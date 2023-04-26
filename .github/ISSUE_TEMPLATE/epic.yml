@@ -1,0 +1,27 @@
+name: 📚 Epic
+description: Create an epic
+labels: [epic]
+body:
+- type: markdown
+  attributes:
+    value: |
+      An Epic is a significant feature or piece of work that doesn't
+      easily fit into a single release. It will typically have a number of Stories
+      and/or Tasks associated with it that can be delivered iteratively.
+- type: textarea
+  attributes:
+    label: Description
+    description: Describe the epic
+- type: dropdown
+  id: estimation
+  attributes:
+    label: Have you provided an initial effort estimate for this issue?
+    description: See our [handbook](https://flowforge.com/handbook/development/releases/planning/#effort-estimation) for more details.
+    multiple: false
+    options:
+      - I have provided an initial effort estimate
+      - I am no FlowForge team member
+      - I can not provide an initial effort estimate
+      - All subtasks of this epic have an effort estimate
+  validations:
+      required: true

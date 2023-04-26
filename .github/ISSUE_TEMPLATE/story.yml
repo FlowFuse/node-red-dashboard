@@ -1,0 +1,60 @@
+name: 📖 Story
+description: Create a story
+labels: [story]
+body:
+- type: markdown
+  attributes:
+    value: |
+      A Story is a user-oriented description of a feature. It should describe what
+      a user should be able to do and identify the value that brings to the user.
+- type: input
+  attributes:
+    label: Epic
+    description: What epic is this story part of?
+    placeholder: '#123'
+- type: textarea
+  attributes:
+    label: Description
+    description: Describe the story
+    value: |
+      **As a:**
+
+      **I want to:**
+
+      **So that:**
+
+- type: dropdown
+  id: pricing
+  attributes:
+    label: Which customers would this be availble to 
+    description: Based on our [pricing principles](https://flowforge.com/handbook/product/pricing/) features should be aligned between Cloud and CE/EE
+    multiple: false
+    options:
+      - All Users, (CE)
+      - Licensed Edition (EE)
+      - Other (See comments)
+
+
+- type: textarea
+  attributes:
+    label: Acceptance Criteria
+    description: |
+      Any key points that should be used to assess if the story has been completed.
+    value: |
+      - [ ] criteria 1
+      - [ ] criteria 2
+      - [ ] criteria 3
+      - ...
+
+- type: dropdown
+  id: estimation
+  attributes:
+    label: Have you provided an initial effort estimate for this issue?
+    description: See our [handbook](https://flowforge.com/handbook/development/releases/planning/#effort-estimation) for more details.
+    multiple: false
+    options:
+      - I have provided an initial effort estimate
+      - I am no FlowForge team member
+      - I can not provide an initial effort estimate
+  validations:
+      required: true
