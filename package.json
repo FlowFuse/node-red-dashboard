@@ -1,0 +1,57 @@
+{
+    "name": "@flowforge/node-red-dashboard",
+    "version": "0.0.1",
+    "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
+    "author": {
+        "name": "Joe Pavitt",
+        "url": "https://github.com/joepavitt"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flowforge/flowforge-nr-dashboard.git"
+    },
+    "license": "Apache-2.0",
+    "keywords": [
+        "node-red"
+    ],
+    "node-red": {
+        "nodes": {
+            "ui_base": "nodes/config/ui_base.js",
+            "ui_text": "nodes/widgets/ui_text.js"
+        }
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/vue3-essential",
+            "eslint:recommended"
+        ],
+        "parserOptions": {
+            "parser": "@babel/eslint-parser"
+        },
+        "rules": {}
+    },
+    "dependencies": {
+        "core-js": "^3.8.3",
+        "socket.io": "^4.6.2",
+        "vue": "^3.2.13"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.16",
+        "@babel/eslint-parser": "^7.12.16",
+        "@vue/cli-plugin-babel": "~5.0.0",
+        "@vue/cli-plugin-eslint": "~5.0.0",
+        "@vue/cli-service": "~5.0.0",
+        "eslint": "^7.32.0",
+        "eslint-plugin-vue": "^8.0.3"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead",
+        "not ie 11"
+    ]
+}

@@ -1,0 +1,37 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ui_base',{
+        category: 'config',
+        defaults: {
+            name: {
+                value: "UI Name",
+                required: true
+            },
+            path: {
+                value: "/ui",
+                required: true,
+            },
+            port: {
+                value: null,
+                required: false,
+            }
+        },
+        label: function() {
+            return `${this.name} [${this.path}]` || "UI Config";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui_base">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
+        <input type="text" id="node-config-input-path">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="fa fa-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
+</script>

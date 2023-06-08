@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <!-- <title><%= htmlWebpackPlugin.options.title %></title> -->
+    <title>Test Title</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <my-component></my-component>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader"></script>
+
+    <script type="text/javascript">
+      const options = {
+        moduleCache: {
+          vue: Vue,
+        },
+        
+        getFile(url) {
+          return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
+        },
+        
+        addStyle(styleStr) {
+          const style = document.createElement('style');
+          style.textContent = styleStr;
+          const ref = document.head.getElementsByTagName('style')[0] || null;
+          document.head.insertBefore(style, ref);
+        },
+        
+        log(type, ...args) {
+          console.log(type, ...args);
+        }
+      }
+      
+      const { loadModule, version } = window["vue3-sfc-loader"];
+    
+      const app = Vue.createApp({
+        components: {
+          'my-component': Vue.defineAsyncComponent(() => loadModule('./HelloWorld.vue', options)),
+        },
+        template: `Hello <my-component></my-component> <sub>from vue3-sfc-loader v${ version }</sub>`
+      });
+      
+      app.mount('#app');
+    </script>
+  </body>
+</html>
