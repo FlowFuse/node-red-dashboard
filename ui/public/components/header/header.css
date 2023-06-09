@@ -1,0 +1,9 @@
+.nrdb-header {
+    background-color: var(--nrdb-header-bg);
+    color: var(--nrdb-header-text-color);
+    padding: var(--nrdb-header-padding);
+}
+
+.nrdb-header h1 {
+    margin: 0;
+}

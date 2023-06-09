@@ -1,9 +1,17 @@
 // const Emitter = require('events').EventEmitter
-const fs = require('fs')
 const path = require('path')
 
+//from: https://stackoverflow.com/a/28592528/3016654
+// function join() {
+//     var trimRegex = new RegExp('^\\/|\\/$','g');
+//     var paths = Array.prototype.slice.call(arguments);
+//     return '/'+paths.map(function(e) {
+//         if (e) { return e.replace(trimRegex,""); }
+//     }).filter(function(e) {return e;}).join('/');
+// }
+
 module.exports = function(RED) {
-    // const { Server } = require("socket.io")
+    const { Server } = require("socket.io")
     // const ui = require('../../ui/src/main')
 
     // const emitter = new Emitter()
@@ -19,30 +27,43 @@ module.exports = function(RED) {
 
         RED.nodes.createNode(node, n);
 
-        // CREATE VUE APP
-        // ui.create()
+        /**
+         * Configure & Run Express Server
+         */
+        node.port = 1881
 
-        console.log(n.path)
         /** @type { import('socket.io').ServerOptions } */
-        this.options = {}
-        this.options.path = n.path
-        this.port = 1881
+        // const fullPath = join(RED.settings.httpNodeRoot, n.path)
+        // const socketIoPath = join(fullPath, 'socket.io')
 
         /** @type { import('express').Application } */
-        this.app = express()
-        this.app.use(express.json())
-        this.app.use(express.urlencoded({ extended: true }))
+        node.app = express()
+        node.app.use(express.json())
+        node.app.use(express.urlencoded({ extended: true }))
 
-        // const index = fs.readFileSync(path.join(__dirname, '../../ui/public/index.html'))
+        /**
+         * Create IO Server for comms between Node-RED and UI
+         */
+        // node.io = new Server(RED.server, {
+        //     path: socketIoPath
+        // })
+        // this.io.listen(this.port)
 
-        this.app.use('/ui', express.static(path.join(__dirname, '../../ui/public/')))
+        // node.io.on('connection', function() {
+        //     console.log('connected established via io')
+        //     // console.log(socket)
+        // })
+
+
+        /**
+         * Expose UI Endpoints
+         */
+        node.app.use(n.path, express.static(path.join(__dirname, '../../ui/public')))
           
-        const server = this.app.listen(this.port, () => {
-            console.log(`Example app listening on port ${this.port}`)
+        const server = node.app.listen(node.port, () => {
+            console.log(`Example app listening on port ${node.port}`)
         })
 
-        // this.io = new Server(RED.server, this.options)
-        // this.io.listen(this.port)
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
@@ -52,9 +73,13 @@ module.exports = function(RED) {
                     console.log('server shut down')
                 })
             }
-            // TODO: clean everything up
             done()
         })
+
+        /**
+         * External Functions for managing UI Components
+         */
+
     }
     console.log('register base')
     RED.nodes.registerType("ui_base", UIBaseNode);

@@ -5,13 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="stylesheet" href="./stylesheets/common.css">
     <!-- <title><%= htmlWebpackPlugin.options.title %></title> -->
     <title>Test Title</title>
   </head>
 
   <body>
     <div id="app">
-      <my-component></my-component>
+      <nrdb-header></nrdb-header>
+      <main>
+        Hello
+        <my-component></my-component>
+        <sub>from vue3-sfc-loader v{{ version }}</sub>
+      </main>
     </div>
 
     <script src="https://unpkg.com/vue"></script>
@@ -44,8 +50,13 @@
       const app = Vue.createApp({
         components: {
           'my-component': Vue.defineAsyncComponent(() => loadModule('./HelloWorld.vue', options)),
+          'nrdb-header': Vue.defineAsyncComponent(() => loadModule('./components/header/Header.vue', options)),
         },
-        template: `Hello <my-component></my-component> <sub>from vue3-sfc-loader v${ version }</sub>`
+        data () {
+          return {
+            version
+          }
+        }
       });
       
       app.mount('#app');

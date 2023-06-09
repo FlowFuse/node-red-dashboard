@@ -17,6 +17,7 @@
     "node-red": {
         "nodes": {
             "ui_base": "nodes/config/ui_base.js",
+            "ui_page": "nodes/config/ui_page.js",
             "ui_text": "nodes/widgets/ui_text.js"
         }
     },

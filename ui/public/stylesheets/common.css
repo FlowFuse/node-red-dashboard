@@ -1,0 +1,26 @@
+/*
+    Theming Variables
+*/
+
+:root {
+    --nrdb-bg-color: #222;
+    --nrdb-text-color: #fff;
+    --nrdb-font-family: Helvtiva;
+    /* header */
+    --nrdb-header-bg: red;
+    --nrdb-header-padding: 6px 12px;
+    --nrdb-header-text-color: white;
+    /* main */
+    --nrdb-main-padding: 12px;
+}
+
+body {
+    margin: 0;
+    font-family: Helvetica;
+    background-color: var(--nrdb-bg-color);
+    color: var(--nrdb-text-color);
+}
+
+main {
+    padding: var(--nrdb-main-padding);
+}

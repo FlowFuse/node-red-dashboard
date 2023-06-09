@@ -71,7 +71,8 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            ui: { type: 'ui_base', required:true },
+            ui: { type: 'ui_base', required: true },
+            page: { type: 'ui_page', required: true },
             group: { type: 'ui_group', required:true },
             order: {value: 0},
             width: {value: 0, validate: function(v) {
@@ -89,7 +90,6 @@
             format: {value: '{{msg.payload}}'},
             layout: {value:'row-spread'},
             className: {value: ''},
-
             style: { value: false },
             font: { value: "" },
             fontSize: { value: 16 },
@@ -184,8 +184,8 @@
 
 <script type="text/html" data-template-name="ui_text">
     <div class="form-row">
-        <label for="node-input-ui"><i class="fa fa-table"></i> UI</label>
-        <input type="text" id="node-input-ui">
+        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
+        <input type="text" id="node-input-page">
     </div>
     <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>
