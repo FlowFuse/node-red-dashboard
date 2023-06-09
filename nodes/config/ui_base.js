@@ -2,15 +2,16 @@
 const path = require('path')
 
 //from: https://stackoverflow.com/a/28592528/3016654
-// function join() {
-//     var trimRegex = new RegExp('^\\/|\\/$','g');
-//     var paths = Array.prototype.slice.call(arguments);
-//     return '/'+paths.map(function(e) {
-//         if (e) { return e.replace(trimRegex,""); }
-//     }).filter(function(e) {return e;}).join('/');
-// }
+function join() {
+    var trimRegex = new RegExp('^\\/|\\/$','g');
+    var paths = Array.prototype.slice.call(arguments);
+    return '/'+paths.map(function(e) {
+        if (e) { return e.replace(trimRegex,""); }
+    }).filter(function(e) {return e;}).join('/');
+}
 
 module.exports = function(RED) {
+    const http = require('http')
     const { Server } = require("socket.io")
     // const ui = require('../../ui/src/main')
 
@@ -32,9 +33,6 @@ module.exports = function(RED) {
          */
         node.port = 1881
 
-        /** @type { import('socket.io').ServerOptions } */
-        // const fullPath = join(RED.settings.httpNodeRoot, n.path)
-        // const socketIoPath = join(fullPath, 'socket.io')
 
         /** @type { import('express').Application } */
         node.app = express()
@@ -42,45 +40,93 @@ module.exports = function(RED) {
         node.app.use(express.urlencoded({ extended: true }))
 
         /**
-         * Create IO Server for comms between Node-RED and UI
-         */
-        // node.io = new Server(RED.server, {
-        //     path: socketIoPath
-        // })
-        // this.io.listen(this.port)
-
-        // node.io.on('connection', function() {
-        //     console.log('connected established via io')
-        //     // console.log(socket)
-        // })
-
-
-        /**
-         * Expose UI Endpoints
+         * Create Web Server
          */
         node.app.use(n.path, express.static(path.join(__dirname, '../../ui/public')))
           
-        const server = node.app.listen(node.port, () => {
-            console.log(`Example app listening on port ${node.port}`)
+        
+        const server = http.createServer(node.app)
+        server.listen(node.port, () => {
+            node.log(`Dashboard UI listening on port ${node.port}`)
         })
 
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
-            // this.io.close()
             if (server) {
+                node.io.close()
                 server.close(() => {
-                    console.log('server shut down')
+                    node.log('server shut down')
                 })
             }
             done()
         })
 
         /**
+         * Create IO Server for comms between Node-RED and UI
+         */
+        /** @type { import('socket.io').ServerOptions } */
+        const fullPath = join(RED.settings.httpNodeRoot, n.path)
+        const socketIoPath = join(fullPath, 'socket.io')
+        node.io = new Server(server, {
+            path: socketIoPath
+        })
+
+        var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
+        node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
+
+        node.io.on('connection', function(socket) {
+            node.log('connected established via io')
+
+            socket.emit('msg', 'ui-config', {
+                pages: Object.fromEntries(node.ui.pages),
+                widgets: Object.fromEntries(node.ui.widgets)
+            })
+
+            socket.emit('ui-config', 'randomid', {
+                pages: Object.fromEntries(node.ui.pages),
+                widgets: Object.fromEntries(node.ui.widgets)
+            })
+
+            // handle disconnection
+            socket.on("msg", (topic, payload) => {
+                node.log('msg received')
+                node.log(topic, payload)
+            })
+
+            socket.on("disconnect", reason => {
+                node.log(`Disconnected ${socket.id} due to ${reason}`)
+            })
+        })
+
+
+        /**
          * External Functions for managing UI Components
          */
 
+        node.ui = {
+            pages: new Map(),
+            widgets: new Map()
+        }
+
+        /**
+         * 
+         * @param {*} page 
+         * @param {*} widget 
+         */
+        node.register = function (page, widget) {
+            if (!node.ui.pages.has(page.id)) {
+                console.log('page id: ' + page.id)
+                node.ui.pages.set(page.id, page)
+            }
+            // map widgets on a page-by-page basis
+            if (!node.ui.widgets[page.id]) {
+                node.ui.widgets[page.id] = new Map()
+            }
+            // add the widget to the page-mapping
+            node.ui.widgets.set(page.id, widget)
+        }
+
     }
-    console.log('register base')
     RED.nodes.registerType("ui_base", UIBaseNode);
 }

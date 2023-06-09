@@ -9,6 +9,8 @@ module.exports = function(RED) {
         // which page are we rendering this widget
         var page = RED.nodes.getNode(config.page);
 
+        page.register(node)
+
         // inform the dashboard UI that we are adding this node
 
         node.on('input', async function (msg, send, done) {
