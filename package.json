@@ -54,6 +54,7 @@
         "eslint-plugin-vue": "^8.0.3",
         "glob": "^10.2.7",
         "socket.io-client": "^4.6.2",
+        "vue-router": "^4.2.2",
         "vuex": "^4.1.0"
     },
     "browserslist": [

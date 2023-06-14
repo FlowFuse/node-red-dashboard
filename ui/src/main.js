@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
+import router from './router.js'
 
 import store from './store/index.js'
 
@@ -37,6 +38,7 @@ socket.on("connect_error", (err) => {
  */
 const app = createApp(App)
     .use(store)
+    .use(router)
 
 // make the socket service available app-wide via this.$socket
 app.config.globalProperties.$socket = socket

@@ -2,7 +2,7 @@
   <nrdb-header></nrdb-header>
   <main>
       <button @click="send">Send Message</button>
-      <layout-mgr :widgets="widgets"></layout-mgr>
+      <router-view></router-view>
       <h1>Pages:</h1>
       {{ pages }}
       <h1>Widgets:</h1>
@@ -14,6 +14,8 @@
 <script>
 import { mapState } from 'vuex'
 import NRDBHeader from './components/header/Header'
+
+// import Flex from './layouts/Flex' // import all layouts
 
 export default {
     name: 'App',
@@ -30,6 +32,19 @@ export default {
             this.widgets = Object.values(payload.widgets)
             this.$store.commit('dashboard/pages', payload.pages)
             this.$store.commit('dashboard/widgets', payload.widgets)
+
+            const layouts = {
+                'flex': 'hello world' // Flex
+            }
+            
+            Object.values(payload.pages).forEach(page => {
+                console.log(page)
+                console.log(layouts[page.layout])
+                this.$router?.addRoute({
+                    path: page.path,
+                    component: layouts[page.layout]
+                })
+            })
         })
     },
     methods: {
