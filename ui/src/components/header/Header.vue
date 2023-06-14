@@ -14,6 +14,6 @@
   </script>
   
   <style scoped>
-  @import "./components/header/header.css";
+  @import "./header.css";
   </style>
   

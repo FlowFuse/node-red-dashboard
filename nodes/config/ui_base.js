@@ -42,7 +42,7 @@ module.exports = function(RED) {
         /**
          * Create Web Server
          */
-        node.app.use(n.path, express.static(path.join(__dirname, '../../ui/public')))
+        node.app.use(n.path, express.static(path.join(__dirname, '../../dist')))
           
         
         const server = http.createServer(node.app)
@@ -78,22 +78,27 @@ module.exports = function(RED) {
         node.io.on('connection', function(socket) {
             node.log('connected established via io')
 
-            socket.emit('msg', 'ui-config', {
-                pages: Object.fromEntries(node.ui.pages),
-                widgets: Object.fromEntries(node.ui.widgets)
-            })
+            // socket.emit('msg', 'ui-config', {
+            //     pages: Object.fromEntries(node.ui.pages),
+            //     widgets: Object.fromEntries(node.ui.widgets)
+            // })
 
             socket.emit('ui-config', 'randomid', {
                 pages: Object.fromEntries(node.ui.pages),
                 widgets: Object.fromEntries(node.ui.widgets)
             })
 
-            // handle disconnection
             socket.on("msg", (topic, payload) => {
                 node.log('msg received')
                 node.log(topic, payload)
             })
 
+            socket.on("widget-action", (nodeid, payload) => {
+                node.log('widget actioned')
+                node.log(nodeid, payload)
+            })
+            
+            // handle disconnection
             socket.on("disconnect", reason => {
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
@@ -115,16 +120,18 @@ module.exports = function(RED) {
          * @param {*} widget 
          */
         node.register = function (page, widget) {
+            console.log('page id: ' + page.id)
+            console.log('widget id: ' + widget.id)
             if (!node.ui.pages.has(page.id)) {
-                console.log('page id: ' + page.id)
                 node.ui.pages.set(page.id, page)
             }
             // map widgets on a page-by-page basis
-            if (!node.ui.widgets[page.id]) {
-                node.ui.widgets[page.id] = new Map()
+            if (!node.ui.widgets.has(page.id)) {
+                node.ui.widgets.set(page.id, {})
             }
+            console.log('widget: ' + node.ui.widgets.get(page.id))
             // add the widget to the page-mapping
-            node.ui.widgets.set(page.id, widget)
+            node.ui.widgets.get(page.id)[widget.id] = widget
         }
 
     }

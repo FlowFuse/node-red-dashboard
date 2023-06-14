@@ -1,3 +1,14 @@
+# Node-RED Dashboard 2.0
+ 
+## Development
+
+The Node-RED nodes (in particular, `ui_base`) requires a static app to be served via `/dist`. as such,
+when making local changes there is currently sa manual step required to get your latest changes into the UI deployed by Node-RED:
+
+```bash
+npm run build
+```
+
 # Dashboard Planning Repository
 
 This repository is a collaborative space for ideation, and planning of a FlowForge Node-RED Dashboard (naming open)

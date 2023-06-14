@@ -1,100 +1,18 @@
 <!DOCTYPE html>
 <html lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-        <link rel="stylesheet" href="./stylesheets/common.css">
-        <!-- <title><%= htmlWebpackPlugin.options.title %></title> -->
-        <title>Test Title</title>
-    </head>
-
-    <body>
-        <div id="app">
-            <nrdb-header></nrdb-header>
-            <main>
-                Hello
-                <button @click="send">Send Message</button>
-                <my-component></my-component>
-                <sub>from vue3-sfc-loader v{{ version }}</sub>
-            </main>
-        </div>
-
-        <script src="https://unpkg.com/vue"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader"></script>
-        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-
-        <script type="text/javascript">
-            const options = {
-                moduleCache: {
-                    vue: Vue,
-                },
-                
-                getFile(url) {
-                    return fetch(url).then(response => response.ok ? response.text() : Promise.reject(response));
-                },
-                
-                addStyle(styleStr) {
-                    const style = document.createElement('style');
-                    style.textContent = styleStr;
-                    const ref = document.head.getElementsByTagName('style')[0] || null;
-                    document.head.insertBefore(style, ref);
-                },
-                
-                log(type, ...args) {
-                    console.log(type, ...args);
-                }
-            }
-            
-            const { loadModule, version } = window["vue3-sfc-loader"];
-
-            var socket = io({
-                path: "/ui/socket.io"
-            });
-
-            // handle final disconnection
-            socket.on("disconnect", (reason) => {
-                console.log("SIO disconnect:", reason)
-            })
-
-            socket.on("connect", () => {
-                console.log("SIO connected")
-            })
-
-            socket.on("ui-config", (topic, payload) => {
-                console.log("ui config")
-                console.log(topic, payload)
-            })
-
-            socket.on("msg", (topic, payload) => {
-                console.log("msg received")
-                console.log(topic, payload)
-            })
-
-            socket.on("connect_error", (err) => {
-                console.log("SIO connect error:", err, err.data)
-            })
-            
-            const app = Vue.createApp({
-                components: {
-                    'my-component': Vue.defineAsyncComponent(() => loadModule('./HelloWorld.vue', options)),
-                    'nrdb-header': Vue.defineAsyncComponent(() => loadModule('./components/header/Header.vue', options)),
-                },
-                data () {
-                    return {
-                        version
-                    }
-                },
-                methods: {
-                    send: function () {
-                        console.log(socket)
-                        socket.emit('msg', 'test-mg', 'hello world');
-                    }
-                }
-            });
-            
-            app.mount('#app');
-        </script>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app">
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
 </html>
