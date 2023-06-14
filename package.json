@@ -19,9 +19,9 @@
     ],
     "node-red": {
         "nodes": {
-            "ui_base": "nodes/config/ui_base.js",
-            "ui_page": "nodes/config/ui_page.js",
-            "ui_text": "nodes/widgets/ui_text.js"
+            "ui-base": "nodes/config/ui_base.js",
+            "ui-page": "nodes/config/ui_page.js",
+            "ui-text": "nodes/widgets/ui_text.js"
         }
     },
     "eslintConfig": {
@@ -46,13 +46,15 @@
     "devDependencies": {
         "@babel/core": "^7.12.16",
         "@babel/eslint-parser": "^7.12.16",
+        "@babel/plugin-transform-private-methods": "^7.22.5",
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-eslint": "~5.0.0",
         "@vue/cli-service": "~5.0.0",
-        "vuex": "^4.1.0",
         "eslint": "^7.32.0",
         "eslint-plugin-vue": "^8.0.3",
-        "socket.io-client": "^4.6.2"
+        "glob": "^10.2.7",
+        "socket.io-client": "^4.6.2",
+        "vuex": "^4.1.0"
     },
     "browserslist": [
         "> 1%",

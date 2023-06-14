@@ -4,6 +4,8 @@ import { io } from 'socket.io-client'
 
 import store from './store/index.js'
 
+// widgets
+import UIText from './widgets/ui_text/UIText'
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
@@ -38,6 +40,9 @@ const app = createApp(App)
 
 // make the socket service available app-wide via this.$socket
 app.config.globalProperties.$socket = socket
+
+// widgets
+app.component('ui-text', UIText)
 
 // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
 app.mount('#app')

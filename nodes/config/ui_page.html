@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui_page',{
+    RED.nodes.registerType('ui-page',{
         category: 'config',
         defaults: {
             name: {
@@ -7,7 +7,7 @@
                 required: true
             },
             ui: {
-                type: 'ui_base',
+                type: 'ui-base',
                 value: "",
                 required: true,
             },
@@ -42,7 +42,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="ui_page">
+<script type="text/html" data-template-name="ui-page">
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">

@@ -67,11 +67,11 @@
     ];
 
 
-    RED.nodes.registerType('ui_text',{
+    RED.nodes.registerType('ui-text',{
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            page: { type: 'ui_page', required: true },
+            page: { type: 'ui-page', required: true },
             order: {value: 0},
             width: {value: 0, validate: function(v) {
                     var width = v||0;
@@ -180,7 +180,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="ui_text">
+<script type="text/html" data-template-name="ui-text">
     <div class="form-row">
         <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
         <input type="text" id="node-input-page">

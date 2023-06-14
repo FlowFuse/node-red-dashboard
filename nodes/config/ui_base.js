@@ -47,7 +47,7 @@ module.exports = function(RED) {
         
         const server = http.createServer(node.app)
         server.listen(node.port, () => {
-            node.log(`Dashboard UI listening on port ${node.port}`)
+            node.log(`Dashboard UI listening at ${n.path} on port ${node.port}`)
         })
 
 
@@ -135,5 +135,5 @@ module.exports = function(RED) {
         }
 
     }
-    RED.nodes.registerType("ui_base", UIBaseNode);
+    RED.nodes.registerType("ui-base", UIBaseNode);
 }

@@ -9,7 +9,7 @@ module.exports = function(RED) {
         // which page are we rendering this widget
         var page = RED.nodes.getNode(config.page);
 
-        page.register(node)
+        page.register(config)
 
         // inform the dashboard UI that we are adding this node
 
@@ -23,7 +23,7 @@ module.exports = function(RED) {
             done()
         });
     }
-    RED.nodes.registerType("ui_text", TextNode);
+    RED.nodes.registerType("ui-text", TextNode);
 };
 
 // module.exports = function(RED) {
