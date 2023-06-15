@@ -11,6 +11,7 @@
         "url": "https://github.com/flowforge/flowforge-nr-dashboard.git"
     },
     "scripts": {
+        "serve": "vue-cli-service serve",
         "build": "vue-cli-service build"
     },
     "license": "Apache-2.0",

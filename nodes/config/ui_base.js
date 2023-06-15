@@ -43,6 +43,15 @@ module.exports = function(RED) {
          * Create Web Server
          */
         node.app.use(n.path, express.static(path.join(__dirname, '../../dist')))
+
+        node.app.get(n.path, (req,res) => {
+            res.sendFile(path.join(__dirname, '../../dist/index.html'));
+        });
+        
+        node.app.get(n.path + '/*', (req,res) => {
+            res.sendFile(path.join(__dirname, '../../dist/index.html'));
+        });
+
           
         
         const server = http.createServer(node.app)
@@ -84,6 +93,7 @@ module.exports = function(RED) {
             // })
 
             socket.emit('ui-config', 'randomid', {
+                dashboards: Object.fromEntries(node.ui.dashboards),
                 pages: Object.fromEntries(node.ui.pages),
                 widgets: Object.fromEntries(node.ui.widgets)
             })
@@ -110,6 +120,7 @@ module.exports = function(RED) {
          */
 
         node.ui = {
+            dashboards: new Map(),
             pages: new Map(),
             widgets: new Map()
         }
@@ -120,8 +131,12 @@ module.exports = function(RED) {
          * @param {*} widget 
          */
         node.register = function (page, widget) {
+            console.log('dashboard id: ' + n.id)
             console.log('page id: ' + page.id)
             console.log('widget id: ' + widget.id)
+            if (!node.ui.dashboards.has(n.id)) {
+                node.ui.dashboards.set(n.id, n)
+            }
             if (!node.ui.pages.has(page.id)) {
                 node.ui.pages.set(page.id, page)
             }

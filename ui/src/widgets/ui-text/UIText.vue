@@ -2,7 +2,7 @@
     UI Text Goes Here
 </template>
   
-<script type="text/javascript">
+<script>
     export default {
         name: 'DBUIText',
         props: {

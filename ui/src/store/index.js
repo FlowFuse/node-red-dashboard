@@ -1,10 +1,10 @@
 import { createStore } from 'vuex'
 
-import dashboard from './dashboard.js'
+import ui from './ui.js'
 
 export default createStore({
     modules: {
-        dashboard
+        ui
     },
     plugins: []
 })

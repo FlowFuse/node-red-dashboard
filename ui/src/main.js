@@ -6,7 +6,7 @@ import router from './router.js'
 import store from './store/index.js'
 
 // widgets
-import UIText from './widgets/ui_text/UIText'
+import UIText from './widgets/ui-text/UIText'
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
