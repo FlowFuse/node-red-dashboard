@@ -47,7 +47,7 @@ module.exports = function(RED) {
         node.app.get(n.path, (req,res) => {
             res.sendFile(path.join(__dirname, '../../dist/index.html'));
         });
-        
+
         node.app.get(n.path + '/*', (req,res) => {
             res.sendFile(path.join(__dirname, '../../dist/index.html'));
         });
@@ -85,6 +85,8 @@ module.exports = function(RED) {
         node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
 
         node.io.on('connection', function(socket) {
+            node.socketio = socket
+
             node.log('connected established via io')
 
             // socket.emit('msg', 'ui-config', {
@@ -130,10 +132,10 @@ module.exports = function(RED) {
          * @param {*} page 
          * @param {*} widget 
          */
-        node.register = function (page, widget) {
+        node.register = function (page, widgetNode, widgetConfig) {
             console.log('dashboard id: ' + n.id)
             console.log('page id: ' + page.id)
-            console.log('widget id: ' + widget.id)
+            console.log('widget id: ' + widgetConfig.id)
             if (!node.ui.dashboards.has(n.id)) {
                 node.ui.dashboards.set(n.id, n)
             }
@@ -144,9 +146,18 @@ module.exports = function(RED) {
             if (!node.ui.widgets.has(page.id)) {
                 node.ui.widgets.set(page.id, {})
             }
-            console.log('widget: ' + node.ui.widgets.get(page.id))
+            
+            // add listener to the widget for when it's corresponding node receives a msg in Node-RED
+            widgetNode.on('input', async function (msg, send, done) {
+                console.log('msg received', msg)
+                console.log('msg sent on', 'msg-input:' + widgetConfig.id)
+                // send a message to the UI to let it know we've received a msg
+                node.socketio.emit('msg-input:' + widgetConfig.id, msg)
+                done()
+            })
+
             // add the widget to the page-mapping
-            node.ui.widgets.get(page.id)[widget.id] = widget
+            node.ui.widgets.get(page.id)[widgetConfig.id] = widgetConfig
         }
 
     }

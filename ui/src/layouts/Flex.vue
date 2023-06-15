@@ -3,7 +3,7 @@
         Flex View:
         <div v-if="widgets && widgets[$route.meta.id]">
             <div v-for="w in widgets[$route.meta.id]" :key="w.id">
-                <component :is="w.component" />
+                <component :is="w.component" :id="w.id" />
             </div>
         </div>
     </BaselineLayout>

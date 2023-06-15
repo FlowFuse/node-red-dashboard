@@ -9,7 +9,7 @@ module.exports = function(RED) {
         // which page are we rendering this widget
         var page = RED.nodes.getNode(config.page);
 
-        page.register(config)
+        page.register(node, config)
 
         // inform the dashboard UI that we are adding this node
 

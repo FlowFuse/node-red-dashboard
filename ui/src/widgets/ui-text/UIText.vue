@@ -1,12 +1,23 @@
 <template>
-    This is the text widget
+    This is the text widget {{  id }}
 </template>
   
 <script>
     export default {
         name: 'DBUIText',
         props: {
-            msg: String
+            id: String,
+            msg: String,
+        },
+        mounted () {
+            console.log("msg-input:" + this.id)
+            this.$socket.on("msg-input:" + this.id, (msg) => {
+                console.log("msg received")
+                console.log(msg.topic, msg.payload)
+            })
+        },
+        unmounted () {
+            this.$socket.off("msg-input:" + this.id)
         }
     }
 </script>
