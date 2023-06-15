@@ -54,8 +54,10 @@
         "eslint": "^7.32.0",
         "eslint-plugin-vue": "^8.0.3",
         "glob": "^10.2.7",
+        "@mdi/font": "~6.5.0",
         "socket.io-client": "^4.6.2",
         "vue-router": "^4.2.2",
+        "vuetify": "^3.3.3",
         "vuex": "^4.1.0"
     },
     "browserslist": [

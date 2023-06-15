@@ -3,6 +3,18 @@ import App from './App.vue'
 import { io } from 'socket.io-client'
 import router from './router.js'
 
+// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
 import store from './store/index.js'
 
 // widgets
@@ -38,6 +50,7 @@ socket.on("connect_error", (err) => {
  */
 const app = createApp(App)
     .use(store)
+    .use(vuetify)
     .use(router)
 
 // make the socket service available app-wide via this.$socket
