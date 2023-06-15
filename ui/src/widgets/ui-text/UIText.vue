@@ -1,5 +1,5 @@
 <template>
-    UI Text Goes Here
+    This is the text widget
 </template>
   
 <script>

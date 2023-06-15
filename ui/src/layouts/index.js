@@ -1,4 +1,7 @@
 import Flex from './Flex';
 import Grid from './Grid';
 
-export { Flex, Grid };
+export default { 
+    "flex": Flex,
+    "grid": Grid
+}

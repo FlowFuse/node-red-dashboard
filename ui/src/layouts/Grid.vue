@@ -1,6 +1,6 @@
 <template>
     <BaselineLayout :page-title="$route.name">
-        Flex View:
+        Grid View:
         <div v-if="widgets && widgets[$route.meta.id]">
             <div v-for="w in widgets[$route.meta.id]" :key="w.id">
                 <component :is="w.component" />

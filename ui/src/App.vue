@@ -17,8 +17,10 @@
 
 <script>
 import { mapState } from 'vuex'
+import { markRaw } from 'vue'
 
-import Flex from './layouts/Flex' // import all layouts
+import layouts from './layouts' // import all layouts
+import widgetComponents from './widgets' // import all Vue Widget Components
 
 export default {
     name: 'App',
@@ -29,14 +31,8 @@ export default {
         this.$socket.on("ui-config", (topic, payload) => {
             console.log("ui config")
             console.log(topic, payload)
-            this.widgets = Object.values(payload.widgets)
-
-            console.log(Flex)
-
-            const layouts = {
-                'flex': Flex
-            }
             
+            // loop over pages, add to vue router
             Object.values(payload.pages).forEach(page => {
                 const route = payload.dashboards[page.ui].path + page.path
                 const routeName = 'Page:' + page.name
@@ -55,6 +51,15 @@ export default {
                 }
                 this.$router.push({
                     name: routeName
+                })
+            })
+
+            // loop over widgets, map in component
+            Object.keys(payload.widgets).forEach(page => {
+                Object.values(payload.widgets[page]).forEach(widget => {
+                    console.log("adding widget", widget)
+                    // widget.component = 'hello world'
+                    widget.component = markRaw(widgetComponents[widget.type])
                 })
             })
 
