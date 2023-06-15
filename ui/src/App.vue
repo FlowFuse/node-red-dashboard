@@ -44,7 +44,10 @@ export default {
                 this.$router?.addRoute({
                     path: route,
                     name: routeName,
-                    component: layouts[page.layout]
+                    component: layouts[page.layout],
+                    meta: {
+                        id: page.id
+                    }
                 })
                 page.route = {
                     path: route,

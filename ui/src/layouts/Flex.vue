@@ -1,8 +1,8 @@
 <template>
     <BaselineLayout :page-title="$route.name">
         Flex View:
-        {{ widgets }}
-        <div v-for="w in widgets" :key="w.id">
+        {{ widgets[$route.meta.id] }}
+        <div v-for="w in widgets[$route.meta.id]" :key="w.id">
             {{ w.id }} {{  w.type }}
             <!-- <component :is="w.type" /> -->
         </div>
@@ -16,7 +16,7 @@
     export default {
         name: 'LayoutFlex',
         computed: {
-            ...mapState('ui', ['widgets'])
+            ...mapState('ui', ['widgets']),
         },
         components: {
             BaselineLayout
