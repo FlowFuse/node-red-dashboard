@@ -1,10 +1,7 @@
 <template>
     <BaselineLayout :page-title="$route.name">
-        Flex View:
-        <div v-if="widgets && widgets[$route.meta.id]">
-            <div v-for="w in widgets[$route.meta.id]" :key="w.id">
-                <component :is="w.component" :id="w.id" />
-            </div>
+        <div class="nrdb-layout--flex" v-if="widgets && widgets[$route.meta.id]">
+            <component v-for="w in widgets[$route.meta.id]" :key="w.id" :is="w.component" :id="w.id" />
         </div>
     </BaselineLayout>
 </template>
@@ -23,3 +20,22 @@
         }
     }
 </script>
+
+<style scoped>
+
+.nrdb-layout--flex {
+    --layout-card-width: 320px;
+    --layout-gap: 12px;
+}
+.nrdb-layout--flex {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--layout-gap);
+    gap: var(--layout-gap);
+}
+
+.v-card {
+    width: var(--layout-card-width);
+    max-width: 100%;
+}
+</style>

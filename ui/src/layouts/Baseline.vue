@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app class="nrdb-app nrdb-app--baseline">
         <v-app-bar>
             <template v-slot:prepend>
                 <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
@@ -13,7 +13,7 @@
                 <v-list-item v-for="page in pages" :key="page.id" prepend-icon="mdi-home" :title="`page.name (${page.route.path})`" @click="go(page.route.name)"></v-list-item>
             </v-list>
         </v-navigation-drawer>
-        <slot></slot>
+        <slot class="nrdb-layout"></slot>
       </v-main>
     </v-app>
   </template>

@@ -1,5 +1,9 @@
 <template>
-    {{ (values && values[id]) || 'No Message Received' }}
+    <v-card variant="outlined">
+        <template #text>
+            {{ (values && values[id]) || 'No Message Received' }}
+        </template>
+    </v-card>
 </template>
 
 <script>
