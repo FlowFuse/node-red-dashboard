@@ -1,23 +1,21 @@
 <template>
-    This is the text widget {{  id }}
+    {{ (values && values[id]) || 'No Message Received' }}
 </template>
-  
+
 <script>
+    import { useDataTracker } from '../data-tracker.js'
+    import { mapState } from 'vuex'
+
     export default {
         name: 'DBUIText',
         props: {
-            id: String,
-            msg: String,
+            id: String
         },
-        mounted () {
-            console.log("msg-input:" + this.id)
-            this.$socket.on("msg-input:" + this.id, (msg) => {
-                console.log("msg received")
-                console.log(msg.topic, msg.payload)
-            })
+        computed: {
+            ...mapState('data', ['values']),
         },
-        unmounted () {
-            this.$socket.off("msg-input:" + this.id)
+        setup (props) {
+            useDataTracker(props.id)
         }
     }
 </script>

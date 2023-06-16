@@ -24,6 +24,7 @@ import widgetComponents from './widgets' // import all Vue Widget Components
 
 export default {
     name: 'App',
+    inject: ['$socket'],
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets'])
     },
@@ -45,16 +46,19 @@ export default {
                         id: page.id
                     }
                 })
+                // store data on the "page" object so it's easy for us to map in the navigation drawer
                 page.route = {
                     path: route,
                     name: routeName
                 }
+                // navigate to this route, this ensures we navigate to _something_ when the app loads
                 this.$router.push({
                     name: routeName
                 })
             })
 
-            // loop over widgets, map in component
+            // loop over the widgets defined in Node-RED,
+            // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(page => {
                 Object.values(payload.widgets[page]).forEach(widget => {
                     console.log("adding widget", widget)
@@ -63,6 +67,7 @@ export default {
                 })
             })
 
+            // store this data in our VueX store for access across the app
             this.$store.commit('ui/dashboards', payload.dashboards)
             this.$store.commit('ui/pages', payload.pages)
             this.$store.commit('ui/widgets', payload.widgets)
@@ -77,7 +82,7 @@ export default {
                 name
             })
         }
-    },
+    }
 }
 </script>
 

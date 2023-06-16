@@ -54,7 +54,7 @@ const app = createApp(App)
     .use(router)
 
 // make the socket service available app-wide via this.$socket
-app.config.globalProperties.$socket = socket
+app.provide('$socket', socket)
 
 // widgets
 app.component('ui-text', UIText)
