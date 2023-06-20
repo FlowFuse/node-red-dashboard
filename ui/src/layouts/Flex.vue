@@ -40,8 +40,12 @@
     gap: var(--layout-gap);
 }
 
-.v-card {
+.nrdb-layout--flex > div {
     width: var(--layout-card-width);
     max-width: 100%;
+}
+
+.v-card {
+    width: 100%;
 }
 </style>
