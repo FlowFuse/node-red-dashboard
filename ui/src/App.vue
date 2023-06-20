@@ -33,7 +33,7 @@ export default {
             console.log("ui config")
             console.log(topic, payload)
             
-            // loop over pages, add to vue router
+            // loop over pages, add them to vue router
             Object.values(payload.pages).forEach(page => {
                 const route = payload.dashboards[page.ui].path + page.path
                 const routeName = 'Page:' + page.name
