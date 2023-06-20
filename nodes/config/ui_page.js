@@ -18,9 +18,9 @@ module.exports = function(RED) {
          * along with the widget
          * @param {*} widget 
          */
-        node.register = function (widgetNode, widgetConfig) {
+        node.register = function (widgetNode, widgetConfig, widgetEvents) {
             const page = config
-            ui.register(page, widgetNode, widgetConfig)
+            ui.register(page, widgetNode, widgetConfig, widgetEvents)
         }
     }
     RED.nodes.registerType("ui-page", UIPageNode);

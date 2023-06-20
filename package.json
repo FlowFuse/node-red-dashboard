@@ -22,7 +22,8 @@
         "nodes": {
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
-            "ui-text": "nodes/widgets/ui_text.js"
+            "ui-text": "nodes/widgets/ui_text.js",
+            "ui-text-input": "nodes/widgets/ui_text_input.js"
         }
     },
     "eslintConfig": {

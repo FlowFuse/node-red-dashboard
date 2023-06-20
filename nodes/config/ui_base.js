@@ -132,7 +132,7 @@ module.exports = function(RED) {
          * @param {*} page 
          * @param {*} widget 
          */
-        node.register = function (page, widgetNode, widgetConfig) {
+        node.register = function (page, widgetNode, widgetConfig, widgetEvents) {
             console.log('dashboard id: ' + n.id)
             console.log('page id: ' + page.id)
             console.log('widget id: ' + widgetConfig.id)
@@ -166,14 +166,54 @@ module.exports = function(RED) {
                 node.ui.widgets.set(page.id, {})
             }
             
-            // add listener to the widget for when it's corresponding node receives a msg in Node-RED
+            // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
-                console.log('msg received', msg)
-                console.log('msg sent on', 'msg-input:' + widget.id)
+                console.log('node-red:input', msg)
                 // send a message to the UI to let it know we've received a msg
                 node.socketio.emit('msg-input:' + widget.id, msg)
-                done()
+                // store the latest msg passed to node
+                widgetNode._msg = msg
+                // node-specific handlers
+                if (widgetEvents?.onInput) {
+                    widgetEvents?.onInput(msg, send, done)
+                } else {
+                    done()
+                }
             })
+
+            node.io.on('connection', function(socket) {
+                // add listener for when the UI loads, so that we can send any
+                // stored values associated to a widget that we have in Node-RED
+                socket.on('widget-load:' + widget.id, async function () {
+                    console.log('on:widget-load', widgetNode._msg)
+                    // rreplicate receiving an input, so the widget can handle accordingly
+                    const msg = widgetNode._msg
+                    if (msg) {
+                        // only emit something if we have something to send
+                        node.socketio.emit('msg-input:' + widget.id, msg)
+                    }
+                })
+            })
+
+
+            // Handle Socket IO Event Handlers
+            if (widgetEvents?.onChange) {
+                node.io.on('connection', function(socket) {
+
+                    // listen to in-UI events that Node-RED may need to action
+                    socket.on('widget-change:' + widget.id, (value) => {
+                        console.log('on:widget-change', value)
+                        // TODO: bind this property to whichever chosen, for now use payload
+                        const msg = widgetNode._msg
+                        msg.payload = value
+
+                        widgetNode._msg = msg
+
+                        // simulate Node-RED node receiving an input
+                        widgetNode.receive(msg)
+                    })
+                })
+            }
 
             // add the widget to the page-mapping
             node.ui.widgets.get(page.id)[widget.id] = widget

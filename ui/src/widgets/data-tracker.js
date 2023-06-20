@@ -11,13 +11,15 @@ export function useDataTracker(widgetId) {
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
         socket.on("msg-input:" + widgetId, (msg) => {
-            console.log("msg received in " + widgetId)
-            console.log(msg.topic, msg.payload)
+            console.log("msg-input:" + widgetId, msg)
             store.commit('data/bind', {
                 widgetId,
                 data: msg.payload
             })
         })
+        // let Node-RED know that this widget has loaded
+        // useful as Node-RED can return (via msg-input) any stored data 
+        socket.emit("widget-load:" + widgetId)
     })
     onUnmounted(() => {
         socket.off("msg-input:" + widgetId)

@@ -1,11 +1,13 @@
 <template>
     <BaselineLayout :page-title="$route.name">
         <div class="nrdb-layout--flex" v-if="widgets && widgets[$route.meta.id]">
-            <v-card v-for="w in widgets[$route.meta.id]" :key="w.id" variant="outlined" class="">
-                <template #text>
-                    <component  :is="w.component" :id="w.id" :props="w.props"/>
-                </template>
-            </v-card>
+            <div v-for="w in widgets[$route.meta.id]" :key="w.id">
+                <v-card variant="outlined" class="">
+                    <template #text>
+                        <component  :is="w.component" :id="w.id" :props="w.props"/>
+                    </template>
+                </v-card>
+            </div>
         </div>
     </BaselineLayout>
 </template>

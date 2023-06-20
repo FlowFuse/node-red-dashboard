@@ -9,19 +9,8 @@ module.exports = function(RED) {
         // which page are we rendering this widget
         var page = RED.nodes.getNode(config.page);
 
-        page.register(node, config)
-
         // inform the dashboard UI that we are adding this node
-
-        node.on('input', async function (msg, send, done) {
-            console.log('hello world')
-            done()
-        });
-
-        node.on("close", async function (done) {
-            console.log('goodbye world')
-            done()
-        });
+        page.register(node, config)
     }
     RED.nodes.registerType("ui-text", TextNode);
 };
