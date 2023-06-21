@@ -22,6 +22,7 @@
         "nodes": {
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
+            "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js"
         }
@@ -49,13 +50,14 @@
         "@babel/core": "^7.12.16",
         "@babel/eslint-parser": "^7.12.16",
         "@babel/plugin-transform-private-methods": "^7.22.5",
+        "@mdi/font": "~6.5.0",
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-eslint": "~5.0.0",
         "@vue/cli-service": "~5.0.0",
+        "chart.js": "^4.3.0",
         "eslint": "^7.32.0",
         "eslint-plugin-vue": "^8.0.3",
         "glob": "^10.2.7",
-        "@mdi/font": "~6.5.0",
         "socket.io-client": "^4.6.2",
         "vue-router": "^4.2.2",
         "vuetify": "^3.3.3",

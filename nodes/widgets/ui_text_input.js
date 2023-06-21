@@ -1,19 +1,18 @@
 module.exports = function(RED) {
-    // var ui = require('../ui')(RED);
-
     function TextInputNode(config) {
-
-        RED.nodes.createNode(this, config);
         var node = this;
 
+        // create node in Node-RED
+        RED.nodes.createNode(this, config);
+
         // this ndoe need to store content/value from UI
-        console.log('node constructor')
         node.value = null
 
         // which page are we rendering this widget
         var page = RED.nodes.getNode(config.page);
 
         const evts = {
+            onChange: true,
             onInput: function (msg, send) {
                 send(msg)
             }
@@ -27,5 +26,6 @@ module.exports = function(RED) {
             done()
         });
     }
+
     RED.nodes.registerType("ui-text-input", TextInputNode);
 };

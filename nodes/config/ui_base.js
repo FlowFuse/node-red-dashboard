@@ -204,7 +204,7 @@ module.exports = function(RED) {
                     socket.on('widget-change:' + widget.id, (value) => {
                         console.log('on:widget-change', value)
                         // TODO: bind this property to whichever chosen, for now use payload
-                        const msg = widgetNode._msg
+                        const msg = widgetNode._msg || {}
                         msg.payload = value
 
                         widgetNode._msg = msg
