@@ -30,6 +30,16 @@
                 console.log("label changed", value)
                 this.chart.options.plugins.title.text = value
                 this.chart.update()
+            },
+            'props.chartType': function (value) {
+                console.log("chart type changed", value)
+                this.chart.config.type = value
+                this.chart.update()
+            },
+            'props.xAxisType': function (value) {
+                console.log("x-axis type changed", value)
+                this.chart.options.scales.x.type = value
+                this.chart.update()
             }
         },
         created () {
@@ -40,7 +50,7 @@
             console.log('mounted')
             // get a reference to the canvas element
             const el = this.$refs.chart
-
+            console.log(this.props.chartType)
             // create our ChartJS object
             const chart = new Chart(el, {
                 type: this.props.chartType,
@@ -51,11 +61,20 @@
                     //     data: [12, 19, 3, 5, 2, 3],
                     //     borderWidth: 1
                     // }]
-                    labels: [],
                     datasets: []
                 },
+                // data: {
+                //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                //     datasets: [{
+                //         data: [65, 59, 80, 81, 56, 55]
+                //     }]
+                // },
                 options: {
+                    parsing: false,
                     scales: {
+                        x: {
+                            type: this.props.xAxisType || 'linear'
+                        },
                         y: {
                             beginAtZero: true
                         }
@@ -102,7 +121,7 @@
                 console.log('add', payload, label)
                 // determine what type of msg we have
                 if (payload) {
-                    if (this.props.chartType === 'line') {
+                    if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
                         this.addToLine(payload, label)
                     }
                     else if (this.props.chartType === 'bar') {
@@ -118,24 +137,29 @@
              * @param {*} payload 
              * @param {*} label 
              */
-            addToLine (payload, label) {
+            addToLine (payload) {
+                console.log('adding to line')
                 const datapoint = {}
                 // construct our datapoint
                 if (typeof payload === 'number') {
                     // just a number, assume we're plotting a time series
-                    datapoint.x = Date.now()
+                    datapoint.x = (new Date()).getTime()
                     datapoint.y = payload
                 } else if (typeof payload === 'object' && 'y' in payload) {
                     // may have been given an x/y object already
-                    datapoint.x = payload.x || Date.now()
+                    datapoint.x = payload.x || (new Date()).getTime()
                     datapoint.y = payload.y
                 }
+                console.log('datapoint', datapoint)
                 // the chart is empty, we're adding a new series
-                this.chart.data.datasets.push({
-                    label: label || '',
-                    data: [datapoint],
-                    borderWidth: 1
-                })
+                if (!this.chart.data.datasets.length) {
+                        this.chart.data.datasets.push({
+                        data: [datapoint]
+                    })
+                } else {
+                    // we're adding a new datapoint to an existing series
+                    this.chart.data.datasets[0].data.push(datapoint)
+                }
                 this.chart.update()
             },
             /**

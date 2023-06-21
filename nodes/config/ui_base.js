@@ -166,22 +166,22 @@ module.exports = function(RED) {
                 node.ui.widgets.set(page.id, {})
             }
             
-            // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
-            widgetNode.on('input', async function (msg, send, done) {
-                console.log('node-red:input', msg)
-                // send a message to the UI to let it know we've received a msg
-                node.socketio.emit('msg-input:' + widget.id, msg)
-                // store the latest msg passed to node
-                widgetNode._msg = msg
-                // node-specific handlers
-                if (widgetEvents?.onInput) {
-                    widgetEvents?.onInput(msg, send, done)
-                } else {
-                    done()
-                }
-            })
-
             node.io.on('connection', function(socket) {
+                // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
+                widgetNode.on('input', async function (msg, send, done) {
+                    console.log('node-red:input', msg)
+                    // send a message to the UI to let it know we've received a msg
+                    node.socketio.emit('msg-input:' + widget.id, msg)
+                    // store the latest msg passed to node
+                    widgetNode._msg = msg
+                    // node-specific handlers
+                    if (widgetEvents?.onInput) {
+                        widgetEvents?.onInput(msg, send, done)
+                    } else {
+                        done()
+                    }
+                })
+
                 // add listener for when the UI loads, so that we can send any
                 // stored values associated to a widget that we have in Node-RED
                 socket.on('widget-load:' + widget.id, async function () {
