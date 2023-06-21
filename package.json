@@ -24,6 +24,7 @@
             "ui-page": "nodes/config/ui_page.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
+            "ui-slider": "nodes/widgets/ui_slider.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js"
         }
