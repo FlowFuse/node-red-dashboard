@@ -199,7 +199,6 @@ module.exports = function(RED) {
             // Handle Socket IO Event Handlers
             if (widgetEvents?.onChange) {
                 node.io.on('connection', function(socket) {
-
                     // listen to in-UI events that Node-RED may need to action
                     socket.on('widget-change:' + widget.id, (value) => {
                         console.log('on:widget-change', value)
@@ -210,6 +209,21 @@ module.exports = function(RED) {
                         widgetNode._msg = msg
 
                         // simulate Node-RED node receiving an input
+                        widgetNode.receive(msg)
+                    })
+                })
+            }
+            if (widgetEvents?.onAction) {
+                node.io.on('connection', function(socket) {
+                    socket.on('widget-action:' + widget.id, (value) => {
+                        console.log('on:widget-action', value)
+                        // TODO: bind this property to whichever chosen, for now use payload
+                        const msg = widgetNode._msg || {}
+                        msg.payload = value
+
+                        widgetNode._msg = msg
+
+                        // simulate Node-RED node receiving an input as to trigger send(msg)
                         widgetNode.receive(msg)
                     })
                 })

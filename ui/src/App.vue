@@ -61,7 +61,7 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(page => {
                 Object.values(payload.widgets[page]).forEach(widget => {
-                    console.log("adding widget", widget)
+                    console.log("adding widget", widget.type)
                     // widget.component = 'hello world'
                     widget.component = markRaw(widgetComponents[widget.type])
                 })
