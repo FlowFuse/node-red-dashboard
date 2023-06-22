@@ -23,6 +23,7 @@
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
             "ui-button": "nodes/widgets/ui_button.js",
+            "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
             "ui-text": "nodes/widgets/ui_text.js",

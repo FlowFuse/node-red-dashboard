@@ -1,6 +1,7 @@
 
 <template>
-    <v-text-field v-model="values[id]" class="nrdb-ui-text-field" :label="label" variant="outlined" @blur="onBlur"></v-text-field>
+    <v-text-field v-model="values[id]" class="nrdb-ui-text-field"
+        :label="label" variant="outlined" hide-details="auto" @blur="onBlur"></v-text-field>
 </template>
 
 <script>
