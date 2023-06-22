@@ -1,0 +1,207 @@
+<script type="text/javascript">
+    // convert to i18 text
+    function c_(x) {
+        return RED._("node-red-dashboard/ui-template:ui-template."+x);
+    }
+
+    RED.nodes.registerType('ui-template',{
+        category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
+        color: 'rgb( 63, 173, 181)',
+        defaults: {
+            page: { type: 'ui-page', required: true },
+            name: {value: ''},
+            order: {value: 0},
+            width: {value: 0, validate: function(v) {
+                    var valid = true
+                    if (this.templateScope !== 'global') {
+                        var width = v||0;
+                        var currentGroup = $('#node-input-group').val() || this.group;
+                        var groupNode = RED.nodes.node(currentGroup);
+                        valid = !groupNode || +width <= +groupNode.width;
+                        $("#node-input-size").toggleClass("input-error",!valid);
+                    }
+                    return valid;
+                }},
+            height: {value: 0},
+            format: {value: '<div ng-bind-html="msg.payload"></div>'},
+            storeOutMessages: {value: true},
+            fwdInMessages: {value: true},
+            resendOnRefresh: {value: true},
+            templateScope: {value: 'local'},
+            className: {value: ''}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "ui-template.png",
+        paletteLabel: 'template',
+        label: function() { return this.name || 'template'; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
+        oneditprepare: function() {
+            if (RED.editor.hasOwnProperty("editText") && typeof RED.editor.editText === "function") {
+                $("#node-template-expand-editor").show();
+            }
+            else {
+                $("#node-template-expand-editor").hide();
+            }
+            var that = this;
+            // $("#node-input-size").elementSizer({
+            //     width: "#node-input-width",
+            //     height: "#node-input-height",
+            //     group: "#node-input-group"
+            // });
+
+            if (typeof this.storeOutMessages === 'undefined') {
+                this.storeOutMessages = true;
+                $('#node-input-storeOutMessages').prop('checked', true);
+            }
+
+            if (typeof this.fwdInMessages === 'undefined') {
+                this.fwdInMessages = true;
+                $('#node-input-fwdInMessages').prop('checked', true);
+            }
+
+            if (typeof this.templateScope === 'undefined') {
+                this.templateScope = 'local';
+                $('#node-input-templateScope').val(this.templateScope);
+            }
+
+            $('#node-input-templateScope').on('change', function() {
+                if ($('#node-input-templateScope').val() === 'global') {
+                    $('#template-row-group, #template-row-size, #template-pass-store, #template-row-class').hide();
+                    that._def.defaults.group.required = false;
+                }
+                else {
+                    $('#template-row-group, #template-row-size, #template-pass-store, #template-row-class').show();
+                    that._def.defaults.group.required = true;
+                }
+
+                var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+                var height = $("#dialog-form").height();
+                for (var i=0; i<rows.size(); i++) {
+                    height = height - $(rows[i]).outerHeight(true);
+                }
+                if ($('#node-input-templateScope').val() === "global") { height += 240; }
+                var editorRow = $("#dialog-form>div.node-text-editor-row");
+                height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+                $(".node-text-editor").css("height",height+"px");
+                if (this.editor) { this.editor.resize(); }
+            })
+
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-format-editor',
+                mode: 'ace/mode/html',
+                value: $("#node-input-format").val()
+            });
+
+            RED.library.create({
+                url:"uitemplates", // where to get the data from
+                type:"ui-template", // the type of object the library is for
+                editor:this.editor, // the field name the main text body goes to
+                mode:"ace/mode/html",
+                fields:['name']
+            });
+
+            this.editor.focus();
+
+            RED.popover.tooltip($("#node-template-expand-editor"),c_("label.expand"));
+
+            $("#node-template-expand-editor").on("click", function(e) {
+                e.preventDefault();
+                var value = that.editor.getValue();
+                RED.editor.editText({
+                    mode: 'html',
+                    value: value,
+                    width: "Infinity",
+                    cursor: that.editor.getCursorPosition(),
+                    complete: function(v,cursor) {
+                        that.editor.setValue(v, -1);
+                        that.editor.gotoLine(cursor.row+1,cursor.column,false);
+                        setTimeout(function() { that.editor.focus(); },300);
+                    }
+                })
+            })
+        },
+        oneditsave: function() {
+            var annot = this.editor.getSession().getAnnotations();
+            this.noerr = 0;
+            $("#node-input-noerr").val(0);
+            for (var k=0; k < annot.length; k++) {
+                if (annot[k].type === "error") {
+                    $("#node-input-noerr").val(annot.length);
+                    this.noerr = annot.length;
+                }
+            }
+            $("#node-input-format").val(this.editor.getValue());
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditcancel: function() {
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+            var height = $("#dialog-form").height();
+            for (var i=0; i<rows.size(); i++) {
+                height = height - $(rows[i]).outerHeight(true);
+            }
+            if ($('#node-input-templateScope').val() === "global") { height += 232; }
+            var editorRow = $("#dialog-form>div.node-text-editor-row");
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+            $(".node-text-editor").css("height",height+"px");
+            this.editor.resize();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-template">
+    <!--<div class="form-row">
+        <label for="node-input-format"><span data-i18n="ui-template.label.type"></span></label>
+        <select style="width:76%" id="node-input-templateScope">
+            <option value="local" data-i18n="ui-template.label.local"></option>
+            <option value="global" data-i18n="ui-template.label.global"></option>
+        </select>
+    </div>-->
+    <div class="form-row">
+        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
+        <input type="text" id="node-input-page">
+    </div>
+    <!--<div class="form-row" id="template-row-size">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-template.label.size"></span></label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row" id="template-row-class">
+        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-template.label.className"></label>
+        <input type="text" id="node-input-className" data-i18n="[placeholder]ui-template.label.classNamePlaceholder"/>
+    </div>-->
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <div style="display:inline-block; width:calc(100% - 105px)">
+            <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+        </div>
+    </div>
+    <div class="form-row" style="margin-bottom:0px;">
+        <label for="node-input-format"><i class="fa fa-copy"></i> <span data-i18n="ui-template.label.template"></span></label>
+        <input type="hidden" id="node-input-format">
+        <button id="node-template-expand-editor" class="red-ui-button red-ui-button-small" style="float:right"><i class="fa fa-expand"></i></button>
+    </div>
+    <div class="form-row node-text-editor-row" style="display: block;">
+        <div style="height:250px; min-height:100px" class="node-text-editor" id="node-input-format-editor" ></div>
+    </div>
+    <div id="template-pass-store">
+        <div class="form-row" style="margin-bottom:0px;">
+            <input type="checkbox" id="node-input-fwdInMessages" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
+            <label for="node-input-fwdInMessages" style="width:70%;"> <span data-i18n="ui-template.label.pass-through"></span></label>
+        </div>
+        <div class="form-row" style="margin-bottom:0px;">
+            <input type="checkbox" id="node-input-storeOutMessages" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
+            <label for="node-input-storeOutMessages" style="width:70%;"> <span data-i18n="ui-template.label.store-state"></span></label>
+        </div>
+        <div class="form-row" style="margin-bottom:0px;">
+            <input type="checkbox" id="node-input-resendOnRefresh" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
+            <label for="node-input-resendOnRefresh" style="width:70%;"> <span data-i18n="ui-template.label.resend"></span></label>
+        </div>
+    </div>
+</script>
