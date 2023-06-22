@@ -215,16 +215,10 @@ module.exports = function(RED) {
             }
             if (widgetEvents?.onAction) {
                 node.io.on('connection', function(socket) {
-                    socket.on('widget-action:' + widget.id, (value) => {
-                        console.log('on:widget-action', value)
-                        // TODO: bind this property to whichever chosen, for now use payload
-                        const msg = widgetNode._msg || {}
-                        msg.payload = value
-
-                        widgetNode._msg = msg
-
-                        // simulate Node-RED node receiving an input as to trigger send(msg)
-                        widgetNode.receive(msg)
+                    socket.on('widget-action:' + widget.id, (evt) => {
+                        console.log('on:widget-action')
+                        // simulate Node-RED node receiving an input as to trigger on('input)
+                        widgetNode.receive(evt)
                     })
                 })
             }

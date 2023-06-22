@@ -20,9 +20,16 @@
             useDataTracker(props.id)
         },
         methods: {
-            action () {
-                console.log('button clicked')
-                this.$socket.emit(`widget-action:${this.id}`, 'button clicked')
+            action ($evt) {
+                console.log('button clicked', $evt)
+                const evt = {
+                    clientX: $evt.clientX,
+                    clientY: $evt.clientY,
+                    bbox: $evt.target.getBoundingClientRect()
+                }
+                this.$socket.emit(`widget-action:${this.id}`, {
+                    event: evt
+                })
             }
         }
     }
