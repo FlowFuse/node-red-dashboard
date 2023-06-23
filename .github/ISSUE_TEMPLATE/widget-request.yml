@@ -1,0 +1,48 @@
+name: 📈 Widget Request
+description: Define a request for a new type of widget to be created for Dashboard
+labels: [needs-triage, widget, feature-request]
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: Describe the widget
+- type: textarea
+  attributes:
+    label: Properties
+    description: What level of customisation should be available to the user? These will be made available to the user in the Node-RED Editor.
+    value: |
+      - Labelling
+      - Style
+      - Behaviour
+- type: textarea
+  attributes:
+    label: Events
+    description: What events would this widget need to fire?
+    value: |
+      - [ ] **on-action**: this widget would need to send a message back to Node-RED when it's action is triggered, e.g. button clicked
+      - [ ] **on-change**: this widget would need to send a message back to Node-RED when it's value is changed/updated
+- type: textarea
+  attributes:
+    label: Controls
+    description: Would this widget have any controllable state from Node-RED?
+    value: |
+      - [ ] **enabled**: could this widget be enabled/disabled?
+      - [ ] **visible**: should it be possible to hide this widget?
+- type: textarea
+  attributes:
+    label: Existing Examples
+    description: Are there any examples you can reference for this widget?
+    value: |
+      We use Vuetify for a lot of our widgets, is there a Vuetify component that is similar to what you are looking for?
+- type: dropdown
+  id: estimation
+  attributes:
+    label: Have you provided an initial effort estimate for this issue?
+    description: See our [handbook](https://flowforge.com/handbook/development/releases/planning/#effort-estimation) for more details.
+    multiple: false
+    options:
+      - I have provided an initial effort estimate
+      - I am no FlowForge team member
+      - I can not provide an initial effort estimate
+  validations:
+      required: true
