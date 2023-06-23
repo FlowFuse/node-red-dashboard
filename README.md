@@ -1,5 +1,7 @@
 # Node-RED Dashboard 2.0
 
+Documentation can be found here: 
+
 ## Installation
 
 Currently this project is in a pre-release state, and is not yet available on the [Node-RED flows library](https://flows.nodered.org/).
