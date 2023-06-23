@@ -12,6 +12,7 @@ export default {
       nav: [
         { text: 'GitHub', link: 'https://github.com/flowforge/flowforge-nr-dashboard' }
       ],
+      outline: [2, 3],
       search: {
         provider: 'local'
       },
@@ -20,14 +21,34 @@ export default {
           text: 'Introduction',
           collapsed: false,
           items: [
+            { text: 'About', link: '/' },
             { text: 'Getting Started', link: '/getting-started' }
           ]
         },
         {
-          text: 'Widgets',
+          text: 'Nodes',
           collapsed: false,
           items: [
-            { text: 'ui-button', link: '/widgets/ui-button' }
+            {
+              text: 'Config Nodes',
+              collapsed: false,
+              items: [
+                { 
+                  text: 'ui-base',
+                  link: '/nodes/config/ui-base'
+                }
+              ]
+            },
+            {
+              text: 'Widgets',
+              collapsed: false,
+              items: [
+                { 
+                  text: 'ui-button',
+                  link: '/nodes/widgets/ui-button'
+                }
+              ]
+            }
           ]
         },
         {
@@ -35,7 +56,7 @@ export default {
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/contributing/' },
-            { text: 'Architecture', link: '/contributing/architecture' }
+            { text: 'Project Architecture', link: '/contributing/architecture' }
           ]
         }
       ]
