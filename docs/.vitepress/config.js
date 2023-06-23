@@ -34,10 +34,8 @@ export default {
               text: 'Config Nodes',
               collapsed: false,
               items: [
-                { 
-                  text: 'ui-base',
-                  link: '/nodes/config/ui-base'
-                }
+                { text: 'ui-base', link: '/nodes/config/ui-base' },
+                { text: 'ui-page', link: '/nodes/config/ui-page' }
               ]
             },
             {
