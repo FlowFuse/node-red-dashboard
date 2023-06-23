@@ -1,5 +1,5 @@
 <template>
-    <v-btn @click="action" block variant="outlined">{{ props.label }}</v-btn>
+    <v-btn @click="action" block variant="outlined" :disabled="!state.enabled">{{ props.label }}</v-btn>
 </template>
 
 <script>
@@ -11,7 +11,8 @@
         inject: ['$socket'],
         props: {
             id: String,
-            props: Object
+            props: Object,
+            state: Object
         },
         computed: {
             ...mapState('data', ['values']),

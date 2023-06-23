@@ -4,7 +4,7 @@
             <div v-for="w in widgets[$route.meta.id]" :key="w.id">
                 <v-card variant="outlined" class="">
                     <template #text>
-                        <component  :is="w.component" :id="w.id" :props="w.props"/>
+                        <component  :is="w.component" :id="w.id" :props="w.props" :state="w.state"/>
                     </template>
                 </v-card>
             </div>

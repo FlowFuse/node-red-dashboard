@@ -50,15 +50,12 @@ module.exports = function(RED) {
 
         node.app.get(n.path + '/*', (req,res) => {
             res.sendFile(path.join(__dirname, '../../dist/index.html'));
-        });
-
-          
+        });       
         
         const server = http.createServer(node.app)
         server.listen(node.port, () => {
             node.log(`Dashboard UI listening at ${n.path} on port ${node.port}`)
         })
-
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
@@ -94,20 +91,10 @@ module.exports = function(RED) {
             //     widgets: Object.fromEntries(node.ui.widgets)
             // })
 
-            socket.emit('ui-config', 'randomid', {
+            socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 pages: Object.fromEntries(node.ui.pages),
                 widgets: Object.fromEntries(node.ui.widgets)
-            })
-
-            socket.on("msg", (topic, payload) => {
-                node.log('msg received')
-                node.log(topic, payload)
-            })
-
-            socket.on("widget-action", (nodeid, payload) => {
-                node.log('widget actioned')
-                node.log(nodeid, payload)
             })
             
             // handle disconnection
@@ -121,6 +108,8 @@ module.exports = function(RED) {
          * External Functions for managing UI Components
          */
 
+        console.log('ui base constructor')
+
         node.ui = {
             dashboards: new Map(),
             pages: new Map(),
@@ -133,16 +122,20 @@ module.exports = function(RED) {
          * @param {*} widget 
          */
         node.register = function (page, widgetNode, widgetConfig, widgetEvents) {
-            console.log('dashboard id: ' + n.id)
-            console.log('page id: ' + page.id)
-            console.log('widget id: ' + widgetConfig.id)
+            console.log(node.ui.widgets)
+            console.log(`register widget: ${widgetNode.id} ${widgetNode.type}`)
 
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
+            // store our UI state properties under the .state key too
             const widget = {
                 id: widgetConfig.id,
                 type: widgetConfig.type,
-                props: widgetConfig
+                props: widgetConfig,
+                state: {
+                    enabled: widgetNode._msg?.enabled || true,
+                    visible: widgetNode._msg?.visible || true
+                }
             }
             delete widget.props.id
             delete widget.props.type
@@ -166,14 +159,19 @@ module.exports = function(RED) {
                 node.ui.widgets.set(page.id, {})
             }
 
+            // add the widget to the page-mapping
+            node.ui.widgets.get(page.id)[widget.id] = widget
+
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
                 console.log('node-red:input', msg)
                 // send a message to the UI to let it know we've received a msg
                 node.socketio.emit('msg-input:' + widget.id, msg)
+
                 // store the latest msg passed to node
                 widgetNode._msg = msg
-                // node-specific handlers
+
+                // run any node-specific handler defined in the Widget's component
                 if (widgetEvents?.onInput) {
                     widgetEvents?.onInput(msg, send, done)
                 } else {
@@ -222,9 +220,6 @@ module.exports = function(RED) {
                     })
                 })
             }
-
-            // add the widget to the page-mapping
-            node.ui.widgets.get(page.id)[widget.id] = widget
         }
 
     }

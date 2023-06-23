@@ -10,8 +10,26 @@ export function useDataTracker(widgetId, onInput) {
     // a composable can also hook into its owner component's
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
+        // This will on in msg input for ALL components
         socket.on("msg-input:" + widgetId, (msg) => {
             console.log("msg-input:" + widgetId, msg)
+
+            // set states if passed into msg
+            if ('enabled' in msg) {
+                console.log('setting enabled')
+                store.commit('ui/widgetState', {
+                    widgetId: widgetId,
+                    enabled: msg.enabled
+                })
+            }
+
+            if ('visible' in msg) {
+                store.commit('ui/widgetState', {
+                    widgetId: widgetId,
+                    visible: msg.visible
+                })
+            }
+
             if (onInput) {
                 // sometimes we need to have different behaviour
                 onInput(msg)

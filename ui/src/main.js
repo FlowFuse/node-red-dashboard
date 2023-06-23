@@ -29,16 +29,11 @@ var socket = io({
 
 // handle final disconnection
 socket.on("disconnect", (reason) => {
-    console.log("SIO disconnect:", reason)
+    console.log("SIO disconnected", reason)
 })
 
 socket.on("connect", () => {
     console.log("SIO connected")
-})
-
-socket.on("msg", (topic, payload) => {
-    console.log("msg received")
-    console.log(topic, payload)
 })
 
 socket.on("connect_error", (err) => {
