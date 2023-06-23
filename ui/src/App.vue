@@ -1,17 +1,6 @@
 <template>
     <v-app>
         <router-view></router-view>
-        <v-btn @click="send">Send Message</v-btn>
-        <v-btn @click="go('TestView')">Navigate to Test Route</v-btn>
-        <div>
-            <v-btn v-for="page in pages" :key="page.id" @click="go(page.route.name)">{{ page.name }} ({{ page.route.path }})</v-btn>
-        </div>
-
-        <h1>Pages:</h1>
-        {{ pages }}
-        <h1>Widgets:</h1>
-        {{ widgets }}
-        <img alt="Vue logo" src="./assets/logo.png">
     </v-app>
 </template>
 

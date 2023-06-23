@@ -1,6 +1,6 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline">
-        <v-app-bar>
+        <v-app-bar :elevation="1">
             <template v-slot:prepend>
                 <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
             </template>
