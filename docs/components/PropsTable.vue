@@ -9,7 +9,7 @@
         <tbody>
             <tr v-for="(value, property) in page.frontmatter?.props" :key="property">
                 <td>{{ property }}</td>
-                <td>{{ value }}</td>
+                <td v-html="value"></td>
             </tr>
         </tbody>
     </table>
