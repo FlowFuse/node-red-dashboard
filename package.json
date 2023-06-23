@@ -1,0 +1,80 @@
+{
+    "name": "@flowforge/node-red-dashboard",
+    "version": "0.0.1",
+    "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
+    "author": {
+        "name": "Joe Pavitt",
+        "url": "https://github.com/joepavitt"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flowforge/flowforge-nr-dashboard.git"
+    },
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs"
+    },
+    "license": "Apache-2.0",
+    "keywords": [
+        "node-red"
+    ],
+    "node-red": {
+        "nodes": {
+            "ui-base": "nodes/config/ui_base.js",
+            "ui-page": "nodes/config/ui_page.js",
+            "ui-button": "nodes/widgets/ui_button.js",
+            "ui-dropdown": "nodes/widgets/ui_dropdown.js",
+            "ui-chart": "nodes/widgets/ui_chart.js",
+            "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-template": "nodes/widgets/ui_template.js",
+            "ui-text": "nodes/widgets/ui_text.js",
+            "ui-text-input": "nodes/widgets/ui_text_input.js"
+        }
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/vue3-essential",
+            "eslint:recommended"
+        ],
+        "parserOptions": {
+            "parser": "@babel/eslint-parser"
+        },
+        "rules": {}
+    },
+    "dependencies": {
+        "core-js": "^3.8.3",
+        "socket.io": "^4.6.2",
+        "vue": "^3.3.4"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.16",
+        "@babel/eslint-parser": "^7.12.16",
+        "@babel/plugin-transform-private-methods": "^7.22.5",
+        "@mdi/font": "~6.5.0",
+        "@vue/cli-plugin-babel": "~5.0.0",
+        "@vue/cli-plugin-eslint": "~5.0.0",
+        "@vue/cli-service": "~5.0.0",
+        "chart.js": "^4.3.0",
+        "eslint": "^7.32.0",
+        "eslint-plugin-vue": "^8.0.3",
+        "glob": "^10.2.7",
+        "medium-zoom": "^1.0.8",
+        "socket.io-client": "^4.6.2",
+        "vitepress": "^1.0.0-beta.3",
+        "vue-router": "^4.2.2",
+        "vuetify": "^3.3.3",
+        "vuex": "^4.1.0"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead",
+        "not ie 11"
+    ]
+}

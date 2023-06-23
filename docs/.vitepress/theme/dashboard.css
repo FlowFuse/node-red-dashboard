@@ -1,0 +1,9 @@
+:root {
+    --vp-c-brand: #0094CE;
+}
+
+img + em {
+    text-align: center;
+    display: block;
+}
+

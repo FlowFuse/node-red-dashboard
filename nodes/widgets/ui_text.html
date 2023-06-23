@@ -1,0 +1,331 @@
+<script type="text/javascript">
+    const fonts = [
+        {
+            value: "Arial,Arial,Helvetica,sans-serif",
+            name: "Arial" 
+        },
+        {
+            value: "Arial Black,Arial Black,Gadget,sans-serif",
+            name: "Arial Black" 
+        },
+        {
+            value: "Arial Narrow,Nimbus Sans L,sans-serif",
+            name: "Arial Narrow" 
+        },
+        {
+            value: "Century Gothic,CenturyGothic,AppleGothic,sans-serif",
+            name: "Century Gothic" 
+        },
+        {
+            value: "Copperplate,Copperplate Gothic Light,fantasy",
+            name: "Copperplate" 
+        },
+        {
+            value: "Courier,monospace",
+            name: "Courier" 
+        },
+        {
+            value: "Georgia,Georgia,serif",
+            name: "Georgia" 
+        },
+        {
+            value: "Gill Sans,Geneva,sans-serif",
+            name: "Gill Sans" 
+        },
+        {
+            value: "Impact,Impact,Charcoal,sans-serif",
+            name: "Impact" 
+        },
+        {
+            value: "Lucida Sans Typewriter,Lucida Console,Monaco,monospace", 
+            name: "Lucida Console" 
+        },
+        {
+            value: "Lucida Sans Unicode,Lucida Grande,sans-serif",
+            name: "Lucida Sans" 
+        },
+        {
+            value: "Palatino Linotype,Palatino,Book Antiqua,serif", 
+            name: "Palatino Linotype" 
+        },
+        {
+            value: "Tahoma,Geneva,sans-serif",
+            name: "Tahoma" 
+        },
+        {
+            value: "Times New Roman,Times,serif",
+            name: "Times New Roman" 
+        },
+        {
+            value: "Trebuchet MS,Helvetica,sans-serif",
+            name: "Trebuchet MS" 
+        },
+        {
+            value: "Verdana,Verdana,Geneva,sans-serif",
+            name: "Verdana" 
+        },
+    ];
+
+
+    RED.nodes.registerType('ui-text',{
+        category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
+        color: 'rgb(119, 198, 204)',
+        defaults: {
+            page: { type: 'ui-page', required: true },
+            order: {value: 0},
+            width: {value: 0, validate: function(v) {
+                    var width = v||0;
+                    var currentGroup = $('#node-input-group').val()||this.group;
+                    var groupNode = RED.nodes.node(currentGroup);
+                    var valid = !groupNode || +width <= +groupNode.width;
+                    $("#node-input-size").toggleClass("input-error",!valid);
+                    return valid;
+                }
+            },
+            height: {value: 0},
+            name: {value: ''},
+            label: {value: 'text'},
+            format: {value: '{{msg.payload}}'},
+            layout: {value:'row-spread'},
+            className: {value: ''},
+            style: { value: false },
+            font: { value: "" },
+            fontSize: { value: 16 },
+            color: { value: "#000" },
+        },
+        inputs: 1,
+        outputs: 0,
+        align: "right",
+        icon: "ui_text.png",
+        paletteLabel: 'text',
+        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'text'; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
+        oneditprepare: function() {
+            // $("#node-input-size").elementSizer({
+            //     width: "#node-input-width",
+            //     height: "#node-input-height",
+            //     group: "#node-input-group"
+            // });
+
+            $(".nr-db-text-layout-"+(this.layout||'row-spread')).addClass('selected');
+
+            [ ".nr-db-text-layout-row-left",".nr-db-text-layout-row-center",".nr-db-text-layout-row-right",
+              ".nr-db-text-layout-row-spread",".nr-db-text-layout-col-center"].forEach(function(id) {
+                    $(id).click(function(e) {
+                        $(".nr-db-text-layout").removeClass('selected');
+                        $(this).addClass('selected');
+                        $('#node-input-layout').val(id.substring(".nr-db-text-layout-".length));
+                        e.preventDefault();
+                    })
+              });
+
+            const select = $("#node-select-font");
+            fonts.forEach((font) => {
+                var name = font.name;
+                var val = font.value;
+                $("<option/>", {
+                    value: val,
+                }).text(name).appendTo(select);
+            });
+            $(select).change(() => {
+                const val = $("#node-select-font").val();
+                $("#node-input-font").val(val);
+                $("#node-test-text").css({
+                    "font-family": val,
+                }); 
+            });
+            $(select).val(this.font);
+            $(select).change();
+
+            $("#node-input-fontSize").spinner({
+                min: 1,
+                max: 100,
+                spin: () => {
+                    const val = $("#node-input-fontSize").val();
+                    $("#node-test-text").css({
+                        "font-size": val +"px",
+                    }); 
+                }
+            });
+            if (this.fontSize) {
+                $("#node-test-text").css({
+                    "font-size": this.fontSize +"px",
+                }); 
+            }
+
+            $("#node-input-color").change(() => {
+                const val = $("#node-input-color").val();
+                $("#node-test-text").css({
+                    "color": val,
+                }); 
+            });
+            if (this.color) {
+                $("#node-test-text").css({
+                    "color": this.color
+                }); 
+            }
+
+            $("#node-input-style").change(() => {
+                const val = $("#node-input-style").prop("checked");
+                if (val) {
+                    $("#node-styles").show();
+                }
+                else {
+                    $("#node-styles").hide();
+                }
+            });
+            $("#node-input-style").change();
+
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-text">
+    <div class="form-row">
+        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
+        <input type="text" id="node-input-page">
+    </div>
+    <!-- <div class="form-row">
+        <label><i class="fa fa-object-group"></i> Size</label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div> -->
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
+        <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
+    </div>
+    <div class="form-row">
+        <label style="vertical-align: top"><i class="fa fa-th-large"></i> Layout</label>
+        <div style="display:inline-block">
+            <input type="hidden" id="node-input-layout">
+            <input type="hidden" id="node-input-layoutAlign" >
+            <div>
+                <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-left">
+                    <span class="nr-db-text-layout-label">label</span>
+                    <span class="nr-db-text-layout-value">value</span>
+                    <div class="nr-db-text-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-center">
+                    <span class="nr-db-text-layout-label">label</span>
+                    <span class="nr-db-text-layout-value">value</span>
+                    <div class="nr-db-text-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-right">
+                    <span class="nr-db-text-layout-label">label</span>
+                    <span class="nr-db-text-layout-value">value</span>
+                    <div class="nr-db-text-layout-checkbox"></div>
+                </a>
+            </div>
+            <div>
+                <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-spread">
+                    <span class="nr-db-text-layout-label">label</span>
+                    <span class="nr-db-text-layout-value">value</span>
+                    <div class="nr-db-text-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-text-layout nr-db-text-layout-col nr-db-text-layout-col-center">
+                    <span class="nr-db-text-layout-label">label</span>
+                    <span class="nr-db-text-layout-value">value</span>
+                    <div class="nr-db-text-layout-checkbox"></div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="form-row">
+        <label><i class="fa fa-cog"></i> Style</label>
+        <input type="checkbox" id="node-input-style" style="display: inline-block; width: auto; vertical-align: top;"/>
+        <label for="node-input-style" style="width: 70%;"> Apply Style</label>
+    </div>-->
+
+    <div id="node-styles">
+        <div class="form-row">
+            <label for="node-input-font"><i class="fa fa-font"></i>  Font</label>
+            <select id="node-select-font">
+            </select>
+            <input type="hidden" id="node-input-font"/>
+        </div>
+        <div class="form-row">
+            <label for="node-input-fontSize"><i class="fa fa-text-height"></i>  Text Size</label>
+            <input id="node-input-fontSize" value="16" style="width: 50px;"/>
+        </div>
+        <div class="form-row">
+            <label for="node-input-color"><i class="fa fa-tint"></i>  Text Color</label>
+            <input type="color" id="node-input-color" style="width: 50px;"/>
+        </div>
+        <div class="form-row">
+            <label>&nbsp;</label>
+            <input id="node-test-text" value="Enter Sample Here"/ style="width: 280px;">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
+        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for widget"/>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+
+
+</script>
+<style>
+    .nr-db-text-layout {
+        position:relative;
+        display: inline-block;
+        width: 90px;
+        height: 60px;
+        border-radius:3px;
+        border:1px solid var(--red-ui-form-input-border-color, #bbb);
+        cursor:pointer;
+        color: #666;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    .nr-db-text-layout.selected, .nr-db-text-layout:hover {
+        border-color: var(--red-ui-form-input-border-selected-color, #333);
+        color: var(--red-ui-secondary-text-color-selected, #333);
+    }
+    .nr-db-text-layout span {
+        position: absolute;
+    }
+    .nr-db-text-layout-value {
+        font-weight: bold;
+    }
+    .nr-db-text-layout-row span { top: 20px; }
+    .nr-db-text-layout-row-left .nr-db-text-layout-label { left: 2px; }
+    .nr-db-text-layout-row-left .nr-db-text-layout-value { left: 34px; }
+    .nr-db-text-layout-row-spread .nr-db-text-layout-label { left: 2px; }
+    .nr-db-text-layout-row-spread .nr-db-text-layout-value { right: 2px; }
+    .nr-db-text-layout-row-center .nr-db-text-layout-label { left: 11px; }
+    .nr-db-text-layout-row-center .nr-db-text-layout-value { right: 11px; }
+    .nr-db-text-layout-row-right .nr-db-text-layout-label { right: 40px; }
+    .nr-db-text-layout-row-right .nr-db-text-layout-value { right: 2px; }
+
+    .nr-db-text-layout-col span { width: 90px;  text-align: center; left: 0px;}
+    .nr-db-text-layout-col-center .nr-db-text-layout-label { top: 12px; }
+    .nr-db-text-layout-col-center .nr-db-text-layout-value { top: 26px; }
+    .nr-db-text-layout-checkbox {
+        display: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--red-ui-primary-border-color, #bbb);
+        position: absolute;
+        right: -5px;
+        top: -5px;
+        background: var(--red-ui-secondary-background, #fff);
+    }
+    .nr-db-text-layout.selected .nr-db-text-layout-checkbox {
+        display:inline-block;
+        box-shadow: inset 0px 0px 0px 2px #fff;
+        background: #333;
+        border-color: #333;
+    }
+
+</style>

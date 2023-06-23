@@ -131,3 +131,6 @@ dist
 .github/ISSUE_TEMPLATE/.DS_Store
 .github/.DS_Store
 .DS_Store
+
+
+docs/.vitepress/cache/

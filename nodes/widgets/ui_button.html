@@ -1,0 +1,116 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ui-button',{
+        category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
+        color: 'rgb(176, 223, 227)',
+        defaults: {
+            page: { type: 'ui-page', required: true },
+            name: {value: ''},
+            label: {value: 'button'},
+            order: {value: 0},
+            width: {value: 0, validate: function(v) {
+                    var width = v||0;
+                    var currentGroup = $('#node-input-group').val()||this.group;
+                    var groupNode = RED.nodes.node(currentGroup);
+                    var valid = !groupNode || +width <= +groupNode.width;
+                    $("#node-input-size").toggleClass("input-error",!valid);
+                    return valid;
+                }
+            },
+            height: {value: 0},
+            passthru: {value: false},
+            tooltip: {value: ''},
+            color: {value: ''},
+            bgcolor: {value: ''},
+            className: {value: ''},
+            icon: {value: ''},
+            payload: {value: '', validate: (RED.validators.hasOwnProperty('typedInput') ? RED.validators.typedInput('payloadType') : function(v) { return true})},
+            payloadType: { value: 'str'},
+            topic:  {value: 'topic', validate: (RED.validators.hasOwnProperty('typedInput') ? RED.validators.typedInput('topicType') : function(v) { return true})},
+            topicType: {value: 'msg'}
+        },
+        inputs:1,
+        outputs:1,
+        outputLabels: function() {
+            if (this.payloadType === "str") {
+                return this.payload;
+            } else {
+                return this.payloadType;
+            }
+        },
+        icon: "ui-button.png",
+        paletteLabel: 'button',
+        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'button'; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
+        oneditprepare: function() {
+            $('#node-input-payload').typedInput({
+                default: 'str',
+                typeField: $("#node-input-payloadType"),
+                types: ['str','num','bool','json','bin','date','flow','global']
+            });
+
+            $('#node-input-topic').typedInput({
+                default: 'str',
+                typeField: $("#node-input-topicType"),
+                types: ['str','msg','flow','global']
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-button">
+    <div class="form-row">
+        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
+        <input type="text" id="node-input-page">
+    </div>
+    <!--<div class="form-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-button.label.size"></label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> <span data-i18n="ui-button.label.icon"></label>
+        <input type="text" id="node-input-icon" data-i18n="[placeholder]ui-button.label.optionalIcon">
+    </div>-->
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-button.label.optionalLabel">
+    </div>
+    <!--<div class="form-row">
+        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-button.label.tooltip"></label>
+        <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-button.label.optionalTooltip">
+    </div>
+    <div class="form-row">
+        <label for="node-input-color"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.color"></label>
+        <input type="text" id="node-input-color" data-i18n="[placeholder]ui-button.label.optionalColor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bgcolor"><i class="fa fa-tint"></i>  <span data-i18n="ui-button.label.background"></label>
+        <input type="text" id="node-input-bgcolor" data-i18n="[placeholder]ui-button.label.optionalBackgroundColor">
+    </div>-->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.whenClicked"></label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-payload" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.payload"></label>
+        <input type="text" id="node-input-payload" style="width:70%">
+        <input type="hidden" id="node-input-payloadType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.topic"></label>
+        <input type="text" id="node-input-topic">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+    <!--<div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="ui-button.label.emulateClick"></label>
+        <input type="checkbox" id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-button.label.className"></label>
+        <input type="text" id="node-input-className" data-i18n="[placeholder]ui-button.label.classNamePlaceholder"/>
+    </div>-->
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+</script>

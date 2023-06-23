@@ -1,0 +1,62 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ui-page',{
+        category: 'config',
+        defaults: {
+            name: {
+                value: "Page Name",
+                required: true
+            },
+            ui: {
+                type: 'ui-base',
+                value: "",
+                required: true,
+            },
+            path: {
+                value: "/",
+                required: false,
+            },
+            layout: {
+                value: "",
+                required: true
+            }
+        },
+        oneditprepare: function () {
+            $("#node-config-input-layout").typedInput({
+                type: "layout",
+                types: [{
+                    value: 'layout',
+                    options: [
+                        { value: 'flex', label: 'Flex'}
+                    ]
+                }],
+                typeField: "#node-input-layoutType"
+            });
+
+        },
+        label: function() {
+            const base = RED.nodes.node(this.ui).path
+            const path = this.path || ''
+            return `${this.name} [${base}${path}]` || "UI Page";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-page">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <input type="text" id="node-config-input-ui">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
+        <input type="text" id="node-config-input-path">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Layout</label>
+        <input type="text" id="node-config-input-layout">
+        <input type="hidden" id="node-config-input-layoutType">
+    </div>
+</script>

@@ -1,0 +1,79 @@
+# Layout Managers
+
+Dashboard's UI is built around the central core of a "Layout Manager" which is responsible for rendering the UI, and managing the layout of the widgets within it.
+
+The navigational hierarchy of the Dashboard UI is as follows:
+
+- **UI** - `ui-base` - Multiple endpoints can be served within a single Dashboard. Later work will be done to treat these as completely isolated interfaces.
+- **Page** - `ui-page` - All pages within a single UI are listed in the navigation drawer (left menu). Each page is configured to use a given "Layout Manager", and that manager will render 
+- **Widget** - `ui-<widget-name>` - Each widget is defined as a Vue component. You can checkout an example `<widget>.vue` file in our [Adding Widgets](./adding-widgets#example-widget-vue) guide.
+
+
+## Baseline Layouts
+
+`/Layouts/Baseline.vue` defines the basic structure of a page (header and left-side navigation drawer). Other layouts then can extend this baseline and define _how_ the widgets are rendered within the baseline's default `<slot></slot>`.
+
+This list of layouts will grow in time, and for now, just includes a _very_ basic starter template.
+
+### Flex
+
+This is a simple flexbox layout, with a single row of widgets, and our only functional layout currently. It will automatically move widgets to the next row if they don't fit within a given screen width. The height of each row is determined by the tallest widget in that row.
+
+![Flex Layout](../../assets/images/layout-eg-flex.png)
+*An example UI rendered using the "Flex" Layout Manager*
+
+Currently, each widget is rendered directly inside a `v-card` (from Vuetify), however, plans for widgets to be grouped, as per Dashboard 1.0 are on the horizon, as well as controlling widget width and height.
+
+## Adding a new Layout Manager
+
+If you're looking to define your own Layout manager to add to Dashboard, then the below example will help you get started.
+
+We have also documented the contents of the [Widget](./events#widget) object (used in `line 13`), which will provide detail on what data you have available for a given widget/component.
+
+```vue:line-numbers {1}
+<template>
+    <!-- Extend the Baseline Template, and render the page title appropriately -->
+    <BaselineLayout :page-title="$route.name">
+        <!-- Retrieve our widgets assigned to this page (page id = $route.meta.id) -->
+        <div class="nrdb-layout--flex" v-if="widgets && widgets[$route.meta.id]">
+            <!-- Loop over the widgets defined for this page -->
+            <div v-for="w in widgets[$route.meta.id]" :key="w.id">
+                <!-- here we wrap all of our widgets inside a Vuetify v-card -->
+                <v-card variant="outlined" class="">
+                    <!-- draw our widget into the #text slot of the v-card -->
+                    <template #text>
+                        <!-- render the widget's component, passing in the widget id, props and state -->
+                        <component  :is="w.component" :id="w.id" :props="w.props" :state="w.state"/>
+                    </template>
+                </v-card>
+            </div>
+        </div>
+    </BaselineLayout>
+</template>
+
+<script>
+    import BaselineLayout from './Baseline.vue'
+    import { mapState } from 'vuex';
+
+    export default {
+        name: 'LayoutFlex',
+        computed: {
+            // our "ui" vue store contains a collection
+            //of widgets mapped by Page ID ($route.meta.id)
+            ...mapState('ui', ['widgets']),
+        },
+        components: {
+            // extend the BaslineLayout component to get
+            // the header and navigation drawer
+            BaselineLayout
+        }
+    }
+</script>
+
+<style scoped>
+/*
+    any CSS you have for this layout can go here,
+    mapped with appropriate CSS classes
+*/
+</style>
+```
