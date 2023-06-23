@@ -19,15 +19,15 @@ body:
     label: Events
     description: What events would this widget need to fire?
     value: |
-      - [ ] **on-action**: this widget would need to send a message back to Node-RED when it's action is triggered, e.g. button clicked
-      - [ ] **on-change**: this widget would need to send a message back to Node-RED when it's value is changed/updated
+      - **on-action**: this widget would need to send a message back to Node-RED when it's action is triggered, e.g. button clicked
+      - **on-change**: this widget would need to send a message back to Node-RED when it's value is changed/updated
 - type: textarea
   attributes:
     label: Controls
     description: Would this widget have any controllable state from Node-RED?
     value: |
-      - [ ] **enabled**: could this widget be enabled/disabled?
-      - [ ] **visible**: should it be possible to hide this widget?
+      - **enabled**: this widget can be enabled/disabled
+      - **visible**: this widget can be hidden
 - type: textarea
   attributes:
     label: Existing Examples
