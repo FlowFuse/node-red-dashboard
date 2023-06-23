@@ -1,9 +1,13 @@
 # Node-RED Dashboard 2.0
+
+## Installation
+
+Currently this project is in a pre-release state, and is not yet available on the [Node-RED flows library](https://flows.nodered.org/).
  
 ## Development
 
 The Node-RED nodes (in particular, `ui_base`) requires a static app to be served via `/dist`. as such,
-when making local changes there is currently sa manual step required to get your latest changes into the UI deployed by Node-RED:
+when making local changes there is currently a manual step required to get your latest changes into the UI deployed by Node-RED:
 
 ```bash
 npm run build

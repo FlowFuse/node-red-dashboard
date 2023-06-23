@@ -12,7 +12,9 @@
     },
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build"
+        "build": "vue-cli-service build",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs"
     },
     "license": "Apache-2.0",
     "keywords": [
@@ -48,7 +50,7 @@
     "dependencies": {
         "core-js": "^3.8.3",
         "socket.io": "^4.6.2",
-        "vue": "^3.2.13"
+        "vue": "^3.3.4"
     },
     "devDependencies": {
         "@babel/core": "^7.12.16",
@@ -62,7 +64,9 @@
         "eslint": "^7.32.0",
         "eslint-plugin-vue": "^8.0.3",
         "glob": "^10.2.7",
+        "medium-zoom": "^1.0.8",
         "socket.io-client": "^4.6.2",
+        "vitepress": "^1.0.0-beta.3",
         "vue-router": "^4.2.2",
         "vuetify": "^3.3.3",
         "vuex": "^4.1.0"
