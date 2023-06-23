@@ -1,5 +1,5 @@
 export default {
-    base: 'flowforge-nr-dashboard',
+    base: '/flowforge-nr-dashboard',
     locales: {
       root: {
         lang: 'en',
