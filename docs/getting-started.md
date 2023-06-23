@@ -8,4 +8,4 @@ If you would like to run this set of nodes locally, and specifically to help con
 
 ## How it Works
 
-If you'd like to learn more about the project, and how it works, you can read the [Project Architecture](../contributing/architecture.md) documentation.
+If you'd like to learn more about the project, and how it works, you can read the various Guides available in the left navigation, under the "Contributing" section.

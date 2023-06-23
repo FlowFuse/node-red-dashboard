@@ -9,6 +9,7 @@ export default {
       }
     },
     themeConfig: {
+      // logo: '/logo.png',
       nav: [
         { text: 'GitHub', link: 'https://github.com/flowforge/flowforge-nr-dashboard' }
       ],
@@ -56,7 +57,16 @@ export default {
           collapsed: false,
           items: [
             { text: 'Introduction', link: '/contributing/' },
-            { text: 'Project Architecture', link: '/contributing/architecture' }
+            {
+              text: 'Guides',
+              collapsed: false,
+              items: [
+                { text: 'Repo Structure', link: '/contributing/guides/repo' },
+                { text: 'Events Architecture', link: '/contributing/guides/events' },
+                { text: 'Layout Managers', link: '/contributing/guides/layouts' },
+                { text: 'Adding Widgets', link: '/contributing/guides/adding-widgets' }
+              ]
+            }
           ]
         }
       ]

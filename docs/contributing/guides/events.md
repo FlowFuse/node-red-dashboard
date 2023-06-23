@@ -1,24 +1,8 @@
-# Project Architecture
-
-The purpose of this page is to give an overview how of Dashboard 2.0 is structured, and how the various components interact with each other.
-
-## Core Components
-
-The repository contains two primary folders:
-
-### /nodes
-
-The `/nodes` directory contains the collection of Node-RED nodes that are available within the Node-RED editor. These nodes are responsible for handling the configuration of the Dashboard, which widgets are shown, and for sending and receiving events to and from the Dashboard, based on their configurtion within the Node-RED editor.
-
-### /ui
-
-This folder contains our Vue.js Application. This can be built using `npm run build`, and the output of this build is then copied into the `/dist` directory, where it is served by Node-RED.
-
-## Event Architecture
+# Event Architecture
 
 An important part of the Dashboard is how Node-RED and the Dashboard communicate. This is achieved using [socket.io](https://socket.io/).
 
-![A flow diagram depicting how events flow between Node-RED and the Dashboard](../assets/images/events-architecture.png){data-zoomable}
+![A flow diagram depicting how events flow between Node-RED and the Dashboard](../../assets/images/events-architecture.png){data-zoomable}
 *A flow diagram depicting how events flow between Node-RED (red) and the Dashboard (blue)*
 
 ## Events List
