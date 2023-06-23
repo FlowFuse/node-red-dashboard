@@ -1,6 +1,6 @@
 # Node-RED Dashboard 2.0
 
-Documentation can be found here: 
+Documentation can be found here: https://flowforge.github.io/flowforge-nr-dashboard/
 
 ## Installation
 

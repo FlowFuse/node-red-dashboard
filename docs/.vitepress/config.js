@@ -5,7 +5,7 @@ export default {
         lang: 'en',
         label: 'English',
         title: 'Node-RED Dashboard 2.0',
-        description: 'Vue-powered Static Site Generator',
+        description: 'Documentation for Node-RED Dashboard 2.0, a collection of nodes to build out data visualisations and dashboards in Node-RED',
       }
     },
     themeConfig: {
