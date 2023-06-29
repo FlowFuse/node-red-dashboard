@@ -14,7 +14,8 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "docs:dev": "vitepress dev docs",
-        "docs:build": "vitepress build docs"
+        "docs:build": "vitepress build docs",
+        "test": "mocha \"test/**/*.spec.js\""
     },
     "license": "Apache-2.0",
     "keywords": [
@@ -45,7 +46,13 @@
         "parserOptions": {
             "parser": "@babel/eslint-parser"
         },
-        "rules": {}
+        "rules": {},
+        "globals": {
+            "afterEach": "readonly",
+            "beforeEach": "readonly",
+            "describe": "readonly",
+            "it": "readonly"
+        }
     },
     "dependencies": {
         "core-js": "^3.8.3",
@@ -65,6 +72,9 @@
         "eslint-plugin-vue": "^8.0.3",
         "glob": "^10.2.7",
         "medium-zoom": "^1.0.8",
+        "mocha": "^10.2.0",
+        "node-red": "^3.0.2",
+        "node-red-node-test-helper": "^0.3.2",
         "socket.io-client": "^4.6.2",
         "vitepress": "^1.0.0-beta.3",
         "vue-router": "^4.2.2",

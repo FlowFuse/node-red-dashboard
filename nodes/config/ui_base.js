@@ -60,7 +60,7 @@ module.exports = function(RED) {
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
             if (server) {
-                node.io.close()
+                node.ioServer.close()
                 server.close(() => {
                     node.log('server shut down')
                 })
@@ -74,15 +74,18 @@ module.exports = function(RED) {
         /** @type { import('socket.io').ServerOptions } */
         const fullPath = join(RED.settings.httpNodeRoot, n.path)
         const socketIoPath = join(fullPath, 'socket.io')
-        node.io = new Server(server, {
+        // store reference to the SocketIO Server
+        node.ioServer = new Server(server, {
             path: socketIoPath
         })
 
         var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
         node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
 
-        node.io.on('connection', function(socket) {
-            node.socketio = socket
+        node.ioServer.on('connection', function(socket) {
+            console.log('socket connected')
+            // TODO: Change socketio to "connections" and store in a Map or Array
+            node.socketio = socket // store the connection for later use
 
             node.log('connected established via io')
 
@@ -164,9 +167,12 @@ module.exports = function(RED) {
 
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
-                console.log('node-red:input', msg)
                 // send a message to the UI to let it know we've received a msg
-                node.socketio.emit('msg-input:' + widget.id, msg)
+                try {
+                    node.socketio.emit('msg-input:' + widget.id, msg)
+                } catch (err) {
+                    console.error(err)
+                }
 
                 // store the latest msg passed to node
                 widgetNode._msg = msg
@@ -179,7 +185,7 @@ module.exports = function(RED) {
                 }
             })
             
-            node.io.on('connection', function(socket) {
+            node.ioServer.on('connection', function(socket) {
                 // add listener for when the UI loads, so that we can send any
                 // stored values associated to a widget that we have in Node-RED
                 socket.on('widget-load:' + widget.id, async function () {
@@ -196,7 +202,7 @@ module.exports = function(RED) {
 
             // Handle Socket IO Event Handlers
             if (widgetEvents?.onChange) {
-                node.io.on('connection', function(socket) {
+                node.ioServer.on('connection', function(socket) {
                     // listen to in-UI events that Node-RED may need to action
                     socket.on('widget-change:' + widget.id, (value) => {
                         console.log('on:widget-change', value)
@@ -212,7 +218,7 @@ module.exports = function(RED) {
                 })
             }
             if (widgetEvents?.onAction) {
-                node.io.on('connection', function(socket) {
+                node.ioServer.on('connection', function(socket) {
                     socket.on('widget-action:' + widget.id, (evt) => {
                         console.log('on:widget-action')
                         // simulate Node-RED node receiving an input as to trigger on('input)

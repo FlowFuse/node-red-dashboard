@@ -1,0 +1,7 @@
+{
+    "id": "config-ui-base",
+    "type": "ui-base",
+    "name": "UI Name",
+    "path": "/ui",
+    "port": ""
+}
