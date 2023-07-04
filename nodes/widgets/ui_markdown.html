@@ -1,0 +1,107 @@
+<script type="text/javascript">
+    // convert to i18 text
+    function c_(x) {
+        return RED._("node-red-dashboard/ui-template:ui-template."+x);
+    }
+
+    RED.nodes.registerType('ui-markdown',{
+        category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
+        color: 'rgb( 63, 173, 181)',
+        defaults: {
+            page: { type: 'ui-page', required: true },
+            name: {value: ''},
+            order: {value: 0},
+            width: {value: 0, validate: function(v) {
+                    var valid = true
+                    if (this.templateScope !== 'global') {
+                        var width = v||0;
+                        var currentGroup = $('#node-input-group').val() || this.group;
+                        var groupNode = RED.nodes.node(currentGroup);
+                        valid = !groupNode || +width <= +groupNode.width;
+                        $("#node-input-size").toggleClass("input-error",!valid);
+                    }
+                    return valid;
+                }},
+            height: {value: 0},
+            content: {value: '# Markdown Content\n\nGoes here...'}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "ui-template.png",
+        paletteLabel: 'markdown',
+        label: function() { return this.name || 'markdown'; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
+        oneditprepare: function() {
+            var that = this;
+
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-content-editor',
+                mode: 'ace/mode/markdown',
+                value: $("#node-input-content").val()
+            });
+
+            RED.library.create({
+                url: "uimarkdown", // where to get the data from
+                type: "ui-markdown", // the type of object the library is for
+                editor: this.editor, // the field name the main text body goes to
+                mode: "ace/mode/markdown",
+                fields: ['name']
+            });
+
+            this.editor.focus();
+
+            RED.popover.tooltip($("#node-markdown-expand-editor"),c_("label.expand"));
+        },
+        oneditsave: function() {
+            var annot = this.editor.getSession().getAnnotations();
+            this.noerr = 0;
+            $("#node-input-noerr").val(0);
+            for (var k=0; k < annot.length; k++) {
+                if (annot[k].type === "error") {
+                    $("#node-input-noerr").val(annot.length);
+                    this.noerr = annot.length;
+                }
+            }
+            console.log('edit content')
+            console.log(this.editor.getValue())
+            $("#node-input-content").val(this.editor.getValue());
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditcancel: function() {
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+            var height = $("#dialog-form").height();
+            for (var i=0; i<rows.size(); i++) {
+                height = height - $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-text-editor-row");
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+            $(".node-text-editor").css("height",height+"px");
+            this.editor.resize();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-markdown">
+    <div class="form-row">
+        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
+        <input style="flex-grow:1" type="text" id="node-input-page">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <div style="flex-grow: 1">
+            <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+        </div>
+    </div>
+    <div class="form-row" style="margin-bottom:0px;">
+        <label for="node-input-content"><i class="fa fa-copy"></i> Content</label>
+        <input type="hidden" id="node-input-content">
+    </div>
+    <div class="form-row node-text-editor-row" style="display: block;">
+        <div style="height:250px; min-height:100px" class="node-text-editor" id="node-input-content-editor" ></div>
+    </div>
+</script>
