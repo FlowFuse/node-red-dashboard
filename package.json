@@ -29,6 +29,7 @@
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js"
@@ -77,6 +78,7 @@
         "node-red-node-test-helper": "^0.3.2",
         "socket.io-client": "^4.6.2",
         "vitepress": "^1.0.0-beta.3",
+        "vue-markdown-render": "^2.0.1",
         "vue-router": "^4.2.2",
         "vuetify": "^3.3.3",
         "vuex": "^4.1.0"

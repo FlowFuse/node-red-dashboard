@@ -26,3 +26,10 @@ body {
 main {
     padding: var(--nrdb-main-padding);
 }
+
+.nrdb-ui-markdown h1 {
+    margin: 0.67em 0;
+}
+.nrdb-ui-markdown p {
+    margin: 1em 0;
+}
