@@ -1,5 +1,7 @@
 import Flex from './Flex';
+import Masonry from './Masonry';
 
 export default { 
-    "flex": Flex
+    "flex": Flex,
+    "masonry": Masonry
 }

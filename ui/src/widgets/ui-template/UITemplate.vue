@@ -1,5 +1,5 @@
 <template>
-    Template Node: {{ props.format }}
+    <div class="nrdb-ui-widget">Template Node: {{ props.format }}</div>
 </template>
 
 <script>

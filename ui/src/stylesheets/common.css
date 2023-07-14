@@ -12,6 +12,8 @@
     --nrdb-header-text-color: white;
     /* main */
     --nrdb-main-padding: 12px;
+    /* widget sizing */
+    --widget-row-height: 42px;
 }
 
 body {
@@ -27,6 +29,16 @@ main {
     padding: var(--nrdb-main-padding);
 }
 
+/**
+* Common Widget Styling
+*/  
+.nrdb-ui-widget {
+    min-height: var(--widget-row-height);
+}
+
+/**
+* Widget: Markdown
+*/ 
 .nrdb-ui-markdown h1 {
     margin: 0.67em 0;
 }

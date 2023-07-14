@@ -3,7 +3,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'chart'},
             order: {value: 0},
@@ -24,7 +24,7 @@
         outputs: 1,
         inputLabels: function() { return this.chartType; },
         outputLabels: ["chart state"],
-        icon: "ui_chart.png",
+        icon: "font-awesome/fa-line-chart",
         align: "right",
         paletteLabel: 'chart',
         label: function() {
@@ -83,8 +83,8 @@
 
 <script type="text/html" data-template-name="ui-chart">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>

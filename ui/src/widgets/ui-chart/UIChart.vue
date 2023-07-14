@@ -1,6 +1,6 @@
 
 <template>
-    <canvas ref="chart"></canvas>
+    <canvas class="nrdb-ui-widget" ref="chart"></canvas>
 </template>
 
 <script>

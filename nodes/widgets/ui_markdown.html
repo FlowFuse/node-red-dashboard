@@ -8,7 +8,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb( 63, 173, 181)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             order: {value: 0},
             width: {value: 0, validate: function(v) {
@@ -88,8 +88,8 @@
 
 <script type="text/html" data-template-name="ui-markdown">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input style="flex-grow:1" type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input style="flex-grow:1" type="text" id="node-input-group">
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>

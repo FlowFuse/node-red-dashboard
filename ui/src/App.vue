@@ -59,6 +59,7 @@ export default {
             // store this data in our VueX store for access across the app
             this.$store.commit('ui/dashboards', payload.dashboards)
             this.$store.commit('ui/pages', payload.pages)
+            this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
         })
     },

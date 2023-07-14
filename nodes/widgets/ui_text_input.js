@@ -8,8 +8,8 @@ module.exports = function(RED) {
         // this ndoe need to store content/value from UI
         node.value = null
 
-        // which page are we rendering this widget
-        var page = RED.nodes.getNode(config.page);
+        // which group are we rendering this widget
+        var group = RED.nodes.getNode(config.group);
 
         const evts = {
             onChange: true,
@@ -19,7 +19,7 @@ module.exports = function(RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        page.register(node, config, evts)
+        group.register(node, config, evts)
 
         node.on("close", async function (done) {
             console.log('goodbye world')

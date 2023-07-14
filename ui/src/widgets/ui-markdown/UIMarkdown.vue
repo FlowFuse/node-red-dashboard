@@ -1,5 +1,5 @@
 <template>
-    <vue-markdown class="nrdb-ui-markdown" :source="props.content" />
+    <vue-markdown class="nrdb-ui-widget nrdb-ui-markdown" :source="props.content" />
 </template>
 
 <script>

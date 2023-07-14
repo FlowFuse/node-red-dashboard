@@ -4,8 +4,8 @@ module.exports = function(RED) {
 
         RED.nodes.createNode(this, config);
 
-        // which page are we rendering this widget
-        var page = RED.nodes.getNode(config.page);
+        // which group are we rendering this widget
+        var group = RED.nodes.getNode(config.group);
 
         this.pt = config.passthru;
         this.state = [" "," "];
@@ -32,7 +32,7 @@ module.exports = function(RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        page.register(node, config, evts)
+        group.register(node, config, evts)
     }
     RED.nodes.registerType("ui-slider", SliderNode);
 };

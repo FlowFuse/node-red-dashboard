@@ -3,12 +3,12 @@ module.exports = function(RED) {
      * 
      * @param {*} config
      */
-    function UIPageNode(config) {
+    function UIGroupNode(config) {
         const node = this
         RED.nodes.createNode(node, config);
         
-        // which UI are we rendering this page in
-        var ui = RED.nodes.getNode(config.ui);
+        // which page are we rendering this page in
+        var page = RED.nodes.getNode(config.page);
         node.log('UI Page Constructor')
 
         /**
@@ -17,10 +17,10 @@ module.exports = function(RED) {
          * along with the widget
          * @param {*} widget 
          */
-        node.register = function (group, widgetNode, widgetConfig, widgetEvents) {
-            const page = config
-            ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
+        node.register = function (widgetNode, widgetConfig, widgetEvents) {
+            const group = config
+            page.register(group, widgetNode, widgetConfig, widgetEvents)
         }
     }
-    RED.nodes.registerType("ui-page", UIPageNode);
+    RED.nodes.registerType("ui-group", UIGroupNode);
 }

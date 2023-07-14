@@ -26,9 +26,19 @@ Currently, each widget is rendered directly inside a `v-card` (from Vuetify), ho
 
 ## Adding a new Layout Manager
 
-If you're looking to define your own Layout manager to add to Dashboard, then the below example will help you get started.
+### Checklist 
 
-We have also documented the contents of the [Widget](./events#widget) object (used in `line 13`), which will provide detail on what data you have available for a given widget/component.
+If you're looking to define your own Layout manager to add to Dashboard, then you need to ensure you've completed the following steps:
+
+1. Created `YourLayout.vue` in `/ui/src/layouts/`
+1. Add your layout in `/ui/src/layouts/index.js` with a specific key, e.g. `your-layout`
+1. Add your layout to the options in `/nodes/config/ui-page_html`, inside the `oneditprepare` function. Ensure to have the `value` set as the key you used in Step 2.
+
+### Example `.vue` file
+
+The below example can help you get started with your own layout.
+
+We have also documented the structure of the [Widget](./events#widget) object (used in `line 13`), which will provide detail on what data you have available for a given widget/component.
 
 ```vue:line-numbers {1}
 <template>

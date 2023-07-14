@@ -5,8 +5,8 @@ module.exports = function(RED) {
         // create node in Node-RED
         RED.nodes.createNode(this, config);
 
-        // which page are we rendering this widget
-        var page = RED.nodes.getNode(config.page);
+        // which group are we rendering this widget
+        var group = RED.nodes.getNode(config.group);
 
         const evts = {
             onChange: true,
@@ -16,7 +16,7 @@ module.exports = function(RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        page.register(node, config, evts)
+        group.register(node, config, evts)
     }
 
     RED.nodes.registerType("ui-dropdown", DropdownNode);
