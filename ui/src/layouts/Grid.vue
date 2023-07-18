@@ -1,14 +1,14 @@
 <template>
     <BaselineLayout :page-title="$route.name">
-        <div class="nrdb-layout--flex" v-if="groups && groups[$route.meta.id]">
-            <div v-for="g in orderedGroups" :key="g.id" :style="{'width': ((rowHeight * 2 * g.width) + 'px')}">
-                <v-card variant="outlined" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
+        <div class="nrdb-layout--grid" v-if="groups && groups[$route.meta.id]">
+            <div v-for="g in gridGroups" :key="g.id" :style="`grid-column-end: span ${ g.width }`">
+                <v-card variant="outlined" class="">
                     <template #title v-if="g.disp">
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}px, auto)); `">
-                            <div v-for="w in widgets[g.id]" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}px); grid-column-end: span ${ w.props.width || g.width }`">
+                        <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}, auto)); `">
+                            <div v-for="w in widgets[g.id]" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}); grid-column-end: span ${ w.props.width || g.width }`">
                                 <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`"/>
                             </div>
                         </div>
@@ -24,10 +24,10 @@
     import { mapState } from 'vuex';
 
     export default {
-        name: 'LayoutFlex',
+        name: 'LayoutGrid',
         computed: {
             ...mapState('ui', ['groups', 'widgets']),
-            orderedGroups: function () {
+            gridGroups: function () {
                 const groups = this.groups[this.$route.meta.id]
                 const ordered = Object.values(groups).sort((a, b) => {
                     // if order = 0, prioritise groups where order _is_ set
@@ -43,7 +43,8 @@
         },
         data () {
             return {
-                rowHeight: 48
+                columns: 12,
+                rowHeight: '48px'
             }
         }
     }
@@ -52,23 +53,39 @@
 <style scoped>
 
 @import "./grid-groups.css";
-.nrdb-layout--flex {
+
+.nrdb-layout--grid {
     --layout-card-width: 320px;
     --layout-gap: 12px;
+    --widget-row-height: 48px;
 }
-.nrdb-layout--flex {
-    display: flex;
+.nrdb-layout--grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
     flex-wrap: wrap;
     padding: var(--layout-gap);
     gap: var(--layout-gap);
 }
 
-.nrdb-layout--flex > div {
-    width: var(--layout-card-width);
-    max-width: 100%;
+.nrdb-layout--grid > div {
+    width: 100%;
+    /* max-width: 100%; */
 }
 
 .v-card {
     width: 100%;
 }
+
+@media only screen and (max-width: 1024px) {
+    .nrdb-layout--grid {
+        grid-template-columns: repeat(9, 1fr);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .nrdb-layout--grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
 </style>

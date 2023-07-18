@@ -22,7 +22,6 @@ module.exports = function(RED) {
         group.register(node, config, evts)
 
         node.on("close", async function (done) {
-            console.log('goodbye world')
             done()
         });
     }

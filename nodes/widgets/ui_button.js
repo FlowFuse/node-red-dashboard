@@ -52,7 +52,6 @@ module.exports = function(RED) {
                 // retrieve the topic we're sending from this button
                 if (!error) {
                     const topic = RED.util.evaluateNodeProperty(config.topic, config.topicType || "str", node, msg)
-                    console.log(payload, topic)
                     msg.payload = payload
                     msg.topic = topic
                     send(msg)

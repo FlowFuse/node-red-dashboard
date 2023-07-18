@@ -1,0 +1,21 @@
+/** https://github.com/vuejs/vue-loader/releases/tag/v12.2.0 */
+:deep(.v-field__input) {
+    --v-field-input-min-height: calc(var(--widget-row-height) - 4px);
+    --v-field-input-padding-top: 12px;
+    --v-field-input-padding-bottom: 12px;
+}
+/** https://github.com/vuejs/vue-loader/releases/tag/v12.2.0 */
+:deep(.v-input--horizontal) {
+    grid-template-areas: "prepend control append";
+    grid-template-rows: auto;
+}
+
+.nr-db-layout-group--grid {
+    grid-auto-rows: minmax(var(--widget-row-height), auto);
+    padding: 0;
+    grid-template-columns: repeat(6, 1fr);
+    display: grid;
+    flex-wrap: wrap;
+    padding: var(--layout-gap);
+    gap: var(--layout-gap);
+}

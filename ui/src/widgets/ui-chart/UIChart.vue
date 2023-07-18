@@ -27,17 +27,14 @@
         },
         watch: {
             'props.label': function (value) {
-                console.log("label changed", value)
                 this.chart.options.plugins.title.text = value
                 this.chart.update()
             },
             'props.chartType': function (value) {
-                console.log("chart type changed", value)
                 this.chart.config.type = value
                 this.chart.update()
             },
             'props.xAxisType': function (value) {
-                console.log("x-axis type changed", value)
                 this.chart.options.scales.x.type = value
                 this.chart.update()
             }
@@ -47,10 +44,8 @@
             useDataTracker(this.id, this.onMsgInput)
         },
         mounted () {           
-            console.log('mounted')
             // get a reference to the canvas element
             const el = this.$refs.chart
-            console.log(this.props.chartType)
             // create our ChartJS object
             const chart = new Chart(el, {
                 type: this.props.chartType,
@@ -70,6 +65,7 @@
                 //     }]
                 // },
                 options: {
+                    maintainAspectRatio: false,
                     parsing: false,
                     scales: {
                         x: {

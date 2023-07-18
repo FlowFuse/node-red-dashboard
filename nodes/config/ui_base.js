@@ -127,8 +127,6 @@ module.exports = function(RED) {
          * @param {*} widget 
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
-            console.log(node.ui.widgets)
-            console.log(`register widget: ${widgetNode.id} ${widgetNode.type}`)
 
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
@@ -153,6 +151,13 @@ module.exports = function(RED) {
             delete widget.props.y
             delete widget.props.z
             delete widget.props.wires
+
+            if (widget.props.width === "0") {
+                widget.props.width = null
+            }
+            if (widget.props.height === "0") {
+                widget.props.height = null
+            }
 
             // map dashboards by their ID
             if (!node.ui.dashboards.has(n.id)) {

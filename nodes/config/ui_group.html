@@ -8,13 +8,21 @@
             },
             page: { type: 'ui-page', required: true },
             width: { value: 6 },
+            height: { value: 1 },
             order: { value: 0 },
             disp: { value: true } // show title on group card
         },
         label: function() {
             const page = RED.nodes.node(this.page).name
             return `${this.name} [${page}]` || "UI Group";
-        }
+        },
+        oneditprepare: function() {
+            $("#node-config-input-size").elementSizer({
+                width: "#node-config-input-width",
+                height: "#node-config-input-height",
+                auto: false
+            });
+        },
     });
 </script>
 
@@ -28,8 +36,10 @@
         <input type="text" id="node-config-input-page">
     </div>
     <div class="form-row">
-        <label for="node-config-input-width"><i class="fa fa-bookmark"></i> Columns</label>
-        <input type="text" id="node-config-input-width">
+        <label for="node-config-input-size"><i class="fa fa-arrows-h"></i> Size</label>
+        <input type="hidden" id="node-config-input-width">
+        <input type="hidden" id="node-config-input-height">
+        <button class="editor-button" id="node-config-input-size"></button>
     </div>
     <div class="form-row">
         <label for="node-config-input-order"><i class="fa fa-bookmark"></i> Order</label>

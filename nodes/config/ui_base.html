@@ -32,8 +32,8 @@
             }
             var that = this;
             var gridWidth = 6;
-            var width = parseInt($(this.options.width).val()||0);
-            var height = parseInt(this.options.hasOwnProperty('height')?$(this.options.height).val():"1")||0;
+            var width = parseInt($(this.options.width).val() || 0);
+            var height = parseInt(this.options.hasOwnProperty('height') ? $(this.options.height).val() : "1" ) || 0;
             var hasAuto = (!this.options.hasOwnProperty('auto') || this.options.auto);
 
             this.element.css({
@@ -45,8 +45,8 @@
                 evt.stopPropagation();
                 evt.preventDefault();
 
-                var width = parseInt($(that.options.width).val()||0);
-                var height = parseInt(that.options.hasOwnProperty('height')?$(that.options.height).val():"1")||0;
+                var width = parseInt($(that.options.width).val() || 0);
+                var height = parseInt(that.options.hasOwnProperty('height') ? $(that.options.height).val() : "1") || 0;
                 var maxWidth = 0;
                 var maxHeight;
                 var fixedWidth = false;
@@ -64,8 +64,8 @@
                 else {
                     gridWidth = Math.max(12,+width);
                     maxWidth = gridWidth;
-                    maxHeight = 1;
-                    fixedHeight = true;
+                    maxHeight = height + 1;
+                    // fixedHeight = false;
                 }
 
                 var pos = $(this).offset();
