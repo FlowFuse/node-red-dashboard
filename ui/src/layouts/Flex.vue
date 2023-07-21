@@ -2,7 +2,7 @@
     <BaselineLayout :page-title="$route.name">
         <div class="nrdb-layout--flex" v-if="groups && groups[$route.meta.id]">
             <div v-for="g in orderedGroups" :key="g.id" :style="{'width': ((rowHeight * 2 * g.width) + 'px')}">
-                <v-card variant="outlined" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
+                <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
                     <template #title v-if="g.disp">
                         {{ g.name }}
                     </template>

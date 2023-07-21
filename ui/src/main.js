@@ -10,9 +10,32 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+// set a base theme on which we will add our custom NR-defined theme
+const theme =  {
+    dark: false,
+    colors: {
+        background: '#0000ff',
+        'group-background': '#ffffff',
+        primary: "#0000ff",
+        accent: "#ff6b99",
+        secondary: "#26ff8c",
+        success: "#a5d64c",
+        surface: "#ffffff",
+        info: "#ff53d0",
+        warning: "#ff8e00",
+        error: "#ff5252"
+    }
+}
+
 const vuetify = createVuetify({
-  components,
-  directives,
+    components,
+    directives,
+    theme: {
+        defaultTheme: "nrdb",
+        themes: {
+            "nrdb": theme
+        },
+    },
 })
 
 import store from './store/index.js'

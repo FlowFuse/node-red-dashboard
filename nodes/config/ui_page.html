@@ -18,6 +18,11 @@
             layout: {
                 value: "",
                 required: true
+            },
+            theme: {
+                type: 'ui-theme',
+                value: "default",
+                required: true
             }
         },
         oneditprepare: function () {
@@ -54,6 +59,10 @@
     <div class="form-row">
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
         <input type="text" id="node-config-input-path">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-theme"><i class="fa fa-bookmark"></i> Theme</label>
+        <input type="text" id="node-config-input-theme">
     </div>
     <div class="form-row">
         <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Layout</label>

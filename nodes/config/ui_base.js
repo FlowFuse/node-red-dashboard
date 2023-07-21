@@ -97,6 +97,7 @@ module.exports = function(RED) {
             socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 pages: Object.fromEntries(node.ui.pages),
+                themes: Object.fromEntries(node.ui.themes),
                 groups: Object.fromEntries(node.ui.groups),
                 widgets: Object.fromEntries(node.ui.widgets)
             })
@@ -117,6 +118,7 @@ module.exports = function(RED) {
         node.ui = {
             dashboards: new Map(),
             pages: new Map(),
+            themes: new Map(),
             groups: new Map(),
             widgets: new Map()
         }
@@ -162,6 +164,12 @@ module.exports = function(RED) {
             // map dashboards by their ID
             if (!node.ui.dashboards.has(n.id)) {
                 node.ui.dashboards.set(n.id, n)
+            }
+
+            // map themes by their ID
+            if (!node.ui.themes.has(page.theme)) {
+                const theme = RED.nodes.getNode(page.theme)
+                node.ui.themes.set(page.theme, theme)
             }
             
             // map pages by their ID

@@ -1,0 +1,103 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ui-theme', {
+        category: 'config',
+        defaults: {
+            name: {
+                value: "Theme Name",
+                required: true
+            },
+            // colors
+            colors: {
+                value: null
+            },
+        },
+        oneditprepare: function () {
+            if (!this.colors) {
+                this.colors = {}
+                // set default values
+                this.colors.surface = "#ffffff"
+                this.colors.primary = "#0094CE"
+                // pages
+                this.colors.bgPage = "#eeeeee"
+                // groups
+                this.colors.groupBg = "#ffffff"
+                this.colors.groupOutline = "#cccccc"
+            }
+
+            // loop over keys in this.colors
+            Object.keys(this.colors).forEach((color) => {
+                // get the value of the key
+                const value = this.colors[color]
+                // set the value of the input
+                $("#node-config-input-" + color).val(value)
+            })
+            
+            // update label b/g to match the colour input values
+            // this provides nicer styling than the default browser styling
+            var colorWrappers = $(".color-picker-wrapper");
+            colorWrappers.each(function (i) {
+                const wrapper = $(this);
+                var colorPicker = wrapper.children("input[type='color']").eq(0);
+                colorPicker.on('change', () => {
+                    wrapper.css('background-color', colorPicker.val())  
+                })
+                wrapper.css('background-color', colorPicker.val())  
+            })
+        },
+        oneditsave: function() {
+            // update our config values from the input values
+            Object.keys(this.colors).forEach((color) => {
+                // get the value of the key
+                const value = this.colors[color]
+                // set the value of the input
+                this.colors[color] = $("#node-config-input-" + color).val()
+            })
+        },
+        label: function() {
+            return `${this.name}` || "UI Theme";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-theme">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-bookmark"></i> Surface</label>
+        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+            <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
+        </label>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-bookmark"></i> Primary</label>
+        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+            <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
+        </label>
+    </div>
+    <div class="form-row">
+        <h4 style="margin-bottom: 0;">Pages</h4>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-bookmark"></i> Background</label>
+        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+            <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
+        </label>
+    </div>
+    <div class="form-row">
+        <h4 style="margin-bottom: 0;">Groups</h4>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-bookmark"></i> Background</label>
+        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+            <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
+        </label>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-bookmark"></i> Outline</label>
+        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+            <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
+        </label>
+    </div>
+</script>

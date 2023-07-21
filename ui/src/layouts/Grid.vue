@@ -2,7 +2,7 @@
     <BaselineLayout :page-title="$route.name">
         <div class="nrdb-layout--grid" v-if="groups && groups[$route.meta.id]">
             <div v-for="g in gridGroups" :key="g.id" :style="`grid-column-end: span ${ g.width }`">
-                <v-card variant="outlined" class="">
+                <v-card variant="outlined" class="bg-group-background">
                     <template #title v-if="g.disp">
                         {{ g.name }}
                     </template>

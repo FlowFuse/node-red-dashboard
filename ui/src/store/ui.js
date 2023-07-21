@@ -4,6 +4,7 @@ import router from '../router'
 const state = () => ({
     pages: null,
     groups: null,
+    themes: null,
     widgets: null
 })
 
@@ -14,6 +15,9 @@ const getters = {
     },
     groups (state) {
         return state.groups
+    },
+    themes (state) {
+        return state.themes
     },
     widgets (state) {
         return state.widgets
@@ -26,6 +30,9 @@ const mutations = {
     },
     groups (state, groups) {
         state.groups = groups
+    },
+    themes (state, themes) {
+        state.themes = themes
     },
     widgets (state, widgets) {
         state.widgets = widgets
