@@ -97,6 +97,7 @@ module.exports = function(RED) {
             socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 pages: Object.fromEntries(node.ui.pages),
+                groups: Object.fromEntries(node.ui.groups),
                 widgets: Object.fromEntries(node.ui.widgets)
             })
             
@@ -116,6 +117,7 @@ module.exports = function(RED) {
         node.ui = {
             dashboards: new Map(),
             pages: new Map(),
+            groups: new Map(),
             widgets: new Map()
         }
 
@@ -124,9 +126,7 @@ module.exports = function(RED) {
          * @param {*} page 
          * @param {*} widget 
          */
-        node.register = function (page, widgetNode, widgetConfig, widgetEvents) {
-            console.log(node.ui.widgets)
-            console.log(`register widget: ${widgetNode.id} ${widgetNode.type}`)
+        node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
 
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
@@ -135,6 +135,11 @@ module.exports = function(RED) {
                 id: widgetConfig.id,
                 type: widgetConfig.type,
                 props: widgetConfig,
+                layout: {
+                    width: widgetNode._msg?.width || 3,
+                    height: widgetNode._msg?.width || 1,
+                    order: widgetNode._msg?.order || 0
+                },
                 state: {
                     enabled: widgetNode._msg?.enabled || true,
                     visible: widgetNode._msg?.visible || true
@@ -147,6 +152,13 @@ module.exports = function(RED) {
             delete widget.props.z
             delete widget.props.wires
 
+            if (widget.props.width === "0") {
+                widget.props.width = null
+            }
+            if (widget.props.height === "0") {
+                widget.props.height = null
+            }
+
             // map dashboards by their ID
             if (!node.ui.dashboards.has(n.id)) {
                 node.ui.dashboards.set(n.id, n)
@@ -157,13 +169,21 @@ module.exports = function(RED) {
                 node.ui.pages.set(page.id, page)
             }
 
-            // map widgets on a page-by-page basis
-            if (!node.ui.widgets.has(page.id)) {
-                node.ui.widgets.set(page.id, {})
+            // map groups on a page-by-page basis
+            if (!node.ui.groups.has(page.id)) {
+                node.ui.groups.set(page.id, {})
+            }
+
+            // map widgets on a group-by-group basis
+            if (!node.ui.widgets.has(group.id)) {
+                node.ui.widgets.set(group.id, {})
             }
 
             // add the widget to the page-mapping
-            node.ui.widgets.get(page.id)[widget.id] = widget
+            node.ui.groups.get(page.id)[group.id] = group
+
+            // add the widget to the page-mapping
+            node.ui.widgets.get(group.id)[widget.id] = widget
 
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {

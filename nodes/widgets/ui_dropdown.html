@@ -3,7 +3,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(176, 223, 227)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'Select Option:'},
             tooltip: {value: ''},
@@ -32,7 +32,7 @@
         },
         inputs:1,
         outputs:1,
-        icon: "ui_dropdown.png",
+        icon: "font-awesome/fa-bars",
         paletteLabel: 'dropdown',
         label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'dropdown'; },
         labelStyle: function() { return this.name?"node_label_italic":""; },
@@ -123,8 +123,8 @@
 
 <script type="text/html" data-template-name="ui-dropdown">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
     <!--<div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>

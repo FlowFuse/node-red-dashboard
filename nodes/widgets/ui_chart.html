@@ -3,10 +3,10 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'chart'},
-            order: {value: 0},
+            order: {value: Number.MAX_SAFE_INTEGER},
             chartType: {value: 'line'},
             xAxisType: {value: 'linear'},
             width: {value: 0, validate: function(v) {
@@ -24,7 +24,7 @@
         outputs: 1,
         inputLabels: function() { return this.chartType; },
         outputLabels: ["chart state"],
-        icon: "ui_chart.png",
+        icon: "font-awesome/fa-line-chart",
         align: "right",
         paletteLabel: 'chart',
         label: function() {
@@ -32,6 +32,12 @@
         },
         labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function () {
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
+
             // set value options for chart's type
             $("#node-input-chartType").typedInput({
                 type: "chartType",
@@ -56,9 +62,7 @@
             // handle event when chart's type is changed
             $("#node-input-chartType").on("change", (evt) => {
                 const value = $("#node-input-chartType").typedInput("value")
-                console.log("chartType changed", evt, value)
                 if (value === 'line' || value === 'scatter') {
-                    console.log('is a line/scatter graph')
                     $("#node-input-xAxisType").typedInput("types", [{
                         value: 'linear',
                         options: [
@@ -68,7 +72,6 @@
                     }])
                     $("#node-input-xAxisType").typedInput("type", "linear")
                 } else {
-                    console.log('is a bar graph')
                     $("#node-input-xAxisType").typedInput("types", [{
                         value: 'linear',
                         options: [
@@ -83,8 +86,8 @@
 
 <script type="text/html" data-template-name="ui-chart">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>

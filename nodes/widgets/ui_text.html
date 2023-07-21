@@ -71,7 +71,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             order: {value: 0},
             width: {value: 0, validate: function(v) {
                     var width = v||0;
@@ -96,16 +96,16 @@
         inputs: 1,
         outputs: 0,
         align: "right",
-        icon: "ui_text.png",
+        icon: "font-awesome/fa-font",
         paletteLabel: 'text',
         label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'text'; },
         labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function() {
-            // $("#node-input-size").elementSizer({
-            //     width: "#node-input-width",
-            //     height: "#node-input-height",
-            //     group: "#node-input-group"
-            // });
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
 
             $(".nr-db-text-layout-"+(this.layout||'row-spread')).addClass('selected');
 
@@ -182,15 +182,15 @@
 
 <script type="text/html" data-template-name="ui-text">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
-    <!-- <div class="form-row">
+    <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
-    </div> -->
+    </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label">

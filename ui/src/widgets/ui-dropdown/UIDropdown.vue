@@ -1,5 +1,6 @@
 <template>
     <v-combobox
+        class="nrdb-ui-widget"
         v-model="value"
         :label="props.label"
         :multiple="props.multiple"

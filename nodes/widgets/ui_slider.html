@@ -3,7 +3,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(176, 223, 227)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'slider'},
             tooltip: {value: ''},
@@ -29,11 +29,16 @@
         inputs:1,
         outputs:1,
         outputLabels: function() { return this.min+" - "+this.max; },
-        icon: "ui_slider.png",
+        icon: "font-awesome/fa-sliders",
         paletteLabel: 'slider',
         label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'slider'; },
         labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function() {
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
             $('#node-input-topic').typedInput({
                 default: 'str',
                 typeField: $("#node-input-topicType"),
@@ -46,15 +51,15 @@
 
 <script type="text/html" data-template-name="ui-slider">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
-    <!--<div class="form-row">
+    <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
-    </div>-->
+    </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label">

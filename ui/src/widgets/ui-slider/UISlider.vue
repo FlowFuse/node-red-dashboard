@@ -1,5 +1,6 @@
 <template>
     <v-slider v-model="values[id]" :label="props.label" hide-details="auto"
+        class="nrdb-ui-widget"
         :min="props.min" :max="props.max" :step="props.step || 1"></v-slider>
 </template>
 

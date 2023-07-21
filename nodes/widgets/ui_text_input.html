@@ -3,7 +3,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(119, 198, 204)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'text'},
             order: {value: 0},
@@ -21,19 +21,26 @@
         inputs: 1,
         outputs: 1,
         outputLabels: function() { return this.mode; },
-        icon: "ui_text.png",
+        icon: "font-awesome/fa-i-cursor",
         paletteLabel: 'text input',
+        oneditprepare: function() {
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
+        },
         label: function() {
             return this.name || (~this.label.indexOf("{{") ? null : this.label) || this.mode + ' input';
         },
-        labelStyle: function() { return this.name?"node_label_italic":""; }
+        labelStyle: function() { return this.name?"node_label_italic":""; },
     });
 </script>
 
 <script type="text/html" data-template-name="ui-text-input">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>

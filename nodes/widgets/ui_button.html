@@ -3,7 +3,7 @@
         category: RED._("node-red-dashboard/ui_base:ui_base.label.category"),
         color: 'rgb(176, 223, 227)',
         defaults: {
-            page: { type: 'ui-page', required: true },
+            group: { type: 'ui-group', required: true },
             name: {value: ''},
             label: {value: 'button'},
             order: {value: 0},
@@ -37,11 +37,17 @@
                 return this.payloadType;
             }
         },
-        icon: "ui-button.png",
+        icon: "font-awesome/fa-hand-pointer-o",
         paletteLabel: 'button',
         label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'button'; },
         labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function() {
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
+
             $('#node-input-payload').typedInput({
                 default: 'str',
                 typeField: $("#node-input-payloadType"),
@@ -59,16 +65,16 @@
 
 <script type="text/html" data-template-name="ui-button">
     <div class="form-row">
-        <label for="node-input-page"><i class="fa fa-table"></i> Page</label>
-        <input type="text" id="node-input-page">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
-    <!--<div class="form-row">
+    <div class="form-row">
         <label><i class="fa fa-object-group"></i> <span data-i18n="ui-button.label.size"></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row">
+    <!--<div class="form-row">
         <label for="node-input-icon"><i class="fa fa-picture-o"></i> <span data-i18n="ui-button.label.icon"></label>
         <input type="text" id="node-input-icon" data-i18n="[placeholder]ui-button.label.optionalIcon">
     </div>-->
