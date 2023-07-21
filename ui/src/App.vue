@@ -61,6 +61,7 @@ export default {
             this.$store.commit('ui/pages', payload.pages)
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
+            this.$store.commit('ui/themes', payload.themes)
         })
     },
     methods: {

@@ -26,6 +26,7 @@
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
             "ui-group": "nodes/config/ui_group.js",
+            "ui-theme": "nodes/config/ui_theme.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
