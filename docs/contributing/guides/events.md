@@ -12,7 +12,7 @@ This is a comprehensive list of all events that are sent between Node-RED and th
 ### `ui-config`
 - Payload: `object{ dashboards, theme, pages, groups, widgets }`
 
-Used to transport dashboard/theme/page/groups/[widget](#widget) layout data, each mapped byt their respective id's.
+Used to transport dashboard/theme/page/groups/[widget](#widget) layout data, each mapped by their respective id's.
 
 ### `msg-input:<node-id>`
 - Payload: `<msg>`
