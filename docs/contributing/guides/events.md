@@ -10,9 +10,9 @@ An important part of the Dashboard is how Node-RED and the Dashboard communicate
 This is a comprehensive list of all events that are sent between Node-RED and the Dashboard via socket.io.
 
 ### `ui-config`
-- Payload: `object{ pages, dashboard, widgets }`
+- Payload: `object{ dashboards, theme, pages, groups, widgets }`
 
-Used to transport dashboard/page/[widget](#widget) layout data.
+Used to transport dashboard/theme/page/groups/[widget](#widget) layout data, each mapped by their respective id's.
 
 ### `msg-input:<node-id>`
 - Payload: `<msg>`
