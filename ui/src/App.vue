@@ -48,12 +48,11 @@ export default {
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page
-            Object.keys(payload.widgets).forEach(page => {
-                Object.values(payload.widgets[page]).forEach(widget => {
-                    console.log("adding widget", widget.type)
-                    // widget.component = 'hello world'
-                    widget.component = markRaw(widgetComponents[widget.type])
-                })
+            Object.keys(payload.widgets).forEach(id => {
+                const widget = payload.widgets[id]
+                console.log("adding widget", widget.type)
+                // widget.component = 'hello world'
+                widget.component = markRaw(widgetComponents[widget.type])
             })
 
             // store this data in our VueX store for access across the app
@@ -62,6 +61,7 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
+            console.log('all stored')
         })
     },
     methods: {

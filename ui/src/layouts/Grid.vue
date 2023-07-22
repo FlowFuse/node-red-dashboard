@@ -1,6 +1,6 @@
 <template>
     <BaselineLayout :page-title="$route.name">
-        <div class="nrdb-layout--grid" v-if="groups && groups[$route.meta.id]">
+        <div class="nrdb-layout--grid" v-if="gridGroups">
             <div v-for="g in gridGroups" :key="g.id" :style="`grid-column-end: span ${ g.width }`">
                 <v-card variant="outlined" class="bg-group-background">
                     <template #title v-if="g.disp">
@@ -8,7 +8,7 @@
                     </template>
                     <template #text>
                         <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}, auto)); `">
-                            <div v-for="w in widgets[g.id]" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}); grid-column-end: span ${ w.props.width || g.width }`">
+                            <div v-for="w in widgetsByGroup(g.id)" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}); grid-column-end: span ${ w.props.width || g.width }`">
                                 <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`"/>
                             </div>
                         </div>
@@ -21,15 +21,16 @@
 
 <script>
     import BaselineLayout from './Baseline.vue'
-    import { mapState } from 'vuex';
+    import { mapState, mapGetters } from 'vuex';
 
     export default {
         name: 'LayoutGrid',
         computed: {
             ...mapState('ui', ['groups', 'widgets']),
+            ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
             gridGroups: function () {
-                const groups = this.groups[this.$route.meta.id]
-                const ordered = Object.values(groups).sort((a, b) => {
+                const groups = this.groupsByPage(this.$route.meta.id)
+                const ordered = groups.sort((a, b) => {
                     // if order = 0, prioritise groups where order _is_ set
                     const aOrder = a.order || Number.MAX_SAFE_INTEGER
                     const bOrder = b.order || Number.MAX_SAFE_INTEGER

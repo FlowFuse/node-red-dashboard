@@ -169,29 +169,29 @@ module.exports = function(RED) {
             // map themes by their ID
             if (!node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
-                node.ui.themes.set(page.theme, theme)
+                // eslint-disable-next-line no-unused-vars
+                const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
+                node.ui.themes.set(page.theme, t)
             }
             
             // map pages by their ID
             if (!node.ui.pages.has(page.id)) {
-                node.ui.pages.set(page.id, page)
+                // eslint-disable-next-line no-unused-vars
+                const { _user, type, ...p } = page
+                node.ui.pages.set(page.id, p)
             }
 
             // map groups on a page-by-page basis
-            if (!node.ui.groups.has(page.id)) {
-                node.ui.groups.set(page.id, {})
+            if (!node.ui.groups.has(group.id)) {
+                // eslint-disable-next-line no-unused-vars
+                const { _user, type, ...g } = group
+                node.ui.groups.set(group.id, g)
             }
 
             // map widgets on a group-by-group basis
-            if (!node.ui.widgets.has(group.id)) {
-                node.ui.widgets.set(group.id, {})
+            if (!node.ui.widgets.has(widget.id)) {
+                node.ui.widgets.set(widget.id, widget)
             }
-
-            // add the widget to the page-mapping
-            node.ui.groups.get(page.id)[group.id] = group
-
-            // add the widget to the page-mapping
-            node.ui.widgets.get(group.id)[widget.id] = widget
 
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {

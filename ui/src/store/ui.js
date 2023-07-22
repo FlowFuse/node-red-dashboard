@@ -21,6 +21,24 @@ const getters = {
     },
     widgets (state) {
         return state.widgets
+    },
+    groupsByPage: (state) => (pageId) => {
+        if (state.groups) {
+            var groupsOnPage = Object.values(state.groups).filter((p) => {
+                return p.page === pageId;
+            });
+            return groupsOnPage
+        }
+        return
+    },
+    widgetsByGroup: (state) => (groupId) => {
+        if (state.widgets) {
+            var widgetsInGroup = Object.values(state.widgets).filter((w) => {
+                return w.props.group === groupId;
+            });
+            return widgetsInGroup
+        }
+        return
     }
 }
 
@@ -40,6 +58,7 @@ const mutations = {
     widgetState (state, data) {
         // TODO: Assumed widget is on the current page
         const pageId = router.currentRoute.value.meta.id
+
         const wId = data.widgetId
         console.log('widgetState', pageId, wId, data)
 
