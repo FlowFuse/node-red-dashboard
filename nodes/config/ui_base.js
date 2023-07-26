@@ -16,12 +16,14 @@ module.exports = function(RED) {
     // const ui = require('../../ui/src/main')
 
     // const emitter = new Emitter()
-    
+
     /**
      * 
      * @param {*} n 
      */
     function UIBaseNode(n) {
+        console.log('ui base node constructor')
+        console.log(this.app)
         const express = require('express')
 
         const node = this
@@ -31,13 +33,16 @@ module.exports = function(RED) {
         /**
          * Configure & Run Express Server
          */
-        node.port = 1881
+        node.port = n.port || 1880
 
 
         /** @type { import('express').Application } */
-        node.app = express()
-        node.app.use(express.json())
-        node.app.use(express.urlencoded({ extended: true }))
+        // node.app = express()
+        // node.app.use(express.json())
+        // node.app.use(express.urlencoded({ extended: true }))
+
+        node.app = RED.httpNode || RED.httpAdmin
+        const server = RED.server
 
         /**
          * Create Web Server
@@ -52,10 +57,10 @@ module.exports = function(RED) {
             res.sendFile(path.join(__dirname, '../../dist/index.html'));
         });       
         
-        const server = http.createServer(node.app)
-        server.listen(node.port, () => {
-            node.log(`Dashboard UI listening at ${n.path} on port ${node.port}`)
-        })
+        // const server = http.createServer(node.app)
+        // server.listen(node.port, () => {
+        //     node.log(`Dashboard UI listening at ${n.path} on port ${node.port}`)
+        // })
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
