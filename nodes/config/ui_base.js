@@ -14,11 +14,17 @@ module.exports = function(RED) {
     const express = require('express')
     const { Server } = require("socket.io")
 
+    // store state that can maintain cross re-deployments
     const ui = {
         app: null,
         httpServer: null,
         ioServer: null,
-        connections: []
+        connections: {},
+        events: {
+            load: {},
+            change: {},
+            action: {}
+        }
     }
 
     /*
@@ -59,12 +65,9 @@ module.exports = function(RED) {
             var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
             node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
 
-            ui.ioServer.on('connection', function(conn) {
-                console.log('socket connected')
-                // TODO: Change socketio to "connections" and store in a Map or Array
-                ui.connections.push(conn) // store the connection for later use
-
-                node.log('connected established via io')
+            // When a UI connects - send the UI Config from Node-RED to the UI
+            ui.ioServer.on('connection', function(conn) {                
+                ui.connections[conn.id] = conn // store the connection for later use
 
                 // pass the connected UI the UI config
                 conn.emit('ui-config', node.id, {
@@ -77,6 +80,7 @@ module.exports = function(RED) {
                 
                 // handle disconnection
                 conn.on("disconnect", reason => {
+                    delete ui.connections[conn.id]
                     node.log(`Disconnected ${conn.id} due to ${reason}`)
                 })
             })
@@ -88,7 +92,7 @@ module.exports = function(RED) {
      */
     function close (node) {
         ui.ioServer.close()
-        ui.server.close(() => {
+        ui.httpServer.close(() => {
             node.log('server shut down')
         })
     }
@@ -99,7 +103,7 @@ module.exports = function(RED) {
      * @param {Object} data
      */
     function emit (event, data) {
-        ui.connections.forEach(conn => {
+        Object.values(ui.connections).forEach(conn => {
             conn.emit(event, data)
         })
     }
@@ -119,6 +123,21 @@ module.exports = function(RED) {
          */
         init(node, n)
 
+        // account time for all widgets to register themselves, before sending hte full config to the UI
+        // this is most important running running a "Deploy" from within Node-RED
+        setTimeout(() => {
+            Object.values(ui.connections).forEach(conn => {
+                // pass the connected UI the UI config
+                conn.emit('ui-config', node.id, {
+                    dashboards: Object.fromEntries(node.ui.dashboards),
+                    pages: Object.fromEntries(node.ui.pages),
+                    themes: Object.fromEntries(node.ui.themes),
+                    groups: Object.fromEntries(node.ui.groups),
+                    widgets: Object.fromEntries(node.ui.widgets)
+                })
+            })
+        }, 300)
+
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
             if (ui.server) {
@@ -131,7 +150,7 @@ module.exports = function(RED) {
          * External Functions for managing UI Components
          */
 
-        // store ui config
+        // store ui config to be sent to UI
         node.ui = {
             dashboards: new Map(),
             pages: new Map(),
@@ -147,6 +166,10 @@ module.exports = function(RED) {
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
 
+            /**
+             * Build UI Config
+             */
+
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
             // store our UI state properties under the .state key too
@@ -155,9 +178,9 @@ module.exports = function(RED) {
                 type: widgetConfig.type,
                 props: widgetConfig,
                 layout: {
-                    width: widgetNode._msg?.width || 3,
-                    height: widgetNode._msg?.width || 1,
-                    order: widgetNode._msg?.order || 0
+                    width: widgetConfig.width || 3,
+                    height: widgetConfig.width || 1,
+                    order: widgetConfig.order || 0
                 },
                 state: {
                     enabled: widgetNode._msg?.enabled || true,
@@ -210,8 +233,15 @@ module.exports = function(RED) {
                 node.ui.widgets.set(widget.id, widget)
             }
 
+            /**
+             * Event Handlers
+             */
+
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
+                // ensure we have latest instance of the widget's node
+                const wNode = RED.nodes.getNode(widgetNode.id);
+                
                 // send a message to the UI to let it know we've received a msg
                 try {
                     // emit to all connected UIs
@@ -221,7 +251,7 @@ module.exports = function(RED) {
                 }
 
                 // store the latest msg passed to node
-                widgetNode._msg = msg
+                wNode._msg = msg
 
                 // run any node-specific handler defined in the Widget's component
                 if (widgetEvents?.onInput) {
@@ -230,49 +260,77 @@ module.exports = function(RED) {
                     done()
                 }
             })
-            
-            // on first connection with the UI, send the widget it's stored state
-            ui.ioServer.on('connection', function(conn) {
-                // add listener for when the UI loads, so that we can send any
-                // stored values associated to a widget that we have in Node-RED
-                conn.on('widget-load:' + widget.id, async function () {
-                    console.log('on:widget-load', widgetNode._msg)
-                    // replicate receiving an input, so the widget can handle accordingly
-                    const msg = widgetNode._msg
-                    if (msg) {
-                        // only emit something if we have something to send
-                        // and only to this connection, not all connected clients
-                        conn.emit('msg-input:' + widget.id, msg)
-                    }
-                })
-            })
 
+            if (!ui.events.load[widget.id]) {
+                // on first connection with the UI, send the widget it's stored state
+                ui.ioServer.on('connection', function(conn) {
+                    async function handler () {
+                        // ensure we have latest instance of the widget's node
+                        const wNode = RED.nodes.getNode(widgetNode.id);
+                        console.log('conn:' + conn.id, 'on:widget-load:' + widget.id, wNode._msg)
+                        // replicate receiving an input, so the widget can handle accordingly
+                        const msg = wNode._msg
+                        if (msg) {
+                            // only emit something if we have something to send
+                            // and only to this connection, not all connected clients
+                            conn.emit('msg-input:' + widget.id, msg)
+                        }
+                    }
+                    // add listener for when the UI loads, so that we can send any
+                    // stored values associated to a widget that we have in Node-RED
+                    conn.on('widget-load:' + widget.id, handler)
+
+                    conn.on("disconnect", function() {
+                        ui.ioServer.removeListener('widget-load:' + widget.id, handler);
+                    });
+
+                })
+                ui.events.load[widget.id] = true
+            }
 
             // Handle Socket IO Event Handlers
             if (widgetEvents?.onChange) {
-                ui.ioServer.on('connection', function(socket) {
-                    // listen to in-UI events that Node-RED may need to action
-                    socket.on('widget-change:' + widget.id, (value) => {
-                        console.log('on:widget-change', value)
-                        // TODO: bind this property to whichever chosen, for now use payload
-                        const msg = widgetNode._msg || {}
-                        msg.payload = value
+                if (!ui.events.change[widget.id]) {
+                    ui.ioServer.on('connection', function(conn) {
+                        function handler (value) {
+                            // ensure we have latest instance of the widget's node
+                            const wNode = RED.nodes.getNode(widgetNode.id);
 
-                        widgetNode._msg = msg
+                            console.log('conn:' + conn.id, 'on:widget-change', value)
+                            // TODO: bind this property to whichever chosen, for now use payload
+                            const msg = wNode._msg || {}
+                            msg.payload = value
 
-                        // simulate Node-RED node receiving an input
-                        widgetNode.receive(msg)
+                            wNode._msg = msg
+
+                            // simulate Node-RED node receiving an input
+                            wNode.receive(msg)
+                        }
+
+                        // listen to in-UI events that Node-RED may need to action
+                        conn.on('widget-change:' + widget.id, handler)
+
+                        conn.on("disconnect", function() {
+                            ui.ioServer.removeListener('widget-change:' + widget.id, handler);
+                        });
                     })
-                })
+                    ui.events.change[widget.id] = true
+                }
             }
             if (widgetEvents?.onAction) {
-                ui.ioServer.on('connection', function(socket) {
-                    socket.on('widget-action:' + widget.id, (evt) => {
-                        console.log('on:widget-action')
-                        // simulate Node-RED node receiving an input as to trigger on('input)
-                        widgetNode.receive(evt)
+                if (!ui.events.change[widget.id]) {
+                    ui.ioServer.on('connection', function(conn) {
+                        conn.on('widget-action:' + widget.id, (evt) => {
+                            // ensure we have latest instance of the widget's node
+                            const wNode = RED.nodes.getNode(widgetNode.id);
+
+                            console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
+                            // simulate Node-RED node receiving an input as to trigger on('input)
+                            wNode.receive(evt)
+                        })
                     })
-                })
+                    ui.events.action[widget.id] = true
+                }
             }
         }
 
