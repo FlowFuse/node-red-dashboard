@@ -11,20 +11,104 @@ function join() {
 }
 
 module.exports = function(RED) {
-    const http = require('http')
+    const express = require('express')
     const { Server } = require("socket.io")
-    // const ui = require('../../ui/src/main')
 
-    // const emitter = new Emitter()
+    const ui = {
+        app: null,
+        httpServer: null,
+        ioServer: null,
+        connections: []
+    }
+
+    /*
+     * Initialise the Express Server and SocketIO Server in Singleton Pattern
+     */
+    function init (node, config) {
+        // eventually check if we have routes used, so we can support multiple base UIs
+        if (!ui.app) {
+            ui.app = RED.httpNode || RED.httpAdmin
+            ui.httpServer = RED.server
+
+            /**
+             * Configure Web Server to handle UI traffic
+             */
+             
+            ui.app.use(config.path, express.static(path.join(__dirname, '../../dist')))
+
+            ui.app.get(config.path, (req,res) => {
+                res.sendFile(path.join(__dirname, '../../dist/index.html'));
+            });
+
+            ui.app.get(config.path + '/*', (req,res) => {
+                res.sendFile(path.join(__dirname, '../../dist/index.html'));
+            });
+
+            /**
+             * Create IO Server for comms between Node-RED and UI
+             */
+
+            /** @type { import('socket.io').ServerOptions } */
+            const fullPath = join(RED.settings.httpNodeRoot, config.path)
+            const socketIoPath = join(fullPath, 'socket.io')
+            // store reference to the SocketIO Server
+            ui.ioServer = new Server(ui.httpServer, {
+                path: socketIoPath
+            })
+
+            var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
+            node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
+
+            ui.ioServer.on('connection', function(conn) {
+                console.log('socket connected')
+                // TODO: Change socketio to "connections" and store in a Map or Array
+                ui.connections.push(conn) // store the connection for later use
+
+                node.log('connected established via io')
+
+                // pass the connected UI the UI config
+                conn.emit('ui-config', node.id, {
+                    dashboards: Object.fromEntries(node.ui.dashboards),
+                    pages: Object.fromEntries(node.ui.pages),
+                    themes: Object.fromEntries(node.ui.themes),
+                    groups: Object.fromEntries(node.ui.groups),
+                    widgets: Object.fromEntries(node.ui.widgets)
+                })
+                
+                // handle disconnection
+                conn.on("disconnect", reason => {
+                    node.log(`Disconnected ${conn.id} due to ${reason}`)
+                })
+            })
+        }
+    }
 
     /**
-     * 
+     * Close the Express Server and SocketIO Server
+     */
+    function close (node) {
+        ui.ioServer.close()
+        ui.server.close(() => {
+            node.log('server shut down')
+        })
+    }
+
+    /**
+     * Emit an event to all connected UIs
+     * @param {String} event
+     * @param {Object} data
+     */
+    function emit (event, data) {
+        ui.connections.forEach(conn => {
+            conn.emit(event, data)
+        })
+    }
+
+    /**
+     * UI Base Node Constructor. Called each time Node-RED nodes are deployed.
      * @param {*} n 
      */
     function UIBaseNode(n) {
-        console.log('ui base node constructor')
-        console.log(this.app)
-        const express = require('express')
 
         const node = this
 
@@ -33,93 +117,21 @@ module.exports = function(RED) {
         /**
          * Configure & Run Express Server
          */
-        node.port = n.port || 1880
-
-
-        /** @type { import('express').Application } */
-        // node.app = express()
-        // node.app.use(express.json())
-        // node.app.use(express.urlencoded({ extended: true }))
-
-        node.app = RED.httpNode || RED.httpAdmin
-        const server = RED.server
-
-        /**
-         * Create Web Server
-         */
-        node.app.use(n.path, express.static(path.join(__dirname, '../../dist')))
-
-        node.app.get(n.path, (req,res) => {
-            res.sendFile(path.join(__dirname, '../../dist/index.html'));
-        });
-
-        node.app.get(n.path + '/*', (req,res) => {
-            res.sendFile(path.join(__dirname, '../../dist/index.html'));
-        });       
-        
-        // const server = http.createServer(node.app)
-        // server.listen(node.port, () => {
-        //     node.log(`Dashboard UI listening at ${n.path} on port ${node.port}`)
-        // })
+        init(node, n)
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
-            if (server) {
-                node.ioServer.close()
-                server.close(() => {
-                    node.log('server shut down')
-                })
+            if (ui.server) {
+                close(node)
             }
             done()
         })
 
         /**
-         * Create IO Server for comms between Node-RED and UI
-         */
-        /** @type { import('socket.io').ServerOptions } */
-        const fullPath = join(RED.settings.httpNodeRoot, n.path)
-        const socketIoPath = join(fullPath, 'socket.io')
-        // store reference to the SocketIO Server
-        node.ioServer = new Server(server, {
-            path: socketIoPath
-        })
-
-        var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
-        node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
-
-        node.ioServer.on('connection', function(socket) {
-            console.log('socket connected')
-            // TODO: Change socketio to "connections" and store in a Map or Array
-            node.socketio = socket // store the connection for later use
-
-            node.log('connected established via io')
-
-            // socket.emit('msg', 'ui-config', {
-            //     pages: Object.fromEntries(node.ui.pages),
-            //     widgets: Object.fromEntries(node.ui.widgets)
-            // })
-
-            socket.emit('ui-config', node.id, {
-                dashboards: Object.fromEntries(node.ui.dashboards),
-                pages: Object.fromEntries(node.ui.pages),
-                themes: Object.fromEntries(node.ui.themes),
-                groups: Object.fromEntries(node.ui.groups),
-                widgets: Object.fromEntries(node.ui.widgets)
-            })
-            
-            // handle disconnection
-            socket.on("disconnect", reason => {
-                node.log(`Disconnected ${socket.id} due to ${reason}`)
-            })
-        })
-
-
-        /**
          * External Functions for managing UI Components
          */
 
-        console.log('ui base constructor')
-
+        // store ui config
         node.ui = {
             dashboards: new Map(),
             pages: new Map(),
@@ -129,7 +141,7 @@ module.exports = function(RED) {
         }
 
         /**
-         * 
+         * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node
          * @param {*} page 
          * @param {*} widget 
          */
@@ -202,7 +214,8 @@ module.exports = function(RED) {
             widgetNode.on('input', async function (msg, send, done) {
                 // send a message to the UI to let it know we've received a msg
                 try {
-                    node.socketio.emit('msg-input:' + widget.id, msg)
+                    // emit to all connected UIs
+                    emit('msg-input:' + widget.id, msg)
                 } catch (err) {
                     console.error(err)
                 }
@@ -218,16 +231,18 @@ module.exports = function(RED) {
                 }
             })
             
-            node.ioServer.on('connection', function(socket) {
+            // on first connection with the UI, send the widget it's stored state
+            ui.ioServer.on('connection', function(conn) {
                 // add listener for when the UI loads, so that we can send any
                 // stored values associated to a widget that we have in Node-RED
-                socket.on('widget-load:' + widget.id, async function () {
+                conn.on('widget-load:' + widget.id, async function () {
                     console.log('on:widget-load', widgetNode._msg)
-                    // rreplicate receiving an input, so the widget can handle accordingly
+                    // replicate receiving an input, so the widget can handle accordingly
                     const msg = widgetNode._msg
                     if (msg) {
                         // only emit something if we have something to send
-                        node.socketio.emit('msg-input:' + widget.id, msg)
+                        // and only to this connection, not all connected clients
+                        conn.emit('msg-input:' + widget.id, msg)
                     }
                 })
             })
@@ -235,7 +250,7 @@ module.exports = function(RED) {
 
             // Handle Socket IO Event Handlers
             if (widgetEvents?.onChange) {
-                node.ioServer.on('connection', function(socket) {
+                ui.ioServer.on('connection', function(socket) {
                     // listen to in-UI events that Node-RED may need to action
                     socket.on('widget-change:' + widget.id, (value) => {
                         console.log('on:widget-change', value)
@@ -251,7 +266,7 @@ module.exports = function(RED) {
                 })
             }
             if (widgetEvents?.onAction) {
-                node.ioServer.on('connection', function(socket) {
+                ui.ioServer.on('connection', function(socket) {
                     socket.on('widget-action:' + widget.id, (evt) => {
                         console.log('on:widget-action')
                         // simulate Node-RED node receiving an input as to trigger on('input)
