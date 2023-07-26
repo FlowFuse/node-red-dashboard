@@ -1,6 +1,6 @@
 {
     "name": "@flowforge/node-red-dashboard",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
     "author": {
         "name": "Joe Pavitt",
@@ -11,7 +11,8 @@
         "url": "https://github.com/flowforge/flowforge-nr-dashboard.git"
     },
     "files": [
-        "dist/*"
+        "dist/*",
+        "nodes/*"
     ],
     "scripts": {
         "serve": "vue-cli-service serve",
