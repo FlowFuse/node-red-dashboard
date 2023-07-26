@@ -10,6 +10,9 @@
         "type": "git",
         "url": "https://github.com/flowforge/flowforge-nr-dashboard.git"
     },
+    "files": [
+        "dist/*"
+    ],
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
