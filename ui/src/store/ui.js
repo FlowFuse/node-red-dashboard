@@ -63,10 +63,10 @@ const mutations = {
         console.log('widgetState', pageId, wId, data)
 
         if ('enabled' in data) {
-            state.widgets[pageId][wId].state.enabled = data.enabled
+            state.widgets[wId].state.enabled = data.enabled
         }
         if ('visible' in data) {
-            state.widgets[pageId][wId].state.visible = data.visible
+            state.widgets[wId].state.visible = data.visible
         }
     }
 }

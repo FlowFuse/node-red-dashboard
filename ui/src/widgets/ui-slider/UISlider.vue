@@ -9,7 +9,7 @@
     import { mapState } from 'vuex'
 
     export default {
-        name: 'DBUIButton',
+        name: 'DBUISlider',
         inject: ['$socket'],
         props: {
             id: String,
