@@ -64,26 +64,6 @@ module.exports = function(RED) {
 
             var bindOn = RED.server ? "bound to Node-RED port" : "on port " + node.port
             node.log("Created socket.io server " + bindOn + " at path " + socketIoPath)
-
-            // When a UI connects - send the UI Config from Node-RED to the UI
-            ui.ioServer.on('connection', function(conn) {                
-                ui.connections[conn.id] = conn // store the connection for later use
-
-                // pass the connected UI the UI config
-                conn.emit('ui-config', node.id, {
-                    dashboards: Object.fromEntries(node.ui.dashboards),
-                    pages: Object.fromEntries(node.ui.pages),
-                    themes: Object.fromEntries(node.ui.themes),
-                    groups: Object.fromEntries(node.ui.groups),
-                    widgets: Object.fromEntries(node.ui.widgets)
-                })
-                
-                // handle disconnection
-                conn.on("disconnect", reason => {
-                    delete ui.connections[conn.id]
-                    node.log(`Disconnected ${conn.id} due to ${reason}`)
-                })
-            })
         }
     }
 
@@ -123,23 +103,44 @@ module.exports = function(RED) {
          */
         init(node, n)
 
-        // account time for all widgets to register themselves, before sending hte full config to the UI
-        // this is most important running running a "Deploy" from within Node-RED
+        function emitConfig (conn) {
+            // pass the connected UI the UI config
+            conn.emit('ui-config', node.id, {
+                dashboards: Object.fromEntries(node.ui.dashboards),
+                pages: Object.fromEntries(node.ui.pages),
+                themes: Object.fromEntries(node.ui.themes),
+                groups: Object.fromEntries(node.ui.groups),
+                widgets: Object.fromEntries(node.ui.widgets)
+            })
+        }
+
+        function onConnection (conn) {              
+            ui.connections[conn.id] = conn // store the connection for later use
+            emitConfig(conn)          
+            
+            // handle disconnection
+            conn.on("disconnect", reason => {
+                delete ui.connections[conn.id]
+                node.log(`Disconnected ${conn.id} due to ${reason}`)
+            })
+        }
+
+        // When a UI connects - send the UI Config from Node-RED to the UI
+        ui.ioServer.on('connection', onConnection)
+
+        // account time for all widgets to register themselves, before sending the full config to the UI
+        // this is most important running running a "Deploy" from within Node-RED, and our onConnection doesn't run
         setTimeout(() => {
             Object.values(ui.connections).forEach(conn => {
                 // pass the connected UI the UI config
-                conn.emit('ui-config', node.id, {
-                    dashboards: Object.fromEntries(node.ui.dashboards),
-                    pages: Object.fromEntries(node.ui.pages),
-                    themes: Object.fromEntries(node.ui.themes),
-                    groups: Object.fromEntries(node.ui.groups),
-                    widgets: Object.fromEntries(node.ui.widgets)
-                })
+                emitConfig(conn)
             })
         }, 300)
 
         // Make sure we clean up after ourselves
         node.on('close', async (done) => {
+            // clear event handlers on base node
+            ui.ioServer?.off('connection', onConnection)
             if (ui.server) {
                 close(node)
             }
@@ -236,6 +237,10 @@ module.exports = function(RED) {
             /**
              * Event Handlers
              */
+
+            widgetNode.on('close', function () {
+                console.log('Node-RED Closed', widget.id)
+            })
 
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
