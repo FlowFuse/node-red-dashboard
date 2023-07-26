@@ -27,14 +27,13 @@
             "ui-page": "nodes/config/ui_page.js",
             "ui-group": "nodes/config/ui_group.js",
             "ui-theme": "nodes/config/ui_theme.js",
+            "ui-text-input": "nodes/widgets/ui_text_input.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
-            "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
-            "ui-markdown": "nodes/widgets/ui_markdown.js",
-            "ui-template": "nodes/widgets/ui_template.js",
             "ui-text": "nodes/widgets/ui_text.js",
-            "ui-text-input": "nodes/widgets/ui_text_input.js"
+            "ui-chart": "nodes/widgets/ui_chart.js",
+            "ui-markdown": "nodes/widgets/ui_markdown.js"
         }
     },
     "eslintConfig": {

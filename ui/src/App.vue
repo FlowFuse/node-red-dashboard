@@ -32,6 +32,7 @@ export default {
                     name: routeName,
                     component: layouts[page.layout],
                     meta: {
+                        title: page.name,
                         id: page.id
                     }
                 })

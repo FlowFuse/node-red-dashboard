@@ -1,5 +1,5 @@
 <template>
-    <BaselineLayout :page-title="$route.name">
+    <BaselineLayout :page-title="$route.meta.title">
         <div class="nrdb-layout--grid" v-if="gridGroups">
             <div v-for="g in gridGroups" :key="g.id" :style="`grid-column-end: span ${ g.width }`">
                 <v-card variant="outlined" class="bg-group-background">

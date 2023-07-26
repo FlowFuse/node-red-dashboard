@@ -1,5 +1,8 @@
 {
     "ui-base" : {
-        "auto": "auto"
+        "auto": "auto",
+        "label": {
+            "category": "dashboard"
+        }
     }
 }
