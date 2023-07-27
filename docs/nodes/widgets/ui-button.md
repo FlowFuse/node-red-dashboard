@@ -1,11 +1,12 @@
 ---
 props:
-    Page: Defines with page of the UI Dashboard this widget will render on
+    Group: Defines which group of the UI Dashboard this widget will render in.
+    Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
 controls:
     enabled:
         example: true | false
-        description: Lorum Ipsum
+        description: Allow control over whether or not the button is clickable.
 ---
 
 <script setup>
@@ -13,8 +14,7 @@ controls:
 
 # Button `ui-button`
 
-Some details here about the ui-button widget
-
+Adds a clickable button to your dashboard.
 
 ## Properties
 
@@ -23,3 +23,8 @@ Some details here about the ui-button widget
 ## Controls
 
 <ControlsTable/>
+
+## Example
+
+![Example of a Button](../../assets/images/node-examples/ui-button.png "Example of a Button"){data-zoomable}
+*Example of a rendered button in a Dashboard.*
