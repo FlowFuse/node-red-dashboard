@@ -1,7 +1,7 @@
 
 <template>
     <v-text-field v-model="values[id]" class="nrdb-ui-widget nrdb-ui-text-field"
-        :label="label" variant="outlined" hide-details="auto" @blur="onBlur"></v-text-field>
+        :label="label" :type="type" :rules="validation" variant="outlined" hide-details="auto" @blur="onBlur"></v-text-field>
 </template>
 
 <script>
@@ -19,6 +19,16 @@
             ...mapState('data', ['values']),
             label: function () {
                 return this.props.label
+            },
+            type: function () {
+                return this.props.mode || 'text'
+            },
+            validation: function () {
+                if (this.type === 'email') {
+                    return [v => !v || /^[^\s@]+@[^\s@]+$/.test(v) || 'E-mail must be valid']
+                } else {
+                    return []
+                }
             }
         },
         setup (props) {
