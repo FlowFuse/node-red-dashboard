@@ -19,7 +19,7 @@ This list of layouts will grow in time, and for now, just includes a _very_ basi
 
 This is a simple flexbox layout, with a single row of widgets, and our only functional layout currently. It will automatically move widgets to the next row if they don't fit within a given screen width. The height of each row is determined by the tallest widget in that row.
 
-![Flex Layout](../../assets/images/layout-eg-flex.png)
+![Flex Layout](../../assets/images/layout-eg-flex.png){data-zoomable}
 *An example UI rendered using the "Flex" Layout Manager*
 
 Currently, each widget is rendered directly inside a `v-card` (from Vuetify), however, plans for widgets to be grouped, as per Dashboard 1.0 are on the horizon, as well as controlling widget width and height.

@@ -20,10 +20,10 @@ Each page can be assigned a theme, which will be used to render the page. The th
 
 ## Example
 
-Example Config of ui-theme in Node-RED:
+Example Config of `ui-theme` in Node-RED:
 
-<img src="/images/theme-config.png" alt="Example config for a Theme" width="450"/>
+<img src="/images/theme-config.png" alt="Example config for a Theme" width="350"/>
 
 Resulting Dashboard with the theme applied:
 
-![Resulting Dashboard with applied theme](/images/theme-example.png "Resulting Dashboard with applied theme")
+![Resulting Dashboard with applied theme](/images/theme-example.png "Resulting Dashboard with applied theme"){data-zoomable}

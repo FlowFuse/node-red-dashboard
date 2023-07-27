@@ -16,7 +16,9 @@
                     return valid;
                 }
             },
-            height: {value: 0}
+            height: { value: 0 },
+            mode: { value: 'text', required: true},
+            passthru: { value: true }
         },
         inputs: 1,
         outputs: 1,
@@ -53,32 +55,26 @@
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
-        <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
-    </div>
-    <div class="form-row">
         <label for="node-input-mode"><i class="fa fa-keyboard-o"></i> Mode</label>
-        <select style="width:128px" id="node-input-mode">
+        <select id="node-input-mode">
             <option value="text">text input</option>
             <option value="email">email address</option>
             <option value="password">password</option>
             <option value="number">number</option>
-            <option value="tel">telephone input</option>
             <option value="color">color picker</option>
             <option value="time">time picker</option>
-            <option value="datetime-local">datetime picker</option>
             <option value="week">week picker</option>
             <option value="month">month picker</option>
-            <!-- <option value="date">date picker</option> -->
+            <option value="datetime-local">datetime picker</option>
         </select>
-        <label for="node-input-delay" style="text-align:right; width:100px"><i class="fa fa-clock-o"></i> Delay (ms)</label>
-        <input type="text" style="width:58px" id="node-input-delay">
+        <!--<label for="node-input-delay" style="text-align:right; width:100px"><i class="fa fa-clock-o"></i> Delay (ms)</label>
+        <input type="text" style="width:58px" id="node-input-delay">-->
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
-        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
-    <div class="form-row">
+    <!--<div class="form-row">
         <label style="width:auto" for="node-input-sendOnBlur">Send value on focus leave: </label>
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
@@ -93,11 +89,7 @@
         <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px">Topic</label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
-    </div>
-    <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
-        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for widget"/>
-    </div>
+    </div>-->
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name">

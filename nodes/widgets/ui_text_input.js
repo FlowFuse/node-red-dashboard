@@ -14,7 +14,9 @@ module.exports = function(RED) {
         const evts = {
             onChange: true,
             onInput: function (msg, send) {
-                send(msg)
+                if (config.passthru) {
+                    send(msg)
+                }
             }
         }
 
