@@ -309,7 +309,7 @@ module.exports = function(RED) {
                             wNode._msg = msg
 
                             // simulate Node-RED node receiving an input
-                            wNode.receive(msg)
+                            wNode.send(msg)
                         }
 
                         // listen to in-UI events that Node-RED may need to action
@@ -331,7 +331,7 @@ module.exports = function(RED) {
 
                             console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
                             // simulate Node-RED node receiving an input as to trigger on('input)
-                            wNode.receive(evt)
+                            wNode.send(evt)
                         })
                     })
                     ui.events.action[widget.id] = true
