@@ -11,7 +11,7 @@ FlowForge's Node-RED Dashbaord 2.0 is available in the Node-RED Palette Manager.
 - Search `node-red-dashboard`
 - Install the `@flowforge/node-red-dashboard` package (not `node-red-dashboard`)
 
-![Install via "Manage Palette"](../../assets/images/install-palette.png){data-zoomable}
+![Install via "Manage Palette"](./assets/images/install-palette.png){data-zoomable}
 *Screenshot showing the nodes available in the Node-RED Palette Manager*
 
 The nodes will then be available in your editor for you to get started.
