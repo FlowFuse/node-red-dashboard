@@ -2,7 +2,6 @@
 
 ## Installation
 
-
 FlowForge's Node-RED Dashbaord 2.0 is available in the Node-RED Palette Manager. To install it:
 
 - Open the menu in the top-right of Node-RED
