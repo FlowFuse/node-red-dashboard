@@ -10,7 +10,7 @@ props:
 <script setup>
 </script>
 
-# Button `ui-text-input`
+# Text Input `ui-text-input`
 
 Adds a single text input row to your dashboard, with a configurable "type" (text, password, etc).
 

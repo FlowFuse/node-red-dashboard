@@ -10,7 +10,7 @@ props:
 <script setup>
 </script>
 
-# dropdown `ui-dropdown`
+# Dropdown `ui-dropdown`
 
 Adds a dropdown to your dashboard that will emit values in Node-RED under `msg.payload` anytime it's value is changed.
 
