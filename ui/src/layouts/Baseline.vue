@@ -106,44 +106,4 @@ export default {
 </script>
   
 <style>
-.v-list-item--active {
-    background-color: var(--v-theme-background);
-}
-/**
- * Override the default Vuetify theme by making 'primary' the main colour for widgets, rather than 'surface'
- */
-.v-btn--variant-elevated, .v-btn--variant-flat {
-    background-color: rgb(var(--v-theme-primary));
-    color: rgb(var(--v-theme-on-primary));
-}
-.v-btn--variant-elevated, .v-btn--variant-flat {
-    background-color: rgb(var(--v-theme-primary));
-    color: rgb(var(--v-theme-on-primary));
-}
-
-.v-card {
-    border: 1px solid rgb(var(--v-theme-group-outline));
-}
-
-/* focused border color */
-.v-field--variant-outlined.v-field--focused .v-field__outline__end,
-.v-field--variant-outlined.v-field--focused .v-field__outline__notch:after,
-.v-field--variant-outlined.v-field--focused .v-field__outline__notch:before,
-.v-field--variant-outlined.v-field--focused .v-field__outline__start {
-    border-color: rgb(var(--v-theme-primary));
-}
-
-/* dropdown list items */
-.v-menu>.v-overlay__content>.v-card, .v-menu>.v-overlay__content>.v-list, .v-menu>.v-overlay__content>.v-sheet {
-    background: rgb(var(--v-theme-background));
-    color: rgb(var(--v-theme-on-background));
-}
-
-.v-slider-track__background,
-.v-slider-track__fill,
-.v-slider-track__tick,
-.v-slider-thumb__surface {
-    background-color: rgb(var(--v-theme-primary));
-}
-
 </style>

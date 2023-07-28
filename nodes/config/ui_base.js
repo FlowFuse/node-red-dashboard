@@ -295,9 +295,10 @@ module.exports = function(RED) {
 
             // Handle Socket IO Event Handlers
             if (widgetEvents?.onChange) {
+                // have we configured a listener for this widget's change event?
                 if (!ui.events.change[widget.id]) {
                     ui.ioServer.on('connection', function(conn) {
-                        function handler (value) {
+                        function defaultHandler (value) {
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id);
 
@@ -311,6 +312,10 @@ module.exports = function(RED) {
                             // simulate Node-RED node receiving an input
                             wNode.send(msg)
                         }
+
+                        // Most of the time, we can just use this default handler,
+                        // but sometimes a node needs to do something specific (e.g. ui-switch)
+                        const handler = typeof(widgetEvents.onChange) === "function" ? widgetEvents.onChange : defaultHandler
 
                         // listen to in-UI events that Node-RED may need to action
                         conn.on('widget-change:' + widget.id, handler)
