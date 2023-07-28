@@ -1,0 +1,170 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ui-switch', {
+        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
+        color: 'rgb(176, 223, 227)',
+        defaults: {
+            name: {value: ''},
+            label: {value: 'switch'},
+            // tooltip: {value: ''},
+            group: {type: 'ui-group', required: true},
+            order: {value: 0},
+            width: {value: 0, validate: function(v) {
+                    var width = v||0;
+                    var currentGroup = $('#node-input-group').val()||this.group;
+                    var groupNode = RED.nodes.node(currentGroup);
+                    var valid = !groupNode || +width <= +groupNode.width;
+                    $("#node-input-size").toggleClass("input-error",!valid);
+                    return valid;
+                }
+            },
+            height: {value: 0},
+            passthru: {value: true},
+            topic: {value: 'topic', validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('topicType'):function(v) { return true})},
+            topicType: {value: 'msg'},
+            style: {value: ''},
+            onvalue: {value: true, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('onvalueType'):function(v) { return true})},
+            onvalueType: {value: 'bool'},
+            onicon: {value: '' },
+            oncolor: {value: ''},
+            offvalue: {value: false, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('offvalueType'):function(v) { return true})},
+            offvalueType: {value: 'bool'},
+            officon: {value: ''},
+            offcolor: {value: ''},
+            animate: {value: false},
+            className: {value: ''}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "ui_switch.png",
+        paletteLabel: 'switch',
+        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'switch'; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
+        oneditprepare: function() {
+            $("#node-input-size").elementSizer({
+                width: "#node-input-width",
+                height: "#node-input-height",
+                group: "#node-input-group"
+            });
+            $('#node-input-custom-icons').on("change", function() {
+                if ($('#node-input-custom-icons').val() === "default") {
+                    $(".form-row-custom-icons").hide();
+                }
+                else {
+                    $(".form-row-custom-icons").show();
+                }
+            });
+
+            if (this.onicon !== "" || this.oncolor !== "" || this.officon !=="" || this.offcolor !== "") {
+                $('#node-input-custom-icons').val('custom');
+            }
+            else {
+                $(".form-row-custom-icons").hide();
+                $('#node-input-custom-icons').change();
+            }
+
+            $('#node-input-onvalue').typedInput({
+                default: 'str',
+                typeField: $("#node-input-onvalueType"),
+                types: ['str','num','bool','json','bin','date','flow','global']
+            });
+
+            $('#node-input-offvalue').typedInput({
+                default: 'str',
+                typeField: $("#node-input-offvalueType"),
+                types: ['str','num','bool','json','bin','date','flow','global']
+            });
+
+            $('#node-input-topic').typedInput({
+                default: 'str',
+                typeField: $("#node-input-topicType"),
+                types: ['str','msg','flow','global']
+            });
+
+            $('#node-input-passthru').on("change", function() {
+                if (this.checked) {
+                    $('.form-row-decouple').hide();
+                    $('#node-input-decouple').val("false");
+                }
+                else {
+                    $('.form-row-decouple').show();
+                }
+            });
+        },
+        oneditsave: function() {
+            if ($('#node-input-custom-icons').val() === 'default') {
+                $('#node-input-onicon').val('');
+                $('#node-input-officon').val('');
+                $('#node-input-oncolor').val('');
+                $('#node-input-offcolor').val('');
+            }
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ui-switch">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+	<div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> Size</label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="text" id="node-input-label">
+    </div>
+    <!--<div class="form-row">
+        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
+        <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
+    </div>-->
+    <!--<div class="form-row">
+        <label for="node-input-custom-icons"><i class="fa fa-picture-o"></i> Icon</label>
+        <select id="node-input-custom-icons" style="width:35%">
+            <option value="default">Default</option>
+            <option value="custom">Custom</option>
+        </select>
+        <span style="width:auto; padding-left:20px" class="form-row-custom-icons" for="node-input-animate"> Animate
+        <input type="checkbox" checked id="node-input-animate" style="display:inline-block; width:auto; vertical-align:baseline;"></span>
+    </div>
+    <div class="form-row form-row-custom-icons">
+        <label for="node-input-onicon" style="text-align:right;"><i class="fa fa-toggle-on"></i> On Icon</label>
+        <input type="text" id="node-input-onicon" style="width:120px">
+        <label for="node-input-oncolor" style="width:50px; text-align:right;">Colour</label>
+        <input type="text" id="node-input-oncolor" style="width:120px">
+    </div>
+    <div class="form-row form-row-custom-icons">
+        <label for="node-input-officon" style="text-align:right;"><i class="fa fa-toggle-off"></i> Off Icon</label>
+        <input type="text" id="node-input-officon" style="width:120px">
+        <label for="node-input-offcolor" style="width:50px; text-align:right;">Colour</label>
+        <input type="text" id="node-input-offcolor" style="width:120px">
+    </div>-->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-onvalue"><i class="fa fa-envelope-o"></i> When clicked, send:</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-onvalue" style="padding-left:25px; margin-right:-25px">On Payload</label>
+        <input type="text" id="node-input-onvalue" style="width:70%">
+        <input type="hidden" id="node-input-onvalueType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-offvalue" style="padding-left:25px; margin-right:-25px">Off Payload</label>
+        <input type="text" id="node-input-offvalue" style="width:70%">
+        <input type="hidden" id="node-input-offvalueType">
+    </div>
+    <!--<div class="form-row">
+        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
+        <input type="text" id="node-input-topic">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
+        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for widget"/>
+    </div>-->
+</script>
