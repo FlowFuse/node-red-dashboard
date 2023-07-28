@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-ui-widget nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout">
+    <div class="nrdb-ui-widget nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
         <label class="nrdb-ui-text-label">{{ props.label }}</label>
         <span class="nrdb-ui-text-value">{{ (values && values[id]) || 'No Message Received' }}</span>
     </div>
@@ -45,6 +45,10 @@
 .nrdb-ui-text--row-center {
     align-items: center;
     justify-content: center;
+}
+.nrdb-ui-text--row-center label,
+.nrdb-ui-text--row-center span {
+    text-align: center;
 }
 .nrdb-ui-text--row-right {
     align-items: center;

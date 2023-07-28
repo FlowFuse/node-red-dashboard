@@ -120,6 +120,8 @@
               });
 
             const select = $("#node-select-font");
+
+            // add font options
             fonts.forEach((font) => {
                 var name = font.name;
                 var val = font.value;
@@ -127,9 +129,13 @@
                     value: val,
                 }).text(name).appendTo(select);
             });
+
+            // when a font is selected
             $(select).change(() => {
                 const val = $("#node-select-font").val();
+                // update hidden input
                 $("#node-input-font").val(val);
+                // update test text
                 $("#node-test-text").css({
                     "font-family": val,
                 }); 
@@ -137,34 +143,28 @@
             $(select).val(this.font);
             $(select).change();
 
+            // make the fontsize a numeric spinner
             $("#node-input-fontSize").spinner({
                 min: 1,
                 max: 100,
                 spin: () => {
+                    // update the test text when value is changed
                     const val = $("#node-input-fontSize").val();
                     $("#node-test-text").css({
                         "font-size": val +"px",
                     }); 
                 }
             });
-            if (this.fontSize) {
-                $("#node-test-text").css({
-                    "font-size": this.fontSize +"px",
-                }); 
-            }
 
+            // add change handler to color picker to update test text
             $("#node-input-color").change(() => {
                 const val = $("#node-input-color").val();
                 $("#node-test-text").css({
                     "color": val,
                 }); 
             });
-            if (this.color) {
-                $("#node-test-text").css({
-                    "color": this.color
-                }); 
-            }
 
+            // add change handler to show/hide style config options
             $("#node-input-style").change(() => {
                 const val = $("#node-input-style").prop("checked");
                 if (val) {
@@ -176,11 +176,26 @@
             });
             $("#node-input-style").change();
 
+            // when opening the config, make sure the test text is updated
+            if (this.fontSize) {
+                $("#node-test-text").css({
+                    "font-size": this.fontSize +"px",
+                }); 
+            }
+            if (this.color) {
+                $("#node-test-text").css({
+                    "color": this.color
+                }); 
+            }
         }
     });
 </script>
 
 <script type="text/html" data-template-name="ui-text">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
     <div class="form-row">
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input type="text" id="node-input-group">
@@ -195,10 +210,10 @@
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label">
     </div>
-    <div class="form-row">
+    <!--<div class="form-row">
         <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
         <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
-    </div>
+    </div>-->
     <div class="form-row">
         <label style="vertical-align: top"><i class="fa fa-th-large"></i> Layout</label>
         <div style="display:inline-block">
@@ -236,11 +251,11 @@
         </div>
     </div>
 
-    <!--<div class="form-row">
+    <div class="form-row">
         <label><i class="fa fa-cog"></i> Style</label>
-        <input type="checkbox" id="node-input-style" style="display: inline-block; width: auto; vertical-align: top;"/>
+        <input type="checkbox" id="node-input-style" style="display: inline-block; width: auto; vertical-align: top; margin: 0 3px 0 0;"/>
         <label for="node-input-style" style="width: 70%;"> Apply Style</label>
-    </div>-->
+    </div>
 
     <div id="node-styles">
         <div class="form-row">
@@ -262,18 +277,8 @@
             <input id="node-test-text" value="Enter Sample Here"/ style="width: 280px;">
         </div>
     </div>
-
-    <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
-        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for widget"/>
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
-    </div>
-
-
 </script>
+
 <style>
     .nr-db-text-layout {
         position:relative;
