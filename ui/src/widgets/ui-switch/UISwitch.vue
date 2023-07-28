@@ -2,7 +2,7 @@
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label}">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
         <v-switch v-if="!icon" @click="onChange" v-model="state" class="nrdb-ui-widget" :class="{'active': state}" hide-details="auto" color="primary"></v-switch>
-        <v-btn v-else @click="toggle" class="ma-2" variant="text" :icon="icon" :color="color"></v-btn>
+        <v-btn v-else @click="toggle" variant="text" :icon="icon" :color="color"></v-btn>
    </div>
 </template>
 
