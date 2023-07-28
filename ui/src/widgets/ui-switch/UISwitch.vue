@@ -1,8 +1,9 @@
 <template>
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label}">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
-        <v-switch @click="onChange" v-model="state" class="nrdb-ui-widget" :class="{'active': state}" hide-details="auto" color="primary"></v-switch>
-    </div>
+        <v-switch v-if="!icon" @click="onChange" v-model="state" class="nrdb-ui-widget" :class="{'active': state}" hide-details="auto" color="primary"></v-switch>
+        <v-btn v-else @click="toggle" class="ma-2" variant="text" :icon="icon" :color="color"></v-btn>
+   </div>
 </template>
 
 <script>
@@ -18,13 +19,26 @@
         },
         computed: {
             ...mapState('data', ['values']),
+            icon: function () {
+                if (this.props.onicon && this.props.officon) {
+                    const icon = this.state ? this.props.onicon : this.props.officon
+                    return 'mdi-' + icon
+                } else {
+                    return null
+                }
+            },
+            color: function () {
+                if (this.props.oncolor || this.props.offcolor) {
+                    return this.state ? this.props.oncolor : this.props.offcolor
+                }
+                return null
+            },
             value: function () {
                 return this.values[this.id]
             },
             state: {
                 get () {
                     const val = this.values[this.id]
-                    console.log(this.props.evaluated, val)
                     if (typeof(val) === 'boolean') {
                         return val
                     } else if (this.props.evaluated) {
@@ -45,6 +59,10 @@
                 // only runs when clicked/changed in UI.
                 // inverted as the store doesn't quite update quick enough, but this is reliable method
                 this.$socket.emit(`widget-change:${this.id}`, !this.values[this.id])
+            },
+            toggle () {
+                this.state = !this.state
+                this.$socket.emit(`widget-change:${this.id}`, this.state)
             }
         }
     }

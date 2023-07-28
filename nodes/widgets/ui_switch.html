@@ -22,16 +22,17 @@
             topic: {value: 'topic', validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('topicType'):function(v) { return true})},
             topicType: {value: 'msg'},
             style: {value: ''},
+            className: {value: ''},
+            // on state
             onvalue: {value: true, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('onvalueType'):function(v) { return true})},
             onvalueType: {value: 'bool'},
             onicon: {value: '' },
             oncolor: {value: ''},
+            // off state
             offvalue: {value: false, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('offvalueType'):function(v) { return true})},
             offvalueType: {value: 'bool'},
             officon: {value: ''},
-            offcolor: {value: ''},
-            animate: {value: false},
-            className: {value: ''}
+            offcolor: {value: ''}
         },
         inputs:1,
         outputs:1,
@@ -124,14 +125,12 @@
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
         <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
     </div>-->
-    <!--<div class="form-row">
+    <div class="form-row">
         <label for="node-input-custom-icons"><i class="fa fa-picture-o"></i> Icon</label>
         <select id="node-input-custom-icons" style="width:35%">
             <option value="default">Default</option>
             <option value="custom">Custom</option>
         </select>
-        <span style="width:auto; padding-left:20px" class="form-row-custom-icons" for="node-input-animate"> Animate
-        <input type="checkbox" checked id="node-input-animate" style="display:inline-block; width:auto; vertical-align:baseline;"></span>
     </div>
     <div class="form-row form-row-custom-icons">
         <label for="node-input-onicon" style="text-align:right;"><i class="fa fa-toggle-on"></i> On Icon</label>
@@ -144,7 +143,7 @@
         <input type="text" id="node-input-officon" style="width:120px">
         <label for="node-input-offcolor" style="width:50px; text-align:right;">Colour</label>
         <input type="text" id="node-input-offcolor" style="width:120px">
-    </div>-->
+    </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-onvalue"><i class="fa fa-envelope-o"></i> When clicked, send:</label>
     </div>
