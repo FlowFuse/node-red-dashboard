@@ -4,9 +4,23 @@ module.exports = function(RED) {
 
         RED.nodes.createNode(this, config);
 
+        let style = "";
+        if (config.style) {
+            if (config.color) {
+                style += `color: ${config.color};`
+            }
+            if (config.fontSize) {
+                style += `font-size: ${config.fontSize}px;`
+                style += `line-height: ${config.fontSize}px;`
+            }
+            if (config.font) {
+                style += `font-family: ${config.font};`
+            }
+            config.style = style
+        }
+
         // which group are we rendering this widget
         var group = RED.nodes.getNode(config.group);
-
         // inform the dashboard UI that we are adding this node
         group.register(node, config)
     }
