@@ -1,12 +1,12 @@
-module.exports = function(RED) {
-    function DropdownNode(config) {
-        var node = this;
+module.exports = function (RED) {
+    function DropdownNode (config) {
+        const node = this
 
         // create node in Node-RED
-        RED.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config)
 
         // which group are we rendering this widget
-        var group = RED.nodes.getNode(config.group);
+        const group = RED.nodes.getNode(config.group)
 
         const evts = {
             onChange: true,
@@ -19,5 +19,5 @@ module.exports = function(RED) {
         group.register(node, config, evts)
     }
 
-    RED.nodes.registerType("ui-dropdown", DropdownNode);
-};
+    RED.nodes.registerType('ui-dropdown', DropdownNode)
+}

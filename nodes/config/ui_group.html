@@ -1,9 +1,9 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-group',{
+    RED.nodes.registerType('ui-group', {
         category: 'config',
         defaults: {
             name: {
-                value: "Group Name",
+                value: 'Group Name',
                 required: true
             },
             page: { type: 'ui-page', required: true },
@@ -12,18 +12,18 @@
             order: { value: 0 },
             disp: { value: true } // show title on group card
         },
-        label: function() {
+        label: function () {
             const page = RED.nodes.node(this.page).name
-            return `${this.name} [${page}]` || "UI Group";
+            return `${this.name} [${page}]` || 'UI Group'
         },
-        oneditprepare: function() {
-            $("#node-config-input-size").elementSizer({
-                width: "#node-config-input-width",
-                height: "#node-config-input-height",
+        oneditprepare: function () {
+            $('#node-config-input-size').elementSizer({
+                width: '#node-config-input-width',
+                height: '#node-config-input-height',
                 auto: false
-            });
-        },
-    });
+            })
+        }
+    })
 </script>
 
 <script type="text/html" data-template-name="ui-group">

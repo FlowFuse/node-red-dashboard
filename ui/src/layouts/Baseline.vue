@@ -1,55 +1,57 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline">
         <v-app-bar :elevation="1">
-            <template v-slot:prepend>
-                <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+            <template #prepend>
+                <v-app-bar-nav-icon @click="drawer = !drawer" />
             </template>
             <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
         </v-app-bar>
-  
-      <v-main>
-        <v-navigation-drawer v-model="drawer">
-            <v-list nav>
-                <v-list-item v-for="page in pages" :key="page.id" active-class="v-list-item--active"
-                    prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
-                    :to="{name: page.route.name}" link></v-list-item>
-            </v-list>
-        </v-navigation-drawer>
-        <slot class="nrdb-layout"></slot>
-      </v-main>
+
+        <v-main>
+            <v-navigation-drawer v-model="drawer">
+                <v-list nav>
+                    <v-list-item
+                        v-for="page in pages" :key="page.id" active-class="v-list-item--active"
+                        prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
+                        :to="{name: page.route.name}" link
+                    />
+                </v-list>
+            </v-navigation-drawer>
+            <slot class="nrdb-layout" />
+        </v-main>
     </v-app>
 </template>
-  
+
 <script>
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 
 /**
  * Convert a hex to RGB color
- * @param {String(hex)} hex 
+ * @param {String(hex)} hex
  */
-function hexToRgb(hex) {
-    const bigint = parseInt(hex.replace('#', ''), 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return [r, g, b];
+function hexToRgb (hex) {
+    const bigint = parseInt(hex.replace('#', ''), 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
+    return [r, g, b]
 }
 
 /**
  * Given a hex color code to represent a bg, return an appropriately contrasting text color
- * @param {String(hex)} bg 
+ * @param {String(hex)} bg
  */
-function getContrast(bg) {
-    const bgRgb = hexToRgb(bg);
+function getContrast (bg) {
+    const bgRgb = hexToRgb(bg)
 
     // http://www.w3.org/TR/AERT#color-contrast
     const brightness = Math.round(((parseInt(bgRgb[0]) * 299) +
                         (parseInt(bgRgb[1]) * 587) +
-                        (parseInt(bgRgb[2]) * 114)) / 1000);
+                        (parseInt(bgRgb[2]) * 114)) / 1000)
 
-    const textColor = (brightness > 125) ? '#000000' : '#ffffff';
+    const textColor = (brightness > 125) ? '#000000' : '#ffffff'
     console.log('textColor', textColor)
-    return textColor;
+    return textColor
 }
 
 export default {
@@ -58,6 +60,11 @@ export default {
         pageTitle: {
             type: String,
             default: 'Page Title Here'
+        }
+    },
+    data () {
+        return {
+            drawer: false
         }
     },
     computed: {
@@ -73,10 +80,8 @@ export default {
             this.updateTheme()
         }
     },
-    data () {
-        return {
-            drawer: false
-        }
+    mounted () {
+        this.updateTheme()
     },
     methods: {
         go: function (name) {
@@ -84,8 +89,8 @@ export default {
                 name
             })
         },
-        updateTheme() {
-            const theme = this.$vuetify.theme.themes["nrdb"].colors
+        updateTheme () {
+            const theme = this.$vuetify.theme.themes.nrdb.colors
             // convert NR Theming to Vuetify Theming
             theme.surface = this.theme.surface
             // primary bg
@@ -98,12 +103,6 @@ export default {
             theme['group-background'] = this.theme.groupBg
             theme['group-outline'] = this.theme.groupOutline
         }
-    },
-    mounted () {
-        this.updateTheme()
     }
 }
 </script>
-  
-<style>
-</style>

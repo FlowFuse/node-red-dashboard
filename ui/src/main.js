@@ -1,3 +1,26 @@
+/* eslint-disable import/first */
+/* eslint-disable n/file-extension-in-import */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/order */
+
+/*
+SORTED and corrected imports - temporarily disabled until I get it all working again!
+import { io } from 'socket.io-client'
+import { createApp } from 'vue'
+
+// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/dist/vuetify.css'
+import { components, createVuetify, directives } from 'vuetify'
+
+import App from './App.vue'
+import router from './router.js'
+import store from './store/index.js'
+
+// widgets
+import UIText from './widgets/ui-text/UIText.vue'
+*/
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
@@ -11,19 +34,19 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // set a base theme on which we will add our custom NR-defined theme
-const theme =  {
+const theme = {
     dark: false,
     colors: {
         background: '#0000ff',
         'group-background': '#ffffff',
-        primary: "#0000ff",
-        accent: "#ff6b99",
-        secondary: "#26ff8c",
-        success: "#a5d64c",
-        surface: "#ffffff",
-        info: "#ff53d0",
-        warning: "#ff8e00",
-        error: "#ff5252"
+        primary: '#0000ff',
+        accent: '#ff6b99',
+        secondary: '#26ff8c',
+        success: '#a5d64c',
+        surface: '#ffffff',
+        info: '#ff53d0',
+        warning: '#ff8e00',
+        error: '#ff5252'
     }
 }
 
@@ -31,36 +54,37 @@ const vuetify = createVuetify({
     components,
     directives,
     theme: {
-        defaultTheme: "nrdb",
+        defaultTheme: 'nrdb',
         themes: {
-            "nrdb": theme
-        },
-    },
+            nrdb: theme
+        }
+    }
 })
 
 import store from './store/index.js'
 
 // widgets
-import UIText from './widgets/ui-text/UIText'
+import UIText from './widgets/ui-text/UIText' // eslint-disable-line n/no-missing-import
+
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
-
-var socket = io({
-    path: "/ui/socket.io"
-});
+console.log('Connecting to Node-RED via SocketIO')
+const socket = io({
+    path: '/ui/socket.io'
+})
 
 // handle final disconnection
-socket.on("disconnect", (reason) => {
-    console.log("SIO disconnected", reason)
+socket.on('disconnect', (reason) => {
+    console.log('SIO disconnected', reason)
 })
 
-socket.on("connect", () => {
-    console.log("SIO connected")
+socket.on('connect', () => {
+    console.log('SIO connected')
 })
 
-socket.on("connect_error", (err) => {
-    console.log("SIO connect error:", err, err.data)
+socket.on('connect_error', (err) => {
+    console.log('SIO connect error:', err, err.data)
 })
 
 /**

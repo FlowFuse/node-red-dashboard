@@ -1,221 +1,227 @@
 <script type="text/javascript">
-
-    RED.nodes.registerType('ui-base',{
+(function () {
+    function hasProperty (obj, prop) {
+        return Object.prototype.hasOwnProperty.call(obj, prop)
+    }
+    RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
             name: {
-                value: "UI Name",
+                value: 'UI Name',
                 required: true
             },
             path: {
-                value: "/ui",
-                required: true,
+                value: '/ui',
+                required: true
             }
         },
-        label: function() {
-            return `${this.name} [${this.path}]` || "UI Config";
+        label: function () {
+            return `${this.name} [${this.path}]` || 'UI Config'
         }
-    });
+    })
 
     /**
      * jQuery widget to provide a selector for the sizing of a widget & group
      */
-    $.widget("nodereddashboard.elementSizer", {
-        _create: function() {
+    $.widget('nodereddashboard.elementSizer', {
+        _create: function () {
             // convert to i18 text
-            function c_(x) {
-                return RED._(`@flowforge/node-red-dashboard/ui-base:ui-base.${x}`);
+            function c_ (x) {
+                return RED._(`@flowforge/node-red-dashboard/ui-base:ui-base.${x}`)
             }
-            var that = this;
-            var gridWidth = 6;
-            var width = parseInt($(this.options.width).val() || 0);
-            var height = parseInt(this.options.hasOwnProperty('height') ? $(this.options.height).val() : "1" ) || 0;
-            var hasAuto = (!this.options.hasOwnProperty('auto') || this.options.auto);
+
+            const thisWidget = this
+            let gridWidth = 6
+            const width = parseInt($(this.options.width).val() || 0)
+            const height = parseInt(hasProperty(this.options, 'height') ? $(this.options.height).val() : '1') || 0
+            const hasAuto = (!hasProperty(this.options, 'auto') || this.options.auto)
 
             this.element.css({
-                minWidth: this.element.height()+4
-            });
-            var auto_text = c_("auto");
-            var sizeLabel = (width === 0 && height === 0) ? auto_text : width + (this.options.hasOwnProperty('height') ? " x " + height : "");
-            this.element.text(sizeLabel).on('mousedown',function(evt) {
-                evt.stopPropagation();
-                evt.preventDefault();
+                minWidth: this.element.height() + 4
+            })
+            const autoText = c_('auto')
+            const sizeLabel = (width === 0 && height === 0) ? autoText : width + (hasProperty(this.options, 'height') ? ' x ' + height : '')
+            this.element.text(sizeLabel).on('mousedown', function (evt) {
+                evt.stopPropagation()
+                evt.preventDefault()
 
-                var width = parseInt($(that.options.width).val() || 0);
-                var height = parseInt(that.options.hasOwnProperty('height') ? $(that.options.height).val() : "1") || 0;
-                var maxWidth = 0;
-                var maxHeight;
-                var fixedWidth = false;
-                var fixedHeight = false;
-                var group = $(that.options.group).val();
+                const width = parseInt($(thisWidget.options.width).val() || 0)
+                const height = parseInt(hasProperty(thisWidget.options, 'height') ? $(thisWidget.options.height).val() : '1') || 0
+                let maxWidth = 0
+                let maxHeight
+                let fixedWidth = false
+                const fixedHeight = false
+                const group = $(thisWidget.options.group).val()
                 if (group) {
-                    var groupNode = RED.nodes.node(group);
+                    const groupNode = RED.nodes.node(group)
                     if (groupNode) {
-                        gridWidth = Math.max(6,groupNode.width,+width);
-                        maxWidth = groupNode.width || gridWidth;
-                        fixedWidth = true;
+                        gridWidth = Math.max(6, groupNode.width, +width)
+                        maxWidth = groupNode.width || gridWidth
+                        fixedWidth = true
                     }
-                    maxHeight = Math.max(6,+height+1);
-                }
-                else {
-                    gridWidth = Math.max(12,+width);
-                    maxWidth = gridWidth;
-                    maxHeight = height + 1;
+                    maxHeight = Math.max(6, +height + 1)
+                } else {
+                    gridWidth = Math.max(12, +width)
+                    maxWidth = gridWidth
+                    maxHeight = height + 1
                     // fixedHeight = false;
                 }
 
-                var pos = $(this).offset();
-                var container = $('<div>').css({
+                const pos = $(this).offset()
+                const container = $('<div>').css({
                     position: 'absolute',
                     background: 'var(--red-ui-secondary-background, white)',
                     padding: '5px 10px 10px 10px',
                     border: '1px solid var(--red-ui-primary-border-color, grey)',
                     zIndex: '20',
-                    borderRadius: "4px",
-                    display:"none"
-                }).appendTo(document.body);
+                    borderRadius: '4px',
+                    display: 'none'
+                }).appendTo(document.body)
 
-                var closeTimer;
-                container.on('mouseleave',function(evt) {
-                    closeTimer = setTimeout(function() {
-                        container.fadeOut(200, function() { $(this).remove(); });
-                    },100)
-                });
-                container.on('mouseenter',function() {
-                    clearTimeout(closeTimer);
+                let closeTimer
+                container.on('mouseleave', function (evt) {
+                    closeTimer = setTimeout(function () {
+                        container.fadeOut(200, function () { $(this).remove() })
+                    }, 100)
+                })
+                container.on('mouseenter', function () {
+                    clearTimeout(closeTimer)
                 })
 
-                var label = $("<div>").css({
+                const label = $('<div>').css({
                     fontSize: '13px',
                     color: 'var(--red-ui-tertiary-text-color, #aaa)',
                     float: 'left',
                     paddingTop: '1px'
-                }).appendTo(container).text((width === 0 && height === 0)?auto_text:(width+(that.options.hasOwnProperty('height')?" x "+height:"")));
-                label.hover(function() {
-                    $(this).css('text-decoration', 'underline');
-                }, function() {
-                    $(this).css('text-decoration', 'none');
-                });
+                }).appendTo(container).text((width === 0 && height === 0) ? autoText : (width + (hasProperty(thisWidget.options, 'height') ? ' x ' + height : '')))
+                label.hover(function () {
+                    $(this).css('text-decoration', 'underline')
+                }, function () {
+                    $(this).css('text-decoration', 'none')
+                })
 
-                label.click(function(e) {
-                    var group = $(that.options.group).val();
-                    var groupNode = null;
-                    if(group) {
-                        groupNode = RED.nodes.node(group);
-                        if(groupNode === null) {
-                            return;
+                label.click(function (e) {
+                    const group = $(thisWidget.options.group).val()
+                    let groupNode = null
+                    if (group) {
+                        groupNode = RED.nodes.node(group)
+                        if (groupNode === null) {
+                            return
                         }
                     }
-                    $(that).elementSizerByNum({
-                        width: that.options.width,
-                        height: that.options.height,
-                        groupNode: groupNode,
-                        pos: pos,
-                        label: that.element,
-                        has_height: that.options.hasOwnProperty('height')
-                    });
-                    closeTimer = setTimeout(function() {
-                        container.fadeOut(200, function() {
-                            $(this).remove();
-                        });
-                    },100)
-                });
+                    $(thisWidget).elementSizerByNum({
+                        width: thisWidget.options.width,
+                        height: thisWidget.options.height,
+                        groupNode,
+                        pos,
+                        label: thisWidget.element,
+                        has_height: hasProperty(thisWidget.options, 'height')
+                    })
+                    closeTimer = setTimeout(function () {
+                        container.fadeOut(200, function () {
+                            $(this).remove()
+                        })
+                    }, 100)
+                })
 
-                var buttonRow = $('<div>',{style:"text-align:right; height:25px;"}).appendTo(container);
+                const buttonRow = $('<div>', { style: 'text-align:right; height:25px;' }).appendTo(container)
 
                 if (hasAuto) {
-                    var button = $('<a>',{href:"#",class:"editor-button editor-button-small",style:"margin-bottom:5px"})
-                    .text(auto_text)
-                    .appendTo(buttonRow)
-                    .on('mouseup',function(evt) {
-                        that.element.text(auto_text)
-                        $(that.options.width).val(0).change();
-                        $(that.options.height).val(0).change();
-                        evt.preventDefault();
-                        container.fadeOut(200, function() { $(this).remove(); });
-                    });
+                    $('<a>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-bottom:5px' })
+                        .text(autoText)
+                        .appendTo(buttonRow)
+                        .on('mouseup', function (evt) {
+                            thisWidget.element.text(autoText)
+                            $(thisWidget.options.width).val(0).change()
+                            $(thisWidget.options.height).val(0).change()
+                            evt.preventDefault()
+                            container.fadeOut(200, function () { $(this).remove() })
+                        })
                 }
 
-                var cellBorder = "1px dashed var(--red-ui-secondary-border-color, lightGray)";
-                var cellBorderExisting = "1px solid gray";
-                var cellBorderHighlight = "1px dashed var(--red-ui-primary-border-color, black)";
-                var rows = [];
-                function addRow(i) {
-                    var row = $('<div>').css({padding:0,margin:0,height:"25px","box-sizing":"border-box"}).appendTo(container);
-                    rows.push(row);
+                const cellBorder = '1px dashed var(--red-ui-secondary-border-color, lightGray)'
+                const cellBorderExisting = '1px solid gray'
+                const cellBorderHighlight = '1px dashed var(--red-ui-primary-border-color, black)'
+                const rows = []
+                const cells = []
+
+                function addRow (i) {
+                    const row = $('<div>').css({ padding: 0, margin: 0, height: '25px', 'box-sizing': 'border-box' }).appendTo(container)
+                    rows.push(row)
                     cells.push([])
-                    for (var j=0; j<gridWidth; j++) {
-                        addCell(i,j);
+                    for (let j = 0; j < gridWidth; j++) {
+                        addCell(i, j)
                     }
                 }
-                function addCell(i,j) {
-                    var row = rows[i];
-                    var cell = $('<div>').css({
-                        display:"inline-block",
-                        width: "25px",
-                        height: "25px",
-                        borderRight: (j===(width-1)&&i<height)?cellBorderExisting:cellBorder,
-                        borderBottom: (i===(height-1)&&j<width)?cellBorderExisting:cellBorder,
-                        boxSizing: "border-box",
-                        cursor:"pointer",
-                        background: (j<maxWidth)?"var(--red-ui-secondary-background, #fff)" : "var(--red-ui-node-background-placeholder, #eee)"
-                    }).appendTo(row);
-                    cells[i].push(cell);
-                    if (j===0) {
-                        cell.css({borderLeft:((i<=height-1)?cellBorderExisting:cellBorder)});
+
+                function addCell (i, j) {
+                    const row = rows[i]
+                    const cell = $('<div>').css({
+                        display: 'inline-block',
+                        width: '25px',
+                        height: '25px',
+                        borderRight: (j === (width - 1) && i < height) ? cellBorderExisting : cellBorder,
+                        borderBottom: (i === (height - 1) && j < width) ? cellBorderExisting : cellBorder,
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                        background: (j < maxWidth) ? 'var(--red-ui-secondary-background, #fff)' : 'var(--red-ui-node-background-placeholder, #eee)'
+                    }).appendTo(row)
+                    cells[i].push(cell)
+                    if (j === 0) {
+                        cell.css({ borderLeft: ((i <= height - 1) ? cellBorderExisting : cellBorder) })
                     }
-                    if (i===0) {
-                        cell.css({borderTop:((j<=width-1)?cellBorderExisting:cellBorder)});
+                    if (i === 0) {
+                        cell.css({ borderTop: ((j <= width - 1) ? cellBorderExisting : cellBorder) })
                     }
-                    if (j<maxWidth) {
-                        cell.data("w",j);
-                        cell.data("h",i);
-                        cell.on("mouseup",function() {
-                            that.element.text(($(this).data("w")+1)+(that.options.hasOwnProperty('height')?" x "+($(this).data("h")+1):""))
-                            $(that.options.width).val($(this).data("w")+1).change();
-                            $(that.options.height).val($(this).data("h")+1).change();
-                            container.fadeOut(200, function() { $(this).remove(); });
-                        });
-                        cell.on("mouseover",function() {
-                            var w = $(this).data("w");
-                            var h = $(this).data("h");
-                            label.text((w+1)+(that.options.hasOwnProperty('height')?" x "+(h+1):""));
-                            for (var y = 0; y<maxHeight; y++) {
-                                for (var x = 0; x<maxWidth; x++) {
+                    if (j < maxWidth) {
+                        cell.data('w', j)
+                        cell.data('h', i)
+                        cell.on('mouseup', function () {
+                            thisWidget.element.text(($(this).data('w') + 1) + (hasProperty(thisWidget.options, 'height') ? ' x ' + ($(this).data('h') + 1) : ''))
+                            $(thisWidget.options.width).val($(this).data('w') + 1).change()
+                            $(thisWidget.options.height).val($(this).data('h') + 1).change()
+                            container.fadeOut(200, function () { $(this).remove() })
+                        })
+                        cell.on('mouseover', function () {
+                            const w = $(this).data('w')
+                            const h = $(this).data('h')
+                            label.text((w + 1) + (hasProperty(thisWidget.options, 'height') ? ' x ' + (h + 1) : ''))
+                            for (let y = 0; y < maxHeight; y++) {
+                                for (let x = 0; x < maxWidth; x++) {
                                     cells[y][x].css({
-                                        background: (y<=h && x<=w)?'var(--red-ui-secondary-background-selected, #ddd)' : 'var(--red-ui-secondary-background, #fff)',
-                                        borderLeft: (x===0&&y<=h)?cellBorderHighlight:(x===0)?((y<=height-1)?cellBorderExisting:cellBorder):'',
-                                        borderTop: (y===0&&x<=w)?cellBorderHighlight:(y===0)?((x<=width-1)?cellBorderExisting:cellBorder):'',
-                                        borderRight: (x===w&&y<=h)?cellBorderHighlight:((x===width-1&&y<=height-1)?cellBorderExisting:cellBorder),
-                                        borderBottom: (y===h&&x<=w)?cellBorderHighlight:((y===height-1&&x<=width-1)?cellBorderExisting:cellBorder)
+                                        background: (y <= h && x <= w) ? 'var(--red-ui-secondary-background-selected, #ddd)' : 'var(--red-ui-secondary-background, #fff)',
+                                        borderLeft: (x === 0 && y <= h) ? cellBorderHighlight : (x === 0) ? ((y <= height - 1) ? cellBorderExisting : cellBorder) : '',
+                                        borderTop: (y === 0 && x <= w) ? cellBorderHighlight : (y === 0) ? ((x <= width - 1) ? cellBorderExisting : cellBorder) : '',
+                                        borderRight: (x === w && y <= h) ? cellBorderHighlight : ((x === width - 1 && y <= height - 1) ? cellBorderExisting : cellBorder),
+                                        borderBottom: (y === h && x <= w) ? cellBorderHighlight : ((y === height - 1 && x <= width - 1) ? cellBorderExisting : cellBorder)
                                     })
                                 }
                             }
-                            if (!fixedHeight && h === maxHeight-1) {
+                            if (!fixedHeight && h === maxHeight - 1) {
                                 addRow(maxHeight++)
                             }
-                            if (!fixedWidth && w === maxWidth-1) {
-                                maxWidth++;
-                                gridWidth++;
-                                for (var r=0; r<maxHeight; r++) {
-                                    addCell(r,maxWidth-1);
+                            if (!fixedWidth && w === maxWidth - 1) {
+                                maxWidth++
+                                gridWidth++
+                                for (let r = 0; r < maxHeight; r++) {
+                                    addCell(r, maxWidth - 1)
                                 }
                             }
                         })
                     }
                 }
-                var cells = [];
-                for (var i=0; i<maxHeight; i++) {
-                    addRow(i);
+                for (let i = 0; i < maxHeight; i++) {
+                    addRow(i)
                 }
                 container.css({
-                    top:(pos.top)+"px",
-                    left:(pos.left)+"px"
-                });
-                container.fadeIn(200);
+                    top: (pos.top) + 'px',
+                    left: (pos.left) + 'px'
+                })
+                container.fadeIn(200)
             })
         }
-    });
+    })
+})()
 </script>
 
 <script type="text/html" data-template-name="ui-base">

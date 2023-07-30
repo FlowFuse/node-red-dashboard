@@ -6,24 +6,25 @@
 </template>
 
 <script>
-    import { useDataTracker } from '../data-tracker.js'
-    import { mapState } from 'vuex'
 
-    export default {
-        name: 'DBUIText',
-        props: {
-            id: String,
-            props: Object
-        },
-        computed: {
-            ...mapState('data', ['values']),
-        },
-        setup (props) {
-            useDataTracker(props.id)
-        }
+import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
+import { mapState } from 'vuex' // eslint-disable-line import/order
+
+export default {
+    name: 'DBUIText',
+    props: {
+        id: { type: String, required: true },
+        props: { type: Object, default: () => ({}) }
+    },
+    setup (props) {
+        useDataTracker(props.id)
+    },
+    computed: {
+        ...mapState('data', ['values'])
     }
+}
 </script>
-  
+
 <style scoped>
 /* Base Styling */
 .nrdb-ui-text {
@@ -35,7 +36,6 @@
 .nrdb-ui-text-value {
     font-weight: 600;
 }
-
 
 /* Layouts */
 .nrdb-ui-text--row-left {
@@ -65,4 +65,3 @@
     flex-direction: column;
 }
 </style>
-  

@@ -1,10 +1,10 @@
-module.exports = function(RED) {
-    function TextNode(config) {
-        var node = this;
+module.exports = function (RED) {
+    function TextNode (config) {
+        const node = this
 
-        RED.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config)
 
-        let style = "";
+        let style = ''
         if (config.style) {
             if (config.color) {
                 style += `color: ${config.color};`
@@ -20,13 +20,13 @@ module.exports = function(RED) {
         }
 
         // which group are we rendering this widget
-        var group = RED.nodes.getNode(config.group);
+        const group = RED.nodes.getNode(config.group)
         // inform the dashboard UI that we are adding this node
         group.register(node, config)
     }
 
-    RED.nodes.registerType("ui-text", TextNode);
-};
+    RED.nodes.registerType('ui-text', TextNode)
+}
 
 // module.exports = function(RED) {
 //     var ui = require('../ui')(RED);

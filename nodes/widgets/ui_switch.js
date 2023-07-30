@@ -1,25 +1,25 @@
-module.exports = function(RED) {
-    function SwitchNode(config) {
+module.exports = function (RED) {
+    function SwitchNode (config) {
         // create node in Node-RED
-        RED.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config)
 
-        var node = this;
-        node.status({});
+        const node = this
+        node.status({})
 
         const states = ['off', 'on']
 
         // which group are we rendering this widget
-        var group = RED.nodes.getNode(config.group);
+        const group = RED.nodes.getNode(config.group)
 
         const evts = {
             // runs on UI interaction
             onChange: function (value) {
                 // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(node.id);
+                const wNode = RED.nodes.getNode(node.id)
                 const msg = wNode._msg || {}
-                
+
                 node.status({
-                    fill: value ? "green" : "red",
+                    fill: value ? 'green' : 'red',
                     shape: 'ring',
                     text: value ? states[1] : states[0]
                 })
@@ -35,10 +35,10 @@ module.exports = function(RED) {
                 wNode.send(msg)
             },
             onInput: function (msg, send) {
-                var error = null
+                let error = null
                 // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(node.id);
-                
+                const wNode = RED.nodes.getNode(node.id)
+
                 // retrieve the assigned on/off value
                 const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
@@ -52,7 +52,7 @@ module.exports = function(RED) {
                 }
                 if (!error) {
                     node.status({
-                        fill: msg.payload ? "green" : "red",
+                        fill: msg.payload ? 'green' : 'red',
                         shape: 'ring',
                         text: msg.payload ? states[1] : states[0]
                     })
@@ -73,13 +73,13 @@ module.exports = function(RED) {
         const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, node)
 
         config.evaluated = {
-            on: on,
-            off: off
+            on,
+            off
         }
 
         // inform the dashboard UI that we are adding this node
         group.register(node, config, evts)
     }
 
-    RED.nodes.registerType("ui-switch", SwitchNode);
-};
+    RED.nodes.registerType('ui-switch', SwitchNode)
+}

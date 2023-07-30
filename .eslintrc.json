@@ -1,0 +1,96 @@
+{
+    "root": true,
+    "env": {
+        "es2021": true,
+        "commonjs": true,
+        "jquery": true
+    },
+    "plugins": ["promise", "no-only-tests", "eslint-plugin-html"],
+    "extends": [
+        "eslint:recommended", 
+        "standard",
+        "plugin:import/recommended",
+        "plugin:promise/recommended",
+        "plugin:n/recommended"
+    ],
+    "globals":{
+        "RED": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2022
+    },
+    "ignorePatterns": ["dist/", "*.svg", "*.xml"],
+    "rules": {
+        // Inbuilt
+        "indent": ["error", 4],
+        "object-shorthand": ["error"],
+        "sort-imports": [
+            "error",
+            {
+                "ignoreDeclarationSort": true
+            }
+        ],
+        "no-console": ["error", { "allow": ["log", "info", "warn", "error"] }],
+        // "no-console": ["error", { "allow": ["info", "warn", "error"] }], // TODO: enable this for v1.0.0
+
+        // plugin:import
+        "import/order": [
+            "error",
+            {
+                "alphabetize": {
+                    "order": "asc"
+                },
+                "newlines-between": "always-and-inside-groups"
+            }
+        ],
+        "import/no-unresolved": "error",
+
+        // plugin:n
+        "n/file-extension-in-import": "error",
+        "n/no-missing-import": "error",
+        "n/no-missing-require": "error",
+
+        // plugin:no-only-tests
+        "no-only-tests/no-only-tests": "error",
+
+        // plugin:promise
+        "promise/catch-or-return": ["error", { "allowFinally": true }]
+    },
+    "overrides": [
+        {
+            "files": ["test/**"],
+            "env": {
+                "mocha": true
+            }
+        },
+        // Frontend runs in the browser and builds with webpack
+        {
+            "files": "ui/src/**",
+            "plugins": ["vue", "vuetify"],
+            "extends": [
+                "plugin:vue/vue3-recommended",
+                "plugin:vuetify/base"
+            ],
+            "env": {
+                "browser": true,
+                "commonjs": false
+            },
+            "parserOptions": {
+                "parser": "@babel/eslint-parser",
+                "sourceType": "module"
+            },
+            "rules": {
+                // plugin:vue
+                "vue/html-indent": ["error", 4],
+                "vue/singleline-html-element-content-newline": "off",
+                "vue/max-attributes-per-line": "off",
+                "vue/attribute-hyphenation": "off",
+
+                // plugin:promise
+                "promise/always-return": "off", // common Vue.js pattern
+
+                "import/no-extraneous-dependencies": "off" // temporary fix to get majority of codebase to pass
+            }
+        }
+    ]
+}

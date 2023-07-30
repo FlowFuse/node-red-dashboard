@@ -1,16 +1,16 @@
-module.exports = function(RED) {
-    function TemplateNode(config) {
-        var node = this;
+module.exports = function (RED) {
+    function TemplateNode (config) {
+        const node = this
 
         // create node in Node-RED
-        RED.nodes.createNode(this, config);
+        RED.nodes.createNode(this, config)
 
         // which group are we rendering this widget
-        var group = RED.nodes.getNode(config.group);
+        const group = RED.nodes.getNode(config.group)
 
         // inform the dashboard UI that we are adding this node
         group.register(node, config)
     }
 
-    RED.nodes.registerType("ui-template", TemplateNode);
-};
+    RED.nodes.registerType('ui-template', TemplateNode)
+}

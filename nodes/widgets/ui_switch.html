@@ -1,105 +1,109 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-switch', {
-        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
-        color: 'rgb(176, 223, 227)',
-        defaults: {
-            name: {value: ''},
-            label: {value: 'switch'},
-            // tooltip: {value: ''},
-            group: {type: 'ui-group', required: true},
-            order: {value: 0},
-            width: {value: 0, validate: function(v) {
-                    var width = v||0;
-                    var currentGroup = $('#node-input-group').val()||this.group;
-                    var groupNode = RED.nodes.node(currentGroup);
-                    var valid = !groupNode || +width <= +groupNode.width;
-                    $("#node-input-size").toggleClass("input-error",!valid);
-                    return valid;
-                }
-            },
-            height: {value: 0},
-            passthru: {value: true},
-            topic: {value: 'topic', validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('topicType'):function(v) { return true})},
-            topicType: {value: 'msg'},
-            style: {value: ''},
-            className: {value: ''},
-            // on state
-            onvalue: {value: true, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('onvalueType'):function(v) { return true})},
-            onvalueType: {value: 'bool'},
-            onicon: {value: '' },
-            oncolor: {value: ''},
-            // off state
-            offvalue: {value: false, validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('offvalueType'):function(v) { return true})},
-            offvalueType: {value: 'bool'},
-            officon: {value: ''},
-            offcolor: {value: ''}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "ui_switch.png",
-        paletteLabel: 'switch',
-        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'switch'; },
-        labelStyle: function() { return this.name?"node_label_italic":""; },
-        oneditprepare: function() {
-            $("#node-input-size").elementSizer({
-                width: "#node-input-width",
-                height: "#node-input-height",
-                group: "#node-input-group"
-            });
-            $('#node-input-custom-icons').on("change", function() {
-                if ($('#node-input-custom-icons').val() === "default") {
-                    $(".form-row-custom-icons").hide();
-                }
-                else {
-                    $(".form-row-custom-icons").show();
-                }
-            });
-
-            if (this.onicon !== "" || this.oncolor !== "" || this.officon !=="" || this.offcolor !== "") {
-                $('#node-input-custom-icons').val('custom');
-            }
-            else {
-                $(".form-row-custom-icons").hide();
-                $('#node-input-custom-icons').change();
-            }
-
-            $('#node-input-onvalue').typedInput({
-                default: 'str',
-                typeField: $("#node-input-onvalueType"),
-                types: ['str','num','bool','json','bin','date','flow','global']
-            });
-
-            $('#node-input-offvalue').typedInput({
-                default: 'str',
-                typeField: $("#node-input-offvalueType"),
-                types: ['str','num','bool','json','bin','date','flow','global']
-            });
-
-            $('#node-input-topic').typedInput({
-                default: 'str',
-                typeField: $("#node-input-topicType"),
-                types: ['str','msg','flow','global']
-            });
-
-            $('#node-input-passthru').on("change", function() {
-                if (this.checked) {
-                    $('.form-row-decouple').hide();
-                    $('#node-input-decouple').val("false");
-                }
-                else {
-                    $('.form-row-decouple').show();
-                }
-            });
-        },
-        oneditsave: function() {
-            if ($('#node-input-custom-icons').val() === 'default') {
-                $('#node-input-onicon').val('');
-                $('#node-input-officon').val('');
-                $('#node-input-oncolor').val('');
-                $('#node-input-offcolor').val('');
-            }
+    (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
         }
-    });
+        RED.nodes.registerType('ui-switch', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(176, 223, 227)',
+            defaults: {
+                name: { value: '' },
+                label: { value: 'switch' },
+                // tooltip: {value: ''},
+                group: { type: 'ui-group', required: true },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                passthru: { value: true },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
+                style: { value: '' },
+                className: { value: '' },
+                // on state
+                onvalue: { value: true, validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('onvalueType') : function (v) { return true }) },
+                onvalueType: { value: 'bool' },
+                onicon: { value: '' },
+                oncolor: { value: '' },
+                // off state
+                offvalue: { value: false, validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('offvalueType') : function (v) { return true }) },
+                offvalueType: { value: 'bool' },
+                officon: { value: '' },
+                offcolor: { value: '' }
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: 'ui_switch.png',
+            paletteLabel: 'switch',
+            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'switch' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
+                $('#node-input-custom-icons').on('change', function () {
+                    if ($('#node-input-custom-icons').val() === 'default') {
+                        $('.form-row-custom-icons').hide()
+                    } else {
+                        $('.form-row-custom-icons').show()
+                    }
+                })
+
+                if (this.onicon !== '' || this.oncolor !== '' || this.officon !== '' || this.offcolor !== '') {
+                    $('#node-input-custom-icons').val('custom')
+                } else {
+                    $('.form-row-custom-icons').hide()
+                    $('#node-input-custom-icons').change()
+                }
+
+                $('#node-input-onvalue').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-onvalueType'),
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                })
+
+                $('#node-input-offvalue').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-offvalueType'),
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                })
+
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
+                $('#node-input-passthru').on('change', function () {
+                    if (this.checked) {
+                        $('.form-row-decouple').hide()
+                        $('#node-input-decouple').val('false')
+                    } else {
+                        $('.form-row-decouple').show()
+                    }
+                })
+            },
+            oneditsave: function () {
+                if ($('#node-input-custom-icons').val() === 'default') {
+                    $('#node-input-onicon').val('')
+                    $('#node-input-officon').val('')
+                    $('#node-input-oncolor').val('')
+                    $('#node-input-offcolor').val('')
+                }
+            }
+        })
+    })()
 </script>
 
 <script type="text/html" data-template-name="ui-switch">

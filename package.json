@@ -17,8 +17,10 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
+        "build:dev": "vue-cli-service build  --mode development",
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
+        "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
         "test": "mocha \"test/**/*.spec.js\""
     },
     "license": "Apache-2.0",
@@ -26,6 +28,7 @@
         "node-red"
     ],
     "node-red": {
+        "version": ">=3.0.0",
         "nodes": {
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
@@ -41,26 +44,6 @@
             "ui-markdown": "nodes/widgets/ui_markdown.js"
         }
     },
-    "eslintConfig": {
-        "root": true,
-        "env": {
-            "node": true
-        },
-        "extends": [
-            "plugin:vue/vue3-essential",
-            "eslint:recommended"
-        ],
-        "parserOptions": {
-            "parser": "@babel/eslint-parser"
-        },
-        "rules": {},
-        "globals": {
-            "afterEach": "readonly",
-            "beforeEach": "readonly",
-            "describe": "readonly",
-            "it": "readonly"
-        }
-    },
     "dependencies": {
         "core-js": "^3.8.3",
         "socket.io": "^4.6.2",
@@ -68,21 +51,32 @@
         "express": "^4.18.2"
     },
     "devDependencies": {
-        "@babel/core": "^7.12.16",
-        "@babel/eslint-parser": "^7.12.16",
+        "@babel/core": "^7.22.1",
+        "@babel/eslint-parser": "^7.22.9",
         "@babel/plugin-transform-private-methods": "^7.22.5",
         "@mdi/font": "~6.5.0",
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-eslint": "~5.0.0",
         "@vue/cli-service": "~5.0.0",
         "chart.js": "^4.3.0",
-        "eslint": "^7.32.0",
-        "eslint-plugin-vue": "^8.0.3",
+        "eslint": "^8.41.0",
+        "eslint-plugin-html": "^7.1.0",
+        "eslint-plugin-vuetify": "^2.0.5",
+        "eslint-config-standard": "^17.1.0",
+        "eslint-plugin-cypress": "^2.13.3",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-n": "^16.0.0",
+        "eslint-plugin-no-only-tests": "^3.1.0",
+        "eslint-plugin-promise": "^6.1.1",
+        "eslint-plugin-vue": "^9.14.1",
         "glob": "^10.2.7",
         "medium-zoom": "^1.0.8",
         "mocha": "^10.2.0",
         "node-red": "^3.0.2",
         "node-red-node-test-helper": "^0.3.2",
+        "should": "^13.2.3",
+        "should-sinon": "^0.0.6",
+        "sinon": "^15.1.0",
         "socket.io-client": "^4.6.2",
         "vitepress": "^1.0.0-beta.3",
         "vue-markdown-render": "^2.0.1",
@@ -95,5 +89,8 @@
         "last 2 versions",
         "not dead",
         "not ie 11"
-    ]
+    ],
+    "engines": {
+        "node": ">=14"
+    }
 }

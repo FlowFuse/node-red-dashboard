@@ -1,9 +1,8 @@
-import { onMounted, onUnmounted, inject} from 'vue'
+import { inject, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 // by convention, composable function names start with "use"
-export function useDataTracker(widgetId, onInput) {
-
+export function useDataTracker (widgetId, onInput) {
     const store = useStore()
     const socket = inject('$socket')
 
@@ -12,21 +11,21 @@ export function useDataTracker(widgetId, onInput) {
     onMounted(() => {
         if (socket) {
             // This will on in msg input for ALL components
-            socket.on("msg-input:" + widgetId, (msg) => {
-                console.log("msg-input:" + widgetId, msg)
+            socket.on('msg-input:' + widgetId, (msg) => {
+                console.log('msg-input:' + widgetId, msg)
 
                 // set states if passed into msg
                 if ('enabled' in msg) {
                     console.log('setting enabled')
                     store.commit('ui/widgetState', {
-                        widgetId: widgetId,
+                        widgetId,
                         enabled: msg.enabled
                     })
                 }
 
                 if ('visible' in msg) {
                     store.commit('ui/widgetState', {
-                        widgetId: widgetId,
+                        widgetId,
                         visible: msg.visible
                     })
                 }
@@ -43,13 +42,11 @@ export function useDataTracker(widgetId, onInput) {
                 }
             })
             // let Node-RED know that this widget has loaded
-            // useful as Node-RED can return (via msg-input) any stored data 
-            socket.emit("widget-load:" + widgetId)
+            // useful as Node-RED can return (via msg-input) any stored data
+            socket.emit('widget-load:' + widgetId)
         }
     })
     onUnmounted(() => {
-        socket?.off("msg-input:" + widgetId)
+        socket?.off('msg-input:' + widgetId)
     })
-
-    return 
 }

@@ -1,15 +1,15 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div class="nrdb-layout--flex" v-if="groups && groups[$route.meta.id]">
+        <div v-if="groups && groups[$route.meta.id]" class="nrdb-layout--flex">
             <div v-for="g in orderedGroups" :key="g.id" :style="{'width': ((rowHeight * 2 * g.width) + 'px')}">
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
-                    <template #title v-if="g.disp">
+                    <template v-if="g.disp" #title>
                         {{ g.name }}
                     </template>
                     <template #text>
                         <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}px, auto)); `">
                             <div v-for="w in widgetsByGroup(g.id)" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}px); grid-column-end: span ${ w.props.width || g.width }`">
-                                <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`"/>
+                                <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
                             </div>
                         </div>
                     </template>
@@ -20,34 +20,35 @@
 </template>
 
 <script>
-    import BaselineLayout from './Baseline.vue'
-    import { mapState, mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex'
 
-    export default {
-        name: 'LayoutFlex',
-        computed: {
-            ...mapState('ui', ['groups', 'widgets']),
-            ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
-            orderedGroups: function () {
-                const groups = this.groupsByPage(this.$route.meta.id)
-                const ordered = Object.values(groups).sort((a, b) => {
-                    // if order = 0, prioritise groups where order _is_ set
-                    const aOrder = a.order || Number.MAX_SAFE_INTEGER
-                    const bOrder = b.order || Number.MAX_SAFE_INTEGER
-                    return aOrder - bOrder
-                })
-                return ordered
-            }
-        },
-        components: {
-            BaselineLayout
-        },
-        data () {
-            return {
-                rowHeight: 48
-            }
+import BaselineLayout from './Baseline.vue'
+
+export default {
+    name: 'LayoutFlex',
+    components: {
+        BaselineLayout
+    },
+    data () {
+        return {
+            rowHeight: 48
+        }
+    },
+    computed: {
+        ...mapState('ui', ['groups', 'widgets']),
+        ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
+        orderedGroups: function () {
+            const groups = this.groupsByPage(this.$route.meta.id)
+            const ordered = Object.values(groups).sort((a, b) => {
+                // if order = 0, prioritise groups where order _is_ set
+                const aOrder = a.order || Number.MAX_SAFE_INTEGER
+                const bOrder = b.order || Number.MAX_SAFE_INTEGER
+                return aOrder - bOrder
+            })
+            return ordered
         }
     }
+}
 </script>
 
 <style scoped>

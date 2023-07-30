@@ -3,25 +3,24 @@
 </template>
 
 <script>
-    import { useDataTracker } from '../data-tracker.js'
-    import { mapState } from 'vuex'
+import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
-    export default {
-        name: 'DBUITemplate',
-        inject: ['$socket'],
-        props: {
-            id: String,
-            props: Object
-        },
-        computed: {
-            ...mapState('data', ['values']),
-        },
-        setup (props) {
-            useDataTracker(props.id)
-        }
+export default {
+    name: 'DBUITemplate',
+    inject: ['$socket'],
+    props: {
+        id: { type: String, required: true },
+        props: { type: Object, default: () => ({}) }
+    },
+    setup (props) {
+        useDataTracker(props.id)
+    },
+    computed: {
+        ...mapState('data', ['values'])
     }
+}
 </script>
-  
+
 <style scoped>
 </style>
-  
