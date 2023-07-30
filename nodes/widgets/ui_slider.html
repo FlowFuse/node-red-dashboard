@@ -50,25 +50,25 @@
 </script>
 
 <script type="text/html" data-template-name="ui-slider">
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label><i class="fa fa-object-group"></i> Size</label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label">
     </div>
-    <!--<div class="form-row">
+    <!--<div class="form-row ui-slider">
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
         <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
     </div>-->
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label for="node-input-min"><i class="fa fa-arrows-h"></i> Range</label>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
             <div>
@@ -85,41 +85,50 @@
             </div>
         </div>
     </div>
-    <!-- <div class="form-row">
+    <!-- <div class="form-row ui-slider">
         <label for="node-input-outs"><i class="fa fa-sign-out"></i> Output</label>
         <select id="node-input-outs" style="width:204px">
             <option value="all">continuously while sliding</option>
             <option value="end">only on release</option>
         </select>
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label style="padding-left:25px; margin-right:-25px">Payload</label>
         <label style="width:auto">Current value</label>
     </div>
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
         <input type="text" id="node-input-topic">
     </div>-->
-    <div class="form-row">
+    <div class="form-row ui-slider">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name">
         <input type="hidden" id="node-input-topicType">
     </div>
 </script>
 
+<!-- 
 <style scoped>
-    .form-row {
+scoped is depreciated and not supported in most browsers instead use a unique
+class name for the style to make it specific to this widget.
+In this case, setting .form-row was affecting all other widgets - in particular the code editor.
+It was causing the clientWidth to be zero and thus the elementSizer was not working correctly.
+In short, we should be more specific with our CSS selectors on edit forms & probably handle the fragile
+code editor width issue in a different way - but for now, being more specific is the quick fix
+-->
+<style id="nr-db2-ui-slider-styles">
+    div.form-row.ui-slider {
         display: flex;
         align-items: center;
     }
-    .form-row label {
+    div.form-row.ui-slider label {
         margin-bottom: 0;
     }
 </style>
