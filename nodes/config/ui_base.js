@@ -2,26 +2,28 @@
 const path = require('path')
 
 // from: https://stackoverflow.com/a/28592528/3016654
-function join () {
-    const trimRegex = /^\/|\/$/g
-    const paths = Array.prototype.slice.call(arguments)
-    return '/' + paths.map(function (e) {
-        if (e) {
-            e.replace(trimRegex, '')
-        }
-        return e
-    }).filter(function (e) { return e }).join('/')
+function join (...paths) {
+    return paths.map(function (element) {
+        return element.replace(/^\/|\/$/g, '')
+    }).join('/')
 }
 
 module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
 
+    /**
+     * @typedef {import('socket.io/dist').Socket} Socket
+     * @typedef {import('socket.io/dist').Server} Server
+     */
+
     // store state that can maintain cross re-deployments
     const ui = {
         app: null,
         httpServer: null,
+        /** @type { Server } */
         ioServer: null,
+        /** @type {Object.<string, Socket>} */
         connections: {},
         events: {
             load: {},
@@ -57,13 +59,15 @@ module.exports = function (RED) {
              * Create IO Server for comms between Node-RED and UI
              */
 
-            /** @type { import('socket.io').ServerOptions } */
             const fullPath = join(RED.settings.httpNodeRoot, config.path)
-            const socketIoPath = join(fullPath, 'socket.io')
-            // store reference to the SocketIO Server
-            ui.ioServer = new Server(ui.httpServer, {
+            const socketIoPath = join('/', fullPath, 'socket.io')
+            /** @type {import('socket.io/dist').ServerOptions} */
+            const serverOptions = {
                 path: socketIoPath
-            })
+            }
+            console.log('Creating socket.io server at path', socketIoPath)
+            // store reference to the SocketIO Server
+            ui.ioServer = new Server(ui.httpServer, serverOptions)
 
             const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
             node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
@@ -73,10 +77,35 @@ module.exports = function (RED) {
     /**
      * Close the Express Server and SocketIO Server
      */
-    function close (node) {
-        ui.ioServer.close()
-        ui.httpServer.close(() => {
-            node.log('server shut down')
+    function close (node, done) {
+        // dont call done until the callbacks say they're done!
+        done = done || function () {}
+        const httpServerClose = (_done) => {
+            if (ui.httpServer) {
+                ui.httpServer.close(() => {
+                    node.log('server shut down')
+                    _done()
+                })
+            } else {
+                _done()
+            }
+        }
+        const ioServerClose = (_done) => {
+            if (ui.ioServer.engine) {
+                ui.ioServer.close((err) => {
+                    if (err) {
+                        node.log('Error shutting down socket.io server', err)
+                    } else {
+                        node.log('socket.io server shut down')
+                    }
+                    _done()
+                })
+            } else {
+                _done()
+            }
+        }
+        httpServerClose(() => {
+            ioServerClose(done)
         })
     }
 
@@ -116,14 +145,18 @@ module.exports = function (RED) {
             })
         }
 
-        function onConnection (conn) {
-            ui.connections[conn.id] = conn // store the connection for later use
-            emitConfig(conn)
+        /**
+         * on connection handler for SocketIO
+         * @param {Socket} socket socket.io socket connecting to the server
+         */
+        function onConnection (socket) {
+            ui.connections[socket.id] = socket // store the connection for later use
+            emitConfig(socket)
 
             // handle disconnection
-            conn.on('disconnect', reason => {
-                delete ui.connections[conn.id]
-                node.log(`Disconnected ${conn.id} due to ${reason}`)
+            socket.on('disconnect', reason => {
+                delete ui.connections[socket.id]
+                node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
         }
 
@@ -143,9 +176,7 @@ module.exports = function (RED) {
         node.on('close', async (done) => {
             // clear event handlers on base node
             ui.ioServer?.off('connection', onConnection)
-            if (ui.server) {
-                close(node)
-            }
+            close(node)
             done()
         })
 

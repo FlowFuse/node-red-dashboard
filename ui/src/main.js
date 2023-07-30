@@ -3,24 +3,6 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
 
-/*
-SORTED and corrected imports - temporarily disabled until I get it all working again!
-import { io } from 'socket.io-client'
-import { createApp } from 'vue'
-
-// Vuetify
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/dist/vuetify.css'
-import { components, createVuetify, directives } from 'vuetify'
-
-import App from './App.vue'
-import router from './router.js'
-import store from './store/index.js'
-
-// widgets
-import UIText from './widgets/ui-text/UIText.vue'
-*/
-
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
@@ -69,7 +51,7 @@ import UIText from './widgets/ui-text/UIText' // eslint-disable-line n/no-missin
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
-console.log('Connecting to Node-RED via SocketIO')
+console.log('Connecting to Node-RED via SocketIO at /ui/socket.io')
 const socket = io({
     path: '/ui/socket.io'
 })
