@@ -126,7 +126,6 @@ module.exports = function (RED) {
      */
     function UIBaseNode (n) {
         const node = this
-        console.log('Creating UI Base Node', n)
         RED.nodes.createNode(node, n)
 
         /**
