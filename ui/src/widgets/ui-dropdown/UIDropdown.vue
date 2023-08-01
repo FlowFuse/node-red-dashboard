@@ -59,6 +59,7 @@ export default {
     methods: {
         onChange () {
             console.log('dropdown changed')
+            // ensure our data binding with vuex store is updated
             this.$store.commit('data/bind', {
                 widgetId: this.id,
                 data: this.value

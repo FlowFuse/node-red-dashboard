@@ -10,8 +10,8 @@ module.exports = function (RED) {
 
         const evts = {
             onAction: true,
-            onInput: function (msg, send) {
-                var error = null
+            beforeSend: function (msg) {
+                let error = null
 
                 // retrieve the payload we're sending from this button
                 let payloadType = config.payloadType
@@ -46,8 +46,12 @@ module.exports = function (RED) {
                 if (!error) {
                     const topic = RED.util.evaluateNodeProperty(config.topic, config.topicType || 'str', node, msg)
                     msg.payload = payload
-                    msg.topic = topic
-                    send(msg)
+                    if (topic) {
+                        msg.topic = topic
+                    }
+                    return msg
+                } else {
+                    return null
                 }
             }
         }
