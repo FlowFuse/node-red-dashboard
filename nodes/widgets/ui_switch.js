@@ -64,11 +64,6 @@ module.exports = function (RED) {
             }
         }
 
-        console.log(config.onvalue)
-        console.log(config.onvalueType)
-        console.log(config.offvalue)
-        console.log(config.offvalueType)
-
         const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, node)
         const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, node)
 

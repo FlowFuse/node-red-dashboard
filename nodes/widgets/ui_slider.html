@@ -57,76 +57,78 @@
 </script>
 
 <script type="text/html" data-template-name="ui-slider">
-    <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
-        <input type="text" id="node-input-group">
-    </div>
-    <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
-        <input type="hidden" id="node-input-width">
-        <input type="hidden" id="node-input-height">
-        <button class="editor-button" id="node-input-size"></button>
-    </div>
-    <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
-        <input type="text" id="node-input-label">
-    </div>
-    <!--<div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
-        <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
-    </div>-->
-    <div class="form-row">
-        <label for="node-input-min"><i class="fa fa-arrows-h"></i> Range</label>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
-            <div>
-                <span for="node-input-min">min</span>
-                <input type="text" id="node-input-min" style="width:60px">
-            </div>
-            <div>
-                <span for="not-input-step">step</span>
-                <input type="text" id="node-input-step" style="width:60px">
-            </div>
-            <div>
-                <span for="not-input-max">max</span>
-                <input type="text" id="node-input-max" style="width:60px">
+    <div class="ui-slider">
+        <div class="form-row">
+            <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+            <input type="text" id="node-input-group">
+        </div>
+        <div class="form-row">
+            <label><i class="fa fa-object-group"></i> Size</label>
+            <input type="hidden" id="node-input-width">
+            <input type="hidden" id="node-input-height">
+            <button class="editor-button" id="node-input-size"></button>
+        </div>
+        <div class="form-row">
+            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+            <input type="text" id="node-input-label">
+        </div>
+        <!--<div class="form-row">
+            <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
+            <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
+        </div>-->
+        <div class="form-row">
+            <label for="node-input-min"><i class="fa fa-arrows-h"></i> Range</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
+                <div>
+                    <span for="node-input-min">min</span>
+                    <input type="text" id="node-input-min" style="width:60px">
+                </div>
+                <div>
+                    <span for="not-input-step">step</span>
+                    <input type="text" id="node-input-step" style="width:60px">
+                </div>
+                <div>
+                    <span for="not-input-max">max</span>
+                    <input type="text" id="node-input-max" style="width:60px">
+                </div>
             </div>
         </div>
-    </div>
-    <!-- <div class="form-row">
-        <label for="node-input-outs"><i class="fa fa-sign-out"></i> Output</label>
-        <select id="node-input-outs" style="width:204px">
-            <option value="all">continuously while sliding</option>
-            <option value="end">only on release</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
-        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
-    </div>
-    <div class="form-row">
-        <label style="padding-left:25px; margin-right:-25px">Payload</label>
-        <label style="width:auto">Current value</label>
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
-        <input type="text" id="node-input-topic">
-    </div>-->
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
-        <input type="hidden" id="node-input-topicType">
+        <!-- <div class="form-row">
+            <label for="node-input-outs"><i class="fa fa-sign-out"></i> Output</label>
+            <select id="node-input-outs" style="width:204px">
+                <option value="all">continuously while sliding</option>
+                <option value="end">only on release</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+            <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+        <div class="form-row">
+            <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
+        </div>
+        <div class="form-row">
+            <label style="padding-left:25px; margin-right:-25px">Payload</label>
+            <label style="width:auto">Current value</label>
+        </div>
+        <div class="form-row">
+            <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
+            <input type="text" id="node-input-topic">
+        </div>-->
+        <div class="form-row">
+            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+            <input type="text" id="node-input-name">
+            <input type="hidden" id="node-input-topicType">
+        </div>
     </div>
 </script>
 
-<style scoped>
-    .form-row {
+<style id="nr-db2-ui-slider-styles">
+    .red-ui-editor div.ui-slider .form-row {
         display: flex;
         align-items: center;
     }
-    .form-row label {
+    .red-ui-editor div.ui-slider .form-row label {
         margin-bottom: 0;
     }
 </style>
