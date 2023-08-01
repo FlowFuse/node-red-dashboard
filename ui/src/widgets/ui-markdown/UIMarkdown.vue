@@ -3,30 +3,30 @@
 </template>
 
 <script>
-    import { useDataTracker } from '../data-tracker.js'
-    import { mapState } from 'vuex'
+import VueMarkdown from 'vue-markdown-render'
+import { mapState } from 'vuex'
 
-    import VueMarkdown from 'vue-markdown-render'
+import { useDataTracker } from '../data-tracker.js'
 
-    export default {
-        name: 'DBUIMarkdown',
-        inject: ['$socket'],
-        props: {
-            id: String,
-            props: Object
-        },
-        components: {
-            VueMarkdown
-        },
-        computed: {
-            ...mapState('data', ['values']),
-        },
-        created () {
-            useDataTracker(this.id)
-        }
+export default {
+    name: 'DBUIMarkdown',
+    components: {
+        VueMarkdown
+    },
+    inject: ['$socket'],
+    props: {
+        id: { type: String, required: true },
+        props: { type: Object, default: () => ({}) }
+    },
+    computed: {
+        ...mapState('data', ['values'])
+    },
+    created () {
+        useDataTracker(this.id)
     }
+}
 </script>
-  
+
 <style lang="css">
 .nrdb-ui-markdown h1 {
     margin: 0.67em 0;
@@ -49,4 +49,3 @@
     color: gray;
 }
 </style>
-  

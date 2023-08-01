@@ -1,14 +1,16 @@
 <template>
     <v-app>
-        <router-view></router-view>
+        <router-view />
     </v-app>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { markRaw } from 'vue'
+import { markRaw } from 'vue' // eslint-disable-line import/order
 
+// eslint-disable-next-line n/no-missing-import
 import layouts from './layouts' // import all layouts
+// eslint-disable-next-line n/no-missing-import
 import widgetComponents from './widgets' // import all Vue Widget Components
 
 export default {
@@ -18,15 +20,15 @@ export default {
         ...mapState('ui', ['dashboards', 'pages', 'widgets'])
     },
     created () {
-        this.$socket.on("ui-config", (topic, payload) => {
-            console.log("ui config")
+        this.$socket.on('ui-config', (topic, payload) => {
+            console.log('ui config')
             console.log(topic, payload)
-            
+
             // loop over pages, add them to vue router
             Object.values(payload.pages).forEach(page => {
                 const route = payload.dashboards[page.ui].path + page.path
                 const routeName = 'Page:' + page.name
-                console.log("adding route", route)
+                console.log('adding route', route)
                 this.$router?.addRoute({
                     path: route,
                     name: routeName,
@@ -51,8 +53,7 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(id => {
                 const widget = payload.widgets[id]
-                console.log("adding widget", widget.type)
-                // widget.component = 'hello world'
+                console.log('adding widget', widget.type)
                 widget.component = markRaw(widgetComponents[widget.type])
             })
 
@@ -67,7 +68,7 @@ export default {
     },
     methods: {
         send: function () {
-            this.$socket.emit('widget-action', '<node-id>', 'hello world');
+            this.$socket.emit('widget-action', '<node-id>', 'hello world')
         },
         go: function (name) {
             this.$router.push({

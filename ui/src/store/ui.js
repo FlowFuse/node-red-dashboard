@@ -1,3 +1,6 @@
+/* eslint-disable n/no-missing-import */
+/* eslint-disable n/file-extension-in-import */
+/* eslint-disable import/no-unresolved */
 import router from '../router'
 
 // initial state
@@ -24,21 +27,19 @@ const getters = {
     },
     groupsByPage: (state) => (pageId) => {
         if (state.groups) {
-            var groupsOnPage = Object.values(state.groups).filter((p) => {
-                return p.page === pageId;
-            });
+            const groupsOnPage = Object.values(state.groups).filter((p) => {
+                return p.page === pageId
+            })
             return groupsOnPage
         }
-        return
     },
     widgetsByGroup: (state) => (groupId) => {
         if (state.widgets) {
-            var widgetsInGroup = Object.values(state.widgets).filter((w) => {
-                return w.props.group === groupId;
-            });
+            const widgetsInGroup = Object.values(state.widgets).filter((w) => {
+                return w.props.group === groupId
+            })
             return widgetsInGroup
         }
-        return
     }
 }
 

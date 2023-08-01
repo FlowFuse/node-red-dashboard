@@ -1,50 +1,49 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-page',{
+    RED.nodes.registerType('ui-page', {
         category: 'config',
         defaults: {
             name: {
-                value: "Page Name",
+                value: 'Page Name',
                 required: true
             },
             ui: {
                 type: 'ui-base',
-                value: "",
-                required: true,
+                value: '',
+                required: true
             },
             path: {
-                value: "/",
-                required: false,
+                value: '/',
+                required: false
             },
             layout: {
-                value: "",
+                value: '',
                 required: true
             },
             theme: {
                 type: 'ui-theme',
-                value: "default",
+                value: 'default',
                 required: true
             }
         },
         oneditprepare: function () {
-            $("#node-config-input-layout").typedInput({
-                type: "layout",
+            $('#node-config-input-layout').typedInput({
+                type: 'layout',
                 types: [{
                     value: 'layout',
                     options: [
-                        { value: 'grid', label: 'Grid'},
-                        { value: 'flex', label: 'Flex'}
+                        { value: 'grid', label: 'Grid' },
+                        { value: 'flex', label: 'Flex' }
                     ]
                 }],
-                typeField: "#node-input-layoutType"
-            });
-
+                typeField: '#node-input-layoutType'
+            })
         },
-        label: function() {
+        label: function () {
             const base = RED.nodes.node(this.ui).path
             const path = this.path || ''
-            return `${this.name} [${base}${path}]` || "UI Page";
+            return `${this.name} [${base}${path}]` || 'UI Page'
         }
-    });
+    })
 </script>
 
 <script type="text/html" data-template-name="ui-page">

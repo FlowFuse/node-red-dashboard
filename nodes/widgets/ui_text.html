@@ -1,194 +1,195 @@
 <script type="text/javascript">
-    const fonts = [
-        {
-            value: "Arial,Arial,Helvetica,sans-serif",
-            name: "Arial" 
-        },
-        {
-            value: "Arial Black,Arial Black,Gadget,sans-serif",
-            name: "Arial Black" 
-        },
-        {
-            value: "Arial Narrow,Nimbus Sans L,sans-serif",
-            name: "Arial Narrow" 
-        },
-        {
-            value: "Century Gothic,CenturyGothic,AppleGothic,sans-serif",
-            name: "Century Gothic" 
-        },
-        {
-            value: "Copperplate,Copperplate Gothic Light,fantasy",
-            name: "Copperplate" 
-        },
-        {
-            value: "Courier,monospace",
-            name: "Courier" 
-        },
-        {
-            value: "Georgia,Georgia,serif",
-            name: "Georgia" 
-        },
-        {
-            value: "Gill Sans,Geneva,sans-serif",
-            name: "Gill Sans" 
-        },
-        {
-            value: "Impact,Impact,Charcoal,sans-serif",
-            name: "Impact" 
-        },
-        {
-            value: "Lucida Sans Typewriter,Lucida Console,Monaco,monospace", 
-            name: "Lucida Console" 
-        },
-        {
-            value: "Lucida Sans Unicode,Lucida Grande,sans-serif",
-            name: "Lucida Sans" 
-        },
-        {
-            value: "Palatino Linotype,Palatino,Book Antiqua,serif", 
-            name: "Palatino Linotype" 
-        },
-        {
-            value: "Tahoma,Geneva,sans-serif",
-            name: "Tahoma" 
-        },
-        {
-            value: "Times New Roman,Times,serif",
-            name: "Times New Roman" 
-        },
-        {
-            value: "Trebuchet MS,Helvetica,sans-serif",
-            name: "Trebuchet MS" 
-        },
-        {
-            value: "Verdana,Verdana,Geneva,sans-serif",
-            name: "Verdana" 
-        },
-    ];
-
-
-    RED.nodes.registerType('ui-text',{
-        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
-        color: 'rgb(119, 198, 204)',
-        defaults: {
-            group: { type: 'ui-group', required: true },
-            order: {value: 0},
-            width: {value: 0, validate: function(v) {
-                    var width = v||0;
-                    var currentGroup = $('#node-input-group').val()||this.group;
-                    var groupNode = RED.nodes.node(currentGroup);
-                    var valid = !groupNode || +width <= +groupNode.width;
-                    $("#node-input-size").toggleClass("input-error",!valid);
-                    return valid;
-                }
+    (function () {
+        const fonts = [
+            {
+                value: 'Arial,Arial,Helvetica,sans-serif',
+                name: 'Arial'
             },
-            height: {value: 0},
-            name: {value: ''},
-            label: {value: 'text'},
-            format: {value: '{{msg.payload}}'},
-            layout: {value:'row-spread'},
-            className: {value: ''},
-            style: { value: false },
-            font: { value: "" },
-            fontSize: { value: 16 },
-            color: { value: "#000" },
-        },
-        inputs: 1,
-        outputs: 0,
-        align: "right",
-        icon: "font-awesome/fa-font",
-        paletteLabel: 'text',
-        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'text'; },
-        labelStyle: function() { return this.name?"node_label_italic":""; },
-        oneditprepare: function() {
-            $("#node-input-size").elementSizer({
-                width: "#node-input-width",
-                height: "#node-input-height",
-                group: "#node-input-group"
-            });
+            {
+                value: 'Arial Black,Arial Black,Gadget,sans-serif',
+                name: 'Arial Black'
+            },
+            {
+                value: 'Arial Narrow,Nimbus Sans L,sans-serif',
+                name: 'Arial Narrow'
+            },
+            {
+                value: 'Century Gothic,CenturyGothic,AppleGothic,sans-serif',
+                name: 'Century Gothic'
+            },
+            {
+                value: 'Copperplate,Copperplate Gothic Light,fantasy',
+                name: 'Copperplate'
+            },
+            {
+                value: 'Courier,monospace',
+                name: 'Courier'
+            },
+            {
+                value: 'Georgia,Georgia,serif',
+                name: 'Georgia'
+            },
+            {
+                value: 'Gill Sans,Geneva,sans-serif',
+                name: 'Gill Sans'
+            },
+            {
+                value: 'Impact,Impact,Charcoal,sans-serif',
+                name: 'Impact'
+            },
+            {
+                value: 'Lucida Sans Typewriter,Lucida Console,Monaco,monospace',
+                name: 'Lucida Console'
+            },
+            {
+                value: 'Lucida Sans Unicode,Lucida Grande,sans-serif',
+                name: 'Lucida Sans'
+            },
+            {
+                value: 'Palatino Linotype,Palatino,Book Antiqua,serif',
+                name: 'Palatino Linotype'
+            },
+            {
+                value: 'Tahoma,Geneva,sans-serif',
+                name: 'Tahoma'
+            },
+            {
+                value: 'Times New Roman,Times,serif',
+                name: 'Times New Roman'
+            },
+            {
+                value: 'Trebuchet MS,Helvetica,sans-serif',
+                name: 'Trebuchet MS'
+            },
+            {
+                value: 'Verdana,Verdana,Geneva,sans-serif',
+                name: 'Verdana'
+            }
+        ]
 
-            $(".nr-db-text-layout-"+(this.layout||'row-spread')).addClass('selected');
+        RED.nodes.registerType('ui-text', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(119, 198, 204)',
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                name: { value: '' },
+                label: { value: 'text' },
+                format: { value: '{{msg.payload}}' },
+                layout: { value: 'row-spread' },
+                className: { value: '' },
+                style: { value: false },
+                font: { value: '' },
+                fontSize: { value: 16 },
+                color: { value: '#000' }
+            },
+            inputs: 1,
+            outputs: 0,
+            align: 'right',
+            icon: 'font-awesome/fa-font',
+            paletteLabel: 'text',
+            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'text' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
 
-            [ ".nr-db-text-layout-row-left",".nr-db-text-layout-row-center",".nr-db-text-layout-row-right",
-              ".nr-db-text-layout-row-spread",".nr-db-text-layout-col-center"].forEach(function(id) {
-                    $(id).click(function(e) {
-                        $(".nr-db-text-layout").removeClass('selected');
-                        $(this).addClass('selected');
-                        $('#node-input-layout').val(id.substring(".nr-db-text-layout-".length));
-                        e.preventDefault();
+                $('.nr-db-text-layout-' + (this.layout || 'row-spread')).addClass('selected');
+                ['.nr-db-text-layout-row-left', '.nr-db-text-layout-row-center', '.nr-db-text-layout-row-right', '.nr-db-text-layout-row-spread', '.nr-db-text-layout-col-center']
+                    .forEach(function (id) {
+                        $(id).click(function (e) {
+                            $('.nr-db-text-layout').removeClass('selected')
+                            $(this).addClass('selected')
+                            $('#node-input-layout').val(id.substring('.nr-db-text-layout-'.length))
+                            e.preventDefault()
+                        })
                     })
-              });
 
-            const select = $("#node-select-font");
+                const select = $('#node-select-font')
 
-            // add font options
-            fonts.forEach((font) => {
-                var name = font.name;
-                var val = font.value;
-                $("<option/>", {
-                    value: val,
-                }).text(name).appendTo(select);
-            });
+                // add font options
+                fonts.forEach((font) => {
+                    const name = font.name
+                    const val = font.value
+                    $('<option/>', {
+                        value: val
+                    }).text(name).appendTo(select)
+                })
 
-            // when a font is selected
-            $(select).change(() => {
-                const val = $("#node-select-font").val();
-                // update hidden input
-                $("#node-input-font").val(val);
-                // update test text
-                $("#node-test-text").css({
-                    "font-family": val,
-                }); 
-            });
-            $(select).val(this.font);
-            $(select).change();
+                // when a font is selected
+                $(select).change(() => {
+                    const val = $('#node-select-font').val()
+                    // update hidden input
+                    $('#node-input-font').val(val)
+                    // update test text
+                    $('#node-test-text').css({
+                        'font-family': val
+                    })
+                })
+                $(select).val(this.font)
+                $(select).change()
 
-            // make the fontsize a numeric spinner
-            $("#node-input-fontSize").spinner({
-                min: 1,
-                max: 100,
-                spin: () => {
-                    // update the test text when value is changed
-                    const val = $("#node-input-fontSize").val();
-                    $("#node-test-text").css({
-                        "font-size": val +"px",
-                    }); 
+                // make the fontsize a numeric spinner
+                $('#node-input-fontSize').spinner({
+                    min: 1,
+                    max: 100,
+                    spin: () => {
+                        // update the test text when value is changed
+                        const val = $('#node-input-fontSize').val()
+                        $('#node-test-text').css({
+                            'font-size': val + 'px'
+                        })
+                    }
+                })
+
+                // add change handler to color picker to update test text
+                $('#node-input-color').change(() => {
+                    const val = $('#node-input-color').val()
+                    $('#node-test-text').css({
+                        color: val
+                    })
+                })
+
+                // add change handler to show/hide style config options
+                $('#node-input-style').change(() => {
+                    const val = $('#node-input-style').prop('checked')
+                    if (val) {
+                        $('#node-styles').show()
+                    } else {
+                        $('#node-styles').hide()
+                    }
+                })
+                $('#node-input-style').change()
+
+                // when opening the config, make sure the test text is updated
+                if (this.fontSize) {
+                    $('#node-test-text').css({
+                        'font-size': this.fontSize + 'px'
+                    })
                 }
-            });
-
-            // add change handler to color picker to update test text
-            $("#node-input-color").change(() => {
-                const val = $("#node-input-color").val();
-                $("#node-test-text").css({
-                    "color": val,
-                }); 
-            });
-
-            // add change handler to show/hide style config options
-            $("#node-input-style").change(() => {
-                const val = $("#node-input-style").prop("checked");
-                if (val) {
-                    $("#node-styles").show();
+                if (this.color) {
+                    $('#node-test-text').css({
+                        color: this.color
+                    })
                 }
-                else {
-                    $("#node-styles").hide();
-                }
-            });
-            $("#node-input-style").change();
-
-            // when opening the config, make sure the test text is updated
-            if (this.fontSize) {
-                $("#node-test-text").css({
-                    "font-size": this.fontSize +"px",
-                }); 
             }
-            if (this.color) {
-                $("#node-test-text").css({
-                    "color": this.color
-                }); 
-            }
-        }
-    });
+        })
+    })()
 </script>
 
 <script type="text/html" data-template-name="ui-text">

@@ -1,124 +1,132 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-dropdown',{
-        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
-        color: 'rgb(176, 223, 227)',
-        defaults: {
-            group: { type: 'ui-group', required: true },
-            name: {value: ''},
-            label: {value: 'Select Option:'},
-            tooltip: {value: ''},
-            order: {value: 0},
-            width: {value: 0, validate: function(v) {
-                    var width = v||0;
-                    var currentGroup = $('#node-input-group').val()||this.group;
-                    var groupNode = RED.nodes.node(currentGroup);
-                    var valid = !groupNode || +width <= +groupNode.width;
-                    $("#node-input-size").toggleClass("input-error",!valid);
-                    return valid;
-                }
-            },
-            height: {value: 0},
-            passthru: {value: true},
-            multiple: {value: false},
-            options: {value:[{value: '', label : ''}],
-                validate:function(v) {
-                    var unique = new Set(v.map(function(o) {return o.value;}));
-                    return v.length == unique.size;
-                }},
-            payload: {value: ''},
-            topic: {value: 'topic', validate: (RED.validators.hasOwnProperty('typedInput')?RED.validators.typedInput('topicType'):function(v) { return true})},
-            topicType: {value: 'msg'},
-            className: {value: ''}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "font-awesome/fa-bars",
-        paletteLabel: 'dropdown',
-        label: function() { return this.name || (~this.label.indexOf("{{") ? null : this.label) || 'dropdown'; },
-        labelStyle: function() { return this.name?"node_label_italic":""; },
-        oneditprepare: function() {
-            if (this.multiple === undefined) {
-                $("#node-input-multiple").prop('checked', false);;
-            }
-            // $("#node-input-size").elementSizer({
-            //     width: "#node-input-width",
-            //     height: "#node-input-height",
-            //     group: "#node-input-group"
-            // });
-            var un = new Set(this.options.map(function(o) {return o.value}));
-            if (this.options.length == un.size) { $("#valWarning").hide(); }
-            else { $("#valWarning").show(); }
-
-            function generateOption(i, option) {
-                var container = $('<li/>',{style:"background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);"});
-                var row = $('<div/>').appendTo(container);
-                var row2 = $('<div/>',{style:"padding-top:5px; padding-left:175px;"}).appendTo(container);
-                var row3 = $('<div/>',{style:"padding-top:5px; padding-left:120px;"}).appendTo(container);
-
-                $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row);
-
-                var valueField = $('<input/>',{class:"node-input-option-value",type:"text",style:"margin-left:7px; width:calc(50% - 32px);", placeholder: 'Value',value:option.value}).appendTo(row).typedInput({default:option.type||'str',types:['str','num','bool']});
-                var labelField = $('<input/>',{class:"node-input-option-label",type:"text",style:"margin-left:7px; width:calc(50% - 32px);", placeholder: 'Label', value:option.label}).appendTo(row);
-
-                var finalspan = $('<span/>',{style:"float:right; margin-right:8px;"}).appendTo(row);
-                var deleteButton = $('<a/>',{href:"#",class:"editor-button editor-button-small", style:"margin-top:7px; margin-left:5px;"}).appendTo(finalspan);
-                $('<i/>',{class:"fa fa-remove"}).appendTo(deleteButton);
-
-                deleteButton.click(function() {
-                    container.css({"background":"var(--red-ui-secondary-background-inactive, #fee)"});
-                    container.fadeOut(300, function() {
-                        $(this).remove();
-                    });
-                });
-
-                $("#node-input-option-container").append(container);
-            }
-
-            $("#node-input-add-option").click(function() {
-                generateOption($("#node-input-option-container").children().length+1, {});
-                $("#node-input-option-container-div").scrollTop($("#node-input-option-container-div").get(0).scrollHeight);
-            });
-
-            for (var i=0; i<this.options.length; i++) {
-                var option = this.options[i];
-                generateOption(i+1,option);
-            }
-
-            $( "#node-input-option-container" ).sortable({
-                axis: "y",
-                handle:".node-input-option-handle",
-                cursor: "move"
-            });
-
-            $('#node-input-topic').typedInput({
-                default: 'str',
-                typeField: $("#node-input-topicType"),
-                types: ['str','msg','flow','global']
-            });
-        },
-        oneditsave: function() {
-            var options = $("#node-input-option-container").children();
-            var node = this;
-            node.options = [];
-            options.each(function(i) {
-                var option = $(this);
-                var o = {
-                    label: option.find(".node-input-option-label").val(),
-                    value: option.find(".node-input-option-value").typedInput('value'),
-                    type: option.find(".node-input-option-value").typedInput('type')
-                };
-                if (option.find(".node-input-option-value").typedInput('type') === "num") {
-                    o.value = Number(o.value);
-                }
-                if (option.find(".node-input-option-value").typedInput('type') === "bool") {
-                    o.value = (o.value == "true");
-                }
-                node.options.push(o);
-            });
-        },
-        oneditresize: function() {
+    (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
         }
-    });
+        RED.nodes.registerType('ui-dropdown', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(176, 223, 227)',
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                label: { value: 'Select Option:' },
+                tooltip: { value: '' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                passthru: { value: true },
+                multiple: { value: false },
+                options: {
+                    value: [{ value: '', label: '' }],
+                    validate: function (v) {
+                        const unique = new Set(v.map(function (o) { return o.value }))
+                        return v.length === unique.size
+                    }
+                },
+                payload: { value: '' },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
+                className: { value: '' }
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: 'font-awesome/fa-bars',
+            paletteLabel: 'dropdown',
+            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'dropdown' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                if (this.multiple === undefined) {
+                    $('#node-input-multiple').prop('checked', false)
+                }
+                // $("#node-input-size").elementSizer({
+                //     width: "#node-input-width",
+                //     height: "#node-input-height",
+                //     group: "#node-input-group"
+                // });
+                const un = new Set(this.options.map(function (o) { return o.value }))
+                if (this.options.length === un.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
+
+                function generateOption (i, option) {
+                    const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                    const row = $('<div/>').appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                    $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
+
+                    $('<input/>', { class: 'node-input-option-value', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Value', value: option.value }).appendTo(row).typedInput({ default: option.type || 'str', types: ['str', 'num', 'bool'] })
+                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Label', value: option.label }).appendTo(row)
+
+                    const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
+                    const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
+                    $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
+
+                    deleteButton.click(function () {
+                        container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                        container.fadeOut(300, function () {
+                            $(this).remove()
+                        })
+                    })
+
+                    $('#node-input-option-container').append(container)
+                }
+
+                $('#node-input-add-option').click(function () {
+                    generateOption($('#node-input-option-container').children().length + 1, {})
+                    $('#node-input-option-container-div').scrollTop($('#node-input-option-container-div').get(0).scrollHeight)
+                })
+
+                for (let i = 0; i < this.options.length; i++) {
+                    const option = this.options[i]
+                    generateOption(i + 1, option)
+                }
+
+                $('#node-input-option-container').sortable({
+                    axis: 'y',
+                    handle: '.node-input-option-handle',
+                    cursor: 'move'
+                })
+
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+            },
+            oneditsave: function () {
+                const options = $('#node-input-option-container').children()
+                const node = this
+                node.options = []
+                options.each(function (i) {
+                    const option = $(this)
+                    const o = {
+                        label: option.find('.node-input-option-label').val(),
+                        value: option.find('.node-input-option-value').typedInput('value'),
+                        type: option.find('.node-input-option-value').typedInput('type')
+                    }
+                    if (option.find('.node-input-option-value').typedInput('type') === 'num') {
+                        o.value = Number(o.value)
+                    }
+                    if (option.find('.node-input-option-value').typedInput('type') === 'bool') {
+                        o.value = (o.value === 'true')
+                    }
+                    node.options.push(o)
+                })
+            },
+            oneditresize: function () {
+            }
+        })
+    })()
 </script>
 
 <script type="text/html" data-template-name="ui-dropdown">
@@ -152,7 +160,7 @@
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-multiple"><i class="fa fa-th-list"></i> Allow multiple selections from list: </label>
-        <input type="checkbox" checked id="node-input-multiple" style="display: ineline-block; width: auto; margin: 0px 0px 0px 4px;">
+        <input type="checkbox" checked id="node-input-multiple" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>
     <!--<div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>

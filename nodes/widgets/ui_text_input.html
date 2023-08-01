@@ -1,42 +1,46 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-text-input', {
-        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
-        color: 'rgb(176, 223, 227)',
-        defaults: {
-            group: { type: 'ui-group', required: true },
-            name: {value: ''},
-            label: {value: 'text'},
-            order: {value: 0},
-            width: {value: 0, validate: function(v) {
-                    var width = v || 0;
-                    var currentGroup = $('#node-input-group').val()||this.group;
-                    var groupNode = RED.nodes.node(currentGroup);
-                    var valid = !groupNode || +width <= +groupNode.width;
-                    $("#node-input-size").toggleClass("input-error",!valid);
-                    return valid;
-                }
+    (function () {
+        RED.nodes.registerType('ui-text-input', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(176, 223, 227)',
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                label: { value: 'text' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                mode: { value: 'text', required: true },
+                passthru: { value: true }
             },
-            height: { value: 0 },
-            mode: { value: 'text', required: true},
-            passthru: { value: true }
-        },
-        inputs: 1,
-        outputs: 1,
-        outputLabels: function() { return this.mode; },
-        icon: "font-awesome/fa-i-cursor",
-        paletteLabel: 'text input',
-        oneditprepare: function() {
-            $("#node-input-size").elementSizer({
-                width: "#node-input-width",
-                height: "#node-input-height",
-                group: "#node-input-group"
-            });
-        },
-        label: function() {
-            return this.name || (~this.label.indexOf("{{") ? null : this.label) || this.mode + ' input';
-        },
-        labelStyle: function() { return this.name?"node_label_italic":""; },
-    });
+            inputs: 1,
+            outputs: 1,
+            outputLabels: function () { return this.mode },
+            icon: 'font-awesome/fa-i-cursor',
+            paletteLabel: 'text input',
+            oneditprepare: function () {
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
+            },
+            label: function () {
+                return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
+            },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' }
+        })
+    })()
 </script>
 
 <script type="text/html" data-template-name="ui-text-input">
@@ -96,4 +100,3 @@
     </div>
     <div class="form-tips">Setting <b>Delay</b> to 0 waits for Enter or Tab key, to send input.</span></div>
 </script>
-<style></style>

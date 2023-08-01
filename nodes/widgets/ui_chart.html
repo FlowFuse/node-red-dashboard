@@ -1,87 +1,91 @@
 <script type="text/javascript">
-    RED.nodes.registerType('ui-chart', {
-        category: RED._("@flowforge/node-red-dashboard/ui-base:ui-base.label.category"),
-        color: 'rgb(119, 198, 204)',
-        defaults: {
-            group: { type: 'ui-group', required: true },
-            name: {value: ''},
-            label: {value: 'chart'},
-            order: {value: Number.MAX_SAFE_INTEGER},
-            chartType: {value: 'line'},
-            xAxisType: {value: 'linear'},
-            width: {value: 0, validate: function(v) {
-                    var width = v || 0;
-                    var currentGroup = $('#node-input-group').val()||this.group;
-                    var groupNode = RED.nodes.node(currentGroup);
-                    var valid = !groupNode || +width <= +groupNode.width;
-                    $("#node-input-size").toggleClass("input-error",!valid);
-                    return valid;
-                }
+    (function () {
+        RED.nodes.registerType('ui-chart', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(119, 198, 204)',
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                label: { value: 'chart' },
+                order: { value: Number.MAX_SAFE_INTEGER },
+                chartType: { value: 'line' },
+                xAxisType: { value: 'linear' },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 }
             },
-            height: {value: 0}
-        },
-        inputs: 1,
-        outputs: 1,
-        inputLabels: function() { return this.chartType; },
-        outputLabels: ["chart state"],
-        icon: "font-awesome/fa-line-chart",
-        align: "right",
-        paletteLabel: 'chart',
-        label: function() {
-            return this.name || (~this.label.indexOf("{{") ? null : this.label) || this.mode + ' input';
-        },
-        labelStyle: function() { return this.name?"node_label_italic":""; },
-        oneditprepare: function () {
-            $("#node-input-size").elementSizer({
-                width: "#node-input-width",
-                height: "#node-input-height",
-                group: "#node-input-group"
-            });
+            inputs: 1,
+            outputs: 1,
+            inputLabels: function () { return this.chartType },
+            outputLabels: ['chart state'],
+            icon: 'font-awesome/fa-line-chart',
+            align: 'right',
+            paletteLabel: 'chart',
+            label: function () {
+                return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
+            },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
 
-            // set value options for chart's type
-            $("#node-input-chartType").typedInput({
-                type: "chartType",
-                types: [{
-                    value: 'line',
-                    options: [
-                        { value: 'line', label: 'Line'},
-                        { value: 'bar', label: 'Bar'},
-                        { value: 'scatter', label: 'Scatter'}
-                    ]
-                }],
-                typeField: "#node-input-chartTypeType"
-            });
-
-            // line    = categorical, time, linear, log
-            // scatter = categorical, time, linear, log
-            // bar     = categorical (or just hide)
-
-            // provide options for x-axis type
-            $("#node-input-xAxisType").typedInput();
-
-            // handle event when chart's type is changed
-            $("#node-input-chartType").on("change", (evt) => {
-                const value = $("#node-input-chartType").typedInput("value")
-                if (value === 'line' || value === 'scatter') {
-                    $("#node-input-xAxisType").typedInput("types", [{
-                        value: 'linear',
+                // set value options for chart's type
+                $('#node-input-chartType').typedInput({
+                    type: 'chartType',
+                    types: [{
+                        value: 'line',
                         options: [
-                            { value: 'linear', label: 'Linear'},
-                            { value: 'category', label: 'Categorical'}
+                            { value: 'line', label: 'Line' },
+                            { value: 'bar', label: 'Bar' },
+                            { value: 'scatter', label: 'Scatter' }
                         ]
-                    }])
-                    $("#node-input-xAxisType").typedInput("type", "linear")
-                } else {
-                    $("#node-input-xAxisType").typedInput("types", [{
-                        value: 'linear',
-                        options: [
-                            { value: 'category', label: 'Categorical'}
-                        ]
-                    }])
-                }
-            })
-        },
-    });
+                    }],
+                    typeField: '#node-input-chartTypeType'
+                })
+
+                // line    = categorical, time, linear, log
+                // scatter = categorical, time, linear, log
+                // bar     = categorical (or just hide)
+
+                // provide options for x-axis type
+                $('#node-input-xAxisType').typedInput()
+
+                // handle event when chart's type is changed
+                $('#node-input-chartType').on('change', (evt) => {
+                    const value = $('#node-input-chartType').typedInput('value')
+                    if (value === 'line' || value === 'scatter') {
+                        $('#node-input-xAxisType').typedInput('types', [{
+                            value: 'linear',
+                            options: [
+                                { value: 'linear', label: 'Linear' },
+                                { value: 'category', label: 'Categorical' }
+                            ]
+                        }])
+                        $('#node-input-xAxisType').typedInput('type', 'linear')
+                    } else {
+                        $('#node-input-xAxisType').typedInput('types', [{
+                            value: 'linear',
+                            options: [
+                                { value: 'category', label: 'Categorical' }
+                            ]
+                        }])
+                    }
+                })
+            }
+        })
+    })()
 </script>
 
 <script type="text/html" data-template-name="ui-chart">

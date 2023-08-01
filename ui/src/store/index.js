@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { createStore } from 'vuex'
 
 import ui from './ui.js'
