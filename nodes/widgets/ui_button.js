@@ -14,10 +14,6 @@ module.exports = function(RED) {
                 var error = null
                 var event = msg.event
 
-                if (event) {
-                    console.log('event triggered by UI button click')
-                }
-
                 // retrieve the payload we're sending from this button
                 var payloadType = config.payloadType;
                 var payload = config.payload;

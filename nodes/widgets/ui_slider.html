@@ -50,7 +50,7 @@
 </script>
 
 <script type="text/html" data-template-name="ui-slider">
-    <div class="form-rows">
+    <div class="ui-slider">
         <div class="form-row">
             <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
             <input type="text" id="node-input-group">
@@ -116,21 +116,12 @@
     </div>
 </script>
 
-<!-- 
-<style scoped>
-scoped is depreciated and not supported in most browsers instead use a unique
-class name for the style to make it specific to this widget.
-In this case, setting .form-row was affecting all other widgets - in particular the code editor.
-It was causing the clientWidth to be zero and thus the elementSizer was not working correctly.
-In short, we should be more specific with our CSS selectors on edit forms & probably handle the fragile
-code editor width issue in a different way - but for now, being more specific is the quick fix
--->
 <style id="nr-db2-ui-slider-styles">
-    .red-ui-editor div.form-rows.form-row {
+    .red-ui-editor div.ui-slider.form-row {
         display: flex;
         align-items: center;
     }
-    .red-ui-editor div.form-rows.form-row label {
+    .red-ui-editor div.ui-slider.form-row label {
         margin-bottom: 0;
     }
 </style>
