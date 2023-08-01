@@ -11,12 +11,7 @@ module.exports = function (RED) {
         const evts = {
             onAction: true,
             onInput: function (msg, send) {
-                let error = null
-                const event = msg.event
-
-                if (event) {
-                    console.log('event triggered by UI button click')
-                }
+                var error = null
 
                 // retrieve the payload we're sending from this button
                 let payloadType = config.payloadType
