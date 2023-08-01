@@ -289,11 +289,19 @@ module.exports = function (RED) {
                 // store the latest msg passed to node
                 wNode._msg = msg
 
+                // pre-process the msg before running our onInput function
+                if (widgetEvents?.beforeSend) {
+                    msg = widgetEvents.beforeSend(msg)
+                }
+
                 // run any node-specific handler defined in the Widget's component
                 if (widgetEvents?.onInput) {
                     widgetEvents?.onInput(msg, send, done)
                 } else {
-                    done()
+                    // msg could be null if the beforeSend errors and returns null
+                    if (msg) {
+                        send(msg)
+                    }
                 }
             })
 
@@ -334,10 +342,14 @@ module.exports = function (RED) {
 
                             console.log('conn:' + conn.id, 'on:widget-change', value)
                             // TODO: bind this property to whichever chosen, for now use payload
-                            const msg = wNode._msg || {}
+                            let msg = wNode._msg || {}
                             msg.payload = value
 
                             wNode._msg = msg
+
+                            if (widgetEvents?.beforeSend) {
+                                msg = widgetEvents.beforeSend(msg)
+                            }
 
                             // simulate Node-RED node receiving an input
                             wNode.send(msg)
@@ -360,13 +372,18 @@ module.exports = function (RED) {
             if (widgetEvents?.onAction) {
                 if (!ui.events.change[widget.id]) {
                     ui.ioServer.on('connection', function (conn) {
-                        conn.on('widget-action:' + widget.id, (evt) => {
+                        conn.on('widget-action:' + widget.id, (msg) => {
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id)
 
                             console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
+
+                            if (widgetEvents?.beforeSend) {
+                                msg = widgetEvents.beforeSend(msg)
+                            }
+
                             // simulate Node-RED node receiving an input as to trigger on('input)
-                            wNode.send(evt)
+                            wNode.send(msg)
                         })
                     })
                     ui.events.action[widget.id] = true

@@ -13,6 +13,7 @@ module.exports = function (RED) {
 
         const evts = {
             // runs on UI interaction
+            // value = true | false from the ui-switch
             onChange: function (value) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)

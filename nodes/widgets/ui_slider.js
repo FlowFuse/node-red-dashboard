@@ -24,10 +24,7 @@ module.exports = function (RED) {
         }
 
         const evts = {
-            onChange: true,
-            onInput: function (msg, send) {
-                send(msg)
-            }
+            onChange: true
         }
 
         // inform the dashboard UI that we are adding this node
