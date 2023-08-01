@@ -12,7 +12,6 @@ module.exports = function(RED) {
             onAction: true,
             onInput: function (msg, send) {
                 var error = null
-                var event = msg.event
 
                 // retrieve the payload we're sending from this button
                 var payloadType = config.payloadType;
