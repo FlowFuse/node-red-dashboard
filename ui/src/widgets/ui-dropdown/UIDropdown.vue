@@ -16,8 +16,9 @@
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
-import { mapState } from 'vuex' // eslint-disable-line import/order
+import { mapState } from 'vuex'
+
+import { useDataTracker } from '../data-tracker.js'
 
 export default {
     name: 'DBUIDropdown',

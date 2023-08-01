@@ -3,9 +3,10 @@
 </template>
 
 <script>
-import VueMarkdown from 'vue-markdown-render' // eslint-disable-line import/order
-import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
-import { mapState } from 'vuex' // eslint-disable-line import/order
+import VueMarkdown from 'vue-markdown-render'
+import { mapState } from 'vuex'
+
+import { useDataTracker } from '../data-tracker.js'
 
 export default {
     name: 'DBUIMarkdown',

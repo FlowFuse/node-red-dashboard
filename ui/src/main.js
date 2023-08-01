@@ -45,9 +45,6 @@ const vuetify = createVuetify({
 
 import store from './store/index.js'
 
-// widgets
-import UIText from './widgets/ui-text/UIText' // eslint-disable-line n/no-missing-import
-
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
@@ -79,9 +76,6 @@ const app = createApp(App)
 
 // make the socket service available app-wide via this.$socket
 app.provide('$socket', socket)
-
-// widgets
-app.component('ui-text', UIText)
 
 // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
 app.mount('#app')
