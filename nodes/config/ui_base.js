@@ -36,6 +36,7 @@ module.exports = function (RED) {
      * Initialise the Express Server and SocketIO Server in Singleton Pattern
      */
     function init (node, config) {
+        console.log('📈 ui-base: init', config)
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!ui.app) {
             ui.app = RED.httpNode || RED.httpAdmin
@@ -68,6 +69,7 @@ module.exports = function (RED) {
             console.log('Creating socket.io server at path', socketIoPath)
             // store reference to the SocketIO Server
             ui.ioServer = new Server(ui.httpServer, serverOptions)
+            ui.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
 
             const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
             node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
@@ -75,38 +77,56 @@ module.exports = function (RED) {
     }
 
     /**
-     * Close the Express Server and SocketIO Server
+     * Close the SocketIO Server
      */
     function close (node, done) {
-        // dont call done until the callbacks say they're done!
-        done = done || function () {}
-        const httpServerClose = (_done) => {
-            if (ui.httpServer) {
-                ui.httpServer.close(() => {
-                    node.log('server shut down')
-                    _done()
-                })
-            } else {
-                _done()
-            }
+        console.log('📈 ui-base: close')
+
+        if (!ui.ioServer) {
+            done()
+            return
         }
-        const ioServerClose = (_done) => {
-            if (ui.ioServer.engine) {
-                ui.ioServer.close((err) => {
-                    if (err) {
-                        node.log('Error shutting down socket.io server', err)
-                    } else {
-                        node.log('socket.io server shut down')
-                    }
-                    _done()
-                })
-            } else {
-                _done()
+
+        // determine if any ui-pages are left, if so, don't close the server
+        const baseNodes = []
+        const pageNodes = []
+        const themes = []
+        RED.nodes.eachNode(n => {
+            if (n.type === 'ui-page') {
+                pageNodes.push(n)
+            } else if (n.type === 'ui-base' && n.id !== node.id) {
+                baseNodes.push(n)
+            } else if (n.type === 'ui-theme') {
+                themes.push(n)
             }
-        }
-        httpServerClose(() => {
-            ioServerClose(done)
         })
+
+        if (pageNodes.length > 0) {
+            // there are still ui-pages, so don't close the server
+            done()
+            return
+        }
+        node.ui.pages.clear()// ensure we clear out any pages that may have been left over
+        // since there are no pages, we can assume widgets and groups are also gone
+        node.ui.widgets.clear()
+        node.ui.groups.clear()
+
+        if (baseNodes.length > 0) {
+            // there are still other ui-base nodes, don't close the server
+            done()
+            return
+        }
+
+        // as there are no more instances of ui-page and this is the last ui-base, close the server
+        ui.ioServer.removeAllListeners()
+        ui.ioServer.disconnectSockets(true)
+        // tidy up
+        if (themes.length === 0) {
+            node.ui.themes.clear()
+        }
+        node.ui.dashboards.clear() // ensure we clear out any dashboards that may have been left over
+
+        done && done()
     }
 
     /**
@@ -125,6 +145,8 @@ module.exports = function (RED) {
      * @param {*} n
      */
     function UIBaseNode (n) {
+        console.log('📈 ui-base: UIBaseNode instantiate', n)
+
         const node = this
         RED.nodes.createNode(node, n)
 
@@ -172,11 +194,13 @@ module.exports = function (RED) {
         }, 300)
 
         // Make sure we clean up after ourselves
-        node.on('close', async (done) => {
-            // clear event handlers on base node
-            ui.ioServer?.off('connection', onConnection)
-            close(node)
-            done()
+        node.on('close', (removed, done) => {
+            close(node, function (err) {
+                if (err) {
+                    node.error(`Error closing socket.io server for ${node.id}`, err)
+                }
+                done()
+            })
         })
 
         /**
@@ -269,15 +293,18 @@ module.exports = function (RED) {
              * Event Handlers
              */
 
-            widgetNode.on('close', function () {
-                console.log('Node-RED Closed', widget.id)
+            widgetNode.on('close', function (removed, done) {
+                node.deregister(null, null, widgetNode)
+                done()
             })
 
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(widgetNode.id)
-
+                if (!wNode) {
+                    return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+                }
                 // send a message to the UI to let it know we've received a msg
                 try {
                     // emit to all connected UIs
@@ -311,6 +338,9 @@ module.exports = function (RED) {
                     async function handler () {
                         // ensure we have latest instance of the widget's node
                         const wNode = RED.nodes.getNode(widgetNode.id)
+                        if (!wNode) {
+                            return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+                        }
                         console.log('conn:' + conn.id, 'on:widget-load:' + widget.id, wNode._msg)
                         // replicate receiving an input, so the widget can handle accordingly
                         const msg = wNode._msg
@@ -339,7 +369,9 @@ module.exports = function (RED) {
                         function defaultHandler (value) {
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id)
-
+                            if (!wNode) {
+                                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+                            }
                             console.log('conn:' + conn.id, 'on:widget-change', value)
                             // TODO: bind this property to whichever chosen, for now use payload
                             let msg = wNode._msg || {}
@@ -375,7 +407,9 @@ module.exports = function (RED) {
                         conn.on('widget-action:' + widget.id, (msg) => {
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id)
-
+                            if (!wNode) {
+                                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+                            }
                             console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
 
                             if (widgetEvents?.beforeSend) {
@@ -388,6 +422,23 @@ module.exports = function (RED) {
                     })
                     ui.events.action[widget.id] = true
                 }
+            }
+        }
+
+        node.deregister = function (page, group, widgetNode) {
+            // remove widget from our UI config
+            if (widgetNode) {
+                node.ui.widgets.delete(widgetNode.id)
+            }
+
+            // if there are no more widgets on this group, remove the group from our UI config
+            if (group && [...node.ui.widgets].filter(w => w.props?.group === group.id).length === 0) {
+                node.ui.groups.delete(group.id)
+            }
+
+            // if there are no more groups on this page, remove the page from our UI config
+            if (page && [...node.ui.groups].filter(g => g.page === page.id).length === 0) {
+                node.ui.pages.delete(page.id)
             }
         }
     }
