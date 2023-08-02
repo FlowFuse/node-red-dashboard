@@ -27,14 +27,19 @@ export default {
         // const template = ref(compile('<div>Hello World</div>'))
         return () => h({
             props: ['id', 'props'],
-            template: '<div>id: {{ id }}</div>' + props.props.format
+            template: '<div>id: {{ id }}</div>' + props.props.format,
+            computed: {
+                ...mapState('data', ['values']),
+                msg () {
+                    return {
+                        payload: this.values[this.id]
+                    }
+                }
+            }
         }, {
             id: props.id,
             props: props.props
         })
-    },
-    computed: {
-        ...mapState('data', ['values'])
     }
 }
 </script>
