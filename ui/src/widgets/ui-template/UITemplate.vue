@@ -1,18 +1,8 @@
-<template>
-    <div class="nrdb-ui-widget">
-        Using v-html= -
-        <div v-html="props.format" />
-        {{ props.format }}
-        Using component :is -
-        <component :is="template" />
-    </div>
-</template>
-
 <script>
 
 // eslint-disable vue/one-component-per-file
 
-import { defineComponent, markRaw } from 'vue'
+import { h } from 'vue'
 
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
@@ -27,34 +17,21 @@ export default {
     },
     setup (props) {
         useDataTracker(props.id)
-    },
-    data () {
-        console.log('data')
-        // eslint-disable-next-line vue/one-component-per-file
-        const options = markRaw(defineComponent({
-            template: '<div>Template Component</div>'
-        }))
-
-        console.log(options)
-
-        // const template = defineAsyncComponent(() => {
-        //     console.log('inside async')
-        //     return new Promise((resolve, reject) => {
-        //         console.log(UIButton)
-        //         // ...load component from server
-        //         resolve({
-        //             name: 'UITemplate',
-        //             render () {
-        //                 return h({ render: compile('<div>Template Component</div>') })
-        //             }
-        //         })
-        //     })
-        // })
+        // const template = ref(compile('<div>Hello World</div>'))
         // console.log(template)
-        // const template = defineAsyncComponent(() => import('../ui-button/UIButton.vue'))
-        return {
-            template: options
-        }
+        // return {
+        //     template: {
+        //         template: '<div>Hello World</div>'
+        //     }
+        // }
+        // const template = ref(compile('<div>Hello World</div>'))
+        return () => h({
+            props: ['id', 'props'],
+            template: '<div>id: {{ id }}</div>' + props.props.format
+        }, {
+            id: props.id,
+            props: props.props
+        })
     },
     computed: {
         ...mapState('data', ['values'])
