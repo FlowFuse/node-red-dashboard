@@ -79,7 +79,6 @@ module.exports = function (RED) {
      * Close the SocketIO Server
      */
     function close (node, done) {
-        console.log('📈 ui-base: close')
 
         if (!ui.ioServer) {
             done()
