@@ -190,6 +190,7 @@ module.exports = function (RED) {
 
         // Make sure we clean up after ourselves
         node.on('close', (removed, done) => {
+            ui.ioServer?.off('connection', onConnection)
             close(node, function (err) {
                 if (err) {
                     node.error(`Error closing socket.io server for ${node.id}`, err)
