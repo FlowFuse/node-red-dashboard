@@ -17,14 +17,6 @@ export default {
     },
     setup (props) {
         useDataTracker(props.id)
-        // const template = ref(compile('<div>Hello World</div>'))
-        // console.log(template)
-        // return {
-        //     template: {
-        //         template: '<div>Hello World</div>'
-        //     }
-        // }
-        // const template = ref(compile('<div>Hello World</div>'))
         return () => h({
             props: ['id', 'props'],
             template: '<div>id: {{ id }}</div>' + props.props.format,
