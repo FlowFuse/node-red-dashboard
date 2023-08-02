@@ -79,7 +79,6 @@ module.exports = function (RED) {
      * Close the SocketIO Server
      */
     function close (node, done) {
-
         if (!ui.ioServer) {
             done()
             return
@@ -143,8 +142,6 @@ module.exports = function (RED) {
      * @param {*} n
      */
     function UIBaseNode (n) {
-        console.log('📈 ui-base: UIBaseNode instantiate', n)
-
         const node = this
         RED.nodes.createNode(node, n)
 
