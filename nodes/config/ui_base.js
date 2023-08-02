@@ -36,7 +36,6 @@ module.exports = function (RED) {
      * Initialise the Express Server and SocketIO Server in Singleton Pattern
      */
     function init (node, config) {
-        console.log('📈 ui-base: init', config)
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!ui.app) {
             ui.app = RED.httpNode || RED.httpAdmin
