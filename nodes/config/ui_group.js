@@ -11,6 +11,11 @@ module.exports = function (RED) {
         const page = RED.nodes.getNode(config.page)
         node.log('UI Page Constructor')
 
+        node.on('close', function (removed, done) {
+            node.deregister() // deregister self
+            done()
+        })
+
         /**
          * Function for widgets to register themselves with this page
          * Calls the parent UI Base "register" function and registers this page,
@@ -20,6 +25,11 @@ module.exports = function (RED) {
         node.register = function (widgetNode, widgetConfig, widgetEvents) {
             const group = config
             page.register(group, widgetNode, widgetConfig, widgetEvents)
+        }
+
+        node.deregister = function (widgetNode) {
+            const group = config
+            page.deregister(group, widgetNode)
         }
     }
     RED.nodes.registerType('ui-group', UIGroupNode)
