@@ -19,7 +19,7 @@ export default {
         useDataTracker(props.id)
         return () => h({
             props: ['id', 'props'],
-            template: '<div>id: {{ id }}</div>' + props.props.format,
+            template: props.props.format,
             computed: {
                 ...mapState('data', ['values']),
                 msg () {
