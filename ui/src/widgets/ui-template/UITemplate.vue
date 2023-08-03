@@ -6,7 +6,6 @@ import { h } from 'vue'
 
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
-// import UIButton from '../ui-button/UIButton.vue' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITemplate',
