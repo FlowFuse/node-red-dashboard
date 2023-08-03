@@ -34,10 +34,13 @@ export function useDataTracker (widgetId, onInput) {
                     // sometimes we need to have different behaviour
                     onInput(msg)
                 } else {
-                    // but most of the time, we just care about the latest value of msg.payload
+                    // but most of the time, we just care about the value of msg
                     store.commit('data/bind', {
                         widgetId,
-                        data: msg.payload
+                        msg // TODO: we should sanitise what is stored in the store?
+                        // One way to do this is to permit only keys explicitly listed in the widget's config (default to topic+payload if none are specified)
+                        // A smarter? way to do this is to scan the template for msg.? binds and store only those keys
+                        // For now, we'll just store the whole msg
                     })
                 }
             })

@@ -7,9 +7,11 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
-
+        const evts = {
+            onAction: true // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
+        }
         // inform the dashboard UI that we are adding this node
-        group.register(node, config)
+        group.register(node, config, evts)
     }
 
     RED.nodes.registerType('ui-template', TemplateNode)

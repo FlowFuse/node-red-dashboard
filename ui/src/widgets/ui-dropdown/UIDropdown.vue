@@ -33,44 +33,60 @@ export default {
         }
     },
     computed: {
-        ...mapState('data', ['values'])
+        ...mapState('data', ['messages'])
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
         useDataTracker(this.id, (msg) => {
-            let value = msg.payload
-            // rebuild the full list of options from just their values (req'd for multi selection)
-            if (Array.isArray(msg.payload)) {
-                value = this.props.options.filter((o) => {
-                    console.log(o)
-                    return msg.payload.includes(o.value)
+            let payload = msg.payload
+
+            // When a msg comes in from Node-RED, we need support 2 operations:
+            // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
+            // 2. update the selected value(s)
+            // additionally, we need to support both single and multi selection
+
+            // For now, we only support selecting which item(s) are selected, not updating the available options
+
+            // if the payload is an array, we assume it is a list of values to select
+
+            // first, if we have a single value, we need to convert it to an array
+            if (!Array.isArray(payload)) {
+                payload = [payload]
+            }
+
+            // now if this is a single selection, we just need to find the option with the matching value
+            if (!this.props.multiple) {
+                payload = this.props.options.find((o) => {
+                    return o.value === payload[0]
+                })
+            } else {
+                // this is a multi selection, we need to find all the options with matching values
+                payload = this.props.options.filter((o) => {
+                    return payload.includes(o.value)
                 })
             }
+            // if we didn't find any matching options, we stop here
+            if (!payload) {
+                return
+            }
+
             // update our vuex store with the value retrieved from Node-RED
             this.$store.commit('data/bind', {
                 widgetId: this.id,
-                data: value
+                msg
             })
             // ensure we set our local "value" to match
-            // that stored in the vuex store
-            this.value = this.values[this.id]
+            this.value = payload
         })
     },
     methods: {
         onChange () {
             console.log('dropdown changed')
             // ensure our data binding with vuex store is updated
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                data: this.value
-            })
-            if (this.props.multiple) {
-                console.log('emitting', this.value.map(v => v.value))
-                this.$socket.emit(`widget-change:${this.id}`, this.value.map(v => v.value))
-            } else {
-                console.log('emitting', this.value)
-                this.$socket.emit(`widget-change:${this.id}`, this.value)
-            }
+            const msg = this.messages[this.id] || {}
+            msg.payload = this.value
+            this.$store.commit('data/bind', msg)
+            this.$socket.emit(`widget-change:${this.id}`, msg.payload)
         }
     }
 }
