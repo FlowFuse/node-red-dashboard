@@ -41,7 +41,8 @@
             "ui-switch": "nodes/widgets/ui_switch.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
-            "ui-markdown": "nodes/widgets/ui_markdown.js"
+            "ui-markdown": "nodes/widgets/ui_markdown.js",
+            "ui-template": "nodes/widgets/ui_template.js"
         }
     },
     "dependencies": {

@@ -29,7 +29,7 @@
                     }
                 },
                 height: { value: 0 },
-                format: { value: '<div ng-bind-html="msg.payload"></div>' },
+                format: { value: '<div>{{ msg.payload }}</div>' },
                 storeOutMessages: { value: true },
                 fwdInMessages: { value: true },
                 resendOnRefresh: { value: true },
@@ -171,6 +171,12 @@
         </select>
     </div>-->
     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <div style="display:inline-block; width:calc(100% - 105px)">
+            <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+        </div>
+    </div>
+    <div class="form-row">
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input type="text" id="node-input-group">
     </div>
@@ -184,12 +190,6 @@
         <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-template.label.className"></label>
         <input type="text" id="node-input-className" data-i18n="[placeholder]ui-template.label.classNamePlaceholder"/>
     </div>-->
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-        <div style="display:inline-block; width:calc(100% - 105px)">
-            <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-        </div>
-    </div>
     <div class="form-row" style="margin-bottom:0px;">
         <label for="node-input-format"><i class="fa fa-copy"></i> <span data-i18n="ui-template.label.template"></span></label>
         <input type="hidden" id="node-input-format">

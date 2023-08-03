@@ -1,8 +1,9 @@
-<template>
-    <div class="nrdb-ui-widget">Template Node: {{ props.format }}</div>
-</template>
-
 <script>
+
+// eslint-disable vue/one-component-per-file
+
+import { h } from 'vue'
+
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
@@ -15,9 +16,21 @@ export default {
     },
     setup (props) {
         useDataTracker(props.id)
-    },
-    computed: {
-        ...mapState('data', ['values'])
+        return () => h({
+            props: ['id', 'props'],
+            template: props.props.format,
+            computed: {
+                ...mapState('data', ['values']),
+                msg () {
+                    return {
+                        payload: this.values[this.id]
+                    }
+                }
+            }
+        }, {
+            id: props.id,
+            props: props.props
+        })
     }
 }
 </script>
