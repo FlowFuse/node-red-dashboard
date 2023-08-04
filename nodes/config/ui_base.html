@@ -1,8 +1,22 @@
+<style>
+    #ff-node-red-dashboard .red-ui-sidebar-header {
+        display: flex;
+        justify-content: space-between;
+    }
+    #ff-node-red-dashboard .red-ui-sidebar-header label {
+        margin-bottom: 0;
+    }
+</style>
+
+
 <script type="text/javascript">
 (function () {
+    const sidebarContentTemplate = '<div id="ff-node-red-dashboard"></div>'
+
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
+
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -18,6 +32,42 @@
         label: function () {
             return `${this.name} [${this.path}]` || 'UI Config'
         }
+    })
+
+    /**
+     * Add Custom Dashboard Side Menu
+     * */
+
+    const content = $(sidebarContentTemplate)
+
+    function uiLink (name, path) {
+        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${path}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+    }
+
+    RED.sidebar.addTab({
+        id: 'dashboard-2.0',
+        label: 'Dashboard 2.0',
+        name: 'Dashboard 2.0',
+        content,
+        closeable: true,
+        pinned: true,
+        disableOnEdit: true,
+        iconClass: 'fa fa-bar-chart',
+        action: '@flowforge/node-red-dashboard:show-dashboard-2.0-tab',
+        onchange: function () {
+            content.empty()
+            RED.nodes.eachConfig(function (n) {
+                if (n.type === 'ui-base') {
+                    content.append(uiLink(n.name, n.path))
+                }
+            })
+            // placeholder message
+            content.append('<span style="padding: 9px; font-style: italic; color: #a2a2a2; font-size: 8pt;">More content will be added here in future releases</span>')
+        }
+    })
+
+    RED.actions.add('@flowforge/node-red-dashboard:show-dashboard-2.0-tab', function () {
+        RED.sidebar.show('flowforge-nr-tools')
     })
 
     /**
