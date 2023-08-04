@@ -31,7 +31,7 @@ export default {
             }
             const msg = this.messages[this.id] || {}
             msg._event = evt
-            this.$socket.emit(`widget-action:${this.id}`, msg)
+            this.$socket.emit('widget-action', this.id, msg)
         }
     }
 }

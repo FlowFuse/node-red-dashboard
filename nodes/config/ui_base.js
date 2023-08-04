@@ -24,16 +24,13 @@ module.exports = function (RED) {
         /** @type { Server } */
         ioServer: null,
         /** @type {Object.<string, Socket>} */
-        connections: {},
-        events: {
-            load: {},
-            change: {},
-            action: {}
-        }
+        connections: {}
     }
 
-    /*
+    /**
      * Initialise the Express Server and SocketIO Server in Singleton Pattern
+     * @param {Object} node - Node-RED Node
+     * @param {Object} config - Node-RED Node Config
      */
     function init (node, config) {
         // eventually check if we have routes used, so we can support multiple base UIs
@@ -138,21 +135,30 @@ module.exports = function (RED) {
     }
 
     /**
-     * UI Base Node Constructor. Called each time Node-RED nodes are deployed.
-     * @param {*} n
+     * UI Base Node Constructor. Called each time Node-RED deploy creates / recreates a u-base node.
+     * * _whether this constructor is called depends on if there are any changes to THIS node_
+     * * _A full Deploy will always call this function as every node is destroyed and re-created_
+     * @param {Object} n - Node-RED node configuration as entered in the nodes editor
      */
     function UIBaseNode (n) {
         const node = this
         RED.nodes.createNode(node, n)
 
-        /**
-         * Configure & Run Express Server
-         */
+        /** @type {Object.<string, Socket>} */
+        node.connections = {} // store socket.io connections for this node
+        /** @type {NodeJS.Timeout} */
+        node.emitConfigRequested = null // used to debounce requests to emitConfig
+
+        // Configure & Run Express Server
         init(node, n)
 
-        function emitConfig (conn) {
+        /**
+         * Emit UI Config to all connected UIs
+         * @param {Socket} socket - socket.io socket connecting to the server
+         */
+        function emitConfig (socket) {
             // pass the connected UI the UI config
-            conn.emit('ui-config', node.id, {
+            socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 pages: Object.fromEntries(node.ui.pages),
                 themes: Object.fromEntries(node.ui.themes),
@@ -166,25 +172,191 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
+            node.connections[socket.id] = socket // store the connection for later use
             ui.connections[socket.id] = socket // store the connection for later use
             emitConfig(socket)
 
+            const cleanup = () => {
+                try {
+                    socket.removeListener('widget-action', onAction.bind(null, socket))
+                } catch (_error) { /* do nothing */ }
+                try {
+                    socket.removeListener('widget-change', onChange.bind(null, socket))
+                } catch (_error) { /* do nothing */ }
+                try {
+                    socket.removeListener('widget-load', onLoad.bind(null, socket))
+                } catch (_error) { /* do nothing */ }
+            }
+            // clean up then re-register listeners
+            cleanup()
+            socket.on('widget-action', onAction.bind(null, socket))
+            socket.on('widget-change', onChange.bind(null, socket))
+            socket.on('widget-load', onLoad.bind(null, socket))
+
             // handle disconnection
             socket.on('disconnect', reason => {
+                cleanup()
                 delete ui.connections[socket.id]
+                delete node.connections[socket.id]
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
+        }
+        /**
+         * Handles a widget-action event from the UI
+         * @param {Socket} conn - socket.io socket connecting to the server
+         * @param {String} id - widget id sending the action
+         * @param {*} msg - The node-red msg object to forward
+         * @returns void
+         */
+        async function onAction (conn, id, msg) {
+            console.log('conn:' + conn.id, 'on:widget-action:' + id, msg)
+
+            // ensure msg is an object. Assume the incoming data is the payload if not
+            if (!msg || typeof msg !== 'object') {
+                msg = { payload: msg }
+            }
+
+            // get widget node and configuration
+            const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
+
+            // ensure we can get the requested widget from the runtime
+            if (!wNode) {
+                return // widget does not exist (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+            }
+
+            // Wrap execution in a try/catch to ensure we don't crash Node-RED
+            try {
+                // populate topic if the node specifies one
+                if (widgetConfig.topic || widgetConfig.topicType) {
+                    try {
+                        msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
+                    } catch (_err) { /* do nothing */ }
+                }
+
+                // ensure we have a topic property in the msg, even if it's an empty string
+                if (!('topic' in msg)) {
+                    msg.topic = ''
+                }
+
+                // pre-process the msg before running our onInput function (if beforeSend is defined)
+                if (widgetEvents?.beforeSend && typeof widgetEvents.beforeSend === 'function') {
+                    msg = await widgetEvents.beforeSend(msg)
+                }
+
+                // send the msg onwards
+                wNode.send(msg)
+            } catch (error) {
+                let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
+                errorHandler = errorHandler || (typeof wNode.error === 'function' ? wNode.error : node.error)
+                errorHandler && errorHandler(error)
+            }
+        }
+
+        /**
+         * Handles a widget-change event from the UI
+         * @param {Socket} conn - socket.io socket connecting to the server
+         * @param {String} id - widget id sending the action
+         * @param {*} value - The value to send to node-red. Typically this is the payload
+         * @returns void
+         */
+        async function onChange (conn, id, value) {
+            console.log('conn:' + conn.id, 'on:widget-change:' + id, value)
+
+            // get widget node and configuration
+            const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
+
+            if (!wNode) {
+                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+            }
+            let msg = wNode._msg || {}
+            async function defaultHandler (value) {
+                msg.payload = value
+
+                // populate topic if the node specifies one
+                if (widgetConfig.topic || widgetConfig.topicType) {
+                    try {
+                        msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
+                    } catch (_err) {
+                        // do nothing
+                    }
+                }
+
+                // ensure we have a topic property in the msg, even if it's an empty string
+                if (!('topic' in msg)) {
+                    msg.topic = ''
+                }
+
+                if (widgetEvents?.beforeSend) {
+                    msg = widgetEvents.beforeSend(msg)
+                }
+                wNode._msg = msg
+                wNode.send(msg) // send the msg onwards
+            }
+
+            // wrap execution in a try/catch to ensure we don't crash Node-RED
+            try {
+                // Most of the time, we can just use this default handler,
+                // but sometimes a node needs to do something specific (e.g. ui-switch)
+                const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
+                await handler(value)
+            } catch (error) {
+                let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
+                errorHandler = errorHandler || (typeof wNode.error === 'function' ? wNode.error : node.error)
+                errorHandler && errorHandler(error)
+            }
+        }
+
+        async function onLoad (conn, id, msg) {
+            console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
+
+            const { wNode, widgetEvents } = getWidgetAndConfig(id)
+            if (!wNode) {
+                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+            }
+            async function handler () {
+                // replicate receiving an input, so the widget can handle accordingly
+                const msg = wNode._msg
+                if (msg) {
+                    // only emit something if we have something to send
+                    // and only to this connection, not all connected clients
+                    conn.emit('msg-input:' + id, msg)
+                }
+
+                // store the latest msg passed to node
+                wNode._msg = msg
+            }
+            // wrap execution in a try/catch to ensure we don't crash Node-RED
+            try {
+                handler()
+            } catch (error) {
+                let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
+                errorHandler = errorHandler || (typeof wNode.error === 'function' ? wNode.error : node.error)
+                errorHandler && errorHandler(error)
+            }
+        }
+
+        /**
+         * Get the widget node and associated configuration/event hooks
+         * @param {String} id - ID of the widget
+         * @returns {Object} - { wNode, widgetConfig, widgetEvents, widget }
+         */
+        function getWidgetAndConfig (id) {
+            const wNode = RED.nodes.getNode(id)
+            const widget = node.ui?.widgets?.get(id)
+            const widgetConfig = widget?.props || {}
+            const widgetEvents = widget?.hooks || {}
+            return { wNode, widgetConfig, widgetEvents, widget }
         }
 
         // When a UI connects - send the UI Config from Node-RED to the UI
         ui.ioServer.on('connection', onConnection)
 
         // account time for all widgets to register themselves, before sending the full config to the UI
-        // this is most important running running a "Deploy" from within Node-RED, and our onConnection doesn't run
+        // this is most important for running a "Deploy" from within Node-RED, and our onConnection doesn't run
         setTimeout(() => {
-            Object.values(ui.connections).forEach(conn => {
+            Object.values(ui.connections).forEach(socket => {
                 // pass the connected UI the UI config
-                emitConfig(conn)
+                emitConfig(socket)
             })
         }, 300)
 
@@ -237,7 +409,8 @@ module.exports = function (RED) {
                 state: {
                     enabled: widgetNode._msg?.enabled || true,
                     visible: widgetNode._msg?.visible || true
-                }
+                },
+                hooks: widgetEvents
             }
             delete widget.props.id
             delete widget.props.type
@@ -314,7 +487,7 @@ module.exports = function (RED) {
 
                 // pre-process the msg before running our onInput function
                 if (widgetEvents?.beforeSend) {
-                    msg = widgetEvents.beforeSend(msg)
+                    msg = await widgetEvents.beforeSend(msg)
                 }
 
                 // run any node-specific handler defined in the Widget's component
@@ -327,143 +500,52 @@ module.exports = function (RED) {
                     }
                 }
             })
-
-            if (!ui.events.load[widget.id]) {
-                // on first connection with the UI, send the widget it's stored state
-                ui.ioServer.on('connection', function (conn) {
-                    async function handler () {
-                        // ensure we have latest instance of the widget's node
-                        const wNode = RED.nodes.getNode(widgetNode.id)
-                        if (!wNode) {
-                            return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
-                        }
-                        console.log('conn:' + conn.id, 'on:widget-load:' + widget.id, wNode._msg)
-                        // replicate receiving an input, so the widget can handle accordingly
-                        const msg = wNode._msg
-                        if (msg) {
-                            // only emit something if we have something to send
-                            // and only to this connection, not all connected clients
-                            conn.emit('msg-input:' + widget.id, msg)
-                        }
-                    }
-                    // add listener for when the UI loads, so that we can send any
-                    // stored values associated to a widget that we have in Node-RED
-                    conn.on('widget-load:' + widget.id, handler)
-
-                    conn.on('disconnect', function () {
-                        ui.ioServer.removeListener('widget-load:' + widget.id, handler)
-                    })
-                })
-                ui.events.load[widget.id] = true
-            }
-
-            // Handle Socket IO Event Handlers
-            if (widgetEvents?.onChange) {
-                // have we configured a listener for this widget's change event?
-                if (!ui.events.change[widget.id]) {
-                    ui.ioServer.on('connection', function (conn) {
-                        async function defaultHandler (value) {
-                            // ensure we have latest instance of the widget's node
-                            const wNode = RED.nodes.getNode(widgetNode.id)
-                            if (!wNode) {
-                                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
-                            }
-                            console.log('conn:' + conn.id, 'on:widget-change', value)
-                            // TODO: bind this property to whichever chosen, for now use payload
-                            let msg = wNode._msg || {}
-                            msg.payload = value
-
-                            // populate topic is the node specifies one
-                            if (widgetConfig.topic || widgetConfig.topicType) {
-                                try {
-                                    msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
-                                } catch (_err) {
-                                    // do nothing
-                                }
-                            }
-
-                            // ensure we have a topic property in the msg, even if it's an empty string
-                            if (!('topic' in msg)) {
-                                msg.topic = ''
-                            }
-
-                            if (widgetEvents?.beforeSend) {
-                                msg = widgetEvents.beforeSend(msg)
-                            }
-                            wNode._msg = msg
-                            wNode.send(msg) // send the msg onwards
-                        }
-
-                        // Most of the time, we can just use this default handler,
-                        // but sometimes a node needs to do something specific (e.g. ui-switch)
-                        const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
-
-                        // listen to in-UI events that Node-RED may need to action
-                        conn.on('widget-change:' + widget.id, handler)
-
-                        conn.on('disconnect', function () {
-                            ui.ioServer.removeListener('widget-change:' + widget.id, handler)
-                        })
-                    })
-                    ui.events.change[widget.id] = true
-                }
-            }
-            if (widgetEvents?.onAction) {
-                if (!ui.events.change[widget.id]) {
-                    ui.ioServer.on('connection', function (conn) {
-                        conn.on('widget-action:' + widget.id, async (msg) => {
-                            // ensure msg is an object. Assume the incoming data is the payload if not
-                            if (!msg || typeof msg !== 'object') {
-                                msg = { payload: msg }
-                            }
-                            // ensure we have latest instance of the widget's node
-                            const wNode = RED.nodes.getNode(widgetNode.id)
-                            if (!wNode) {
-                                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
-                            }
-                            console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
-
-                            // populate topic is the node specifies one
-                            if (widgetConfig.topic || widgetConfig.topicType) {
-                                try {
-                                    msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
-                                } catch (_err) {
-                                    // do nothing
-                                }
-                            }
-
-                            // ensure we have a topic property in the msg, even if it's an empty string
-                            if (!('topic' in msg)) {
-                                msg.topic = ''
-                            }
-
-                            if (widgetEvents?.beforeSend) {
-                                msg = widgetEvents.beforeSend(msg)
-                            }
-
-                            wNode.send(msg) // send the msg onwards
-                        })
-                    })
-                    ui.events.action[widget.id] = true
-                }
-            }
+            node.requestEmitConfig() // queue up a config emit to the UI
         }
 
         node.deregister = function (page, group, widgetNode) {
+            let changes = false
             // remove widget from our UI config
             if (widgetNode) {
                 node.ui.widgets.delete(widgetNode.id)
+                changes = true
             }
 
             // if there are no more widgets on this group, remove the group from our UI config
             if (group && [...node.ui.widgets].filter(w => w.props?.group === group.id).length === 0) {
                 node.ui.groups.delete(group.id)
+                changes = true
             }
 
             // if there are no more groups on this page, remove the page from our UI config
             if (page && [...node.ui.groups].filter(g => g.page === page.id).length === 0) {
                 node.ui.pages.delete(page.id)
+                changes = true
             }
+            if (changes) {
+                node.requestEmitConfig()
+            }
+        }
+
+        // expose the emitConfig function to the node
+        // NOTE: we debounce this function to prevent it being called too often
+        node.requestEmitConfig = function () {
+            if (node.emitConfigRequested) {
+                return
+            }
+            console.log('queueing emitConfig')
+            node.emitConfigRequested = setTimeout(() => {
+                console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
+                try {
+                    // emit config to all connected UI for this ui-base
+                    Object.values(node.connections).forEach(socket => {
+                        console.log('emitting config to', socket.id)
+                        emitConfig(socket)
+                    })
+                } finally {
+                    node.emitConfigRequested = null
+                }
+            }, 300)
         }
     }
 

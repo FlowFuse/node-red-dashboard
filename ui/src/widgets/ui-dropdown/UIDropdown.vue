@@ -78,6 +78,10 @@ export default {
             // ensure we set our local "value" to match
             this.value = payload
         })
+
+        // let Node-RED know that this widget has loaded
+        // useful as Node-RED can return (via msg-input) any stored data
+        this.$socket.emit('widget-load', this.id)
     },
     methods: {
         onChange () {
@@ -86,7 +90,7 @@ export default {
             const msg = this.messages[this.id] || {}
             msg.payload = this.value
             this.$store.commit('data/bind', msg)
-            this.$socket.emit(`widget-change:${this.id}`, msg.payload)
+            this.$socket.emit('widget-change', this.id, msg.payload)
         }
     }
 }

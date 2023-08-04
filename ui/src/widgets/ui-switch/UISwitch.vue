@@ -60,11 +60,11 @@ export default {
         onChange () {
             // only runs when clicked/changed in UI.
             // inverted as the store doesn't quite update quick enough, but this is reliable method
-            this.$socket.emit(`widget-change:${this.id}`, !this.value)
+            this.$socket.emit('widget-change', this.id, !this.value)
         },
         toggle () {
             this.state = !this.state
-            this.$socket.emit(`widget-change:${this.id}`, this.state)
+            this.$socket.emit('widget-change', this.id, this.state)
         }
     }
 }

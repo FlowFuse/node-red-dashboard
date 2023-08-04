@@ -46,7 +46,7 @@ export function useDataTracker (widgetId, onInput) {
             })
             // let Node-RED know that this widget has loaded
             // useful as Node-RED can return (via msg-input) any stored data
-            socket.emit('widget-load:' + widgetId)
+            socket.emit('widget-load', widgetId)
         }
     })
     onUnmounted(() => {
