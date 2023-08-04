@@ -351,15 +351,6 @@ module.exports = function (RED) {
         // When a UI connects - send the UI Config from Node-RED to the UI
         ui.ioServer.on('connection', onConnection)
 
-        // account time for all widgets to register themselves, before sending the full config to the UI
-        // this is most important for running a "Deploy" from within Node-RED, and our onConnection doesn't run
-        setTimeout(() => {
-            Object.values(ui.connections).forEach(socket => {
-                // pass the connected UI the UI config
-                emitConfig(socket)
-            })
-        }, 300)
-
         // Make sure we clean up after ourselves
         node.on('close', (removed, done) => {
             ui.ioServer?.off('connection', onConnection)
@@ -382,6 +373,32 @@ module.exports = function (RED) {
             themes: new Map(),
             groups: new Map(),
             widgets: new Map()
+        }
+
+        /**
+         * Queue up a config emit to the UI. This is a debounced function
+         * NOTES:
+         * * only sockets connected to this node will receive the config
+         * * each ui-node will have it's own connections and will emit it's own config
+         * @returns {void}
+         */
+        node.requestEmitConfig = function () {
+            if (node.emitConfigRequested) {
+                return
+            }
+            console.log('queueing emitConfig')
+            node.emitConfigRequested = setTimeout(() => {
+                console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
+                try {
+                    // emit config to all connected UI for this ui-base
+                    Object.values(node.connections).forEach(socket => {
+                        console.log('emitting config to', socket.id)
+                        emitConfig(socket)
+                    })
+                } finally {
+                    node.emitConfigRequested = null
+                }
+            }, 300)
         }
 
         /**
@@ -527,26 +544,10 @@ module.exports = function (RED) {
             }
         }
 
-        // expose the emitConfig function to the node
-        // NOTE: we debounce this function to prevent it being called too often
-        node.requestEmitConfig = function () {
-            if (node.emitConfigRequested) {
-                return
-            }
-            console.log('queueing emitConfig')
-            node.emitConfigRequested = setTimeout(() => {
-                console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
-                try {
-                    // emit config to all connected UI for this ui-base
-                    Object.values(node.connections).forEach(socket => {
-                        console.log('emitting config to', socket.id)
-                        emitConfig(socket)
-                    })
-                } finally {
-                    node.emitConfigRequested = null
-                }
-            }, 300)
-        }
+        // Finally, queue up a config emit to the UI.
+        // NOTE: this is a cautionary measure only - typically the registration of nodes will queue up a config emit
+        // but in the event no widgets are registered, we still need still emit a config
+        node.requestEmitConfig()
     }
 
     function evaluateNodeProperty (value, type, node, msg) {
