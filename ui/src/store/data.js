@@ -4,16 +4,19 @@
 
 // initial state is empty - we don't know if we have any widgets
 const state = () => ({
-    values: {}
+    values: {},
+    messages: {}
 })
 
 const mutations = {
-    bind (state, payload) {
-        const widgetId = payload.widgetId
-        const data = payload.data
-        state.values[widgetId] = data
-        console.log(widgetId)
-        console.log(data)
+    bind (state, data) {
+        const widgetId = data.widgetId
+        // if packet contains a msg, then we store it in the messages object
+        if ('msg' in data) {
+            state.messages[widgetId] = data.msg
+        }
+
+        console.log('DEBUG: Received a mutation', data)
     }
 }
 

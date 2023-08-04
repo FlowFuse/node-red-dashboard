@@ -25,12 +25,12 @@ Sent from NR to UI when a msg input is received into a Dashboard node.
 Sent from UI to NR when the UI/widget is first loaded. Gives a chance for NR to provide the widget with any known existing values.
 
 ### `widget-change:<node-id>`
-- Payload: `<value>`
+- Payload: `<value>` - typically the payload data to be sent in the msg
 
 Sent from UI to NR when the value of a widget is changed from the UI, e.g. text input, slider
 
 ### `widget-action:<node-id>`
-- Payload: `<value>`
+- Payload: `<msg>`
 
 Sent from UI to NR when a widget is actioned, e.g. click of a button or upload of a file
 

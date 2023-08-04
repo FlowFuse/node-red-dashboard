@@ -19,7 +19,7 @@ export default {
         props: { type: Object, default: () => ({}) }
     },
     computed: {
-        ...mapState('data', ['values'])
+        ...mapState('data', ['messages'])
     },
     created () {
         useDataTracker(this.id)

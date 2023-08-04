@@ -362,7 +362,7 @@ module.exports = function (RED) {
                 // have we configured a listener for this widget's change event?
                 if (!ui.events.change[widget.id]) {
                     ui.ioServer.on('connection', function (conn) {
-                        function defaultHandler (value) {
+                        async function defaultHandler (value) {
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id)
                             if (!wNode) {
@@ -373,14 +373,25 @@ module.exports = function (RED) {
                             let msg = wNode._msg || {}
                             msg.payload = value
 
-                            wNode._msg = msg
+                            // populate topic is the node specifies one
+                            if (widgetConfig.topic || widgetConfig.topicType) {
+                                try {
+                                    msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
+                                } catch (_err) {
+                                    // do nothing
+                                }
+                            }
+
+                            // ensure we have a topic property in the msg, even if it's an empty string
+                            if (!('topic' in msg)) {
+                                msg.topic = ''
+                            }
 
                             if (widgetEvents?.beforeSend) {
                                 msg = widgetEvents.beforeSend(msg)
                             }
-
-                            // simulate Node-RED node receiving an input
-                            wNode.send(msg)
+                            wNode._msg = msg
+                            wNode.send(msg) // send the msg onwards
                         }
 
                         // Most of the time, we can just use this default handler,
@@ -400,7 +411,11 @@ module.exports = function (RED) {
             if (widgetEvents?.onAction) {
                 if (!ui.events.change[widget.id]) {
                     ui.ioServer.on('connection', function (conn) {
-                        conn.on('widget-action:' + widget.id, (msg) => {
+                        conn.on('widget-action:' + widget.id, async (msg) => {
+                            // ensure msg is an object. Assume the incoming data is the payload if not
+                            if (!msg || typeof msg !== 'object') {
+                                msg = { payload: msg }
+                            }
                             // ensure we have latest instance of the widget's node
                             const wNode = RED.nodes.getNode(widgetNode.id)
                             if (!wNode) {
@@ -408,12 +423,25 @@ module.exports = function (RED) {
                             }
                             console.log('conn:' + conn.id, 'on:widget-action:' + widget.id)
 
+                            // populate topic is the node specifies one
+                            if (widgetConfig.topic || widgetConfig.topicType) {
+                                try {
+                                    msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
+                                } catch (_err) {
+                                    // do nothing
+                                }
+                            }
+
+                            // ensure we have a topic property in the msg, even if it's an empty string
+                            if (!('topic' in msg)) {
+                                msg.topic = ''
+                            }
+
                             if (widgetEvents?.beforeSend) {
                                 msg = widgetEvents.beforeSend(msg)
                             }
 
-                            // simulate Node-RED node receiving an input as to trigger on('input)
-                            wNode.send(msg)
+                            wNode.send(msg) // send the msg onwards
                         })
                     })
                     ui.events.action[widget.id] = true
@@ -438,5 +466,18 @@ module.exports = function (RED) {
             }
         }
     }
+
+    function evaluateNodeProperty (value, type, node, msg) {
+        return new Promise(function (resolve, reject) {
+            RED.util.evaluateNodeProperty(value, type, node, msg, function (e, r) {
+                if (e) {
+                    reject(e)
+                } else {
+                    resolve(r)
+                }
+            })
+        })
+    }
+
     RED.nodes.registerType('ui-base', UIBaseNode)
 }

@@ -36,8 +36,8 @@ When adding a new widget, you will need to follow the steps below to ensure that
         },
         computed: {
             // map our data store such that we can get any data bound to this widget
-            // receieved on input from Node-RED
-            ...mapState('data', ['values']),
+            // received on input from Node-RED
+            ...mapState('data', ['messages']), // provides access to `this.messages` where `this.messages[this.id]` is the stored msg for this widget
         },
         setup (props) {
             // Use our data-tracker, which setups up the basic event handling for us
@@ -46,12 +46,12 @@ When adding a new widget, you will need to follow the steps below to ensure that
         },
         methods: {
             onAction () {
-                // we can send any data we need Node-RED through this (optional) payload
-                const payload = {
-                    hello: 'world'
+                // we can send any data we need Node-RED through this (optional) message parameter
+                const msg = {
+                    payload: 'hello world'
                 }
                 // send an event to Node-RED to inform it that we've clicked this widget
-                this.$socket.emit('widget-action:' + this.id, payload)
+                this.$socket.emit('widget-action:' + this.id, msg)
             }
         }
     }

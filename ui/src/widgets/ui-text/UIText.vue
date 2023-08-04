@@ -1,7 +1,7 @@
 <template>
     <div class="nrdb-ui-widget nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
         <label class="nrdb-ui-text-label">{{ props.label }}</label>
-        <span class="nrdb-ui-text-value">{{ (values && values[id]) || 'No Message Received' }}</span>
+        <span class="nrdb-ui-text-value">{{ value || 'No Message Received' }}</span>
     </div>
 </template>
 
@@ -20,7 +20,10 @@ export default {
         useDataTracker(props.id)
     },
     computed: {
-        ...mapState('data', ['values'])
+        ...mapState('data', ['messages']),
+        value: function () {
+            return this.messages[this.id]?.payload
+        }
     }
 }
 </script>

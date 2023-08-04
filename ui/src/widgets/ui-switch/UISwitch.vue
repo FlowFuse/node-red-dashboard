@@ -21,7 +21,7 @@ export default {
         useDataTracker(props.id)
     },
     computed: {
-        ...mapState('data', ['values']),
+        ...mapState('data', ['messages']),
         icon: function () {
             if (this.props.onicon && this.props.officon) {
                 const icon = this.state ? this.props.onicon : this.props.officon
@@ -37,11 +37,11 @@ export default {
             return null
         },
         value: function () {
-            return this.values[this.id]
+            return this.messages[this.id]?.payload
         },
         state: {
             get () {
-                const val = this.values[this.id]
+                const val = this.value
                 if (typeof (val) === 'boolean') {
                     return val
                 } else if (this.props.evaluated) {
@@ -50,7 +50,9 @@ export default {
                 return this.value
             },
             set (val) {
-                this.values[this.id] = val
+                const msg = this.messages[this.id] || {}
+                msg.payload = val
+                this.messages[this.id] = msg
             }
         }
     },
@@ -58,7 +60,7 @@ export default {
         onChange () {
             // only runs when clicked/changed in UI.
             // inverted as the store doesn't quite update quick enough, but this is reliable method
-            this.$socket.emit(`widget-change:${this.id}`, !this.values[this.id])
+            this.$socket.emit(`widget-change:${this.id}`, !this.value)
         },
         toggle () {
             this.state = !this.state

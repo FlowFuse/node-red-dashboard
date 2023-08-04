@@ -22,7 +22,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('data', ['values'])
+        ...mapState('data', ['messages'])
     },
     watch: {
         'props.label': function (value) {

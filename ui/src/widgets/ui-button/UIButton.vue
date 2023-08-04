@@ -18,19 +18,20 @@ export default {
         useDataTracker(props.id)
     },
     computed: {
-        ...mapState('data', ['values'])
+        ...mapState('data', ['messages'])
     },
     methods: {
         action ($evt) {
             console.log('button clicked', $evt)
             const evt = {
+                type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
-            this.$socket.emit(`widget-action:${this.id}`, {
-                event: evt
-            })
+            const msg = this.messages[this.id] || {}
+            msg._event = evt
+            this.$socket.emit(`widget-action:${this.id}`, msg)
         }
     }
 }
