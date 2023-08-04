@@ -16,6 +16,7 @@
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
+
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -33,15 +34,15 @@
         }
     })
 
-    // Add Custom Dashboard Side Menu
+    /**
+     * Add Custom Dashboard Side Menu
+     * */
 
     const content = $(sidebarContentTemplate)
 
-    const uiRow = $('<div class="red-ui-sidebar-header"></div>')
-        .appendTo(content)
-
-    $('<label>Dashboard 2.0 UI</label><a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
-        .appendTo(uiRow)
+    function uiLink (name, path) {
+        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${path}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+    }
 
     RED.sidebar.addTab({
         id: 'dashboard-2.0',
@@ -54,8 +55,14 @@
         iconClass: 'fa fa-bar-chart',
         action: '@flowforge/node-red-dashboard:show-dashboard-2.0-tab',
         onchange: function () {
-            console.log('onload of sidebar')
-            // refresh();
+            content.empty()
+            RED.nodes.eachConfig(function (n) {
+                if (n.type === 'ui-base') {
+                    content.append(uiLink(n.name, n.path))
+                }
+            })
+            // placeholder message
+            content.append('<span style="padding: 9px; font-style: italic; color: #a2a2a2; font-size: 8pt;">More content will be added here in future releases</span>')
         }
     })
 
