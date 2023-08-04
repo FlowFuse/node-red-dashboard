@@ -546,7 +546,7 @@ module.exports = function (RED) {
 
         // Finally, queue up a config emit to the UI.
         // NOTE: this is a cautionary measure only - typically the registration of nodes will queue up a config emit
-        // but in the event no widgets are registered, we still need still emit a config
+        // but in cases where the dashboard has no widgets registered, we still need to emit a config
         node.requestEmitConfig()
     }
 
