@@ -51,8 +51,7 @@ export default {
     },
     methods: {
         onBlur: function () {
-            console.log('blur', this.messages[this.id])
-            this.$socket.emit('widget-change', this.id, this.messages[this.id])
+            this.$socket.emit('widget-change', this.id, this.value)
         }
     }
 }

@@ -90,7 +90,7 @@ export default {
             const msg = this.messages[this.id] || {}
             msg.payload = this.value
             this.$store.commit('data/bind', msg)
-            this.$socket.emit('widget-change', this.id, msg.payload)
+            this.$socket.emit('widget-change', this.id, this.value)
         }
     }
 }
