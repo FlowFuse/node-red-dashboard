@@ -44,7 +44,7 @@ export default {
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
-            this.$socket.emit(`widget-action:${this.id}`, msg) // TODO: should we have a widget-send emitter to differentiate from action?
+            this.$socket.emit('widget-action', this.id, msg) // TODO: should we have a widget-send emitter to differentiate from action?
         },
         submit (component, $evt) {
             console.log('submit called from template item', component, $evt)
@@ -59,7 +59,7 @@ export default {
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
-            this.$socket.emit(`widget-action:${this.id}`, msg) // TODO: should we have a widget-send emitter to differentiate from action?
+            this.$socket.emit('widget-action', this.id, msg) // TODO: should we have a widget-send emitter to differentiate from action?
         }
     }
 }

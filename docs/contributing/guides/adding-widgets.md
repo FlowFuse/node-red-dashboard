@@ -51,7 +51,7 @@ When adding a new widget, you will need to follow the steps below to ensure that
                     payload: 'hello world'
                 }
                 // send an event to Node-RED to inform it that we've clicked this widget
-                this.$socket.emit('widget-action:' + this.id, msg)
+                this.$socket.emit('widget-action', this.id, msg)
             }
         }
     }
