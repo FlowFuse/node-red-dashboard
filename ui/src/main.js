@@ -48,9 +48,10 @@ import store from './store/index.js'
 /**
  * Configure SocketIO Client to Interact with Node-RED
  */
-console.log('Connecting to Node-RED via SocketIO at /ui/socket.io')
+const path = '/dashboard/socket.io'
+console.log(`Connecting to Node-RED via SocketIO at ${path}`)
 const socket = io({
-    path: '/ui/socket.io'
+    path
 })
 
 // handle final disconnection
