@@ -43,6 +43,8 @@ module.exports = function (RED) {
                     }
                 }
 
+                msg.payload = payload
+
                 if (!error) {
                     return msg
                 } else {
