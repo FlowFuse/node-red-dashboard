@@ -35,7 +35,6 @@ export default {
     flex-direction: row;
     gap: 2px;
 }
-.nrdb-ui-text-label {}
 .nrdb-ui-text-value {
     font-weight: 600;
 }
