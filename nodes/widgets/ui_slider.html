@@ -57,6 +57,11 @@
 </script>
 
 <script type="text/html" data-template-name="ui-slider">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+        <input type="hidden" id="node-input-topicType">
+    </div>
     <div class="ui-slider">
         <div class="form-row">
             <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
@@ -115,11 +120,6 @@
             <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
             <input type="text" id="node-input-topic">
         </div>-->
-        <div class="form-row">
-            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-            <input type="text" id="node-input-name">
-            <input type="hidden" id="node-input-topicType">
-        </div>
     </div>
 </script>
 
@@ -132,41 +132,3 @@
         margin-bottom: 0;
     }
 </style>
-
-
-<script type="text/html" data-help-name="ui-slider">
-    <p>Adds a slider widget to the user interface.</p>
-    <p>
-        The user can change its value between the limits (<b>min</b> and <b>max</b>).
-        Each value change will generate a message with the value set as <b>payload</b>.
-    </p>
-    <p>The slider can be reversed by setting the min value larger than the max value. e.g. min 100, max 0.</p>
-    <h3>Properties</h3>
-    <dl class="message-properties">
-        <dt>Label <span class="property-type">str</span></dt>
-        <dd>Text shown to the left of the slider.</dd>
-        <dt>Range <span class="property-type">number</span></dt>
-        <dd>
-            Defines the minimum (<b>min</b>) and maximum (<b>max</b>)
-            values that can be selected on the slider. The <b>step</b>
-            then defines the selectable intervals within this range.
-        </dd>
-    </dl>
-    <h3>Input</h3>
-    <p>Data can be passed into the Chart node in a variety of formats,
-    depending on the "X-Axis Type" (e.g. linear, categorical, time).</p>
-    <dl class="message-properties">
-        <dt>Numerical <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.payload = 5</pre> A single value, that will be plotted
-            in the y-axis, and the current time of injection as the x-value.</dd>
-        <dt>Series <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.topic = 'Series 1'</pre> Multiple series can
-            be shown on the same chart by using a different msg.topic value on each
-            input message.</dd>
-        <dt>Object <span class="property-type">linear</span></dt>
-        <dd><pre>msg.payload = {x: 10, y: 15}</pre>This type of data is only
-            supported on linear plots, e.g. "Line" or "Scatter" charts.</dd>
-    </dl>
-    <h3>Details</h3>
-    <p></p>
-</script>
