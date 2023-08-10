@@ -18,11 +18,15 @@ export default {
         useDataTracker(props.id)
         return () => h({
             props: ['id', 'props'],
+            errorCaptured: (err, vm, info) => {
+                console.error('errorCaptured', err, vm, info)
+                return false
+            },
             template: props.props.format,
             computed: {
                 ...mapState('data', ['messages']),
                 msg () {
-                    return this.messages[this.id]
+                    return this.messages[this.id] || {}
                 }
             },
             methods: {
@@ -37,6 +41,10 @@ export default {
             id: props.id,
             props: props.props
         })
+    },
+    errorCaptured: (err, vm, info) => {
+        console.error('errorCaptured', err, vm, info)
+        return false
     },
     methods: {
         send (component, msg) {
