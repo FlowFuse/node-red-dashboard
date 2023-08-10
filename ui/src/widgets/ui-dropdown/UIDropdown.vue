@@ -85,7 +85,6 @@ export default {
     },
     methods: {
         onChange () {
-            console.log('dropdown changed')
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
             msg.payload = this.value

@@ -12,8 +12,6 @@ export function useDataTracker (widgetId, onInput) {
         if (socket) {
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
-                console.log('msg-input:' + widgetId, msg)
-
                 // set states if passed into msg
                 if ('enabled' in msg) {
                     console.log('setting enabled')
