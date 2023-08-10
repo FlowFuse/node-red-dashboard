@@ -146,6 +146,12 @@ module.exports = function (RED) {
 
         /** @type {Object.<string, Socket>} */
         node.connections = {} // store socket.io connections for this node
+        // re-map existing connections for this base node
+        for (const id in ui.connections) {
+            if (ui.connections[id]._baseId === node.id) {
+                node.connections[id] = ui.connections[id]
+            }
+        }
         /** @type {NodeJS.Timeout} */
         node.emitConfigRequested = null // used to debounce requests to emitConfig
 
@@ -172,6 +178,9 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
+            // record mapping from connection to he ui-base node
+            socket._baseId = node.id
+
             node.connections[socket.id] = socket // store the connection for later use
             ui.connections[socket.id] = socket // store the connection for later use
             emitConfig(socket)
@@ -365,7 +374,6 @@ module.exports = function (RED) {
         /**
          * External Functions for managing UI Components
          */
-
         // store ui config to be sent to UI
         node.ui = {
             dashboards: new Map(),
@@ -386,7 +394,6 @@ module.exports = function (RED) {
             if (node.emitConfigRequested) {
                 return
             }
-            console.log('queueing emitConfig')
             node.emitConfigRequested = setTimeout(() => {
                 console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
                 try {
