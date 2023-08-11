@@ -21,7 +21,7 @@
         </div>
         <div class="nrdb-ui-form-actions">
             <v-btn type="submit" variant="flat" size="large">{{ props.submit || 'submit' }}</v-btn>
-            <v-btn variant="outlined" size="large" @click="clear">{{ props.cancel || 'clear' }}</v-btn>
+            <v-btn v-if="props.cancel" variant="outlined" size="large" @click="clear">{{ props.cancel }}</v-btn>
         </div>
     </v-form>
 </template>
@@ -50,26 +50,28 @@ export default {
         ...mapState('data', ['messages'])
     },
     mounted () {
-        this.props.options.forEach(row => {
-            // set defaults
-            if (row.type === 'check' || row.type === 'switch') {
-                this.input[row.key] = false
-            } else if (row.type === 'number') {
-                this.input[row.key] = 0
-            } else {
-                this.input[row.key] = ''
-            }
-        })
+        this.reset()
     },
     methods: {
         onSubmit: function () {
-            console.log(this.input)
             this.$socket.emit('widget-action', this.id, {
                 payload: this.input
             })
         },
         clear () {
-            console.log('clear')
+            this.reset()
+        },
+        reset () {
+            this.props.options.forEach(row => {
+            // set defaults
+                if (row.type === 'check' || row.type === 'switch') {
+                    this.input[row.key] = false
+                } else if (row.type === 'number') {
+                    this.input[row.key] = 0
+                } else {
+                    this.input[row.key] = ''
+                }
+            })
         }
     }
 }

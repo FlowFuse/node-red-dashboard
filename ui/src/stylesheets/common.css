@@ -52,6 +52,8 @@ main {
 }
 .nrdb-ui-form-row {
     margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
 }
 .nrdb-ui-form-row .nrdb-ui-widget,
 .nrdb-ui-form-row .v-selection-control {
