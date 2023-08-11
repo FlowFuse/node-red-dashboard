@@ -2,16 +2,18 @@
     <label v-if="props.label" class="nrdb-ui-form-label">{{ props.label }}</label>
     <v-form @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
-            <div v-for="(row, $index) in props.options" :key="$index" class="nrdb-ui-form-row">
-                <v-checkbox v-if="row.type === 'checkbox'" :label="row.label" hide-details="auto" />
-                <v-switch v-else-if="row.type === 'switch'" v-model="state" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
+            <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row">
+                <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
+                <v-switch v-else-if="row.type === 'switch'" v-model="input[row.key]" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
                 <v-textarea
                     v-else-if="row.type === 'multiline'"
+                    v-model="input[row.key]"
                     class="nrdb-ui-widget nrdb-ui-text-field" :rows="row.rows"
                     :label="row.label" variant="outlined" hide-details="auto"
                 />
                 <v-text-field
                     v-else
+                    v-model="input[row.key]"
                     class="nrdb-ui-widget nrdb-ui-text-field"
                     :label="row.label" :type="row.type" :rules="validation" variant="outlined" hide-details="auto"
                 />
@@ -39,12 +41,32 @@ export default {
     setup (props) {
         useDataTracker(props.id)
     },
+    data () {
+        return {
+            input: {}
+        }
+    },
     computed: {
         ...mapState('data', ['messages'])
     },
+    mounted () {
+        this.props.options.forEach(row => {
+            // set defaults
+            if (row.type === 'check' || row.type === 'switch') {
+                this.input[row.key] = false
+            } else if (row.type === 'number') {
+                this.input[row.key] = 0
+            } else {
+                this.input[row.key] = ''
+            }
+        })
+    },
     methods: {
         onSubmit: function () {
-            this.$socket.emit('widget-action', this.id, this.value)
+            console.log(this.input)
+            this.$socket.emit('widget-action', this.id, {
+                payload: this.input
+            })
         },
         clear () {
             console.log('clear')

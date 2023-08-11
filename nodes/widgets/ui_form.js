@@ -8,13 +8,7 @@ module.exports = function (RED) {
         if (!group) { return }
 
         const evts = {
-            onAction: true,
-            beforeSend: async function (msg) {
-                // create form object here?
-                console.log(msg)
-                console.log(config.options)
-                return msg
-            }
+            onAction: true
         }
 
         // inform the dashboard UI that we are adding this node

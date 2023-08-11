@@ -32,7 +32,7 @@
                     validate: function (value) {
                         if (value.length) {
                             for (let i = 0; i < value.length; i++) {
-                                if (!value[i].value) {
+                                if (!value[i].key) {
                                     return false
                                 }
                             }
@@ -69,7 +69,7 @@
                 this.resizeRule = function (option, newWidth) {
                     // option.find(".node-input-option-type").width(newWidth);
                     //  option.find(".node-input-option-label").width(newWidth);
-                    //  option.find(".node-input-option-value").width(newWidth);
+                    //  option.find(".node-input-option-key").width(newWidth);
                 }
 
                 function generateOption (i, option) {
@@ -81,12 +81,13 @@
                     $('<i style="cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
 
                     // label field
-                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName'), value: option.label }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
+                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName'), value: option.label }).appendTo(row)
     
-                    let valueClass = 'node-input-option-value'
-                    if (!option.value) { valueClass = 'node-input-option-value input-error' }
-                    const valueField = $('<input/>', { class: valueClass, type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName2'), value: option.value }).appendTo(row)// .typedInput({default:'str',types:['str','num','bool']});
-                    valueField.keyup(function () {
+                    // key field
+                    let keyClass = 'node-input-option-key'
+                    if (!option.key) { keyClass = 'node-input-option-key input-error' }
+                    const keyField = $('<input/>', { class: keyClass, type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName2'), value: option.key }).appendTo(row)
+                    keyField.keyup(function () {
                         if ($(this).val() && $(this).hasClass('input-error')) {
                             $(this).removeClass('input-error')
                         } else {
@@ -95,7 +96,8 @@
                             }
                         }
                     })
-                    // var typeField = $('<input/>',{class:"node-input-option-type",type:"text",style:"margin-left: 7px; width: 135px;", placeholder: 'Type', value:option.type}).appendTo(row).typedInput({default:'str',types:['str', 'num']});
+    
+                    // type field
                     const typeField = $('<select/>', { class: 'node-input-option-type', type: 'text', style: 'margin-left:7px; width:16%' }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
 
                     const arr = [
@@ -145,7 +147,7 @@
                     })
 
                     deleteButton.click(function () {
-                        container.find('.node-input-option-value').removeAttr('required')
+                        container.find('.node-input-option-key').removeAttr('required')
                         container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
                         container.fadeOut(300, function () {
                             $(this).remove()
@@ -185,14 +187,13 @@
                 options.each(function (i) {
                     const option = $(this)
                     const o = {
-                        label: option.find('.node-input-option-label').val(), // typedInput('value'),
-                        value: option.find('.node-input-option-value').val(), // typedInput('value'),
-                        type: option.find('.node-input-option-type').val(), // typedInput('value')
+                        label: option.find('.node-input-option-label').val(),
+                        key: option.find('.node-input-option-key').val(),
+                        type: option.find('.node-input-option-type').val(),
                         required: option.find('.node-input-option-required').is(':checked'),
                         rows: parseInt(option.find('.node-input-option-rows').val())
                     }
-                    // o.value= o.value||o.label||(o.type+"_"+i);
-                    node.formValue[o.value] = o.type === 'checkbox' || o.type === 'switch' ? false : ''
+                    node.formValue[o.key] = o.type === 'checkbox' || o.type === 'switch' ? false : ''
                     node.options.push(o)
                 })
             },
