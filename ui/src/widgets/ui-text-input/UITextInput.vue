@@ -7,7 +7,7 @@
     <v-textarea
         v-else
         v-model="value" class="nrdb-ui-widget nrdb-ui-text-field"
-        :label="label" :type="type" variant="outlined" hide-details="auto" @blur="onBlur"
+        :label="label" variant="outlined" hide-details="auto" @blur="onBlur"
     />
 </template>
 

@@ -1,0 +1,324 @@
+<script type="text/javascript">
+    (function () {
+        // convert to i18 text
+        function c_ (x) {
+            return RED._('@flowforge/node-red-dashboard/ui-form:ui-form.' + x)
+        }
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
+        RED.nodes.registerType('ui-form', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(176, 223, 227)',
+            defaults: {
+                name: { value: '' },
+                group: { type: 'ui-group', required: true },
+                label: { value: '' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                options: {
+                    value: [{ value: '', label: '', type: '', required: true }],
+                    validate: function (value) {
+                        if (value.length) {
+                            for (let i = 0; i < value.length; i++) {
+                                if (!value[i].value) {
+                                    return false
+                                }
+                            }
+                        } else {
+                            return false
+                        }
+                        return true
+                    },
+                    required: true
+                },
+                formValue: { value: {} },
+                payload: { value: '' },
+                submit: { value: 'submit' },
+                cancel: { value: 'clear' },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
+                splitLayout: { value: '' }
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: 'font-awesome/fa-list-alt',
+            paletteLabel: 'form',
+            label: function () { return this.name || this.label || 'form' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                if ($('#node-input-submit').val() === null) { $('#node-input-submit').val('submit') }
+                if ($('#node-input-cancel').val() === null) { $('#node-input-cancel').val('cancel') }
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
+
+                this.resizeRule = function (option, newWidth) {
+                    // option.find(".node-input-option-type").width(newWidth);
+                    //  option.find(".node-input-option-label").width(newWidth);
+                    //  option.find(".node-input-option-value").width(newWidth);
+                }
+
+                function generateOption (i, option) {
+                    const container = $('<li/>', { style: 'margin:0; padding:8px 0px 0px; border-bottom:1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                    const row = $('<div/>').appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                    $('<i style="cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
+
+                    // label field
+                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName'), value: option.label }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
+    
+                    let valueClass = 'node-input-option-value'
+                    if (!option.value) { valueClass = 'node-input-option-value input-error' }
+                    const valueField = $('<input/>', { class: valueClass, type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName2'), value: option.value }).appendTo(row)// .typedInput({default:'str',types:['str','num','bool']});
+                    valueField.keyup(function () {
+                        if ($(this).val() && $(this).hasClass('input-error')) {
+                            $(this).removeClass('input-error')
+                        } else {
+                            if (!$(this).val()) {
+                                $(this).addClass('input-error')
+                            }
+                        }
+                    })
+                    // var typeField = $('<input/>',{class:"node-input-option-type",type:"text",style:"margin-left: 7px; width: 135px;", placeholder: 'Type', value:option.type}).appendTo(row).typedInput({default:'str',types:['str', 'num']});
+                    const typeField = $('<select/>', { class: 'node-input-option-type', type: 'text', style: 'margin-left:7px; width:16%' }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
+
+                    const arr = [
+                        { val: 'text', text: c_('label.text') },
+                        { val: 'multiline', text: c_('label.multiline') },
+                        { val: 'number', text: c_('label.number') },
+                        { val: 'email', text: c_('label.email') },
+                        { val: 'password', text: c_('label.password') },
+                        { val: 'checkbox', text: c_('label.checkbox') },
+                        { val: 'switch', text: c_('label.switch') },
+                        { val: 'date', text: c_('label.date') },
+                        { val: 'time', text: c_('label.time') }
+                    ]
+
+                    // var sel = $('<select>').appendTo('body');
+                    $(arr).each(function () {
+                        let isSelected = false
+                        if (option.type === this.val) {
+                            isSelected = true
+                        }
+                        typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
+                    })
+
+                    const requiredContainer = $('<div/>', { style: 'display:inline-block; height:34px; width:13%; vertical-align: middle' }).appendTo(row)
+                    const requiredInnerContainer = $('<div/>', { style: 'left:35%; position:relative; width:30px' }).appendTo(requiredContainer)
+                    const reqRow = $('<label />', { class: 'switch', style: 'top:10px; width:30px;' }).appendTo(requiredInnerContainer)
+                    // required
+                    $('<input/>', { class: 'node-input-option-required', type: 'checkbox', checked: option.required, style: 'vertical-align:top;' }).appendTo(reqRow)// labelForRequried);//.typedInput({default:'str',types:['str', 'num']});
+                    $('<div />', { class: 'slider round' }).appendTo(reqRow)
+    
+                    const vis = option.rows ? 'visible' : 'hidden'
+                    const rowsField = $('<input/>', { class: 'node-input-option-rows', type: 'number', style: 'width:10%;', placeholder: 'Rows', value: option.rows }).css('visibility', vis).appendTo(row)
+
+                    const finalspan = $('<div/>', { style: 'display:inline-block; width:5%;' }).appendTo(row)
+                    const deleteButton = $('<a/>', { href: '#', class: 'editor-button', style: 'font-size:1.3em; left:45%; position:relative;' }).appendTo(finalspan)
+                    $('<i/>', { class: 'fa fa-trash-o' }).appendTo(deleteButton)
+
+                    typeField.change(function (e) {
+                        if (e.target.value !== 'multiline') {
+                            rowsField.val(undefined)
+                            option.rows = null
+                            rowsField.css('visibility', 'hidden')
+                        } else {
+                            rowsField.css('visibility', 'visible')
+                            if (!rowsField[0].value) rowsField[0].value = 3
+                        }
+                    })
+
+                    deleteButton.click(function () {
+                        container.find('.node-input-option-value').removeAttr('required')
+                        container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                        container.fadeOut(300, function () {
+                            $(this).remove()
+                        })
+                    })
+
+                    $('#node-input-option-container').append(container)
+                }
+
+                $('#node-input-add-option').click(function () {
+                    generateOption($('#node-input-option-container').children().length + 1, {})
+                    $('#node-input-option-container-div').scrollTop($('#node-input-option-container-div').get(0).scrollHeight)
+                })
+
+                for (let i = 0; i < this.options.length; i++) {
+                    const option = this.options[i]
+                    generateOption(i + 1, option)
+                }
+
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
+                $('#node-input-option-container').sortable({
+                    axis: 'y',
+                    handle: '.node-input-option-handle',
+                    cursor: 'move'
+                })
+            },
+            oneditsave: function () {
+                const options = $('#node-input-option-container').children()
+                const node = this
+                node.options = []
+                node.formValue = {}
+                options.each(function (i) {
+                    const option = $(this)
+                    const o = {
+                        label: option.find('.node-input-option-label').val(), // typedInput('value'),
+                        value: option.find('.node-input-option-value').val(), // typedInput('value'),
+                        type: option.find('.node-input-option-type').val(), // typedInput('value')
+                        required: option.find('.node-input-option-required').is(':checked'),
+                        rows: parseInt(option.find('.node-input-option-rows').val())
+                    }
+                    // o.value= o.value||o.label||(o.type+"_"+i);
+                    node.formValue[o.value] = o.type === 'checkbox' || o.type === 'switch' ? false : ''
+                    node.options.push(o)
+                })
+            },
+            oneditresize: function () {
+                const options = $('#node-input-option-container').children()
+                const newWidth = ($('#node-input-option-container').width() - 175) / 2
+                const node = this
+                options.each(function (i) {
+                    node.resizeRule($(this), newWidth)
+                })
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-form">
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 18px;
+        }
+
+        .switch input {display:none;}
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--red-ui-tertiary-border-color, #ccc);
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 15px;
+            width: 15px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--red-ui-secondary-background, white);
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #910000;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(11px);
+            -ms-transform: translateX(11px);
+            transform: translateX(11px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-form.label.group"></label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-form.label.size"></label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-form.label.label"></label>
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-form.label.optionalLabel">
+    </div>
+    <div class="form-row node-input-option-container-row" style="margin-bottom:0px; width:100%; min-width:520px">
+        <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.formElements"></label>
+        <div style="display:inline-block; width:78%; border:1px solid var(--red-ui-form-input-border-color, #ccc); border-radius:5px; box-sizing:border-box;">
+          <div class="red-ui-tray-header" style="width:100%; display: inline-block; padding-top:10px; padding-bottom:10px; border-top:0px solid; border-radius:5px 5px 0 0; border-bottom:1px solid var(--red-ui-form-input-border-color, #ccc);">
+              <div style="width:94%; display:inline-block; margin-left:27px">
+                <div style="width:20%; text-align:center; float:left;" data-i18n="ui-form.label.label"></span></div>
+                <div style="width:20%; text-align:center; float:left; margin-left:9px" data-i18n="node-red:common.label.name"></div>
+                <div style="margin-left:7px; width:16%; text-align:center; float:left; margin-left:9px" data-i18n="ui-form.label.type"></div>
+                <div style="width:16%; text-align:center; float:left;" data-i18n="ui-form.label.required"></div>
+                <div style="width:10%; text-align:center; float:left;" data-i18n="ui-form.label.rows"></div>
+                <div style="width:12%; text-align:center; float:left;" data-i18n="ui-form.label.remove"></div>
+              </div>
+          </div>
+          <div id="node-input-option-container-div" style=" height: 257px; padding: 5px; overflow-y:scroll;">
+            <ol id="node-input-option-container" style=" list-style-type:none; margin: 0;"></ol>
+          </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top: 4px; margin-left: 103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-form.label.element"></span></a>
+    </div>
+    <div class="form-row">
+        <label for="node-input-submit"><i class="fa fa-square"></i> <span data-i18n="ui-form.label.buttons"></label>
+        <i class="fa fa-thumbs-o-up"></i> <input type="text" id="node-input-submit" data-i18n="[placeholder]ui-form.label.submitButtonText" style="width:35%;">
+        <span style="margin-left:16px"><i class="fa fa-thumbs-o-down"></i></span>
+        <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:35%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-splitLayout"></label>
+        <input type="checkbox" id="node-input-splitLayout" style="display:inline-block; width:auto; vertical-align:top;">
+        <span data-i18n="ui-form.label.splitLayout">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+</script>

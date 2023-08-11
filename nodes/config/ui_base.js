@@ -247,7 +247,7 @@ module.exports = function (RED) {
                     msg.topic = ''
                 }
 
-                // pre-process the msg before running our onInput function (if beforeSend is defined)
+                // pre-process the msg before send on the msg (if beforeSend is defined)
                 if (widgetEvents?.beforeSend && typeof widgetEvents.beforeSend === 'function') {
                     msg = await widgetEvents.beforeSend(msg)
                 }
