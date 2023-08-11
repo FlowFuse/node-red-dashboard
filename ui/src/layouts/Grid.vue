@@ -8,7 +8,7 @@
                     </template>
                     <template #text>
                         <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}, auto)); `">
-                            <div v-for="w in widgetsByGroup(g.id)" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, ${rowHeight}); grid-column-end: span ${ w.props.width || g.width }`">
+                            <div v-for="w in widgetsByGroup(g.id)" :key="w.id" style="display: grid" :style="`grid-template-rows: repeat(${w.props.height}, minmax(${rowHeight}, auto)); grid-column-end: span ${ w.props.width || g.width }`">
                                 <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
                             </div>
                         </div>
