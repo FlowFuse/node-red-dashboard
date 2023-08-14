@@ -75,7 +75,6 @@
         "marked": "^4.3.0",
         "marked-highlight": "^2.0.2",
         "medium-zoom": "^1.0.8",
-        "mermaid": "^10.3.0",
         "mocha": "^10.2.0",
         "node-red": "^3.0.2",
         "node-red-node-test-helper": "^0.3.2",
