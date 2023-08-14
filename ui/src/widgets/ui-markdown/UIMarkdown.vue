@@ -1,34 +1,18 @@
 <script>
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
+import 'highlight.js/styles/default.css'
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 
-import mermaid from 'mermaid'
 import { h } from 'vue'
 import { mapGetters, mapState } from 'vuex' // eslint-disable-line import/order
 
 import { useDataTracker } from '../data-tracker.js'
-marked.use({
-    renderer: {
-        code (code, language) {
-            console.log('code', language)
-            console.log('code', language)
-            if (language === 'mermaid') {
-                return '<pre class="mermaid">' + code + '</pre>'
-            }
-            return code
-        }
-    }
-})
 
 marked.use(markedHighlight({
     langPrefix: 'hljs language-',
     highlight (code, lang) {
-        console.log('highlight', lang)
-        if (lang === 'mermaid') {
-            return '<pre class="mermaid">' + code + '</pre>'
-        }
         const language = hljs.getLanguage(lang) ? lang : 'plaintext'
         return hljs.highlight(code, { language }).value
     }
@@ -42,13 +26,6 @@ export default {
         props: { type: Object, default: () => ({}) }
     },
     setup (props) {
-        mermaid.initialize({
-            startOnLoad: true,
-            flowchart: { useMaxWidth: false, htmlLabels: true },
-            class: 'mermaid-diagram',
-            theme: 'default'
-        })
-
         useDataTracker(props.id)
         return () => h({
             props: ['id', 'props'],
@@ -56,7 +33,6 @@ export default {
                 console.error('errorCaptured', err, vm, info)
                 return false
             },
-            // template: `<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">\n<div class="nrdb-ui-markdown">${DOMPurify.sanitize(marked.parse(props.props.content))}</div>`,
             template: `<div class="nrdb-ui-markdown">${DOMPurify.sanitize(marked.parse(props.props.content))}</div>`,
             computed: {
                 ...mapState('data', ['messages']),
@@ -85,7 +61,8 @@ export default {
 }
 </script>
 <style>
-    @import '//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css';
+    /* import hljs css */
+    @import 'highlight.js/styles/default.css';
 </style>
 <style lang="css">
 
