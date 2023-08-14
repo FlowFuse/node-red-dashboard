@@ -8,7 +8,6 @@ module.exports = function (RED) {
         RED.nodes.createNode(node, config)
 
         // which UI are we rendering this page in
-        const ui = RED.nodes.getNode(config.ui)
         node.log('UI Page Constructor')
 
         node.on('close', function (removed, done) {
@@ -23,10 +22,12 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (group, widgetNode, widgetConfig, widgetEvents) {
+            const ui = RED.nodes.getNode(config.ui)
             const page = config
             ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
         }
         node.deregister = function (group, widgetNode) {
+            const ui = RED.nodes.getNode(config.ui)
             const page = config
             ui.deregister(page, group, widgetNode)
         }

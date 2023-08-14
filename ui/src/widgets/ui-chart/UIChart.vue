@@ -94,7 +94,6 @@ export default {
             // TODO:
             // what do we do with the msg object when chart receives it?
             // need some storage into vuex store, but what else, and in what format?
-            console.log('chart got msg', msg)
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart
                 this.clear()
@@ -104,16 +103,13 @@ export default {
             }
         },
         clear () {
-            console.log('clear')
             this.chart.data.labels = []
             this.chart.data.datasets = []
-            console.log(this.chart.data)
             this.chart.update()
         },
         add (msg) {
             const payload = msg.payload
             const label = msg.topic
-            console.log('add', payload, label)
             // determine what type of msg we have
             if (payload) {
                 if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
@@ -132,7 +128,6 @@ export default {
              * @param {*} label
              */
         addToLine (payload) {
-            console.log('adding to line')
             const datapoint = {}
             // construct our datapoint
             if (typeof payload === 'number') {
@@ -144,7 +139,6 @@ export default {
                 datapoint.x = payload.x || (new Date()).getTime()
                 datapoint.y = payload.y
             }
-            console.log('datapoint', datapoint)
             // the chart is empty, we're adding a new series
             if (!this.chart.data.datasets.length) {
                 this.chart.data.datasets.push({
@@ -163,18 +157,15 @@ export default {
              */
         addToBar (payload, label) {
             label = label || ''
-            console.log('adding to bar')
             // construct our datapoint
             if (typeof payload === 'number') {
                 // is this series already a label in the chart?
                 if (this.chart.data.labels.includes(label)) {
-                    console.log('already have label', label)
                     // yes, so we need to find the index of this label
                     const index = this.chart.data.labels.indexOf(label)
                     // and update the data at this index
                     this.chart.data.datasets[0].data[index] = payload
                 } else {
-                    console.log('do not have label', label)
                     // no, so we need to add new label and data point
                     if (!this.chart.data.datasets.length) {
                         this.chart.data.datasets.push({ data: [] })

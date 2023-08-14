@@ -47,6 +47,7 @@ export default {
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-slider', link: '/nodes/widgets/ui-slider' },
                 { text: 'ui-switch', link: '/nodes/widgets/ui-switch' },
+                { text: 'ui-template', link: '/nodes/widgets/ui-template' },
                 { text: 'ui-text', link: '/nodes/widgets/ui-text' },
                 { text: 'ui-text-input', link: '/nodes/widgets/ui-text-input' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },

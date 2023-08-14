@@ -53,7 +53,6 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(id => {
                 const widget = payload.widgets[id]
-                console.log('adding widget', widget.type)
                 widget.component = markRaw(widgetComponents[widget.type])
             })
 
@@ -63,7 +62,6 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
-            console.log('all stored')
         })
     },
     methods: {

@@ -1,7 +1,6 @@
 /* eslint-disable n/no-missing-import */
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
-import router from '../router'
 
 // initial state
 const state = () => ({
@@ -58,10 +57,7 @@ const mutations = {
     },
     widgetState (state, data) {
         // TODO: Assumed widget is on the current page
-        const pageId = router.currentRoute.value.meta.id
-
         const wId = data.widgetId
-        console.log('widgetState', pageId, wId, data)
 
         if ('enabled' in data) {
             state.widgets[wId].state.enabled = data.enabled

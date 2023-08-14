@@ -17,8 +17,6 @@ const mutations = {
         if ('msg' in data) {
             state.messages[widgetId] = data.msg
         }
-
-        console.log('DEBUG: Received a mutation', data)
     }
 }
 

@@ -1,7 +1,13 @@
 <template>
     <v-text-field
+        v-if="type !== 'textarea'"
         v-model="value" class="nrdb-ui-widget nrdb-ui-text-field"
         :label="label" :type="type" :rules="validation" variant="outlined" hide-details="auto" @blur="onBlur"
+    />
+    <v-textarea
+        v-else
+        v-model="value" class="nrdb-ui-widget nrdb-ui-text-field"
+        :label="label" :type="type" variant="outlined" hide-details="auto" @blur="onBlur"
     />
 </template>
 

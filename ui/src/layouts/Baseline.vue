@@ -50,7 +50,6 @@ function getContrast (bg) {
                         (parseInt(bgRgb[2]) * 114)) / 1000)
 
     const textColor = (brightness > 125) ? '#000000' : '#ffffff'
-    console.log('textColor', textColor)
     return textColor
 }
 
