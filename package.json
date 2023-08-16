@@ -38,6 +38,7 @@
             "ui-text-input": "nodes/widgets/ui_text_input.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
+            "ui-radio-group": "nodes/widgets/ui_radio_group.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
             "ui-switch": "nodes/widgets/ui_switch.js",
             "ui-text": "nodes/widgets/ui_text.js",
