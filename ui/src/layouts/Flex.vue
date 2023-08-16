@@ -1,6 +1,6 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div v-if="groups && groups[$route.meta.id]" class="nrdb-layout--flex">
+        <div v-if="orderedGroups" class="nrdb-layout--flex">
             <div v-for="g in orderedGroups" :key="g.id" :style="{'width': ((rowHeight * 2 * g.width) + 'px')}">
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
                     <template v-if="g.disp" #title>
@@ -31,7 +31,7 @@ export default {
     },
     data () {
         return {
-            rowHeight: 48
+            rowHeight: 45
         }
     },
     computed: {
@@ -39,7 +39,7 @@ export default {
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
         orderedGroups: function () {
             const groups = this.groupsByPage(this.$route.meta.id)
-            const ordered = Object.values(groups).sort((a, b) => {
+            const ordered = groups.sort((a, b) => {
                 // if order = 0, prioritise groups where order _is_ set
                 const aOrder = a.order || Number.MAX_SAFE_INTEGER
                 const bOrder = b.order || Number.MAX_SAFE_INTEGER
