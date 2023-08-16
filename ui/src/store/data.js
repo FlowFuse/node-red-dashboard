@@ -2,6 +2,8 @@
  * Vuex store for tracking data bound to each widget
  */
 
+import { getDeepValue } from '../util.js'
+
 // initial state is empty - we don't know if we have any widgets
 const state = () => ({
     values: {},
@@ -18,8 +20,21 @@ const mutations = {
     }
 }
 
+const getters = {
+    // get the value of a widget's data
+    value: (state) => (widgetId) => {
+        return state.values[widgetId]
+    },
+    // get the message of a widget's data
+    getMsgProperty: (state) => (widgetId, path, defaultValue) => {
+        const msg = state.messages[widgetId] || {}
+        return getDeepValue(msg, path, defaultValue)
+    }
+}
+
 export default {
     namespaced: true,
     state,
-    mutations
+    mutations,
+    getters
 }

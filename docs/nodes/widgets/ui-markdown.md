@@ -11,6 +11,18 @@ props:
 
 Allows for markdown to be defined within Node-RED editor and rendered into the UI. Can be use for rendering labels, headers or even full blog articles.
 
+You can inject `msg` values into the markdown using:
+
+::: v-pre
+`{{ msg?.payload }}`
+:::
+
+This will be replaced with the value of `msg?.payload` when a message is received to the node. If you'd like to have a placeholder value before a message is received you can use:
+
+::: v-pre
+`{{ msg?.payload || 'Placeholder' }}`
+:::
+
 If you're looking for a quick cheat sheet on how to write Markdown, you can check out FlowForge's guide [here](https://flowforge.com/handbook/development/markdown-how-to/#markdown-how-to).
 
 ## Properties
@@ -24,25 +36,36 @@ If you're looking for a quick cheat sheet on how to write Markdown, you can chec
 
 The above example is rendered using the following markdown:
 
-```md
+````md
 # Markdown Content
 
-## Secondary header
+## Secondary Header
 
 ### Third Header
 
-Goes here...
+Paragraph here...
 
-`<code-example />`
+inline `<code-example />` with other text either side
+
+```js
+// multiline
+function () {
+    console.log('hello world')
+}
+```
 
 - List Item 1
 - List Item 1
 - List Item 1
 - List Item 1
 
-[Hyperlink](https://url.here)
+[Hyperlink](https://news.bbc.co.uk)
 
 ---
 
 > Lorum Ipsum Quotation Over two lines 
-```
+
+| Header 1 | Header 2 |
+|-|-|
+| `msg.payload` | {{ msg.payload || 'Placeholder' }} |
+````
