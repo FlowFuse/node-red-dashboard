@@ -71,6 +71,29 @@ main {
 }
 
 /**
+* Widget: Radio Group
+*/
+.nrdb-ui-radio-group .v-selection-control-group {
+    display: grid;
+}
+.nrdb-ui-radio-group .v-selection-control-group .v-selection-control {
+    grid-area: initial;
+}
+.nrdb-ui-radio-group.nrdb-ui-radio-group--cols-2 .v-selection-control-group {
+    grid-template-columns: repeat(2, 1fr);
+}
+.nrdb-ui-radio-group.nrdb-ui-radio-group--cols-3 .v-selection-control-group {
+    grid-template-columns: repeat(3, 1fr);
+}
+.nrdb-ui-radio-group.nrdb-ui-radio-group--cols-4 .v-selection-control-group {
+    grid-template-columns: repeat(4, 1fr);
+}
+.nrdb-ui-radio-group.nrdb-ui-radio-group--cols-5 .v-selection-control-group {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+
+/**
 * Widget: Markdown
 */ 
 .nrdb-ui-markdown h1 {

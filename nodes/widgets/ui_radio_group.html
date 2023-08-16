@@ -1,0 +1,161 @@
+<script type="text/javascript">
+    (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
+        RED.nodes.registerType('ui-radio-group', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(176, 223, 227)',
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                label: { value: 'Select Option:' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                columns: { value: 1 },
+                passthru: { value: true },
+                options: {
+                    value: [{ value: '', label: '' }],
+                    validate: function (v) {
+                        const unique = new Set(v.map(function (o) { return o.value }))
+                        return v.length === unique.size
+                    }
+                },
+                payload: { value: '' },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
+                className: { value: '' }
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: 'font-awesome/fa-dot-circle-o',
+            paletteLabel: 'radio group',
+            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'radio group' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                if (this.multiple === undefined) {
+                    $('#node-input-multiple').prop('checked', false)
+                }
+                // $("#node-input-size").elementSizer({
+                //     width: "#node-input-width",
+                //     height: "#node-input-height",
+                //     group: "#node-input-group"
+                // });
+                const un = new Set(this.options.map(function (o) { return o.value }))
+                if (this.options.length === un.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
+
+                function generateOption (i, option) {
+                    const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                    const row = $('<div/>').appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                    $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
+
+                    $('<input/>', { class: 'node-input-option-value', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Value', value: option.value }).appendTo(row).typedInput({ default: option.type || 'str', types: ['str', 'num', 'bool'] })
+                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Label', value: option.label }).appendTo(row)
+
+                    const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
+                    const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
+                    $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
+
+                    deleteButton.click(function () {
+                        container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                        container.fadeOut(300, function () {
+                            $(this).remove()
+                        })
+                    })
+
+                    $('#node-input-option-container').append(container)
+                }
+
+                $('#node-input-add-option').click(function () {
+                    generateOption($('#node-input-option-container').children().length + 1, {})
+                    $('#node-input-option-container-div').scrollTop($('#node-input-option-container-div').get(0).scrollHeight)
+                })
+
+                for (let i = 0; i < this.options.length; i++) {
+                    const option = this.options[i]
+                    generateOption(i + 1, option)
+                }
+
+                $('#node-input-option-container').sortable({
+                    axis: 'y',
+                    handle: '.node-input-option-handle',
+                    cursor: 'move'
+                })
+
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+            },
+            oneditsave: function () {
+                const options = $('#node-input-option-container').children()
+                const node = this
+                node.options = []
+                options.each(function (i) {
+                    const option = $(this)
+                    const o = {
+                        label: option.find('.node-input-option-label').val(),
+                        value: option.find('.node-input-option-value').typedInput('value'),
+                        type: option.find('.node-input-option-value').typedInput('type')
+                    }
+                    if (option.find('.node-input-option-value').typedInput('type') === 'num') {
+                        o.value = Number(o.value)
+                    }
+                    if (option.find('.node-input-option-value').typedInput('type') === 'bool') {
+                        o.value = (o.value === 'true')
+                    }
+                    node.options.push(o)
+                })
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-radio-group">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-tag"></i> Label</label>
+        <input type="text" id="node-input-label" placeholder="optional label">
+    </div>
+    <div class="form-row node-input-option-container-row" style="margin-bottom: 0px;width: 100%">
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Options</label>
+        <div id="node-input-option-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width:calc(70% + 15px);">
+            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b>All Values must be unique.</b></span>
+            <ol id="node-input-option-container" style="list-style-type:none; margin:0;"></ol>
+        </div>
+    </div>
+    <div class="form-row">
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>option</span></a>
+    </div>
+    <div class="form-row">
+        <label for="node-input-columns"><i class="fa fa-tag"></i> Columns</label>
+        <input type="number" id="node-input-columns" placeholder="columns" min="1" max="5">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="optional msg.topic">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+</script>

@@ -19,6 +19,7 @@ import UIButton from './ui-button/UIButton'
 import UIDropdown from './ui-dropdown/UIDropdown'
 import UIForm from './ui-form/UIForm'
 import UIChart from './ui-chart/UIChart'
+import UIRadioGroup from './ui-radio-group/UIRadioGroup'
 import UISlider from './ui-slider/UISlider'
 import UISwitch from './ui-switch/UISwitch'
 import UIMarkdown from './ui-markdown/UIMarkdown'
@@ -30,6 +31,7 @@ export default {
     'ui-dropdown': UIDropdown,
     'ui-form': UIForm,
     'ui-chart': UIChart,
+    'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,
     'ui-markdown': UIMarkdown,
