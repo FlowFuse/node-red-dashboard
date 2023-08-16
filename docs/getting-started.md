@@ -2,7 +2,7 @@
 
 ## Installation
 
-FlowForge's Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
+[FlowForge](https://flowforge.com)'s Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
 
 - Open the menu in the top-right of Node-RED
 - Click "Manage Palette"
