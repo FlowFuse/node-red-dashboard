@@ -121,21 +121,27 @@
                         typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
                     })
 
+                    // which input types don't need a 'require' option
+                    const noReqd = ['checkbox', 'switch']
+    
+                    // required
                     const requiredContainer = $('<div/>', { style: 'display:inline-block; height:34px; width:13%; vertical-align: middle' }).appendTo(row)
                     const requiredInnerContainer = $('<div/>', { style: 'left:35%; position:relative; width:30px' }).appendTo(requiredContainer)
-                    const reqRow = $('<label />', { class: 'switch', style: 'top:10px; width:30px;' }).appendTo(requiredInnerContainer)
-                    // required
-                    $('<input/>', { class: 'node-input-option-required', type: 'checkbox', checked: option.required, style: 'vertical-align:top;' }).appendTo(reqRow)// labelForRequried);//.typedInput({default:'str',types:['str', 'num']});
+                    const reqVis = noReqd.includes(option.type) ? 'hidden' : 'visible'
+                    const reqRow = $('<label />', { class: 'switch', style: 'top:10px; width:30px;' }).css('visibility', reqVis).appendTo(requiredInnerContainer)
+                    const reqd = $('<input/>', { class: 'node-input-option-required', type: 'checkbox', checked: option.required, style: 'vertical-align:top;' }).appendTo(reqRow)// labelForRequried);//.typedInput({default:'str',types:['str', 'num']});
                     $('<div />', { class: 'slider round' }).appendTo(reqRow)
     
-                    const vis = option.rows ? 'visible' : 'hidden'
-                    const rowsField = $('<input/>', { class: 'node-input-option-rows', type: 'number', style: 'width:10%;', placeholder: 'Rows', value: option.rows }).css('visibility', vis).appendTo(row)
+                    // ui rows
+                    const rowsVis = option.rows ? 'visible' : 'hidden'
+                    const rowsField = $('<input/>', { class: 'node-input-option-rows', type: 'number', style: 'width:10%;', placeholder: 'Rows', value: option.rows }).css('visibility', rowsVis).appendTo(row)
 
                     const finalspan = $('<div/>', { style: 'display:inline-block; width:5%;' }).appendTo(row)
                     const deleteButton = $('<a/>', { href: '#', class: 'editor-button', style: 'font-size:1.3em; left:45%; position:relative;' }).appendTo(finalspan)
                     $('<i/>', { class: 'fa fa-trash-o' }).appendTo(deleteButton)
 
                     typeField.change(function (e) {
+                        // decide whether we need to show the "rows" option
                         if (e.target.value !== 'multiline') {
                             rowsField.val(undefined)
                             option.rows = null
@@ -143,6 +149,15 @@
                         } else {
                             rowsField.css('visibility', 'visible')
                             if (!rowsField[0].value) rowsField[0].value = 3
+                        }
+
+                        // device whether we need to show the "required" option
+                        if (noReqd.includes(e.target.value)) {
+                            reqd.val(false)
+                            option.required = false
+                            reqRow.css('visibility', 'hidden')
+                        } else {
+                            reqRow.css('visibility', 'visible')
                         }
                     })
 
