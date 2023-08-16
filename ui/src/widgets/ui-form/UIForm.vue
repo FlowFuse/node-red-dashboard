@@ -1,26 +1,26 @@
 <template>
     <label v-if="props.label" class="nrdb-ui-form-label">{{ props.label }}</label>
-    <v-form @submit.prevent="onSubmit">
+    <v-form v-model="isValid" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
                 <v-switch v-else-if="row.type === 'switch'" v-model="input[row.key]" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
                 <v-textarea
                     v-else-if="row.type === 'multiline'"
-                    v-model="input[row.key]"
+                    v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field" :rows="row.rows"
                     :label="row.label" variant="outlined" hide-details="auto"
                 />
                 <v-text-field
                     v-else
-                    v-model="input[row.key]"
+                    v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field"
-                    :label="row.label" :type="row.type" :rules="validation" variant="outlined" hide-details="auto"
+                    :label="row.label" :type="row.type" variant="outlined" hide-details="auto"
                 />
             </div>
         </div>
         <div class="nrdb-ui-form-actions">
-            <v-btn type="submit" variant="flat" size="large">{{ props.submit || 'submit' }}</v-btn>
+            <v-btn type="submit" variant="flat" size="large" :disabled="!isValid">{{ props.submit || 'submit' }}</v-btn>
             <v-btn v-if="props.cancel" variant="outlined" size="large" @click="clear">{{ props.cancel }}</v-btn>
         </div>
     </v-form>
@@ -43,7 +43,8 @@ export default {
     },
     data () {
         return {
-            input: {}
+            input: {},
+            isValid: null
         }
     },
     computed: {
@@ -72,6 +73,18 @@ export default {
                     this.input[row.key] = ''
                 }
             })
+        },
+        rules (row) {
+            if (row.required) {
+                // is required
+                return [(v) => {
+                    console.log('v', v)
+                    return !!v || row.label + ' is required'
+                }]
+            } else {
+                // no rules
+                return []
+            }
         }
     }
 }
