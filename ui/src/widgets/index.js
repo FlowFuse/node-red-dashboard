@@ -17,6 +17,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 /* eslint-disable import/no-unresolved */
 import UIButton from './ui-button/UIButton'
 import UIDropdown from './ui-dropdown/UIDropdown'
+import UIForm from './ui-form/UIForm'
 import UIChart from './ui-chart/UIChart'
 import UISlider from './ui-slider/UISlider'
 import UISwitch from './ui-switch/UISwitch'
@@ -27,6 +28,7 @@ import UITextInput from './ui-text-input/UITextInput'
 export default {
     'ui-button': UIButton,
     'ui-dropdown': UIDropdown,
+    'ui-form': UIForm,
     'ui-chart': UIChart,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,

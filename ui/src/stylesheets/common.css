@@ -37,6 +37,40 @@ main {
 }
 
 /**
+* Widget: Form
+*/ 
+
+.nrdb-ui-form-label {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+.nrdb-ui-form-rows {
+    display: grid;
+    gap: 0.5rem;
+}
+.nrdb-ui-form-rows--split {
+    grid-template-columns: 1fr 1fr;
+}
+.nrdb-ui-form-row {
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+.nrdb-ui-form-row .nrdb-ui-widget,
+.nrdb-ui-form-row .v-selection-control {
+    min-height: 0;
+}
+.nrdb-ui-form-actions {
+    margin-top: 1rem; 
+}
+.nrdb-ui-form-actions button {
+    margin-right: 1rem; 
+}
+.nrdb-ui-form-row .v-text-field .v-input__details {
+    padding-inline-start: 0;
+}
+
+/**
 * Widget: Markdown
 */ 
 .nrdb-ui-markdown h1 {
