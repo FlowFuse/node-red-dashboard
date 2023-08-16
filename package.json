@@ -1,6 +1,6 @@
 {
     "name": "@flowforge/node-red-dashboard",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
     "author": {
         "name": "Joe Pavitt",
