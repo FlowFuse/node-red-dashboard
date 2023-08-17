@@ -111,7 +111,7 @@ export default {
             const payload = msg.payload
             const label = msg.topic
             // determine what type of msg we have
-            if (payload) {
+            if (payload !== null && payload !== undefined) {
                 if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
                     this.addToLine(payload, label)
                 } else if (this.props.chartType === 'bar') {

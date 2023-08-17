@@ -1,7 +1,7 @@
 <template>
     <div class="nrdb-ui-widget nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
         <label class="nrdb-ui-text-label">{{ props.label }}</label>
-        <span class="nrdb-ui-text-value">{{ value || 'No Message Received' }}</span>
+        <span class="nrdb-ui-text-value">{{ value !== null ? value : 'No Message Received' }}</span>
     </div>
 </template>
 
