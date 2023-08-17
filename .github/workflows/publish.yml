@@ -1,0 +1,27 @@
+name: Build and push packages
+
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: 'flowforge/github-actions-workflows/.github/workflows/build_node_package.yml@main'
+    with:
+      run_tests: true
+  
+  publish:
+    needs: build
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    uses: 'flowforge/github-actions-workflows/.github/workflows/publish_node_package.yml@main'
+    with:
+      package_name: node-red-dashboard
+      publish_package: true
