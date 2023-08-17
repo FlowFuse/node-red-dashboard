@@ -23,6 +23,9 @@
                 type: 'ui-theme',
                 value: 'default',
                 required: true
+            },
+            order: {
+                value: -1
             }
         },
         oneditprepare: function () {
@@ -65,6 +68,11 @@
     </div>
     <div class="form-row">
         <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Layout</label>
+        <input type="text" id="node-config-input-layout">
+        <input type="hidden" id="node-config-input-layoutType">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Order</label>
         <input type="text" id="node-config-input-layout">
         <input type="hidden" id="node-config-input-layoutType">
     </div>
