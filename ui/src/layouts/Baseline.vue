@@ -12,7 +12,7 @@
                 <v-list nav>
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
-                        prepend-icon="mdi-home" :title="`${page.name} ${page.order} (${page.route.path})`"
+                        prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
                     />
                 </v-list>

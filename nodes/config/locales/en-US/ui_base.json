@@ -3,6 +3,9 @@
         "auto": "auto",
         "label": {
             "category": "dashboard"
+        },
+        "layout": {
+            "pages": "Pages"
         }
     }
 }
