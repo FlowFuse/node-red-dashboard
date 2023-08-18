@@ -1,6 +1,8 @@
 <style>
     #ff-node-red-dashboard {
+        --ff-grey-50: #F9FAFB;
         --ff-grey-100: #F3F4F6;
+        --ff-grey-200: #E5E7EB;
     }
     #ff-node-red-dashboard .red-ui-sidebar-header {
         display: flex;
@@ -11,6 +13,10 @@
     }
     #ff-node-red-dashboard .red-ui-editableList-container {
         padding: 0;
+    }
+    /* don't show border for nexted editable lists */
+    .red-ui-editableList-border .red-ui-editableList-border {
+        border: 0;
     }
     /* Dashboard 2.0 Sidebar */
     .nrdb2-layout-order-editor {
@@ -33,6 +39,15 @@
         padding: 9px 6px;
         cursor: pointer;
     }
+    .nrdb2-sb-list-header.nrdb2-sb-pages-list-header {
+        border-top: 1px solid var(--ff-grey-200);
+        border-bottom: 1px solid var(--ff-grey-200);
+    }
+    .nrdb2-sb-list-header .nrdb2-sb-title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
     .nrdb2-sb-list-handle {
         opacity: 0;
         transition: 0.15s opacity;
@@ -42,6 +57,10 @@
     }
     .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle {
         opacity: 1;
+    }
+    /* indent the groups */
+    .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
+        margin-left: 1.5rem;
     }
 </style>
 
@@ -89,6 +108,71 @@
     /**
      * Add an editor to control the ordering of groups & widgets
      */
+
+    function updateItemOrder (items, events) {
+        items.each((i, el) => {
+            const group = el.data('data')
+            if (group.order !== i + 1) {
+                // update the order property for exposure to UI, start from 1, makes backup to SAFE_INT logic easier on frontend
+                group.order = i + 1
+                // update Node-RED node properties to trigger a redeploy
+                group.dirty = true
+                group.changed = true
+            }
+            const hev = {
+                t: 'edit',
+                node: group,
+                changes: {
+                    order: group.order
+                },
+                dirty: group.dirty,
+                changed: group.changed
+            }
+            events.push(hev)
+        })
+    }
+
+    // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
+    function recordEvents (events) {
+        // add our changes to NR history and trigger whether or not we need to redeploy
+        RED.history.push({
+            t: 'multi',
+            events
+        })
+        RED.nodes.dirty(true)
+        RED.view.redraw()
+    }
+
+    function addGroupOrderingList (container, groups) {
+        // ordered list of groupss to live within a container (e.g. page list item)
+        const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
+            sortable: '.nrdb2-sb-groups-list-header',
+            addButton: false,
+            height: 'auto',
+            connectWith: '.nrdb2-sb-group-list',
+            addItem: function (container, i, group) {
+                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                const groupicon = 'fa-table'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+            },
+            sortItems: function (items) {
+                // track any changes
+                const events = []
+                updateItemOrder(items, events)
+
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
+            }
+        })
+
+        groups.forEach(function (group) {
+            console.log(group)
+            groupsOL.editableList('addItem', group)
+        })
+    }
 
     function buildLayoutOrderEditor () {
         // layout/order editor
@@ -142,295 +226,22 @@
                 const tabicon = 'fa-object-group'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
+
+                // adds groups within this page
+                const groups = groupsByPage[page.id] || []
+                const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
+                addGroupOrderingList(groupsList, groups)
             },
             sortItems: function (items) {
-                console.log(items)
                 // track any changes
                 const events = []
-                items.each((i, el) => {
-                    const page = el.data('data')
-                    // const pageNode = RED.nodes.node(page.id)
-                    // console.log(pageNode)
-                    if (page.order !== i) {
-                        // update the order property for exposure to UI
-                        page.order = i
-                        // update Node-RED node properties to trigger a redeploy
-                        page.dirty = true
-                        page.changed = true
-                    }
-                    const hev = {
-                        t: 'edit',
-                        node: page,
-                        changes: {
-                            order: page.order
-                        },
-                        dirty: page.dirty,
-                        changed: page.changed
-                    }
-                    events.push(hev)
-                })
+                updateItemOrder(items, events)
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
-                RED.history.push({
-                    t: 'multi',
-                    events
-                })
-                RED.nodes.dirty(true)
-                RED.view.redraw()
+                recordEvents(events)
             }
         })
 
-        // ordered list for pages to manage group ordering
-        const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(sidebar).editableList({
-            sortable: '.nrdb2-sb-group-list-header',
-            addButton: false,
-            height: 'auto',
-            connectWith: '.nrdb2-sb-group-list',
-            addItem: function (container, i, group) {
-                // if (!group.node) {
-                //     group.node = {
-                //         id: RED.nodes.id(),
-                //         _def: RED.nodes.getType('ui_group'),
-                //         type: 'ui_group',
-                //         users: [],
-                //         tab: item.node.id,
-                //         order: i + 1,
-                //         name: 'Group ' + (i + 1),
-                //         width: 6,
-                //         disp: true
-                //     }
-                //     listElements[group.node.id] = container
-                //     RED.nodes.add(group.node)
-                //     RED.editor.validateNode(group.node)
-                //     group.widgets = []
-                //     RED.history.push({
-                //         t: 'add',
-                //         nodes: [group.node.id],
-                //         dirty: RED.nodes.dirty()
-                //     })
-                //     RED.nodes.dirty(true)
-                //     if (RED.nodes.hasOwnProperty('updateConfigNodeUsers')) {
-                //         RED.nodes.updateConfigNodeUsers(group.node)
-                //     }
-                // } else {
-                //     if (group.node.order === undefined) {
-                //         group.node.order = i + 1
-                //     }
-                // }
-                console.log(container, i)
-                console.log(group)
-                const groupNode = group.node
-                // elementParents[groupNode] = item.node.id
-                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-group-list-header' }).appendTo(container)
-                $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
-                $('<i class="nrdb2-sb-icon nrdb2-sb-group-icon fa fa-table"></i>').appendTo(titleRow)
-                $('<span class="nrdb2-sb-title">').text(groupNode.name || groupNode.id || '').appendTo(titleRow)
-                // listElements[groupNode.id] = container
-                // const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: groupNode.id }).appendTo(titleRow)
-                // const spacerButton = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.spacer') + '</a>').appendTo(buttonGroup)
-                // spacerButton.on('click', function (evt) {
-                //     if (isLocked(item.node.id)) {
-                //         evt.stopPropagation()
-                //         evt.preventDefault()
-                //         notifyLocked()
-                //         return
-                //     }
-                //     const spaceNode = {
-                //         _def: RED.nodes.getType('ui_spacer'),
-                //         type: 'ui_spacer',
-                //         hasUsers: false,
-                //         users: [],
-                //         id: RED.nodes.id(),
-                //         tab: item.node.name,
-                //         group: group.node.id,
-                //         order: i + 1,
-                //         name: 'spacer',
-                //         width: 1,
-                //         height: 1,
-                //         z: RED.workspaces.active(),
-                //         label: function () { return 'spacer ' + this.width + 'x' + this.height }
-                //     }
-                //     RED.nodes.add(spaceNode)
-                //     RED.editor.validateNode(spaceNode)
-                //     RED.history.push({
-                //         t: 'add',
-                //         nodes: [spaceNode.id],
-                //         dirty: RED.nodes.dirty()
-                //     })
-                //     RED.nodes.dirty(true)
-                //     RED.view.redraw()
-                //     evt.stopPropagation()
-                //     evt.preventDefault()
-                // })
-                // const editButton = $('<a href="#" class="nrdb2-sb-edit-group-button editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(buttonGroup)
-                // const content = $('<div>', { class: 'nrdb2-sb-widget-list-container' }).appendTo(container)
-                // if (!listStates.hasOwnProperty(groupNode.id) || !listStates[groupNode.id]) {
-                //     content.hide()
-                //     chevron.css({ transform: 'rotate(-90deg)' })
-                //     content.addClass('nrdb2-sb-collapsed')
-                //     listStates[groupNode.id] = false
-                // } else {
-                //     listStates[groupNode.id] = true
-                // }
-
-                // var ol = $('<ol>', { class: 'nrdb2-sb-widget-list' }).appendTo(content).editableList({
-                //     sortable: '.nrdb2-sb-widget-list-header',
-                //     addButton: false,
-                //     height: 'auto',
-                //     connectWith: '.nrdb2-sb-widget-list',
-                //     addItem: function (container, i, widgetNode) {
-                //         elementParents[widgetNode.id] = groupNode.id
-                //         const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widget-list-header' }).appendTo(container)
-                //         $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                //         $('<i class="nrdb2-sb-icon nrdb2-sb-widget-icon fa fa-picture-o"></i>').click(function (e) { e.preventDefault(); RED.search.show(widgetNode.id) }).appendTo(titleRow)
-                //         let l = widgetNode._def.label
-                //         try {
-                //             l = (typeof l === 'function' ? l.call(widgetNode) : l) || ''
-                //         } catch (err) {
-                //             console.log('Definition error: ' + d.type + '.label', err)
-                //             l = d.type
-                //         }
-                //         const title = $('<span class="nrdb2-sb-title">').text(l).appendTo(titleRow)
-                //         listElements[widgetNode.id] = container
-                //         const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group' }).appendTo(titleRow)
-                //         const editButton = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(buttonGroup)
-                //         container.on('mouseover', function () {
-                //             widgetNode.highlighted = true
-                //             widgetNode.dirty = true
-                //             RED.view.redraw()
-                //         })
-                //         container.on('mouseout', function () {
-                //             widgetNode.highlighted = false
-                //             widgetNode.dirty = true
-                //             RED.view.redraw()
-                //         })
-                //         editButton.on('click', function (evt) {
-                //             if (isLockedTab(widgetNode.z)) {
-                //                 evt.stopPropagation()
-                //                 evt.preventDefault()
-                //                 notifyLocked()
-                //                 return
-                //             }
-                //             RED.editor.edit(widgetNode)
-                //             evt.stopPropagation()
-                //             evt.preventDefault()
-                //         })
-                //     },
-                //     sortItems: function (items) {
-                //         if (isLocked(item.node.id)) {
-                //             $(ol).editableList('cancel')
-                //             notifyLocked()
-                //             return
-                //         }
-                //         const historyEvents = []
-                //         items.each(function (i, el) {
-                //             const node = el.data('data')
-                //             const hev = {
-                //                 t: 'edit',
-                //                 node,
-                //                 changes: {
-                //                     order: node.order,
-                //                     group: node.group
-                //                 },
-                //                 dirty: node.dirty,
-                //                 changed: node.changed
-                //             }
-                //             historyEvents.push(hev)
-                //             let changed = false
-                //             if (node.order !== i + 1) {
-                //                 node.order = i + 1
-                //                 changed = true
-                //             }
-                //             if (node.group !== group.node.id) {
-                //                 const oldGroupNode = RED.nodes.node(node.group)
-                //                 if (oldGroupNode) {
-                //                     const index = oldGroupNode.users.indexOf(node)
-                //                     oldGroupNode.users.splice(index, 1)
-                //                 }
-                //                 node.group = group.node.id
-                //                 group.node.users.push(node)
-                //                 changed = true
-                //             }
-                //             if (changed) {
-                //                 node.dirty = true
-                //                 node.changed = true
-                //             }
-                //         })
-                //         RED.history.push({
-                //             t: 'multi',
-                //             events: historyEvents
-                //         })
-                //         RED.nodes.dirty(true)
-                //         RED.view.redraw()
-                //     }
-                // })
-                // ol.css('min-height', '5px')
-                // if (groupNode.id) {
-                //     groupLists[groupNode.id] = ol
-                // }
-                // titleRow.click(titleToggle(groupNode.id, content, chevron))
-                // editButton.on('click', function (evt) {
-                //     if (isLocked(item.node.id)) {
-                //         evt.stopPropagation()
-                //         evt.preventDefault()
-                //         notifyLocked()
-                //         return
-                //     }
-                //     RED.editor.editConfig('', groupNode.type, groupNode.id)
-                //     evt.stopPropagation()
-                //     evt.preventDefault()
-                // })
-                // group.widgets.forEach(function (widget) {
-                //     ol.editableList('addItem', widget)
-                // })
-            },
-            sortItems: function (items) {
-                // called everytime an item is moved in the list
-
-                // const historyEvents = []
-                // items.each(function (i, el) {
-                //     const groupData = el.data('data')
-                //     const node = groupData.node
-                //     const hev = {
-                //         t: 'edit',
-                //         node,
-                //         changes: {
-                //             order: node.order,
-                //             tab: node.tab
-                //         },
-                //         dirty: node.dirty,
-                //         changed: node.changed
-                //     }
-                //     historyEvents.push(hev)
-                //     let changed = false
-                //     if (node.order !== i + 1) {
-                //         node.order = i + 1
-                //         changed = true
-                //     }
-                //     if (changed) {
-                //         node.dirty = true
-                //         node.changed = true
-                //     }
-                //     if (node.tab !== item.node.id) {
-                //         const oldTabNode = RED.nodes.node(node.tab)
-                //         if (oldTabNode) {
-                //             const index = oldTabNode.users.indexOf(node)
-                //             oldTabNode.users.splice(index, 1)
-                //         }
-                //         node.tab = item.node.id
-                //         item.node.users.push(node)
-                //         changed = true
-                //     }
-                // })
-                // RED.history.push({
-                //     t: 'multi',
-                //     events: historyEvents
-                // })
-                // RED.nodes.dirty(true)
-                // RED.view.redraw()
-            }
-        })
         Object.values(groupsByPage).sort((a, b) => a.order - b.order).forEach(function (groups) {
             console.log(groups)
             const page = pages[groups[0].page]
