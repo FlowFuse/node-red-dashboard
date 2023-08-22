@@ -6,11 +6,7 @@
                 value: 'Group Name',
                 required: true
             },
-            page: { type: 'ui-page', required: false },
-            path: {
-                value: '/',
-                required: false
-            },
+            page: { type: 'ui-page', required: true },
             width: { value: 6 },
             height: { value: 1 },
             order: { value: 0 },
@@ -38,10 +34,6 @@
     <div class="form-row">
         <label for="node-config-input-page"><i class="fa fa-bookmark"></i> Page</label>
         <input type="text" id="node-config-input-page">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Default Path</label>
-        <input type="text" id="node-config-input-path">
     </div>
     <div class="form-row">
         <label for="node-config-input-size"><i class="fa fa-arrows-h"></i> Size</label>

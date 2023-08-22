@@ -27,6 +27,10 @@
             path: {
                 value: '/dashboard',
                 required: true
+            },
+            default: {
+                value: '/',
+                required: false
             }
         },
         label: function () {
@@ -283,5 +287,9 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-default"><i class="fa fa-bookmark"></i> Default</label>
+        <input type="text" id="node-config-input-default">
     </div>
 </script>
