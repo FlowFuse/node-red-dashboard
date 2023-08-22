@@ -3,6 +3,13 @@
         --ff-grey-50: #F9FAFB;
         --ff-grey-100: #F3F4F6;
         --ff-grey-200: #E5E7EB;
+        position: absolute;
+        top: 1px;
+        bottom: 2px;
+        left: 1px;
+        right: 1px;
+        overflow-y: auto;
+        padding: 10px;
     }
     #ff-node-red-dashboard .red-ui-sidebar-header {
         display: flex;
@@ -62,12 +69,17 @@
     .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
         margin-left: 1.5rem;
     }
+    /* indent the widgets */
+    .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
+        margin-left: 3.5rem;
+    }
 </style>
 
 
 <script type="text/javascript">
 (function () {
-    const sidebarContentTemplate = '<div id="ff-node-red-dashboard"></div>'
+    const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
+    const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
 
     // convert to i18 text
     function c_ (x) {
@@ -108,28 +120,46 @@
     /**
      * Add an editor to control the ordering of groups & widgets
      */
+    const pages = {}
+    const groupsByPage = {}
+    const widgetsByGroup = {}
 
     function updateItemOrder (items, events) {
         items.each((i, el) => {
-            const group = el.data('data')
-            if (group.order !== i + 1) {
+            const node = el.data('data')
+            if (node.order !== i + 1) {
                 // update the order property for exposure to UI, start from 1, makes backup to SAFE_INT logic easier on frontend
-                group.order = i + 1
+                node.order = i + 1
                 // update Node-RED node properties to trigger a redeploy
-                group.dirty = true
-                group.changed = true
+                node.dirty = true
+                node.changed = true
             }
             const hev = {
                 t: 'edit',
-                node: group,
+                node,
                 changes: {
-                    order: group.order
+                    order: node.order
                 },
-                dirty: group.dirty,
-                changed: group.changed
+                dirty: node.dirty,
+                changed: node.changed
             }
             events.push(hev)
         })
+    }
+
+    // toggle slide tab group content
+    const titleToggle = function (id, content, chevron) {
+        return function (evt) {
+            if (content.is(':visible')) {
+                content.slideUp()
+                chevron.css({ transform: 'rotate(-90deg)' })
+                content.addClass('nr-db-sb-collapsed')
+            } else {
+                content.slideDown()
+                chevron.css({ transform: '' })
+                content.removeClass('nr-db-sb-collapsed')
+            }
+        }
     }
 
     // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
@@ -143,7 +173,8 @@
         RED.view.redraw()
     }
 
-    function addGroupOrderingList (container, groups) {
+    // Adds child list of groups for a given page
+    function addGroupOrderingList (pageId, container, groups) {
         // ordered list of groupss to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -152,15 +183,42 @@
             connectWith: '.nrdb2-sb-group-list',
             addItem: function (container, i, group) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
-                $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
                 const groupicon = 'fa-table'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+
+                // adds widgets within this group
+                const widgets = widgetsByGroup[group.id] || []
+                const widgetsList = $('<div>', { class: 'nrdb2-sb-widget-list-container' }).appendTo(container)
+
+                // add chevron/list toggle
+                titleRow.click(titleToggle(group.id, widgetsList, chevron))
+
+                addWidgetToList(group.id, widgetsList, widgets)
             },
             sortItems: function (items) {
                 // track any changes
                 const events = []
+
+                // check if we have any new widgets added to this list
+                items.each((i, el) => {
+                    const widget = el.data('data')
+                    if (widget.page !== pageId) {
+                        widget.page = pageId
+                        events.push({
+                            t: 'edit',
+                            node: widget,
+                            changes: {
+                                page: widget.page
+                            },
+                            dirty: widget.dirty,
+                            changed: widget.changed
+                        })
+                    }
+                })
+
                 updateItemOrder(items, events)
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
@@ -171,6 +229,55 @@
         groups.forEach(function (group) {
             console.log(group)
             groupsOL.editableList('addItem', group)
+        })
+    }
+
+    // Adds  list of widgets underneath a group
+    function addWidgetToList (groupId, container, widgets) {
+        // ordered list of groupss to live within a container (e.g. page list item)
+        const widgetsOL = $('<ol>', { class: 'nrdb2-sb-widget-list' }).appendTo(container).editableList({
+            sortable: '.nrdb2-sb-widgets-list-header',
+            addButton: false,
+            height: 'auto',
+            connectWith: '.nrdb2-sb-widget-list',
+            addItem: function (container, i, widget) {
+                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
+
+                const groupicon = 'fa-image'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + groupicon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
+            },
+            sortItems: function (items) {
+                // track any changes
+                const events = []
+
+                // check if we have any new widgets added to this list
+                items.each((i, el) => {
+                    const widget = el.data('data')
+                    if (widget.group !== groupId) {
+                        widget.group = groupId
+                        events.push({
+                            t: 'edit',
+                            node: widget,
+                            changes: {
+                                group: widget.group
+                            },
+                            dirty: widget.dirty,
+                            changed: widget.changed
+                        })
+                    }
+                })
+
+                updateItemOrder(items, events)
+
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
+            }
+        })
+
+        widgets.forEach(function (w) {
+            widgetsOL.editableList('addItem', w)
         })
     }
 
@@ -199,8 +306,6 @@
             .appendTo(buttonGroup)
 
         // get all pages & all groups
-        const pages = {}
-        const groupsByPage = {}
         RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-page' && !!n.ui) {
                 pages[n.id] = n
@@ -212,7 +317,17 @@
                 groupsByPage[n.page].push(n)
             }
         })
-        console.log(pages, groupsByPage)
+
+        // get all widgets
+        RED.nodes.eachNode(function (n) {
+            if (/^ui-/.test(n.type) && n.group) {
+                if (!widgetsByGroup[n.group]) {
+                    widgetsByGroup[n.group] = []
+                }
+                widgetsByGroup[n.group].push(n)
+            }
+        })
+        console.log(pages, groupsByPage, widgetsByGroup)
 
         const pagesOL = $('<ol>', { class: 'nrdb2-sb-pages-list' }).appendTo(divTabs).editableList({
             sortable: '.nrdb2-sb-pages-list-header',
@@ -222,7 +337,7 @@
 
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
                 const tabicon = 'fa-object-group'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
@@ -230,7 +345,10 @@
                 // adds groups within this page
                 const groups = groupsByPage[page.id] || []
                 const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
-                addGroupOrderingList(groupsList, groups)
+
+                titleRow.click(titleToggle(page.id, groupsList, chevron))
+
+                addGroupOrderingList(page.id, groupsList, groups)
             },
             sortItems: function (items) {
                 // track any changes
@@ -285,7 +403,7 @@
     })
 
     /**
-     * jQuery widget to provide a selector for the sizing of a widget & group
+     * jQuery widget to provide a selector for the sizing (width & height) of a widget & group
      */
     $.widget('nodereddashboard.elementSizer', {
         _create: function () {

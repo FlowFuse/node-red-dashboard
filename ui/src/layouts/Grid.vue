@@ -41,12 +41,6 @@ export default {
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
         gridGroups: function () {
             const groups = this.groupsByPage(this.$route.meta.id)
-            groups.sort((a, b) => {
-                // if order = 0, prioritise groups where order _is_ set
-                const aOrder = a.order || Number.MAX_SAFE_INTEGER
-                const bOrder = b.order || Number.MAX_SAFE_INTEGER
-                return aOrder - bOrder
-            })
             return groups
         }
     }
