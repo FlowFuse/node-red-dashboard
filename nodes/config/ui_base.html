@@ -185,7 +185,7 @@
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(row)
         const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button  editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
         editButton.on('click', function (evt) {
-            if (item.type === 'ui-page') {
+            if (item.type === 'ui-page' || item.type === 'ui-group') {
                 RED.editor.editConfig('', item.type, item.id)
             } else {
                 RED.editor.edit(item)
