@@ -55,6 +55,11 @@
         overflow: hidden;
         white-space: nowrap;
     }
+    .nrdb2-sb-list-header-button-group {
+        position: absolute;
+        right: 1rem;
+    }
+    .nrdb2-sb-list-header-button-group,
     .nrdb2-sb-list-handle {
         opacity: 0;
         transition: 0.15s opacity;
@@ -62,7 +67,8 @@
     .nrdb2-sb-list-header:hover {
         background-color: var(--ff-grey-100);
     }
-    .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle {
+    .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle, 
+    .nrdb2-sb-list-header:hover .nrdb2-sb-list-header-button-group {
         opacity: 1;
     }
     /* indent the groups */
@@ -120,9 +126,6 @@
     /**
      * Add an editor to control the ordering of groups & widgets
      */
-    const pages = {}
-    const groupsByPage = {}
-    const widgetsByGroup = {}
 
     function updateItemOrder (items, events) {
         items.each((i, el) => {
@@ -173,8 +176,27 @@
         RED.view.redraw()
     }
 
+    /**
+     * Add group of actions to the right-side of a row in the sidebar editable list.
+     * @param {Object} row - jQuery object to add this button group as a child element to
+     * @param {Object} row - The page/group/widget that these actions are bound to
+     */
+    function addRowActions (row, item) {
+        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(row)
+        const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button  editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
+        editButton.on('click', function (evt) {
+            if (item.type === 'ui-page') {
+                RED.editor.editConfig('', item.type, item.id)
+            } else {
+                RED.editor.edit(item)
+            }
+            evt.stopPropagation()
+            evt.preventDefault()
+        })
+    }
+
     // Adds child list of groups for a given page
-    function addGroupOrderingList (pageId, container, groups) {
+    function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
         // ordered list of groupss to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -188,6 +210,8 @@
                 const groupicon = 'fa-table'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+
+                addRowActions(titleRow, group)
 
                 // adds widgets within this group
                 const widgets = widgetsByGroup[group.id] || []
@@ -247,6 +271,8 @@
                 const groupicon = 'fa-image'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
+
+                addRowActions(titleRow, widget)
             },
             sortItems: function (items) {
                 // track any changes
@@ -305,6 +331,10 @@
             })
             .appendTo(buttonGroup)
 
+        const pages = {}
+        const groupsByPage = {}
+        const widgetsByGroup = {}
+
         // get all pages & all groups
         RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-page' && !!n.ui) {
@@ -327,7 +357,6 @@
                 widgetsByGroup[n.group].push(n)
             }
         })
-        console.log(pages, groupsByPage, widgetsByGroup)
 
         const pagesOL = $('<ol>', { class: 'nrdb2-sb-pages-list' }).appendTo(divTabs).editableList({
             sortable: '.nrdb2-sb-pages-list-header',
@@ -342,13 +371,16 @@
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
 
+                // page - actions
+                addRowActions(titleRow, page)
+
                 // adds groups within this page
                 const groups = groupsByPage[page.id] || []
                 const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
 
                 titleRow.click(titleToggle(page.id, groupsList, chevron))
 
-                addGroupOrderingList(page.id, groupsList, groups)
+                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
             },
             sortItems: function (items) {
                 // track any changes

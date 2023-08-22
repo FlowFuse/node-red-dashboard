@@ -5,7 +5,8 @@
             "category": "dashboard"
         },
         "layout": {
-            "pages": "Pages"
+            "pages": "Pages",
+            "edit": "Edit"
         }
     }
 }
