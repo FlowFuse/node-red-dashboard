@@ -56,20 +56,24 @@ module.exports = function (RED) {
             /**
              * Create IO Server for comms between Node-RED and UI
              */
+            if (RED.settings.httpNodeRoot !== false) {
+                const root = RED.settings.httpNodeRoot || '/'
+                const fullPath = join(root, config.path)
+                const socketIoPath = join('/', fullPath, 'socket.io')
+                /** @type {import('socket.io/dist').ServerOptions} */
+                const serverOptions = {
+                    path: socketIoPath
+                }
+                // console.log('Creating socket.io server at path', socketIoPath) // disable - noisy in tests
+                // store reference to the SocketIO Server
+                uiShared.ioServer = new Server(uiShared.httpServer, serverOptions)
+                uiShared.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
 
-            const fullPath = join(RED.settings.httpNodeRoot, config.path)
-            const socketIoPath = join('/', fullPath, 'socket.io')
-            /** @type {import('socket.io/dist').ServerOptions} */
-            const serverOptions = {
-                path: socketIoPath
+                const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
+                node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
+            } else {
+                node.warn('Cannot create UI Base node when httpNodeRoot set to false')
             }
-            console.log('Creating socket.io server at path', socketIoPath)
-            // store reference to the SocketIO Server
-            uiShared.ioServer = new Server(uiShared.httpServer, serverOptions)
-            uiShared.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
-
-            const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
-            node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
         }
     }
 
