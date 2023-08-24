@@ -463,9 +463,13 @@ module.exports = function (RED) {
             // map themes by their ID
             if (!node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
-                // eslint-disable-next-line no-unused-vars
-                const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
-                node.ui.themes.set(page.theme, t)
+                if (theme) {
+                    // eslint-disable-next-line no-unused-vars
+                    const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
+                    node.ui.themes.set(page.theme, t)
+                } else {
+                    node.warn(`Theme '${page.theme}' specified  in page '${page.id}' does not exist`)
+                }
             }
 
             // map pages by their ID
