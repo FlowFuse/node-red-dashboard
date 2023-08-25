@@ -366,6 +366,50 @@
         })
     }
 
+    // expand / collapse buttons
+    let layoutDisplayLevel = 2 // all open by default
+    const getGroupsInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-widget-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const getPagesInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-group-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-pages-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const collapseLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: 'rotate(-90deg)' })
+        content.slideUp()
+        content.addClass('nr-db-sb-collapsed')
+    }
+    const expandLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: '' })
+        content.slideDown()
+        content.removeClass('nr-db-sb-collapsed')
+    }
+    /**
+     * Update the visibility of the layout editor expandable lists
+     * @param {0|1|2} level - 0 = collapse all, 1 = expand pages (groups collapsed), 2 = expand pages and groups (to expose widgets)
+     */
+    const updateLayoutVisibility = function (level) {
+        if (RED._db2debug) { console.log('updateLayoutVisibility', level) }
+        if (level === 2) {
+            expandLayoutItems(getGroupsInLayout())
+            expandLayoutItems(getPagesInLayout())
+        } else if (level === 1) {
+            expandLayoutItems(getPagesInLayout())
+            collapseLayoutItems(getGroupsInLayout())
+        } else {
+            collapseLayoutItems(getGroupsInLayout())
+            collapseLayoutItems(getPagesInLayout())
+        }
+    }
+
     function buildLayoutOrderEditor () {
         // layout/order editor
         const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
@@ -377,18 +421,23 @@
         // toggle "all" buttons
         const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(pagesHeader)
 
-        // Toggle expand buttons
-        $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-up"></i></a>')
+        const buttonCollapse = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-up"></i></a>')
             .click(function (evt) {
                 evt.preventDefault()
+                if (--layoutDisplayLevel < 0) { layoutDisplayLevel = 0 }
+                updateLayoutVisibility(layoutDisplayLevel)
             })
             .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonCollapse, c_('layout.collapse'))
 
-        $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-down"></i></a>')
+        // expand button
+        const buttonExpand = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-down"></i></a>')
             .click(function (evt) {
-                evt.preventDefault()
-            })
+                if (++layoutDisplayLevel > 2) { layoutDisplayLevel = 2 }
+                updateLayoutVisibility(layoutDisplayLevel)
+            }).appendTo(buttonGroup)
             .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonExpand, c_('layout.expand'))
 
         const pages = {}
         const groupsByPage = {}
