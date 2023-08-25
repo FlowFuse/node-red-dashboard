@@ -143,23 +143,27 @@
     function updateItemOrder (items, events) {
         items.each((i, el) => {
             const node = el.data('data')
+            const nodeBefore = RED.nodes.node(node.id)
             if (node.order !== i + 1) {
-                // update the order property for exposure to UI, start from 1, makes backup to SAFE_INT logic easier on frontend
-                node.order = i + 1
-                // update Node-RED node properties to trigger a redeploy
+                const originalOrder = nodeBefore.order
+                const wasDirty = node.dirty
+                const wasChanged = node.changed
+                // update Node-RED node properties
+                node.order = i + 1 // start from 1, makes backup to SAFE_INT logic easier on frontend
                 node.dirty = true
                 node.changed = true
+                // generate a history event
+                const hev = {
+                    t: 'edit',
+                    node,
+                    changes: {
+                        order: originalOrder
+                    },
+                    dirty: wasDirty,
+                    changed: wasChanged
+                }
+                events.push(hev)
             }
-            const hev = {
-                t: 'edit',
-                node,
-                changes: {
-                    order: node.order
-                },
-                dirty: node.dirty,
-                changed: node.changed
-            }
-            events.push(hev)
         })
     }
 
@@ -180,10 +184,17 @@
 
     // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
     function recordEvents (events) {
+        if (events.length === 0) { return } // nothing to record
+
+        // note the state of the editor before pushing to history
+        const isDirty = RED.nodes.dirty()
+        if (RED._db2debug) { console.log('recordEvents', isDirty, events) }
+
         // add our changes to NR history and trigger whether or not we need to redeploy
         RED.history.push({
             t: 'multi',
-            events
+            events,
+            dirty: isDirty
         })
         RED.nodes.dirty(true)
         RED.view.redraw()
@@ -270,15 +281,16 @@
                 items.each((i, el) => {
                     const widget = el.data('data')
                     if (widget.page !== pageId) {
+                        const oldPageId = widget.page
                         widget.page = pageId
                         events.push({
                             t: 'edit',
                             node: widget,
                             changes: {
-                                page: widget.page
+                                page: oldPageId
                             },
-                            dirty: widget.dirty,
-                            changed: widget.changed
+                            dirty: widget.changed,
+                            changed: widget.dirty
                         })
                     }
                 })
@@ -294,7 +306,7 @@
         })
 
         groups.forEach(function (group) {
-            console.log(group)
+            if (RED._db2debug) { if (RED._db2debug) { console.log(group) } }
             groupsOL.editableList('addItem', group)
         })
     }
@@ -325,12 +337,13 @@
                 items.each((i, el) => {
                     const widget = el.data('data')
                     if (widget.group !== groupId) {
+                        const oldGroupId = widget.group
                         widget.group = groupId
                         events.push({
                             t: 'edit',
                             node: widget,
                             changes: {
-                                group: widget.group
+                                group: oldGroupId
                             },
                             dirty: widget.dirty,
                             changed: widget.changed
@@ -442,7 +455,7 @@
         })
 
         Object.values(groupsByPage).sort((a, b) => a.order - b.order).forEach(function (groups) {
-            console.log(groups)
+            if (RED._db2debug) { console.log(groups) }
             const page = pages[groups[0].page]
             if (page) {
                 pagesOL.editableList('addItem', page)
