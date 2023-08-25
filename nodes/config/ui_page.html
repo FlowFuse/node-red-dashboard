@@ -42,7 +42,8 @@
             })
         },
         label: function () {
-            const base = RED.nodes.node(this.ui).path
+            const baseNode = RED.nodes.node(this.ui)
+            const base = baseNode ? baseNode.path : '/'
             const path = this.path || ''
             return `${this.name} [${base}${path}]` || 'UI Page'
         }
