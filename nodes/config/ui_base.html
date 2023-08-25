@@ -95,7 +95,20 @@
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
-
+    function debounce (func, wait, immediate) {
+        let timeout
+        return function () {
+            const context = this; const args = arguments
+            const later = function () {
+                timeout = null
+                if (!immediate) func.apply(context, args)
+            }
+            const callNow = immediate && !timeout
+            clearTimeout(timeout)
+            timeout = setTimeout(later, wait)
+            if (callNow) func.apply(context, args)
+        }
+    }
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -175,6 +188,33 @@
         RED.nodes.dirty(true)
         RED.view.redraw()
     }
+
+    // watch for nodes changed, added, removed - use this to refresh the sidebar
+    const refreshLayoutEditorDebounced = debounce(refreshLayoutEditor, 300)
+    RED.events.on('nodes:change', function (event) {
+        if (RED._db2debug) { console.log('nodes:change', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:change - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:add', function (event) {
+        if (RED._db2debug) { console.log('nodes:add', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:remove', function (event) {
+        if (RED._db2debug) { console.log('nodes:remove', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:remove - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
 
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
@@ -309,7 +349,7 @@
 
     function buildLayoutOrderEditor () {
         // layout/order editor
-        const divTabs = $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
+        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
 
         // section header - Pages
         const pagesHeader = $('<div>', { class: 'nrdb2-layout-order-editor--pages' }).appendTo(divTabs)
@@ -402,6 +442,27 @@
 
             // })
         })
+
+        // call updateLayoutVisibility to sync display level
+        updateLayoutVisibility(layoutDisplayLevel)
+    }
+
+    function refreshLayoutEditor () {
+        if (RED._db2debug) { console.log('refreshLayoutEditor called') }
+        const layoutOrderDiv = $('.nrdb2-layout-order-editor')
+        // empty the list if any items exist
+        if (layoutOrderDiv.length) {
+            // TODO: create a lookup of which items are expanded / collapsed
+            layoutOrderDiv.empty()
+        }
+
+        // now rebuild
+        buildLayoutOrderEditor()
+
+        // finally, restore previous state of expanded/collapsed items
+        // TODO: expand/collapse any items that were expanded before
+        // for now, we will just re-sync the display level
+        updateLayoutVisibility(layoutDisplayLevel)
     }
 
     RED.sidebar.addTab({
