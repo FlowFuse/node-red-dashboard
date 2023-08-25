@@ -287,6 +287,9 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
@@ -339,6 +342,9 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
@@ -429,6 +435,9 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
