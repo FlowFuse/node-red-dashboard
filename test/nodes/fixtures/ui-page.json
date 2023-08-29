@@ -1,8 +1,9 @@
 {
     "id": "config-ui-page",
     "type": "ui-page",
-    "name": "Page 2",
+    "name": "Page 1",
     "ui": "config-ui-base",
-    "path": "/page2",
-    "layout": "flex"
+    "path": "/page1",
+    "layout": "flex",
+    "theme": "config-ui-theme"
 }

@@ -1,0 +1,9 @@
+{
+    "id": "config-ui-group",
+    "type": "ui-group",
+    "name": "Group 1",
+    "ui": "config-ui-base",
+    "path": "/group1",
+    "page": "config-ui-page",
+    "layout": "flex"
+}
