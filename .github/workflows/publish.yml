@@ -1,5 +1,4 @@
-name: Build and push packages
-
+name: Build and publish packages to private registry
 on:
   schedule:
     - cron: '0 23 * * *'
