@@ -54,11 +54,7 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        if (group) {
-            group.register(node, config, evts)
-        } else {
-            node.error('No group configured')
-        }
+        group.register(node, config, evts)
     }
 
     RED.nodes.registerType('ui-button', ButtonNode)
