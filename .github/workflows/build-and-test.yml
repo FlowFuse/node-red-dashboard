@@ -3,6 +3,7 @@ on:
   pull_request:
 jobs:
   build:
-    uses: 'flowforge/github-actions-workflows/.github/workflows/build_node_package.yml@main'
+    name: Build and test
+    uses: 'flowforge/github-actions-workflows/.github/workflows/build_node_package.yml@feat-remove-npm-test-action'
     with:
       run_tests: true
