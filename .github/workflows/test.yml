@@ -1,0 +1,19 @@
+name: Unit Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+jobs:
+  test:
+    if: ${{ github.repository == 'flowforge/flowforge-nr-dashboard' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      # Install NPM dependencies
+      - name: Install Dependencies
+        run: npm ci
+      # Run Tests
+      - run: npm run test
