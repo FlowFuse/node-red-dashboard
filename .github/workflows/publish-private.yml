@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -18,7 +15,6 @@ jobs:
   publish:
     needs: build
     if: |
-      github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
     uses: 'flowforge/github-actions-workflows/.github/workflows/publish_node_package.yml@main'
     with:
