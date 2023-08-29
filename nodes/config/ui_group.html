@@ -9,11 +9,11 @@
             page: { type: 'ui-page', required: true },
             width: { value: 6 },
             height: { value: 1 },
-            order: { value: 0 },
+            order: { value: -1 },
             disp: { value: true } // show title on group card
         },
         label: function () {
-            const page = RED.nodes.node(this.page).name
+            const page = RED.nodes.node(this.page)?.name || ''
             return `${this.name} [${page}]` || 'UI Group'
         },
         oneditprepare: function () {

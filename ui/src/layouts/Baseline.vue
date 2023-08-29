@@ -11,7 +11,7 @@
             <v-navigation-drawer v-model="drawer">
                 <v-list nav>
                     <v-list-item
-                        v-for="page in pages" :key="page.id" active-class="v-list-item--active"
+                        v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
                         prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
                     />
@@ -72,6 +72,9 @@ export default {
             const page = this.pages[this.$route.meta.id]
             const theme = this.themes[page.theme].colors
             return theme
+        },
+        orderedPages: function () {
+            return Object.values(this.pages).sort((a, b) => a.order - b.order)
         }
     },
     watch: {
