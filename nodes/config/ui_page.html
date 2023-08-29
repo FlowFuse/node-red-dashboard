@@ -42,7 +42,8 @@
             })
         },
         label: function () {
-            const base = RED.nodes.node(this.ui).path
+            const baseNode = RED.nodes.node(this.ui)
+            const base = baseNode ? baseNode.path : '/'
             const path = this.path || ''
             return `${this.name} [${base}${path}]` || 'UI Page'
         }
@@ -73,7 +74,7 @@
     </div>
     <div class="form-row">
         <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Order</label>
-        <input type="text" id="node-config-input-layout">
-        <input type="hidden" id="node-config-input-layoutType">
+        <input type="text" id="node-config-input-order">
+        <input type="hidden" id="node-config-input-orderType">
     </div>
 </script>

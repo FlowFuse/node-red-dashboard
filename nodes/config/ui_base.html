@@ -95,7 +95,20 @@
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
-
+    function debounce (func, wait, immediate) {
+        let timeout
+        return function () {
+            const context = this; const args = arguments
+            const later = function () {
+                timeout = null
+                if (!immediate) func.apply(context, args)
+            }
+            const callNow = immediate && !timeout
+            clearTimeout(timeout)
+            timeout = setTimeout(later, wait)
+            if (callNow) func.apply(context, args)
+        }
+    }
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -130,23 +143,27 @@
     function updateItemOrder (items, events) {
         items.each((i, el) => {
             const node = el.data('data')
+            const nodeBefore = RED.nodes.node(node.id)
             if (node.order !== i + 1) {
-                // update the order property for exposure to UI, start from 1, makes backup to SAFE_INT logic easier on frontend
-                node.order = i + 1
-                // update Node-RED node properties to trigger a redeploy
+                const originalOrder = nodeBefore.order
+                const wasDirty = node.dirty
+                const wasChanged = node.changed
+                // update Node-RED node properties
+                node.order = i + 1 // start from 1, makes backup to SAFE_INT logic easier on frontend
                 node.dirty = true
                 node.changed = true
+                // generate a history event
+                const hev = {
+                    t: 'edit',
+                    node,
+                    changes: {
+                        order: originalOrder
+                    },
+                    dirty: wasDirty,
+                    changed: wasChanged
+                }
+                events.push(hev)
             }
-            const hev = {
-                t: 'edit',
-                node,
-                changes: {
-                    order: node.order
-                },
-                dirty: node.dirty,
-                changed: node.changed
-            }
-            events.push(hev)
         })
     }
 
@@ -167,14 +184,48 @@
 
     // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
     function recordEvents (events) {
+        if (events.length === 0) { return } // nothing to record
+
+        // note the state of the editor before pushing to history
+        const isDirty = RED.nodes.dirty()
+        if (RED._db2debug) { console.log('recordEvents', isDirty, events) }
+
         // add our changes to NR history and trigger whether or not we need to redeploy
         RED.history.push({
             t: 'multi',
-            events
+            events,
+            dirty: isDirty
         })
         RED.nodes.dirty(true)
         RED.view.redraw()
     }
+
+    // watch for nodes changed, added, removed - use this to refresh the sidebar
+    const refreshLayoutEditorDebounced = debounce(refreshLayoutEditor, 300)
+    RED.events.on('nodes:change', function (event) {
+        if (RED._db2debug) { console.log('nodes:change', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:change - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:add', function (event) {
+        if (RED._db2debug) { console.log('nodes:add', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:remove', function (event) {
+        if (RED._db2debug) { console.log('nodes:remove', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:remove - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
 
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
@@ -230,15 +281,16 @@
                 items.each((i, el) => {
                     const widget = el.data('data')
                     if (widget.page !== pageId) {
+                        const oldPageId = widget.page
                         widget.page = pageId
                         events.push({
                             t: 'edit',
                             node: widget,
                             changes: {
-                                page: widget.page
+                                page: oldPageId
                             },
-                            dirty: widget.dirty,
-                            changed: widget.changed
+                            dirty: widget.changed,
+                            changed: widget.dirty
                         })
                     }
                 })
@@ -247,11 +299,14 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
         groups.forEach(function (group) {
-            console.log(group)
+            if (RED._db2debug) { if (RED._db2debug) { console.log(group) } }
             groupsOL.editableList('addItem', group)
         })
     }
@@ -282,12 +337,13 @@
                 items.each((i, el) => {
                     const widget = el.data('data')
                     if (widget.group !== groupId) {
+                        const oldGroupId = widget.group
                         widget.group = groupId
                         events.push({
                             t: 'edit',
                             node: widget,
                             changes: {
-                                group: widget.group
+                                group: oldGroupId
                             },
                             dirty: widget.dirty,
                             changed: widget.changed
@@ -299,6 +355,9 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
@@ -307,9 +366,53 @@
         })
     }
 
+    // expand / collapse buttons
+    let layoutDisplayLevel = 2 // all open by default
+    const getGroupsInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-widget-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const getPagesInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-group-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-pages-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const collapseLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: 'rotate(-90deg)' })
+        content.slideUp()
+        content.addClass('nr-db-sb-collapsed')
+    }
+    const expandLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: '' })
+        content.slideDown()
+        content.removeClass('nr-db-sb-collapsed')
+    }
+    /**
+     * Update the visibility of the layout editor expandable lists
+     * @param {0|1|2} level - 0 = collapse all, 1 = expand pages (groups collapsed), 2 = expand pages and groups (to expose widgets)
+     */
+    const updateLayoutVisibility = function (level) {
+        if (RED._db2debug) { console.log('updateLayoutVisibility', level) }
+        if (level === 2) {
+            expandLayoutItems(getGroupsInLayout())
+            expandLayoutItems(getPagesInLayout())
+        } else if (level === 1) {
+            expandLayoutItems(getPagesInLayout())
+            collapseLayoutItems(getGroupsInLayout())
+        } else {
+            collapseLayoutItems(getGroupsInLayout())
+            collapseLayoutItems(getPagesInLayout())
+        }
+    }
+
     function buildLayoutOrderEditor () {
         // layout/order editor
-        const divTabs = $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
+        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
 
         // section header - Pages
         const pagesHeader = $('<div>', { class: 'nrdb2-layout-order-editor--pages' }).appendTo(divTabs)
@@ -318,18 +421,23 @@
         // toggle "all" buttons
         const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(pagesHeader)
 
-        // Toggle expand buttons
-        $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-up"></i></a>')
+        const buttonCollapse = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-up"></i></a>')
             .click(function (evt) {
                 evt.preventDefault()
+                if (--layoutDisplayLevel < 0) { layoutDisplayLevel = 0 }
+                updateLayoutVisibility(layoutDisplayLevel)
             })
             .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonCollapse, c_('layout.collapse'))
 
-        $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-down"></i></a>')
+        // expand button
+        const buttonExpand = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-down"></i></a>')
             .click(function (evt) {
-                evt.preventDefault()
-            })
+                if (++layoutDisplayLevel > 2) { layoutDisplayLevel = 2 }
+                updateLayoutVisibility(layoutDisplayLevel)
+            }).appendTo(buttonGroup)
             .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonExpand, c_('layout.expand'))
 
         const pages = {}
         const groupsByPage = {}
@@ -389,11 +497,14 @@
 
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
             }
         })
 
         Object.values(groupsByPage).sort((a, b) => a.order - b.order).forEach(function (groups) {
-            console.log(groups)
+            if (RED._db2debug) { console.log(groups) }
             const page = pages[groups[0].page]
             if (page) {
                 pagesOL.editableList('addItem', page)
@@ -402,6 +513,27 @@
 
             // })
         })
+
+        // call updateLayoutVisibility to sync display level
+        updateLayoutVisibility(layoutDisplayLevel)
+    }
+
+    function refreshLayoutEditor () {
+        if (RED._db2debug) { console.log('refreshLayoutEditor called') }
+        const layoutOrderDiv = $('.nrdb2-layout-order-editor')
+        // empty the list if any items exist
+        if (layoutOrderDiv.length) {
+            // TODO: create a lookup of which items are expanded / collapsed
+            layoutOrderDiv.empty()
+        }
+
+        // now rebuild
+        buildLayoutOrderEditor()
+
+        // finally, restore previous state of expanded/collapsed items
+        // TODO: expand/collapse any items that were expanded before
+        // for now, we will just re-sync the display level
+        updateLayoutVisibility(layoutDisplayLevel)
     }
 
     RED.sidebar.addTab({

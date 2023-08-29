@@ -13,7 +13,7 @@
             disp: { value: true } // show title on group card
         },
         label: function () {
-            const page = RED.nodes.node(this.page).name
+            const page = RED.nodes.node(this.page)?.name || ''
             return `${this.name} [${page}]` || 'UI Group'
         },
         oneditprepare: function () {

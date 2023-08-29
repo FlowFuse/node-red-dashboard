@@ -6,7 +6,9 @@
         },
         "layout": {
             "pages": "Pages",
-            "edit": "Edit"
+            "edit": "Edit",
+            "collapse": "Collapse",
+            "expand": "Expand"
         }
     }
 }
