@@ -7,9 +7,6 @@ module.exports = function (RED) {
         const node = this
         RED.nodes.createNode(node, config)
 
-        // which page are we rendering this page in
-        node.log('UI Page Constructor')
-
         node.on('close', function (removed, done) {
             node.deregister() // deregister self
             done()

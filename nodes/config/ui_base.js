@@ -1,6 +1,8 @@
 // const Emitter = require('events').EventEmitter
 const path = require('path')
 
+const v = require('../../package.json').version
+
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
     return paths.map(function (element) {
@@ -52,6 +54,8 @@ module.exports = function (RED) {
             uiShared.app.get(config.path + '/*', (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
+
+            node.log(`Node-RED Dashboard 2.0 (v${v}) started at ${config.path}`)
 
             /**
              * Create IO Server for comms between Node-RED and UI
@@ -400,11 +404,9 @@ module.exports = function (RED) {
                 return
             }
             node.emitConfigRequested = setTimeout(() => {
-                console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
                 try {
                     // emit config to all connected UI for this ui-base
                     Object.values(node.connections).forEach(socket => {
-                        console.log('emitting config to', socket.id)
                         emitConfig(socket)
                     })
                 } finally {
