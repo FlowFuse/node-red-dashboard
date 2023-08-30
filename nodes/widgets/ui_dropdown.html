@@ -48,11 +48,11 @@
                 if (this.multiple === undefined) {
                     $('#node-input-multiple').prop('checked', false)
                 }
-                // $("#node-input-size").elementSizer({
-                //     width: "#node-input-width",
-                //     height: "#node-input-height",
-                //     group: "#node-input-group"
-                // });
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
                 const un = new Set(this.options.map(function (o) { return o.value }))
                 if (this.options.length === un.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
 
@@ -138,12 +138,12 @@
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input type="text" id="node-input-group">
     </div>
-    <!--<div class="form-row">
+    <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
-    </div>-->
+    </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-tag"></i> Label</label>
         <input type="text" id="node-input-label" placeholder="optional label">
