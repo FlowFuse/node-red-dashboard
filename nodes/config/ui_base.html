@@ -29,6 +29,13 @@
     .nrdb2-layout-order-editor {
         padding: 8px 10px;
     }
+    .nrdb2-layout-helptext {
+        padding: 0 0 9px;
+        font-style: italic;
+        color: #a2a2a2;
+        font-size: 8pt;
+        line-height: 12pt;
+    }
     .nrdb2-layout-order-editor--pages {
         display: flex;
         justify-content: space-between;
@@ -439,6 +446,8 @@
             .appendTo(buttonGroup)
         RED.popover.tooltip(buttonExpand, c_('layout.expand'))
 
+        divTabs.append('<div class="nrdb2-layout-helptext">Here you can re-order and move your widgets, groups and pages.</div>')
+
         const pages = {}
         const groupsByPage = {}
         const widgetsByGroup = {}
@@ -556,9 +565,6 @@
 
             // add layout editor
             buildLayoutOrderEditor()
-
-            // placeholder message
-            sidebar.append('<span style="padding: 9px; font-style: italic; color: #a2a2a2; font-size: 8pt;">More content will be added here in future releases</span>')
         }
     })
 
