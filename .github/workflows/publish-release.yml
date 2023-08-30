@@ -28,7 +28,7 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          registry: ${{ vars.PRIVATE_NPM_REGISTRY_URL }}
+          registry: "https://${{ vars.PRIVATE_NPM_REGISTRY_URL }}"
       - name: Publish package to public npm registry
         uses: JS-DevTools/npm-publish@v1
         with:
