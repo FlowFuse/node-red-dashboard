@@ -13,16 +13,7 @@ The navigational hierarchy of the Dashboard UI is as follows:
 
 `/Layouts/Baseline.vue` defines the basic structure of a page (header and left-side navigation drawer). Other layouts then can extend this baseline and define _how_ the widgets are rendered within the baseline's default `<slot></slot>`.
 
-This list of layouts will grow in time, and for now, just includes a _very_ basic starter template.
-
-### Flex
-
-This is a simple flexbox layout, with a single row of widgets, and our only functional layout currently. It will automatically move widgets to the next row if they don't fit within a given screen width. The height of each row is determined by the tallest widget in that row.
-
-![Flex Layout](../../assets/images/layout-eg-flex.png){data-zoomable}
-*An example UI rendered using the "Flex" Layout Manager*
-
-Currently, each widget is rendered directly inside a `v-card` (from Vuetify), however, plans for widgets to be grouped, as per Dashboard 1.0 are on the horizon, as well as controlling widget width and height.
+This list of baseline layouts will likely grow in time, and for now, just includes a _very_ basic starter template (side navigation and header).
 
 ## Adding a new Layout Manager
 
