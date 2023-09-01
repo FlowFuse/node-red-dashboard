@@ -3,8 +3,10 @@
 /* eslint-disable import/no-unresolved */
 import Flex from './Flex'
 import Grid from './Grid'
+import Notebook from './Notebook'
 
 export default {
     flex: Flex,
-    grid: Grid
+    grid: Grid,
+    notebook: Notebook
 }
