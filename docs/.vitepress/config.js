@@ -59,6 +59,15 @@ export default {
           ]
         },
         {
+          text: 'Layouts',
+          collapsed: false,
+          items: [
+            { text: 'Flex', link: '/layouts/flex' },
+            { text: 'Grid', link: '/layouts/grid' },
+            { text: 'Notebook', link: '/layouts/notebook' }
+          ]
+        },
+        {
           text: 'Contributing',
           collapsed: false,
           items: [
