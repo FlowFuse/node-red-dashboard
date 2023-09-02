@@ -65,6 +65,14 @@
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
                 })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             }
         })
     })()
@@ -89,6 +97,19 @@
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-button.label.optionalLabel">
     </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="width: 70%; display: inline-flex;">
+            <input type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Class names can also be set at runtime by sending a message to the node with a topic string of 'ui-property:class' and a payload containing the class name(s) to be applied.  NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 10px; cursor: help;">
+                <i style="font-family: ui-serif; font-size: larger;">fx</i>
+            </a>
+        </div>
+    </div>
     <!--<div class="form-row">
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-button.label.tooltip"></label>
         <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-button.label.optionalTooltip">
@@ -111,16 +132,12 @@
     </div>
     <div class="form-row">
         <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.topic"></label>
-        <input type="text" id="node-input-topic">
+        <input type="text" id="node-input-topic" style="width:70%">
         <input type="hidden" id="node-input-topicType">
     </div>
     <!--<div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="ui-button.label.emulateClick"></label>
         <input type="checkbox" id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-button.label.className"></label>
-        <input type="text" id="node-input-className" data-i18n="[placeholder]ui-button.label.classNamePlaceholder"/>
     </div>-->
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>

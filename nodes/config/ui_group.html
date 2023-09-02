@@ -10,7 +10,8 @@
             width: { value: 6 },
             height: { value: 1 },
             order: { value: 0 },
-            disp: { value: true } // show title on group card
+            disp: { value: true }, // show title on group card
+            className: { value: '' }
         },
         label: function () {
             const page = RED.nodes.node(this.page).name
@@ -44,6 +45,10 @@
     <div class="form-row">
         <label for="node-config-input-order"><i class="fa fa-bookmark"></i> Order</label>
         <input type="text" id="node-config-input-order">
+    </div>
+    <div class="form-row" id="text-row-class">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for group"/>
     </div>
     <div class="form-row">
         <input style="margin:8px 0 10px 102px; width:20px;" type="checkbox" checked id="node-config-input-disp"> <label style="width:auto" for="node-config-input-disp"><span data-i18n="ui-group.display-name"></span></label>

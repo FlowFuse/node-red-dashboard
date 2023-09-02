@@ -27,7 +27,8 @@
                     }
                 },
                 height: { value: 0 },
-                content: { value: '# Markdown Content\n\nGoes here...' }
+                content: { value: '# Markdown Content\n\nGoes here...' },
+                className: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -55,6 +56,14 @@
                 this.editor.focus()
 
                 RED.popover.tooltip($('#node-markdown-expand-editor'), c_('label.expand'))
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             },
             oneditsave: function () {
                 $('#node-input-content').val(this.editor.getValue())
@@ -84,6 +93,16 @@
     <div class="form-row">
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input style="flex-grow:1" type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="width: calc(70% - 40px);">
+        <a
+            title="Class names can also be set at runtime by sending a message to the node with a topic string of 'ui-property:class' and a payload containing the class name(s) to be applied.  NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+            class="red-ui-button ui-node-popover-title"
+            style="margin-left: 10px; cursor: help;">
+            <i style="font-family: ui-serif; font-size: larger;">fx</i>
+        </a>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>

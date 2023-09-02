@@ -101,6 +101,14 @@
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
                 })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             },
             oneditsave: function () {
                 const options = $('#node-input-option-container').children()
@@ -139,6 +147,19 @@
         <label for="node-input-label"><i class="fa fa-tag"></i> Label</label>
         <input type="text" id="node-input-label" placeholder="optional label">
     </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="width: 70%; display: inline-flex;">
+            <input type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Class names can also be set at runtime by sending a message to the node with a topic string of 'ui-property:class' and a payload containing the class name(s) to be applied.  NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 10px; cursor: help;">
+                <i style="font-family: ui-serif; font-size: larger;">fx</i>
+            </a>
+        </div>
+    </div>
     <div class="form-row node-input-option-container-row" style="margin-bottom: 0px;width: 100%">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Options</label>
         <div id="node-input-option-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width:calc(70% + 15px);">
@@ -155,7 +176,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" placeholder="optional msg.topic">
+        <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
         <input type="hidden" id="node-input-topicType">
     </div>
 </script>
