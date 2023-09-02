@@ -21,8 +21,7 @@ export default {
     },
     created () {
         this.$socket.on('ui-config', (topic, payload) => {
-            console.log('ui config')
-            console.log(topic, payload)
+            console.log('ui-config received. topic:', topic, 'payload:', payload)
 
             // loop over pages, add them to vue router
             Object.values(payload.pages).forEach(page => {
@@ -34,8 +33,9 @@ export default {
                     name: routeName,
                     component: layouts[page.layout],
                     meta: {
-                        title: page.name,
-                        id: page.id
+                        title: page.name, // the page name
+                        id: page.id, // the pages id
+                        dashboard: page.ui // the dashboard id - to simplify determining which dashboard we're on
                     }
                 })
                 // store data on the "page" object so it's easy for us to map in the navigation drawer
