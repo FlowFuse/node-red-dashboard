@@ -1,5 +1,5 @@
 <template>
-    <v-btn class="nrdb-ui-widget" block variant="flat" :disabled="!state.enabled" @click="action">{{ props.label }}</v-btn>
+    <v-btn block variant="flat" :disabled="!state.enabled" @click="action">{{ props.label }}</v-btn>
 </template>
 
 <script>

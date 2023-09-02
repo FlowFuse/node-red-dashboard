@@ -1,7 +1,7 @@
 <template>
     <v-slider
         v-model="value" :label="props.label" hide-details="auto"
-        class="nrdb-ui-widget"
+        :class="className"
         :min="props.min" :max="props.max" :step="props.step || 1"
     />
 </template>
@@ -47,7 +47,6 @@ export default {
     },
     methods: {
         onChange () {
-            console.log('slider moved')
             const msg = this.messages[this.id] || {}
             msg.payload = this.value
             this.$store.commit('data/bind', msg)

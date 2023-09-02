@@ -1,5 +1,5 @@
 <template>
-    <canvas ref="chart" class="nrdb-ui-widget" />
+    <canvas ref="chart" :class="className" />
 </template>
 
 <script>

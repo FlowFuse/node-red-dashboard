@@ -2,7 +2,7 @@
 <template>
     <v-combobox
         v-model="value"
-        class="nrdb-ui-widget"
+        :class="className"
         :label="props.label"
         :multiple="props.multiple"
         :items="props.options"
