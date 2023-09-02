@@ -1,9 +1,10 @@
 {
     "ui-template": {
         "label": {
-            "type": "Template type",
+            "scope": "Scope",
             "local": "Widget in group",
-            "global": "Added to site <head> section",
+            "site-style": "Site wide <style>",
+            "page-style": "Page scoped <style>",
             "group": "Group",
             "size": "Size",
             "name": "Name",
@@ -11,9 +12,7 @@
             "store-state": "Add output messages to stored state.",
             "template": "Template",
             "expand": "Expand",
-            "resend": "Reload last value on refresh.",
-            "className": "Class",
-            "classNamePlaceholder": "Optional CSS class name(s) for widget"
+            "resend": "Reload last value on refresh."
         }
     }
 }
