@@ -37,6 +37,13 @@ main {
 }
 
 /**
+* Widget: Button
+*/
+.v-btn {
+    text-transform: none;
+}
+
+/**
 * Widget: Form
 */ 
 

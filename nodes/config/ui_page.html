@@ -24,6 +24,9 @@
                 value: 'default',
                 required: true
             },
+            order: {
+                value: -1
+            },
             className: { value: '' }
         },
         oneditprepare: function () {
@@ -33,14 +36,16 @@
                     value: 'layout',
                     options: [
                         { value: 'grid', label: 'Grid' },
-                        { value: 'flex', label: 'Flex' }
+                        { value: 'flex', label: 'Flex' },
+                        { value: 'notebook', label: 'Notebook' }
                     ]
                 }],
                 typeField: '#node-input-layoutType'
             })
         },
         label: function () {
-            const base = RED.nodes.node(this.ui).path
+            const baseNode = RED.nodes.node(this.ui)
+            const base = baseNode ? baseNode.path : '/'
             const path = this.path || ''
             return `${this.name} [${base}${path}]` || 'UI Page'
         }
@@ -72,5 +77,8 @@
     <div class="form-row" id="text-row-class">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
         <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for page"/>
+    </div>
+    <div class="form-row">
+        <button onclick="RED.sidebar.show('dashboard-2.0')" class="editor-button editor-button-small">Open Dashboard 2.0 Sidebar</button>
     </div>
 </script>

@@ -8,13 +8,28 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci
-      - run: npm run build
-      - uses: JS-DevTools/npm-publish@v1
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Tests
+        run: npm run test
+      - name: Build
+        run: npm run build
+      - name: Publish package to private registry
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: "https://${{ vars.PRIVATE_NPM_REGISTRY_URL }}"
+      - name: Publish package to public npm registry
+        uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}

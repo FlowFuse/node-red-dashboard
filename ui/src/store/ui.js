@@ -29,7 +29,13 @@ const getters = {
             const groupsOnPage = Object.values(state.groups).filter((p) => {
                 return p.page === pageId
             })
-            return groupsOnPage
+            // sort by .order
+            return groupsOnPage.sort((a, b) => {
+                // if order = 0, prioritise groups where order _is_ set
+                const aOrder = a.order || Number.MAX_SAFE_INTEGER
+                const bOrder = b.order || Number.MAX_SAFE_INTEGER
+                return aOrder - bOrder
+            })
         }
     },
     widgetsByGroup: (state) => (groupId) => {
@@ -38,7 +44,13 @@ const getters = {
                 // return all widgets that belong to the specified group (so long as it is not a non-local scoped ui-template)
                 return w.props.group === groupId && !(w.type === 'ui-template' && w.props.templateScope !== 'local')
             })
-            return widgetsInGroup
+            // sort by .order
+            return widgetsInGroup.sort((a, b) => {
+                // if order = 0, prioritise groups where order _is_ set
+                const aOrder = a.props?.order || Number.MAX_SAFE_INTEGER
+                const bOrder = b.props?.order || Number.MAX_SAFE_INTEGER
+                return aOrder - bOrder
+            })
         }
     },
     siteTemplates: (state) => (dashboardId) => {

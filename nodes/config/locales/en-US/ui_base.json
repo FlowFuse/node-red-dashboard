@@ -3,6 +3,12 @@
         "auto": "auto",
         "label": {
             "category": "dashboard"
+        },
+        "layout": {
+            "pages": "Pages",
+            "edit": "Edit",
+            "collapse": "Collapse",
+            "expand": "Expand"
         }
     }
 }

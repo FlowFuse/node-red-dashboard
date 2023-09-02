@@ -1,6 +1,8 @@
 // const Emitter = require('events').EventEmitter
 const path = require('path')
 
+const v = require('../../package.json').version
+
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
     return paths.map(function (element) {
@@ -18,7 +20,7 @@ module.exports = function (RED) {
      */
 
     // store state that can maintain cross re-deployments
-    const ui = {
+    const uiShared = {
         app: null,
         httpServer: null,
         /** @type { Server } */
@@ -33,42 +35,49 @@ module.exports = function (RED) {
      * @param {Object} config - Node-RED Node Config
      */
     function init (node, config) {
+        node.uiShared = uiShared // ensure we have a uiShared object on the node (for testing mainly)
         // eventually check if we have routes used, so we can support multiple base UIs
-        if (!ui.app) {
-            ui.app = RED.httpNode || RED.httpAdmin
-            ui.httpServer = RED.server
+        if (!uiShared.app) {
+            uiShared.app = RED.httpNode || RED.httpAdmin
+            uiShared.httpServer = RED.server
 
             /**
              * Configure Web Server to handle UI traffic
              */
 
-            ui.app.use(config.path, express.static(path.join(__dirname, '../../dist')))
+            uiShared.app.use(config.path, express.static(path.join(__dirname, '../../dist')))
 
-            ui.app.get(config.path, (req, res) => {
+            uiShared.app.get(config.path, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
 
-            ui.app.get(config.path + '/*', (req, res) => {
+            uiShared.app.get(config.path + '/*', (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
+
+            node.log(`Node-RED Dashboard 2.0 (v${v}) started at ${config.path}`)
 
             /**
              * Create IO Server for comms between Node-RED and UI
              */
+            if (RED.settings.httpNodeRoot !== false) {
+                const root = RED.settings.httpNodeRoot || '/'
+                const fullPath = join(root, config.path)
+                const socketIoPath = join('/', fullPath, 'socket.io')
+                /** @type {import('socket.io/dist').ServerOptions} */
+                const serverOptions = {
+                    path: socketIoPath
+                }
+                // console.log('Creating socket.io server at path', socketIoPath) // disable - noisy in tests
+                // store reference to the SocketIO Server
+                uiShared.ioServer = new Server(uiShared.httpServer, serverOptions)
+                uiShared.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
 
-            const fullPath = join(RED.settings.httpNodeRoot, config.path)
-            const socketIoPath = join('/', fullPath, 'socket.io')
-            /** @type {import('socket.io/dist').ServerOptions} */
-            const serverOptions = {
-                path: socketIoPath
+                const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
+                node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
+            } else {
+                node.warn('Cannot create UI Base node when httpNodeRoot set to false')
             }
-            console.log('Creating socket.io server at path', socketIoPath)
-            // store reference to the SocketIO Server
-            ui.ioServer = new Server(ui.httpServer, serverOptions)
-            ui.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
-
-            const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
-            node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
         }
     }
 
@@ -76,7 +85,7 @@ module.exports = function (RED) {
      * Close the SocketIO Server
      */
     function close (node, done) {
-        if (!ui.ioServer) {
+        if (!uiShared.ioServer) {
             done()
             return
         }
@@ -112,14 +121,14 @@ module.exports = function (RED) {
         }
 
         // as there are no more instances of ui-page and this is the last ui-base, close the server
-        ui.ioServer.removeAllListeners()
-        ui.ioServer.disconnectSockets(true)
+        uiShared.ioServer.removeAllListeners()
+        uiShared.ioServer.disconnectSockets(true)
         // tidy up
         if (themes.length === 0) {
             node.ui.themes.clear()
         }
         node.ui.dashboards.clear() // ensure we clear out any dashboards that may have been left over
-
+        node.uiShared = null // remove reference to ui object
         done && done()
     }
 
@@ -129,7 +138,7 @@ module.exports = function (RED) {
      * @param {Object} data
      */
     function emit (event, data) {
-        Object.values(ui.connections).forEach(conn => {
+        Object.values(uiShared.connections).forEach(conn => {
             conn.emit(event, data)
         })
     }
@@ -147,9 +156,9 @@ module.exports = function (RED) {
         /** @type {Object.<string, Socket>} */
         node.connections = {} // store socket.io connections for this node
         // re-map existing connections for this base node
-        for (const id in ui.connections) {
-            if (ui.connections[id]._baseId === node.id) {
-                node.connections[id] = ui.connections[id]
+        for (const id in uiShared.connections) {
+            if (uiShared.connections[id]._baseId === node.id) {
+                node.connections[id] = uiShared.connections[id]
             }
         }
         /** @type {NodeJS.Timeout} */
@@ -183,7 +192,7 @@ module.exports = function (RED) {
             socket._baseId = node.id
 
             node.connections[socket.id] = socket // store the connection for later use
-            ui.connections[socket.id] = socket // store the connection for later use
+            uiShared.connections[socket.id] = socket // store the connection for later use
             emitConfig(socket)
 
             const cleanup = () => {
@@ -206,7 +215,7 @@ module.exports = function (RED) {
             // handle disconnection
             socket.on('disconnect', reason => {
                 cleanup()
-                delete ui.connections[socket.id]
+                delete uiShared.connections[socket.id]
                 delete node.connections[socket.id]
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
@@ -359,11 +368,11 @@ module.exports = function (RED) {
         }
 
         // When a UI connects - send the UI Config from Node-RED to the UI
-        ui.ioServer.on('connection', onConnection)
+        uiShared.ioServer.on('connection', onConnection)
 
         // Make sure we clean up after ourselves
         node.on('close', (removed, done) => {
-            ui.ioServer?.off('connection', onConnection)
+            uiShared.ioServer?.off('connection', onConnection)
             close(node, function (err) {
                 if (err) {
                     node.error(`Error closing socket.io server for ${node.id}`, err)
@@ -397,11 +406,9 @@ module.exports = function (RED) {
                 return
             }
             node.emitConfigRequested = setTimeout(() => {
-                console.log(`emitting config to ${Object.keys(node.connections).length} connections`)
                 try {
                     // emit config to all connected UI for this ui-base
                     Object.values(node.connections).forEach(socket => {
-                        console.log('emitting config to', socket.id)
                         emitConfig(socket)
                     })
                 } finally {
@@ -460,9 +467,13 @@ module.exports = function (RED) {
             // map themes by their ID
             if (!node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
-                // eslint-disable-next-line no-unused-vars
-                const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
-                node.ui.themes.set(page.theme, t)
+                if (theme) {
+                    // eslint-disable-next-line no-unused-vars
+                    const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
+                    node.ui.themes.set(page.theme, t)
+                } else {
+                    node.warn(`Theme '${page.theme}' specified  in page '${page.id}' does not exist`)
+                }
             }
 
             // map pages by their ID

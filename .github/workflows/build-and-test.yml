@@ -1,0 +1,8 @@
+name: Run Build & Unit Tests
+on:
+  pull_request:
+jobs:
+  build:
+    uses: 'flowforge/github-actions-workflows/.github/workflows/build_node_package.yml@main'
+    with:
+      run_tests: true

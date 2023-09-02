@@ -1,4 +1,16 @@
 <style>
+    #ff-node-red-dashboard {
+        --ff-grey-50: #F9FAFB;
+        --ff-grey-100: #F3F4F6;
+        --ff-grey-200: #E5E7EB;
+        position: absolute;
+        top: 1px;
+        bottom: 2px;
+        left: 1px;
+        right: 1px;
+        overflow-y: auto;
+        padding: 10px;
+    }
     #ff-node-red-dashboard .red-ui-sidebar-header {
         display: flex;
         justify-content: space-between;
@@ -6,17 +18,104 @@
     #ff-node-red-dashboard .red-ui-sidebar-header label {
         margin-bottom: 0;
     }
+    #ff-node-red-dashboard .red-ui-editableList-container {
+        padding: 0;
+    }
+    /* don't show border for nexted editable lists */
+    .red-ui-editableList-border .red-ui-editableList-border {
+        border: 0;
+    }
+    /* Dashboard 2.0 Sidebar */
+    .nrdb2-layout-order-editor {
+        padding: 8px 10px;
+    }
+    .nrdb2-layout-helptext {
+        padding: 0 0 9px;
+        font-style: italic;
+        color: #a2a2a2;
+        font-size: 8pt;
+        line-height: 12pt;
+    }
+    .nrdb2-layout-order-editor--pages {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 9px;
+    }
+    .nrdb2-sb-pages-list li {
+        padding: 0;
+        border-bottom: 0;
+    }
+    .nrdb2-sb-list-header {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 9px 6px;
+        cursor: pointer;
+    }
+    .nrdb2-sb-list-header.nrdb2-sb-pages-list-header {
+        border-top: 1px solid var(--ff-grey-200);
+        border-bottom: 1px solid var(--ff-grey-200);
+    }
+    .nrdb2-sb-list-header .nrdb2-sb-title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .nrdb2-sb-list-header-button-group {
+        position: absolute;
+        right: 1rem;
+    }
+    .nrdb2-sb-list-header-button-group,
+    .nrdb2-sb-list-handle {
+        opacity: 0;
+        transition: 0.15s opacity;
+    }
+    .nrdb2-sb-list-header:hover {
+        background-color: var(--ff-grey-100);
+    }
+    .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle, 
+    .nrdb2-sb-list-header:hover .nrdb2-sb-list-header-button-group {
+        opacity: 1;
+    }
+    /* indent the groups */
+    .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
+        margin-left: 1.5rem;
+    }
+    /* indent the widgets */
+    .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
+        margin-left: 3.5rem;
+    }
 </style>
 
 
 <script type="text/javascript">
 (function () {
-    const sidebarContentTemplate = '<div id="ff-node-red-dashboard"></div>'
+    const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
+    const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
+
+    // convert to i18 text
+    function c_ (x) {
+        return RED._('@flowforge/node-red-dashboard/ui-base:ui-base.' + x)
+    }
 
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
-
+    function debounce (func, wait, immediate) {
+        let timeout
+        return function () {
+            const context = this; const args = arguments
+            const later = function () {
+                timeout = null
+                if (!immediate) func.apply(context, args)
+            }
+            const callNow = immediate && !timeout
+            clearTimeout(timeout)
+            timeout = setTimeout(later, wait)
+            if (callNow) func.apply(context, args)
+        }
+    }
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -38,31 +137,438 @@
      * Add Custom Dashboard Side Menu
      * */
 
-    const content = $(sidebarContentTemplate)
+    const sidebar = $(sidebarContentTemplate)
 
     function uiLink (name, path) {
-        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${path}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+        const base = RED.settings.httpNodeRoot || '/'
+        const basePart = base.endsWith('/') ? base : `${base}/`
+        const dashPart = path.startsWith('/') ? path.slice(1) : path
+        const fullPath = `${basePart}${dashPart}`
+        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+    }
+
+    /**
+     * Add an editor to control the ordering of groups & widgets
+     */
+
+    function updateItemOrder (items, events) {
+        items.each((i, el) => {
+            const node = el.data('data')
+            const nodeBefore = RED.nodes.node(node.id)
+            if (node.order !== i + 1) {
+                const originalOrder = nodeBefore.order
+                const wasDirty = node.dirty
+                const wasChanged = node.changed
+                // update Node-RED node properties
+                node.order = i + 1 // start from 1, makes backup to SAFE_INT logic easier on frontend
+                node.dirty = true
+                node.changed = true
+                // generate a history event
+                const hev = {
+                    t: 'edit',
+                    node,
+                    changes: {
+                        order: originalOrder
+                    },
+                    dirty: wasDirty,
+                    changed: wasChanged
+                }
+                events.push(hev)
+            }
+        })
+    }
+
+    // toggle slide tab group content
+    const titleToggle = function (id, content, chevron) {
+        return function (evt) {
+            if (content.is(':visible')) {
+                content.slideUp()
+                chevron.css({ transform: 'rotate(-90deg)' })
+                content.addClass('nr-db-sb-collapsed')
+            } else {
+                content.slideDown()
+                chevron.css({ transform: '' })
+                content.removeClass('nr-db-sb-collapsed')
+            }
+        }
+    }
+
+    // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
+    function recordEvents (events) {
+        if (events.length === 0) { return } // nothing to record
+
+        // note the state of the editor before pushing to history
+        const isDirty = RED.nodes.dirty()
+        if (RED._db2debug) { console.log('recordEvents', isDirty, events) }
+
+        // add our changes to NR history and trigger whether or not we need to redeploy
+        RED.history.push({
+            t: 'multi',
+            events,
+            dirty: isDirty
+        })
+        RED.nodes.dirty(true)
+        RED.view.redraw()
+    }
+
+    // watch for nodes changed, added, removed - use this to refresh the sidebar
+    const refreshLayoutEditorDebounced = debounce(refreshLayoutEditor, 300)
+    RED.events.on('nodes:change', function (event) {
+        if (RED._db2debug) { console.log('nodes:change', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:change - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:add', function (event) {
+        if (RED._db2debug) { console.log('nodes:add', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+    RED.events.on('nodes:remove', function (event) {
+        if (RED._db2debug) { console.log('nodes:remove', event) }
+        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:remove - this is a ui- node! queuing a call to refreshLayoutEditor') }
+            // debounce the call to refreshLayoutEditor as multiple events can be fired in quick succession
+            refreshLayoutEditorDebounced()
+        }
+    })
+
+    /**
+     * Add group of actions to the right-side of a row in the sidebar editable list.
+     * @param {Object} row - jQuery object to add this button group as a child element to
+     * @param {Object} row - The page/group/widget that these actions are bound to
+     */
+    function addRowActions (row, item) {
+        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(row)
+        const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button  editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
+        editButton.on('click', function (evt) {
+            if (item.type === 'ui-page' || item.type === 'ui-group') {
+                RED.editor.editConfig('', item.type, item.id)
+            } else {
+                RED.editor.edit(item)
+            }
+            evt.stopPropagation()
+            evt.preventDefault()
+        })
+    }
+
+    // Adds child list of groups for a given page
+    function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
+        // ordered list of groupss to live within a container (e.g. page list item)
+        const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
+            sortable: '.nrdb2-sb-groups-list-header',
+            addButton: false,
+            height: 'auto',
+            connectWith: '.nrdb2-sb-group-list',
+            addItem: function (container, i, group) {
+                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                const groupicon = 'fa-table'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+
+                addRowActions(titleRow, group)
+
+                // adds widgets within this group
+                const widgets = widgetsByGroup[group.id] || []
+                const widgetsList = $('<div>', { class: 'nrdb2-sb-widget-list-container' }).appendTo(container)
+
+                // add chevron/list toggle
+                titleRow.click(titleToggle(group.id, widgetsList, chevron))
+
+                addWidgetToList(group.id, widgetsList, widgets)
+            },
+            sortItems: function (items) {
+                // track any changes
+                const events = []
+
+                // check if we have any new widgets added to this list
+                items.each((i, el) => {
+                    const widget = el.data('data')
+                    if (widget.page !== pageId) {
+                        const oldPageId = widget.page
+                        widget.page = pageId
+                        events.push({
+                            t: 'edit',
+                            node: widget,
+                            changes: {
+                                page: oldPageId
+                            },
+                            dirty: widget.changed,
+                            changed: widget.dirty
+                        })
+                    }
+                })
+
+                updateItemOrder(items, events)
+
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
+            }
+        })
+
+        groups.forEach(function (group) {
+            if (RED._db2debug) { if (RED._db2debug) { console.log(group) } }
+            groupsOL.editableList('addItem', group)
+        })
+    }
+
+    // Adds  list of widgets underneath a group
+    function addWidgetToList (groupId, container, widgets) {
+        // ordered list of groupss to live within a container (e.g. page list item)
+        const widgetsOL = $('<ol>', { class: 'nrdb2-sb-widget-list' }).appendTo(container).editableList({
+            sortable: '.nrdb2-sb-widgets-list-header',
+            addButton: false,
+            height: 'auto',
+            connectWith: '.nrdb2-sb-widget-list',
+            addItem: function (container, i, widget) {
+                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
+
+                const groupicon = 'fa-image'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + groupicon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
+
+                addRowActions(titleRow, widget)
+            },
+            sortItems: function (items) {
+                // track any changes
+                const events = []
+
+                // check if we have any new widgets added to this list
+                items.each((i, el) => {
+                    const widget = el.data('data')
+                    if (widget.group !== groupId) {
+                        const oldGroupId = widget.group
+                        widget.group = groupId
+                        events.push({
+                            t: 'edit',
+                            node: widget,
+                            changes: {
+                                group: oldGroupId
+                            },
+                            dirty: widget.dirty,
+                            changed: widget.changed
+                        })
+                    }
+                })
+
+                updateItemOrder(items, events)
+
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
+            }
+        })
+
+        widgets.forEach(function (w) {
+            widgetsOL.editableList('addItem', w)
+        })
+    }
+
+    // expand / collapse buttons
+    let layoutDisplayLevel = 2 // all open by default
+    const getGroupsInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-widget-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const getPagesInLayout = function () {
+        const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-group-list-container')
+        return {
+            content,
+            chevrons: content.parent().find('div.nrdb2-sb-pages-list-header > .nrdb2-sb-list-chevron')
+        }
+    }
+    const collapseLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: 'rotate(-90deg)' })
+        content.slideUp()
+        content.addClass('nr-db-sb-collapsed')
+    }
+    const expandLayoutItems = function ({ chevrons, content }) {
+        chevrons.css({ transform: '' })
+        content.slideDown()
+        content.removeClass('nr-db-sb-collapsed')
+    }
+    /**
+     * Update the visibility of the layout editor expandable lists
+     * @param {0|1|2} level - 0 = collapse all, 1 = expand pages (groups collapsed), 2 = expand pages and groups (to expose widgets)
+     */
+    const updateLayoutVisibility = function (level) {
+        if (RED._db2debug) { console.log('updateLayoutVisibility', level) }
+        if (level === 2) {
+            expandLayoutItems(getGroupsInLayout())
+            expandLayoutItems(getPagesInLayout())
+        } else if (level === 1) {
+            expandLayoutItems(getPagesInLayout())
+            collapseLayoutItems(getGroupsInLayout())
+        } else {
+            collapseLayoutItems(getGroupsInLayout())
+            collapseLayoutItems(getPagesInLayout())
+        }
+    }
+
+    function buildLayoutOrderEditor () {
+        // layout/order editor
+        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
+
+        // section header - Pages
+        const pagesHeader = $('<div>', { class: 'nrdb2-layout-order-editor--pages' }).appendTo(divTabs)
+        $('<b>').html(c_('layout.pages')).appendTo(pagesHeader)
+
+        // toggle "all" buttons
+        const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(pagesHeader)
+
+        const buttonCollapse = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-up"></i></a>')
+            .click(function (evt) {
+                evt.preventDefault()
+                if (--layoutDisplayLevel < 0) { layoutDisplayLevel = 0 }
+                updateLayoutVisibility(layoutDisplayLevel)
+            })
+            .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonCollapse, c_('layout.collapse'))
+
+        // expand button
+        const buttonExpand = $('<a href="#" class="editor-button editor-button-small nrdb2-sb-list-header-button"><i class="fa fa-angle-double-down"></i></a>')
+            .click(function (evt) {
+                if (++layoutDisplayLevel > 2) { layoutDisplayLevel = 2 }
+                updateLayoutVisibility(layoutDisplayLevel)
+            }).appendTo(buttonGroup)
+            .appendTo(buttonGroup)
+        RED.popover.tooltip(buttonExpand, c_('layout.expand'))
+
+        divTabs.append('<div class="nrdb2-layout-helptext">Here you can re-order and move your widgets, groups and pages.</div>')
+
+        const pages = {}
+        const groupsByPage = {}
+        const widgetsByGroup = {}
+
+        // get all pages & all groups
+        RED.nodes.eachConfig(function (n) {
+            if (n.type === 'ui-page' && !!n.ui) {
+                pages[n.id] = n
+            }
+            if (n.type === 'ui-group' && !!n.page) {
+                if (!groupsByPage[n.page]) {
+                    groupsByPage[n.page] = []
+                }
+                groupsByPage[n.page].push(n)
+            }
+        })
+
+        // get all widgets
+        RED.nodes.eachNode(function (n) {
+            if (/^ui-/.test(n.type) && n.group) {
+                if (!widgetsByGroup[n.group]) {
+                    widgetsByGroup[n.group] = []
+                }
+                widgetsByGroup[n.group].push(n)
+            }
+        })
+
+        const pagesOL = $('<ol>', { class: 'nrdb2-sb-pages-list' }).appendTo(divTabs).editableList({
+            sortable: '.nrdb2-sb-pages-list-header',
+            addButton: false,
+            addItem: function (container, i, page) {
+                container.addClass('nrdb2-sb-pages-list-item')
+
+                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
+                $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                const tabicon = 'fa-object-group'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
+
+                // page - actions
+                addRowActions(titleRow, page)
+
+                // adds groups within this page
+                const groups = groupsByPage[page.id] || []
+                const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
+
+                titleRow.click(titleToggle(page.id, groupsList, chevron))
+
+                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
+            },
+            sortItems: function (items) {
+                // track any changes
+                const events = []
+                updateItemOrder(items, events)
+
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
+            },
+            sort: function (a, b) {
+                return Number(a.order) - Number(b.order)
+            }
+        })
+
+        Object.values(groupsByPage).sort((a, b) => a.order - b.order).forEach(function (groups) {
+            if (RED._db2debug) { console.log(groups) }
+            const page = pages[groups[0].page]
+            if (page) {
+                pagesOL.editableList('addItem', page)
+            }
+            // groups.forEach(() => {
+
+            // })
+        })
+
+        // call updateLayoutVisibility to sync display level
+        updateLayoutVisibility(layoutDisplayLevel)
+    }
+
+    function refreshLayoutEditor () {
+        if (RED._db2debug) { console.log('refreshLayoutEditor called') }
+        const layoutOrderDiv = $('.nrdb2-layout-order-editor')
+        // empty the list if any items exist
+        if (layoutOrderDiv.length) {
+            // TODO: create a lookup of which items are expanded / collapsed
+            layoutOrderDiv.empty()
+        }
+
+        // now rebuild
+        buildLayoutOrderEditor()
+
+        // finally, restore previous state of expanded/collapsed items
+        // TODO: expand/collapse any items that were expanded before
+        // for now, we will just re-sync the display level
+        updateLayoutVisibility(layoutDisplayLevel)
     }
 
     RED.sidebar.addTab({
         id: 'dashboard-2.0',
         label: 'Dashboard 2.0',
         name: 'Dashboard 2.0',
-        content,
+        content: sidebar,
         closeable: true,
         pinned: true,
         disableOnEdit: true,
         iconClass: 'fa fa-bar-chart',
         action: '@flowforge/node-red-dashboard:show-dashboard-2.0-tab',
         onchange: function () {
-            content.empty()
+            sidebar.empty()
             RED.nodes.eachConfig(function (n) {
                 if (n.type === 'ui-base') {
-                    content.append(uiLink(n.name, n.path))
+                    sidebar.append(uiLink(n.name, n.path))
                 }
             })
-            // placeholder message
-            content.append('<span style="padding: 9px; font-style: italic; color: #a2a2a2; font-size: 8pt;">More content will be added here in future releases</span>')
+
+            // add layout editor
+            buildLayoutOrderEditor()
         }
     })
 
@@ -71,7 +577,7 @@
     })
 
     /**
-     * jQuery widget to provide a selector for the sizing of a widget & group
+     * jQuery widget to provide a selector for the sizing (width & height) of a widget & group
      */
     $.widget('nodereddashboard.elementSizer', {
         _create: function () {
