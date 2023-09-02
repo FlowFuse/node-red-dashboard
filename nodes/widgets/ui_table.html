@@ -20,6 +20,7 @@
                     }
                 },
                 height: { value: 0 },
+                autocols: { value: true },
                 columns: {
                     // value: [{ key: '', label: '' }]
                     value: null
@@ -35,6 +36,72 @@
                     width: '#node-input-width',
                     height: '#node-input-height',
                     group: '#node-input-group'
+                })
+                const autocols = $('#node-input-autocols')
+
+                $(autocols).change(() => {
+                    const val = autocols.is(':checked')
+                    const customColsDiv = $('#node-input-columns-container')
+                    if (val) {
+                        customColsDiv.hide()
+                    } else {
+                        customColsDiv.show()
+                    }
+                })
+
+                // Columns Editor
+                function generateColumn (i, col) {
+                    const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                    const row = $('<div/>').appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                    $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                    $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-column-handle fa fa-bars"></i>').appendTo(row)
+
+                    $('<input/>', { class: 'node-input-column-key', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Key', value: col.key }).appendTo(row)
+                    $('<input/>', { class: 'node-input-column-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Label', value: col.label }).appendTo(row)
+
+                    const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
+                    const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
+                    $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
+
+                    deleteButton.click(function () {
+                        container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                        container.fadeOut(300, function () {
+                            $(this).remove()
+                        })
+                    })
+
+                    $('#node-input-column-container').append(container)
+                }
+
+                $('#node-input-add-column').click(function () {
+                    generateColumn($('#node-input-column-container').children().length + 1, {})
+                    $('#node-input-column-container-div').scrollTop($('#node-input-column-column-div').get(0).scrollHeight)
+                })
+
+                for (let i = 0; i < this.columns?.length; i++) {
+                    const col = this.columns[i]
+                    generateColumn(i + 1, col)
+                }
+
+                $('#node-input-column-container').sortable({
+                    axis: 'y',
+                    handle: '.node-input-column-handle',
+                    cursor: 'move'
+                })
+            },
+            oneditsave: function () {
+                const columns = $('#node-input-column-container').children()
+                const node = this
+                node.columns = []
+                columns.each(function (i) {
+                    const column = $(this)
+                    const o = {
+                        label: column.find('.node-input-column-label').val(),
+                        key: column.find('.node-input-column-key').val()
+                    }
+                    node.columns.push(o)
                 })
             }
         })
@@ -56,8 +123,19 @@
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
-        <input type="text" id="node-input-label">
+    <div class="form-row" style="display:flex;">
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Columns</label>
+        <div class="form-row node-input-column-container-row" style="margin-bottom: 0px; width:calc(70% + 15px);">
+            <div>
+                <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+                <label style="width:auto" for="node-input-autocols">Auto Calculate Columns</label>
+            </div>
+            <div id="node-input-columns-container">
+                <div id="node-input-column-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 100%;">
+                    <ol id="node-input-column-container" style="list-style-type:none; margin:0;"></ol>
+                </div>
+                <a href="#" class="editor-button editor-button-small" id="node-input-add-column" style="margin-top:4px;"><i class="fa fa-plus"></i> <span>column</span></a>
+            </div>
+        </div>
     </div>
 </script>

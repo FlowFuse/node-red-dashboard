@@ -43,23 +43,29 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         columns () {
-            if (this.props.columns) {
-                return this.props.columns
-            } else if (this.messages[this.id]?.payload) {
-                // loop over data and get keys
-                const cols = []
-                for (const row of this.messages[this.id].payload) {
-                    Object.keys(row).forEach((key) => {
-                        if (!cols.includes(key)) {
-                            cols.push(key)
-                        }
+            if (this.props.autocols) {
+                if (this.messages[this.id]?.payload) {
+                    // loop over data and get keys
+                    const cols = []
+                    for (const row of this.messages[this.id].payload) {
+                        Object.keys(row).forEach((key) => {
+                            if (!cols.includes(key)) {
+                                cols.push(key)
+                            }
+                        })
+                    }
+                    return cols.map((col) => {
+                        return { key: col, label: col }
                     })
+                } else {
+                    return [{
+                        key: '', label: ''
+                    }]
                 }
-                console.log(cols)
-                return cols.map((col) => {
-                    return { key: col, label: col }
-                })
+            } else if (this.props.columns) {
+                return this.props.columns
             } else {
+                // even if auto cols is off, but we have no columns defined, still have a fall back
                 return [{
                     key: '', label: ''
                 }]
