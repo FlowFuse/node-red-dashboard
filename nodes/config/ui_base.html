@@ -140,7 +140,11 @@
     const sidebar = $(sidebarContentTemplate)
 
     function uiLink (name, path) {
-        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${path}" target="nr-dashboard" class="editor-button editor-button-small nrdb2-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+        const base = RED.settings.httpNodeRoot || '/'
+        const basePart = base.endsWith('/') ? base : `${base}/`
+        const dashPart = path.startsWith('/') ? path.slice(1) : path
+        const fullPath = `${basePart}${dashPart}`
+        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
     }
 
     /**

@@ -45,11 +45,18 @@ const vuetify = createVuetify({
 
 import store from './store/index.js'
 
-/**
+/*
  * Configure SocketIO Client to Interact with Node-RED
  */
-const path = '/dashboard/socket.io'
-console.log(`Connecting to Node-RED via SocketIO at ${path}`)
+// Inspect the current URL to determine the correct path to use for socket.io.
+// for example, the base path might be `:1880/` or if `httpNodeRoot` is set, it could be something like `:1880/nr/endpoints/v1`
+// 1. determine the base path to use (grab everything before the first /dashboard)
+// 2. append '/socket.io' to the base path
+// TODO: determine what to do when /dashboard is called something else (support multiple dashboards github #23 )
+//       possible idea: pass the base path as a query param from the side bar, extract it then redirect?
+const url = new URL(window.location.href)
+const basePath = url.pathname.split('/dashboard')[0]
+const path = basePath + '/dashboard/socket.io'
 const socket = io({
     path
 })
