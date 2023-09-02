@@ -1,5 +1,13 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline">
+        <div v-for="siteTemplate in siteTemplates($route.meta.dashboard)" :key="siteTemplate.id" style="display: none">
+            Loaded site template '{{ siteTemplate.id }}'
+            <component :is="siteTemplate.component" :id="siteTemplate.id" :props="siteTemplate.props" :state="siteTemplate.state" />
+        </div>
+        <div v-for="pageTemplate in pageTemplates($route.meta.id)" :key="pageTemplate.id" style="display: none">
+            Loaded site template '{{ pageTemplate.id }}'
+            <component :is="pageTemplate.component" :id="pageTemplate.id" :props="pageTemplate.props" :state="pageTemplate.state" />
+        </div>
         <v-app-bar :elevation="1">
             <template #prepend>
                 <v-app-bar-nav-icon @click="drawer = !drawer" />
@@ -23,7 +31,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 /**
  * Convert a hex to RGB color
@@ -67,7 +75,9 @@ export default {
         }
     },
     computed: {
-        ...mapState('ui', ['pages', 'themes']),
+        ...mapState('ui', ['pages', 'themes', 'pageData']),
+        ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
+
         theme: function () {
             const page = this.pages[this.$route.meta.id]
             const theme = this.themes[page.theme].colors
@@ -80,6 +90,7 @@ export default {
         }
     },
     mounted () {
+        console.log('BaselineLayout mounted. siteTemplates:', this.siteTemplates(this.$route.meta.dashboard), 'pageTemplates:', this.pageTemplates(this.$route.meta.id))
         this.updateTheme()
     },
     methods: {
