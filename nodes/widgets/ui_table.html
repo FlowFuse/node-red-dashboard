@@ -31,6 +31,9 @@
             outputLabels: function () { return this.mode },
             icon: 'font-awesome/fa-table',
             paletteLabel: 'table',
+            label: function () {
+                return this.name || 'table'
+            },
             oneditprepare: function () {
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
