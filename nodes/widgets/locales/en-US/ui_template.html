@@ -1,29 +1,58 @@
-<script type="text/html" data-help-name="ui-template">
-    <p>
-      Provide custom HTML (including any <a href="https://vuetifyjs.com/en/components/all/" target="blank">
-      Vuetify component</a>) to render in the Dashboard.
-    </p>
-    <p>
-      You can render dynamic content using any VueJS data-binding expressions, (e.g. <code>v-if</code>, <code>v-for</code>)
-      and access incoming data to the node via the <code>msg</code> object, e.g:
-      <pre style="font-size:smaller;">{{ msg?.payload }}</pre>
-    </p>
-    <p>
-      <b>send(msg)</b><br>
-      The template comes with two built-in functions the first of which is a <code>send(msg)</code> function that
-      can be used to send a <code>msg</code> from the template, e.g:
-      <pre style="font-size:smaller;">&lt;v-btn @click="send({'hello': 'world'})"&gt;&lt;/v-btn&gt;</pre>
-    </p>
-    <p>
-      <b>submit()</b><br>
-      The second built-in function can be attached to a form. The <code>msg</code> sent will be an object
-      representation of the <code>FormData</code> from the attached form, e.g:
-      <pre style="font-size:smaller;">&lt;form @submit.prevent="submit"&gt;
-  &lt;v-text-field name="first" label="First Name"&gt;&lt;/v-text-field&gt;
-  &lt;v-text-field name="last" label="Last Name"&gt;&lt;/v-text-field&gt;
-  &lt;v-btn type="submit"&gt;&lt;/v-btn&gt;
-&lt;/form&gt;</pre>
-      Would return the following <code>msg</code> when submitted:
-      <pre style="font-size:smaller;">{"first": &lt;value&gt;, "last": &lt;value&gt;}</pre>
-    </p>
-  </script>
+<script type="text/markdown" data-help-name="ui-template">
+Provides a means to render custom content or a set of node-styles depending on scope.
+* HTML (including any <a href="https://vuetifyjs.com/en/components/all/" target="blank">
+  Vuetify component</a>) can be rendered in the Dashboard when the scope is set to **Widget in Group**
+* Custom CSS can be included in the Dashboard when the scope is set to **Page style** or **Site style**
+
+### Details - Widget in Group
+When the scope is set to **Widget in Group**, the template will be rendered in the Dashboard as HTML.
+You can render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`)
+  and access incoming data to the node via the `msg` object, e.g:
+```
+&lt;span&gt;{{ msg?.payload }}&lt;/span&gt;
+&lt;div v-if="msg?.payload === 'hello'"&gt;
+  I will be visible if msg.payload equals 'hello'
+&lt;/div&gt;
+```
+
+#### **send(msg)**
+The template comes with two built-in functions the first of which is a `send(msg)` function that
+  can be used to send a `msg` from the template, e.g:
+```html
+&lt;v-btn @click="send({'hello': 'world'})"&gt;&lt;/v-btn&gt;
+```
+
+#### **submit()**
+The second built-in function can be attached to a form. The `msg` sent will be an object
+  representation of the `FormData` from the attached form, e.g:
+```html
+&lt;form @submit.prevent="submit"&gt;
+    &lt;v-text-field name="first" label="First Name"&gt;&lt;/v-text-field&gt;
+    &lt;v-text-field name="last" label="Last Name"&gt;&lt;/v-text-field&gt;
+    &lt;v-btn type="submit"&gt;&lt;/v-btn&gt;
+&lt;/form&gt;
+```
+Would send the following `msg` when submitted:
+```js
+{ "first": <value>, "last": <value> }
+```
+
+### Details - Site Scoped Style
+When the scope is set to **Site Scoped Style**, the CSS in the template will be added to the `head` of all pages.
+e.g.
+```css
+.my-class {
+  color: red;
+}
+```
+
+### Details - Page Scoped Style
+When the scope is set to **Site Scoped Style**, the CSS in the template will be added to the `head` of the selected page.
+e.g.
+```css
+.my-page1-only-class {
+  color: green;
+}
+```
+
+</script>
