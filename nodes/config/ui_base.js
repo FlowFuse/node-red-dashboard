@@ -166,6 +166,7 @@ module.exports = function (RED) {
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
+                heads: Object.fromEntries(node.ui.heads),
                 pages: Object.fromEntries(node.ui.pages),
                 themes: Object.fromEntries(node.ui.themes),
                 groups: Object.fromEntries(node.ui.groups),
@@ -376,6 +377,7 @@ module.exports = function (RED) {
          */
         // store ui config to be sent to UI
         node.ui = {
+            heads: new Map(),
             dashboards: new Map(),
             pages: new Map(),
             themes: new Map(),
