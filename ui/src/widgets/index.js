@@ -17,6 +17,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 /* eslint-disable import/no-unresolved */
 import UIButton from './ui-button/UIButton'
 import UIDropdown from './ui-dropdown/UIDropdown'
+import UITable from './ui-table/UITable'
 import UIForm from './ui-form/UIForm'
 import UIChart from './ui-chart/UIChart'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup'
@@ -29,6 +30,7 @@ import UITextInput from './ui-text-input/UITextInput'
 export default {
     'ui-button': UIButton,
     'ui-dropdown': UIDropdown,
+    'ui-table': UITable,
     'ui-form': UIForm,
     'ui-chart': UIChart,
     'ui-radio-group': UIRadioGroup,
