@@ -59,7 +59,7 @@
         "@babel/eslint-parser": "^7.22.9",
         "@babel/plugin-transform-private-methods": "^7.22.5",
         "@mdi/font": "~6.5.0",
-        "@unhead/vue": "^1.3.7",
+        "@unhead/vue": "^1.4.1",
         "@vue/cli-plugin-babel": "~5.0.0",
         "@vue/cli-plugin-eslint": "~5.0.0",
         "@vue/cli-service": "~5.0.0",
