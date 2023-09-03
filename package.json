@@ -21,7 +21,8 @@
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
         "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
-        "test": "mocha \"test/**/*.spec.js\""
+        "test": "mocha \"test/**/*.spec.js\"",
+        "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
     },
     "license": "Apache-2.0",
     "keywords": [
