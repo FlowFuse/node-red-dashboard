@@ -20,6 +20,7 @@
                     }
                 },
                 height: { value: 0 },
+                maxrows: { value: 0, validate: RED.validators.number() },
                 autocols: { value: true },
                 columns: {
                     // value: [{ key: '', label: '' }]
@@ -125,6 +126,10 @@
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxrows"><i class="fa fa-tag"></i> Max Rows</label>
+        <input type="number" id="node-input-maxrows">
     </div>
     <div class="form-row" style="display:flex;">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Columns</label>
