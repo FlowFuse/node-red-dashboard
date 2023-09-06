@@ -1,7 +1,7 @@
 <template>
     <v-radio-group
-        v-model="value" class="nrdb-ui-widget nrdb-ui-radio-group"
-        :class="'nrdb-ui-radio-group--cols-' + props.columns"
+        v-model="value" class="nrdb-ui-radio-group"
+        :class="'nrdb-ui-radio-group--cols-' + props.columns + ' ' + className"
         :label="label" variant="outlined" hide-details="auto"
     >
         <v-radio

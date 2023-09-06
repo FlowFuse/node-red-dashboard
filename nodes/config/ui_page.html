@@ -26,7 +26,8 @@
             },
             order: {
                 value: -1
-            }
+            },
+            className: { value: '' }
         },
         oneditprepare: function () {
             $('#node-config-input-layout').typedInput({
@@ -72,6 +73,10 @@
         <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Layout</label>
         <input type="text" id="node-config-input-layout">
         <input type="hidden" id="node-config-input-layoutType">
+    </div>
+    <div class="form-row" id="text-row-class">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <input type="text" id="node-input-className" placeholder="Optional CSS class name(s) for page"/>
     </div>
     <div class="form-row">
         <button onclick="RED.sidebar.show('dashboard-2.0')" class="editor-button editor-button-small">Open Dashboard 2.0 Sidebar</button>

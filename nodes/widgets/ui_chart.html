@@ -21,7 +21,8 @@
                         return valid
                     }
                 },
-                height: { value: 0 }
+                height: { value: 0 },
+                className: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -39,6 +40,14 @@
                     width: '#node-input-width',
                     height: '#node-input-height',
                     group: '#node-input-group'
+                })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
                 })
 
                 // set value options for chart's type
@@ -102,6 +111,19 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui_chart.label.optionalChartTitle">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-chartType"><i class="fa fa-bookmark"></i> Type</label>

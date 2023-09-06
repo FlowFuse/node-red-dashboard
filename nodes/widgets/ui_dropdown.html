@@ -102,6 +102,14 @@
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
                 })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             },
             oneditsave: function () {
                 const options = $('#node-input-option-container').children()
@@ -148,6 +156,19 @@
         <label for="node-input-label"><i class="fa fa-tag"></i> Label</label>
         <input type="text" id="node-input-label" placeholder="optional label">
     </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
     <!--<div class="form-row">
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
         <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
@@ -172,7 +193,7 @@
     </div>-->
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" placeholder="optional msg.topic">
+        <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
         <input type="hidden" id="node-input-topicType">
     </div>
 </script>

@@ -40,7 +40,7 @@ export default {
                 console.error('errorCaptured', err, vm, info)
                 return false
             },
-            template: `<div class="nrdb-ui-markdown">${DOMPurify.sanitize(md)}</div>`,
+            template: `<div class="nrdb-ui-markdown-content">${DOMPurify.sanitize(md)}</div>`,
             computed: {
                 ...mapState('data', ['messages']),
                 ...mapGetters('data', ['getMsgProperty']),

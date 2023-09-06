@@ -2,7 +2,7 @@
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
-
+import { VueHeadMixin, createHead } from '@unhead/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
@@ -81,6 +81,10 @@ const app = createApp(App)
     .use(store)
     .use(vuetify)
     .use(router)
+
+const head = createHead()
+app.use(head)
+app.mixin(VueHeadMixin)
 
 // make the socket service available app-wide via this.$socket
 app.provide('$socket', socket)

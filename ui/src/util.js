@@ -94,6 +94,17 @@ function getDeepValue (obj, path, defaultValue) {
     return obj || defaultValue
 }
 
+/**
+ * @description: Check if an object has a property
+ * @param {Object} obj - The object to check for the property
+ * @param {String} prop - The property to check for
+ * @returns {Boolean} True if the object has the property, false otherwise
+ */
+function hasProperty (obj, prop) {
+    return Object.prototype.hasOwnProperty.call(obj, prop)
+}
+
 module.exports = {
-    getDeepValue
+    getDeepValue,
+    hasProperty
 }

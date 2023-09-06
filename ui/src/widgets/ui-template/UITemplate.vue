@@ -22,7 +22,32 @@ export default {
                 console.error('errorCaptured', err, vm, info)
                 return false
             },
-            template: props.props.format,
+            head () {
+                let _props = this.props || props
+                if (_props.props) { _props = _props.props }
+                if (!_props || _props.templateScope === 'local') {
+                    return {} // this is a "widget template" so we don't need to do anything
+                }
+                const setup = {}
+                if (_props.format && (_props.templateScope === 'page:style' || _props.templateScope === 'site:style')) {
+                    setup.style = [{ innerHTML: _props.format, 'data-template-name': _props.name, 'data-template-scope': _props.templateScope, 'data-template-id': _props.id }]
+                }
+                // future?
+                // if (_props.format && (_props.templateScope === 'page:script' || _props.templateScope === 'site:script')) {
+                //     setup.script = [{ textContent: _props.format, id: `${_props.name || _props.templateScope}-${_props.id}` }]
+                // }
+                // if (hasProperty(_props, 'script')) {
+                //     setup.script = [_props.head.script]
+                // }
+                // if (hasProperty(_props, 'meta')) {
+                //     setup.meta = [_props.head.meta]
+                // }
+                // if (hasProperty(_props, 'link')) {
+                //     setup.link = [_props.head.link]
+                // }
+                return setup
+            },
+            template: props.props.templateScope !== 'local' ? undefined : props.props.format,
             computed: {
                 ...mapState('data', ['messages']),
                 msg () {
@@ -48,14 +73,12 @@ export default {
     },
     methods: {
         send (component, msg) {
-            console.log('send called from template item', component, msg)
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
             this.$socket.emit('widget-action', this.id, msg) // TODO: should we have a widget-send emitter to differentiate from action?
         },
         submit (component, $evt) {
-            console.log('submit called from template item', component, $evt)
             // extract the form names and values from $evt.target & generate a msg
             // where the payload is an object of name/value pairs
             // and the topic is the event type (e.g. 'submit')

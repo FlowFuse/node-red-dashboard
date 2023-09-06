@@ -28,6 +28,13 @@ export default {
           ]
         },
         {
+          text: 'User Guides',
+          collapsed: false,
+          items: [
+            { text: 'Dynamic Properties', link: '/user/dynamic-properties' }
+          ]
+        },
+        {
           text: 'Nodes',
           collapsed: false,
           items: [

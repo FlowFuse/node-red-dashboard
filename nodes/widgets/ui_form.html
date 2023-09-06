@@ -49,7 +49,8 @@
                 cancel: { value: 'clear' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
-                splitLayout: { value: '' }
+                splitLayout: { value: '' },
+                className: { value: '' }
             },
             inputs: 0,
             outputs: 1,
@@ -193,6 +194,14 @@
                     handle: '.node-input-option-handle',
                     cursor: 'move'
                 })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             },
             oneditsave: function () {
                 const options = $('#node-input-option-container').children()
@@ -300,6 +309,19 @@
         <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-form.label.label"></label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-form.label.optionalLabel">
     </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
     <div class="form-row node-input-option-container-row" style="margin-bottom:0px; width:100%; min-width:520px">
         <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.formElements"></label>
         <div style="display:inline-block; width:78%; border:1px solid var(--red-ui-form-input-border-color, #ccc); border-radius:5px; box-sizing:border-box;">
@@ -334,7 +356,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
-        <input type="text" id="node-input-topic" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
+        <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
         <input type="hidden" id="node-input-topicType">
     </div>
 </script>

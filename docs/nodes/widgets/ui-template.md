@@ -1,7 +1,9 @@
 ---
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
-    Template: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
+    Scope: Template nodes can be used  for 3 purposes/scopes. Firstly, as a standard HTML widget rendered in a group in the Dashboard. Alternatively, to define custom CSS classes/styling for a page/UI. This scope defines the extent of which any CSS defined in a <style> tage will be applied.
+    Class: Appends CSS classes to the widget
+    Template: The content of the widget or CSS <style>. If using this for CSS, you do not need to include any <style> tags, as these will be automatically added.
 ---
 
 <script setup>

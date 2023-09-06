@@ -4,6 +4,7 @@
         function c_ (x) {
             return RED._('@flowforge/node-red-dashboard/ui-template:ui-template.' + x)
         }
+        // TODO: move this to util.js for reuse & unit testing
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
@@ -11,7 +12,9 @@
             category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
             color: 'rgb( 63, 173, 181)',
             defaults: {
-                group: { type: 'ui-group', required: true },
+                group: { type: 'ui-group', required: true }, // for when template is scoped to 'local' (default)
+                dashboard: { type: 'ui-base', required: false }, // for when template is scoped to 'site'
+                page: { type: 'ui-page', required: false }, // for when template is scoped to 'page'
                 name: { value: '' },
                 order: { value: 0 },
                 width: {
@@ -40,11 +43,19 @@
             outputs: 1,
             icon: 'font-awesome/fa-code',
             paletteLabel: 'template',
-            label: function () { return this.name || 'template' },
+            label: function () {
+                if (this.name) { return this.name }
+                const knownLabels = {
+                    local: 'template',
+                    'site:style': 'site style',
+                    'page:style': 'page style'
+                }
+                return knownLabels[this.templateScope] || 'template'
+            },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 if (RED.editor.__debug === true) {
-                    console.log('ui-markdown: oneditprepare')
+                    console.log('ui-template: oneditprepare') // useful for locating this code in the browser debugger
                 }
                 if (hasProperty(RED.editor, 'editText') && typeof RED.editor.editText === 'function') {
                     $('#node-template-expand-editor').show()
@@ -52,6 +63,7 @@
                     $('#node-template-expand-editor').hide()
                 }
                 const that = this
+                const $templateScope = $('#node-input-templateScope')
                 // $("#node-input-size").elementSizer({
                 //     width: "#node-input-width",
                 //     height: "#node-input-height",
@@ -70,28 +82,42 @@
 
                 if (typeof this.templateScope === 'undefined') {
                     this.templateScope = 'local'
-                    $('#node-input-templateScope').val(this.templateScope)
+                    $templateScope.val(this.templateScope)
                 }
 
-                $('#node-input-templateScope').on('change', function () {
-                    if ($('#node-input-templateScope').val() === 'global') {
-                        $('#template-row-group, #template-row-size, #template-pass-store, #template-row-class').hide()
-                        that._def.defaults.group.required = false
-                    } else {
-                        $('#template-row-group, #template-row-size, #template-pass-store, #template-row-class').show()
+                $templateScope.on('change', function () {
+                    that._def.defaults.group.required = false
+                    that._def.defaults.page.required = false
+                    that._def.defaults.dashboard.required = false
+                    $('#template-row-group, #template-row-page, #template-row-dashboard, #template-row-class').hide()
+                    switch ($templateScope.val()) {
+                    case 'site:style':
+                        $('#template-row-dashboard').show()
+                        that._def.defaults.dashboard.required = true
+                        that.editor.getSession().setMode('ace/mode/css')
+                        break
+                    case 'page:style':
+                        $('#template-row-page').show()
+                        that._def.defaults.dashboard.required = true
+                        that.editor.getSession().setMode('ace/mode/css')
+                        break
+                    case 'site:script':
+                        $('#template-row-dashboard').show()
+                        that._def.defaults.dashboard.required = true
+                        that.editor.getSession().setMode('ace/mode/javascript')
+                        break
+                    case 'page:script':
+                        $('#template-row-page').show()
+                        that._def.defaults.dashboard.required = true
+                        that.editor.getSession().setMode('ace/mode/javascript')
+                        break
+                    default:
+                        $('#template-row-group, #template-row-class').show()
                         that._def.defaults.group.required = true
+                        that.editor.getSession().setMode('ace/mode/html')
+                        break
                     }
-
-                    const rows = $('#dialog-form>div:not(.node-text-editor-row)')
-                    let height = $('#dialog-form').height()
-                    for (let i = 0; i < rows.size(); i++) {
-                        height = height - $(rows[i]).outerHeight(true)
-                    }
-                    if ($('#node-input-templateScope').val() === 'global') { height += 240 }
-                    const editorRow = $('#dialog-form>div.node-text-editor-row')
-                    height -= (parseInt(editorRow.css('marginTop')) + parseInt(editorRow.css('marginBottom')))
-                    $('.node-text-editor').css('height', height + 'px')
-                    if (this.editor) { this.editor.resize() }
+                    resize.call(that)
                 })
 
                 this.editor = RED.editor.createEditor({
@@ -116,7 +142,7 @@
                     e.preventDefault()
                     const value = that.editor.getValue()
                     RED.editor.editText({
-                        mode: 'html',
+                        mode: $templateScope.val() === 'global' ? 'css' : 'html',
                         value,
                         width: 'Infinity',
                         cursor: that.editor.getCursorPosition(),
@@ -127,6 +153,16 @@
                         }
                     })
                 })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+
+                $templateScope.trigger('change') // trigger the change event to hide/show the group/dashboard row
             },
             oneditsave: function () {
                 const annot = this.editor.getSession().getAnnotations()
@@ -146,30 +182,27 @@
                 this.editor.destroy()
                 delete this.editor
             },
-            oneditresize: function (size) {
-                const rows = $('#dialog-form>div:not(.node-text-editor-row)')
-                let height = $('#dialog-form').height()
-                for (let i = 0; i < rows.size(); i++) {
-                    height = height - $(rows[i]).outerHeight(true)
-                }
-                if ($('#node-input-templateScope').val() === 'global') { height += 232 }
-                const editorRow = $('#dialog-form>div.node-text-editor-row')
-                height -= (parseInt(editorRow.css('marginTop')) + parseInt(editorRow.css('marginBottom')))
-                $('.node-text-editor').css('height', height + 'px')
-                this.editor.resize()
-            }
+            oneditresize: resize.bind(this)
         })
+
+        function resize (size) {
+            const rows = $('#dialog-form>div:not(.node-text-editor-row)')
+            let fixRowsHeight = 0
+            for (let i = 0; i < rows.size(); i++) {
+                fixRowsHeight += $(rows[i]).height()
+            }
+            const dialogHeight = $('#dialog-form').height()
+            const height = dialogHeight - fixRowsHeight
+            $('.node-text-editor').css('height', height + 'px')
+            if (RED.editor.__debug === true) {
+                console.log('dialogHeight', dialogHeight, 'fixRowsHeight', fixRowsHeight, 'height', height, 'editorRow')
+            }
+            this.editor && this.editor.resize()
+        }
     })()
 </script>
 
 <script type="text/html" data-template-name="ui-template">
-    <!--<div class="form-row">
-        <label for="node-input-format"><span data-i18n="ui-template.label.type"></span></label>
-        <select style="width:76%" id="node-input-templateScope">
-            <option value="local" data-i18n="ui-template.label.local"></option>
-            <option value="global" data-i18n="ui-template.label.global"></option>
-        </select>
-    </div>-->
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <div style="display:inline-block; width:calc(100% - 105px)">
@@ -177,19 +210,46 @@
         </div>
     </div>
     <div class="form-row">
+        <label for="node-input-temlplateScope"><i class="fa fa-dot-circle-o"></i> <span data-i18n="ui-template.label.scope"></span></label>
+        <select style="width:76%" id="node-input-templateScope">
+            <option value="local" data-i18n="ui-template.label.local"></option>
+            <option value="site:style" data-i18n="ui-template.label.site-style"></option>
+            <option value="page:style" data-i18n="ui-template.label.page-style"></option>
+            <!-- FUTURE? <option value="site:script" data-i18n="ui-template.label.site-script"></option>
+            <option value="page:script" data-i18n="ui-template.label.page-script"></option> -->
+        </select>
+    </div>
+    <div id="template-row-group" class="form-row">
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input type="text" id="node-input-group">
+    </div>
+    <div id="template-row-dashboard" class="form-row">
+        <label for="node-input-dashboard"><i class="fa fa-bookmark"></i> Dashboard</label>
+        <input type="text" id="node-input-dashboard">
+    </div>
+    <div id="template-row-page" class="form-row">
+        <label for="node-input-page"><i class="fa fa-bookmark"></i> Page</label>
+        <input type="text" id="node-input-page">
     </div>
     <!--<div class="form-row" id="template-row-size">
         <label><i class="fa fa-object-group"></i> <span data-i18n="ui-template.label.size"></span></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
-    </div>
-    <div class="form-row" id="template-row-class">
-        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-template.label.className"></label>
-        <input type="text" id="node-input-className" data-i18n="[placeholder]ui-template.label.classNamePlaceholder"/>
     </div>-->
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
     <div class="form-row" style="margin-bottom:0px;">
         <label for="node-input-format"><i class="fa fa-copy"></i> <span data-i18n="ui-template.label.template"></span></label>
         <input type="hidden" id="node-input-format">
