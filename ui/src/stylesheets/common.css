@@ -239,3 +239,16 @@ main {
 .active .v-switch__thumb {
     opacity: 1.0;
 }
+
+/* Data Table */
+
+.v-table {
+    background: rgb(var(--v-theme-group-background));
+}
+
+.v-table, .v-table .v-table__wrapper > table > thead > tr > th {
+    color: rgb(var(--v-theme-on-group-background));
+}
+.v-table .v-table__wrapper > table > thead > tr > th {
+    font-weight: 600;
+}
