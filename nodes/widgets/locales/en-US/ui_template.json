@@ -1,10 +1,10 @@
 {
     "ui-template": {
         "label": {
-            "scope": "Scope",
-            "local": "Widget in group",
-            "site-style": "Site wide <style>",
-            "page-style": "Page scoped <style>",
+            "scope": "Type",
+            "local": "Widget",
+            "site-style": "CSS (All Pages)",
+            "page-style": "CSS (Single Page)",
             "group": "Group",
             "size": "Size",
             "name": "Name",
