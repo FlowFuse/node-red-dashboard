@@ -118,7 +118,7 @@ describe('ui-button node', function () {
         const loadedNodes = getLoadedNodes(helper)
         loadedNodes.should.have.length(flow.length)
         loadedNodes.forEach(node => {
-            const loadedNode = flow.find(item => item.id === node.id)
+            const loadedNode = helper.getNode(node.id)
             should(loadedNode).be.an.Object()
             loadedNode.should.have.property('type', node.type)
         })
