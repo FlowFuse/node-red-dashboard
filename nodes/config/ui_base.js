@@ -2,6 +2,7 @@
 const path = require('path')
 
 const v = require('../../package.json').version
+const { appendTopic } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -245,17 +246,7 @@ module.exports = function (RED) {
 
             // Wrap execution in a try/catch to ensure we don't crash Node-RED
             try {
-                // populate topic if the node specifies one
-                if (widgetConfig.topic || widgetConfig.topicType) {
-                    try {
-                        msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
-                    } catch (_err) { /* do nothing */ }
-                }
-
-                // ensure we have a topic property in the msg, even if it's an empty string
-                if (!('topic' in msg)) {
-                    msg.topic = ''
-                }
+                msg = await appendTopic(RED, widgetConfig, wNode, msg)
 
                 // pre-process the msg before send on the msg (if beforeSend is defined)
                 if (widgetEvents?.beforeSend && typeof widgetEvents.beforeSend === 'function') {
@@ -291,22 +282,10 @@ module.exports = function (RED) {
             async function defaultHandler (value) {
                 msg.payload = value
 
-                // populate topic if the node specifies one
-                if (widgetConfig.topic || widgetConfig.topicType) {
-                    try {
-                        msg.topic = await evaluateNodeProperty(widgetConfig.topic, widgetConfig.topicType || 'str', wNode, msg) || ''
-                    } catch (_err) {
-                        // do nothing
-                    }
-                }
-
-                // ensure we have a topic property in the msg, even if it's an empty string
-                if (!('topic' in msg)) {
-                    msg.topic = ''
-                }
+                msg = await appendTopic(RED, widgetConfig, wNode, msg)
 
                 if (widgetEvents?.beforeSend) {
-                    msg = widgetEvents.beforeSend(msg)
+                    msg = await widgetEvents.beforeSend(msg)
                 }
                 wNode._msg = msg
                 wNode.send(msg) // send the msg onwards
@@ -529,11 +508,20 @@ module.exports = function (RED) {
 
                 // run any node-specific handler defined in the Widget's component
                 if (widgetEvents?.onInput) {
-                    widgetEvents?.onInput(msg, send, done)
+                    await widgetEvents?.onInput(msg, send, done)
                 } else {
                     // msg could be null if the beforeSend errors and returns null
                     if (msg) {
-                        send(msg)
+                        if (widgetConfig.topic || widgetConfig.topicType) {
+                            msg = await appendTopic(RED, widgetConfig, wNode, msg)
+                        }
+                        if (Object.hasOwn(widgetConfig, 'passthru')) {
+                            if (widgetConfig.passthru) {
+                                send(msg)
+                            }
+                        } else {
+                            send(msg)
+                        }
                     }
                 }
             })
@@ -568,18 +556,6 @@ module.exports = function (RED) {
         // NOTE: this is a cautionary measure only - typically the registration of nodes will queue up a config emit
         // but in cases where the dashboard has no widgets registered, we still need to emit a config
         node.requestEmitConfig()
-    }
-
-    function evaluateNodeProperty (value, type, node, msg) {
-        return new Promise(function (resolve, reject) {
-            RED.util.evaluateNodeProperty(value, type, node, msg, function (e, r) {
-                if (e) {
-                    reject(e)
-                } else {
-                    resolve(r)
-                }
-            })
-        })
     }
 
     RED.nodes.registerType('ui-base', UIBaseNode)

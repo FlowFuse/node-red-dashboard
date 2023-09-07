@@ -9,12 +9,7 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const evts = {
-            onChange: true,
-            onInput: function (msg, send) {
-                if (config.passthru) {
-                    send(msg)
-                }
-            }
+            onChange: true
         }
 
         // inform the dashboard UI that we are adding this node
