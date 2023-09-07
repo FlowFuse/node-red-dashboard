@@ -24,7 +24,7 @@
                     }
                 },
                 height: { value: 0 },
-                passthru: { value: true },
+                passthru: { value: false },
                 outs: { value: 'all' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
