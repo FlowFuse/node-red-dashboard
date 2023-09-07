@@ -57,8 +57,9 @@ module.exports = function (RED) {
                         shape: 'ring',
                         text: msg.payload ? states[1] : states[0]
                     })
-
-                    send(msg)
+                    if (config.passthru) {
+                        send(msg)
+                    }
                 } else {
                     node.error(error)
                 }
