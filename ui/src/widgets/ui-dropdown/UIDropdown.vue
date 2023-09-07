@@ -87,9 +87,20 @@ export default {
         onChange () {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
-            msg.payload = this.value
+            if (this.props.multiple) {
+                // return an array
+                msg.payload = this.value.map((option) => {
+                    return option.value
+                })
+            } else if (this.value) {
+                // return a single value
+                msg.payload = this.value.value
+            } else {
+                // return null
+                msg.payload = null
+            }
             this.$store.commit('data/bind', msg)
-            this.$socket.emit('widget-change', this.id, this.value)
+            this.$socket.emit('widget-change', this.id, msg.payload)
         }
     }
 }
