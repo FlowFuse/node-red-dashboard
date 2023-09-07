@@ -7,4 +7,18 @@
         In the case where a single option is selected, returns the object detailing that selection.
         If "Allow multiple selections" is enabled, returns an array of objects detailing the selections.
     </p>
+    <h3>Selecting Options via <code>msg.</code></h3>
+    <p>
+        You can dynamically make selections for this dropdown by passing in the respective <code>value</code> to <code>msg.payload</code>.
+    </p>
+    <p>
+        To make a single selection, pass in the <code>value</code> of the option as <code>msg.payload</code>, e.g. <code>msg.payload = "option1"</code>.
+    </p>
+    <p>
+        To make a multi-selection selection, you must first have "Allow Multiple" enabled on the node, you can then
+        pass an Array of <code>value</code> of the respective options as <code>msg.payload</code>, e.g. <code>msg.payload = ["option1", "option2"]</code>.
+    </p>
+    <p>
+        To clear any selection for a dropdown, pass an empty array <code>[]</code> as <code>msg.payload</code>.
+    </p>
 </script>
