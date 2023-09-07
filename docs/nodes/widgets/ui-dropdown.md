@@ -14,6 +14,22 @@ props:
 
 Adds a dropdown to your dashboard that will emit values in Node-RED under `msg.payload` anytime it's value is changed.
 
+## Programmatic Selections
+
+You can dynamically make selections for this dropdown by passing in the respective `value` to `msg.payload`.
+
+### Single Selection
+
+To make a single selection, pass in the `value` of the option as `msg.payload`, e.g. `msg.payload = "option1"`.
+
+### Multi-Selection
+
+ To make a multi-selection selection, you must first have "Allow Multiple" enabled on the node, you can then pass an Array of `value` of the respective options as `msg.payload`, e.g. `msg.payload = ["option1", "option2"]`.
+
+### Clear Selection
+
+ To clear any selection for a dropdown, pass an empty array `[]` as `msg.payload`.
+
 ## Properties
 
 <PropsTable/>
