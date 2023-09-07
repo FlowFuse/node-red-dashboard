@@ -24,7 +24,7 @@
                     }
                 },
                 height: { value: 0 },
-                passthru: { value: true },
+                passthru: { value: false },
                 multiple: { value: false },
                 options: {
                     value: [{ value: '', label: '' }],
@@ -187,10 +187,10 @@
         <label style="width:auto" for="node-input-multiple"><i class="fa fa-th-list"></i> Allow multiple selections from list: </label>
         <input type="checkbox" checked id="node-input-multiple" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>
-    <!--<div class="form-row">
+    <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>-->
+    </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
