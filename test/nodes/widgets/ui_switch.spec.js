@@ -21,12 +21,16 @@ describe('ui-switch node', function () {
 
     const flow = [
         {
-            id: 'ui-switch',
+            id: 'helper-node',
+            type: 'helper'
+        },
+        {
+            id: 'node-ui-switch',
             type: 'ui-switch',
             z: 'tab-id',
             name: '',
             label: 'UI Switch',
-            group: 'config-ui-grup',
+            group: 'config-ui-group',
             order: 0,
             width: '3',
             height: '1',
@@ -49,21 +53,13 @@ describe('ui-switch node', function () {
                 ['helper-node']
             ]
         },
-        {
-            id: 'helper-node',
-            type: 'helper'
-        },
         ...testFlow1
     ]
 
     it('should be loaded', async function () {
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
-        const base = helper.getNode('config-ui-base')
-        const h = helper.getNode('helper-node')
-        console.log(h)
-        const n = helper.getNode('ui-switch')
-        console.log(n)
+        const n = helper.getNode('node-ui-switch')
         should(n).be.an.Object()
     })
 
@@ -95,7 +91,7 @@ describe('ui-switch node', function () {
         const loadedNodes = getLoadedNodes(helper)
         loadedNodes.should.have.length(flow.length)
         loadedNodes.forEach(node => {
-            const loadedNode = flow.find(item => item.id === node.id)
+            const loadedNode = helper.getNode(node.id)
             should(loadedNode).be.an.Object()
             loadedNode.should.have.property('type', node.type)
         })
