@@ -1,6 +1,5 @@
 const helper = require('node-red-node-test-helper')
 const should = require('should')
-const sinon = require('sinon')
 
 // load test 1 standard test data (base, page, group, theme, switch)
 // eslint-disable-next-line no-unused-vars
