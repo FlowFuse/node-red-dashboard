@@ -2,7 +2,8 @@ const helper = require('node-red-node-test-helper')
 const should = require('should') // eslint-disable-line no-unused-vars
 
 // load test 1 standard test data (base, page, group, theme, button)
-const { getLoadedNodes, testData1 } = require('../fixtures/index.js')
+const { testData1 } = require('../fixtures/index.js')
+const { verifyFlowLoaded } = require('../utils.js')
 const testFlow1 = testData1.flows
 const nodeImports = testData1.getImports(null, ['ui_button'])
 
@@ -76,28 +77,4 @@ describe('ui-group config node', function () {
         group.id.should.equal('config-ui-group')
         group.should.have.property('page', page.id)
     })
-
-    function verifyFlowLoaded (helper, flow) {
-        const loadedNodes = getLoadedNodes(helper)
-        loadedNodes.should.have.length(flow.length)
-        loadedNodes.forEach(node => {
-            const loadedNode = flow.find(item => item.id === node.id)
-            should(loadedNode).be.an.Object()
-            loadedNode.should.have.property('type', node.type)
-        })
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    function debugPrintLoadedNodes (testInstance, helper) {
-        // get a the full path to the test from .parent.parent.etc
-        const pathItems = testInstance.test.titlePath()
-        const padding = ' '.repeat(pathItems.length * 2)
-        const testPath = testInstance.test.titlePath().join(' > ')
-        console.log(`${padding}TEST: ${testPath}`)
-        console.log(`${padding}  Loaded nodes:`)
-        const loadedNodes = getLoadedNodes(helper)
-        loadedNodes.forEach(node => {
-            console.log(`${padding}  * ${JSON.stringify(node, null, 0)}`)
-        })
-    }
 })

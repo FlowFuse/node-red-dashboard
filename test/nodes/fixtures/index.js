@@ -41,30 +41,7 @@ function getImports (configNodes, widgetNodes) {
     return importItems
 }
 
-/**
- * Get a list of all nodes that have been loaded
- * This is useful for ensuring the helper loaded all nodes as expected
- * @example
- * const loadedNodes = getLoadedNodes(helper)
- * loadedNodes.should.have.length(flow.length)
- * @example
- * const loadedNodes = getLoadedNodes(helper)
- * loadedNodes.forEach(node => {
- *    console.log(node.type, node.id)
- * })
- * @param {import('node-red-node-test-helper')} helper The loaded node-red test helper
- * @returns {Array} An array of loaded nodes
- */
-function getLoadedNodes (helper) {
-    const loadedNodes = []
-    helper._RED.nodes.eachNode(n => {
-        loadedNodes.push(n)
-    })
-    return loadedNodes
-}
-
 module.exports = {
-    getLoadedNodes,
     getImports,
     fixtures,
     testData1
