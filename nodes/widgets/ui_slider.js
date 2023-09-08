@@ -1,8 +1,7 @@
 module.exports = function (RED) {
     function SliderNode (config) {
-        const node = this
-
         RED.nodes.createNode(this, config)
+        const node = this
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
@@ -12,19 +11,17 @@ module.exports = function (RED) {
 
         node.status({})
 
-        if (!node.pt) {
-            node.on('input', function (msg) {
-                node.state[0] = msg.payload
-                node.status({ shape: 'dot', fill: 'grey', text: node.state[0] + ' | ' + node.state[1] })
-            })
-        } else if (node._wireCount === 0) {
-            node.on('input', function (msg) {
-                node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
-            })
-        }
-
         const evts = {
-            onChange: true
+            onChange: true,
+            beforeSend: function (msg) {
+                if (!node.pt) {
+                    node.state[0] = msg.payload
+                    node.status({ shape: 'dot', fill: 'grey', text: node.state[0] + ' | ' + node.state[1] })
+                } else if (node._wireCount === 0) {
+                    node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
+                }
+                return msg
+            }
         }
 
         // inform the dashboard UI that we are adding this node

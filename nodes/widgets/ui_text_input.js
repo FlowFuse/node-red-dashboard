@@ -14,6 +14,11 @@ module.exports = function (RED) {
         const evts = {
             onChange: true,
             onInput: function (msg, send) {
+                // ensure we have latest instance of the widget's node
+                const wNode = RED.nodes.getNode(node.id)
+                // store the latest msg passed to node
+                wNode._msg = msg
+                // only send msg on if we have passthru enabled
                 if (config.passthru) {
                     send(msg)
                 }

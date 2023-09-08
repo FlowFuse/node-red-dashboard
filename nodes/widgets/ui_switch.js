@@ -1,3 +1,5 @@
+const { appendTopic } = require('../utils/index.js')
+
 module.exports = function (RED) {
     function SwitchNode (config) {
         // create node in Node-RED
@@ -14,7 +16,7 @@ module.exports = function (RED) {
         const evts = {
             // runs on UI interaction
             // value = true | false from the ui-switch
-            onChange: function (value) {
+            onChange: async function (value) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)
                 const msg = wNode._msg || {}
@@ -35,7 +37,7 @@ module.exports = function (RED) {
                 // simulate Node-RED node receiving an input
                 wNode.send(msg)
             },
-            onInput: function (msg, send) {
+            onInput: async function (msg, send) {
                 let error = null
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)
@@ -52,16 +54,30 @@ module.exports = function (RED) {
                     error = 'Invalid payload value'
                 }
                 if (!error) {
+                    // store the latest msg passed to node
+                    wNode._msg = msg
+
                     node.status({
                         fill: msg.payload ? 'green' : 'red',
                         shape: 'ring',
                         text: msg.payload ? states[1] : states[0]
                     })
 
-                    send(msg)
+                    if (config.passthru) {
+                        send(msg)
+                    }
                 } else {
-                    node.error(error)
+                    const err = new Error(error)
+                    err.type = 'warn'
+                    throw err
                 }
+            },
+            beforeSend: async function (msg) {
+                // ensure we have latest instance of the widget's node
+                const wNode = RED.nodes.getNode(node.id)
+
+                msg = await appendTopic(RED, config, wNode, msg)
+                return msg
             }
         }
 
