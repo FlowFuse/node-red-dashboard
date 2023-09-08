@@ -161,7 +161,7 @@ describe('ui-switch node', function () {
         })
     })
 
-    it('should not set the value of the switch, if an input msg.payload does not match the defined off value', async function () {
+    it('should not set the value of the switch, if an input msg.payload does not match the defined on/off value', async function () {
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
 
