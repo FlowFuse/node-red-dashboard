@@ -1,9 +1,8 @@
 module.exports = function (RED) {
     function DropdownNode (config) {
-        const node = this
-
         // create node in Node-RED
         RED.nodes.createNode(this, config)
+        const node = this
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
