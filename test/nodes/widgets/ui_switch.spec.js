@@ -1,5 +1,6 @@
 const helper = require('node-red-node-test-helper')
-const should = require('should') // eslint-disable-line no-unused-vars
+const should = require('should')
+const sinon = require('sinon')
 
 // load test 1 standard test data (base, page, group, theme, switch)
 // eslint-disable-next-line no-unused-vars
@@ -54,6 +55,25 @@ describe('ui-switch node', function () {
                 ['helper-node']
             ]
         },
+        {
+            id: 'helper-node-complete',
+            type: 'helper'
+        },
+        {
+            id: 'node-on-complete',
+            type: 'complete',
+            z: 'tab-id',
+            name: '',
+            scope: [
+                'node-ui-switch'
+            ],
+            uncaught: false,
+            x: 0,
+            y: 0,
+            wires: [
+                ['helper-node-complete']
+            ]
+        },
         ...testFlow1
     ]
 
@@ -82,9 +102,132 @@ describe('ui-switch node', function () {
         const sNode = helper.getNode('node-ui-switch')
         const hNode = helper.getNode('helper-node')
         hNode.on('input', (msg) => {
+            // check the message passed to the next node contains the correct topic
             msg.should.have.property('topic', 'topic')
         })
 
         sNode.receive({ payload: true })
+    })
+
+    it('should set the value of the switch, if an input msg.payload matches the defined on value', async function () {
+        await helper.load(nodeImports, flow)
+        verifyFlowLoaded(helper, flow)
+
+        await new Promise((resolve, reject) => {
+            const sNode = helper.getNode('node-ui-switch')
+            const hNode = helper.getNode('helper-node')
+            hNode.on('input', (msg) => {
+                try {
+                    sNode._msg.payload.should.equal(msg.payload)
+                    resolve()
+                } catch (err) {
+                    reject(err)
+                }
+            })
+
+            sNode.receive({
+                payload: true
+            })
+        })
+    })
+
+    it('should set the value of the switch, if an input msg.payload matches the defined off value', async function () {
+        await helper.load(nodeImports, flow)
+        verifyFlowLoaded(helper, flow)
+        await new Promise((resolve, reject) => {
+            const sNode = helper.getNode('node-ui-switch')
+            const hNode = helper.getNode('helper-node')
+            const helperAfterSwitch = helper.getNode('helper-node')
+            hNode.on('input', (msg) => {
+                // we need to be sure that the helperAfterSwitch node has run first
+                setTimeout(() => {
+                    try {
+                        sNode._msg.payload.should.equal(msg.payload)
+                        msgSent.should.be.true()
+                        resolve()
+                    } catch (err) {
+                        reject(err)
+                    }
+                }, 20)
+            })
+
+            let msgSent = false
+            helperAfterSwitch.on('input', (msg) => {
+                msgSent = true
+            })
+
+            sNode.receive({
+                payload: false
+            })
+        })
+    })
+
+    it('should not set the value of the switch, if an input msg.payload does not match the defined off value', async function () {
+        await helper.load(nodeImports, flow)
+        verifyFlowLoaded(helper, flow)
+
+        await new Promise((resolve, reject) => {
+            const sNode = helper.getNode('node-ui-switch')
+            const helperAfterSwitch = helper.getNode('helper-node')
+            const helperAfterComplete = helper.getNode('helper-node-complete')
+            helperAfterComplete.on('input', (msg) => {
+                // we need to be sure that the helperAfterSwitch node has run first
+                setTimeout(() => {
+                    try {
+                        (sNode._msg === undefined).should.be.true()
+                        sNode.warn.should.be.called()
+                        msgSent.should.be.false()
+                        resolve()
+                    } catch (err) {
+                        reject(err)
+                    }
+                }, 20)
+            })
+
+            let msgSent = false
+            helperAfterSwitch.on('input', () => {
+                msgSent = true
+            })
+
+            sNode.receive({
+                payload: 'random'
+            })
+        })
+    })
+
+    it('should not send on msg if passthru is set to false', async function () {
+        const flow2 = flow.map((node) => {
+            return { ...node }
+        })
+
+        flow2[1].passthru = false
+
+        await helper.load(nodeImports, flow2)
+        verifyFlowLoaded(helper, flow2)
+
+        await new Promise((resolve, reject) => {
+            const sNode = helper.getNode('node-ui-switch')
+
+            const helperAfterSwitch = helper.getNode('helper-node')
+            const helperAfterComplete = helper.getNode('helper-node-complete')
+            helperAfterComplete.on('input', (msg) => {
+                try {
+                    sNode._msg.payload.should.equal(msg.payload)
+                    msgSent.should.be.false()
+                    resolve()
+                } catch (err) {
+                    reject(err)
+                }
+            })
+
+            let msgSent = false
+            helperAfterSwitch.on('input', () => {
+                msgSent = true
+            })
+
+            sNode.receive({
+                payload: true
+            })
+        })
     })
 })

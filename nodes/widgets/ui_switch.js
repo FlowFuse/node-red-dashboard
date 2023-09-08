@@ -54,16 +54,22 @@ module.exports = function (RED) {
                     error = 'Invalid payload value'
                 }
                 if (!error) {
+                    // store the latest msg passed to node
+                    wNode._msg = msg
+
                     node.status({
                         fill: msg.payload ? 'green' : 'red',
                         shape: 'ring',
                         text: msg.payload ? states[1] : states[0]
                     })
+
                     if (config.passthru) {
                         send(msg)
                     }
                 } else {
-                    node.error(error)
+                    const err = new Error(error)
+                    err.type = 'warn'
+                    throw err
                 }
             },
             beforeSend: async function (msg) {

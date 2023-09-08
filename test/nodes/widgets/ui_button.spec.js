@@ -32,7 +32,7 @@ describe('ui-button node', function () {
             order: 0,
             width: 0,
             height: 0,
-            passthru: false,
+            passthru: true,
             tooltip: '',
             color: '',
             bgcolor: '',
@@ -45,8 +45,12 @@ describe('ui-button node', function () {
             x: 290,
             y: 180,
             wires: [
-                []
+                ['helper-node']
             ]
+        },
+        {
+            id: 'helper-node',
+            type: 'helper'
         },
         ...testFlow1
     ]
@@ -106,12 +110,21 @@ describe('ui-button node', function () {
 
         // now send a message to the node
         const button = helper.getNode('node-ui-button')
-        button.receive({})
-
-        socket.emit.should.be.calledOnce()
-        const args = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
-        args[0].should.equal('msg-input:' + button.id)
-        args[1].should.be.an.Object()
-        args[1].should.have.property('payload', 'I was clicked')
+        const hNode = helper.getNode('helper-node')
+        await new Promise((resolve, reject) => {
+            hNode.on('input', (msg) => {
+                try {
+                    socket.emit.should.be.calledOnce()
+                    const args = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
+                    args[0].should.equal('msg-input:' + button.id)
+                    args[1].should.be.an.Object()
+                    args[1].should.have.property('payload', 'I was clicked')
+                    resolve()
+                } catch (err) {
+                    reject(err)
+                }
+            })
+            button.receive({})
+        })
     })
 })

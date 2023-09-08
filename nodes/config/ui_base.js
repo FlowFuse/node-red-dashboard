@@ -490,38 +490,45 @@ module.exports = function (RED) {
                 if (!wNode) {
                     return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
                 }
-                // send a message to the UI to let it know we've received a msg
+
                 try {
-                    // emit to all connected UIs
-                    emit('msg-input:' + widget.id, msg)
-                } catch (err) {
-                    console.error(err)
-                }
+                    // pre-process the msg before running our onInput function
+                    if (widgetEvents?.beforeSend) {
+                        msg = await widgetEvents.beforeSend(msg)
+                    }
 
-                // store the latest msg passed to node
-                wNode._msg = msg
+                    // run any node-specific handler defined in the Widget's component
+                    if (widgetEvents?.onInput) {
+                        await widgetEvents?.onInput(msg, send)
+                    } else {
+                        // msg could be null if the beforeSend errors and returns null
+                        if (msg) {
+                            // store the latest msg passed to node
+                            wNode._msg = msg
 
-                // pre-process the msg before running our onInput function
-                if (widgetEvents?.beforeSend) {
-                    msg = await widgetEvents.beforeSend(msg)
-                }
-
-                // run any node-specific handler defined in the Widget's component
-                if (widgetEvents?.onInput) {
-                    await widgetEvents?.onInput(msg, send, done)
-                } else {
-                    // msg could be null if the beforeSend errors and returns null
-                    if (msg) {
-                        if (widgetConfig.topic || widgetConfig.topicType) {
-                            msg = await appendTopic(RED, widgetConfig, wNode, msg)
-                        }
-                        if (Object.hasOwn(widgetConfig, 'passthru')) {
-                            if (widgetConfig.passthru) {
+                            if (widgetConfig.topic || widgetConfig.topicType) {
+                                msg = await appendTopic(RED, widgetConfig, wNode, msg)
+                            }
+                            if (Object.hasOwn(widgetConfig, 'passthru')) {
+                                if (widgetConfig.passthru) {
+                                    send(msg)
+                                }
+                            } else {
                                 send(msg)
                             }
-                        } else {
-                            send(msg)
                         }
+                    }
+
+                    // emit to all connected UIs
+                    emit('msg-input:' + widget.id, msg)
+
+                    done()
+                } catch (err) {
+                    if (err.type === 'warn') {
+                        wNode.warn(err.message)
+                        done()
+                    } else {
+                        done(err)
                     }
                 }
             })
