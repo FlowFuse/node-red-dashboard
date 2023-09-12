@@ -1,8 +1,5 @@
 <script type="text/javascript">
     (function () {
-        function hasProperty (obj, prop) {
-            return Object.prototype.hasOwnProperty.call(obj, prop)
-        }
         RED.nodes.registerType('ui-notification', {
             category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
             color: 'rgb(119, 198, 204)',
@@ -16,8 +13,6 @@
                 dismissText: { value: 'Close' },
                 raw: { value: false },
                 className: { value: '' },
-                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-                topicType: { value: 'msg' },
                 name: { value: '' }
             },
             inputs: 1,
@@ -65,7 +60,7 @@
         <input type="text" id="node-input-ui">
     </div>
     <div class="form-row">
-        <label for="node-input-position"><i class="fa fa-th-large"></i> Layout</label>
+        <label for="node-input-position"><i class="fa fa-th-large"></i> Position</label>
         <select type="text" id="node-input-position" style="display:inline-block; width:70%; vertical-align:baseline;">
             <option value="top right">Top Right</option>
             <option value="top center">Top Center</option>
@@ -108,11 +103,6 @@
                 <i style="font-family: ui-serif;">fx</i>
             </a>
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
-        <input type="hidden" id="node-input-topicType">
     </div>
     <div class="form-tips"><b>Note</b>: checking <i>Accept raw HTML/JavaScript</i> can allow injection of code.
     Ensure the input comes from trusted sources.</span></div>
