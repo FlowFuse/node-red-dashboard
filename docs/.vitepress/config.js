@@ -93,5 +93,9 @@ export default {
           ]
         }
       ]
-    }
+    },
+    sitemap: {
+      hostname: 'https://dashboard.flowfuse.com'
+    },
+    lastUpdated: true
   }
