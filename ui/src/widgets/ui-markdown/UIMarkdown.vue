@@ -71,6 +71,10 @@ export default {
                 ...mapState('data', ['messages']),
                 ...mapGetters('data', ['getMsgProperty']),
                 msg () {
+                    if (this.messages[this.id]) {
+                        // re-render chart with new input
+                        this.renderMermaid()
+                    }
                     return this.messages[this.id] || {}
                 }
             },
@@ -82,9 +86,15 @@ export default {
                     return this.getMsgProperty(this.id, path, defaultValue)
                 },
                 renderMermaid () {
-                    mermaid.run({
-                        querySelector: '.mermaid',
-                        suppressErrors: true
+                    // remove hte flag that mermaid uses to work out if an element has been processed
+                    // TODO: need to scope this to _just_ this component, otherwise it'll run for all mermaid charts on the page
+                    document.getElementsByClassName('mermaid')[0]?.removeAttribute('data-processed')
+                    this.$nextTick(() => {
+                        // let Vue render the dynamic markdown first, then re-render the chart
+                        mermaid.run({
+                            querySelector: '.mermaid',
+                            suppressErrors: true
+                        })
                     })
                 }
             }
