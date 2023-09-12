@@ -27,7 +27,8 @@ module.exports = function (RED) {
         /** @type { Server } */
         ioServer: null,
         /** @type {Object.<string, Socket>} */
-        connections: {}
+        connections: {},
+        settings: {}
     }
 
     /**
@@ -42,17 +43,28 @@ module.exports = function (RED) {
             uiShared.app = RED.httpNode || RED.httpAdmin
             uiShared.httpServer = RED.server
 
+            // Use the 'dashboard' settings if present, otherwise fallback
+            // to node-red-dashboard 'ui' settings object.
+            uiShared.settings = RED.settings.dashboard || RED.settings.ui || {}
+
+            // Default no-op middleware
+            uiShared.httpMiddleware = function (req, res, next) { next() }
+            if (uiShared.settings.middleware) {
+                if (typeof uiShared.settings.middleware === 'function' || Array.isArray(uiShared.settings.middleware)) {
+                    uiShared.httpMiddleware = uiShared.settings.middleware
+                }
+            }
             /**
              * Configure Web Server to handle UI traffic
              */
 
-            uiShared.app.use(config.path, express.static(path.join(__dirname, '../../dist')))
+            uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
-            uiShared.app.get(config.path, (req, res) => {
+            uiShared.app.get(config.path, uiShared.httpMiddleware, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
 
-            uiShared.app.get(config.path + '/*', (req, res) => {
+            uiShared.app.get(config.path + '/*', uiShared.httpMiddleware, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
 
