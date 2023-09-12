@@ -86,6 +86,26 @@ module.exports = function (RED) {
                 uiShared.ioServer = new Server(uiShared.httpServer, serverOptions)
                 uiShared.ioServer.setMaxListeners(0) // prevent memory leak warning // TODO: be more smart about this!
 
+                if (typeof uiShared.settings.ioMiddleware === 'function') {
+                    uiShared.ioServer.use(uiShared.settings.ioMiddleware)
+                } else if (Array.isArray(uiShared.settings.ioMiddleware)) {
+                    uiShared.settings.ioMiddleware.forEach(function (ioMiddleware) {
+                        uiShared.ioServer.use(ioMiddleware)
+                    })
+                } else {
+                    uiShared.ioServer.use(function (socket, next) {
+                        if (socket.client.conn.request.url.indexOf('transport=websocket') !== -1) {
+                            // Reject direct websocket requests
+                            socket.client.conn.close()
+                            return
+                        }
+                        if (socket.handshake.xdomain === false) {
+                            return next()
+                        } else {
+                            socket.disconnect(true)
+                        }
+                    })
+                }
                 const bindOn = RED.server ? 'bound to Node-RED port' : 'on port ' + node.port
                 node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
             } else {
