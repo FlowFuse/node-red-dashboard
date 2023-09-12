@@ -1,5 +1,5 @@
 export default {
-    base: '/flowforge-nr-dashboard',
+    base: '/',
     locales: {
       root: {
         lang: 'en',
@@ -11,7 +11,7 @@ export default {
     themeConfig: {
       // logo: '/logo.png',
       nav: [
-        { text: 'FlowForge', link: 'https://flowforge.com' },
+        { text: 'FlowFuse', link: 'https://flowfuse.com' },
         { text: 'GitHub', link: 'https://github.com/flowforge/flowforge-nr-dashboard' }
       ],
       outline: [2, 3],
