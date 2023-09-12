@@ -23,7 +23,7 @@ This will be replaced with the value of `msg?.payload` when a message is receive
 `{{ msg?.payload || 'Placeholder' }}`
 :::
 
-If you're looking for a quick cheat sheet on how to write Markdown, you can check out FlowForge's guide [here](https://flowforge.com/handbook/development/markdown-how-to/#markdown-how-to).
+If you're looking for a quick cheat sheet on how to write Markdown, you can check out FlowFuse's guide [here](https://flowfuse.com/handbook/development/markdown-how-to/#markdown-how-to).
 
 ## Properties
 

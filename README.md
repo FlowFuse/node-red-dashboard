@@ -1,10 +1,10 @@
 # Node-RED Dashboard 2.0
 
-Documentation can be found here: https://flowforge.github.io/flowforge-nr-dashboard/
+Documentation can be found here: https://dashboard.flowfuse.com
 
 ## Installation
 
-FlowForge's Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
+FlowFuse's Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
 
 - Open the menu in the top-right of Node-RED
 - Click "Manage Palette"
@@ -18,7 +18,7 @@ If you want to use `npm` to install your nodes, you can instead [follow these in
 
 ## Contributing
 
-If you would like to run this set of nodes locally, and specifically to help contribute to the development efforts, you can read the [Contributing](https://flowforge.github.io/flowforge-nr-dashboard/contributing/) documentation.
+If you would like to run this set of nodes locally, and specifically to help contribute to the development efforts, you can read the [Contributing](https://dashboard.flowfuse.com/contributing/) documentation.
 
 # Dashboard Planning Repository
 
