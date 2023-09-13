@@ -48,6 +48,7 @@ module.exports = function (RED) {
                 if (!error) {
                     return msg
                 } else {
+                    node.error(error)
                     return null
                 }
             }

@@ -41,8 +41,13 @@ module.exports = function (RED) {
                 if (!node._msg) {
                     node._msg = []
                 }
-                // quick clone of msg
-                node._msg.push({ ...msg })
+                if (Array.isArray(msg.payload) && !msg.payload.length) {
+                    // clear history
+                    node._msg = []
+                } else {
+                    // quick clone of msg, and sore in history
+                    node._msg.push({ ...msg })
+                }
 
                 send(msg)
             }
