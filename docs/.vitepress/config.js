@@ -53,15 +53,16 @@ export default {
               items: [
                 { text: 'ui-button', link: '/nodes/widgets/ui-button' },
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
-                { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
+                { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },
+                { text: 'ui-notification', link: '/nodes/widgets/ui-notification' },
+                { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
                 { text: 'ui-slider', link: '/nodes/widgets/ui-slider' },
                 { text: 'ui-switch', link: '/nodes/widgets/ui-switch' },
                 { text: 'ui-table', link: '/nodes/widgets/ui-table' },
                 { text: 'ui-template', link: '/nodes/widgets/ui-template' },
                 { text: 'ui-text', link: '/nodes/widgets/ui-text' },
                 { text: 'ui-text-input', link: '/nodes/widgets/ui-text-input' },
-                { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },
               ]
             }
           ]

@@ -23,6 +23,7 @@ import UIChart from './ui-chart/UIChart'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup'
 import UISlider from './ui-slider/UISlider'
 import UISwitch from './ui-switch/UISwitch'
+import UINotification from './ui-notification/UINotification'
 import UIMarkdown from './ui-markdown/UIMarkdown'
 import UITemplate from './ui-template/UITemplate'
 import UIText from './ui-text/UIText'
@@ -36,6 +37,7 @@ export default {
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,
+    'ui-notification': UINotification,
     'ui-markdown': UIMarkdown,
     'ui-template': UITemplate,
     'ui-text': UIText,

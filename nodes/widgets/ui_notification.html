@@ -1,0 +1,109 @@
+<script type="text/javascript">
+    (function () {
+        RED.nodes.registerType('ui-notification', {
+            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: 'rgb(119, 198, 204)',
+            defaults: {
+                ui: { type: 'ui-base', value: '', required: true },
+                position: { value: 'top right' },
+                displayTime: { value: '3' },
+                showCountdown: { value: true },
+                outputs: { value: 0 },
+                allowDismiss: { value: 'OK' },
+                dismissText: { value: 'Close' },
+                raw: { value: false },
+                className: { value: '' },
+                name: { value: '' }
+            },
+            inputs: 1,
+            outputs: 0,
+            align: 'right',
+            icon: 'font-awesome/fa-envelope-o',
+            paletteLabel: 'notification',
+            label: function () { return this.name || (this.position === 'prompt' ? 'show dialog' : (this.position === 'dialog' ? 'show dialog' : 'show notification')) },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
+                $('#node-input-allowDismiss').on('change', function () {
+                    const allowDismiss = $('#node-input-allowDismiss').is(':checked')
+                    if (allowDismiss) {
+                        $('#node-notification-dismissText').show()
+                    } else {
+                        $('#node-notification-dismissText').hide()
+                    }
+                })
+    
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-notification">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <input type="text" id="node-input-ui">
+    </div>
+    <div class="form-row">
+        <label for="node-input-position"><i class="fa fa-th-large"></i> Position</label>
+        <select type="text" id="node-input-position" style="display:inline-block; width:70%; vertical-align:baseline;">
+            <option value="top right">Top Right</option>
+            <option value="top center">Top Center</option>
+            <option value="top left">Top Left</option>
+            <option value="bottom right">Bottom Right</option>
+            <option value="bottom right">Bottom Center</option>
+            <option value="bottom left">Bottom Left</option>
+            <option value="center center">Center</option>
+        </select>
+    </div>
+    <div class="form-row" id="node-toast-displaytime">
+        <label for="node-input-displayTime"><i class="fa fa-clock-o"></i> Timeout (S)</label>
+        <input type="text" id="node-input-displayTime" placeholder="[msg.timeout]">
+    </div>
+    <div class="form-row form-row-flex" id="node-notification-showCountdown">
+        <input type="checkbox" id="node-input-showCountdown">
+        <label for="node-input-showCountdown">Show timeout countdown bar on notification</label>
+    </div>
+    <div class="form-row form-row-flex" id="node-notification-allowDismiss">
+        <input type="checkbox" id="node-input-allowDismiss">
+        <label for="node-input-allowDismiss"> Allow Manual Dismissal</label>
+    </div>
+    <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-dismissText">
+        <label for="node-input-dismissText"><i class="fa fa-check"></i> Button Label</label>
+        <input type="text" id="node-input-dismissText" placeholder="Close">
+    </div>
+    <div class="form-row form-row-flex" id="node-toast-raw">
+        <input type="checkbox" id="node-input-raw" style="display:inline-block; width:auto; vertical-align:baseline;">
+        <label style="width:auto" for="node-input-raw"> Accept raw HTML/JavaScript input in msg.payload to format popup.</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
+    <div class="form-tips"><b>Note</b>: checking <i>Accept raw HTML/JavaScript</i> can allow injection of code.
+    Ensure the input comes from trusted sources.</span></div>
+</script>

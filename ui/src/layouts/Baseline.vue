@@ -26,6 +26,17 @@
                 </v-list>
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
+            <div class="nrdb-layout-overlay">
+                <!-- Render any widgets with a 'ui' scope, e.g. ui-notification -->
+                <component
+                    :is="widget.component"
+                    v-for="widget in uiWidgets"
+                    :id="widget.id"
+                    :key="widget.id"
+                    :props="widget.props"
+                    :state="widget.state"
+                />
+            </div>
         </v-main>
     </v-app>
 </template>
@@ -75,7 +86,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('ui', ['pages', 'themes', 'pageData']),
+        ...mapState('ui', ['pages', 'themes', 'pageData', 'widgets']),
         ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
 
         theme: function () {
@@ -85,6 +96,12 @@ export default {
         },
         orderedPages: function () {
             return Object.values(this.pages).sort((a, b) => a.order - b.order)
+        },
+        uiWidgets: function () {
+            // get widgets scoped to the UI, not a group/page
+            const widgets = Object.values(this.widgets).filter(w => Object.hasOwn(w.props, 'ui'))
+            console.log(widgets)
+            return widgets
         }
     },
     watch: {
