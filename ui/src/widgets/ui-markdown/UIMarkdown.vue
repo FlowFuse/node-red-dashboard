@@ -66,7 +66,7 @@ export default {
                 console.error('errorCaptured', err, vm, info)
                 return false
             },
-            template: `<div class="nrdb-ui-markdown-content">${DOMPurify.sanitize(md)}</div>`,
+            template: `<div ref="markdown" class="nrdb-ui-markdown-content">${DOMPurify.sanitize(md)}</div>`,
             computed: {
                 ...mapState('data', ['messages']),
                 ...mapGetters('data', ['getMsgProperty']),
@@ -88,7 +88,7 @@ export default {
                 renderMermaid () {
                     // remove hte flag that mermaid uses to work out if an element has been processed
                     // TODO: need to scope this to _just_ this component, otherwise it'll run for all mermaid charts on the page
-                    document.getElementsByClassName('mermaid')[0]?.removeAttribute('data-processed')
+                    this.$refs.markdown.querySelector('.mermaid')?.removeAttribute('data-processed')
                     this.$nextTick(() => {
                         // let Vue render the dynamic markdown first, then re-render the chart
                         mermaid.run({
