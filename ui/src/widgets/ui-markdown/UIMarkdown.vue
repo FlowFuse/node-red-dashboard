@@ -88,7 +88,7 @@ export default {
                 renderMermaid () {
                     // remove hte flag that mermaid uses to work out if an element has been processed
                     // TODO: need to scope this to _just_ this component, otherwise it'll run for all mermaid charts on the page
-                    this.$refs.markdown.querySelector('.mermaid')?.removeAttribute('data-processed')
+                    this.$refs.markdown?.querySelector('.mermaid')?.removeAttribute('data-processed')
                     this.$nextTick(() => {
                         // let Vue render the dynamic markdown first, then re-render the chart
                         mermaid.run({
