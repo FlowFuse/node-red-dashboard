@@ -9,7 +9,7 @@ props:
 
 # Markdown Viewer `ui-markdown`
 
-Allows for markdown to be defined within Node-RED editor and rendered into the UI. Can be use for rendering labels, headers or even full blog articles.
+Allows for markdown to be defined within Node-RED editor and rendered into the UI. Can be used for rendering labels, headers or even full blog articles.
 
 You can inject `msg` values into the markdown using:
 
@@ -69,3 +69,61 @@ function () {
 |-|-|
 | `msg.payload` | {{ msg.payload || 'Placeholder' }} |
 ````
+
+## Mermaid Charts
+
+The `ui-markdown` widget also supports the injection of [Mermaid](https://mermaid.js.org/intro/). To do so, you can include a mermaid chart definition inside a Markdown fenced code block, defined with the `mermaid` type:
+
+````md
+# Here is some Markdown
+
+and here is a definition for a Mermaid Chart:
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+````
+
+### Dynamic Mermaid Charts
+
+It is also possible to inject `msg` values into the mermaid chart definition using mustache templating as with the standard Makrdown definition, e.g:
+
+````md
+# Here is some Markdown
+
+and here is a definition for a Mermaid Chart:
+
+```mermaid
+pie title NETFLIX
+         "Time spent looking for movie" : {{ msg.payload }}
+         "Time spent watching it" : 10
+```
+````
+
+Dashboard will then render the mermaid chart in place of the code block, e.g:
+
+![Example of a Mermaid Chart in Dashboard](../../assets/images/node-examples/ui-markdown-mermaid.png "Example of a Mermaid Chart in Dashboard"){data-zoomable}
+*Example of a Mermaid Chart in Dashboard.*
+
+
+### Overriding Charts
+
+You can use `msg` to completely redefine a mermaid chart, however, you must include the initial code fence, with `mermaid` type in the `ui-markdown` editor, e.g:
+
+````md
+```mermaid
+{{ msg.payload }}
+```
+````
+
+The content of `msg.payload` in this case can then be a definition of any Mermaid Chart, without the surrounding code fence, e.g:
+
+```
+pie title NETFLIX
+         "Time spent looking for movie" : {{ msg.payload }}
+         "Time spent watching it" : 10
+```
