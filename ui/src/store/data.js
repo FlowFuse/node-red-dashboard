@@ -35,7 +35,18 @@ const mutations = {
             // if the msg was not a property message, then we store it in the messages object
             state.messages[widgetId] = data.msg
         }
+    },
+    append (state, data) {
+        const widgetId = data.widgetId
+        // if packet contains a msg, then we process it
+        if ('msg' in data) {
+            if (!state.messages[widgetId]) {
+                state.messages[widgetId] = []
+            }
+            state.messages[widgetId].push(data.msg)
+        }
     }
+
 }
 
 const getters = {

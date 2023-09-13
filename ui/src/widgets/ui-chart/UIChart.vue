@@ -64,8 +64,10 @@ export default {
             //     }]
             // },
             options: {
+                animation: false,
                 maintainAspectRatio: false,
                 parsing: false,
+                borderJoinStyle: 'round',
                 scales: {
                     x: {
                         type: this.props.xAxisType || 'linear'
@@ -112,33 +114,38 @@ export default {
             const label = msg.topic
             // determine what type of msg we have
             if (payload !== null && payload !== undefined) {
-                if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                    this.addToLine(payload, label)
-                } else if (this.props.chartType === 'bar') {
-                    this.addToBar(payload, label)
-                }
+                // we have a single payload value and should append it to the chart
+                this.addPoint(msg, label)
+            } else if (Array.isArray(msg) && msg.length > 0) {
+                // we have an array of msg values, and should append each of them
+                msg.forEach((m) => {
+                    this.addPoint(m, label)
+                })
             } else {
                 // no payload
                 console.log('have no payload')
             }
         },
-        /**
-             * Function to handle adding a data point to Line Charts
-             * @param {*} payload
-             * @param {*} label
-             */
-        addToLine (payload) {
-            const datapoint = {}
-            // construct our datapoint
-            if (typeof payload === 'number') {
-                // just a number, assume we're plotting a time series
-                datapoint.x = (new Date()).getTime()
-                datapoint.y = payload
-            } else if (typeof payload === 'object' && 'y' in payload) {
-                // may have been given an x/y object already
-                datapoint.x = payload.x || (new Date()).getTime()
-                datapoint.y = payload.y
+        addPoint (msg, label) {
+            const p = msg.payload
+            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+                const datapoint = msg._datapoint || {}
+                this.addToLine(datapoint)
+            } else if (this.props.chartType === 'bar') {
+                this.addToBar(p, label)
             }
+
+            // APPEND our latest data point to the store
+            this.$store.commit('data/append', {
+                widgetId: this.id,
+                msg
+            })
+        },
+        /**
+         * Function to handle adding a datapoint (generated NR-side) to Line Charts
+         * @param {*} datapoint
+         */
+        addToLine (datapoint) {
             // the chart is empty, we're adding a new series
             if (!this.chart.data.datasets.length) {
                 this.chart.data.datasets.push({
@@ -151,10 +158,10 @@ export default {
             this.chart.update()
         },
         /**
-             * Function to handle adding a data point to Bar Charts
-             * @param {*} payload
-             * @param {*} label
-             */
+         * Function to handle adding a data point to Bar Charts
+         * @param {*} payload
+         * @param {*} label
+         */
         addToBar (payload, label) {
             label = label || ''
             // construct our datapoint
