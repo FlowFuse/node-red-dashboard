@@ -104,7 +104,42 @@ function hasProperty (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
+// copied from marked helpers
+const escapeTest = /[&<>"']/
+const escapeReplace = new RegExp(escapeTest.source, 'g')
+const escapeTestNoEncode = /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/
+const escapeReplaceNoEncode = new RegExp(escapeTestNoEncode.source, 'g')
+const escapeReplacements = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+}
+const getEscapeReplacement = (ch) => escapeReplacements[ch]
+
+/**
+ * @description: Escape html
+ * @param {String} html - The html to escape
+ * @param {Boolean} encode - A flag to indicate if the html should be encoded
+ * @returns {String} The escaped html
+ */
+function escapeHTML (html, encode) {
+    if (encode) {
+        if (escapeTest.test(html)) {
+            return html.replace(escapeReplace, getEscapeReplacement)
+        }
+    } else {
+        if (escapeTestNoEncode.test(html)) {
+            return html.replace(escapeReplaceNoEncode, getEscapeReplacement)
+        }
+    }
+
+    return html
+}
+
 module.exports = {
     getDeepValue,
-    hasProperty
+    hasProperty,
+    escapeHTML
 }
