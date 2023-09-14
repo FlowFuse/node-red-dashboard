@@ -48,7 +48,19 @@ module.exports = function (RED) {
                     // quick clone of msg, and sore in history
                     node._msg.push({ ...msg })
 
-                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                    if (config.xAxisType === 'category') {
+                        // filters the node._msg array so that we keep just the latest msg with each category
+                        const seen = {}
+                        node._msg.forEach((msg, index) => {
+                            // loop through and record the latest index seen for each topic/label
+                            seen[msg.topic] = index
+                        })
+                        const indices = Object.values(seen)
+                        node._msg = node._msg.filter((msg, index) => {
+                            // return only the msgs with the latest index for each topic/label
+                            return indices.includes(index)
+                        })
+                    } else if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
                         const removeOlder = parseFloat(config.removeOlder)
                         const removeOlderUnit = parseFloat(config.removeOlderUnit)
                         const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago

@@ -67,8 +67,8 @@
                     typeField: '#node-input-chartTypeType'
                 })
 
-                // line    = categorical, time, linear, log
-                // scatter = categorical, time, linear, log
+                // line    = time, linear, log
+                // scatter = time, linear, log
                 // bar     = categorical (or just hide)
 
                 // provide options for x-axis type
@@ -79,16 +79,15 @@
                     const value = $('#node-input-chartType').typedInput('value')
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
-                        // types - categorical, time, linear
+                        // types - time, linear
                         $('#node-input-xAxisType').typedInput('types', [{
                             value: 'linear',
                             options: [
                                 { value: 'time', label: 'Timescale' },
-                                { value: 'linear', label: 'Linear' },
-                                { value: 'category', label: 'Categorical' }
+                                { value: 'linear', label: 'Linear' }
                             ]
                         }])
-                        $('#node-input-xAxisType').typedInput('type', 'linear')
+                        $('#node-input-xAxisType').typedInput('type', 'time')
                     } else {
                         // for bar
                         // types - categorical
@@ -98,6 +97,7 @@
                                 { value: 'category', label: 'Categorical' }
                             ]
                         }])
+                        $('#node-input-xAxisType').typedInput('type', 'category')
                     }
                 })
             }

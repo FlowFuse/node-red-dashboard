@@ -52,24 +52,12 @@ export default {
         const chart = new Chart(el, {
             type: this.props.chartType,
             data: {
-                // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                // datasets: [{
-                //     label: '# of Votes',
-                //     data: [12, 19, 3, 5, 2, 3],
-                //     borderWidth: 1
-                // }]
+                labels: [],
                 datasets: []
             },
-            // data: {
-            //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            //     datasets: [{
-            //         data: [65, 59, 80, 81, 56, 55]
-            //     }]
-            // },
             options: {
                 animation: false,
                 maintainAspectRatio: false,
-                parsing: false,
                 borderJoinStyle: 'round',
                 scales: {
                     x: {
@@ -119,21 +107,24 @@ export default {
         },
         add (msg) {
             const payload = msg.payload
-            const label = msg.topic
             // determine what type of msg we have
             if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
+                const label = msg.topic
                 this.addPoint(msg, label)
             } else if (Array.isArray(msg) && msg.length > 0) {
                 // we have an array of msg values, and should append each of them
                 msg.forEach((m) => {
+                    const label = m.topic
                     this.addPoint(m, label)
                 })
             } else {
                 // no payload
                 console.log('have no payload')
             }
-            this.limitDataSize()
+            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+                this.limitDataSize()
+            }
             this.chart.update()
         },
         addPoint (msg, label) {
@@ -164,6 +155,7 @@ export default {
                     data: [datapoint]
                 })
             } else {
+                // consider msg.topic as the label for the series
                 // we're adding a new datapoint to an existing series
                 this.chart.data.datasets[0].data.push(datapoint)
             }
@@ -212,15 +204,17 @@ export default {
             }
 
             // apply data limitations to the chart
-            const length = this.chart.data.datasets[0].data.length
-            this.chart.data.datasets[0].data = this.chart.data.datasets[0].data.filter((d, i) => {
-                if (cutoff && d.x < cutoff) {
-                    return false
-                } else if (i < length - points) {
-                    return false
-                }
-                return true
-            })
+            if (this.chart.data.datasets.length > 0) {
+                const length = this.chart.data.datasets[0].data.length
+                this.chart.data.datasets[0].data = this.chart.data.datasets[0].data.filter((d, i) => {
+                    if (cutoff && d.x < cutoff) {
+                        return false
+                    } else if (i < length - points) {
+                        return false
+                    }
+                    return true
+                })
+            }
 
             // apply data limtations to the vuex store
             this.$store.commit('data/restrict', {
