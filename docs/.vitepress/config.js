@@ -31,6 +31,7 @@ export default {
           text: 'User Guides',
           collapsed: false,
           items: [
+            { text: 'Settings', link: '/user/settings' },
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' }
           ]
         },
