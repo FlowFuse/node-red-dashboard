@@ -48,7 +48,6 @@ module.exports = function (RED) {
                     // quick clone of msg, and sore in history
                     node._msg.push({ ...msg })
 
-                    // TODO check time/dates
                     if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
                         const removeOlder = parseFloat(config.removeOlder)
                         const removeOlderUnit = parseFloat(config.removeOlderUnit)

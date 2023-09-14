@@ -150,6 +150,8 @@ export default {
                 widgetId: this.id,
                 msg
             })
+
+            this.limitDataSize()
         },
         /**
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
@@ -195,6 +197,39 @@ export default {
                 // only support numbers for now
                 console.log('Unsupported payload type for Bar Chart:', typeof payload)
             }
+        },
+        limitDataSize () {
+            let cutoff = null
+            let points = null
+            if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
+                const removeOlder = parseFloat(this.props.removeOlder)
+                const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
+                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                cutoff = (new Date()).getTime() - ago
+            }
+
+            if (this.props.removeOlderPoints) {
+                // remove older points
+                points = parseInt(this.props.removeOlderPoints)
+            }
+
+            // apply data limitations to the chart
+            const length = this.chart.data.datasets[0].data.length
+            this.chart.data.datasets[0].data = this.chart.data.datasets[0].data.filter((d, i) => {
+                if (cutoff && d.x < cutoff) {
+                    return false
+                } else if (i < length - points) {
+                    return false
+                }
+                return true
+            })
+
+            // apply data limtations to the vuex store
+            this.$store.commit('data/restrict', {
+                widgetId: this.id,
+                min: cutoff,
+                points
+            })
         }
     }
 }
