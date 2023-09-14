@@ -11,7 +11,7 @@
             <tr v-for="(d, control) in page.frontmatter?.controls" :key="control">
                 <td>{{ control }}</td>
                 <td><code>{{ d.example }}</code></td>
-                <td>{{ d.description }}</td>
+                <td v-html="d.description"></td>
             </tr>
         </tbody>
     </table>
