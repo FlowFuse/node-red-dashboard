@@ -47,6 +47,26 @@ module.exports = function (RED) {
                 } else {
                     // quick clone of msg, and sore in history
                     node._msg.push({ ...msg })
+
+                    // TODO check time/dates
+                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                        const removeOlder = parseFloat(config.removeOlder)
+                        const removeOlderUnit = parseFloat(config.removeOlderUnit)
+                        const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                        const cutoff = (new Date()).getTime() - ago
+                        node._msg = node._msg.filter((msg) => {
+                            return msg._datapoint.x > cutoff
+                        })
+                    }
+
+                    if (config.removeOlderPoints) {
+                        // remove older points
+                        const maxPoints = parseInt(config.removeOlderPoints)
+                        if (maxPoints > 0) {
+                            node._msg = node._msg.slice(-maxPoints)
+                        }
+                    }
+                    // check sizing limits
                 }
 
                 send(msg)

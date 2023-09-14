@@ -1,0 +1,16 @@
+{
+    "ui-chart": {
+        "label": {
+            "seconds": "Seconds",
+            "minutes": "Minutes",
+            "hours": "Hours",
+            "days": "Days",
+            "weeks": "Weeks",
+            "or": "OR",
+            "points": "points",
+            "xLimit": "X-Axis Limit",
+            "xType": "X-Axis Type",
+            "last": "last"
+        }
+    }
+  }

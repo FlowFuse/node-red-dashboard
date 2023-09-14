@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import { Chart } from 'chart.js/auto' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import 'chartjs-adapter-luxon'
+
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 
 import { shallowRef } from 'vue'
@@ -45,6 +47,7 @@ export default {
     mounted () {
         // get a reference to the canvas element
         const el = this.$refs.chart
+
         // create our ChartJS object
         const chart = new Chart(el, {
             type: this.props.chartType,
@@ -70,7 +73,12 @@ export default {
                 borderJoinStyle: 'round',
                 scales: {
                     x: {
-                        type: this.props.xAxisType || 'linear'
+                        type: this.props.xAxisType || 'linear',
+                        time: {
+                            displayFormats: {
+                                millisecond: 'HH:mm:ss'
+                            }
+                        }
                     },
                     y: {
                         beginAtZero: true
@@ -134,6 +142,8 @@ export default {
             } else if (this.props.chartType === 'bar') {
                 this.addToBar(p, label)
             }
+
+            // TODO: Handle storage of restricted data size, need to manage in store, so pass props through?
 
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
