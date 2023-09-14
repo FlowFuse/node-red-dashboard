@@ -133,6 +133,8 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
+            this.limitDataSize()
+            this.chart.update()
         },
         addPoint (msg, label) {
             const p = msg.payload
@@ -150,8 +152,6 @@ export default {
                 widgetId: this.id,
                 msg
             })
-
-            this.limitDataSize()
         },
         /**
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
@@ -167,7 +167,6 @@ export default {
                 // we're adding a new datapoint to an existing series
                 this.chart.data.datasets[0].data.push(datapoint)
             }
-            this.chart.update()
         },
         /**
          * Function to handle adding a data point to Bar Charts
@@ -192,7 +191,6 @@ export default {
                     this.chart.data.datasets[0].data.push(payload)
                     this.chart.data.labels.push(label)
                 }
-                this.chart.update()
             } else {
                 // only support numbers for now
                 console.log('Unsupported payload type for Bar Chart:', typeof payload)
