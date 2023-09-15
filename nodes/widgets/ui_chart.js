@@ -48,6 +48,8 @@ module.exports = function (RED) {
                     // quick clone of msg, and sore in history
                     node._msg.push({ ...msg })
 
+                    const maxPoints = parseInt(config.removeOlderPoints)
+
                     if (config.xAxisType === 'category') {
                         // filters the node._msg array so that we keep just the latest msg with each category
                         const seen = {}
@@ -60,12 +62,11 @@ module.exports = function (RED) {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         })
-                    } else if (config.removeOlderPoints) {
+                    } else if (maxPoints && config.removeOlderPoints) {
                         // account for multiple lines?
                         // client-side does this for _each_ line
                         // remove older points
                         const lineCounts = {}
-                        const maxPoints = parseInt(config.removeOlderPoints)
                         // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
                         for (let i = node._msg.length - 1; i >= 0; i--) {
                             const msg = node._msg[i]
