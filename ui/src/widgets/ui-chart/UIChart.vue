@@ -113,6 +113,8 @@ export default {
                 const label = msg.topic
                 this.addPoint(msg, label)
             } else if (Array.isArray(msg) && msg.length > 0) {
+                // need to filter by number here, before we split the data sets out
+
                 // we have an array of msg values, and should append each of them
                 msg.forEach((m) => {
                     const label = m.topic
@@ -131,7 +133,7 @@ export default {
             const p = msg.payload
             if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
                 const datapoint = msg._datapoint || {}
-                this.addToLine(datapoint)
+                this.addToLine(datapoint, label)
             } else if (this.props.chartType === 'bar') {
                 this.addToBar(p, label)
             }
@@ -148,16 +150,22 @@ export default {
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
          * @param {*} datapoint
          */
-        addToLine (datapoint) {
+        addToLine (datapoint, label) {
+            // consider msg.topic (label) as the label for the series
+            const datalabels = [...new Set(this.chart.data.datasets?.map((set) => {
+                return set.label
+            }))]
+            const index = datalabels?.indexOf(label)
             // the chart is empty, we're adding a new series
-            if (!this.chart.data.datasets.length) {
+            if (index === -1) {
                 this.chart.data.datasets.push({
+                    borderColor: this.props.colors[datalabels.length],
+                    label,
                     data: [datapoint]
                 })
             } else {
-                // consider msg.topic as the label for the series
                 // we're adding a new datapoint to an existing series
-                this.chart.data.datasets[0].data.push(datapoint)
+                this.chart.data.datasets[index].data.push(datapoint)
             }
         },
         /**
@@ -178,7 +186,11 @@ export default {
                 } else {
                     // no, so we need to add new label and data point
                     if (!this.chart.data.datasets.length) {
-                        this.chart.data.datasets.push({ data: [] })
+                        this.chart.data.datasets.push({
+                            data: [],
+                            backgroundColor: this.props.colors,
+                            borderColor: this.props.colors
+                        })
                     }
                     this.chart.data.datasets[0].data.push(payload)
                     this.chart.data.labels.push(label)
@@ -205,15 +217,17 @@ export default {
 
             // apply data limitations to the chart
             if (this.chart.data.datasets.length > 0) {
-                const length = this.chart.data.datasets[0].data.length
-                this.chart.data.datasets[0].data = this.chart.data.datasets[0].data.filter((d, i) => {
-                    if (cutoff && d.x < cutoff) {
-                        return false
-                    } else if (i < length - points) {
-                        return false
-                    }
-                    return true
-                })
+                for (let i = 0; i < this.chart.data.datasets.length; i++) {
+                    const length = this.chart.data.datasets[i].data.length
+                    this.chart.data.datasets[i].data = this.chart.data.datasets[i].data.filter((d, i) => {
+                        if (cutoff && d.x < cutoff) {
+                            return false
+                        } else if (i < length - points) {
+                            return false
+                        }
+                        return true
+                    })
+                }
             }
 
             // apply data limtations to the vuex store

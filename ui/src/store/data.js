@@ -59,14 +59,14 @@ const mutations = {
         // if packet contains a msg, then we process it
         if ('min' in data) {
             const cutoff = data.min
-            state.messages[widgetId] = state.messages[widgetId].filter((msg) => {
+            state.messages[widgetId] = state.messages[widgetId]?.filter((msg) => {
                 return msg._datapoint.x > cutoff
             })
         }
 
         if ('points' in data) {
             const points = data.points
-            state.messages[widgetId] = state.messages[widgetId].slice(-points)
+            state.messages[widgetId] = state.messages[widgetId]?.slice(-points)
         }
     }
 

@@ -60,7 +60,27 @@ module.exports = function (RED) {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         })
-                    } else if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                    } else if (config.removeOlderPoints) {
+                        // account for multiple lines?
+                        // client-side does this for _each_ line
+                        // remove older points
+                        const lineCounts = {}
+                        const maxPoints = parseInt(config.removeOlderPoints)
+                        // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
+                        for (let i = node._msg.length - 1; i >= 0; i--) {
+                            const msg = node._msg[i]
+                            const label = msg.topic
+                            lineCounts[label] = lineCounts[label] || 0
+                            if (lineCounts[label] >= maxPoints) {
+                                node._msg.splice(i, 1)
+                            } else {
+                                lineCounts[label]++
+                            }
+                        }
+                    }
+
+                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                        // remove any points older than the specified time
                         const removeOlder = parseFloat(config.removeOlder)
                         const removeOlderUnit = parseFloat(config.removeOlderUnit)
                         const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
@@ -70,13 +90,6 @@ module.exports = function (RED) {
                         })
                     }
 
-                    if (config.removeOlderPoints) {
-                        // remove older points
-                        const maxPoints = parseInt(config.removeOlderPoints)
-                        if (maxPoints > 0) {
-                            node._msg = node._msg.slice(-maxPoints)
-                        }
-                    }
                     // check sizing limits
                 }
 

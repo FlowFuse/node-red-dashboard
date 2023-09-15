@@ -1,6 +1,7 @@
 {
     "ui-chart": {
         "label": {
+            "seriesColours": "Series Colors",
             "seconds": "Seconds",
             "minutes": "Minutes",
             "hours": "Hours",
