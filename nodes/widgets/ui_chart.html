@@ -1,5 +1,26 @@
+<style>
+    #ui-chart-colors input[type="color"] {
+        font-weight: bold;
+    }
+    #ui-chart-colors input[type="color"]::-webkit-color-swatch,
+    #ui-chart-colors input[type="color"]::-moz-color-swatch {
+        border: none;
+    }
+</style>
+
 <script type="text/javascript">
     (function () {
+        function hexToRgb (hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+            return result
+                ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                }
+                : null
+        }
+
         RED.nodes.registerType('ui-chart', {
             category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
             color: 'rgb(119, 198, 204)',
@@ -9,7 +30,11 @@
                 label: { value: 'chart' },
                 order: { value: Number.MAX_SAFE_INTEGER },
                 chartType: { value: 'line' },
-                xAxisType: { value: 'linear' },
+                xAxisType: { value: 'time' },
+                removeOlder: { value: 1, validate: RED.validators.number(), required: true },
+                removeOlderUnit: { value: '3600', required: true },
+                removeOlderPoints: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                colors: { value: ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'] },
                 width: {
                     value: 0,
                     validate: function (v) {
@@ -64,8 +89,8 @@
                     typeField: '#node-input-chartTypeType'
                 })
 
-                // line    = categorical, time, linear, log
-                // scatter = categorical, time, linear, log
+                // line    = time, linear, log
+                // scatter = time, linear, log
                 // bar     = categorical (or just hide)
 
                 // provide options for x-axis type
@@ -75,23 +100,67 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $('#node-input-chartType').typedInput('value')
                     if (value === 'line' || value === 'scatter') {
+                        // for line and scatter
+                        // types - time, linear
                         $('#node-input-xAxisType').typedInput('types', [{
                             value: 'linear',
                             options: [
-                                { value: 'linear', label: 'Linear' },
-                                { value: 'category', label: 'Categorical' }
+                                { value: 'time', label: 'Timescale' },
+                                { value: 'linear', label: 'Linear' }
                             ]
                         }])
-                        $('#node-input-xAxisType').typedInput('type', 'linear')
+                        $('#node-input-xAxisType').typedInput('type', 'time')
+                        // show x-axis limit options
+                        $('#x-axis-show').show()
                     } else {
+                        // for bar
+                        // types - categorical
                         $('#node-input-xAxisType').typedInput('types', [{
                             value: 'linear',
                             options: [
                                 { value: 'category', label: 'Categorical' }
                             ]
                         }])
+                        $('#node-input-xAxisType').typedInput('type', 'category')
+                        // hide x-axis limit options
+                        $('#x-axis-show').hide()
                     }
                 })
+
+                // Series Color Pickers
+                const setColor = function (id, value) {
+                    $(id).val(value)
+                    $(id).css('background-color', value)
+                    const rgb = hexToRgb(value)
+                    const level = ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000
+                    const textColor = (level >= 128) ? '#111111' : '#eeeeee'
+                    $(id).css('color', textColor)
+                }
+                $('.series-color').on('change', function () {
+                    setColor('#' + $(this).attr('id'), $(this).val())
+                })
+                const defaultColors = ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5']
+
+                if (this.colors) {
+                    for (let i = 0; i < this.colors.length; i++) {
+                        const value = this.colors[i] || defaultColors[i]
+                        setColor('#node-input-color' + (i + 1), value)
+                    }
+                } else {
+                    for (let c = 0; c < defaultColors.length; c++) {
+                        setColor('#node-input-color' + (c + 1), defaultColors[c])
+                    }
+                }
+            },
+            oneditsave: function () {
+                const colors = []
+                for (let i = 0; i < 9; i++) {
+                    const color = $('#node-input-color' + (i + 1)).val()
+                    if (color) {
+                        colors.push(color)
+                    }
+                }
+                this.colors = colors
             }
         })
     })()
@@ -110,7 +179,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
-        <input type="text" id="node-input-label" data-i18n="[placeholder]ui_chart.label.optionalChartTitle">
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-chart.label.optionalChartTitle">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
@@ -131,39 +200,39 @@
         <input type="hidden" id="node-input-chartTypeType">
     </div>
     <div class="form-row">
-        <label for="node-input-xAxisType"><i class="fa fa-bookmark"></i> X-Axis Type</label>
+        <label for="node-input-xAxisType" data-i18n="ui-chart.label.xType"></label></label>
         <input type="text" id="node-input-xAxisType">
         <input type="hidden" id="node-input-xAxisTypeType">
     </div>
-</script>
-
-<script type="text/html" data-help-name="ui-chart">
-    <h3>Properties</h3>
-    <dl class="message-properties">
-        <dt>Label <span class="property-type">str</span></dt>
-        <dd>Text shown above the rendered chart in the Dashboard.</dd>
-        <dt>Type <span class="property-type">line | bar | scatter</span></dt>
-        <dd>Choose the type of graph that you wish to render data with. Note
-            that different data structures are accepted for different chart types.</dd>
-        <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
-        <dd> For charts with an x-axis, this option allows customisation
-            of the type of axis to render.</dd>
-    </dl>
-    <h3>Input</h3>
-    <p>Data can be passed into the Chart node in a variety of formats,
-    depending on the "X-Axis Type" (e.g. linear, categorical, time).</p>
-    <dl class="message-properties">
-        <dt>Numerical <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.payload = 5</pre> A single value, that will be plotted
-            in the y-axis, and the current time of injection as the x-value.</dd>
-        <dt>Series <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.topic = 'Series 1'</pre> Multiple series can
-            be shown on the same chart by using a different msg.topic value on each
-            input message.</dd>
-        <dt>Object <span class="property-type">linear</span></dt>
-        <dd><pre>msg.payload = {x: 10, y: 15}</pre>This type of data is only
-            supported on linear plots, e.g. "Line" or "Scatter" charts.</dd>
-    </dl>
-    <h3>Details</h3>
-    <p></p>
+    <div class="form-row" id="x-axis-show">
+        <label for="node-input-removeOlder" data-i18n="ui-chart.label.xLimit"></label>
+        <label for="node-input-removeOlder" style="width:auto" data-i18n="ui-chart.label.last"></label>
+        <input type="text" id="node-input-removeOlder" style="width:50px;">
+        <select id="node-input-removeOlderUnit" style="width:100px;">
+            <option value="1" data-i18n="ui-chart.label.seconds"></option>
+            <option value="60" data-i18n="ui-chart.label.minutes"></option>
+            <option value="3600" data-i18n="ui-chart.label.hours"></option>
+            <option value="86400" data-i18n="ui-chart.label.days"></option>
+            <option value="604800" data-i18n="ui-chart.label.weeks"></option>
+        </select>
+        <label for="node-input-removeOlderPoints" style="width:auto; margin-left:10px; margin-right:10px;" data-i18n="ui-chart.label.or"></label>
+        <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
+        <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
+    </div>
+    <div class="form-row" id="ui-chart-colors">
+        <label for="node-input-color1" data-i18n="ui-chart.label.seriesColors"></label>
+        <input type="color" id="node-input-color1" class="series-color" style="width:100px;"/>
+        <input type="color" id="node-input-color2" class="series-color" style="width:100px;"/>
+        <input type="color" id="node-input-color3" class="series-color" style="width:100px;"/>
+        <div style="margin-top:5px; margin-left:104px;">
+            <input type="color" id="node-input-color4" class="series-color" style="width:100px;"/>
+            <input type="color" id="node-input-color5" class="series-color" style="width:100px;"/>
+            <input type="color" id="node-input-color6" class="series-color" style="width:100px;"/>
+        </div>
+        <div style="margin-top:5px; margin-left:104px;">
+            <input type="color" id="node-input-color7" class="series-color" style="width:100px;"/>
+            <input type="color" id="node-input-color8" class="series-color" style="width:100px;"/>
+            <input type="color" id="node-input-color9" class="series-color" style="width:100px;"/>
+        </div>
+    </div>
 </script>

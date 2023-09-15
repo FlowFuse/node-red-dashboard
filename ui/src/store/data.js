@@ -35,7 +35,41 @@ const mutations = {
             // if the msg was not a property message, then we store it in the messages object
             state.messages[widgetId] = data.msg
         }
+    },
+    append (state, data) {
+        const widgetId = data.widgetId
+        // if packet contains a msg, then we process it
+        if ('msg' in data) {
+            if (!state.messages[widgetId]) {
+                state.messages[widgetId] = []
+            }
+            state.messages[widgetId].push(data.msg)
+        }
+    },
+    /**
+     *
+     * @param {*} state
+     * @param {*} data  - object defining:
+     *  widgetId - The id of the widget in question
+     *  min      - the minimum value allowed for _datapoint.x
+     *  points   - the maximum number of points allowed in the history
+     */
+    restrict (state, data) {
+        const widgetId = data.widgetId
+        // if packet contains a msg, then we process it
+        if ('min' in data) {
+            const cutoff = data.min
+            state.messages[widgetId] = state.messages[widgetId]?.filter((msg) => {
+                return msg._datapoint.x > cutoff
+            })
+        }
+
+        if ('points' in data) {
+            const points = data.points
+            state.messages[widgetId] = state.messages[widgetId]?.slice(-points)
+        }
     }
+
 }
 
 const getters = {

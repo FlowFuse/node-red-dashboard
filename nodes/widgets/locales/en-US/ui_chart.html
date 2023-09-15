@@ -1,0 +1,31 @@
+
+<script type="text/html" data-help-name="ui-chart">
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Label <span class="property-type">str</span></dt>
+        <dd>Text shown above the rendered chart in the Dashboard.</dd>
+        <dt>Type <span class="property-type">line | bar | scatter</span></dt>
+        <dd>Choose the type of graph that you wish to render data with. Note
+            that different data structures are accepted for different chart types.</dd>
+        <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
+        <dd> For charts with an x-axis, this option allows customisation
+            of the type of axis to render.</dd>
+    </dl>
+    <h3>Input</h3>
+    <p>Data can be passed into the Chart node in a variety of formats,
+    depending on the "X-Axis Type" (e.g. linear, categorical, time).</p>
+    <dl class="message-properties">
+        <dt>Numerical <span class="property-type">linear | categorical | time</span></dt>
+        <dd><pre>msg.payload = 5</pre> A single value, that will be plotted
+            in the y-axis, and the current time of injection as the x-value.</dd>
+        <dt>Series <span class="property-type">linear | categorical | time</span></dt>
+        <dd><pre>msg.topic = 'Series 1'</pre> Multiple series can
+            be shown on the same chart by using a different msg.topic value on each
+            input message.</dd>
+        <dt>Object <span class="property-type">linear</span></dt>
+        <dd><pre>msg.payload = {x: 10, y: 15}</pre>This type of data is only
+            supported on linear plots, e.g. "Line" or "Scatter" charts.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p></p>
+</script>

@@ -53,6 +53,7 @@ export default {
               collapsed: false,
               items: [
                 { text: 'ui-button', link: '/nodes/widgets/ui-button' },
+                { text: 'ui-chart', link: '/nodes/widgets/ui-chart' },
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },

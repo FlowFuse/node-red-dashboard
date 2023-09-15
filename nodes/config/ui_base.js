@@ -351,9 +351,6 @@ module.exports = function (RED) {
                     // and only to this connection, not all connected clients
                     conn.emit('msg-input:' + id, msg)
                 }
-
-                // store the latest msg passed to node
-                wNode._msg = msg
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
             try {

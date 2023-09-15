@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import { Chart } from 'chart.js/auto' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import 'chartjs-adapter-luxon'
+
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 
 import { shallowRef } from 'vue'
@@ -45,30 +47,26 @@ export default {
     mounted () {
         // get a reference to the canvas element
         const el = this.$refs.chart
+
         // create our ChartJS object
         const chart = new Chart(el, {
             type: this.props.chartType,
             data: {
-                // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                // datasets: [{
-                //     label: '# of Votes',
-                //     data: [12, 19, 3, 5, 2, 3],
-                //     borderWidth: 1
-                // }]
+                labels: [],
                 datasets: []
             },
-            // data: {
-            //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            //     datasets: [{
-            //         data: [65, 59, 80, 81, 56, 55]
-            //     }]
-            // },
             options: {
+                animation: false,
                 maintainAspectRatio: false,
-                parsing: false,
+                borderJoinStyle: 'round',
                 scales: {
                     x: {
-                        type: this.props.xAxisType || 'linear'
+                        type: this.props.xAxisType || 'linear',
+                        time: {
+                            displayFormats: {
+                                millisecond: 'HH:mm:ss'
+                            }
+                        }
                     },
                     y: {
                         beginAtZero: true
@@ -109,52 +107,72 @@ export default {
         },
         add (msg) {
             const payload = msg.payload
-            const label = msg.topic
             // determine what type of msg we have
             if (payload !== null && payload !== undefined) {
-                if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                    this.addToLine(payload, label)
-                } else if (this.props.chartType === 'bar') {
-                    this.addToBar(payload, label)
-                }
+                // we have a single payload value and should append it to the chart
+                const label = msg.topic
+                this.addPoint(msg, label)
+            } else if (Array.isArray(msg) && msg.length > 0) {
+                // need to filter by number here, before we split the data sets out
+
+                // we have an array of msg values, and should append each of them
+                msg.forEach((m) => {
+                    const label = m.topic
+                    this.addPoint(m, label)
+                })
             } else {
                 // no payload
                 console.log('have no payload')
             }
+            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+                this.limitDataSize()
+            }
+            this.chart.update()
+        },
+        addPoint (msg, label) {
+            const p = msg.payload
+            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+                const datapoint = msg._datapoint || {}
+                this.addToLine(datapoint, label)
+            } else if (this.props.chartType === 'bar') {
+                this.addToBar(p, label)
+            }
+
+            // TODO: Handle storage of restricted data size, need to manage in store, so pass props through?
+
+            // APPEND our latest data point to the store
+            this.$store.commit('data/append', {
+                widgetId: this.id,
+                msg
+            })
         },
         /**
-             * Function to handle adding a data point to Line Charts
-             * @param {*} payload
-             * @param {*} label
-             */
-        addToLine (payload) {
-            const datapoint = {}
-            // construct our datapoint
-            if (typeof payload === 'number') {
-                // just a number, assume we're plotting a time series
-                datapoint.x = (new Date()).getTime()
-                datapoint.y = payload
-            } else if (typeof payload === 'object' && 'y' in payload) {
-                // may have been given an x/y object already
-                datapoint.x = payload.x || (new Date()).getTime()
-                datapoint.y = payload.y
-            }
+         * Function to handle adding a datapoint (generated NR-side) to Line Charts
+         * @param {*} datapoint
+         */
+        addToLine (datapoint, label) {
+            // consider msg.topic (label) as the label for the series
+            const datalabels = [...new Set(this.chart.data.datasets?.map((set) => {
+                return set.label
+            }))]
+            const index = datalabels?.indexOf(label)
             // the chart is empty, we're adding a new series
-            if (!this.chart.data.datasets.length) {
+            if (index === -1) {
                 this.chart.data.datasets.push({
+                    borderColor: this.props.colors[datalabels.length],
+                    label,
                     data: [datapoint]
                 })
             } else {
                 // we're adding a new datapoint to an existing series
-                this.chart.data.datasets[0].data.push(datapoint)
+                this.chart.data.datasets[index].data.push(datapoint)
             }
-            this.chart.update()
         },
         /**
-             * Function to handle adding a data point to Bar Charts
-             * @param {*} payload
-             * @param {*} label
-             */
+         * Function to handle adding a data point to Bar Charts
+         * @param {*} payload
+         * @param {*} label
+         */
         addToBar (payload, label) {
             label = label || ''
             // construct our datapoint
@@ -168,16 +186,56 @@ export default {
                 } else {
                     // no, so we need to add new label and data point
                     if (!this.chart.data.datasets.length) {
-                        this.chart.data.datasets.push({ data: [] })
+                        this.chart.data.datasets.push({
+                            data: [],
+                            backgroundColor: this.props.colors,
+                            borderColor: this.props.colors
+                        })
                     }
                     this.chart.data.datasets[0].data.push(payload)
                     this.chart.data.labels.push(label)
                 }
-                this.chart.update()
             } else {
                 // only support numbers for now
                 console.log('Unsupported payload type for Bar Chart:', typeof payload)
             }
+        },
+        limitDataSize () {
+            let cutoff = null
+            let points = null
+            if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
+                const removeOlder = parseFloat(this.props.removeOlder)
+                const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
+                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                cutoff = (new Date()).getTime() - ago
+            }
+
+            if (this.props.removeOlderPoints) {
+                // remove older points
+                points = parseInt(this.props.removeOlderPoints)
+            }
+
+            // apply data limitations to the chart
+            if (points && this.chart.data.datasets.length > 0) {
+                for (let i = 0; i < this.chart.data.datasets.length; i++) {
+                    const length = this.chart.data.datasets[i].data.length
+                    this.chart.data.datasets[i].data = this.chart.data.datasets[i].data.filter((d, i) => {
+                        if (cutoff && d.x < cutoff) {
+                            return false
+                        } else if (i < length - points) {
+                            return false
+                        }
+                        return true
+                    })
+                }
+            }
+
+            // apply data limtations to the vuex store
+            this.$store.commit('data/restrict', {
+                widgetId: this.id,
+                min: cutoff,
+                points
+            })
         }
     }
 }
