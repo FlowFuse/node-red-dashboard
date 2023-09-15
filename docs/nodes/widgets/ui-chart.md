@@ -48,9 +48,23 @@ Line Charts accept a variety of payload formats. The following are all valid:
 - `msg.payload = { x: <value>, y: <value> }`
     - In this case, the `x` and `y` values will be used as the `x` and `y` values of the data point.
 
-<!-- #### Multiple Lines
+#### Multiple Lines
 
-If you would like to plot multiple lines on the same chart, you can do so by including a `msg.topic` alongside the relevant `msg.payload`. -->
+If you would like to plot multiple lines on the same chart, you can do so by including a `msg.topic` alongside the relevant `msg.payload`, e.g:
+
+```json
+{
+    "topic": "line-1",
+    "payload": 1
+}
+```
+
+```json
+{
+    "topic": "line-2",
+    "payload": 2
+}
+```
 
 ### Scatter Plot
 
