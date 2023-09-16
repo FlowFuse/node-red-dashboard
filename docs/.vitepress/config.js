@@ -10,6 +10,7 @@ export default {
     },
     head: [
       ['meta', { property: 'og:image', content: 'https://dashboard.flowfuse.com/dashboard_og.jpg' }],
+      ['meta', { property: 'twitter:card', content: 'summary_large_image' }],
     ],
     themeConfig: {
       // logo: '/logo.png',
