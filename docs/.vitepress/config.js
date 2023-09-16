@@ -8,6 +8,9 @@ export default {
         description: 'Documentation for Node-RED Dashboard 2.0, a collection of nodes to build out data visualisations and dashboards in Node-RED',
       }
     },
+    head: [
+      ['meta', { property: 'og:image', content: 'https://dashboard.flowfuse.com/dashboard_og.jpg' }],
+    ],
     themeConfig: {
       // logo: '/logo.png',
       nav: [
