@@ -1,25 +1,38 @@
-# Node-RED Dashboard 2.0
+---
+layout: home
 
-Welcome to the documentation for the Node-RED Dashboard 2.0, the successor to the original, and very popular, [Node-RED Dashboard](https://flows.nodered.org/node/node-red-dashboard).
+hero:
+  name: Dashboard 2.0
+  text: Build your own UI using Node-RED
+  tagline: An easy to use collection of nodes for Node-RED that allows you to create data-driven dashboards & data visualisations.
+  image:
+    src: /logo.png
+    alt: VitePress
+  actions:
+    - theme: brand
+      text: Getting Started
+      link: /getting-started
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/flowforge/flowforge-nr-dashboard
 
-This project was formed by [FlowFuse](https://flowforge.com/), as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has long been deprecated. You can read our full statement about _why_ we're building Dashboard 2.0 [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/).
-
-## Technologies
-
-### Node-RED
-
-[Node-RED](https://nodered.org/) is a flow-based programming tool, originally developed by IBM's Emerging Technology Services team and now a part of the JS Foundation. It provides a browser-based editor that makes it easy to wire together flows using the wide range of nodes in the palette that can be deployed to its runtime in a single-click.
-
-### Vue.js v3.0
-
-[Vue.js](https://vuejs.org/) is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. It is a popular choice for building modern web applications.
-
-We chose Vue.js over other popular frameworks like React and Angular because of its shallow learning curve, and ease of use/readibility for non-front-end developers.
-
-We also utilise the [Vuetify component library](https://vuetifyjs.com/en/components/all/), which is a Material Design component framework for Vue.js. It aims to provide clean, semantic and reusable components that make building your application a breeze.
-
-### Socket IO
-
-[Socket.IO](https://socket.io/) enables real-time, bidirectional and event-based communication. It works on every platform, browser or device, focusing equally on reliability and speed.
-
-In Dashboard 2.0 we use Socket IO to communicate between Node-RED and the Dashboard UI.
+features:
+  - icon: 
+      src: /bar-chart.svg
+    title: Diverse Widget Collection
+    details: From forms, to sliders, to charts, Dashboard contains a breadth of widgets to help you build the Dashboard you need.
+    link: /nodes/widgets
+    linkText: View Available Widgets
+  - icon:
+      src: /nodes.svg
+    title: Connect to Anything
+    details: As a plugin for Node-RED, you have the vast collection of 4,000+ nodes at your disposal to easily integrate your Dashboard with APIs, Hardware and more.
+    link: https://flows.nodered.org/search?type=node
+    linkText: View Full List of Node-RED Integrations
+  - icon:
+      src: /newspaper.svg
+    title: "Latest Blog Post"
+    link: https://flowfuse.com/blog/2023/09/dashboard-notebook-layout/
+    linkText: View Blog Post
+    details: Checkout our latest blog post - "Dynamic Markdown, Tables & Notebooks with Dashboard 2.0"
+---

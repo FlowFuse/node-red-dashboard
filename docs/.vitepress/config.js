@@ -19,14 +19,9 @@ export default {
         provider: 'local'
       },
       sidebar: [
-        {
-          text: 'Introduction',
-          collapsed: false,
-          items: [
-            { text: 'About', link: '/' },
-            { text: 'Getting Started', link: '/getting-started' }
-          ]
-        },
+        { text: 'About', link: '/about' },
+        { text: 'Getting Started', link: '/getting-started' },
+        { text: 'Widgets', link: '/nodes/widgets' },
         {
           text: 'User Guides',
           collapsed: false,

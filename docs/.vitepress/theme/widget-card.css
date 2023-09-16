@@ -1,0 +1,52 @@
+.widget-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+a.widget-card {
+    overflow: hidden;
+    color: var(--vp-c-text-1);
+    text-decoration: none;
+    border: 1px solid #eee;
+}
+
+.widget-card img {
+    margin: auto;
+    object-fit: cover;
+    height: 100px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.widget-card-text {
+    padding: 12px 6px;
+    position: relative;
+    z-index: 2;
+    background-color: white;
+}
+
+.widget-card-text label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    pointer-events: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.widget-card-text p {
+    margin: 0.25rem 0;
+    color: var(--vp-c-text-2);
+}
+
+/** Hover Effect */
+
+.widget-card:hover {
+    cursor: pointer;
+}
+
+.widget-card:hover img {
+    transform: scale(1.1);
+}
+
+.widget-card:hover label {
+    color: var(--vp-c-brand-1);
+}
