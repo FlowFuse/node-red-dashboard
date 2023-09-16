@@ -1,4 +1,8 @@
-export default {
+import { loadEnv } from 'vite';
+
+export default ({ mode }) => {
+  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+  return {
     base: '/',
     locales: {
       root: {
@@ -11,6 +15,14 @@ export default {
     head: [
       ['meta', { property: 'og:image', content: 'https://dashboard.flowfuse.com/dashboard_og.jpg' }],
       ['meta', { property: 'twitter:card', content: 'summary_large_image' }],
+      [
+        'script',
+        {},
+        `
+          !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+          posthog.init('${process.env.VITE_POSTHOG_APIKEY}',{api_host:'https://eu.posthog.com'})
+        `
+      ]
     ],
     themeConfig: {
       // logo: '/logo.png',
@@ -23,7 +35,7 @@ export default {
         provider: 'local'
       },
       sidebar: [
-        { text: 'About', link: '/about' },
+        { text: 'About', link: '/about'},
         { text: 'Getting Started', link: '/getting-started' },
         { text: 'Widgets', link: '/nodes/widgets' },
         {
@@ -101,3 +113,4 @@ export default {
     },
     lastUpdated: true
   }
+}
