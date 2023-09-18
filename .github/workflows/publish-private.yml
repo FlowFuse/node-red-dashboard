@@ -1,4 +1,4 @@
-name: Build and publish packages to private registry
+name: Build and publish packages to the registry
 on:
   push:
     branches:
@@ -14,7 +14,9 @@ jobs:
     needs: build
     if: |
       github.ref == 'refs/heads/main'
-    uses: 'flowforge/github-actions-workflows/.github/workflows/publish_node_package.yml@e3e734b910af78371b2c9a1c6856446d17421f50'
+    uses: 'flowforge/github-actions-workflows/.github/workflows/publish_node_package.yml@5e57b30ac6ed8478406b3b3f2780241d2f4dcd8f'
     with:
       package_name: node-red-dashboard
       publish_package: true
+    secrets:
+      npm_registry_token: ${{ secrets.NPM_PUBLISH_TOKEN }}
