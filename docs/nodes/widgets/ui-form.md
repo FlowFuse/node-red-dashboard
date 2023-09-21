@@ -28,5 +28,5 @@ Adds a form to user interface which helps to collect multiple value from the use
 
 ## Example
 
-![Example of a Form](../../assets/images/node-examples/ui-form.png "Example of tewo-column Form"){data-zoomable}
+![Example of a Form](/images/node-examples/ui-form.png "Example of tewo-column Form"){data-zoomable}
 *Example of a rendered form in a Dashboard.*

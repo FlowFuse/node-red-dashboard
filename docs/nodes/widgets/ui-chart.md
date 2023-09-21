@@ -34,7 +34,7 @@ Most commonly, this is done by wiring a `ui-button` to the `ui-chart` node and c
 
 ### Line Chart
 
-![Example of a Line Chart](../../assets/images/node-examples/ui-chart-line.png "Example of a Line Chart"){data-zoomable}
+![Example of a Line Chart](/images/node-examples/ui-chart-line.png "Example of a Line Chart"){data-zoomable}
 *Example of a rendered line chart with a "time" x-axis.*
 
 #### Payloads
@@ -68,7 +68,7 @@ If you would like to plot multiple lines on the same chart, you can do so by inc
 
 ### Scatter Plot
 
-![Example of a Scatter Plot](../../assets/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
+![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
 *Example of a rendered scatter plot with a "time" x-axis.*
 
 #### Payloads
@@ -84,5 +84,5 @@ Scatter Plots accept a variety of payload formats. The following are all valid:
 
 ### Bar Graph
 
-![Example of a Bar Graph](../../assets/images/node-examples/ui-chart-bar.png "Example of a Bar Graph"){data-zoomable}
+![Example of a Bar Graph](/images/node-examples/ui-chart-bar.png "Example of a Bar Graph"){data-zoomable}
 *Example of a rendered bar graph.*

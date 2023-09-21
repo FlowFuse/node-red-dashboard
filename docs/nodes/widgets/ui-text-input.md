@@ -20,5 +20,5 @@ Adds a single text input row to your dashboard, with a configurable "type" (text
 
 ## Example
 
-![Example of a Button](../../assets/images/node-examples/ui-text-input.png "Example of a Button"){data-zoomable}
+![Example of a Button](/images/node-examples/ui-text-input.png "Example of a Button"){data-zoomable}
 *Example of a rendered button in a Dashboard.*

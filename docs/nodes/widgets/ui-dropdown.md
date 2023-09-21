@@ -36,5 +36,5 @@ To make a single selection, pass in the `value` of the option as `msg.payload`, 
 
 ## Example
 
-![Example of a dropdown](../../assets/images/node-examples/ui-dropdown.png "Example of a dropdown"){data-zoomable}
+![Example of a dropdown](/images/node-examples/ui-dropdown.png "Example of a dropdown"){data-zoomable}
 *Example of a rendered dropdown in a Dashboard.*

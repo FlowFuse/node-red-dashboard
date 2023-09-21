@@ -24,5 +24,5 @@ Adds a toggle switch to the user interface.
 
 ## Example
 
-![Example of a Toggle Switch](../../assets/images/node-examples/ui-switch.png "Example of a Toggle Switch"){data-zoomable}
+![Example of a Toggle Switch](/images/node-examples/ui-switch.png "Example of a Toggle Switch"){data-zoomable}
 *Example of rendered switches in a Dashboard.*

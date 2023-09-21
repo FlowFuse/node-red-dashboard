@@ -26,5 +26,5 @@ Adds a clickable button to your dashboard.
 
 ## Example
 
-![Example of a Button](../../assets/images/node-examples/ui-button.png "Example of a Button"){data-zoomable}
+![Example of a Button](/images/node-examples/ui-button.png "Example of a Button"){data-zoomable}
 *Example of a rendered button in a Dashboard.*

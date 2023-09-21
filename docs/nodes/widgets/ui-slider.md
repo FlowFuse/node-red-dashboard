@@ -18,5 +18,5 @@ Adds a slider to your dashboard that will emit values in Node-RED under `msg.pay
 
 ## Example
 
-![Example of a slider](../../assets/images/node-examples/ui-slider.png "Example of a slider"){data-zoomable}
+![Example of a slider](/images/node-examples/ui-slider.png "Example of a slider"){data-zoomable}
 *Example of a rendered slider in a Dashboard.*

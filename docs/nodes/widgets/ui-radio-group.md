@@ -20,5 +20,5 @@ Adds a Radio Group to your dashboard that will emit values in Node-RED under `ms
 
 ## Example
 
-![Example of a radio group](../../assets/images/node-examples/ui-radio.png "Example of a radio group"){data-zoomable}
+![Example of a radio group](/images/node-examples/ui-radio.png "Example of a radio group"){data-zoomable}
 *Example of a rendered radio group in a Dashboard with 2 columns.*

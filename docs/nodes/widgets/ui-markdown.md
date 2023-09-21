@@ -31,7 +31,7 @@ If you're looking for a quick cheat sheet on how to write Markdown, you can chec
 
 ## Example
 
-![Example of rendered Markdown](../../assets/images/node-examples/ui-markdown.png "Example of rendered Markdown"){data-zoomable}
+![Example of rendered Markdown](/images/node-examples/ui-markdown.png "Example of rendered Markdown"){data-zoomable}
 *Example of rendered markdown in a Dashboard.*
 
 The above example is rendered using the following markdown:
@@ -106,7 +106,7 @@ pie title NETFLIX
 
 Dashboard will then render the mermaid chart in place of the code block, e.g:
 
-![Example of a Mermaid Chart in Dashboard](../../assets/images/node-examples/ui-markdown-mermaid.png "Example of a Mermaid Chart in Dashboard"){data-zoomable}
+![Example of a Mermaid Chart in Dashboard](/images/node-examples/ui-markdown-mermaid.png "Example of a Mermaid Chart in Dashboard"){data-zoomable}
 *Example of a Mermaid Chart in Dashboard.*
 
 

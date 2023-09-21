@@ -23,5 +23,5 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 ## Example
 
-![Examples of Text](../../assets/images/node-examples/ui-text.png "Examples of Text"){data-zoomable}
+![Examples of Text](/images/node-examples/ui-text.png "Examples of Text"){data-zoomable}
 *Examples of variants of ui-text rendered in a Dashboard.*

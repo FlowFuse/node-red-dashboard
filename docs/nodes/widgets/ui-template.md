@@ -26,5 +26,5 @@ _Note: Currently restricted to custom HTML only, but there are plans to add `<st
 
 ## Example
 
-![Examples of UI Template](../../assets/images/node-examples/ui-template.png "Examples of UI Template"){data-zoomable}
+![Examples of UI Template](/images/node-examples/ui-template.png "Examples of UI Template"){data-zoomable}
 *Examples of variants of ui-template, one with a functional form, and another showing use of random Vuetify components.*

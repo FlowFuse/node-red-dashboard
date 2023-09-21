@@ -35,8 +35,8 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 
 ## Examples
 
-![Example of a Data Table](../../assets/images/node-examples/ui-table.png "Example of a Data Table"){data-zoomable}
+![Example of a Data Table](/images/node-examples/ui-table.png "Example of a Data Table"){data-zoomable}
 *Example of a rendered data table in a Dashboard.*
 
-![Example of a Paginated Table](../../assets/images/node-examples/ui-table-pagination.png "Example of a Paginated Table"){data-zoomable}
+![Example of a Paginated Table](/images/node-examples/ui-table-pagination.png "Example of a Paginated Table"){data-zoomable}
 *Example of a paginated table which has 10 rows of data, but with "Max Rows" set to 5.*
