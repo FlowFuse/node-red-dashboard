@@ -1,9 +1,9 @@
 <template>
-    <a class="widget-card">
+    <a class="widget-card" :href="url">
         <img
             :src="widget.image"
         >
-
+        
         <div class="widget-card-text">
             <label>{{  widget.name }}</label>
             <p>{{  widget.description }}</p>
@@ -18,6 +18,11 @@ export default {
         widget: {
             type: Object,
             required: true
+        }
+    },
+    computed: {
+        url () {
+            return `/nodes/widgets/${this.widget.widget}.html`
         }
     }
 }
