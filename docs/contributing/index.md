@@ -83,5 +83,5 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
    ```bash
    npm run docs:dev
    ```
-   This will then run your documentation at [http://localhost:5173/](http://localhost:5173/)
+   This will then run your documentation at `http://localhost:5173/`
 2. **Make Changes:** Make any appropriate edits to the documentation (`/docs`). The documentation will live update, no need to re-build, restart the server or refresh the browser.
