@@ -2,6 +2,7 @@
     <a class="widget-card" :href="url">
         <img
             :src="widget.image"
+            :alt="widget.description"
         >
         
         <div class="widget-card-text">
