@@ -15,9 +15,21 @@ export default {
         props: { type: Object, default: () => ({}) }
     },
     setup (props) {
+        // check if we have any addiitonal methods defined
+        // commonly used by 3rd party widgets
+        const methods = {}
+        Object.entries(props.props.methods).forEach((entry, index) => {
+            // eslint-disable-next-line no-unused-vars
+            const key = entry[0]
+            const value = entry[1]
+            // eslint-disable-next-line no-eval
+            eval('methods[key] = ' + value)
+        })
+
         useDataTracker(props.id)
         return () => h({
             props: ['id', 'props'],
+            inject: ['$socket'],
             errorCaptured: (err, vm, info) => {
                 console.error('errorCaptured', err, vm, info)
                 return false
@@ -60,6 +72,19 @@ export default {
                 },
                 submit ($evt) {
                     this.$parent.submit(this, $evt)
+                },
+                ...methods
+            },
+            mounted () {
+                if (this.props.onInput) {
+                    // eslint-disable-next-line no-eval
+                    eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
+                }
+            },
+            unmounted () {
+                if (this.props.onInput) {
+                    // eslint-disable-next-line no-eval
+                    this.$socket.off(`msg-input:${this.id}`)
                 }
             }
         }, {
