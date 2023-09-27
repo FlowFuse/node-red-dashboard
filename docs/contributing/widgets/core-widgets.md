@@ -1,6 +1,8 @@
-# Adding New Widgets
+# Adding New Core Widgets
 
-When adding a new widget, you will need to follow the steps below to ensure that the widget is available in the Node-RED editor and renders correctly in the UI.
+We are always open to Pull Requests and new ideas on widgets that can be added to the core Dashboard repository.
+
+When adding a new widget to the core collection, you will need to follow the steps below to ensure that the widget is available in the Node-RED editor and renders correctly in the UI.
 
 ## Checklist
 

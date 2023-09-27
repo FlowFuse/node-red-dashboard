@@ -108,6 +108,14 @@ export default ({ mode }) => {
           items: [
             { text: 'Introduction', link: '/contributing/' },
             {
+              text: 'Building Widgets',
+              collapsed: false,
+              items: [
+                { text: 'Adding Core Widgets', link: '/contributing/widgets/core-widgets' },
+                { text: 'Third Party Widgets', link: '/contributing/widgets/third-party' }
+              ]
+            },
+            {
               text: 'Guides',
               collapsed: false,
               items: [
