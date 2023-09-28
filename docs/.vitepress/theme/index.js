@@ -23,9 +23,26 @@ export default {
         onMounted(() => {
             initZoom();
         });
+        // add watcher for route change
         watch(
             () => route.path,
-            () => nextTick(() => initZoom())
+            (to, from) => {
+                window.posthog?.capture(
+                    '$pageleave',
+                    {
+                        to: to,
+                        $current_url: from
+                    }
+                )
+                window.posthog?.capture(
+                    '$pageview',
+                    {
+                        from: from,
+                        $current_url: to
+                    }
+                )
+                nextTick(() => initZoom())
+            },
         );
     },
     enhanceApp(ctx) {
