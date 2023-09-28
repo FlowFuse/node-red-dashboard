@@ -76,12 +76,18 @@ export default {
                 ...methods
             },
             mounted () {
+                // if we have an onInput event handler, setup a subscription on SocketIO to ensure we catch the events
                 if (this.props.onInput) {
                     // eslint-disable-next-line no-eval
                     eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
                 }
+                if (this.props.onMounted) {
+                    // eslint-disable-next-line no-eval
+                    eval(`const onMounted = ${this.props.onMounted}; onMounted();`)
+                }
             },
             unmounted () {
+                // if we have an onInput event handler, remove the subscription on SocketIO
                 if (this.props.onInput) {
                     // eslint-disable-next-line no-eval
                     this.$socket.off(`msg-input:${this.id}`)
