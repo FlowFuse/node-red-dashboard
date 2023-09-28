@@ -122,7 +122,7 @@ export default ({ mode }) => {
                 { text: 'Repo Structure', link: '/contributing/guides/repo' },
                 { text: 'Events Architecture', link: '/contributing/guides/events' },
                 { text: 'Layout Managers', link: '/contributing/guides/layouts' },
-                { text: 'Adding Widgets', link: '/contributing/guides/adding-widgets' }
+                { text: 'Registering Widgets', link: '/contributing/guides/registration' }
               ]
             }
           ]

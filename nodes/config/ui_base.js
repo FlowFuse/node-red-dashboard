@@ -293,8 +293,8 @@ module.exports = function (RED) {
             // get widget node and configuration
             const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
 
-            // ensure we can get the requested widget from the runtime
-            if (!wNode) {
+            // ensure we can get the requested widget from the runtime & that this widget has an onAction handler
+            if (!wNode || !widgetEvents.onAction) {
                 return // widget does not exist (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
 

@@ -13,7 +13,3 @@ Some details here about the ui-base config node
 ## Properties
 
 <PropsTable/>
-
-## Registration
-
-Detail the `.register` function
