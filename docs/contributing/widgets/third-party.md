@@ -21,11 +21,15 @@ Finally, any functions that you want to define, that will run as part of your cl
 
 - `/ui/methods.js` - Defines a collection of client-side Vue/JS functions.
 
-## Registering your Widget
+## Registering your Node & Widget
 
-The core concept that Dashboard is built upon is a `.register()` function (see [docs](../../nodes/config/ui-base.md#registration)). This function is available to any `ui-base`, `ui-page` or `ui-group`. It brokers the function up to the `ui-base` where a store is maintained of all widgets in the Dashboard.
+_More details: [Registration](../guides/registration.md)_
 
-Your widget should define one of these as a property in your Node-RED node, most likely, it'll be `ui-group`, as your widget would render _inside_ a Group in the Dashboard.
+Traditionally with Node-RED, you have to register your node using `RED.nodes.registerType("ui-example", UIExampleNode)`, this is still the case with Dashboard, but you must _also_ register the widget with Dashboard too.
+
+Dashboard registration is built upon is a `.register()` function (see [docs](../guides/registration.md)). This function is available to any `ui-base`, `ui-page` or `ui-group`. For `ui-group` and `ui-page`, it brokers the function up to the `ui-base` where a store is maintained of all widgets in the Dashboard.
+
+Your widget should define one of these as a property in your Node-RED node, most likely, it'll be `ui-group`, if you want your widget to render _inside_ a Group in the Dashboard.
 
 In your `/nodes/ui-example.js` file:
 
@@ -45,15 +49,23 @@ module.exports = function(RED) {
          * Further config & setup to go here
          */
 
+        // register the widget with Dashboard
         group.register(node, config, evts)
     }
+    // Register the node with Node-RED
     RED.nodes.registerType("ui-example", UIExampleNode);
 }
 ```
 
-## Configuring your Widget
+## Configuring your Node
 
-A quick summary of the `config.` parameters available is as follows:
+The following is a summary of the the Node-RED node configuration parameters (`config`) available, when registering your widget with Dashboard's `.register` function:
+
+```js
+group.register(node, config, evts)
+```
+
+You can extend this as much as you need to in order to add further customisation to your widget. All of these options are then made available in your widget's `.vue` file via the `this.props` object.
 
 ### Essential Config Options:
 
@@ -76,6 +88,8 @@ The following properties should then _all_ be defined, and can be done so in you
 | `format`         | `<p>Hello</p>` | A string of HTML to render for your widget |
 
 ### Optional Config Options:
+
+These options, whilst defined server-side, are passed to the client-side Vue component, and are used to customise the client-side behaviour of your widget.
 
 |property | description |
 |--|--|
@@ -102,20 +116,24 @@ This will read our `UIExample.vue` as a string, and then bind it to the node.
 
 ### Defining `onInput` Functionality
 
-In the Example node we've built, we store our JS functions in a standalone `.js` file. Within this, we've defined an `onInput(msg)` function that we can pass to our config.
+Here we can define functionality that runs client-side (in the Dashboard) whenever the node receives a `msg` in Node-RED.
 
-The contents of `onInput` are written as if contained within a `.vue` file, this means that you can use `this` freely and access any relevant `data`, `props` or `methods` as you wish, e.g:
+The contents of `onInput` are written as if contained within a `.vue` file, this means that you can use `this` freely and access any relevant `data`, `props` or `methods` as you wish, and even manipulate the widget's HTML e.g:
 
 ```js
 function onInput (msg) {
     // because this will get evaluated client-side, we have access to vue/this
     const vue = this
+    // get an elemnt of the DOM inside this widget with a ref="my-widget", and update it's innerHTML
+    vue.$refs['my-widget'].innerHTML = msg.payload
     // call Dashboard's built-in .send() function
     vue.send({
         payload: 'Created onInput'
     })
 }
 ```
+
+Note the use of VueJS's `$refs` for DOM selection - you can read more about this [here](https://vuejs.org/guide/essentials/template-refs.html).
 
 In our `ui-example.js` file, we can append this to our `config` with:
 

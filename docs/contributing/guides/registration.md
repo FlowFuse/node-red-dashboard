@@ -30,7 +30,13 @@ module.exports = function (RED) {
 
 ## Arguments
 
-The regostration function inputs differ slightly depending on whether being called on the `ui-group`, `ui-page` or `ui-base`, but they all have 3 inputs in common:
+The registration function inputs differ slightly depending on whether being called on the `ui-group`, `ui-page` or `ui-base`:
+
+- `group.register(node, config, evts)`
+- `page.register(group, node, config, evts)`
+- `base.register(page, group, node, config, evts)`
+
+Note though, they do all have 3 inputs in common:
 
 ### `node`
 
@@ -42,7 +48,9 @@ This is made available by Node-RED as the input to the constructor, and can gene
 
 ### `evts`
 
-We expose a range of different event handlers as part of the `register` function. All of these handlers run server (Node-RED) side. In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle), in other occassions, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
+We expose a range of different event handlers as part of the `register` function. All of these handlers run server (Node-RED) side.
+
+In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle), in other occassions, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
 
 A full breakdown of the event lifecycle can be found [here](../../contributing/guides/events.md).
 
@@ -58,6 +66,8 @@ const evts = {
 ```
 
 ## Events
+
+All of these event handlers define behaviour that is run server-side (i.e. within Node-RED). If you're looking for client-side event handlers see [here](../widgets/third-party.md#configuring-your-node).
 
 ### `.onAction` (`boolean`)
 
@@ -133,12 +143,16 @@ Defining this function will override the default `onInput` handler.
 1. Store the most recent message on the widget under the `node._msg`
 2. Appends any `msg.topic` defined on the node config
 3. Checks if the widget has a `passthru` property:
-    - If no `passthru` proeprty is found, runs `send(msg)`
+    - If no `passthru` property is found, runs `send(msg)`
     - If the property is present, `send(msg)` is only run if `passthru` is set to `true`
 
 #### Custom `onInput` Handler
 
-When provided, this will override the default handler. We use this in the core widgets in Dashboard with `ui-chart`, where we want to be storing the history of recent `msg` value, rather than _just_ the most recent value as done in the default handler. We also use it here to ensure we don't have too many data points (as defined in the `ui-chart` config).
+When provided, this will override the default handler.
+
+We use this in the core widgets in Dashboard with `ui-chart`, where we want to be storing the history of recent `msg` value, rather than _just_ the most recent value as done in the default handler. We also use it here to ensure we don't have too many data points (as defined in the `ui-chart` config).
+
+Another use case here would be if you do not want to pass on any incoming `msg` payloads onto connected nodes automatically, for example, you could have a bunch of command-type `msg` payloads that instruct your node to do something, that are then not relevant to any preceding nodes in the flow.
 
 ### `.onError(err)` (`function`)
 
