@@ -490,6 +490,22 @@ module.exports = function (RED) {
                 widget.props.height = null
             }
 
+            // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
+            // and stringify them for transport over SocketIO
+            for (const [key, value] of Object.entries(widget.props)) {
+                // supported functions
+                const supported = ['onMounted', 'onInput']
+                if (supported.includes(key) && typeof value === 'function') {
+                    widget.props[key] = value.toString()
+                } else if (key === 'methods') {
+                    for (const [method, fcn] of Object.entries(widget.props.methods)) {
+                        if (typeof fcn === 'function') {
+                            widget.props.methods[method] = fcn.toString()
+                        }
+                    }
+                }
+            }
+
             // map dashboards by their ID
             if (!node.ui.dashboards.has(n.id)) {
                 node.ui.dashboards.set(n.id, n)

@@ -185,10 +185,8 @@ In our `ui-example.js` file, we can append this to our `config` with:
 const methods = require('../ui/methods')
 
 // methods that will be available to the widget in the Dashboard
-config.onInput = methods.onInput.toString()
+config.onInput = methods.onInput
 ```
-
-Note that we need to run `.toString()` in order for us to be able to transport this data via SocketIO to the Dashboard.
 
 ### Custom Functionality
 
@@ -197,11 +195,9 @@ We can extend VueJS's [methods](https://vuejs.org/api/options-state.html#methods
 ```js
 // methods that will be available to the widget in the Dashboard
 config.methods = {
-    test: methods.test.toString()
+    test: methods.test
 }
 ```
-
-Again, note that we need are running `.toString()` again, in order for us to be able to transport this data via SocketIO to the Dashboard.
 
 These functions can be called directly from your `.vue` file too, e.g:
 
