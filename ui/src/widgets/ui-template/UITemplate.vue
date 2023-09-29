@@ -18,13 +18,15 @@ export default {
         // check if we have any addiitonal methods defined
         // commonly used by 3rd party widgets
         const methods = {}
-        Object.entries(props.props.methods).forEach((entry, index) => {
-            // eslint-disable-next-line no-unused-vars
-            const key = entry[0]
-            const value = entry[1]
-            // eslint-disable-next-line no-eval
-            eval('methods[key] = ' + value)
-        })
+        if (props.props.methods) {
+            Object.entries(props.props.methods).forEach((entry, index) => {
+                // eslint-disable-next-line no-unused-vars
+                const key = entry[0]
+                const value = entry[1]
+                // eslint-disable-next-line no-eval
+                eval('methods[key] = ' + value)
+            })
+        }
 
         useDataTracker(props.id)
         return () => h({
@@ -35,14 +37,43 @@ export default {
                 return false
             },
             head () {
+                console.log('head', this.props)
                 let _props = this.props || props
                 if (_props.props) { _props = _props.props }
-                if (!_props || _props.templateScope === 'local') {
-                    return {} // this is a "widget template" so we don't need to do anything
-                }
+
                 const setup = {}
+
+                if (!_props || _props.templateScope === 'local') {
+                    if (!_props.head) {
+                        return {}
+                    } else if (Array.isArray(_props.head) && _props.head.length > 0) {
+                        // loop through the head items and add them to the setup config
+                        _props.head.forEach((item) => {
+                            // check that we have a data object defining the properties of the tag
+                            if (item.data) {
+                                // types supported by @unhead/vue:
+                                //      script, link, meta, style
+                                setup[item.type] = setup[item.type] || []
+
+                                // add meta data for debugging and auditing
+                                item.data['data-template-name'] = _props.name
+                                item.data['data-template-scope'] = _props.templateScope
+                                item.data['data-template-id'] = this.id
+
+                                setup[item.type].push(item.data)
+                            }
+                        })
+                    }
+                }
                 if (_props.format && (_props.templateScope === 'page:style' || _props.templateScope === 'site:style')) {
-                    setup.style = [{ innerHTML: _props.format, 'data-template-name': _props.name, 'data-template-scope': _props.templateScope, 'data-template-id': _props.id }]
+                    setup.style = [
+                        {
+                            innerHTML: _props.format,
+                            'data-template-name': _props.name,
+                            'data-template-scope': _props.templateScope,
+                            'data-template-id': this.id
+                        }
+                    ]
                 }
                 // future?
                 // if (_props.format && (_props.templateScope === 'page:script' || _props.templateScope === 'site:script')) {

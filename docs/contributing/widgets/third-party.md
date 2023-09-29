@@ -86,6 +86,7 @@ The following properties should then _all_ be defined, and can be done so in you
 | `type`           | `ui-example`   | A suitable, lowercase, kebab-case type for your widget |
 | `templateScope`  | `local`        | Required by `ui-template` that all third=party widgets extend |
 | `format`         | `<p>Hello</p>` | A string of HTML to render for your widget |
+| `head`           | see [example](#injecting-head-tags-dependencies)    | An object detailing the relevant `script`, `meta`, `style` or `link` tags to add. |
 
 ### Optional Config Options:
 
@@ -101,6 +102,48 @@ These options, whilst defined server-side, are passed to the client-side Vue com
 ## Example Configurations
 
 Here, we go into detail about how to define the various config options available to you.
+
+### Injecting `<head>` Tags & Dependencies
+
+A likely scenario is that you'll want to inject some `<script>` tags into the `<head>` of your Dashboard's UI, in order to load dependencies for your custom widget. To do this, you can set `config.head`, for example:
+
+```js
+config.head = {
+    script: [
+        { type: 'text/javascript', defer: 'defer', src: 'https://code.jquery.com/jquery-3.7.1.min.js' },
+        { type: 'text/javascript', defer: 'defer', src: 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js' }
+    ]
+}
+```
+
+This will then be rendered into the head as follows:
+
+```html
+<script
+    defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
+    data-template-name="My Widget"  data-template-id="e1sa12jwc"
+    data-template-scope="local">
+</script>
+```
+
+Note that Dashboard will also inject `data-` attributes to detail the source of any tag added dynamically so that you have full visibility on _where_ the tag came from when needing to debug, etc.
+
+With this same mechanism, you can also define `<meta>` (for site description and meta data) or `<link>` tags (for custom CSS and fonts), e.g:
+
+```js
+config.head = {
+    meta: [
+        { name: 'description', content: 'A custom description of the page' }
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' },
+    ],
+    link: [
+        { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css?family=Roboto' }
+    ]
+}
+```
+```
+
+
 ### Defining HTML to Render
 
 The `ui-template` (which your third-party widget will extend) relies on a `format` property to define the relevant HTML to render, as a result, we can inject our own content with something like:
