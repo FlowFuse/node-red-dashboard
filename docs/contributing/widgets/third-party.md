@@ -219,40 +219,6 @@ function test () {
 }
 ```
 
-## UI Template Functionality
-
-Because we wrap third party widgets in a `ui-template` node, you have access to the same properties & functions.
-
-### Properties
-
-- `id` - The Widget's ID, assigned by Node-RED
-- `props` - Properties defined in Node-RED, e.g. `this.props.name` or `this.props.group`
-
-For example, we could loop over all properties and render their respective property key:
-
-```vue
-<h1>Widget ID: {{ id }}</h1>
-<ul>
-    <li v-for="(value, key, index) in props">
-        <label>{{ key }}</label>
-    </li>
-</ul>
-```
-
-### Functions
-
-- `send` - Send a `msg` (defined by the input to this function call) from this node in the Node-RED flow.
-
-Let's consider:
-
-```vue
-<p @click="send({'payload': 'Hello World'})">
-    This is a 3rd Party Widget
-</p>
-```
-
-This, when clicked, will send a `msg` in Node-RED to any nodes connected to the output of this node.
-
 ## Custom SocketIO Events
 
 It is also possible to extend our own [Events Framework](../guides/events.md) with your own events traffic, sending events from the Dashboard UI back into your node.
@@ -288,3 +254,37 @@ const evts = {
 }
 group.register(node, config, evts)
 ```
+
+## UI Template Functionality
+
+Because we wrap third party widgets in a `ui-template` node, you have access to the same properties & functions.
+
+### Properties
+
+- `id` - The Widget's ID, assigned by Node-RED
+- `props` - Properties defined in Node-RED, e.g. `this.props.name` or `this.props.group`
+
+For example, we could loop over all properties and render their respective property key:
+
+```vue
+<h1>Widget ID: {{ id }}</h1>
+<ul>
+    <li v-for="(value, key, index) in props">
+        <label>{{ key }}</label>
+    </li>
+</ul>
+```
+
+### Functions
+
+- `send` - Send a `msg` (defined by the input to this function call) from this node in the Node-RED flow.
+
+Let's consider:
+
+```vue
+<p @click="send({'payload': 'Hello World'})">
+    This is a 3rd Party Widget
+</p>
+```
+
+This, when clicked, will send a `msg` in Node-RED to any nodes connected to the output of this node.
