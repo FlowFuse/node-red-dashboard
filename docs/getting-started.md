@@ -52,3 +52,5 @@ The sidebar offers you a central place to manage your pages, groups and widgets.
 ## Contributing
 
 If you would like to run this set of nodes locally, and specifically to help contribute to the development efforts, you can read the [Contributing](./contributing/index.md) documentation.
+
+If you'd like to build your own standalone nodes & widgets that integrate seamlessly with Dashboard 2.0, you can read our guide on that [here](./contributing/widgets/third-party.md).
