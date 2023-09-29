@@ -6,7 +6,7 @@ We do also realise though that there are many occassions where a standalone repo
 
 ## Basic Folder Structure
 
-The following explanation of how to build your own third party widgets will reference the Example Node that we've open sourced, showing various integration examples of features available.
+The following explanation of how to build your own third party widgets will reference the [Example Node](https://github.com/FlowFuse/node-red-dashboard-example-node) that we've open sourced, showing various integration examples of features available.
 
 As with any Node-RED nodes, you'll need to start with two files:
 
