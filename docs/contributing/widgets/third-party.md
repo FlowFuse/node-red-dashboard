@@ -92,11 +92,11 @@ The following properties should then _all_ be defined, and can be done so in you
 
 These options, whilst defined server-side, are passed to the client-side Vue component, and are used to customise the client-side behaviour of your widget.
 
-|property | description |
-|--|--|
-| `onMounted`       | Stringified function to run when your widget loads in Dashboard. |
-| `onInput`         | Stringified function that will run client-side, whenever your node receives an input in Node-RED. |
-| `methods`         | An object, where each key is the method name, and the value is a stringified function. These methods will then be exposed to your widget via the widgets's Vue component. |
+|property | example | description |
+|--|--|--|
+| `onMounted`  |     | Stringified function to run when your widget loads in Dashboard. |
+| `onInput`    | see [example](#defining-oninput-functionality) | Stringified function that will run client-side, whenever your node receives an input in Node-RED. |
+| `methods`    | see [example](#custom-functionality) | An object, where each key is the method name, and the value is a stringified function. These methods will then be exposed to your widget via the widgets's Vue component. |
 
 
 ## Example Configurations
