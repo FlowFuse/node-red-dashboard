@@ -53,7 +53,8 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(id => {
                 const widget = payload.widgets[id]
-                widget.component = markRaw(widgetComponents[widget.type])
+                // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
+                widget.component = markRaw(widgetComponents[widget.type] || widgetComponents['ui-template'])
             })
 
             // store this data in our VueX store for access across the app

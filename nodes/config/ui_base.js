@@ -238,12 +238,34 @@ module.exports = function (RED) {
                 try {
                     socket.removeListener('widget-load', onLoad.bind(null, socket))
                 } catch (_error) { /* do nothing */ }
+
+                // check if any widgets have defined custom socket events
+                // remove their listeners to make sure we clean up properly
+                node.ui?.widgets?.forEach((widget) => {
+                    if (widget.hooks?.onSocket) {
+                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            try {
+                                socket.removeListener(eventName, handler)
+                            } catch (_error) { /* do nothing */ }
+                        }
+                    }
+                })
             }
             // clean up then re-register listeners
             cleanup()
             socket.on('widget-action', onAction.bind(null, socket))
             socket.on('widget-change', onChange.bind(null, socket))
             socket.on('widget-load', onLoad.bind(null, socket))
+
+            // check if any widgets have defined custom socket events
+            // most common with third-party widgets that are not part of core Dashboard 2.0
+            node.ui?.widgets?.forEach((widget) => {
+                if (widget.hooks?.onSocket) {
+                    for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                        socket.on(eventName, handler)
+                    }
+                }
+            })
 
             // handle disconnection
             socket.on('disconnect', reason => {
@@ -271,8 +293,8 @@ module.exports = function (RED) {
             // get widget node and configuration
             const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
 
-            // ensure we can get the requested widget from the runtime
-            if (!wNode) {
+            // ensure we can get the requested widget from the runtime & that this widget has an onAction handler
+            if (!wNode || !widgetEvents.onAction) {
                 return // widget does not exist (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
 
@@ -453,6 +475,7 @@ module.exports = function (RED) {
                 },
                 hooks: widgetEvents
             }
+
             delete widget.props.id
             delete widget.props.type
             delete widget.props.x
@@ -465,6 +488,22 @@ module.exports = function (RED) {
             }
             if (widget.props.height === '0') {
                 widget.props.height = null
+            }
+
+            // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
+            // and stringify them for transport over SocketIO
+            for (const [key, value] of Object.entries(widget.props)) {
+                // supported functions
+                const supported = ['onMounted', 'onInput']
+                if (supported.includes(key) && typeof value === 'function') {
+                    widget.props[key] = value.toString()
+                } else if (key === 'methods') {
+                    for (const [method, fcn] of Object.entries(widget.props.methods)) {
+                        if (typeof fcn === 'function') {
+                            widget.props.methods[method] = fcn.toString()
+                        }
+                    }
+                }
             }
 
             // map dashboards by their ID

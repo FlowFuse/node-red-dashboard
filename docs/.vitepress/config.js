@@ -108,13 +108,21 @@ export default ({ mode }) => {
           items: [
             { text: 'Introduction', link: '/contributing/' },
             {
+              text: 'Building Widgets',
+              collapsed: false,
+              items: [
+                { text: 'Adding Core Widgets', link: '/contributing/widgets/core-widgets' },
+                { text: 'Third Party Widgets', link: '/contributing/widgets/third-party' }
+              ]
+            },
+            {
               text: 'Guides',
               collapsed: false,
               items: [
                 { text: 'Repo Structure', link: '/contributing/guides/repo' },
                 { text: 'Events Architecture', link: '/contributing/guides/events' },
                 { text: 'Layout Managers', link: '/contributing/guides/layouts' },
-                { text: 'Adding Widgets', link: '/contributing/guides/adding-widgets' }
+                { text: 'Registering Widgets', link: '/contributing/guides/registration' }
               ]
             }
           ]
