@@ -141,8 +141,6 @@ config.head = {
     ]
 }
 ```
-```
-
 
 ### Defining HTML to Render
 
