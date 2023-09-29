@@ -6,7 +6,7 @@ The navigational hierarchy of the Dashboard UI is as follows:
 
 - **UI** - `ui-base` - Multiple endpoints can be served within a single Dashboard. Later work will be done to treat these as completely isolated interfaces.
 - **Page** - `ui-page` - All pages within a single UI are listed in the navigation drawer (left menu). Each page is configured to use a given "Layout Manager", and that manager will render 
-- **Widget** - `ui-<widget-name>` - Each widget is defined as a Vue component. You can checkout an example `<widget>.vue` file in our [Adding Widgets](./adding-widgets#example-widget-vue) guide.
+- **Widget** - `ui-<widget-name>` - Each widget is defined as a Vue component. You can checkout an example `<widget>.vue` file in our [Adding Widgets](../widgets/core-widgets#example-widget-vue) guide.
 
 
 ## Baseline Layouts
