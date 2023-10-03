@@ -52,19 +52,41 @@ Line Charts accept a variety of payload formats. The following are all valid:
 
 If you would like to plot multiple lines on the same chart, you can do so by including a `msg.topic` alongside the relevant `msg.payload`, e.g:
 
-```json
-{
+```js
+msg = {
     "topic": "line-1",
     "payload": 1
 }
 ```
 
-```json
-{
+```js
+msg = {
     "topic": "line-2",
     "payload": 2
 }
 ```
+
+#### Multiple Data Points (Injecting an Array of Data)
+
+If you would like to pass in multiple data points at the same time into a chart, you can do so by passing an `Array` in `msg.payload`.
+
+```js
+msg = {
+    "topic": "line-1",
+    "payload": [{
+        x: 30,
+        y: 43
+    }, {
+        x: 40,
+        y: 56
+    }, {
+        x: 50,
+        y: 74
+    }]
+}
+```
+
+Note how we can still define the `msg.topic` value such that these data points all appear on the same line.
 
 ### Scatter Plot
 
