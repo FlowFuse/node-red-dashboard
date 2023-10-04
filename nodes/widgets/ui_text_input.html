@@ -1,5 +1,8 @@
 <script type="text/javascript">
     (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
         RED.nodes.registerType('ui-text-input', {
             category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
             color: 'rgb(176, 223, 227)',
@@ -20,6 +23,8 @@
                     }
                 },
                 height: { value: 0 },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
                 mode: { value: 'text', required: true },
                 passthru: { value: true },
                 className: { value: '' }
@@ -34,6 +39,12 @@
                     width: '#node-input-width',
                     height: '#node-input-height',
                     group: '#node-input-group'
+                })
+                // topic
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
                 })
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
@@ -100,6 +111,11 @@
         </select>
         <!--<label for="node-input-delay" style="text-align:right; width:100px"><i class="fa fa-clock-o"></i> Delay (ms)</label>
         <input type="text" style="width:58px" id="node-input-delay">-->
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
+        <input type="text" id="node-input-topic">
+        <input type="hidden" id="node-input-topicType">
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
