@@ -89,11 +89,8 @@ export default {
     },
     methods: {
         onMsgInput (msg) {
-            // TODO:
-            // what do we do with the msg object when chart receives it?
-            // need some storage into vuex store, but what else, and in what format?
             if (Array.isArray(msg.payload) && !msg.payload.length) {
-                // clear the chart
+                // clear the chart if msg.payload = [] is received
                 this.clear()
             } else {
                 // update the chart
@@ -108,18 +105,27 @@ export default {
         add (msg) {
             const payload = msg.payload
             // determine what type of msg we have
-            if (payload !== null && payload !== undefined) {
-                // we have a single payload value and should append it to the chart
-                const label = msg.topic
-                this.addPoint(msg, label)
-            } else if (Array.isArray(msg) && msg.length > 0) {
-                // need to filter by number here, before we split the data sets out
-
-                // we have an array of msg values, and should append each of them
+            if (Array.isArray(msg) && msg.length > 0) {
+                // we have received an array of messages (loading from stored history)
                 msg.forEach((m) => {
                     const label = m.topic
-                    this.addPoint(m, label)
+                    const p = m.payload
+                    const d = m._datapoint // server-side we compute a chart friendly format
+                    this.addPoint(p, d, label)
                 })
+            } else if (Array.isArray(payload) && msg.payload.length > 0) {
+                // we have received a message with an array of data points
+                // and should append each of them
+                payload.forEach((p, i) => {
+                    const label = msg.topic
+                    const d = msg._datapoint[i] // server-side we compute a chart friendly format
+                    this.addPoint(p, d, label)
+                })
+            } else if (payload !== null && payload !== undefined) {
+                // we have a single payload value and should append it to the chart
+                const label = msg.topic
+                const d = msg._datapoint // server-side we compute a chart friendly format
+                this.addPoint(msg, d, label)
             } else {
                 // no payload
                 console.log('have no payload')
@@ -129,13 +135,12 @@ export default {
             }
             this.chart.update()
         },
-        addPoint (msg, label) {
-            const p = msg.payload
+        addPoint (payload, datapoint, label) {
             if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                const datapoint = msg._datapoint || {}
-                this.addToLine(datapoint, label)
+                const d = datapoint || {}
+                this.addToLine(d, label)
             } else if (this.props.chartType === 'bar') {
-                this.addToBar(p, label)
+                this.addToBar(payload, label)
             }
 
             // TODO: Handle storage of restricted data size, need to manage in store, so pass props through?
@@ -143,7 +148,11 @@ export default {
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
                 widgetId: this.id,
-                msg
+                msg: {
+                    payload,
+                    _datapoint: datapoint,
+                    topic: label
+                }
             })
         },
         /**
