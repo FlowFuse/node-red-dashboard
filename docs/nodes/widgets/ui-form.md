@@ -12,6 +12,7 @@ props:
             <li>Required: Whether the form element is required to be filled in before the form can be submitted.</li>
     Buttons: The text shown on each of the form's buttons. If "cancel" text is left empty, then no cancel button will be shown.
     Two Columns: Will render the form as a two-column layout.
+    Reset on Submit: If checked, the form will be reset to an empty state after the form is submitted.
     Topic: Defines how to compute the topic, included in the `msg` object, when the form is submitted.
 ---
 
