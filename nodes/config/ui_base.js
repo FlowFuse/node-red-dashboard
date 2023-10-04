@@ -466,7 +466,7 @@ module.exports = function (RED) {
                 props: widgetConfig,
                 layout: {
                     width: widgetConfig.width || 3,
-                    height: widgetConfig.width || 1,
+                    height: widgetConfig.height || 1,
                     order: widgetConfig.order || 0
                 },
                 state: {
