@@ -2,6 +2,7 @@
     <v-slider
         v-model="value" :label="props.label" hide-details="auto"
         :class="className"
+        :thumb-label="props.thumbLabel || false"
         :min="props.min" :max="props.max" :step="props.step || 1"
     />
 </template>

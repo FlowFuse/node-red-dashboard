@@ -28,6 +28,7 @@
                 outs: { value: 'all' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
+                thumbLabel: { value: true },
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
@@ -83,10 +84,6 @@
             <button class="editor-button" id="node-input-size"></button>
         </div>
         <div class="form-row">
-            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
-            <input type="text" id="node-input-label">
-        </div>
-        <div class="form-row">
             <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
             <div style="display: inline;">
                 <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
@@ -98,6 +95,15 @@
                     <i style="font-family: ui-serif;">fx</i>
                 </a>
             </div>
+        </div>
+        <div class="form-row">
+            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+            <input type="text" id="node-input-label">
+        </div>
+        <div class="form-row">
+            <label><i class="fa fa-i-cursor"></i> Thumb</label>
+            <input type="checkbox" id="node-input-thumbLabel" style="display: inline-block; width: auto; vertical-align: top; margin: 0 3px 0 0;"/>
+            <label for="node-input-thumbLabel" style="width: 70%;"> Show Thumb Label</label>
         </div>
         <!--<div class="form-row">
             <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
