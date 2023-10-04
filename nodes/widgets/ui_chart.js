@@ -46,18 +46,17 @@ module.exports = function (RED) {
                 return msg
             },
             onInput: function (msg, send, done) {
-                const wNode = RED.nodes.getNode(node.id)
                 // use our own custom onInput in order to store history of msg payloads
-                if (!wNode._msg) {
-                    wNode._msg = []
+                if (!node._msg) {
+                    node._msg = []
                 }
                 if (Array.isArray(msg.payload) && !msg.payload.length) {
                     // clear history
-                    wNode._msg = []
+                    node._msg = []
                 } else {
                     if (!Array.isArray(msg.payload)) {
                         // quick clone of msg, and store in history
-                        wNode._msg.push({
+                        node._msg.push({
                             ...msg
                         })
                     } else {
@@ -69,7 +68,7 @@ module.exports = function (RED) {
                                 payload,
                                 _datapoint: msg._datapoint[i]
                             }
-                            wNode._msg.push(m)
+                            node._msg.push(m)
                         })
                     }
 
@@ -78,12 +77,12 @@ module.exports = function (RED) {
                     if (config.xAxisType === 'category') {
                         // filters the node._msg array so that we keep just the latest msg with each category
                         const seen = {}
-                        wNode._msg.forEach((msg, index) => {
+                        node._msg.forEach((msg, index) => {
                             // loop through and record the latest index seen for each topic/label
                             seen[msg.topic] = index
                         })
                         const indices = Object.values(seen)
-                        wNode._msg = wNode._msg.filter((msg, index) => {
+                        node._msg = node._msg.filter((msg, index) => {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         })
@@ -93,12 +92,12 @@ module.exports = function (RED) {
                         // remove older points
                         const lineCounts = {}
                         // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
-                        for (let i = wNode._msg.length - 1; i >= 0; i--) {
-                            const msg = wNode._msg[i]
+                        for (let i = node._msg.length - 1; i >= 0; i--) {
+                            const msg = node._msg[i]
                             const label = msg.topic
                             lineCounts[label] = lineCounts[label] || 0
                             if (lineCounts[label] >= maxPoints) {
-                                wNode._msg.splice(i, 1)
+                                node._msg.splice(i, 1)
                             } else {
                                 lineCounts[label]++
                             }
@@ -111,7 +110,7 @@ module.exports = function (RED) {
                         const removeOlderUnit = parseFloat(config.removeOlderUnit)
                         const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
                         const cutoff = (new Date()).getTime() - ago
-                        wNode._msg = wNode._msg.filter((msg) => {
+                        node._msg = node._msg.filter((msg) => {
                             let timestamp = msg._datapoint.x
                             // is x already a millisecond timestamp?
                             if (typeof (msg._datapoint.x) === 'string') {
