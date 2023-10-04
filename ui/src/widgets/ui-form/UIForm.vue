@@ -58,6 +58,9 @@ export default {
             this.$socket.emit('widget-action', this.id, {
                 payload: this.input
             })
+            if (this.props.resetOnSubmit) {
+                this.reset()
+            }
         },
         clear () {
             this.reset()

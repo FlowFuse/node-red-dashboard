@@ -28,6 +28,7 @@
             "topic": "Topic",
             "optionalMsgTopic": "optional msg.topic",
             "splitLayout":"Place the form elements in two columns",
+            "resetOnSubmit":"Reset the form when submitted",
             "className": "Class",
             "classNamePlaceholder": "Optional CSS class name(s) for widget"
         }
