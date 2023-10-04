@@ -47,6 +47,7 @@
                 payload: { value: '' },
                 submit: { value: 'submit' },
                 cancel: { value: 'clear' },
+                resetOnSubmit: { value: true },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 splitLayout: { value: '' },
@@ -350,9 +351,14 @@
         <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:35%;">
     </div>
     <div class="form-row">
-        <label for="node-input-splitLayout"></label>
+        <label></label>
         <input type="checkbox" id="node-input-splitLayout" style="display:inline-block; width:auto; vertical-align:top;">
-        <span data-i18n="ui-form.label.splitLayout">
+        <label for="node-input-splitLayout" style="width: auto" data-i18n="ui-form.label.splitLayout">
+    </div>
+    <div class="form-row">
+        <label></label>
+        <input type="checkbox" id="node-input-resetOnSubmit" style="display:inline-block; width:auto; vertical-align:top;">
+        <label for="node-input-resetOnSubmit" style="width: auto" data-i18n="ui-form.label.resetOnSubmit"></label>
     </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
