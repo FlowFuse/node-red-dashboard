@@ -15,8 +15,17 @@ module.exports = function (RED) {
                 if (config.chartType === 'line' || config.chartType === 'scatter') {
                     // possible that we haven't received any x-data in the payload,
                     // so let's make sure we append something
-                    const datapoint = addToLine(p, label)
-                    msg._datapoint = datapoint
+
+                    // single point or array of data?
+                    if (Array.isArray(p)) {
+                        // array of data
+                        msg._datapoint = p.map((point) => {
+                            return addToLine(point, label)
+                        })
+                    } else {
+                        // single point
+                        msg._datapoint = addToLine(p, label)
+                    }
                 }
 
                 // function to process a data point being appended to a line/scatter chart
@@ -45,8 +54,23 @@ module.exports = function (RED) {
                     // clear history
                     node._msg = []
                 } else {
-                    // quick clone of msg, and sore in history
-                    node._msg.push({ ...msg })
+                    if (!Array.isArray(msg.payload)) {
+                        // quick clone of msg, and store in history
+                        node._msg.push({
+                            ...msg
+                        })
+                    } else {
+                        // we have an array in msg.payload, let's split them
+                        msg.payload.forEach((p, i) => {
+                            const payload = JSON.parse(JSON.stringify(p))
+                            const m = {
+                                ...msg,
+                                payload,
+                                _datapoint: msg._datapoint[i]
+                            }
+                            node._msg.push(m)
+                        })
+                    }
 
                     const maxPoints = parseInt(config.removeOlderPoints)
 
@@ -87,7 +111,12 @@ module.exports = function (RED) {
                         const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
                         const cutoff = (new Date()).getTime() - ago
                         node._msg = node._msg.filter((msg) => {
-                            return msg._datapoint.x > cutoff
+                            let timestamp = msg._datapoint.x
+                            // is x already a millisecond timestamp?
+                            if (typeof (msg._datapoint.x) === 'string') {
+                                timestamp = (new Date(msg._datapoint.x)).getTime()
+                            }
+                            return timestamp > cutoff
                         })
                     }
 
