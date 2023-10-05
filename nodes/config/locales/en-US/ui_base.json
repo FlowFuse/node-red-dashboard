@@ -2,13 +2,18 @@
     "ui-base" : {
         "auto": "auto",
         "label": {
-            "category": "dashboard"
+            "category": "dashboard 2"
         },
         "layout": {
             "pages": "Pages",
             "edit": "Edit",
             "collapse": "Collapse",
             "expand": "Expand"
+        },
+        "colors": {
+            "light": "var(--nrdb-node-light)",
+            "medium": "var(--nrdb-node-medium)",
+            "dark": "var(--nrdb-node-dark)"
         }
     }
 }

@@ -2,7 +2,7 @@
     (function () {
         RED.nodes.registerType('ui-notification', {
             category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
-            color: 'rgb(119, 198, 204)',
+            color: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.colors.medium'),
             defaults: {
                 ui: { type: 'ui-base', value: '', required: true },
                 position: { value: 'top right' },
