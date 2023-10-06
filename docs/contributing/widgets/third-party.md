@@ -4,6 +4,18 @@ If you have an idea for a widget that you'd like to build in Dashboard 2.0 we ar
 
 We do also realise though that there are many occassions where a standalone repository/package works better as was very popular in Dashboard 1.0.
 
+## Quick Links
+
+Here is a quick summary of the features and fucntionality available to third-party widgets.
+
+- **Custom Dependencies** - ([link](#injecting-head-tags-dependencies)) Injection of external widget dependencies (e.g. other JavaScript libraries) via `<head>`.
+- **Defining Content to Render** - ([link](#defining-html-to-render)) `format` defines the HTML to render in the Dashboard.
+- **On Input** - ([link](#defining-oninput-functionality)) `onInput` defines behaviour of the widget in Dashboard when it receives a message in Node-RED.
+- **On Load** - ([link](#optional-config-options)) `onMounted` defines functionality when a widget first loads in Dashboard.
+- **Custom Functions** - ([link](#custom-functionality)) Define general functions that can be called from within your widget at any point of your choosing
+- **Extend Built-In Events** - ([link](#ui-template-functionality)) Our built in `send` function can be called within your widget's template, and will send a message back to Node-RED, with any content of your choosing.
+- **Custom SocketIO Event Handlers** - ([link](#custom-socketio-events)) If you want to extend the communication between Dashboard and Node-RED, you can emit your own SocketIO events from Dashboard, and have respective handlers for those events in Node-RED.
+
 ## Basic Folder Structure
 
 The following explanation of how to build your own third party widgets will reference the [Example Node](https://github.com/FlowFuse/node-red-dashboard-example-node) that we've open sourced, showing various integration examples of features available.
