@@ -48,7 +48,7 @@ export default {
     data () {
         return {
             columns: 12,
-            rowHeight: '48px'
+            rowHeight: 48
         }
     },
     computed: {
