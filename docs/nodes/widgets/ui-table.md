@@ -13,7 +13,7 @@ props:
 
 # Data Table `ui-table`
 
-Renders a set of data in a tabular format. Expects an input (`mag.payload`) in the format of:
+Renders a set of data in a tabular format. Expects an input (`msg.payload`) in the format of:
 
 ```json
 [{
