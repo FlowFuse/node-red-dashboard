@@ -4,8 +4,9 @@ props:
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
     Class: The text shown within the button.
-    Chart Type: Line | Bar | Scatter
-    X-Axis Type: Timescale | Linear | Categorical
+    Chart Type: <code>Line</code> | <code>Bar</code> | <code>Scatter</code>
+    Show Legend: Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.
+    X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
 ---
 

@@ -31,6 +31,7 @@
                 order: { value: Number.MAX_SAFE_INTEGER },
                 chartType: { value: 'line' },
                 xAxisType: { value: 'time' },
+                showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
                 removeOlderUnit: { value: '3600', required: true },
                 removeOlderPoints: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
@@ -194,10 +195,16 @@
             </a>
         </div>
     </div>
-    <div class="form-row">
-        <label for="node-input-chartType"><i class="fa fa-bookmark"></i> Type</label>
-        <input type="text" id="node-input-chartType">
-        <input type="hidden" id="node-input-chartTypeType">
+    <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
+        <div>
+            <label for="node-input-chartType"><i class="fa fa-bookmark"></i> Type</label>
+            <input type="text" id="node-input-chartType">
+            <input type="hidden" id="node-input-chartTypeType">
+        </div>
+        <div>
+            <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> Show Legend </label>
+            <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-xAxisType" data-i18n="ui-chart.label.xType"></label></label>
