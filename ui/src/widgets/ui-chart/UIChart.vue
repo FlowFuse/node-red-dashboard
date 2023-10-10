@@ -78,7 +78,7 @@ export default {
                         text: this.props.label
                     },
                     legend: {
-                        display: false
+                        display: this.props.showLegend
                     }
                 }
             }
