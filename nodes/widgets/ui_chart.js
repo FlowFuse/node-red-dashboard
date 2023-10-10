@@ -38,7 +38,11 @@ module.exports = function (RED) {
                         datapoint.y = payload
                     } else if (typeof payload === 'object' && 'y' in payload) {
                         // may have been given an x/y object already
-                        datapoint.x = payload.x || (new Date()).getTime()
+                        let x = payload.x
+                        if (x === undefined || x === null) {
+                            x = (new Date()).getTime()
+                        }
+                        datapoint.x = x
                         datapoint.y = payload.y
                     }
                     return datapoint
