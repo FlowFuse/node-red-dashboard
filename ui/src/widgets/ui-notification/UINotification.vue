@@ -9,7 +9,7 @@
         :style="{'--nrdb-ui-notification-color': color}"
     >
         <div v-if="props.showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" :color="props.colorDefault ? 'primary' : color" style="display: block; width: 100%" />
+            <v-progress-linear v-model="countdown" :color="messages[id]?.color || (props.colorDefault ? 'primary' : color)" style="display: block; width: 100%" />
         </div>
         <div v-if="!props.raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -125,9 +125,11 @@ export default {
 
 .nrdb-ui-notification-countdown {
     position: absolute;
-    width: 100%;
+    width: calc(100% + 6px);
     top: 0;
     left: 0;
+    margin-left: -6px;
+    border-top-left-radius: 4px;
 }
 
 .nrdb-ui-notification h1,
