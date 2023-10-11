@@ -6,9 +6,10 @@
         multi-line
         :timeout="-1"
         :location="props.position"
+        :style="{'--nrdb-ui-notification-color': color}"
     >
         <div v-if="props.showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" color="primary" style="display: block; width: 100%" />
+            <v-progress-linear v-model="countdown" :color="props.colorDefault ? 'primary' : color" style="display: block; width: 100%" />
         </div>
         <div v-if="!props.raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -51,6 +52,15 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             return this.messages[this.id]?.payload
+        },
+        color: function () {
+            if (this.messages[this.id]?.color) {
+                return this.messages[this.id]?.color
+            } else if (this.props.colorDefault) {
+                return 'rgb(var(--v-theme-group-background))'
+            } else {
+                return this.props.color
+            }
         }
     },
     created () {
@@ -99,9 +109,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-ui-notification {
     padding-top: 64px;
+}
+
+.nrdb-ui-notification .v-snackbar__wrapper {
+    background-color: rgb(var(--v-theme-group-background));
+    color: rgb(var(--v-theme-on-group-background));
+    border-left: 6px solid var(--nrdb-ui-notification-color);
+}
+.nrdb-ui-notification .v-snackbar__content {
+    padding-left: 8px;
 }
 
 .nrdb-ui-notification-countdown {
@@ -110,4 +129,12 @@ export default {
     top: 0;
     left: 0;
 }
+
+.nrdb-ui-notification h1,
+.nrdb-ui-notification h2,
+.nrdb-ui-notification h3,
+.nrdb-ui-notification h4 {
+    margin: 0.5rem 0;
+}
+
 </style>
