@@ -37,7 +37,6 @@ export default {
                 return false
             },
             head () {
-                console.log('head', this.props)
                 let _props = this.props || props
                 if (_props.props) { _props = _props.props }
 
