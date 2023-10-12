@@ -40,6 +40,9 @@ export default ({ mode }) => {
     themeConfig: {
       // logo: '/logo.png',
       nav: [
+        { text: 'Docs', link: '/getting-started.html' },
+        { text: 'Widgets', link: '/nodes/widgets.html' },
+        { text: 'Contributing', link: '/contributing/' },
         { text: 'FlowFuse', link: 'https://flowfuse.com' },
         { text: 'GitHub', link: 'https://github.com/flowforge/flowforge-nr-dashboard' }
       ],
