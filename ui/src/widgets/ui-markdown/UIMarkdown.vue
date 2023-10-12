@@ -52,8 +52,6 @@ export default {
         props: { type: Object, default: () => ({}) }
     },
     setup (props) {
-        useDataTracker(props.id)
-
         // handle {{ variable || 'placeholder' }} case where || is parsed as a table
         const content = props.props.content.replace(/\|\|/g, 'mdORmd')
         // convert to markdown
@@ -86,14 +84,15 @@ export default {
                     return this.getMsgProperty(this.id, path, defaultValue)
                 },
                 renderMermaid () {
-                    // remove hte flag that mermaid uses to work out if an element has been processed
-                    // TODO: need to scope this to _just_ this component, otherwise it'll run for all mermaid charts on the page
-                    this.$refs.markdown?.querySelector('.mermaid')?.removeAttribute('data-processed')
+                    if (this.$refs.markdown) {
+                        // remove the flag that mermaid uses to work out if an element has been processed
+                        this.$refs.markdown?.querySelector('.mermaid')?.removeAttribute('data-processed')
+                    }
                     this.$nextTick(() => {
                         // let Vue render the dynamic markdown first, then re-render the chart
                         mermaid.run({
                             querySelector: '.mermaid',
-                            suppressErrors: true
+                            suppressErrors: false
                         })
                     })
                 }
@@ -106,9 +105,41 @@ export default {
     computed: {
         ...mapState('data', ['messages'])
     },
+    created () {
+        // can't do this in setup as we have custom onInput function
+        useDataTracker(this.id, this.onMsgInput)
+    },
     errorCaptured: (err, vm, info) => {
         console.error('errorCaptured', err, vm, info)
         return false
+    },
+    methods: {
+        onMsgInput: function (msg) {
+            // compare new msg and old message
+            // Mermaid doesn't like being told to re-render with the _exact_ same content,
+            // so we need to check here before we update the store and trigger re-render
+            if (this.msgChanged(this.$store.state.data.messages[this.id], msg)) {
+                // but most of the time, we just care about the value of msg
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
+        },
+        msgChanged (oldMsg, newMsg) {
+            const ignoreKeys = ['_event', '_msgid']
+            if (!oldMsg) {
+                return true
+            }
+            if (Object.keys(oldMsg).length !== Object.keys(newMsg).length) {
+                return true
+            }
+            for (const key of Object.keys(oldMsg)) {
+                if (!ignoreKeys.includes(key) && oldMsg[key] !== newMsg[key]) {
+                    return true
+                }
+            }
+        }
     }
 }
 </script>
