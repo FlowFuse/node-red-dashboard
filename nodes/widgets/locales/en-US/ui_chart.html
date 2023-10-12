@@ -10,8 +10,15 @@
         <dt>Show Legend <span class="property-type">bool</span></dt>
         <dd>Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.</dd>
         <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
-        <dd> For charts with an x-axis, this option allows customisation
-            of the type of axis to render.</dd>
+        <dd>
+            For charts with an x-axis, this option allows customisation
+            of the type of axis to render.
+        </dd>
+        <dt>Properties <span class="property-type">string</span></dt>
+        <dd>
+            If providing object data to the chart, rather than raw numerical values, each of the <code>X</code> and <code>Y</code> properties rendered onto the chart can be defined here. For example, giving <code>Y</code> a value of <code>nested.value</code> and data in the format:<pre>[{'nested'" {'value': 5}"}]</pre> would render the value <code>5</code> on the y-axis.
+            If <code>X</code> is left blank, it will default to using a new timestamp.</code>
+        </dd>
     </dl>
     <h3>Input</h3>
     <p>Data can be passed into the Chart node in a variety of formats,

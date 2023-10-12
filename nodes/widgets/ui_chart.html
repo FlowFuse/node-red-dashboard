@@ -30,6 +30,8 @@
                 label: { value: 'chart' },
                 order: { value: Number.MAX_SAFE_INTEGER },
                 chartType: { value: 'line' },
+                xAxisProperty: { value: null },
+                yAxisProperty: { value: null },
                 xAxisType: { value: 'time' },
                 showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
@@ -225,6 +227,19 @@
         <label for="node-input-removeOlderPoints" style="width:auto; margin-left:10px; margin-right:10px;" data-i18n="ui-chart.label.or"></label>
         <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
         <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
+    </div>
+    <div class="form-row">
+        <label>Properties</label>
+        <div id="node-input-axisKeys" style="display: inline-flex; align-items: center; width: 70%; gap: 16px;">
+            <div style="display: flex; gap: 8px; align-items: center">
+                <label style="margin: 0; width: auto" for="node-input-xAxisProperty">X:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-xAxisProperty" placeholder="key for x-axis value">
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center">
+                <label style="margin: 0; width: auto" for="node-input-yAxisProperty">Y:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" placeholder="key for y-axis value">
+            </div>
+        </div>
     </div>
     <div class="form-row" id="ui-chart-colors">
         <label for="node-input-color1" data-i18n="ui-chart.label.seriesColors"></label>

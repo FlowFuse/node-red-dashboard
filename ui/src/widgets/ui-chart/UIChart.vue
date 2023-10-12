@@ -48,6 +48,16 @@ export default {
         // get a reference to the canvas element
         const el = this.$refs.chart
 
+        // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
+        // based on chart type and options provided from Node-RED
+        const parsing = {}
+        if (this.props.xAxisProperty) {
+            parsing.xAxisKey = this.props.xAxisProperty
+        }
+        if (this.props.yAxisProperty) {
+            parsing.yAxisKey = this.props.yAxisProperty
+        }
+
         // create our ChartJS object
         const chart = new Chart(el, {
             type: this.props.chartType,
@@ -80,7 +90,8 @@ export default {
                     legend: {
                         display: this.props.showLegend
                     }
-                }
+                },
+                parsing
             }
         })
 
@@ -125,7 +136,7 @@ export default {
                 // we have a single payload value and should append it to the chart
                 const label = msg.topic
                 const d = msg._datapoint // server-side we compute a chart friendly format
-                this.addPoint(msg, d, label)
+                this.addPoint(msg.payload, d, label)
             } else {
                 // no payload
                 console.log('have no payload')
@@ -137,7 +148,10 @@ export default {
         },
         addPoint (payload, datapoint, label) {
             if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                const d = datapoint || {}
+                const d = {
+                    ...payload,
+                    ...datapoint
+                }
                 this.addToLine(d, label)
             } else if (this.props.chartType === 'bar') {
                 this.addToBar(payload, label)

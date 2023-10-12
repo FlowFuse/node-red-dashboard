@@ -36,7 +36,7 @@ module.exports = function (RED) {
                         // just a number, assume we're plotting a time series
                         datapoint.x = (new Date()).getTime()
                         datapoint.y = payload
-                    } else if (typeof payload === 'object' && 'y' in payload) {
+                    } else if (typeof payload === 'object') {
                         // may have been given an x/y object already
                         let x = payload.x
                         if (x === undefined || x === null) {
