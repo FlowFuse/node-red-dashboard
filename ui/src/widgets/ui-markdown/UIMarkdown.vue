@@ -92,7 +92,7 @@ export default {
                         // let Vue render the dynamic markdown first, then re-render the chart
                         mermaid.run({
                             querySelector: '.mermaid',
-                            suppressErrors: false
+                            suppressErrors: true
                         })
                     })
                 }
