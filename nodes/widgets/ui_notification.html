@@ -1,3 +1,13 @@
+<style>
+    #ui-chart-colors input[type="color"] {
+        font-weight: bold;
+    }
+    #ui-chart-colors input[type="color"]::-webkit-color-swatch,
+    #ui-chart-colors input[type="color"]::-moz-color-swatch {
+        border: none;
+    }
+</style>
+
 <script type="text/javascript">
     (function () {
         RED.nodes.registerType('ui-notification', {
@@ -6,6 +16,8 @@
             defaults: {
                 ui: { type: 'ui-base', value: '', required: true },
                 position: { value: 'top right' },
+                colorDefault: { value: true },
+                color: { value: null },
                 displayTime: { value: '3' },
                 showCountdown: { value: true },
                 outputs: { value: 0 },
@@ -35,6 +47,16 @@
                         $('#node-notification-dismissText').show()
                     } else {
                         $('#node-notification-dismissText').hide()
+                    }
+                })
+
+                $('#node-input-colorDefault').on('change', function () {
+                    const defaultColor = $('#node-input-colorDefault').is(':checked')
+                    console.log(defaultColor)
+                    if (defaultColor) {
+                        $('#node-input-color').hide()
+                    } else {
+                        $('#node-input-color').show()
                     }
                 })
     
@@ -70,6 +92,14 @@
             <option value="bottom left">Bottom Left</option>
             <option value="center center">Center</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-color"><i class="fa fa-paint-brush"></i> Color</label>
+        <div style="display: inline-flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="node-input-colorDefault" style="width: auto; margin: 0;">
+            <label for="node-input-colorDefault" style="margin: 0; line-height: 34px;">Default</label>
+            <input type="color" id="node-input-color" placeholder="#FFFFFF">
+        </div>
     </div>
     <div class="form-row" id="node-toast-displaytime">
         <label for="node-input-displayTime"><i class="fa fa-clock-o"></i> Timeout (S)</label>
