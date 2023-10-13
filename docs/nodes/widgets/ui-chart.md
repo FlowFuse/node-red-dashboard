@@ -75,14 +75,14 @@ If you would like to pass in multiple data points at the same time into a chart,
 msg = {
     "topic": "line-1",
     "payload": [{
-        x: 30,
-        y: 43
+        "x": 30,
+        "y": 43
     }, {
-        x: 40,
-        y: 56
+        "x": 40,
+        "y": 56
     }, {
-        x: 50,
-        y: 74
+        "x": 50,
+        "y": 74
     }]
 }
 ```
