@@ -90,7 +90,7 @@
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
-                const propertyType = { value: 'property', label: 'property' }
+                const propertyType = { value: 'property', label: 'property:' }
 
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
@@ -281,8 +281,8 @@
         <label>Properties</label>
         <div id="node-container-axisKeys" class="node-chart-properties">
             <div id="node-container-category" class="node-chart-property">
-                <label style="width: auto" for="node-input-category">Category:</label>
-                <input style="flex-grow: 1" type="text" id="node-input-category" placeholder="defines how to categorise data">
+                <label style="width: auto" for="node-input-category">Series:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-category" placeholder="topic">
                 <input type="hidden" id="node-input-categoryType">
             </div>
             <div id="node-container-xAxisProperty" class="node-chart-property">

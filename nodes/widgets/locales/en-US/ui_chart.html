@@ -16,8 +16,9 @@
         </dd>
         <dt>Properties <span class="property-type">string</span></dt>
         <dd>
-            If providing object data to the chart, rather than raw numerical values, each of the <code>X</code> and <code>Y</code> properties rendered onto the chart can be defined here. For example, giving <code>Y</code> a value of <code>nested.value</code> and data in the format:<pre>[{'nested'" {'value': 5}"}]</pre> would render the value <code>5</code> on the y-axis.
-            If <code>X</code> is left blank, it will default to using a new timestamp.</code>
+            <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</p>
+            <p><b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</p>
+            <p><b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.</p>
         </dd>
     </dl>
     <h3>Input</h3>
