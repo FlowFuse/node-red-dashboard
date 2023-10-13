@@ -8,10 +8,22 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
+        function getProperty (value, property) {
+            const props = property.split('.')
+            props.forEach((prop) => {
+                if (value) {
+                    value = value[prop]
+                }
+            })
+            return value
+        }
+
         const evts = {
             beforeSend: function (msg) {
                 const p = msg.payload
-                const label = msg.topic
+
+                const label = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
+
                 if (config.chartType === 'line' || config.chartType === 'scatter') {
                     // possible that we haven't received any x-data in the payload,
                     // so let's make sure we append something
@@ -26,11 +38,23 @@ module.exports = function (RED) {
                         // single point
                         msg._datapoint = addToLine(p, label)
                     }
+                } else if (config.chartType === 'bar') {
+                    // single point or array of data?
+                    if (Array.isArray(p)) {
+                        // array of data
+                        msg._datapoint = p.map((point) => {
+                            return addToBar(point, label)
+                        })
+                    } else {
+                        // single point
+                        msg._datapoint = addToBar(p, label)
+                    }
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToLine (payload) {
+                function addToLine (payload, category) {
                     const datapoint = {}
+                    datapoint.category = category
                     // construct our datapoint
                     if (typeof payload === 'number') {
                         // just a number, assume we're plotting a time series
@@ -38,7 +62,7 @@ module.exports = function (RED) {
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
                         // may have been given an x/y object already
-                        let x = payload.x
+                        let x = getProperty(payload, config.xAxisProperty)
                         if (x === undefined || x === null) {
                             x = (new Date()).getTime()
                         }
@@ -47,6 +71,17 @@ module.exports = function (RED) {
                     }
                     return datapoint
                 }
+
+                // the only server-side computed var we need is the category for a Bar Chart
+                function addToBar (payload, category) {
+                    const datapoint = {}
+                    datapoint.category = category
+                    if (typeof payload === 'number') {
+                        datapoint.y = payload
+                    }
+                    return datapoint
+                }
+
                 return msg
             },
             onInput: function (msg, send, done) {
@@ -67,10 +102,11 @@ module.exports = function (RED) {
                         // we have an array in msg.payload, let's split them
                         msg.payload.forEach((p, i) => {
                             const payload = JSON.parse(JSON.stringify(p))
+                            const d = msg._datapoint ? msg._datapoint[i] : null
                             const m = {
                                 ...msg,
                                 payload,
-                                _datapoint: msg._datapoint[i]
+                                _datapoint: d
                             }
                             node._msg.push(m)
                         })
