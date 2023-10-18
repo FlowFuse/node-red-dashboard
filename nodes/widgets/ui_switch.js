@@ -1,3 +1,4 @@
+const datastore = require('../store/index.js')
 const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
@@ -19,7 +20,7 @@ module.exports = function (RED) {
             onChange: async function (value) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)
-                const msg = wNode._msg || {}
+                const msg = datastore.get(node.id) || {}
 
                 node.status({
                     fill: value ? 'green' : 'red',
@@ -32,7 +33,7 @@ module.exports = function (RED) {
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
                 msg.payload = value ? on : off
 
-                wNode._msg = msg
+                datastore.save(node.id, msg)
 
                 // simulate Node-RED node receiving an input
                 wNode.send(msg)
@@ -55,7 +56,7 @@ module.exports = function (RED) {
                 }
                 if (!error) {
                     // store the latest msg passed to node
-                    wNode._msg = msg
+                    datastore.save(node.id, msg)
 
                     node.status({
                         fill: msg.payload ? 'green' : 'red',
