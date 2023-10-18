@@ -2,7 +2,7 @@ import { inject, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 // by convention, composable function names start with "use"
-export function useDataTracker (widgetId, onInput) {
+export function useDataTracker (widgetId, onInput, onLoad) {
     const store = useStore()
     const socket = inject('$socket')
 
@@ -10,19 +10,19 @@ export function useDataTracker (widgetId, onInput) {
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
         if (socket) {
-            socket.on('widget-load: ' + widgetId, (msg) => {
-                console.log('widget-load: ' + widgetId, msg)
-                this.$store.commit('data/bind', {
-                    widgetId: this.id,
+            socket.on('widget-load:' + widgetId, (msg) => {
+                store.commit('data/bind', {
+                    widgetId,
                     msg
                 })
+                if (onLoad) {
+                    onLoad(msg)
+                }
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
-                console.log('msg-input:' + widgetId, msg)
                 // set states if passed into msg
                 if ('enabled' in msg) {
-                    console.log('setting enabled')
                     store.commit('ui/widgetState', {
                         widgetId,
                         enabled: msg.enabled

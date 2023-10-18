@@ -42,7 +42,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        useDataTracker(this.id, this.onMsgInput)
+        useDataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
         // get a reference to the canvas element
@@ -88,6 +88,12 @@ export default {
         this.chart = shallowRef(chart)
     },
     methods: {
+        onLoad (history) {
+            // we have received a history of data points
+            // we need to add them to the chart - fortunately,
+            // it's just the same process as receiving a new msg
+            this.onMsgInput(history)
+        },
         onMsgInput (msg) {
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received

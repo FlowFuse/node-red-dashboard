@@ -388,7 +388,6 @@ module.exports = function (RED) {
                 if (msg) {
                     // only emit something if we have something to send
                     // and only to this connection, not all connected clients
-                    console.log('on widget load')
                     conn.emit('widget-load:' + id, msg)
                 }
             }
