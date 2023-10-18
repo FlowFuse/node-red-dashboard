@@ -419,9 +419,8 @@ module.exports = function (RED) {
         // Make sure we clean up after ourselves
         node.on('close', (removed, done) => {
             uiShared.ioServer?.off('connection', onConnection)
-            for (const [id, conn] of Object.entries(uiShared.connections)) {
+            for (const conn of Object.values(uiShared.connections)) {
                 cleanupEventHandlers(conn)
-                // delete node.connections[conn.id]
             }
             close(node, function (err) {
                 if (err) {
