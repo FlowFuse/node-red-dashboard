@@ -10,8 +10,16 @@ export function useDataTracker (widgetId, onInput) {
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
         if (socket) {
+            socket.on('widget-load: ' + widgetId, (msg) => {
+                console.log('widget-load: ' + widgetId, msg)
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
+                console.log('msg-input:' + widgetId, msg)
                 // set states if passed into msg
                 if ('enabled' in msg) {
                     console.log('setting enabled')
