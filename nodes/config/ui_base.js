@@ -2,6 +2,7 @@
 const path = require('path')
 
 const v = require('../../package.json').version
+const datastore = require('../store/index.js')
 const { appendTopic } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
@@ -346,7 +347,7 @@ module.exports = function (RED) {
             if (!wNode) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
-            let msg = wNode._msg || {}
+            let msg = datastore.get(id) || {}
             async function defaultHandler (value) {
                 msg.payload = value
 
@@ -355,7 +356,7 @@ module.exports = function (RED) {
                 if (widgetEvents?.beforeSend) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
-                wNode._msg = msg
+                datastore.save(id, msg)
                 wNode.send(msg) // send the msg onwards
             }
 
@@ -366,6 +367,7 @@ module.exports = function (RED) {
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
                 await handler(value)
             } catch (error) {
+                console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
                 errorHandler = errorHandler || (typeof wNode.error === 'function' ? wNode.error : node.error)
                 errorHandler && errorHandler(error)
@@ -381,7 +383,7 @@ module.exports = function (RED) {
             }
             async function handler () {
                 // replicate receiving an input, so the widget can handle accordingly
-                const msg = wNode._msg
+                const msg = datastore.get(id)
                 if (msg) {
                     // only emit something if we have something to send
                     // and only to this connection, not all connected clients
@@ -489,8 +491,8 @@ module.exports = function (RED) {
                     order: widgetConfig.order || 0
                 },
                 state: {
-                    enabled: widgetNode._msg?.enabled || true,
-                    visible: widgetNode._msg?.visible || true
+                    enabled: datastore.get(widgetConfig.id)?.enabled || true,
+                    visible: datastore.get(widgetConfig.id)?.visible || true
                 },
                 hooks: widgetEvents
             }
@@ -586,7 +588,7 @@ module.exports = function (RED) {
                         // msg could be null if the beforeSend errors and returns null
                         if (msg) {
                             // store the latest msg passed to node
-                            wNode._msg = msg
+                            datastore.save(widgetNode.id, msg)
 
                             if (widgetConfig.topic || widgetConfig.topicType) {
                                 msg = await appendTopic(RED, widgetConfig, wNode, msg)
@@ -617,6 +619,11 @@ module.exports = function (RED) {
 
             // when a widget is "closed" remove it from this Base Node's knowledge
             widgetNode.on('close', function (removed, done) {
+                if (removed) {
+                    // widget has been removed from the Editor
+                    // clear any data from datastore
+                    datastore.clear(widgetNode.id)
+                }
                 node.deregister(null, null, widgetNode)
                 done()
             })
