@@ -183,15 +183,21 @@ module.exports = function (RED) {
      * @param {Object} n - Node-RED node configuration as entered in the nodes editor
      */
     function UIBaseNode (n) {
+        RED.nodes.createNode(this, n)
         const node = this
-        RED.nodes.createNode(node, n)
+
+        node._created = Date.now()
 
         /** @type {Object.<string, Socket>} */
-        node.connections = {} // store socket.io connections for this node
-        // re-map existing connections for this base node
+        // node.connections = {} // store socket.io connections for this node
+        // // re-map existing connections for this base node
         for (const id in uiShared.connections) {
+            const socket = uiShared.connections[id]
             if (uiShared.connections[id]._baseId === node.id) {
-                node.connections[id] = uiShared.connections[id]
+                // re establish event handlers
+                socket.on('widget-action', onAction.bind(null, socket))
+                socket.on('widget-change', onChange.bind(null, socket))
+                socket.on('widget-load', onLoad.bind(null, socket))
             }
         }
         /** @type {NodeJS.Timeout} */
@@ -216,43 +222,35 @@ module.exports = function (RED) {
             })
         }
 
-        /**
-         * on connection handler for SocketIO
-         * @param {Socket} socket socket.io socket connecting to the server
-         */
-        function onConnection (socket) {
-            // record mapping from connection to he ui-base node
-            socket._baseId = node.id
+        // remove event handler socket listeners for a given socket connection
+        function cleanupEventHandlers (socket) {
+            try {
+                socket.removeAllListeners('widget-action')
+            } catch (_error) { /* do nothing */ }
+            try {
+                socket.removeAllListeners('widget-change')
+            } catch (_error) { /* do nothing */ }
+            try {
+                socket.removeAllListeners('widget-load')
+            } catch (_error) { /* do nothing */ }
+            try {
+                socket.removeAllListeners('disconnect')
+            } catch (_error) { /* do nothing */ }
 
-            node.connections[socket.id] = socket // store the connection for later use
-            uiShared.connections[socket.id] = socket // store the connection for later use
-            emitConfig(socket)
-
-            const cleanup = () => {
-                try {
-                    socket.removeListener('widget-action', onAction.bind(null, socket))
-                } catch (_error) { /* do nothing */ }
-                try {
-                    socket.removeListener('widget-change', onChange.bind(null, socket))
-                } catch (_error) { /* do nothing */ }
-                try {
-                    socket.removeListener('widget-load', onLoad.bind(null, socket))
-                } catch (_error) { /* do nothing */ }
-
-                // check if any widgets have defined custom socket events
-                // remove their listeners to make sure we clean up properly
-                node.ui?.widgets?.forEach((widget) => {
-                    if (widget.hooks?.onSocket) {
-                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                            try {
-                                socket.removeListener(eventName, handler)
-                            } catch (_error) { /* do nothing */ }
-                        }
+            // check if any widgets have defined custom socket events
+            // remove their listeners to make sure we clean up properly
+            node.ui?.widgets?.forEach((widget) => {
+                if (widget.hooks?.onSocket) {
+                    for (const [eventName] of Object.entries(widget.hooks.onSocket)) {
+                        try {
+                            socket.removeAllListeners(eventName)
+                        } catch (_error) { /* do nothing */ }
                     }
-                })
-            }
-            // clean up then re-register listeners
-            cleanup()
+                }
+            })
+        }
+
+        function setupEventHandlers (socket) {
             socket.on('widget-action', onAction.bind(null, socket))
             socket.on('widget-change', onChange.bind(null, socket))
             socket.on('widget-load', onLoad.bind(null, socket))
@@ -269,11 +267,27 @@ module.exports = function (RED) {
 
             // handle disconnection
             socket.on('disconnect', reason => {
-                cleanup()
+                cleanupEventHandlers(socket)
                 delete uiShared.connections[socket.id]
-                delete node.connections[socket.id]
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
+        }
+
+        /**
+         * on connection handler for SocketIO
+         * @param {Socket} socket socket.io socket connecting to the server
+         */
+        function onConnection (socket) {
+            // record mapping from connection to he ui-base node
+            socket._baseId = node.id
+
+            // node.connections[socket.id] = socket // store the connection for later use
+            uiShared.connections[socket.id] = socket // store the connection for later use
+            emitConfig(socket)
+
+            // clean up then re-register listeners
+            cleanupEventHandlers(socket)
+            setupEventHandlers(socket)
         }
         /**
          * Handles a widget-action event from the UI
@@ -390,6 +404,8 @@ module.exports = function (RED) {
          * @returns {Object} - { wNode, widgetConfig, widgetEvents, widget }
          */
         function getWidgetAndConfig (id) {
+            // node.ui?.widgets is empty?
+            // themes, groups, etc. are not empty?
             const wNode = RED.nodes.getNode(id)
             const widget = node.ui?.widgets?.get(id)
             const widgetConfig = widget?.props || {}
@@ -403,6 +419,9 @@ module.exports = function (RED) {
         // Make sure we clean up after ourselves
         node.on('close', (removed, done) => {
             uiShared.ioServer?.off('connection', onConnection)
+            for (const conn of Object.values(uiShared.connections)) {
+                cleanupEventHandlers(conn)
+            }
             close(node, function (err) {
                 if (err) {
                     node.error(`Error closing socket.io server for ${node.id}`, err)
@@ -438,7 +457,7 @@ module.exports = function (RED) {
             node.emitConfigRequested = setTimeout(() => {
                 try {
                     // emit config to all connected UI for this ui-base
-                    Object.values(node.connections).forEach(socket => {
+                    Object.values(uiShared.connections).forEach(socket => {
                         emitConfig(socket)
                     })
                 } finally {
@@ -546,11 +565,6 @@ module.exports = function (RED) {
              * Event Handlers
              */
 
-            widgetNode.on('close', function (removed, done) {
-                node.deregister(null, null, widgetNode)
-                done()
-            })
-
             // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
             widgetNode.on('input', async function (msg, send, done) {
                 // ensure we have latest instance of the widget's node
@@ -600,6 +614,13 @@ module.exports = function (RED) {
                     }
                 }
             })
+
+            // when a widget is "closed" remove it from this Base Node's knowledge
+            widgetNode.on('close', function (removed, done) {
+                node.deregister(null, null, widgetNode)
+                done()
+            })
+
             node.requestEmitConfig() // queue up a config emit to the UI
         }
 
