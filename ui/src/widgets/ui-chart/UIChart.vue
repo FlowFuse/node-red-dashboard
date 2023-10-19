@@ -124,8 +124,12 @@ export default {
         },
         onLoad (history) {
             // we have received a history of data points
-            // we need to add them to the chart - fortunately,
-            // it's just the same process as receiving a new msg
+            // we need to add them to the chart
+
+            // clear the chart first, onload is considered to provide all data into a chart
+            this.clear()
+
+            // adding is then just the same process as receiving a new msg
             this.onMsgInput(history)
         },
         onMsgInput (msg) {
@@ -147,10 +151,10 @@ export default {
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
-                msg.forEach((m) => {
+                msg.forEach((m, i) => {
                     const p = m.payload
                     const d = m._datapoint // server-side we compute a chart friendly format
-                    const label = this.getLabel(p, d.category)
+                    const label = d.category
                     this.addPoint(p, d, label)
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
@@ -158,13 +162,13 @@ export default {
                 // and should append each of them
                 payload.forEach((p, i) => {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
-                    const label = this.getLabel(p, d?.category)
+                    const label = d.category
                     this.addPoint(p, d, label)
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
                 const d = msg._datapoint // server-side we compute a chart friendly format
-                const label = this.getLabel(payload, d.category)
+                const label = d.category
                 this.addPoint(msg.payload, d, label)
             } else {
                 // no payload
@@ -194,7 +198,7 @@ export default {
                 msg: {
                     payload,
                     _datapoint: datapoint,
-                    topic: label
+                    series: label
                 }
             })
         },

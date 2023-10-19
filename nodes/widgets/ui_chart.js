@@ -24,7 +24,11 @@ module.exports = function (RED) {
             beforeSend: function (msg) {
                 const p = msg.payload
 
-                const label = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
+                let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
+                // if receiving a object payload, the series could be a within the payload
+                if (config.categoryType === 'property') {
+                    series = getProperty(p, config.category)
+                }
 
                 if (config.chartType === 'line' || config.chartType === 'scatter') {
                     // possible that we haven't received any x-data in the payload,
@@ -34,29 +38,36 @@ module.exports = function (RED) {
                     if (Array.isArray(p)) {
                         // array of data
                         msg._datapoint = p.map((point) => {
-                            return addToLine(point, label)
+                            // series available on a msg by msg basis - ensure we check for each msg
+                            if (config.categoryType === 'property') {
+                                series = getProperty(point, config.category)
+                            }
+                            return addToLine(point, series)
                         })
                     } else {
                         // single point
-                        msg._datapoint = addToLine(p, label)
+                        msg._datapoint = addToLine(p, series)
                     }
                 } else if (config.chartType === 'bar') {
                     // single point or array of data?
                     if (Array.isArray(p)) {
                         // array of data
                         msg._datapoint = p.map((point) => {
-                            return addToBar(point, label)
+                            if (config.categoryType === 'property') {
+                                series = getProperty(point, config.category)
+                            }
+                            return addToBar(point, series)
                         })
                     } else {
                         // single point
-                        msg._datapoint = addToBar(p, label)
+                        msg._datapoint = addToBar(p, series)
                     }
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToLine (payload, category) {
+                function addToLine (payload, series) {
                     const datapoint = {}
-                    datapoint.category = category
+                    datapoint.category = series
                     // construct our datapoint
                     if (typeof payload === 'number') {
                         // just a number, assume we're plotting a time series
@@ -75,9 +86,9 @@ module.exports = function (RED) {
                 }
 
                 // the only server-side computed var we need is the category for a Bar Chart
-                function addToBar (payload, category) {
+                function addToBar (payload, series) {
                     const datapoint = {}
-                    datapoint.category = category
+                    datapoint.category = series
                     if (typeof payload === 'number') {
                         datapoint.y = payload
                     }
@@ -117,20 +128,21 @@ module.exports = function (RED) {
                     const maxPoints = parseInt(config.removeOlderPoints)
 
                     if (config.xAxisType === 'category') {
-                        // TODO: CARRY ON FROM HERE
                         const _msg = datastore.get(node.id)
 
                         // filters the ._msg array so that we keep just the latest msg with each category/series
                         const seen = {}
-                        _msg.forEach((msg, index) => {
+                        _msg.forEach((m, index) => {
+                            const series = m._datapoint.category
                             // loop through and record the latest index seen for each topic/label
-                            seen[msg.topic] = index
+                            seen[series] = index
                         })
                         const indices = Object.values(seen)
-                        datastore(node.id, _msg.filter((msg, index) => {
+                        datastore.save(node.id, _msg.filter((msg, index) => {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         }))
+                        console.log(datastore.get(node.id))
                     } else if (maxPoints && config.removeOlderPoints) {
                         // account for multiple lines?
                         // client-side does this for _each_ line
