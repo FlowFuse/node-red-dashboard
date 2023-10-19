@@ -349,7 +349,11 @@ module.exports = function (RED) {
             }
             let msg = datastore.get(id) || {}
             async function defaultHandler (value) {
-                msg.payload = value
+                if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
+                    msg.payload = value.payload
+                } else {
+                    msg.payload = value
+                }
 
                 msg = await appendTopic(RED, widgetConfig, wNode, msg)
 
