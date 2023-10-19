@@ -4,8 +4,8 @@ module.exports = function (RED) {
      * @param {*} config
      */
     function UIGroupNode (config) {
+        RED.nodes.createNode(this, config)
         const node = this
-        RED.nodes.createNode(node, config)
 
         node.on('close', function (removed, done) {
             node.deregister() // deregister self

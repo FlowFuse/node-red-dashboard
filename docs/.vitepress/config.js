@@ -124,6 +124,7 @@ export default ({ mode }) => {
               items: [
                 { text: 'Repo Structure', link: '/contributing/guides/repo' },
                 { text: 'Events Architecture', link: '/contributing/guides/events' },
+                { text: 'State Management', link: '/contributing/guides/state-management' },
                 { text: 'Layout Managers', link: '/contributing/guides/layouts' },
                 { text: 'Registering Widgets', link: '/contributing/guides/registration' }
               ]
