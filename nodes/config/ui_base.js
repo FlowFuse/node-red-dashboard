@@ -379,6 +379,7 @@ module.exports = function (RED) {
 
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
             if (!wNode) {
+                console.log('widget does not exist any more')
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
@@ -387,7 +388,7 @@ module.exports = function (RED) {
                 if (msg) {
                     // only emit something if we have something to send
                     // and only to this connection, not all connected clients
-                    conn.emit('msg-input:' + id, msg)
+                    conn.emit('widget-load:' + id, msg)
                 }
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
