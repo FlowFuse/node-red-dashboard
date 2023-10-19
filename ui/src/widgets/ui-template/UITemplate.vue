@@ -96,9 +96,16 @@ export default {
                     return this.messages[this.id] || {}
                 }
             },
+            data () {
+                return {
+                    value: null
+                }
+            },
             methods: {
                 send (msg) {
-                    this.$parent.send(this, msg)
+                    if (msg) {
+                        this.$parent.send(this, msg)
+                    }
                 },
                 submit ($evt) {
                     this.$parent.submit(this, $evt)
@@ -134,6 +141,9 @@ export default {
     },
     methods: {
         send (component, msg) {
+            if (typeof (msg) !== 'object') {
+                msg = { payload: msg }
+            }
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
