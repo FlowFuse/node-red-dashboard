@@ -11,12 +11,13 @@ export function useDataTracker (widgetId, onInput, onLoad) {
     onMounted(() => {
         if (socket) {
             socket.on('widget-load:' + widgetId, (msg) => {
-                store.commit('data/bind', {
-                    widgetId,
-                    msg
-                })
                 if (onLoad) {
                     onLoad(msg)
+                } else {
+                    store.commit('data/bind', {
+                        widgetId,
+                        msg
+                    })
                 }
             })
             // This will on in msg input for ALL components

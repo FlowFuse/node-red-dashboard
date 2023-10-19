@@ -48,6 +48,24 @@ export default {
         // get a reference to the canvas element
         const el = this.$refs.chart
 
+        // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
+        // based on chart type and options provided from Node-RED
+        const parsing = {}
+        if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+            if (this.props.xAxisProperty) {
+                parsing.xAxisKey = this.props.xAxisProperty
+            }
+        } else if (this.props.chartType === 'bar') {
+            if (this.props.category && this.props.categoryType !== 'msg') {
+                parsing.xAxisKey = this.props.category
+            } else {
+                parsing.xAxisKey = 'category'
+            }
+        }
+        if (this.props.yAxisProperty) {
+            parsing.yAxisKey = this.props.yAxisProperty
+        }
+
         // create our ChartJS object
         const chart = new Chart(el, {
             type: this.props.chartType,
@@ -80,7 +98,8 @@ export default {
                     legend: {
                         display: this.props.showLegend
                     }
-                }
+                },
+                parsing
             }
         })
 
@@ -88,10 +107,29 @@ export default {
         this.chart = shallowRef(chart)
     },
     methods: {
+        getLabel (value, category) {
+            if (this.props.categoryType !== 'property') {
+                return category
+            }
+            // get nested property value
+            if (category) {
+                const props = category.split('.')
+                props.forEach((prop) => {
+                    if (value) {
+                        value = value[prop]
+                    }
+                })
+            }
+            return value
+        },
         onLoad (history) {
             // we have received a history of data points
-            // we need to add them to the chart - fortunately,
-            // it's just the same process as receiving a new msg
+            // we need to add them to the chart
+
+            // clear the chart first, onload is considered to provide all data into a chart
+            this.clear()
+
+            // adding is then just the same process as receiving a new msg
             this.onMsgInput(history)
         },
         onMsgInput (msg) {
@@ -113,25 +151,25 @@ export default {
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
-                msg.forEach((m) => {
-                    const label = m.topic
+                msg.forEach((m, i) => {
                     const p = m.payload
                     const d = m._datapoint // server-side we compute a chart friendly format
+                    const label = d.category
                     this.addPoint(p, d, label)
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
                 // and should append each of them
                 payload.forEach((p, i) => {
-                    const label = msg.topic
-                    const d = msg._datapoint[i] // server-side we compute a chart friendly format
+                    const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
+                    const label = d.category
                     this.addPoint(p, d, label)
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
-                const label = msg.topic
                 const d = msg._datapoint // server-side we compute a chart friendly format
-                this.addPoint(msg, d, label)
+                const label = d.category
+                this.addPoint(msg.payload, d, label)
             } else {
                 // no payload
                 console.log('have no payload')
@@ -142,11 +180,14 @@ export default {
             this.chart.update()
         },
         addPoint (payload, datapoint, label) {
+            const d = {
+                ...datapoint,
+                ...payload
+            }
             if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                const d = datapoint || {}
                 this.addToLine(d, label)
             } else if (this.props.chartType === 'bar') {
-                this.addToBar(payload, label)
+                this.addToBar(d, label)
             }
 
             // TODO: Handle storage of restricted data size, need to manage in store, so pass props through?
@@ -157,7 +198,7 @@ export default {
                 msg: {
                     payload,
                     _datapoint: datapoint,
-                    topic: label
+                    series: label
                 }
             })
         },
@@ -207,6 +248,24 @@ export default {
                             borderColor: this.props.colors
                         })
                     }
+                    this.chart.data.datasets[0].data.push(payload)
+                    this.chart.data.labels.push(label)
+                }
+            } else if (typeof payload === 'object') {
+                if (this.chart.data.labels.includes(label)) {
+                    // yes, so we need to find the index of this label
+                    const index = this.chart.data.labels.indexOf(label)
+                    // and update the data at this index
+                    this.chart.data.datasets[0].data[index] = payload
+                } else {
+                    if (!this.chart.data.datasets.length) {
+                        this.chart.data.datasets.push({
+                            data: [],
+                            backgroundColor: this.props.colors,
+                            borderColor: this.props.colors
+                        })
+                    }
+                    // ChartJS supports objects for Bar Charts, as long as we have xAxisKey and yAxisKey set
                     this.chart.data.datasets[0].data.push(payload)
                     this.chart.data.labels.push(label)
                 }

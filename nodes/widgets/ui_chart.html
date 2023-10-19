@@ -6,6 +6,29 @@
     #ui-chart-colors input[type="color"]::-moz-color-swatch {
         border: none;
     }
+
+    .node-chart-properties {
+        display: inline-flex;
+        align-items: center;
+        width: 70%;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .node-chart-properties .red-ui-typedInput-container {
+        flex-grow: 1;
+    }
+    .node-chart-property {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-grow: 1;
+    }
+    .node-chart-property label {
+        margin: 0;
+    }
+    .node-chart-property#node-container-category {
+        width: 100%;
+    }
 </style>
 
 <script type="text/javascript">
@@ -30,6 +53,11 @@
                 label: { value: 'chart' },
                 order: { value: Number.MAX_SAFE_INTEGER },
                 chartType: { value: 'line' },
+                category: { value: 'topic' },
+                categoryType: { value: 'msg' },
+                xAxisProperty: { value: null },
+                xAxisPropertyType: { value: 'msg' },
+                yAxisProperty: { value: null },
                 xAxisType: { value: 'time' },
                 showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
@@ -62,6 +90,8 @@
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                const propertyType = { value: 'property', label: 'key:' }
+
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
                     height: '#node-input-height',
@@ -97,9 +127,26 @@
                 // provide options for x-axis type
                 $('#node-input-xAxisType').typedInput()
 
+                $('#node-input-category').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-categoryType'),
+                    types: ['msg', 'str', propertyType]
+                })
+                $('#node-input-xAxisProperty').typedInput({
+                    default: propertyType.value,
+                    typeField: $('#node-input-xAxisPropertyType'),
+                    types: [propertyType]
+                })
+                $('#node-input-yAxisProperty').typedInput({
+                    default: propertyType.value,
+                    typeField: $('#node-input-yAxisPropertyType'),
+                    types: [propertyType]
+                })
+    
                 // handle event when chart's type is changed
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $('#node-input-chartType').typedInput('value')
+
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -111,6 +158,8 @@
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'time')
+                        // show x-axis property setting
+                        $('#node-container-xAxisProperty').show()
                         // show x-axis limit options
                         $('#x-axis-show').show()
                     } else {
@@ -123,6 +172,8 @@
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'category')
+                        // show x-axis property setting
+                        $('#node-container-xAxisProperty').hide()
                         // hide x-axis limit options
                         $('#x-axis-show').hide()
                     }
@@ -225,6 +276,24 @@
         <label for="node-input-removeOlderPoints" style="width:auto; margin-left:10px; margin-right:10px;" data-i18n="ui-chart.label.or"></label>
         <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
         <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
+    </div>
+    <div class="form-row">
+        <label>Properties</label>
+        <div id="node-container-axisKeys" class="node-chart-properties">
+            <div id="node-container-category" class="node-chart-property">
+                <label style="width: auto" for="node-input-category">Series:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-category" placeholder="topic">
+                <input type="hidden" id="node-input-categoryType">
+            </div>
+            <div id="node-container-xAxisProperty" class="node-chart-property">
+                <label style="width: auto" for="node-input-xAxisProperty">X:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-xAxisProperty" placeholder="msg.payload[key] or msg.payload[n][key]">
+            </div>
+            <div id="node-container-yAxisProperty" class="node-chart-property">
+                <label style="width: auto" for="node-input-yAxisProperty">Y:</label>
+                <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" placeholder="msg.payload[key] or msg.payload[n][key]">
+            </div>
+        </div>
     </div>
     <div class="form-row" id="ui-chart-colors">
         <label for="node-input-color1" data-i18n="ui-chart.label.seriesColors"></label>

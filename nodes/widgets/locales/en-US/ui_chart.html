@@ -10,8 +10,16 @@
         <dt>Show Legend <span class="property-type">bool</span></dt>
         <dd>Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.</dd>
         <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
-        <dd> For charts with an x-axis, this option allows customisation
-            of the type of axis to render.</dd>
+        <dd>
+            For charts with an x-axis, this option allows customisation
+            of the type of axis to render.
+        </dd>
+        <dt>Properties <span class="property-type">string</span></dt>
+        <dd>
+            <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</p>
+            <p><b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</p>
+            <p><b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.</p>
+        </dd>
     </dl>
     <h3>Input</h3>
     <p>Data can be passed into the Chart node in a variety of formats,
