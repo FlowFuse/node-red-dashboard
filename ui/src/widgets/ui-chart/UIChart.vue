@@ -121,7 +121,7 @@ export default {
                 })
             }
             return value
-        }.
+        },
         onLoad (history) {
             // we have received a history of data points
             // we need to add them to the chart - fortunately,
