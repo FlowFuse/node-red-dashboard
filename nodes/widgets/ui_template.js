@@ -7,6 +7,7 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
+
         const evts = {
             onAction: true // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
         }

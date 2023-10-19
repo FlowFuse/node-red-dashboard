@@ -94,11 +94,20 @@ export default {
                 ...mapState('data', ['messages']),
                 msg () {
                     return this.messages[this.id] || {}
-                }
-            },
-            data () {
-                return {
-                    value: null
+                },
+                value: {
+                    get () {
+                        console.log('get value', this.id, this.messages[this.id]?.payload)
+                        return this.messages[this.id]?.payload
+                    },
+                    set (val) {
+                        if (this.value === val) {
+                            return // no change
+                        }
+                        const msg = this.messages[this.id] || {}
+                        msg.payload = val
+                        this.messages[this.id] = msg
+                    }
                 }
             },
             methods: {
@@ -147,7 +156,7 @@ export default {
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
-            this.$socket.emit('widget-action', this.id, msg) // TODO: should we have a widget-send emitter to differentiate from action?
+            this.$socket.emit('widget-change', this.id, msg) // widget-change will store msg state server-side
         },
         submit (component, $evt) {
             // extract the form names and values from $evt.target & generate a msg
