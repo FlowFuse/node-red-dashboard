@@ -1,0 +1,84 @@
+{
+    "node": "ui_chart",
+    "description": "Chart stuff",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "type",
+            "changes": -2,
+            "notes": "Line and Bar (V) are already migrated. There is still work to be done to support Bar (H), Pie, Polar and Radar charts. Scatter plots have also been added."    
+        },
+        {
+            "property": "legend",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "interpolate",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "x-axis limit",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "x-axis label",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "y-axis min/max",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "colors",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "blank label",
+            "changes": -1,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "x-axis type",
+            "notes": "'Time', 'Linear' or 'Categorical' are available depending on the Chart Type."
+        },
+        {
+            "property": "series",
+            "notes": "Allows custommisation of the msg property, or nested json key that defines which 'series' a given datapoint belongs to.<br /><br />In Dashboard 1.0, this was <i>always</i> <code>msg.topic</code>."
+        },
+        {
+            "property": "x-property",
+            "notes": "When providing objects or arrays of data into a chart, this property can be used to define which key in the data should be used to populate the x-axis. For example, with the following data point:<pre><code>{date: '2023-10-30', value: 6}</code></pre>setting this property to <code>date</code> would set the <code>x</code> value to <code>2023-10-30</code>."
+        },
+        {
+            "property": "y-property",
+            "notes": "When providing objects or arrays of data into a chart, this property can be used to define which key in the data should be used to populate the y-axis. For example, with the following data point:<pre><code>{date: '2023-10-30', value: 6}</code></pre>setting this property to <code>value</code> would set the <code>y</code> value to <code>6</code>."
+        }
+    ]
+}

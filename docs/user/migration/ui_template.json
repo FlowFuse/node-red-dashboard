@@ -1,0 +1,51 @@
+{
+    "node": "ui_template",
+    "description": "We have big plans in the short term for further improvements to `ui-template`. This is mostly focussed on the ability to inject full Vue component behaviour, two-way binding, and third-party JS library injection.",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "type",
+            "changes": "modified",
+            "notes": "<i>'Widget in Group'</i> is still the default, but we have (temporarily) removed the <code>&lt;head&gt;</code> injection, and replaced it with two options for injecting CSS, one scoped to <i>all</i> pages, and another scoped to a <i>single</i> page"
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "template",
+            "changes": "modified",
+            "notes": "There is no longer support for Angular-based templates.<br /><br />Instead, templates should be written using <a href='https://vuejs.org/'>VueJS</a>. <a href='https://vuetifyjs.com/en/components/all/#containment'>Vuetify components</a> are also supported natively, providing a rich ecosystem of available widgets."
+        },
+        {
+            "property": "passthru",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "reload on refresh",
+            "changes": "modified",
+            "notes": "Default behaviour is that, if there is a known state, it will atomatically be restored."
+        },
+        {
+            "property": "store output",
+            "changes": "modified",
+            "notes": "If using the new in-buil;d 'send' function from within a template, this will store the output of the send function in the nodes state."
+        }
+    ]
+}

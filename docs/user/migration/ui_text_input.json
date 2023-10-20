@@ -1,0 +1,66 @@
+{
+    "node": "ui_text",
+    "description": "Text Stuff",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "mode",
+            "changes": null,
+            "notes": "Multi-line text input option also added"
+        },
+        {
+            "property": "delay",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "passthru",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "send on blur",
+            "changes": "modified",
+            "notes": "This is now the default behaviour in Dashboard 2.0. Once an input has it's value changed, and the user moves focus away, a <code>msg</code> is sent on."
+        },
+        {
+            "property": "payload",
+            "changes": -3,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ]
+}
