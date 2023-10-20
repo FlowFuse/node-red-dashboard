@@ -1,6 +1,6 @@
 <template>
     <slot name="header">
-        <h4>Migration Status</h4>
+        <h4>Property Migration Status</h4>
     </slot>
     <slot name="description">
         <p>
@@ -24,6 +24,7 @@
                     <template v-if="typeof row.changes === 'string'">{{ row.changes }}</template>
                     <span v-else-if="row.changes === -1" class="not-supported">not yet supported</span>
                     <span v-else-if="row.changes === -2" class="not-supported">partly supported</span>
+                    <span v-else-if="row.changes === -3" class="not-supported">no plan to support</span>
                     <span v-else class="no-changes">no changes</span>
                 </td>
                 <td style="width: 100%;" v-html="row.notes"></td>
@@ -61,6 +62,6 @@ table.migration-properties td {
 }
 .no-changes {
     font-style: italic;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 </style>

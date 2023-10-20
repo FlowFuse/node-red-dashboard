@@ -1,0 +1,62 @@
+{
+    "node": "ui_slider",
+    "description": "Slider stuff",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "range",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "output",
+            "changes": -1,
+            "notes": "Dashboard 2.0's (current) default behaviour is to output 'continuously while sliding', which was one of two options in Dashboard 1.0"
+        },
+        {
+            "property": "passthru",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "show thumb",
+            "notes": "Defines whether the tooltip/thumb is shown on the slider when value is changed."
+        }
+    ]
+}

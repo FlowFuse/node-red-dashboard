@@ -1,0 +1,56 @@
+{
+    "node": "ui_text",
+    "description": "Text Stuff",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "format",
+            "changes": -1,
+            "notes": null
+        },
+        {
+            "property": "layout",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "apply style",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "font",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "text size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "text color",
+            "changes": null,
+            "notes": null
+        }
+    ]
+}

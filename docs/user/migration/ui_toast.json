@@ -1,0 +1,51 @@
+{
+    "node": "ui_toast",
+    "description": "'UI Tast' has been renamed to 'UI Notification' in Dashboard 2.0, but most of the functionality is identical.'",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "position",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "timeout",
+            "changes": null,
+            "notes": "As countdown timer will also now show as part of the top border of the notification."
+        },
+        {
+            "property": "highlight",
+            "changes": "color",
+            "notes": "Instead of now just defining a single 'border' colour, the 'highlight' is used on the left-side of the notification'"
+        },
+        {
+            "property": "raw injection",
+            "changes": null,
+            "notes": "Permits the injection fo raw HTML and JS content into the widgets."
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "allow manual",
+            "notes": "Defines whether the notification can be manually dismissed, or not."
+        },
+        {
+            "property": "show countdown",
+            "notes": "When a timer is provided, if this is trye, it will show a decreasing coloured bar across the top of the Dashboard's modal."
+        }
+    ]
+}
