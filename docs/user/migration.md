@@ -164,4 +164,4 @@ We also have future plans to support injection of third-party layouts, and even 
 
 Any addons that were built for Dashboard 1.0 (e.g. `ui-svg`, `ui-worldmap`) are not supported in Dashboard 2.0.
 
-We do need community contributions to re-build them the "Dashboard 2.0 way". If you're interested in helping us with this exercise, we have a [guide on how to build custom widgets](/docs/contributing/widgets/third-party.md) to help you get started.
+We do need community contributions to re-build them the "Dashboard 2.0 way". If you're interested in helping us with this exercise, we have a [guide on how to build custom widgets](/contributing/widgets/third-party.md) to help you get started.
