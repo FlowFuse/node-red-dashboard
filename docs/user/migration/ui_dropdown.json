@@ -1,14 +1,9 @@
 {
-    "node": "ui_button",
-    "description": "Button",
+    "node": "ui_dropdown",
+    "description": "Dropdown",
     "properties": [
         {
             "property": "name",
-            "changes": null,
-            "notes": null
-        },
-        {
-            "property": "label",
             "changes": null,
             "notes": null
         },
@@ -23,8 +18,8 @@
             "notes": null
         },
         {
-            "property": "icon",
-            "changes": -1,
+            "property": "label",
+            "changes": null,
             "notes": null
         },
         {
@@ -33,28 +28,28 @@
             "notes": null
         },
         {
-            "property": "color",
+            "property": "placeholder",
             "changes": -1,
             "notes": null
         },
         {
-            "property": "background",
-            "changes": -1,
+            "property": "options",
+            "changes": null,
             "notes": null
         },
         {
-            "property": "payload",
+            "property": "multiselect",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "passthru",
             "changes": null,
             "notes": null
         },
         {
             "property": "topic",
             "changes": null,
-            "notes": null
-        },
-        {
-            "property": "emulate click",
-            "changes": -1,
             "notes": null
         },
         {

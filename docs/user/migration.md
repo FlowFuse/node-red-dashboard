@@ -3,9 +3,13 @@
     import MigrationWidgetProfile from '../components/MigrationWidgetProfile.vue'
 
     import uiButton from './migration/ui_button.json'
+    import uiDropdown from './migration/ui_dropdown.json'
+    import uiChart from './migration/ui_chart.json'
 
     const widgets = ref({
-        'ui_button': uiButton
+        'ui_button': uiButton,
+        'ui_chart': uiChart,
+        'ui_dropdown': uiDropdown,
     })
 </script>
     
@@ -43,3 +47,11 @@ The following details a direct comparison of all properties available on each no
 ### `ui_button`
 
 <MigrationWidgetProfile :profile="widgets['ui_button']" />
+
+### `ui_chart`
+
+<MigrationWidgetProfile :profile="widgets['ui_chart']" />
+
+### `ui_dropdown`
+
+<MigrationWidgetProfile :profile="widgets['ui_dropdown']" />
