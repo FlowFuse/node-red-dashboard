@@ -1,0 +1,11 @@
+{
+    "node": "ui_button",
+    "description": "Button",
+    "properties": [
+        {
+            "property": "label",
+            "changes": "label",
+            "notes": "label"
+        }
+    ]
+}
