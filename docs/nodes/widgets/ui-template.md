@@ -28,7 +28,7 @@ The template also has access to two built-in functions:
 - `send` - Outputs a message (defined by the input to this function call) from this node in the Node-RED flow. 
 - `submit` - Send a `FormData` object when attached to a `<form>` element. The created object will consnist of the `name` attributes for each form element, corresponding to their respective `value` attributes.
 
-_Note: Currently restricted to custom HTML only, but there are plans to add `<style>` and `<script>` editors in the future too (track [here](https://github.com/flowforge/flowforge-nr-dashboard/issues/115))._
+_Note: Currently restricted to custom HTML only, but there are plans to add `<style>` and `<script>` editors in the future too (track [here](https://github.com/FlowFuse/node-red-dashboard/issues/115))._
 ### Binding variables to Custom Widgets
 
 If you want to `send` a value onwards from the `ui-template` node, that is defined by some input or action taken on your template, this is currently possible using an exposed variable on the `ui-template` named `value`.

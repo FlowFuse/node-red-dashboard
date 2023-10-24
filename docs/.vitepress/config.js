@@ -44,7 +44,7 @@ export default ({ mode }) => {
         { text: 'Widgets', link: '/nodes/widgets.html' },
         { text: 'Contributing', link: '/contributing/' },
         { text: 'FlowFuse', link: 'https://flowfuse.com' },
-        { text: 'GitHub', link: 'https://github.com/flowforge/flowforge-nr-dashboard' }
+        { text: 'GitHub', link: 'https://github.com/FlowFuse/node-red-dashboard' }
       ],
       outline: [2, 3],
       search: {

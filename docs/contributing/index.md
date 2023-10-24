@@ -20,12 +20,12 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 3. **Clone Git Repo:** Clone the forked repository from your Github account. This can be anywhere appropriate on your machine (e.g. `/yourname/development/`):
    ```bash
-   git clone https://github.com/<your_github_account>/flowforge-nr-dashboard.git
+   git clone https://github.com/<your_github_account>/node-red-dashboard.git
    ```
 
 4. **Install Dependencies:** From inside your cloned directory, install all dependent packages (from the `package.json` file):
    ```bash
-   cd /flowforge-nr-dashboard
+   cd /node-red-dashboard
    npm install
    ```
 
@@ -61,7 +61,7 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 2. **Refresh Browser:** Refresh the dashboard in the browser on `http(s)://your_hostname_or_ip_address:1880/dashboard`
 3. **Develop:** Repeat step 1 to 2 over and over again, until you're satisfied with your results.
-7. **Create Branch:** Once you're ready to publish your changes, in your cloned repository directory (e.g. `/yourname/development/flowforge-nr-dashboard`), create a new branch for all the files of your forked dashboard:
+7. **Create Branch:** Once you're ready to publish your changes, in your cloned repository directory (e.g. `/yourname/development/node-red-dashboard`), create a new branch for all the files of your forked dashboard:
    ```bash
    git checkout -b name_of_your_new_branch
    ```
@@ -79,7 +79,7 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 ## Running Documentation Locally
 
-1. **Run Docs Dev Server:** You can run the documentation locally by running the following command at the root of the `/flowforge-nr-dashboard` directory:
+1. **Run Docs Dev Server:** You can run the documentation locally by running the following command at the root of the `/node-red-dashboard` directory:
    ```bash
    npm run docs:dev
    ```
