@@ -219,7 +219,7 @@ Dashboard 2.0 follows a similar architecture to Dashboard 1.0 for managing hiera
 We currently have three layouts available in Dashboard 2.0:
 
 - [**Grid**](../layouts/grid.md) - Modelled with CSS's `grid` layout, this is the default layout, and uses a fixed 12 column approach, whereby content will scale horiztonally with screen width, making it far more friendly for responsive layouts.
-- [**Flex**](../layouts/flex.md) - This uses a CSS Flex Layout and is the most similar we currently have to the only layout in Dashboard 1.0. Improvements are required here to improve the "packing" nature of the layout though.
+- [**Fixed**](../layouts/fixed.md) - This uses a CSS Flex Layout and is the most similar we currently have to the only layout in Dashboard 1.0. Improvements are required here to improve the "packing" nature of the layout though.
 - [**Notebook**](../layouts/notebook.md) - Mimicking a Jupyter Notebook layout, this provides content with a maxiimum width, scales with mobile devices, and allows for content to be stacked vertically.
 
 We also have future plans to support injection of third-party layouts, and even client-side editable layouts (e.g. drag-and-drop layout design).
