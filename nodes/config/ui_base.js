@@ -569,6 +569,14 @@ module.exports = function (RED) {
             }
 
             /**
+             * Helper Function for testing
+             */
+
+            widgetNode.getState = function () {
+                return datastore.get(widgetNode.id)
+            }
+
+            /**
              * Event Handlers
              */
 

@@ -117,7 +117,7 @@ describe('ui-switch node', function () {
             const hNode = helper.getNode('helper-node')
             hNode.on('input', (msg) => {
                 try {
-                    sNode._msg.payload.should.equal(msg.payload)
+                    sNode.getState().payload.should.equal(msg.payload)
                     resolve()
                 } catch (err) {
                     reject(err)
@@ -141,7 +141,7 @@ describe('ui-switch node', function () {
                 // we need to be sure that the helperAfterSwitch node has run first
                 setTimeout(() => {
                     try {
-                        sNode._msg.payload.should.equal(msg.payload)
+                        sNode.getState().payload.should.equal(msg.payload)
                         msgSent.should.be.true()
                         resolve()
                     } catch (err) {
@@ -173,7 +173,6 @@ describe('ui-switch node', function () {
                 // we need to be sure that the helperAfterSwitch node has run first
                 setTimeout(() => {
                     try {
-                        (sNode._msg === undefined).should.be.true()
                         sNode.warn.should.be.called()
                         msgSent.should.be.false()
                         resolve()
@@ -211,7 +210,7 @@ describe('ui-switch node', function () {
             const helperAfterComplete = helper.getNode('helper-node-complete')
             helperAfterComplete.on('input', (msg) => {
                 try {
-                    sNode._msg.payload.should.equal(msg.payload)
+                    sNode.getState().payload.should.equal(msg.payload)
                     msgSent.should.be.false()
                     resolve()
                 } catch (err) {

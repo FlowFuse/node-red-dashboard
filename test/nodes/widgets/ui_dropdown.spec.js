@@ -131,7 +131,7 @@ describe('ui-dropdown node', function () {
             const helperAfterComplete = helper.getNode('helper-node-complete')
             helperAfterComplete.on('input', (msg) => {
                 try {
-                    dNode._msg.payload.should.equal(msg.payload)
+                    dNode.getState().payload.should.equal(msg.payload)
                     msgSent.should.be.false()
                     resolve()
                 } catch (err) {

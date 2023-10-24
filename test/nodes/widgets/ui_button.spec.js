@@ -106,7 +106,6 @@ describe('ui-button node', function () {
 
         // add a fake connection so that button has somewhere to emit to and we can spy on it
         base.uiShared.connections['fake-conn-id'] = socket
-        base.connections['fake-conn-id'] = socket
 
         // now send a message to the node
         const button = helper.getNode('node-ui-button')
