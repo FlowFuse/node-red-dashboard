@@ -57,5 +57,10 @@
             "changes": null,
             "notes": null
         }
-    ]
+    ],
+    "msgs": [{
+        "property": "msg.options",
+        "changes": -1,
+        "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/285'>issue</a>"
+    }]
 }

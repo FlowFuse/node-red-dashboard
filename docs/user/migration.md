@@ -70,6 +70,70 @@ The following details a direct comparison of all properties available on each no
 
 <MigrationWidgetProfile :profile="widgets['ui_chart']" />
 
+#### Injecting Data
+
+There is a significant crossover between Dashboard 1.0 and 2.0 in how you can inject data into a chart, but some important, and notable differences that utilises the new `series` and `property` options available.
+
+Injecting raw data can be done with:
+
+- `msg.payload = <value>`
+    - In this case, the value received by the chart will be used as a `y` value, and the `x` value will be automatically added as the current date/time.
+- `msg.payload = { y: <value> }`
+    - In this case, the `y` value will be used as defined, and the `x` value will be calculated as the current date/time.
+- `msg.payload = { x: <value>, y: <value> }`
+    - In this case, the `x` and `y` values will be used as the `x` and `y` values of the data point.
+- `msg.payload = [{ x: <value>, y: <value> }, { x: <value>, y: <value> }]`
+    - In this case, multiple points will be plotted into a single line.
+- `msg.payload = [{ x: <value>, y: <value>, line: <value> }, { x: <value>, y: <value>, line: <value> }]`
+    - In this case, multiple points will be plotted, and if the `series` property is set to `property:line` then the `line` property will be used to determine which line each data point should be plotted on.
+
+When wanting to separate data into multiple `series` in Dashboard 1.0, you had to define an appropriate `msg.topic`. This is now a configurable option in Dashboard 2.0, with the default value as per Dashboard 1.0. This means, that if you want to inject multiple data points, you could now send:
+
+```js
+msg.payload = [{
+    "category": "cat-1",
+    "value": 2,
+    "date": "2023-10-23"
+}, {
+    "category": "cat-2",
+    "value": 3,
+    "date": "2023-10-23"
+}, {
+    "category": "cat-1",
+    "value": 1,
+    "date": "2023-10-24"
+}, {
+    "category": "cat-2",
+    "value": 6,
+    "date": "2023-10-24"
+}]
+```
+
+Where the `series` property of this chart could be set to `key:category`.
+
+Charts now store data on a message-by-message bassis for clearer auditing, and so do not store as per [Dashboard 1.0](https://github.com/node-red/node-red-dashboard/blob/master/Charts.md#line-charts-1). This means that the format:
+
+```
+[{
+    "series": ["A", "B"],
+    "data": [
+        [
+            { "x": 1504029632890, "y": 5 },
+            { "x": 1504029636001, "y": 4 },
+            { "x": 1504029638656, "y": 2 }
+        ],
+        [
+            { "x": 1504029633514, "y": 6 },
+            { "x": 1504029636622, "y": 7 },
+            { "x": 1504029639539, "y": 6 }
+        ]
+    ],
+    "labels": [""]
+}]
+```
+
+is currently _not_ supported. If this is of particular importance, please do voice your support [here](https://github.com/FlowFuse/node-red-dashboard/issues/229).
+
 ### `ui_colour_picker`
 
 Whilst there is currently not an explicit `ui_colour_picker` widget, the `ui_text_input` widget can be used to achieve the same result, by setting _"type"_ to _"color"_

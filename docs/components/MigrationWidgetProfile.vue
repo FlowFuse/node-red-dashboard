@@ -10,8 +10,19 @@
             </template>
             <template #description>
                 <p>
-                    The following detials newly implemented properties
+                    The following details newly implemented properties
                     and features in Dashboard 2.0 for this node.
+                </p>
+            </template>
+        </PropertyMigrationTable>
+        <PropertyMigrationTable v-if="profile.msgs"
+            :properties="profile.msgs">
+            <template #header>
+                <h4>Message Options</h4>
+            </template>
+            <template #description>
+                <p>
+                    The following are Dashboard 1.0 <code>msg.&ltproperty&gt;</code> values that could be sent to the node to affect functionality & contents of the node.
                 </p>
             </template>
         </PropertyMigrationTable>
