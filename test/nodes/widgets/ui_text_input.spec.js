@@ -114,7 +114,7 @@ describe('ui-text-input node', function () {
             const helperAfterComplete = helper.getNode('helper-node-complete')
             helperAfterComplete.on('input', (msg) => {
                 try {
-                    tNode._msg.payload.should.equal(msg.payload)
+                    tNode.getState().payload.should.equal(msg.payload)
                     msgSent.should.be.false()
                     resolve()
                 } catch (err) {
