@@ -38,7 +38,7 @@ To get started, drop any widget from the flows on the left-side of Node-RED onto
 
 For the first widget you add, you will need to double click your new widget, and create your first group, page, theme and base. Once you have created these, you can add more widgets to the same group freely, and add any more groups/pages as you need to.
 
-_Note: we do have a plan to automate this initial manual step of creating group/page/base - [issue](https://github.com/flowforge/flowforge-nr-dashboard/issues/66)._
+_Note: we do have a plan to automate this initial manual step of creating group/page/base - [issue](https://github.com/FlowFuse/node-red-dashboard/issues/66)._
 
 ## Managing your Dashboard
 

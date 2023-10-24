@@ -14,7 +14,7 @@ hero:
       link: /getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/flowforge/flowforge-nr-dashboard
+      link: https://github.com/FlowFuse/node-red-dashboard
 
 features:
   - icon: 

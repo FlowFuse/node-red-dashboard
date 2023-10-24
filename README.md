@@ -34,7 +34,7 @@ The new Node-RED Dashboard will be published as a separate package. It will carr
 
 ## Community and Contribution
 
-We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [Github issue](https://github.com/flowforge/flowforge-nr-dashboard/issues/new/choose). We also highly encourage open-source contributions. We aim to create a robust tool through community collaboration.
+We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [Github issue](https://github.com/FlowFuse/node-red-dashboard/issues/new/choose). We also highly encourage open-source contributions. We aim to create a robust tool through community collaboration.
 
 ## Join Us
 
