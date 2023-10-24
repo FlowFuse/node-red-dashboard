@@ -1,6 +1,6 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div v-if="orderedGroups" class="nrdb-layout--notebook">
+        <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--notebook nrdb-ui-page" :class="page?.className">
             <div
                 v-for="g in orderedGroups"
                 :id="'nrdb-ui-group-' + g.id"
@@ -49,12 +49,15 @@ export default {
         }
     },
     computed: {
-        ...mapState('ui', ['groups', 'widgets']),
+        ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
         orderedGroups: function () {
             const groups = this.groupsByPage(this.$route.meta.id)
             return groups
+        },
+        page: function () {
+            return this.pages[this.$route.meta.id]
         }
     },
     methods: {
