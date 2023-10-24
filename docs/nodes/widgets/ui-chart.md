@@ -159,6 +159,16 @@ msg = {
 }
 ```
 
+Whilst `msg.topic` is the default value for the `series` property on a `ui-chart`, this can be changed. You could also set it to `key:<series>` to differentiate each point to a separate line, in that case your data would like like:
+
+```js
+msg.payload = {
+    "value": 2,
+    "series": "my-series"
+}
+```
+
+
 #### Multiple Data Points (Injecting an Array of Data)
 
 If you would like to pass in multiple data points at the same time into a chart, you can do so by passing an `Array` in `msg.payload`.
@@ -179,7 +189,27 @@ msg = {
 }
 ```
 
-Note how we can still define the `msg.topic` value such that these data points all appear on the same line.
+Note how we can still define the `msg.topic` value (or whatever we have defined for `series`) such that these data points all appear on the same line.
+
+If we wanted each point in a different series, we could set `series` to `key:series`, so that each data point is condsidered individually:
+
+```js
+msg = {
+    "payload": [{
+        "series": "Line 1",
+        "x": 30,
+        "y": 43
+    }, {
+        "series": "Line 2",
+        "x": 40,
+        "y": 56
+    }, {
+        "series": "Line 1",
+        "x": 50,
+        "y": 74
+    }]
+}
+```
 
 ### Scatter Plot
 
