@@ -101,8 +101,8 @@ export default ({ mode }) => {
           text: 'Layouts',
           collapsed: false,
           items: [
-            { text: 'Flex', link: '/layouts/flex' },
             { text: 'Grid', link: '/layouts/grid' },
+            { text: 'Fixed', link: '/layouts/fixed' },
             { text: 'Notebook', link: '/layouts/notebook' }
           ]
         },
