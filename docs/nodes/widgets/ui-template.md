@@ -39,10 +39,10 @@ Let's consider a use case where a user wants to add [Vuetify's star rating widge
 
 ```html
 <v-rating hover :length="5" :size="32" v-model="value"
-    active-color="primary" @change="send({payload: value})"/>
+    active-color="primary" @update:modelValue="send({payload: value})"/>
 ```
 
-Here, we've used Vue's `v-model` to create a two-way binding of the variable to whatever selection a user makes in the `v-rating` widget. Then, defined an `@change` event, such that when that value changes, we call our in-built `send(msg)` function, where we can make our `msg` on the fly in the function call itself.
+Here, we've used Vue's `v-model` to create a two-way binding of the variable to whatever selection a user makes in the `v-rating` widget. Then, defined an `@update:modelValue` event, such that when that bound value changes, we call our in-built `send(msg)` function, where we can make our `msg` on the fly in the function call itself.
 
 
 When changed, if wired to a "Debug" node, then we can see the resulting outcome is as follows:
