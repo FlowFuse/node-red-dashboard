@@ -1,5 +1,5 @@
 {
-    "name": "@flowforge/node-red-dashboard",
+    "name": "@flowfuse/node-red-dashboard",
     "homepage": "https://dashboard.flowfuse.com",
     "version": "0.7.0",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
