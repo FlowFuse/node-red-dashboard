@@ -43,11 +43,18 @@ export default {
                     path: route,
                     name: routeName
                 }
-                // navigate to this route, this ensures we navigate to _something_ when the app loads
-                this.$router.push({
-                    name: routeName
-                })
             })
+
+            // add catch all - this ensures we navigate to _something_ when the app loads
+            // default to the first page added (for now)
+            this.$router?.addRoute({
+                path: '/:pathMatch(.*)*',
+                redirect: payload.dashboards[Object.values(payload.pages)[0].ui].path + Object.values(payload.pages)[0].path
+            })
+
+            // if this is the first time we load hte Dashboard, the router hasn't registered the current route properly,
+            // so best we just navigate to the existing URL to let router catch up
+            this.$router.push(this.$route.path)
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page
