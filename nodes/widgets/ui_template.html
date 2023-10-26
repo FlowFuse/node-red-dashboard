@@ -2,15 +2,15 @@
     (function () {
         // convert to i18 text
         function c_ (x) {
-            return RED._('@flowforge/node-red-dashboard/ui-template:ui-template.' + x)
+            return RED._('@flowfuse/node-red-dashboard/ui-template:ui-template.' + x)
         }
         // TODO: move this to util.js for reuse & unit testing
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
         RED.nodes.registerType('ui-template', {
-            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
-            color: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.colors.dark'),
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.dark'),
             defaults: {
                 group: { type: 'ui-group', required: true }, // for when template is scoped to 'local' (default)
                 dashboard: { type: 'ui-base', required: false }, // for when template is scoped to 'site'

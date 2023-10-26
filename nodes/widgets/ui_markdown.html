@@ -2,12 +2,12 @@
     (function () {
         // convert to i18 text
         function c_ (x) {
-            return RED._('@flowforge/node-red-dashboard/ui-markdown:ui-markdown.' + x)
+            return RED._('@flowfuse/node-red-dashboard/ui-markdown:ui-markdown.' + x)
         }
 
         RED.nodes.registerType('ui-markdown', {
-            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
-            color: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.colors.dark'),
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.dark'),
             defaults: {
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
