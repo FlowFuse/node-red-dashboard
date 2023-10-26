@@ -190,13 +190,27 @@ main {
 }
 
 /* Override the default Vuetify theme by making 'primary' the main colour for widgets, rather than 'surface' */
-.v-btn--variant-elevated, .v-btn--variant-flat {
+.v-btn--variant-elevated,
+.v-btn--variant-flat,
+.v-btn-group .v-btn--variant-elevated.v-btn--active,
+.v-btn-group .v-btn--variant-flat.v-btn--active {
     background-color: rgb(var(--v-theme-primary));
     color: rgb(var(--v-theme-on-primary));
 }
-.v-btn--variant-elevated, .v-btn--variant-flat {
-    background-color: rgb(var(--v-theme-primary));
-    color: rgb(var(--v-theme-on-primary));
+
+/* Make sure Button fills the containing group */
+.v-btn.v-btn--density-default  {
+    height: auto;
+}
+
+.v-btn-group .v-btn--variant-elevated,
+.v-btn-group .v-btn--variant-flat {
+    background-color: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+}
+
+.v-btn-group .v-btn {
+    flex-grow: 1;
 }
 
 .v-card {
