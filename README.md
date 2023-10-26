@@ -10,11 +10,13 @@ FlowFuse's Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. 
 - Click "Manage Palette"
 - Switch to the "Install" tab
 - Search `node-red-dashboard`
-- Install the `@flowforge/node-red-dashboard` package (not `node-red-dashboard`)
+- Install the `@flowfuse/node-red-dashboard` package (not `node-red-dashboard`)
 
 The nodes will then be available in your editor for you to get started.
 
 If you want to use `npm` to install your nodes, you can instead [follow these instructions](https://nodered.org/docs/user-guide/runtime/adding-nodes)
+
+*Note*: this package was previously published under the name `@flowforge/node-red-dashboard`. That package has now been deprecated and will not receive any further updates.
 
 ## Contributing
 
@@ -34,7 +36,7 @@ The new Node-RED Dashboard will be published as a separate package. It will carr
 
 ## Community and Contribution
 
-We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [Github issue](https://github.com/flowforge/flowforge-nr-dashboard/issues/new/choose). We also highly encourage open-source contributions. We aim to create a robust tool through community collaboration.
+We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [Github issue](https://github.com/FlowFuse/node-red-dashboard/issues/new/choose). We also highly encourage open-source contributions. We aim to create a robust tool through community collaboration.
 
 ## Join Us
 

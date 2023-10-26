@@ -97,7 +97,6 @@ export default {
                 },
                 value: {
                     get () {
-                        console.log('get value', this.id, this.messages[this.id]?.payload)
                         return this.messages[this.id]?.payload
                     },
                     set (val) {
