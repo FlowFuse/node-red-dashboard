@@ -198,6 +198,16 @@ main {
     color: rgb(var(--v-theme-on-primary));
 }
 
+
+/* Make sure Button fills the containing group */
+.v-btn.v-btn--density-default  {
+    height: auto;
+}
+
+.v-btn--variant-elevated, .v-btn--variant-flat {
+    background-color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+}
 .v-btn-group .v-btn--variant-elevated,
 .v-btn-group .v-btn--variant-flat {
     background-color: rgb(var(--v-theme-surface));
