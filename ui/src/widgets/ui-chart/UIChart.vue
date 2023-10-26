@@ -55,14 +55,14 @@ export default {
             if (this.props.xAxisProperty) {
                 parsing.xAxisKey = this.props.xAxisProperty
             }
-        } else if (this.props.chartType === 'bar') {
+        } else if (this.props.categoryType !== 'json' && this.props.chartType === 'bar') {
             if (this.props.category && this.props.categoryType !== 'msg') {
                 parsing.xAxisKey = this.props.category
             } else {
                 parsing.xAxisKey = 'category'
             }
         }
-        if (this.props.yAxisProperty) {
+        if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
             parsing.yAxisKey = this.props.yAxisProperty
         }
 
@@ -107,6 +107,7 @@ export default {
         this.chart = shallowRef(chart)
     },
     methods: {
+        // given an object, return the value of the category property (which can be nested)
         getLabel (value, category) {
             if (this.props.categoryType !== 'property') {
                 return category
@@ -155,7 +156,7 @@ export default {
                     const p = m.payload
                     const d = m._datapoint // server-side we compute a chart friendly format
                     const label = d.category
-                    this.addPoint(p, d, label)
+                    this.addPoints(p, d, label)
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
@@ -163,13 +164,13 @@ export default {
                 payload.forEach((p, i) => {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
                     const label = d.category
-                    this.addPoint(p, d, label)
+                    this.addPoints(p, d, label)
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
                 const d = msg._datapoint // server-side we compute a chart friendly format
                 const label = d.category
-                this.addPoint(msg.payload, d, label)
+                this.addPoints(msg.payload, d, label)
             } else {
                 // no payload
                 console.log('have no payload')
@@ -178,6 +179,25 @@ export default {
                 this.limitDataSize()
             }
             this.chart.update()
+        },
+        addPoints (payload, datapoint, label) {
+            const d = {
+                ...datapoint,
+                ...payload
+            }
+            if (Array.isArray(label) && label.length > 0) {
+                // we have an array of series, meaning we plot multiple data points per data object
+                for (let i = 0; i < label.length; i++) {
+                    const dd = {
+                        ...d
+                    }
+                    dd.category = d.category[i]
+                    dd.y = d.y[i]
+                    this.addPoint(payload, dd, label[i])
+                }
+            } else {
+                this.addPoint(payload, datapoint, label)
+            }
         },
         addPoint (payload, datapoint, label) {
             const d = {
@@ -252,12 +272,7 @@ export default {
                     this.chart.data.labels.push(label)
                 }
             } else if (typeof payload === 'object') {
-                if (this.chart.data.labels.includes(label)) {
-                    // yes, so we need to find the index of this label
-                    const index = this.chart.data.labels.indexOf(label)
-                    // and update the data at this index
-                    this.chart.data.datasets[0].data[index] = payload
-                } else {
+                if (!this.chart.data.labels.includes(label)) {
                     if (!this.chart.data.datasets.length) {
                         this.chart.data.datasets.push({
                             data: [],
@@ -265,9 +280,16 @@ export default {
                             borderColor: this.props.colors
                         })
                     }
-                    // ChartJS supports objects for Bar Charts, as long as we have xAxisKey and yAxisKey set
-                    this.chart.data.datasets[0].data.push(payload)
                     this.chart.data.labels.push(label)
+                }
+                const index = this.chart.data.labels.indexOf(label)
+                // ChartJS supports objects for Bar Charts, as long as we have xAxisKey and yAxisKey set
+                // and update the data at this index
+                if (this.props.categoryType === 'json' && this.props.category.length > 0) {
+                    // we would have computed these values server-side for multiple series defined
+                    this.chart.data.datasets[0].data[index] = payload.y
+                } else {
+                    this.chart.data.datasets[0].data[index] = payload
                 }
             } else {
                 // only support numbers for now
