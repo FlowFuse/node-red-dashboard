@@ -21,12 +21,18 @@ module.exports = function (RED) {
         node.register = function (group, widgetNode, widgetConfig, widgetEvents) {
             const ui = RED.nodes.getNode(config.ui)
             const page = config
-            ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
+            if (ui) {
+                ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
+            } else {
+                node.error(`Error registering Widget - ${widgetNode.name || widgetNode.id}. No parent ui-base node found for ui-page node: ${(page.name || page.id)}`)
+            }
         }
         node.deregister = function (group, widgetNode) {
             const ui = RED.nodes.getNode(config.ui)
             const page = config
-            ui.deregister(page, group, widgetNode)
+            if (ui) {
+                ui.deregister(page, group, widgetNode)
+            }
         }
     }
     RED.nodes.registerType('ui-page', UIPageNode)

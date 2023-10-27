@@ -79,7 +79,10 @@ const getters = {
 
 const mutations = {
     dashboards (state, dashboards) {
-        state.dashboards = dashboards
+        state.dashboards = {
+            ...state.dashboards,
+            ...dashboards
+        }
     },
     pages (state, pages) {
         state.pages = pages

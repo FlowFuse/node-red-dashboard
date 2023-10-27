@@ -72,6 +72,12 @@ main {
     font-weight: 600;
 }
 
+.nrdb-placeholder .status-duplicates {
+    font-weight: 400;
+    color: #222;
+    margin-top: 0.5rem;
+}
+
 /**
 * Common Widget Styling
 */  
