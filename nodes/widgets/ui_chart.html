@@ -130,7 +130,7 @@
                 $('#node-input-category').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-categoryType'),
-                    types: ['msg', 'str', propertyType]
+                    types: ['msg', 'str', 'json', propertyType]
                 })
                 $('#node-input-xAxisProperty').typedInput({
                     default: propertyType.value,
@@ -176,6 +176,18 @@
                         $('#node-container-xAxisProperty').hide()
                         // hide x-axis limit options
                         $('#x-axis-show').hide()
+                    }
+                })
+    
+                // handle event when chart's type is changed
+                $('#node-input-category').change((evt) => {
+                    const categoryType = $('#node-input-categoryType').val()
+
+                    if (categoryType === 'json') {
+                        // hide y-axis proepty setting as category will now control that
+                        $('#node-container-yAxisProperty').hide()
+                    } else {
+                        $('#node-container-yAxisProperty').show()
                     }
                 })
 

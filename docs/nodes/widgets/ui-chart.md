@@ -36,20 +36,25 @@ Most commonly, this is done by wiring a `ui-button` to the `ui-chart` node and c
 
 ## Working with Data
 
-`ui-chart` allows you to define which "Properties" from your data you would like to render on the chart.
+`ui-chart` allows you to define which "keys" from your data you would like to render on the chart.
 
+![Example keymapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example keymapping config for UI Chart"){data-zoomable}
+_Example keymapping config for UI Chart_
+
+In this example, each received datapoint would plot to a fixed "Temperature" series, and UI Chart would read the `.time` value to plot on the x-axis, and the `.temp` value to plot on the y-axis.
 ### Series
 
-The `Series` property allows you to define how you want to set the Series of data stream into this widget.
+The `Series` property allows you to define how you want to control which line/bar (series) data belongs to when streamed into this widget.
 The default is `msg.topic`, where separate topics will render to a new line/bar in their respective plots.
 
-If you want to label a single line on your chart, you can set this to a static `string` value, e.g. `my-line`,
+If you want to label a single line on your chart, you can set this to a static `string` value, e.g. `Temperature`,
 which saves you have to assign `msg.topic` to every data point.
 
 #### Multiple Lines
 
-If you would like to plot multiple lines on the same chart, you can do so by defining the `series` property, which defaults to `msg.topic`.
-With this defined, you can assign different data to different satasets that will be plotted:
+If you would like to plot multiple lines on the same chart, you can do so by defining the `Series` property, which defaults to `msg.topic`.
+
+With this defined, you can assign different data to different datasets that will be plotted:
 
 ```js
 msg = {
@@ -64,6 +69,56 @@ msg = {
     "payload": 2
 }
 ```
+
+This use case is great if you have multiple sensors feeding data into the same chart. You can assign `msg.topic` accordignly for each sensor.
+
+This behaviour is mimicked here with three sliders, each with a different `msg.topic`:
+
+![Example Line Chart rendering data from different "sensors" using msg.topic](/images/node-examples/ui-chart-msgtopic.png "Example Line Chart rendering data from different \"sensors\" using msg.topic"){data-zoomable}
+_Example Line Chart rendering data from different "sensors" using msg.topic_
+
+
+Alternatively, you can set the `series` property to type `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point. For example:
+
+```js
+msg.payload = [
+    {
+        "x_value": 12,
+        "value": 17,
+        "nested": {
+            "value": 24
+        }
+    },
+    {
+        "x_value": 17,
+        "value": 36,
+        "nested": {
+            "value": 10
+        }
+    },
+    {
+        "x_value": 23,
+        "value": 19,
+        "nested": {
+            "value": 75
+        }
+    },
+    {
+        "x_value": 34,
+        "value": 12,
+        "nested": {
+            "value": 23
+        }
+    }
+]
+```
+with a chart config of:
+
+![Example config of a Line Chart to render multiple lines of data from a single data point](/images/node-examples/ui-chart-multiline-config.png "Example config of a Line Chart to render multiple lines of data from a single data point"){data-zoomable}
+
+Would result in:
+
+![Example of a Line Chart rendering multiple data points per injecting payload](/images/node-examples/ui-chart-multiline.png "Example of a Line Chart rendering multiple data points per injecting payload"){data-zoomable}
 
 ### Nested Data
 

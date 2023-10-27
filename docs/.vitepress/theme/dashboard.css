@@ -16,3 +16,7 @@ img + em {
 nav#VPSidebarNav p {
     pointer-events: none;
 }
+
+img + em {
+    font-size: 0.875rem;
+}

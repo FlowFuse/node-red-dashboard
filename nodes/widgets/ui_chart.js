@@ -21,6 +21,8 @@ module.exports = function (RED) {
         }
 
         const evts = {
+            // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
+            // here, we use it to pre-process chart data to format it ready for plotting
             beforeSend: function (msg) {
                 const p = msg.payload
 
@@ -46,7 +48,19 @@ module.exports = function (RED) {
                         })
                     } else {
                         // single point
-                        msg._datapoint = addToLine(p, series)
+                        if (config.categoryType === 'json') {
+                            // we can produce multiple datapoints from a single object/value here
+                            const points = []
+                            series.forEach((s) => {
+                                if (s in p) {
+                                    const datapoint = addToLine(p, s)
+                                    points.push(datapoint)
+                                }
+                            })
+                            msg._datapoint = points
+                        } else {
+                            msg._datapoint = addToLine(p, series)
+                        }
                     }
                 } else if (config.chartType === 'bar') {
                     // single point or array of data?
@@ -66,6 +80,7 @@ module.exports = function (RED) {
 
                 // function to process a data point being appended to a line/scatter chart
                 function addToLine (payload, series) {
+                    console.log(payload, series)
                     const datapoint = {}
                     datapoint.category = series
                     // construct our datapoint
@@ -76,11 +91,21 @@ module.exports = function (RED) {
                     } else if (typeof payload === 'object') {
                         // may have been given an x/y object already
                         let x = getProperty(payload, config.xAxisProperty)
+                        let y = payload.y
                         if (x === undefined || x === null) {
                             x = (new Date()).getTime()
                         }
+                        if (Array.isArray(series)) {
+                            if (series.length > 1) {
+                                y = series.map((s) => {
+                                    return getProperty(payload, s)
+                                })
+                            } else {
+                                y = getProperty(payload, series[0])
+                            }
+                        }
                         datapoint.x = x
-                        datapoint.y = payload.y
+                        datapoint.y = y
                     }
                     return datapoint
                 }
@@ -91,6 +116,17 @@ module.exports = function (RED) {
                     datapoint.category = series
                     if (typeof payload === 'number') {
                         datapoint.y = payload
+                    }
+                    if (Array.isArray(series)) {
+                        let y = null
+                        if (series.length > 1) {
+                            y = series.map((s) => {
+                                return getProperty(payload, s)
+                            })
+                        } else {
+                            y = getProperty(payload, series[0])
+                        }
+                        datapoint.y = y
                     }
                     return datapoint
                 }
