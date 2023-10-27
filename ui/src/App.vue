@@ -96,10 +96,11 @@ export default {
                     }
                 }
                 return null
-            }
-            return {
-                type: 'warning',
-                msg: 'Hmmm... Something unexpected has gone wrong. Please check the console for more information.'
+            } else {
+                return {
+                    type: 'info',
+                    msg: 'Please add and configure your first Dashboard 2.0 node to get started.'
+                }
             }
         }
     },
