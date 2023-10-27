@@ -1,6 +1,15 @@
 <template>
     <v-app>
-        <router-view />
+        <router-view>
+            <div class="nrdb-placeholder-container">
+                <div class="nrdb-placeholder">
+                    <img src="./assets/logo.png">
+                    <h1>Node-RED Dashboard 2.0</h1>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <p :class="'status-' + status.type" v-html="status.msg" />
+                </div>
+            </div>
+        </router-view>
     </v-app>
 </template>
 
@@ -17,7 +26,32 @@ export default {
     name: 'App',
     inject: ['$socket'],
     computed: {
-        ...mapState('ui', ['dashboards', 'pages', 'widgets'])
+        ...mapState('ui', ['dashboards', 'pages', 'widgets']),
+        status: function () {
+            if (this.dashboards) {
+                const dashboards = Object.keys(this.dashboards)
+                if (!dashboards || dashboards.length === 0) {
+                    return {
+                        type: 'info',
+                        msg: 'Please add some Dashboard 2.0 nodes to your flow and re-deploy.'
+                    }
+                } else if (dashboards.length > 1) {
+                    return {
+                        type: 'warning',
+                        msg: 'We currently do not support multiple <code>ui-base</code> nodes in a single flow.<p>Please remove all but one (in the "config" menu on the right-side of Node-RED) and re-deploy.</p>'
+                    }
+                }
+                return {
+                    type: 'warning',
+                    msg: 'Hmmm... Something unexpected has gone wrong. Please check the console for more information.'
+                }
+            } else {
+                return {
+                    type: 'info',
+                    msg: 'Loading...'
+                }
+            }
+        }
     },
     created () {
         this.$socket.on('ui-config', (topic, payload) => {
@@ -54,7 +88,7 @@ export default {
 
             // if this is the first time we load hte Dashboard, the router hasn't registered the current route properly,
             // so best we just navigate to the existing URL to let router catch up
-            this.$router.push(this.$route.path)
+            // this.$router.push(this.$route.path)
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page

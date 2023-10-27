@@ -30,6 +30,49 @@ main {
 }
 
 /**
+* Placeholder
+*/
+
+.nrdb-placeholder-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+}
+
+.nrdb-placeholder {
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #222;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    border-radius: 6px;
+    border: 1px solid #d1d1d1;
+    background-color: #fff;
+}
+
+.nrdb-placeholder img {
+    width: 150px;
+}
+
+.nrdb-placeholder p {
+    margin: 0.5rem 0 0;
+}
+
+.nrdb-placeholder .status-info {
+    font-weight: 600;
+}
+
+.nrdb-placeholder .status-warning {
+    color: #bb2020;
+    font-weight: 600;
+}
+
+/**
 * Common Widget Styling
 */  
 .nrdb-ui-widget {

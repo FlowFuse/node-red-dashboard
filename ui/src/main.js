@@ -19,7 +19,7 @@ import * as directives from 'vuetify/directives'
 const theme = {
     dark: false,
     colors: {
-        background: '#0000ff',
+        background: '#fff',
         'group-background': '#ffffff',
         primary: '#0000ff',
         accent: '#ff6b99',
