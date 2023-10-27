@@ -88,7 +88,7 @@ export default {
 
             // if this is the first time we load hte Dashboard, the router hasn't registered the current route properly,
             // so best we just navigate to the existing URL to let router catch up
-            // this.$router.push(this.$route.path)
+            this.$router.push(this.$route.path)
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page
