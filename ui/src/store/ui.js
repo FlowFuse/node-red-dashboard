@@ -4,6 +4,7 @@
 
 // initial state
 const state = () => ({
+    dashboards: null,
     pages: null,
     groups: null,
     themes: null,
@@ -12,6 +13,9 @@ const state = () => ({
 
 // getters
 const getters = {
+    dashboards (state) {
+        return state.dashboards
+    },
     pages (state) {
         return state.pages
     },
@@ -74,6 +78,12 @@ const getters = {
 }
 
 const mutations = {
+    dashboards (state, dashboards) {
+        state.dashboards = {
+            ...state.dashboards,
+            ...dashboards
+        }
+    },
     pages (state, pages) {
         state.pages = pages
     },
