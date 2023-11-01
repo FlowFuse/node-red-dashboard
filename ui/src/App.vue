@@ -13,13 +13,34 @@
 </template>
 
 <script>
+import * as Vue from 'vue' // eslint-disable-line import/order
+import { defineAsyncComponent, markRaw } from 'vue' // eslint-disable-line import/order
+import { loadModule } from 'vue3-sfc-loader/dist/vue3-sfc-loader.esm.js'
 import { mapState } from 'vuex'
-import { markRaw } from 'vue' // eslint-disable-line import/order
 
 // eslint-disable-next-line n/no-missing-import
 import layouts from './layouts' // import all layouts
 // eslint-disable-next-line n/no-missing-import
-import widgetComponents from './widgets' // import all Vue Widget Components
+import widgetComponents from './widgets'
+
+console.log(loadModule) // import all Vue Widget Components
+
+const options = {
+    async getFile (url) {
+        console.log('get file', url)
+        return fetch(url).then((response) =>
+            response.ok ? response.text() : Promise.reject(response)
+        )
+    },
+    addStyle (textContent) {
+        const style = Object.assign(document.createElement('style'), { textContent })
+        const ref = document.head.getElementsByTagName('style')[0] || null
+        document.head.insertBefore(style, ref)
+    },
+    moduleCache: {
+        vue: Vue
+    }
+}
 
 export default {
     name: 'App',
@@ -144,8 +165,16 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(id => {
                 const widget = payload.widgets[id]
-                // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
-                widget.component = markRaw(widgetComponents[widget.type] || widgetComponents['ui-template'])
+                if (widgetComponents[widget.type]) {
+                    // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
+                    widget.component = markRaw(widgetComponents[widget.type])
+                } else if (widget.src) {
+                    console.log('widget.src.src', widget.src.src)
+                    // widget.component = defineAsyncComponent(() => loadModule(widget.src.src, options))
+                    widget.component = defineAsyncComponent(() => loadModule(widget.src.src, options))
+                } else {
+                    widget.component = markRaw(widgetComponents['ui-template'])
+                }
             })
 
             // store this data in our VueX store for access across the app

@@ -1,4 +1,5 @@
 // const Emitter = require('events').EventEmitter
+const fs = require('fs')
 const path = require('path')
 
 const v = require('../../package.json').version
@@ -29,7 +30,9 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
-        settings: {}
+        settings: {},
+        // third party widgets
+        contribs: {}
     }
 
     /**
@@ -58,6 +61,64 @@ module.exports = function (RED) {
             /**
              * Configure Web Server to handle UI traffic
              */
+
+            // CHECK FOR ANY THIRD PARTY WIDGETS
+            // https://flexdash.github.io/docs/developing-widgets/background/#dependencies
+
+            // read users .Node-RED/package.json
+            console.log('RED')
+            console.log(RED.settings.userDir)
+            // console.log(process.env)
+            const packagePath = path.join(RED.settings.userDir, 'package.json')
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+
+            console.log(packageJson)
+
+            const dependencies = Object.entries(packageJson.dependencies).filter(([p, f]) => {
+                // p - package name
+                // f - file path
+                console.log(p, f)
+                return p.includes('node-red-dashboard-')
+            }).map(([p, f]) => {
+                const modulePath = path.join(RED.settings.userDir, 'node_modules', p)
+                const packagePath = path.join(modulePath, 'package.json')
+                try {
+                    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+                    if (packageJson?.['node-red-dashboard-2']) {
+                        // loop over object of widgets
+                        Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([wName, wConfig]) => {
+                            console.log('widget name: ', wName)
+                            const source = wConfig.source
+                            console.log('widget source: ', source)
+                            // make the `source` file available via our express server and to the UI
+                            const url = config.path + '/widgets/' + p + '/' + wName + '.vue'
+                            const widgetPath = path.join(modulePath, source)
+                            uiShared.app.use(url, uiShared.httpMiddleware, express.static(widgetPath, {
+                                setHeaders: function (res, path, stat) {
+                                    res.set('Content-Type', 'text/javascript')
+                                }
+                            }))
+                            console.log('URL: ', url, ' -> ', widgetPath)
+
+                            uiShared.contribs[wName] = {
+                                package: p,
+                                name: wName,
+                                src: url
+                            }
+                        })
+                    }
+                    return packageJson
+                } catch (error) { /* do nothing */ }
+                return null
+            })
+
+            console.log(dependencies)
+
+            // determine any third-party widgets which is
+
+            // defined by the naming convention of node-red-ffd-contrib-*
+            // - read in the package file: ${user_dir}/node_modules/${widgetmodule}/package.json
+            //   - ui-nodes (mappings of widget name to widget file)
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
@@ -499,7 +560,8 @@ module.exports = function (RED) {
                     enabled: datastore.get(widgetConfig.id)?.enabled || true,
                     visible: datastore.get(widgetConfig.id)?.visible || true
                 },
-                hooks: widgetEvents
+                hooks: widgetEvents,
+                src: uiShared.contribs[widgetConfig.type]
             }
 
             delete widget.props.id
