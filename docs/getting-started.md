@@ -8,7 +8,7 @@
 - Click "Manage Palette"
 - Switch to the "Install" tab
 - Search `node-red-dashboard`
-- Install the `@flowforge/node-red-dashboard` package (not `node-red-dashboard`)
+- Install the `@flowfuse/node-red-dashboard` package (not `node-red-dashboard`)
 
 ![Install via "Manage Palette"](./assets/images/install-palette.png){data-zoomable}
 *Screenshot showing the nodes available in the Node-RED Palette Manager*
