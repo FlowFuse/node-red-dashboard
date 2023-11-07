@@ -74,10 +74,17 @@
         description: 'Adds a clickable button to your dashboard.'
     }]
 
+    const events = [{
+        name: 'Event',
+        widget: 'ui-event',
+        description: 'Monitors for events in the Dashboard and emits accordingly.'
+    }]
+
     const widgets = ref({
         general,
         form,
-        data
+        data,
+        events
     })
 </script>
 # Widgets
@@ -100,4 +107,12 @@ Dashboard widgets are the building blocks of your dashboard. Wire them together 
 
 <WidgetGrid>
     <WidgetCard v-for="widget in widgets.data" :widget="widget"></WidgetCard>
+</WidgetGrid>
+
+## Events & Control
+
+Collection of widgets that do not render content into the Dashboard, but instead allow communication to/from the Dashboard to monitor activity and control Dashboard state.
+
+<WidgetGrid>
+    <WidgetCard v-for="widget in widgets.events" :widget="widget"></WidgetCard>
 </WidgetGrid>
