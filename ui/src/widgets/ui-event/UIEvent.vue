@@ -1,7 +1,3 @@
-<template>
-    <button @click="$socket.emit('ui-event:$pageview', id, {'on': 'click'})">Hello World</button>
-</template>
-
 <script>
 import { mapState } from 'vuex'
 
@@ -11,15 +7,9 @@ export default {
     name: 'DBUIEvent',
     inject: ['$socket'],
     beforeRouteUpdate (to, from) {
-        // react to route changes...
-        // don't forget to call next()
-        console.log('beforeRouteEnter', to)
         this.pageview(to)
     },
     beforeRouteLeave (to, from) {
-        // react to route changes...
-        // don't forget to call next()
-        console.log('beforeRouteLeave', from)
         this.pageleave(from)
     },
     props: {
