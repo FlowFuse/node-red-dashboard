@@ -3,28 +3,64 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIEvent',
     inject: ['$socket'],
+    beforeRouteUpdate (to, from) {
+        // react to route changes...
+        // don't forget to call next()
+        console.log('beforeRouteEnter', to)
+        this.pageview(to)
+    },
+    beforeRouteLeave (to, from) {
+        // react to route changes...
+        // don't forget to call next()
+        console.log('beforeRouteLeave', from)
+        this.pageleave(from)
+    },
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
+    data () {
+        return {
+            page: null
+        }
+    },
+    computed: {
+        ...mapState('ui', ['pages'])
+    },
     created () {
         // can't do this in setup as we have custom onInput function
-        console.log('UI Event Created')
         useDataTracker(this.id, null, this.onLoad)
-        console.log('UI Event Created')
+        this.page = this.pages[this.$route.meta.id]
+        this.pageview()
+    },
+    unmounted () {
+        this.pageleave()
     },
     methods: {
-        onLoad () {
+        pageview () {
+            this.trigger('ui-event:$pageview')
+        },
+        pageleave () {
+            this.trigger('ui-event:$pageleave')
+        },
+        trigger (evt) {
+            const page = { ...this.page }
+            // re-map _users > _groups for better data readability
+            page._groups = page._users
+            delete page._users
+            // form event data object
             const msg = {
-                hello: 'world'
+                page
             }
-            console.log('sending pageview', this.id, msg)
-            this.$socket.emit('ui-event:$pageview', this.id, msg)
+            console.log('trigger', evt, msg)
+            this.$socket.emit(evt, this.id, msg)
         }
     }
 }

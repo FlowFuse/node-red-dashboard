@@ -4,17 +4,15 @@
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
         RED.nodes.registerType('ui-event', {
-            category: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.label.category'),
-            color: RED._('@flowforge/node-red-dashboard/ui-base:ui-base.colors.dark'),
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest'),
             defaults: {
                 ui: { type: 'ui-base', value: '', required: true },
-                name: { value: '' },
-                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-                topicType: { value: 'msg' }
+                name: { value: '' }
             },
             inputs: 0,
             outputs: 1,
-            icon: 'font-awesome/fa-i-cursor',
+            icon: 'font-awesome/fa-arrow-circle-right',
             paletteLabel: 'event',
             oneditprepare: function () {
                 // topic
@@ -40,10 +38,5 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
-        <input type="text" id="node-input-topic">
-        <input type="hidden" id="node-input-topicType">
     </div>
 </script>
