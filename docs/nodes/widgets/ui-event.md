@@ -29,3 +29,10 @@ Currently, we support the following events:
 
 <EventsList />
 
+## Custom Events
+
+In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embeded `$socket` operator directly, for example:
+
+```vue
+<v-btn @click="$socket.emit('ui-event', 'custom-event-name', msg)">Send Custom Event</v-btn>
+```
