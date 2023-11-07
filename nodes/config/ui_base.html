@@ -79,6 +79,8 @@
     .nrdb2-sb-list-header-button-group {
         position: absolute;
         right: 1rem;
+        display: flex;
+        gap: 4px;
     }
     .nrdb2-sb-list-header-button-group,
     .nrdb2-sb-list-handle {
@@ -258,10 +260,19 @@
      * @param {Object} row - The page/group/widget that these actions are bound to
      */
     function addRowActions (row, item) {
+        const configNodes = ['ui-base', 'ui-page', 'ui-group']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(row)
-        const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button  editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
+        if (!configNodes.includes(item.type)) {
+            const focusButton = $('<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-bullseye"></i> ' + c_('layout.focus') + '</a>').appendTo(btnGroup)
+            focusButton.on('click', function (evt) {
+                RED.view.reveal(item.id)
+                evt.stopPropagation()
+                evt.preventDefault()
+            })
+        }
+        const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
         editButton.on('click', function (evt) {
-            if (item.type === 'ui-page' || item.type === 'ui-group') {
+            if (configNodes.includes(item.type)) {
                 RED.editor.editConfig('', item.type, item.id)
             } else {
                 RED.editor.edit(item)
@@ -348,8 +359,8 @@
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
 
-                const groupicon = 'fa-image'
-                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + groupicon }).appendTo(titleRow)
+                const widgeticon = 'fa-image'
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgeticon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
 
                 addRowActions(titleRow, widget)

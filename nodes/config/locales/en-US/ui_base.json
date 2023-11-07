@@ -7,6 +7,7 @@
         "layout": {
             "pages": "Pages",
             "edit": "Edit",
+            "focus": "Focus",
             "collapse": "Collapse",
             "expand": "Expand"
         },
