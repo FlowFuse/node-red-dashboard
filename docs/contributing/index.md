@@ -45,7 +45,7 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 3. **Remove existing Dashboard 2.0:** Note - if you have already installed this dashboard via your palette, you will need to uninstall it first. This can be done from the Palette Manager in Node-RED, or via `npm` on the terminal:
    ```bash
-   npm uninstall @flowforge/node-red-dashboard
+   npm uninstall @flowfuse/node-red-dashboard
    ```
 
 3. **Install Dashboard 2.0:** Install the forked dashboard into your Node-RED system from inside the `.node-red` folder:
