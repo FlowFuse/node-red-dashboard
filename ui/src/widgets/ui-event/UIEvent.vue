@@ -45,10 +45,10 @@ export default {
     },
     methods: {
         pageview () {
-            this.trigger('ui-event:$pageview')
+            this.trigger('$pageview')
         },
         pageleave () {
-            this.trigger('ui-event:$pageleave')
+            this.trigger('$pageleave')
         },
         trigger (evt) {
             const page = { ...this.page }
@@ -60,7 +60,7 @@ export default {
                 page
             }
             console.log('trigger', evt, msg)
-            this.$socket.emit(evt, this.id, msg)
+            this.$socket.emit('ui-event', evt, msg)
         }
     }
 }

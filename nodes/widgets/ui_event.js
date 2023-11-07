@@ -9,15 +9,9 @@ module.exports = function (RED) {
 
         const evts = {
             onSocket: {
-                'ui-event:$pageview': function (id, payload) {
+                'ui-event': function (evt, payload) {
                     node.send({
-                        topic: '$pageview',
-                        payload
-                    })
-                },
-                'ui-event:$pageleave': function (id, payload) {
-                    node.send({
-                        topic: '$pageleave',
+                        topic: evt,
                         payload
                     })
                 }
