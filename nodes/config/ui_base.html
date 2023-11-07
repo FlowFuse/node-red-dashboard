@@ -110,7 +110,7 @@
 
     // convert to i18 text
     function c_ (x) {
-        return RED._('@flowforge/node-red-dashboard/ui-base:ui-base.' + x)
+        return RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.' + x)
     }
 
     function hasProperty (obj, prop) {
@@ -572,7 +572,7 @@
         pinned: true,
         disableOnEdit: true,
         iconClass: 'fa fa-bar-chart',
-        action: '@flowforge/node-red-dashboard:show-dashboard-2.0-tab',
+        action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
         onchange: function () {
             sidebar.empty()
             RED.nodes.eachConfig(function (n) {
@@ -586,8 +586,8 @@
         }
     })
 
-    RED.actions.add('@flowforge/node-red-dashboard:show-dashboard-2.0-tab', function () {
-        RED.sidebar.show('flowforge-nr-tools')
+    RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
+        RED.sidebar.show('flowfuse-nr-tools')
     })
 
     /**
@@ -597,7 +597,7 @@
         _create: function () {
             // convert to i18 text
             function c_ (x) {
-                return RED._(`@flowforge/node-red-dashboard/ui-base:ui-base.${x}`)
+                return RED._(`@flowfuse/node-red-dashboard/ui-base:ui-base.${x}`)
             }
 
             const thisWidget = this
