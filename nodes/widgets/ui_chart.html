@@ -57,15 +57,17 @@
                 categoryType: { value: 'msg' },
                 xAxisProperty: { value: null },
                 xAxisPropertyType: { value: 'msg' },
-                yAxisProperty: { value: null },
                 xAxisType: { value: 'time' },
+                yAxisProperty: { value: null },
+                ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
                 removeOlderUnit: { value: '3600', required: true },
                 removeOlderPoints: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 colors: { value: ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'] },
                 width: {
-                    value: 0,
+                    value: 6,
                     validate: function (v) {
                         const width = v || 0
                         const currentGroup = $('#node-input-group').val() || this.group
@@ -75,7 +77,7 @@
                         return valid
                     }
                 },
-                height: { value: 0 },
+                height: { value: 8 },
                 className: { value: '' }
             },
             inputs: 1,
@@ -288,6 +290,13 @@
         <label for="node-input-removeOlderPoints" style="width:auto; margin-left:10px; margin-right:10px;" data-i18n="ui-chart.label.or"></label>
         <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
         <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
+    </div>
+    <div class="form-row" id="y-axis-show">
+        <label id="y-label-show" for="node-input-ymin" data-i18n="ui-chart.label.yAxis"></label>
+        <label for="node-input-ymin" style="width:auto" data-i18n="ui-chart.label.min"></label>
+        <input type="text" id="node-input-ymin" style="width:92px">
+        <label for="node-input-ymax" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.max"></label>
+        <input type="text" id="node-input-ymax" style="width:92px">
     </div>
     <div class="form-row">
         <label>Properties</label>

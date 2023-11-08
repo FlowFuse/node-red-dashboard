@@ -62,8 +62,18 @@ export default {
                 parsing.xAxisKey = 'category'
             }
         }
+
         if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
             parsing.yAxisKey = this.props.yAxisProperty
+        }
+
+        // y-axis limits
+        const yOptions = {}
+        if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
+            yOptions.min = parseFloat(this.props.ymin)
+        }
+        if (Object.hasOwn(this.props, 'ymax') && this.props.ymax !== '') {
+            yOptions.max = parseFloat(this.props.ymax)
         }
 
         // create our ChartJS object
@@ -86,9 +96,7 @@ export default {
                             }
                         }
                     },
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: yOptions
                 },
                 plugins: {
                     title: {
