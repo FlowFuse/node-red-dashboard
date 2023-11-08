@@ -20,7 +20,6 @@ import UIDropdown from './ui-dropdown/UIDropdown'
 import UITable from './ui-table/UITable'
 import UIForm from './ui-form/UIForm'
 import UIChart from './ui-chart/UIChart'
-import UIEvent from './ui-event/UIEvent'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup'
 import UISlider from './ui-slider/UISlider'
 import UISwitch from './ui-switch/UISwitch'
@@ -35,7 +34,6 @@ export default {
     'ui-table': UITable,
     'ui-form': UIForm,
     'ui-chart': UIChart,
-    'ui-event': UIEvent,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,

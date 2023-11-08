@@ -387,8 +387,13 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
+                // replicate receiving an input, so the widget can handle accordingly
                 const msg = datastore.get(id)
-                conn.emit('widget-load:' + id, msg)
+                if (msg) {
+                    // only emit something if we have something to send
+                    // and only to this connection, not all connected clients
+                    conn.emit('widget-load:' + id, msg)
+                }
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
             try {

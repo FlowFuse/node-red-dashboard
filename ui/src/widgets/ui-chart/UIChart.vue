@@ -124,16 +124,14 @@ export default {
             return value
         },
         onLoad (history) {
-            if (history) {
-                // we have received a history of data points
-                // we need to add them to the chart
+            // we have received a history of data points
+            // we need to add them to the chart
 
-                // clear the chart first, onload is considered to provide all data into a chart
-                this.clear()
+            // clear the chart first, onload is considered to provide all data into a chart
+            this.clear()
 
-                // adding is then just the same process as receiving a new msg
-                this.onMsgInput(history)
-            }
+            // adding is then just the same process as receiving a new msg
+            this.onMsgInput(history)
         },
         onMsgInput (msg) {
             if (Array.isArray(msg.payload) && !msg.payload.length) {
