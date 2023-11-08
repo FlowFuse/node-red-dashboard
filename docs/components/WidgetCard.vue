@@ -1,7 +1,6 @@
 <template>
     <a class="widget-card" :href="url">
         <img
-            v-if="widget.image"
             :src="widget.image"
             :alt="widget.description"
         >

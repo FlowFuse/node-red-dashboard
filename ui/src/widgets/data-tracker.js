@@ -14,12 +14,10 @@ export function useDataTracker (widgetId, onInput, onLoad) {
                 if (onLoad) {
                     onLoad(msg)
                 } else {
-                    if (msg) {
-                        store.commit('data/bind', {
-                            widgetId,
-                            msg
-                        })
-                    }
+                    store.commit('data/bind', {
+                        widgetId,
+                        msg
+                    })
                 }
             })
             // This will on in msg input for ALL components
