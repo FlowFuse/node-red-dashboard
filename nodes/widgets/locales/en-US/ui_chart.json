@@ -11,7 +11,10 @@
             "points": "points",
             "xLimit": "X-Axis Limit",
             "xType": "X-Axis Type",
-            "last": "last"
+            "last": "last",
+            "yAxis": "Y-Axis",
+            "min": "min.",
+            "max": "max."
         }
     }
   }

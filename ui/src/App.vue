@@ -41,12 +41,9 @@ export default {
                     }
                 } else {
                     const pages = Object.values(this.pages)
-                    console.log(dashboards)
-                    console.log(pages)
                     let msg = null
                     for (let i = 0; i < pages.length; i++) {
                         const page = pages[i]
-                        console.log(page)
                         if (!dashboards.includes(page.ui)) {
                             // Catch instances of multiple Dashboards, or pages not bound to a Dashboard we know about
                             msg = {
@@ -112,7 +109,6 @@ export default {
             Object.values(payload.pages).forEach(page => {
                 // check that the page's bound UI is also in our config
                 if (payload.dashboards[page.ui]) {
-                    console.log('adding route for page', page)
                     const route = payload.dashboards[page.ui].path + page.path
                     const routeName = 'Page:' + page.name
                     this.$router?.addRoute({
