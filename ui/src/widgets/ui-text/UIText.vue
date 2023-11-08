@@ -1,5 +1,5 @@
 <template>
-    <div :style="props.style">
+    <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
         <label class="nrdb-ui-text-label">{{ props.label }}</label>
         <span class="nrdb-ui-text-value">{{ value !== null ? value : 'No Message Received' }}</span>
     </div>
@@ -34,6 +34,7 @@ export default {
     display: flex;
     flex-direction: row;
     gap: 2px;
+    font-size: 1rem;
 }
 .nrdb-ui-text-value {
     font-weight: 600;
