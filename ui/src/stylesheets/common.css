@@ -250,6 +250,7 @@ main {
 /* Make sure Button fills the containing group */
 .v-btn.v-btn--density-default  {
     height: auto;
+    min-height: calc(var(--v-btn-height));
 }
 
 .v-btn-group .v-btn--variant-elevated,
