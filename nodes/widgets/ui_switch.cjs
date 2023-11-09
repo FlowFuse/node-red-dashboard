@@ -1,5 +1,5 @@
-const datastore = require('../store/index.js')
-const { appendTopic } = require('../utils/index.js')
+const datastore = require('../store/index.cjs')
+const { appendTopic } = require('../utils/index.cjs')
 
 module.exports = function (RED) {
     function SwitchNode (config) {

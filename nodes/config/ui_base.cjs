@@ -3,8 +3,8 @@ const fs = require('fs')
 const path = require('path')
 
 const v = require('../../package.json').version
-const datastore = require('../store/index.js')
-const { appendTopic } = require('../utils/index.js')
+const datastore = require('../store/index.cjs')
+const { appendTopic } = require('../utils/index.cjs')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -83,27 +83,28 @@ module.exports = function (RED) {
                 const modulePath = path.join(RED.settings.userDir, 'node_modules', p)
                 const packagePath = path.join(modulePath, 'package.json')
                 try {
+                    // get third party package.json
                     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
                     if (packageJson?.['node-red-dashboard-2']) {
                         // loop over object of widgets
                         Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([wName, wConfig]) => {
                             console.log('widget name: ', wName)
-                            const source = wConfig.source
-                            console.log('widget source: ', source)
+                            // const source = wConfig.source
+                            // console.log('widget source: ', source)
                             // make the `source` file available via our express server and to the UI
-                            const url = config.path + '/widgets/' + p + '/' + wName + '.vue'
-                            const widgetPath = path.join(modulePath, source)
-                            uiShared.app.use(url, uiShared.httpMiddleware, express.static(widgetPath, {
-                                setHeaders: function (res, path, stat) {
-                                    res.set('Content-Type', 'text/javascript')
-                                }
-                            }))
-                            console.log('URL: ', url, ' -> ', widgetPath)
+                            // const url = config.path + '/widgets/' + p + '/' + wName + '.vue'
+                            // const widgetPath = path.join(modulePath, source)
+                            // uiShared.app.use(url, uiShared.httpMiddleware, express.static(widgetPath, {
+                            //     setHeaders: function (res, path, stat) {
+                            //         res.set('Content-Type', 'text/javascript')
+                            //     }
+                            // }))
+                            // console.log('URL: ', url, ' -> ', widgetPath)
 
                             uiShared.contribs[wName] = {
                                 package: p,
-                                name: wName,
-                                src: url
+                                name: wName
+                                // src: url
                             }
                         })
                     }

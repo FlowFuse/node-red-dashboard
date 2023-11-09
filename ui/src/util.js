@@ -138,7 +138,7 @@ function escapeHTML (html, encode) {
     return html
 }
 
-module.exports = {
+export {
     getDeepValue,
     hasProperty,
     escapeHTML

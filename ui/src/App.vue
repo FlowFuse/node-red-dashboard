@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import * as Vue from 'vue' // eslint-disable-line import/order
-import { defineAsyncComponent, markRaw } from 'vue' // eslint-disable-line import/order
+// import * as Vue from 'vue' // eslint-disable-line import/order
+import { markRaw } from 'vue' // eslint-disable-line import/order
 import { loadModule } from 'vue3-sfc-loader/dist/vue3-sfc-loader.esm.js'
 import { mapState } from 'vuex'
 
@@ -25,22 +25,22 @@ import widgetComponents from './widgets'
 
 console.log(loadModule) // import all Vue Widget Components
 
-const options = {
-    async getFile (url) {
-        console.log('get file', url)
-        return fetch(url).then((response) =>
-            response.ok ? response.text() : Promise.reject(response)
-        )
-    },
-    addStyle (textContent) {
-        const style = Object.assign(document.createElement('style'), { textContent })
-        const ref = document.head.getElementsByTagName('style')[0] || null
-        document.head.insertBefore(style, ref)
-    },
-    moduleCache: {
-        vue: Vue
-    }
-}
+// const options = {
+//     async getFile (url) {
+//         console.log('get file', url)
+//         return fetch(url).then((response) =>
+//             response.ok ? response.text() : Promise.reject(response)
+//         )
+//     },
+//     addStyle (textContent) {
+//         const style = Object.assign(document.createElement('style'), { textContent })
+//         const ref = document.head.getElementsByTagName('style')[0] || null
+//         document.head.insertBefore(style, ref)
+//     },
+//     moduleCache: {
+//         vue: Vue
+//     }
+// }
 
 export default {
     name: 'App',
@@ -123,7 +123,7 @@ export default {
         }
     },
     created () {
-        this.$socket.on('ui-config', (topic, payload) => {
+        this.$socket.on('ui-config', async (topic, payload) => {
             console.log('ui-config received. topic:', topic, 'payload:', payload)
 
             // loop over pages, add them to vue router
@@ -163,16 +163,22 @@ export default {
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page
-            Object.keys(payload.widgets).forEach(id => {
+            Object.keys(payload.widgets).forEach(async id => {
                 const widget = payload.widgets[id]
                 if (widgetComponents[widget.type]) {
+                    // Core Widgets
                     // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
                     widget.component = markRaw(widgetComponents[widget.type])
                 } else if (widget.src) {
-                    console.log('widget.src.src', widget.src.src)
+                    debugger
+                    // Third Party Widgets
+                    console.log('widget.src', widget.src)
                     // widget.component = defineAsyncComponent(() => loadModule(widget.src.src, options))
-                    widget.component = defineAsyncComponent(() => loadModule(widget.src.src, options))
+                    const c = await import(/* @vite-ignore */ `/resources/${widget.src.package}/${widget.src.name}.mjs`)
+                    console.log(c)
+                    widget.component = this.use(c)
                 } else {
+                    // Old Third Party Widgets
                     widget.component = markRaw(widgetComponents['ui-template'])
                 }
             })

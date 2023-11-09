@@ -1,6 +1,7 @@
 {
     "name": "@flowfuse/node-red-dashboard",
     "homepage": "https://dashboard.flowfuse.com",
+    "type": "module",
     "version": "0.7.2",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
     "author": {
@@ -15,10 +16,9 @@
         "dist/*",
         "nodes/*"
     ],
-    "main": "ui/src/index.js",
     "scripts": {
         "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build",
+        "build": "vite build",
         "build:dev": "vue-cli-service build  --mode development",
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",
@@ -33,23 +33,23 @@
     "node-red": {
         "version": ">=3.0.0",
         "nodes": {
-            "ui-base": "nodes/config/ui_base.js",
-            "ui-page": "nodes/config/ui_page.js",
-            "ui-group": "nodes/config/ui_group.js",
-            "ui-theme": "nodes/config/ui_theme.js",
-            "ui-form": "nodes/widgets/ui_form.js",
-            "ui-text-input": "nodes/widgets/ui_text_input.js",
-            "ui-button": "nodes/widgets/ui_button.js",
-            "ui-dropdown": "nodes/widgets/ui_dropdown.js",
-            "ui-radio-group": "nodes/widgets/ui_radio_group.js",
-            "ui-slider": "nodes/widgets/ui_slider.js",
-            "ui-switch": "nodes/widgets/ui_switch.js",
-            "ui-text": "nodes/widgets/ui_text.js",
-            "ui-table": "nodes/widgets/ui_table.js",
-            "ui-chart": "nodes/widgets/ui_chart.js",
-            "ui-notification": "nodes/widgets/ui_notification.js",
-            "ui-markdown": "nodes/widgets/ui_markdown.js",
-            "ui-template": "nodes/widgets/ui_template.js"
+            "ui-base": "nodes/config/ui_base.cjs",
+            "ui-page": "nodes/config/ui_page.cjs",
+            "ui-group": "nodes/config/ui_group.cjs",
+            "ui-theme": "nodes/config/ui_theme.cjs",
+            "ui-form": "nodes/widgets/ui_form.cjs",
+            "ui-text-input": "nodes/widgets/ui_text_input.cjs",
+            "ui-button": "nodes/widgets/ui_button.cjs",
+            "ui-dropdown": "nodes/widgets/ui_dropdown.cjs",
+            "ui-radio-group": "nodes/widgets/ui_radio_group.cjs",
+            "ui-slider": "nodes/widgets/ui_slider.cjs",
+            "ui-switch": "nodes/widgets/ui_switch.cjs",
+            "ui-text": "nodes/widgets/ui_text.cjs",
+            "ui-table": "nodes/widgets/ui_table.cjs",
+            "ui-chart": "nodes/widgets/ui_chart.cjs",
+            "ui-notification": "nodes/widgets/ui_notification.cjs",
+            "ui-markdown": "nodes/widgets/ui_markdown.cjs",
+            "ui-template": "nodes/widgets/ui_template.cjs"
         }
     },
     "dependencies": {
@@ -61,9 +61,6 @@
         "vue3-sfc-loader": "^0.8.4"
     },
     "devDependencies": {
-        "@babel/core": "^7.22.20",
-        "@babel/eslint-parser": "^7.22.15",
-        "@babel/plugin-transform-private-methods": "^7.22.5",
         "@mdi/font": "~6.9.96",
         "@unhead/vue": "^1.7.4",
         "@vue/cli-plugin-babel": "~5.0.8",
@@ -95,6 +92,8 @@
         "sinon": "^15.2.0",
         "socket.io-client": "^4.7.2",
         "vitepress": "^1.0.0-beta.7",
+        "@vitejs/plugin-vue": "^4.2.3",
+        "vite": "^4.4.5",
         "vue-router": "^4.2.4",
         "vuetify": "^3.3.16",
         "vuex": "^4.1.0"

@@ -1,4 +1,4 @@
-const datastore = require('../store/index.js')
+const datastore = require('../store/index.cjs')
 
 module.exports = function (RED) {
     function TextInputNode (config) {
