@@ -13,9 +13,7 @@
 </template>
 
 <script>
-// import * as Vue from 'vue' // eslint-disable-line import/order
 import { markRaw } from 'vue' // eslint-disable-line import/order
-import { loadModule } from 'vue3-sfc-loader/dist/vue3-sfc-loader.esm.js'
 import { mapState } from 'vuex'
 
 // eslint-disable-next-line n/no-missing-import

@@ -37,8 +37,6 @@
             "ui-page": "nodes/config/ui_page.cjs",
             "ui-group": "nodes/config/ui_group.cjs",
             "ui-theme": "nodes/config/ui_theme.cjs",
-            "ui-form": "nodes/widgets/ui_form.cjs",
-            "ui-text-input": "nodes/widgets/ui_text_input.cjs",
             "ui-button": "nodes/widgets/ui_button.cjs",
             "ui-dropdown": "nodes/widgets/ui_dropdown.cjs",
             "ui-radio-group": "nodes/widgets/ui_radio_group.cjs",
@@ -57,8 +55,7 @@
         "core-js": "^3.32.0",
         "express": "^4.18.2",
         "socket.io": "^4.7.1",
-        "vue": "^3.3.4",
-        "vue3-sfc-loader": "^0.8.4"
+        "vue": "^3.3.4"
     },
     "devDependencies": {
         "@mdi/font": "~6.9.96",
