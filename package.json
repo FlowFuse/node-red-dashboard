@@ -43,6 +43,8 @@
             "ui-slider": "nodes/widgets/ui_slider.cjs",
             "ui-switch": "nodes/widgets/ui_switch.cjs",
             "ui-text": "nodes/widgets/ui_text.cjs",
+            "ui-form": "nodes/widgets/ui_form.cjs",
+            "ui-text-input": "nodes/widgets/ui_text_input.cjs",
             "ui-table": "nodes/widgets/ui_table.cjs",
             "ui-chart": "nodes/widgets/ui_chart.cjs",
             "ui-notification": "nodes/widgets/ui_notification.cjs",
