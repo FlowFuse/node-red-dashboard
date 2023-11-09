@@ -1,56 +1,34 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "homepage": "https://dashboard.flowfuse.com",
-    "type": "module",
     "version": "0.7.2",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
-    "author": {
-        "name": "Joe Pavitt",
-        "url": "https://github.com/joepavitt"
-    },
+    "keywords": [
+        "node-red"
+    ],
+    "homepage": "https://dashboard.flowfuse.com",
     "repository": {
         "type": "git",
         "url": "https://github.com/FlowFuse/node-red-dashboard.git"
     },
+    "license": "Apache-2.0",
+    "author": {
+        "name": "Joe Pavitt",
+        "url": "https://github.com/joepavitt"
+    },
+    "type": "module",
     "files": [
         "dist/*",
         "nodes/*"
     ],
     "scripts": {
-        "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview",
-        "docs:dev": "vitepress dev docs",
+        "dev": "vite",
         "docs:build": "vitepress build docs",
+        "docs:dev": "vitepress dev docs",
         "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
+        "preview": "vite preview",
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
-    },
-    "license": "Apache-2.0",
-    "keywords": [
-        "node-red"
-    ],
-    "node-red": {
-        "version": ">=3.0.0",
-        "nodes": {
-            "ui-base": "nodes/config/ui_base.cjs",
-            "ui-page": "nodes/config/ui_page.cjs",
-            "ui-group": "nodes/config/ui_group.cjs",
-            "ui-theme": "nodes/config/ui_theme.cjs",
-            "ui-button": "nodes/widgets/ui_button.cjs",
-            "ui-dropdown": "nodes/widgets/ui_dropdown.cjs",
-            "ui-radio-group": "nodes/widgets/ui_radio_group.cjs",
-            "ui-slider": "nodes/widgets/ui_slider.cjs",
-            "ui-switch": "nodes/widgets/ui_switch.cjs",
-            "ui-text": "nodes/widgets/ui_text.cjs",
-            "ui-form": "nodes/widgets/ui_form.cjs",
-            "ui-text-input": "nodes/widgets/ui_text_input.cjs",
-            "ui-table": "nodes/widgets/ui_table.cjs",
-            "ui-chart": "nodes/widgets/ui_chart.cjs",
-            "ui-notification": "nodes/widgets/ui_notification.cjs",
-            "ui-markdown": "nodes/widgets/ui_markdown.cjs",
-            "ui-template": "nodes/widgets/ui_template.cjs"
-        }
     },
     "dependencies": {
         "chartjs-adapter-luxon": "^1.3.1",
@@ -97,12 +75,34 @@
         "vuetify": "^3.3.16",
         "vuex": "^4.1.0"
     },
+    "engines": {
+        "node": ">=14"
+    },
+    "node-red": {
+        "version": ">=3.0.0",
+        "nodes": {
+            "ui-base": "nodes/config/ui_base.cjs",
+            "ui-page": "nodes/config/ui_page.cjs",
+            "ui-group": "nodes/config/ui_group.cjs",
+            "ui-theme": "nodes/config/ui_theme.cjs",
+            "ui-button": "nodes/widgets/ui_button.cjs",
+            "ui-dropdown": "nodes/widgets/ui_dropdown.cjs",
+            "ui-radio-group": "nodes/widgets/ui_radio_group.cjs",
+            "ui-slider": "nodes/widgets/ui_slider.cjs",
+            "ui-switch": "nodes/widgets/ui_switch.cjs",
+            "ui-text": "nodes/widgets/ui_text.cjs",
+            "ui-form": "nodes/widgets/ui_form.cjs",
+            "ui-text-input": "nodes/widgets/ui_text_input.cjs",
+            "ui-table": "nodes/widgets/ui_table.cjs",
+            "ui-chart": "nodes/widgets/ui_chart.cjs",
+            "ui-notification": "nodes/widgets/ui_notification.cjs",
+            "ui-markdown": "nodes/widgets/ui_markdown.cjs",
+            "ui-template": "nodes/widgets/ui_template.cjs"
+        }
+    },
     "overrides": {
         "node-red-node-test-helper": {
             "semver": "^7.5.4"
         }
-    },
-    "engines": {
-        "node": ">=14"
     }
 }
