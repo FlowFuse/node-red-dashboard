@@ -1,57 +1,35 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "homepage": "https://dashboard.flowfuse.com",
     "version": "0.7.2",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
-    "author": {
-        "name": "Joe Pavitt",
-        "url": "https://github.com/joepavitt"
-    },
+    "keywords": [
+        "node-red"
+    ],
+    "homepage": "https://dashboard.flowfuse.com",
     "repository": {
         "type": "git",
         "url": "https://github.com/FlowFuse/node-red-dashboard.git"
+    },
+    "license": "Apache-2.0",
+    "author": {
+        "name": "Joe Pavitt",
+        "url": "https://github.com/joepavitt"
     },
     "files": [
         "dist/*",
         "nodes/*"
     ],
     "scripts": {
-        "build:dev": "NODE_ENV=development npm run build",
         "build": "vite build",
+        "build:dev": "NODE_ENV=development npm run build",
         "dev": "vite",
+        "docs:build": "vitepress build docs",
+        "docs:dev": "vitepress dev docs",
+        "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
         "preview": "vite build && vite preview",
         "serve": "npm run dev",
-        "docs:dev": "vitepress dev docs",
-        "docs:build": "vitepress build docs",
-        "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
-    },
-    "license": "Apache-2.0",
-    "keywords": [
-        "node-red"
-    ],
-    "node-red": {
-        "version": ">=3.0.0",
-        "nodes": {
-            "ui-base": "nodes/config/ui_base.js",
-            "ui-page": "nodes/config/ui_page.js",
-            "ui-group": "nodes/config/ui_group.js",
-            "ui-theme": "nodes/config/ui_theme.js",
-            "ui-form": "nodes/widgets/ui_form.js",
-            "ui-text-input": "nodes/widgets/ui_text_input.js",
-            "ui-button": "nodes/widgets/ui_button.js",
-            "ui-dropdown": "nodes/widgets/ui_dropdown.js",
-            "ui-radio-group": "nodes/widgets/ui_radio_group.js",
-            "ui-slider": "nodes/widgets/ui_slider.js",
-            "ui-switch": "nodes/widgets/ui_switch.js",
-            "ui-text": "nodes/widgets/ui_text.js",
-            "ui-table": "nodes/widgets/ui_table.js",
-            "ui-chart": "nodes/widgets/ui_chart.js",
-            "ui-notification": "nodes/widgets/ui_notification.js",
-            "ui-markdown": "nodes/widgets/ui_markdown.js",
-            "ui-template": "nodes/widgets/ui_template.js"
-        }
     },
     "dependencies": {
         "chartjs-adapter-luxon": "^1.3.1",
@@ -95,12 +73,34 @@
         "vuetify": "^3.3.16",
         "vuex": "^4.1.0"
     },
+    "engines": {
+        "node": ">=14"
+    },
+    "node-red": {
+        "version": ">=3.0.0",
+        "nodes": {
+            "ui-base": "nodes/config/ui_base.js",
+            "ui-page": "nodes/config/ui_page.js",
+            "ui-group": "nodes/config/ui_group.js",
+            "ui-theme": "nodes/config/ui_theme.js",
+            "ui-form": "nodes/widgets/ui_form.js",
+            "ui-text-input": "nodes/widgets/ui_text_input.js",
+            "ui-button": "nodes/widgets/ui_button.js",
+            "ui-dropdown": "nodes/widgets/ui_dropdown.js",
+            "ui-radio-group": "nodes/widgets/ui_radio_group.js",
+            "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-switch": "nodes/widgets/ui_switch.js",
+            "ui-text": "nodes/widgets/ui_text.js",
+            "ui-table": "nodes/widgets/ui_table.js",
+            "ui-chart": "nodes/widgets/ui_chart.js",
+            "ui-notification": "nodes/widgets/ui_notification.js",
+            "ui-markdown": "nodes/widgets/ui_markdown.js",
+            "ui-template": "nodes/widgets/ui_template.js"
+        }
+    },
     "overrides": {
         "node-red-node-test-helper": {
             "semver": "^7.5.4"
         }
-    },
-    "engines": {
-        "node": ">=14"
     }
 }
