@@ -541,7 +541,6 @@ module.exports = function (RED) {
             if (page && !node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
                 if (theme) {
-                    // eslint-disable-next-line no-unused-vars
                     const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
                     node.ui.themes.set(page.theme, t)
                 } else {
@@ -551,14 +550,12 @@ module.exports = function (RED) {
 
             // map pages by their ID
             if (page && !node.ui.pages.has(page?.id)) {
-                // eslint-disable-next-line no-unused-vars
                 const { _user, type, ...p } = page
                 node.ui.pages.set(page.id, p)
             }
 
             // map groups on a page-by-page basis
             if (group && !node.ui.groups.has(group?.id)) {
-                // eslint-disable-next-line no-unused-vars
                 const { _user, type, ...g } = group
                 node.ui.groups.set(group.id, g)
             }

@@ -1,7 +1,3 @@
-/* eslint-disable n/no-missing-import */
-/* eslint-disable n/file-extension-in-import */
-/* eslint-disable import/no-unresolved */
-
 // initial state
 const state = () => ({
     dashboards: null,

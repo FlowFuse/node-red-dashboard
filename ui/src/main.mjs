@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
@@ -14,6 +13,8 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+
+import store from './store/index.mjs'
 
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
@@ -42,8 +43,6 @@ const vuetify = createVuetify({
         }
     }
 })
-
-import store from './store/index.mjs'
 
 /*
  * Configure SocketIO Client to Interact with Node-RED
