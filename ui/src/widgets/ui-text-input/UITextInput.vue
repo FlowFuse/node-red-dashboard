@@ -13,7 +13,7 @@
 
 <script>
 
-import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
+import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {

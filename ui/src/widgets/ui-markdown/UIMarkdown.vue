@@ -7,9 +7,9 @@ import mermaid from 'mermaid'
 import { h } from 'vue'
 import { mapGetters, mapState } from 'vuex' // eslint-disable-line import/order
 
-import { useDataTracker } from '../data-tracker.js'
+import { useDataTracker } from '../data-tracker.mjs'
 
-import { escapeHTML } from './../../util.js'
+import { escapeHTML } from './../../util.mjs'
 
 // set up mermaid
 /** @type {import('mermaid').MermaidConfig} */

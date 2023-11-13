@@ -2,7 +2,7 @@
  * Vuex store for tracking data bound to each widget
  */
 
-import { getDeepValue, hasProperty } from '../util.js'
+import { getDeepValue, hasProperty } from '../util.mjs'
 
 // initial state is empty - we don't know if we have any widgets
 const state = () => ({

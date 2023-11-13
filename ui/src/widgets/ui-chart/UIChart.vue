@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import { Chart } from 'chart.js/auto' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import { Chart } from 'chart.js/auto' // eslint-disable-line n/file-extension-in-import
 import 'chartjs-adapter-luxon'
 
-import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
+import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'

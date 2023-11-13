@@ -6,7 +6,7 @@ import { VueHeadMixin, createHead } from '@unhead/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
-import router from './router.js'
+import router from './router.mjs'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -43,7 +43,7 @@ const vuetify = createVuetify({
     }
 })
 
-import store from './store/index.js'
+import store from './store/index.mjs'
 
 /*
  * Configure SocketIO Client to Interact with Node-RED

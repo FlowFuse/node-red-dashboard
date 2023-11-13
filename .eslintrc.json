@@ -63,7 +63,7 @@
                 "mocha": true
             }
         },
-        // Frontend runs in the browser and builds with webpack
+        // Frontend runs in the browser and builds with vite
         {
             "files": "ui/src/**",
             "plugins": ["vue", "vuetify"],
@@ -76,8 +76,8 @@
                 "commonjs": false
             },
             "parserOptions": {
-                "parser": "@babel/eslint-parser",
-                "sourceType": "module"
+                "sourceType": "module",
+                "ecmaVersion": 2022
             },
             "rules": {
                 // plugin:vue

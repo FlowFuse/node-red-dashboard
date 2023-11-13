@@ -16,10 +16,8 @@
 import { mapState } from 'vuex'
 import { markRaw } from 'vue' // eslint-disable-line import/order
 
-// eslint-disable-next-line n/no-missing-import
-import layouts from './layouts' // import all layouts
-// eslint-disable-next-line n/no-missing-import
-import widgetComponents from './widgets' // import all Vue Widget Components
+import layouts from './layouts/index.mjs' // import all layouts
+import widgetComponents from './widgets/index.mjs' // import all Vue Widget Components
 
 export default {
     name: 'App',
