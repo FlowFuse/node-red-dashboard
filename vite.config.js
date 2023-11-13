@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
 
 /**
  * Vite is used to build the UI for the dashboard,
@@ -8,10 +8,10 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  root: 'ui',
-  build: {
-      outDir: '../dist'
-  },
-  base: '/dashboard/'
+    plugins: [vue()],
+    root: 'ui',
+    build: {
+        outDir: '../dist'
+    },
+    base: '/dashboard/'
 })

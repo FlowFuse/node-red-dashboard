@@ -22,7 +22,7 @@
             </template>
             <template #description>
                 <p>
-                    The following are Dashboard 1.0 <code>msg.&ltproperty&gt;</code> values that could be sent to the node to affect functionality & contents of the node.
+                    The following are Dashboard 1.0 <code>msg.&lt;property&gt;</code> values that could be sent to the node to affect functionality & contents of the node.
                 </p>
             </template>
         </PropertyMigrationTable>

@@ -4,7 +4,7 @@
             :src="widget.image"
             :alt="widget.description"
         >
-        
+
         <div class="widget-card-text">
             <label>{{  widget.name }}</label>
             <p>{{  widget.description }}</p>
