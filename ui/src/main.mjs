@@ -16,6 +16,8 @@ import * as directives from 'vuetify/directives'
 
 import store from './store/index.mjs'
 
+import('./stylesheets/common.css')
+
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
     dark: false,
