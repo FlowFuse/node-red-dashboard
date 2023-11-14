@@ -15,7 +15,7 @@
  * const obj = { 'a.b.c': 'hello' }
  * getDeepValue(obj, '[\"a.b.c\"]') // returns 'hello'
  */
-function getDeepValue (obj, path, defaultValue) {
+export function getDeepValue (obj, path, defaultValue) {
     if (typeof obj === 'undefined' || obj === null) return defaultValue
 
     // scan chars - drop each new var into an array
@@ -100,7 +100,7 @@ function getDeepValue (obj, path, defaultValue) {
  * @param {String} prop - The property to check for
  * @returns {Boolean} True if the object has the property, false otherwise
  */
-function hasProperty (obj, prop) {
+export function hasProperty (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
@@ -124,7 +124,7 @@ const getEscapeReplacement = (ch) => escapeReplacements[ch]
  * @param {Boolean} encode - A flag to indicate if the html should be encoded
  * @returns {String} The escaped html
  */
-function escapeHTML (html, encode) {
+export function escapeHTML (html, encode) {
     if (encode) {
         if (escapeTest.test(html)) {
             return html.replace(escapeReplace, getEscapeReplacement)
@@ -138,7 +138,7 @@ function escapeHTML (html, encode) {
     return html
 }
 
-module.exports = {
+export default {
     getDeepValue,
     hasProperty,
     escapeHTML

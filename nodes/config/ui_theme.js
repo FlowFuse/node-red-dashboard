@@ -7,7 +7,6 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config)
         const node = this
 
-        // eslint-disable-next-line no-unused-vars
         const { id, name, type, _users, ...rest } = config
         node.colors = { ...rest.colors }
     }

@@ -3,7 +3,6 @@ const should = require('should') // eslint-disable-line no-unused-vars
 const sinon = require('sinon/lib/sinon.js')
 
 // load test 1 standard test data (base, page, group, theme, button)
-// eslint-disable-next-line no-unused-vars
 const { testData1 } = require('../fixtures/index.js')
 const { verifyFlowLoaded } = require('../utils.js')
 const testFlow1 = testData1.flows

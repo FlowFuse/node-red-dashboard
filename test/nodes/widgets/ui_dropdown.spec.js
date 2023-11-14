@@ -2,7 +2,6 @@ const helper = require('node-red-node-test-helper')
 const should = require('should')
 
 // load test 1 standard test data (base, page, group, theme, slider)
-// eslint-disable-next-line no-unused-vars
 const { testData1 } = require('../fixtures/index.js')
 const { verifyFlowLoaded } = require('../utils.js')
 const testFlow1 = testData1.flows

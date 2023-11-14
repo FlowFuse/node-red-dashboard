@@ -1,17 +1,14 @@
 {
     "root": true,
     "env": {
-        "es2021": true,
-        "commonjs": true,
-        "jquery": true
+        "es2022": true
     },
     "plugins": ["promise", "no-only-tests", "eslint-plugin-html"],
     "extends": [
         "eslint:recommended", 
         "standard",
         "plugin:import/recommended",
-        "plugin:promise/recommended",
-        "plugin:n/recommended"
+        "plugin:promise/recommended"
     ],
     "globals":{
         "RED": "readonly"
@@ -45,11 +42,6 @@
         ],
         "import/no-unresolved": "error",
 
-        // plugin:n
-        "n/file-extension-in-import": "error",
-        "n/no-missing-import": "error",
-        "n/no-missing-require": "error",
-
         // plugin:no-only-tests
         "no-only-tests/no-only-tests": "error",
 
@@ -57,13 +49,31 @@
         "promise/catch-or-return": ["error", { "allowFinally": true }]
     },
     "overrides": [
+        // Tests use Mocha
         {
             "files": ["test/**"],
             "env": {
                 "mocha": true
             }
         },
-        // Frontend runs in the browser and builds with webpack
+
+        // Nodes use CommonJS and are imported by node-red into a Node-Runtime
+        {   
+            "files": "nodes/**",
+            "extends": ["plugin:n/recommended"],
+            "env": {
+                "commonjs": true,
+                "browser": false
+            },
+            "rules": {
+                // plugin:n
+                "n/file-extension-in-import": "error",
+                "n/no-missing-import": "error",
+                "n/no-missing-require": "error"
+            }
+        },
+
+        // Frontend runs in the browser and builds with vite
         {
             "files": "ui/src/**",
             "plugins": ["vue", "vuetify"],
@@ -76,8 +86,8 @@
                 "commonjs": false
             },
             "parserOptions": {
-                "parser": "@babel/eslint-parser",
-                "sourceType": "module"
+                "sourceType": "module",
+                "ecmaVersion": 2022
             },
             "rules": {
                 // plugin:vue
@@ -87,9 +97,24 @@
                 "vue/attribute-hyphenation": "off",
 
                 // plugin:promise
-                "promise/always-return": "off", // common Vue.js pattern
+                "promise/always-return": "off" // common Vue.js pattern
+            }
+        },
 
-                "import/no-extraneous-dependencies": "off" // temporary fix to get majority of codebase to pass
+        // Docs also Vue in browser but are less strict
+        {
+            "files": "docs/**",
+            "plugins": ["vue"],
+            "extends": [
+                "plugin:vue/vue3-essential"
+            ],
+            "env": {
+                "browser": true,
+                "commonjs": false
+            },
+            "parserOptions": {
+                "sourceType": "module",
+                "ecmaVersion": 2022
             }
         }
     ]

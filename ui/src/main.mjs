@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
@@ -6,7 +5,7 @@ import { VueHeadMixin, createHead } from '@unhead/vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
-import router from './router.js'
+import router from './router.mjs'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -14,6 +13,10 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+
+import store from './store/index.mjs'
+
+import './stylesheets/common.css'
 
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
@@ -42,8 +45,6 @@ const vuetify = createVuetify({
         }
     }
 })
-
-import store from './store/index.js'
 
 /*
  * Configure SocketIO Client to Interact with Node-RED

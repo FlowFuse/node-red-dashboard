@@ -1,34 +1,87 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "homepage": "https://dashboard.flowfuse.com",
     "version": "0.7.2",
     "description": "A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts) within Node-RED.",
-    "author": {
-        "name": "Joe Pavitt",
-        "url": "https://github.com/joepavitt"
-    },
+    "keywords": [
+        "node-red"
+    ],
+    "homepage": "https://dashboard.flowfuse.com",
     "repository": {
         "type": "git",
         "url": "https://github.com/FlowFuse/node-red-dashboard.git"
+    },
+    "license": "Apache-2.0",
+    "author": {
+        "name": "Joe Pavitt",
+        "url": "https://github.com/joepavitt"
     },
     "files": [
         "dist/*",
         "nodes/*"
     ],
     "scripts": {
-        "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build",
-        "build:dev": "vue-cli-service build  --mode development",
-        "docs:dev": "vitepress dev docs",
+        "build": "vite build",
+        "build:dev": "NODE_ENV=development npm run build",
+        "dev": "vite",
         "docs:build": "vitepress build docs",
-        "lint": "eslint -c .eslintrc.json \"nodes/**/*.js\" \"nodes/**/*.html\" \"ui/src/**/*.js\" \"ui/src/**/*.vue\" \"test/**/*.js\"",
+        "docs:dev": "vitepress dev docs",
+        "lint": "npm run lint:js && npm run lint:package",
+        "lint:fix": "npm run lint:js:fix && npm run lint:package:fix",
+        "lint:js": "eslint --ext .js,.vue,.cjs,.mjs .",
+        "lint:js:fix": "yarn lint:js --fix",
+        "lint:package": "sort-package-json --check 'package.json'",
+        "lint:package:fix": "sort-package-json 'package.json'",
+        "preview": "vite build && vite preview",
+        "serve": "npm run dev",
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
     },
-    "license": "Apache-2.0",
-    "keywords": [
-        "node-red"
-    ],
+    "dependencies": {
+        "chartjs-adapter-luxon": "^1.3.1",
+        "core-js": "^3.32.0",
+        "express": "^4.18.2",
+        "socket.io": "^4.7.1",
+        "vue": "^3.3.4"
+    },
+    "devDependencies": {
+        "@mdi/font": "~6.9.96",
+        "@unhead/vue": "^1.7.4",
+        "@vitejs/plugin-vue": "^4.4.1",
+        "chart.js": "^4.4.0",
+        "dompurify": "^3.0.5",
+        "eslint": "^8.53.0",
+        "eslint-config-standard": "^17.1.0",
+        "eslint-plugin-html": "^7.1.0",
+        "eslint-plugin-import": "^2.29.0",
+        "eslint-plugin-n": "^16.3.1",
+        "eslint-plugin-no-only-tests": "^3.1.0",
+        "eslint-plugin-promise": "^6.1.1",
+        "eslint-plugin-vue": "^9.18.1",
+        "eslint-plugin-vuetify": "^2.1.0",
+        "glob": "^10.3.4",
+        "highlight.js": "^11.8.0",
+        "luxon": "^3.4.3",
+        "marked": "^4.3.0",
+        "marked-highlight": "^2.0.6",
+        "medium-zoom": "^1.0.8",
+        "mermaid": "^10.4.0",
+        "mocha": "^10.2.0",
+        "node-red": "^3.1.0",
+        "node-red-node-test-helper": "^0.3.2",
+        "should": "^13.2.3",
+        "should-sinon": "^0.0.6",
+        "sinon": "^15.2.0",
+        "socket.io-client": "^4.7.2",
+        "sort-package-json": "^2.6.0",
+        "vite": "^4.5.0",
+        "vitepress": "^1.0.0-beta.7",
+        "vue-router": "^4.2.4",
+        "vuetify": "^3.3.16",
+        "vuex": "^4.1.0"
+    },
+    "engines": {
+        "node": ">=14"
+    },
     "node-red": {
         "version": ">=3.0.0",
         "nodes": {
@@ -51,64 +104,9 @@
             "ui-template": "nodes/widgets/ui_template.js"
         }
     },
-    "dependencies": {
-        "chartjs-adapter-luxon": "^1.3.1",
-        "core-js": "^3.32.0",
-        "express": "^4.18.2",
-        "socket.io": "^4.7.1",
-        "vue": "^3.3.4"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.22.20",
-        "@babel/eslint-parser": "^7.22.15",
-        "@babel/plugin-transform-private-methods": "^7.22.5",
-        "@mdi/font": "~6.9.96",
-        "@unhead/vue": "^1.7.4",
-        "@vue/cli-plugin-babel": "~5.0.8",
-        "@vue/cli-plugin-eslint": "~5.0.8",
-        "@vue/cli-service": "~5.0.8",
-        "chart.js": "^4.4.0",
-        "dompurify": "^3.0.5",
-        "eslint": "^8.49.0",
-        "eslint-config-standard": "^17.1.0",
-        "eslint-plugin-html": "^7.1.0",
-        "eslint-plugin-import": "^2.28.1",
-        "eslint-plugin-n": "^16.1.0",
-        "eslint-plugin-no-only-tests": "^3.1.0",
-        "eslint-plugin-promise": "^6.1.1",
-        "eslint-plugin-vue": "^8.7.1",
-        "eslint-plugin-vuetify": "^2.0.5",
-        "glob": "^10.3.4",
-        "highlight.js": "^11.8.0",
-        "luxon": "^3.4.3",
-        "marked": "^4.3.0",
-        "marked-highlight": "^2.0.6",
-        "medium-zoom": "^1.0.8",
-        "mermaid": "^10.4.0",
-        "mocha": "^10.2.0",
-        "node-red": "^3.1.0",
-        "node-red-node-test-helper": "^0.3.2",
-        "should": "^13.2.3",
-        "should-sinon": "^0.0.6",
-        "sinon": "^15.2.0",
-        "socket.io-client": "^4.7.2",
-        "vitepress": "^1.0.0-beta.7",
-        "vue-router": "^4.2.4",
-        "vuetify": "^3.3.16",
-        "vuex": "^4.1.0"
-    },
     "overrides": {
         "node-red-node-test-helper": {
-            "semver": "^7.5.4" 
+            "semver": "^7.5.4"
         }
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not dead",
-        "not ie 11"
-    ],
-    "engines": {
-        "node": ">=14"
     }
 }

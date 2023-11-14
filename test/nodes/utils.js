@@ -32,7 +32,6 @@ function verifyFlowLoaded (helper, flow) {
     })
 }
 
-// eslint-disable-next-line no-unused-vars
 function debugPrintLoadedNodes (testInstance, helper) {
     // get a the full path to the test from .parent.parent.etc
     const pathItems = testInstance.test.titlePath()

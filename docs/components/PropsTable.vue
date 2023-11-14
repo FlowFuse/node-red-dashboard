@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { useData } from 'vitepress'
+import { useData } from 'vitepress' // eslint-disable-line import/named
 
 const { page } = useData()
 </script>

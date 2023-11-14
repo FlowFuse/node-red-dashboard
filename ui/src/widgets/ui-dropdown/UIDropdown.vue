@@ -18,7 +18,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import { useDataTracker } from '../data-tracker.js'
+import { useDataTracker } from '../data-tracker.mjs'
 
 export default {
     name: 'DBUIDropdown',

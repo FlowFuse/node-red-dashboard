@@ -28,7 +28,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import { useDataTracker } from '../data-tracker.js' // eslint-disable-line import/order
+import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 
 export default {
     name: 'DBUINotification',
