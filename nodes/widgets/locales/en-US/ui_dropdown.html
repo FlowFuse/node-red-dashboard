@@ -21,4 +21,17 @@
     <p>
         To clear any selection for a dropdown, pass an empty array <code>[]</code> as <code>msg.payload</code>.
     </p>
+    <h3>Dynamically Setting Options</h3>
+    <p>
+        You can change the options available in the dropdown at runtime by sending <code>msg.options</code>.
+    </p>
+    <p>
+        Accepted formats of <code>msg.options</code> are:
+        <ul>
+            <li><code>Array&lt;string&gt;</code></li>
+            <li><code>Array&lt;{value: String}&gt;</code></li>
+            <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+            
+        </ul>
+    </p>
 </script>
