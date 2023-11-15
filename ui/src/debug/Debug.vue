@@ -89,8 +89,8 @@
                                     v-model="view.nested"
                                 >
                                     <v-tab :value="'properties'">Properties</v-tab>
-                                    <v-tab :value="'datastore'">Data Store (Server-Side)</v-tab>
-                                    <v-tab :value="'statestore'">State Store (Server-Side)</v-tab>
+                                    <v-tab :value="'datastore'">Message History</v-tab>
+                                    <v-tab :value="'statestore'">Dynamic Properties</v-tab>
                                 </v-tabs>
                                 <v-window v-model="view.nested">
                                     <v-window-item value="properties">
