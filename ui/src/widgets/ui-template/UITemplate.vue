@@ -1,3 +1,4 @@
+<template>Hello World</template>
 <script>
 
 import { h } from 'vue'
@@ -15,18 +16,22 @@ export default {
     setup (props) {
         // check if we have any addiitonal methods defined
         // commonly used by 3rd party widgets
-        const methods = {}
-        if (props.props.methods) {
-            Object.entries(props.props.methods).forEach((entry, index) => {
-                // eslint-disable-next-line no-unused-vars
-                const key = entry[0]
-                const value = entry[1]
-                // eslint-disable-next-line no-eval
-                eval('methods[key] = ' + value)
-            })
-        }
+        // const methods = {}
+        // if (props.props.methods) {
+        //     Object.entries(props.props.methods).forEach((entry, index) => {
+        //         // eslint-disable-next-line no-unused-vars
+        //         const key = entry[0]
+        //         const value = entry[1]
+        //         // eslint-disable-next-line no-eval
+        //         eval('methods[key] = ' + value)
+        //     })
+        // }
 
         useDataTracker(props.id)
+
+        console.log('props.props')
+        console.log(props.props)
+
         return () => h({
             props: ['id', 'props'],
             inject: ['$socket'],
@@ -87,7 +92,7 @@ export default {
                 // }
                 return setup
             },
-            template: props.props.templateScope !== 'local' ? undefined : props.props.format,
+            template: '<div>Hello World</div>',
             computed: {
                 ...mapState('data', ['messages']),
                 msg () {
@@ -115,21 +120,23 @@ export default {
                 },
                 submit ($evt) {
                     this.$parent.submit(this, $evt)
-                },
-                ...methods
+                }
+                // ...methods
             },
             mounted () {
+                console.log('h rendered mounted function')
                 // if we have an onInput event handler, setup a subscription on SocketIO to ensure we catch the events
                 if (this.props.onInput) {
                     // eslint-disable-next-line no-eval
-                    eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
+                    // eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
                 }
                 if (this.props.onMounted) {
                     // eslint-disable-next-line no-eval
-                    eval(`const onMounted = ${this.props.onMounted}; onMounted();`)
+                    // eval(`const onMounted = ${this.props.onMounted}; onMounted();`)
                 }
             },
             unmounted () {
+                console.log('h rendered unmounted function')
                 // if we have an onInput event handler, remove the subscription on SocketIO
                 if (this.props.onInput) {
                     // eslint-disable-next-line no-eval
