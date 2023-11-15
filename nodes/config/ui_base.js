@@ -64,15 +64,14 @@ module.exports = function (RED) {
 
             // debugging endpoints
             uiShared.app.get(config.path + '/_debug/datastore/:widgetid', uiShared.httpMiddleware, (req, res) => {
-                console.log(req.params.widgetid)
-                console.log(datastore.get(req.params.widgetid))
                 return res.json(datastore.get(req.params.widgetid))
             })
-            console.log(config.path + '/_debug/statestore/:widgetid')
+
             uiShared.app.get(config.path + '/_debug/statestore/:widgetid', uiShared.httpMiddleware, (req, res) => {
                 return res.json(statestore.getAll(req.params.widgetid))
             })
 
+            // serve dashboard
             uiShared.app.get(config.path, uiShared.httpMiddleware, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })

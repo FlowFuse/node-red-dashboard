@@ -64,7 +64,7 @@
         "notes": "Allows for dynamic selection of an option (<a href='/nodes/widgets/ui-dropdown.html#programmatic-selections'>docs</a>)"
     }, {
         "property": "msg.options",
-        "changes": -1,
+        "changes": null,
         "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/285'>issue</a>"
     }]
 }

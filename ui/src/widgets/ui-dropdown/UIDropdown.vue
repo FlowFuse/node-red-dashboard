@@ -1,8 +1,5 @@
 <!-- eslint-disable no-console -->
 <template>
-    store: {{ messages[id] }}
-    value: {{ value }}
-    options: {{ options }}
     <v-combobox
         v-model="value"
         :class="className"
