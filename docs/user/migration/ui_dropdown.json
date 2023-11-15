@@ -65,6 +65,6 @@
     }, {
         "property": "msg.options",
         "changes": null,
-        "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/285'>issue</a>"
+        "notes": "Allows for dynamic definition of an option (<a href='/nodes/widgets/ui-dropdown.html#dynamic-properties'>docs</a>)"
     }]
 }
