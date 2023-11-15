@@ -228,7 +228,6 @@ module.exports = function (RED) {
             for (const [id, widget] of widgets) {
                 const state = statestore.getAll(id)
                 if (state) {
-                    console.log('dynamic properties detected for widget', id, state)
                     // merge the statestore with our props to account for dynamically set properties:
                     widget.props = { ...widget.props, ...state }
                 }
