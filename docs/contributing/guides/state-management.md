@@ -1,15 +1,23 @@
 # State Management
 
-Dashboard 2.0 conducts state management through the use of a shared server-side data store. It provides four core functions for interaction with the store.
+Dashboard 2.0 conducts state management through the use of a shared server-side data store. 
 
-The store can be injected into a widget using:
+Stores are imported into a node's `.js` file with:
 
 ```js
-const datastore = require('<path>/<to>/store/index.js')
+const store = require('<path>/<to>/store.js')
 ```
 
+In our architecture, we use two standalone stores:
 
-## `datastore.save`
+- `datastore`: A store for the latest `msg` received by a widget in the Editor.
+- `statestore`: A store for all dynamic properties set against widgets in the Editor.
+
+## Data Store
+
+The server-side `datastore` is a centralised store for all messages received by widgets in the Editor. It is a simple key-value store, where the key is the widget's id, and the value is the message received by the widget. In some cases, e.g. `ui-chart` instead of recording _just_ the latest `msg` received, we actually store a history.
+
+### `datastore.save`
 
 When a widget receives a message, the default `node.on('input')` handler will store the received message, mapped to the widget's id into the datastore using:
 
@@ -19,7 +27,7 @@ datastore.save(node.id, msg)
 
 This will store the latest message received by the widget, which can be retrieved by that same widget on load using:
 
-## `datastore.get`
+### `datastore.get`
 
 When a widget is initialised, it will attempt to retrieve the latest message from the datastore using:
 
@@ -29,7 +37,7 @@ datastore.get(node.id)
 
 This ensures, on refresh of the client, or when new clients connect after data has been geenrated, that the state is presented consistently.
 
-## `datastore.append`
+### `datastore.append`
 
 With `.append`, we can store multiple messages against the same widget, representing a history of state, rather than a single point reference to the _last_ value only.
 
@@ -39,7 +47,7 @@ datastore.append(node.id, msg)
 
 This is used in `ui-chart` to store the history of data points, where each data point could have been an individual message received by the widget.
 
-## `datastore.clear`
+### `datastore.clear`
 
 When a widget is removed from the Editor, we can clear the datastore of any messages stored against that widget using:
 
@@ -48,3 +56,42 @@ datastore.clear(node.id)
 ```
 
 This ensures that we don't have any stale data in the datastore, and that we don't have any data stored against widgets that no longer exist in the Editor.
+
+## State Store
+
+The `statestore` is a centralised store for all dynamic properties set against widgets in the Editor. Dynamic Properties can be set through sending `msg.<proprrty>` payloads to a given node, e.g. for ` ui-dropdown`, we can send `msg.options` to override the "Options" property at runtime.
+
+ At the top-level it is key-mapped to the Widget ID's, then each widget has a map, where each key is the property name, mapping to the value.
+
+### `statestore.getAll`
+
+For a given widget ID, return all dynamic properties that have been set.
+
+```js
+statestore.getAll(node.id)
+```
+
+### `statestore.getProperty`
+
+For a given widget ID, return the value of a particular property.
+
+```js
+statestore.getProperty(node.id, property)
+```
+
+### `statestore.set`
+
+Given a widget ID and property, store the associated value in the appropriate mapping
+
+```js
+statestore.set(node.id, property, value)
+```
+
+### `statestore.reset`
+
+Remove all dynamic properties for a given Widget/Node.
+
+```js
+statestore.reset(node.id)
+```
+
