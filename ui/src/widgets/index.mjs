@@ -1,43 +1,50 @@
-/*
-// sorted imports - temporarily disabled until I get it all working again!
 import UIButton from './ui-button/UIButton.vue'
 import UIChart from './ui-chart/UIChart.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
-import UIMarkdown from './ui-markdown/UIMarkdown.vue'
-import UISlider from './ui-slider/UISlider.vue'
-import UISwitch from './ui-switch/UISwitch.vue'
-import UITemplate from './ui-template/UITemplate.vue'
-import UIText from './ui-text/UIText.vue'
-import UITextInput from './ui-text-input/UITextInput.vue'
-*/
-
-/* eslint-disable import/order */
-import UIButton from './ui-button/UIButton.vue'
-import UIDropdown from './ui-dropdown/UIDropdown.vue'
-import UITable from './ui-table/UITable.vue'
 import UIForm from './ui-form/UIForm.vue'
-import UIChart from './ui-chart/UIChart.vue'
+import UIMarkdown from './ui-markdown/UIMarkdown.vue'
+import UINotification from './ui-notification/UINotification.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
 import UISlider from './ui-slider/UISlider.vue'
 import UISwitch from './ui-switch/UISwitch.vue'
-import UINotification from './ui-notification/UINotification.vue'
-import UIMarkdown from './ui-markdown/UIMarkdown.vue'
+import UITable from './ui-table/UITable.vue'
 import UITemplate from './ui-template/UITemplate.vue'
 import UIText from './ui-text/UIText.vue'
 import UITextInput from './ui-text-input/UITextInput.vue'
 
+// Named exports for use in other components
+export {
+    UIButton,
+    UIChart,
+    UIDropdown,
+    UIForm,
+    UIMarkdown,
+    UINotification,
+    UIRadioGroup,
+    UISlider,
+    UISwitch,
+    UITable,
+    UITemplate,
+    UIText,
+    UITextInput
+}
+
+// Component helpers
+export { useDataTracker } from './data-tracker.mjs'
+
+// Exported as an object for look up by widget name
 export default {
     'ui-button': UIButton,
-    'ui-dropdown': UIDropdown,
-    'ui-table': UITable,
-    'ui-form': UIForm,
     'ui-chart': UIChart,
+    'ui-dropdown': UIDropdown,
+    'ui-form': UIForm,
+    'ui-markdown': UIMarkdown,
+    'ui-notification': UINotification,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,
-    'ui-notification': UINotification,
-    'ui-markdown': UIMarkdown,
+    'ui-table': UITable,
     'ui-template': UITemplate,
-    'ui-text': UIText,
-    'ui-text-input': UITextInput
+    'ui-text-input': UITextInput,
+    'ui-text': UIText
 }

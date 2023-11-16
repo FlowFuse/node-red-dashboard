@@ -2,11 +2,11 @@
 
 If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and ideas for additions to the [core collection](../../nodes/widgets.md) of Widgets.
 
-We do also realise though that there are many occassions where a standalone repository/package works better as was very popular in Dashboard 1.0.
+We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Dashboard 1.0.
 
 ## Quick Links
 
-Here is a quick summary of the features and fucntionality available to third-party widgets.
+Here is a quick summary of the features and functionality available to third-party widgets.
 
 - **Custom Dependencies** - ([link](#injecting-head-tags-dependencies)) Injection of external widget dependencies (e.g. other JavaScript libraries) via `<head>`.
 - **Defining Content to Render** - ([link](#defining-html-to-render)) `format` defines the HTML to render in the Dashboard.
@@ -160,12 +160,12 @@ The `ui-template` (which your third-party widget will extend) relies on a `forma
 
 
 ```js
-fs.readFile(path.join(__dirname, '../ui', 'UIExample.vue'), 'utf8', (err, html) => {
+fs.readFile(path.join(__dirname, '../ui', 'my-html.html'), 'utf8', (err, html) => {
     config.format = html
 })
 ```
 
-This will read our `UIExample.vue` as a string, and then bind it to the node.
+This will read our `my-html.html` as a string, and then bind it to the node.
 
 ### Defining `onInput` Functionality
 
