@@ -2,7 +2,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
 import { VueHeadMixin, createHead } from '@unhead/vue'
-import { createApp } from 'vue'
+import * as Vue from 'vue'
 import App from './App.vue'
 import { io } from 'socket.io-client'
 import router from './router.mjs'
@@ -76,7 +76,8 @@ socket.on('connect_error', (err) => {
 /**
  * Create VueJS App
  */
-const app = createApp(App)
+window.Vue = Vue
+const app = Vue.createApp(App)
     .use(store)
     .use(vuetify)
     .use(router)
