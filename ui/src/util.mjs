@@ -142,9 +142,9 @@ export function escapeHTML (html, encode) {
 
 /**
  * Load a UMD module asynchronously into the page
- * @param {*} url
- * @param {*} packageName
- * @param {*} widgetName
+ * @param {*} url           - <string> The full URL of the .umd.js module to load
+ * @param {*} packageName   - <string> The node name/type
+ * @param {*} widgetName    - <string> The name of the Vue Component to load
  * @returns
  */
 export function importExternalComponent (url, packageName, widgetName = null) {
@@ -157,7 +157,7 @@ export function importExternalComponent (url, packageName, widgetName = null) {
         // Mark component as loading by returning a promise that resolves with the module
         window[packageName] = window[packageName] || {}
         return (window[packageName][widgetName] = (async () => {
-            // Load the component library
+            // Load the component library - umd assigns this to window[packageName]
             await import(url)
 
             if (!window[packageName]) {
@@ -169,7 +169,7 @@ export function importExternalComponent (url, packageName, widgetName = null) {
                 throw new Error(`Loaded ${url} and library ${packageName}, but component ${widgetName} didn't appear to be exported, is that the correct name?`)
             }
 
-            // Library will register itself on window[libraryName]
+            // Library will register itself on window[packageName]
             return window[packageName][widgetName]
         })())
     })
