@@ -29,7 +29,8 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
-        settings: {}
+        settings: {},
+        contribs: {}
     }
 
     /**
@@ -77,19 +78,22 @@ module.exports = function (RED) {
                             const source = widgetConfig.source
 
                             // make the `source` file available via our express server and to the UI
-                            const url = config.path + '/widgets/' + packageName + '/' + widgetName + '.vue'
+                            const url = config.path + '/widgets/' + packageName + '/' + widgetName + '.umd.js'
                             const widgetPath = path.join(modulePath, source)
                             uiShared.app.use(url, uiShared.httpMiddleware, express.static(widgetPath))
 
                             uiShared.contribs[widgetName] = {
                                 package: packageName,
                                 name: widgetName,
-                                src: url
+                                src: url,
+                                component: widgetConfig.component
                             }
                         })
                     }
                     return packageJson
-                } catch (error) { /* do nothing */ }
+                } catch (error) {
+                    console.error(error)
+                }
                 return null
             })
 
@@ -537,7 +541,8 @@ module.exports = function (RED) {
                     enabled: datastore.get(widgetConfig.id)?.enabled || true,
                     visible: datastore.get(widgetConfig.id)?.visible || true
                 },
-                hooks: widgetEvents
+                hooks: widgetEvents,
+                src: uiShared.contribs[widgetConfig.type]
             }
 
             delete widget.props.id
