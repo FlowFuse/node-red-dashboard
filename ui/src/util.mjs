@@ -156,7 +156,7 @@ export function importExternalComponent (url, packageName, widgetName = null) {
 
         // Mark component as loading by returning a promise that resolves with the module
         window[packageName] = window[packageName] || {}
-        return (window[packageName][widgetName] = (async () => {
+        return (async () => {
             // Load the component library - umd assigns this to window[packageName]
             await import(url)
 
@@ -171,7 +171,7 @@ export function importExternalComponent (url, packageName, widgetName = null) {
 
             // Library will register itself on window[packageName]
             return window[packageName][widgetName]
-        })())
+        })()
     })
 }
 
