@@ -1,4 +1,4 @@
-// const Emitter = require('events').EventEmitter
+const fs = require('fs')
 const path = require('path')
 
 const v = require('../../package.json').version
@@ -55,6 +55,44 @@ module.exports = function (RED) {
                     uiShared.httpMiddleware = uiShared.settings.middleware
                 }
             }
+
+            /**
+             * Load in third party widgets
+             */
+
+            const packagePath = path.join(RED.settings.userDir, 'package.json')
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+
+            Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
+                return packageName.includes('node-red-dashboard-')
+            }).map(([packageName, _packageVersion]) => {
+                const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
+                const packagePath = path.join(modulePath, 'package.json')
+                try {
+                    // get third party package.json
+                    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+                    if (packageJson?.['node-red-dashboard-2']) {
+                        // loop over object of widgets
+                        Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([widgetName, widgetConfig]) => {
+                            const source = widgetConfig.source
+
+                            // make the `source` file available via our express server and to the UI
+                            const url = config.path + '/widgets/' + packageName + '/' + widgetName + '.vue'
+                            const widgetPath = path.join(modulePath, source)
+                            uiShared.app.use(url, uiShared.httpMiddleware, express.static(widgetPath))
+
+                            uiShared.contribs[widgetName] = {
+                                package: packageName,
+                                name: widgetName,
+                                src: url
+                            }
+                        })
+                    }
+                    return packageJson
+                } catch (error) { /* do nothing */ }
+                return null
+            })
+
             /**
              * Configure Web Server to handle UI traffic
              */
