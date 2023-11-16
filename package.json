@@ -15,6 +15,12 @@
         "name": "Joe Pavitt",
         "url": "https://github.com/joepavitt"
     },
+    "contributors": [
+        {
+            "name": "Pez Cuckow",
+            "url": "https://github.com/pezmc"
+        }
+    ],
     "files": [
         "dist/*",
         "nodes/*"

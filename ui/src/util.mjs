@@ -1,3 +1,5 @@
+import { defineAsyncComponent } from 'vue'
+
 /**
  * @description: Get a nested property value from an object by path
  * @param {object} obj - The object to retrieve the value from
@@ -136,6 +138,41 @@ export function escapeHTML (html, encode) {
     }
 
     return html
+}
+
+/**
+ * Load a UMD module asynchronously into the page
+ * @param {*} url
+ * @param {*} packageName
+ * @param {*} widgetName
+ * @returns
+ */
+export function importExternalComponent (url, packageName, widgetName = null) {
+    return defineAsyncComponent(async () => {
+        // Already loaded
+        if (window[packageName]?.[widgetName]) {
+            return window[packageName][widgetName]
+        }
+
+        // Mark component as loading by returning a promise that resolves with the module
+        window[packageName] = window[packageName] || {}
+        return (window[packageName][widgetName] = (async () => {
+            // Load the component library
+            await import(url)
+
+            if (!window[packageName]) {
+                throw new Error(`Loaded ${url} but library ${packageName} not found, is that the correct name?`)
+            }
+
+            if (!window[packageName][widgetName]) {
+                console.warn(`Failed to find ${widgetName} in ${packageName}`, window[packageName])
+                throw new Error(`Loaded ${url} and library ${packageName}, but component ${widgetName} didn't appear to be exported, is that the correct name?`)
+            }
+
+            // Library will register itself on window[libraryName]
+            return window[packageName][widgetName]
+        })())
+    })
 }
 
 export default {
