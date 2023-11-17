@@ -142,10 +142,15 @@ export function escapeHTML (html, encode) {
 
 /**
  * Load a UMD module asynchronously into the page
- * @param {*} url           - <string> The full URL of the .umd.js module to load
- * @param {*} packageName   - <string> The node name/type
- * @param {*} widgetName    - <string> The name of the Vue Component to load
- * @returns
+ *
+ * On first call, this will return a promise the resolves to the Vue Component once loaded
+ * If the component is currently loading, it'll return the same promise
+ * If the component has already loaded, it'll short-circuit and return the Vue Component
+ *
+ * @param {String} url The full URL of the .umd.js module to load
+ * @param {String} packageName The node name/type (library name set in Vite)
+ * @param {String} widgetName The name of the Vue Component to load (exported by the library)
+ * @returns {Promise} Promise that resolves to the Vue Component
  */
 export function importExternalComponent (url, packageName, widgetName = null) {
     return defineAsyncComponent(async () => {
@@ -156,7 +161,7 @@ export function importExternalComponent (url, packageName, widgetName = null) {
 
         // Mark component as loading by returning a promise that resolves with the module
         window[packageName] = window[packageName] || {}
-        return (async () => {
+        window[packageName][widgetName] = (async () => {
             // Load the component library - umd assigns this to window[packageName]
             await import(url)
 
@@ -169,9 +174,12 @@ export function importExternalComponent (url, packageName, widgetName = null) {
                 throw new Error(`Loaded ${url} and library ${packageName}, but component ${widgetName} didn't appear to be exported, is that the correct name?`)
             }
 
-            // Library will register itself on window[packageName]
+            // UMD Library will register itself on window[packageName][widgetName]
             return window[packageName][widgetName]
         })()
+
+        // Wait until library has loaded and registered itself
+        return await window[packageName][widgetName]
     })
 }
 
