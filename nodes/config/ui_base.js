@@ -297,10 +297,15 @@ module.exports = function (RED) {
 
             // check if any widgets have defined custom socket events
             // most common with third-party widgets that are not part of core Dashboard 2.0
+            const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
                     for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                        socket.on(eventName, handler)
+                        // we only need add the listener for a given event type the once
+                        if (registered.indexOf(widget.type) === -1) {
+                            socket.on(eventName, handler.bind(null, socket))
+                            registered.push(widget.type)
+                        }
                     }
                 }
             })
