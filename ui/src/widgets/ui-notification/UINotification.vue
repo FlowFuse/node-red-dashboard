@@ -109,7 +109,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .nrdb-ui-notification {
     padding-top: 64px;
 }

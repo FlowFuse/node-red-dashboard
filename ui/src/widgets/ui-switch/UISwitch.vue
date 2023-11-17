@@ -70,7 +70,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .nrdb-switch {
     display: flex;
     align-items: center;
