@@ -152,7 +152,7 @@ export default {
                     widget.component = markRaw(widgetComponents[widget.type])
                 } else if (widget.src) {
                     // Third Party Widgets
-                    widget.component = importExternalComponent(widget.src.src, widget.src.name, widget.src.component)
+                    widget.component = markRaw(importExternalComponent(widget.src.src, widget.src.name, widget.src.component))
                 } else {
                     // Old Third Party Widgets
                     widget.component = markRaw(widgetComponents['ui-template'])
