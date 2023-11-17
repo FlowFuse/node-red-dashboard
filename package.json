@@ -52,7 +52,7 @@
     "devDependencies": {
         "@mdi/font": "~6.9.96",
         "@unhead/vue": "^1.7.4",
-        "@vitejs/plugin-vue": "^4.4.1",
+        "@vitejs/plugin-vue": "^4.5.0",
         "chart.js": "^4.4.0",
         "dompurify": "^3.0.5",
         "eslint": "^8.53.0",
@@ -79,8 +79,8 @@
         "sinon": "^15.2.0",
         "socket.io-client": "^4.7.2",
         "sort-package-json": "^2.6.0",
-        "vite": "^4.5.0",
-        "vitepress": "^1.0.0-beta.7",
+        "vite": "^5.0.0",
+        "vitepress": "^1.0.0-rc.26",
         "vue-router": "^4.2.4",
         "vuetify": "^3.3.16",
         "vuex": "^4.1.0"
