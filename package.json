@@ -28,7 +28,8 @@
     "scripts": {
         "build": "vite build",
         "build:dev": "NODE_ENV=development npm run build",
-        "dev": "vite",
+        "dev": "NODE_ENV=development vite build --watch",
+        "dev:prod": "vite build --watch",
         "docs:build": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
         "lint": "npm run lint:js && npm run lint:package",
@@ -37,8 +38,6 @@
         "lint:js:fix": "yarn lint:js --fix",
         "lint:package": "sort-package-json --check 'package.json'",
         "lint:package:fix": "sort-package-json 'package.json'",
-        "preview": "vite build && vite preview",
-        "serve": "npm run dev",
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
     },
