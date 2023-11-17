@@ -147,12 +147,12 @@ export function escapeHTML (html, encode) {
  * If the component is currently loading, it'll return the same promise
  * If the component has already loaded, it'll short-circuit and return the Vue Component
  *
- * @param {String} url The full URL of the .umd.js module to load
+ * @param {String} file The file name and extension to load from /resources
  * @param {String} packageName The node name/type (library name set in Vite)
  * @param {String} widgetName The name of the Vue Component to load (exported by the library)
  * @returns {Promise} Promise that resolves to the Vue Component
  */
-export function importExternalComponent (url, packageName, widgetName = null) {
+export function importExternalComponent (file, packageName, widgetName = null) {
     return defineAsyncComponent(async () => {
         // Already loaded
         if (window[packageName]?.[widgetName]) {
@@ -163,15 +163,15 @@ export function importExternalComponent (url, packageName, widgetName = null) {
         window[packageName] = window[packageName] || {}
         window[packageName][widgetName] = (async () => {
             // Load the component library - umd assigns this to window[packageName]
-            await import(url)
+            await import(`/resources/${file}`)
 
             if (!window[packageName]) {
-                throw new Error(`Loaded ${url} but library ${packageName} not found, is that the correct name?`)
+                throw new Error(`Loaded /resources/${file} but library ${packageName} not found, is that the correct name?`)
             }
 
             if (!window[packageName][widgetName]) {
                 console.warn(`Failed to find ${widgetName} in ${packageName}`, window[packageName])
-                throw new Error(`Loaded ${url} and library ${packageName}, but component ${widgetName} didn't appear to be exported, is that the correct name?`)
+                throw new Error(`Loaded /resources/${file} and library ${packageName}, but component ${widgetName} didn't appear to be exported, is that the correct name?`)
             }
 
             // UMD Library will register itself on window[packageName][widgetName]
