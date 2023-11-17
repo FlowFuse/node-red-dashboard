@@ -14,6 +14,8 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+import './stylesheets/common.css'
+
 import store from './store/index.mjs'
 
 // set a base theme on which we will add our custom NR-defined theme
