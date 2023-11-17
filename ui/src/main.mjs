@@ -3,6 +3,7 @@
 /* eslint-disable import/order */
 import { VueHeadMixin, createHead } from '@unhead/vue'
 import * as Vue from 'vue'
+import * as vuex from 'vuex'
 import App from './App.vue'
 import { io } from 'socket.io-client'
 import router from './router.mjs'
@@ -78,7 +79,8 @@ socket.on('connect_error', (err) => {
 /**
  * Create VueJS App
  */
-window.Vue = Vue
+window.Vue = Vue // make VueJS available globally for third-party NR widgets
+window.vuex = vuex // make Vuex available globally for third-party NR widgets
 const app = Vue.createApp(App)
     .use(store)
     .use(vuetify)
