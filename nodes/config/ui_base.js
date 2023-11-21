@@ -61,19 +61,19 @@ module.exports = function (RED) {
              * Load in third party widgets
              */
             let packagePath, packageJson
-            try {
+            if (RED.settings?.userDir) {
                 packagePath = path.join(RED.settings.userDir, 'package.json')
                 packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
-            } catch (error) {
-                console.error(error)
+            } else {
+                node.log('Cannot import third party widgets. No access to Node-RED package.json')
             }
 
-            Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
-                return packageName.includes('node-red-dashboard-')
-            }).map(([packageName, _packageVersion]) => {
-                const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
-                const packagePath = path.join(modulePath, 'package.json')
-                try {
+            if (packageJson) {
+                Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
+                    return packageName.includes('node-red-dashboard-')
+                }).map(([packageName, _packageVersion]) => {
+                    const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
+                    const packagePath = path.join(modulePath, 'package.json')
                     // get third party package.json
                     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
                     if (packageJson?.['node-red-dashboard-2']) {
@@ -88,11 +88,8 @@ module.exports = function (RED) {
                         })
                     }
                     return packageJson
-                } catch (error) {
-                    console.error(error)
-                }
-                return null
-            })
+                })
+            }
 
             /**
              * Configure Web Server to handle UI traffic
