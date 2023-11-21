@@ -29,6 +29,11 @@ module.exports = function (RED) {
             const group = config
             page.deregister(group, widgetNode)
         }
+
+        // Return the UI Base Node this group lives in
+        node.getBase = function () {
+            return RED.nodes.getNode(config.page).getBase()
+        }
     }
     RED.nodes.registerType('ui-group', UIGroupNode)
 }

@@ -494,6 +494,10 @@ module.exports = function (RED) {
             widgets: new Map()
         }
 
+        node.stores = {
+            data: datastore
+        }
+
         /**
          * Queue up a config emit to the UI. This is a debounced function
          * NOTES:
