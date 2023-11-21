@@ -3,8 +3,14 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown to the left of the dropdown.
-    Options: A list of the options available in the dropdown. Each row defines a `label` (shown in the dropdown) and `value` (emitted on selection) property.
+    Options:
+        description: A list of the options available in the dropdown. Each row defines a `label` (shown in the dropdown) and `value` (emitted on selection) property.
+        dynamic: true
     Allow Multiple: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
+dynamic:
+    Options:
+        payload: msg.options
+        structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
 ---
 
 <script setup>
@@ -33,6 +39,10 @@ To make a single selection, pass in the `value` of the option as `msg.payload`, 
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

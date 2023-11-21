@@ -1,4 +1,4 @@
-const datastore = require('../store/index.js')
+const datastore = require('../store/data.js')
 
 module.exports = function (RED) {
     function ChartNode (config) {

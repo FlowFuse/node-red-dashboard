@@ -16,6 +16,7 @@
 import { mapState } from 'vuex'
 import { markRaw } from 'vue' // eslint-disable-line import/order
 
+import DebugView from './debug/Debug.vue' // import the Debug View for a Dashboard
 import layouts from './layouts/index.mjs' // import all layouts
 import widgetComponents from './widgets/index.mjs' // import all Vue Widget Components
 
@@ -102,6 +103,18 @@ export default {
     created () {
         this.$socket.on('ui-config', (topic, payload) => {
             console.log('ui-config received. topic:', topic, 'payload:', payload)
+
+            // Create Debug Endpoints
+            Object.values(payload.dashboards).forEach(ui => {
+                this.$router?.addRoute({
+                    path: `${ui.path}/_debug`,
+                    name: `${ui.id}_debug`,
+                    component: DebugView,
+                    meta: {
+                        dashboard: ui.id // the dashboard id - to simplify determining which dashboard we're on
+                    }
+                })
+            })
 
             // loop over pages, add them to vue router
             Object.values(payload.pages).forEach(page => {

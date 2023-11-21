@@ -18,7 +18,7 @@
         <PropertyMigrationTable v-if="profile.msgs"
             :properties="profile.msgs">
             <template #header>
-                <h4>Message Options</h4>
+                <h4>Dynamic Properties</h4>
             </template>
             <template #description>
                 <p>

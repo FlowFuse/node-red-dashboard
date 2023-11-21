@@ -2,7 +2,8 @@
 const path = require('path')
 
 const v = require('../../package.json').version
-const datastore = require('../store/index.js')
+const datastore = require('../store/data.js')
+const statestore = require('../store/state.js')
 const { appendTopic } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
@@ -61,6 +62,16 @@ module.exports = function (RED) {
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
+            // debugging endpoints
+            uiShared.app.get(config.path + '/_debug/datastore/:widgetid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(datastore.get(req.params.widgetid))
+            })
+
+            uiShared.app.get(config.path + '/_debug/statestore/:widgetid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(statestore.getAll(req.params.widgetid))
+            })
+
+            // serve dashboard
             uiShared.app.get(config.path, uiShared.httpMiddleware, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
@@ -212,6 +223,16 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
+            const widgets = node.ui.widgets
+            // loop over widgets - check statestore if we've had any dynamic properties set
+            for (const [id, widget] of widgets) {
+                const state = statestore.getAll(id)
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    widget.props = { ...widget.props, ...state }
+                }
+            }
+
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),
@@ -515,6 +536,8 @@ module.exports = function (RED) {
             if (widget.props.height === '0') {
                 widget.props.height = null
             }
+
+            // merge the statestore with our props toa ccount for dynamically set properties:
 
             // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
             // and stringify them for transport over SocketIO

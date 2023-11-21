@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const routes = []
+const routes = [
+    {
+        name: 'DebugView',
+        route: '/dashboard/_debug'
+    }
+]
 
 const router = createRouter({
     history: createWebHistory(),

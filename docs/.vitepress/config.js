@@ -116,7 +116,8 @@ export default ({ mode }) => {
               collapsed: false,
               items: [
                 { text: 'Adding Core Widgets', link: '/contributing/widgets/core-widgets' },
-                { text: 'Third Party Widgets', link: '/contributing/widgets/third-party' }
+                { text: 'Third Party Widgets', link: '/contributing/widgets/third-party' },
+                { text: 'Debugging', link: '/contributing/widgets/debugging' }
               ]
             },
             {

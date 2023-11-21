@@ -8,6 +8,7 @@ import './overlay.css'
 import './widget-card.css'
 
 import PropsTable from '../../components/PropsTable.vue'
+import DynamicPropsTable from '../../components/DynamicPropsTable.vue'
 import ControlsTable from '../../components/ControlsTable.vue'
 
 export default {
@@ -48,6 +49,7 @@ export default {
     enhanceApp(ctx) {
         // register your custom global components
         ctx.app.component('PropsTable', PropsTable)
+        ctx.app.component('DynamicPropsTable', DynamicPropsTable)
         ctx.app.component('ControlsTable', ControlsTable)
     }
   }

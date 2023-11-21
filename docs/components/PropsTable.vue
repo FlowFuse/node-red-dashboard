@@ -3,13 +3,15 @@
         <thead>
             <tr>
                 <th>Prop</th>
-                <th>Type</th>
+                <th>Dynamic</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="(value, property) in page.frontmatter?.props" :key="property">
                 <td>{{ property }}</td>
-                <td v-html="value"></td>
+                <td style="text-align: center;">{{ value.dynamic ? '&#x2713;' : '' }}</td>
+                <td v-html="value.description || value"></td>
             </tr>
         </tbody>
     </table>
