@@ -26,7 +26,7 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 mode: { value: 'text', required: true },
-                delay: { value: 300, validate: RED.validators.number() },
+                delay: { value: 300, validate: function (v) { return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true } },
                 passthru: { value: true },
                 sendOnDelay: { value: true },
                 sendOnBlur: { value: true },
