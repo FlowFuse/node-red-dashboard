@@ -290,3 +290,93 @@ Scatter Plots accept a variety of payload formats. The following are all valid:
 
 ![Example of a Bar Graph](/images/node-examples/ui-chart-bar.png "Example of a Bar Graph"){data-zoomable}
 *Example of a rendered bar graph.*
+
+Bar charts can only be configured with a "Categorical" x-axis type, the series that each data point will group into is then defined by the "Series" property, with the "y" proeprty defining the value of each bar.
+
+#### Payloads
+
+The payload will heavily depend on the "Series" value used, as such, we provide examples of each as follows:
+
+##### Series: `msg.<property>`
+
+Each message send to the chart will assign to the category depending on `msg.<property>`. In Dashboard 1.0 this was the default behaviour, where `msg.topic` would control the series of the data, and this is still supported in Dashboard 2.0.
+
+```js
+const msg = {
+    "topic": "bar-1",
+    "payload": 1
+}
+```
+
+would set the value of the `bar-1` series to `1`.
+
+##### Series: `string`
+
+Each message received will always bind to the same bar, this restricts the chart to only being able to show a single column/category of data.
+
+```js
+const msg = {
+    "payload": 12
+}
+```
+
+would set the value of the single series to `12`.
+
+##### Series: `key:<key>`
+
+Each message received will bind to the category defined by the value of `<key>` in the message payload. So, if we set the "Series" value to be `key:category`, then the following message:
+
+```js
+const msg = {
+    "payload": {
+        "category": "bar-1",
+        "value": 34
+    }
+}
+```
+
+Would set the value of the `bar-1` series to `34`.
+
+Additionally, with this option it's then easy to control multiple bars from a single `msg`:
+
+```js
+const msg = {
+    "payload": [
+        {
+            "category": "bar-1",
+            "value": 34
+        },
+        {
+            "category": "bar-2",
+            "value": 12
+        },
+        {
+            "category": "bar-3",
+            "value": 23
+        },
+        {
+            "category": "bar-1",
+            "value": 17
+        }
+    ]
+}
+```
+
+##### Series: `JSON:`
+
+This combines the "Series" and "y" options, where you can provide an Array of strings, pointing to the property/value that you want to render. The category label is then defined by the proeprty itself.
+
+So in an example where we set "Series" to `["value", "nested.value"]`
+
+```js
+const msg = {
+    "payload": {
+        "value": 34,
+        "nested": {
+            "value": 12
+        }
+    }
+}
+```
+
+This would render two bars, one labelled `value` with a value of `34`, and one labelled `nested.value` with a value of `12`.
