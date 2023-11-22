@@ -39,8 +39,8 @@
         },
         {
             "property": "output",
-            "changes": -1,
-            "notes": "Dashboard 2.0's (current) default behaviour is to output 'continuously while sliding', which was one of two options in Dashboard 1.0"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "passthru",

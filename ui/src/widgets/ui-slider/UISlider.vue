@@ -1,9 +1,11 @@
+<!-- Error in plugin, @end is supported from Vuetify 3.2.0 -->
+<!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
         v-model="value" :label="props.label" hide-details="auto"
-        :class="className"
-        :thumb-label="props.thumbLabel || false"
-        :min="props.min" :max="props.max" :step="props.step || 1"
+        :class="className" :thumb-label="props.thumbLabel || false"
+        :min="props.min"
+        :max="props.max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
@@ -38,16 +40,21 @@ export default {
                 return // no change
             }
             this.value = val
-        },
-        value: function (val, oldVal) {
-            if (this.storeValue === val) {
-                return // no change
-            }
-            this.onChange()
         }
     },
     methods: {
         onChange () {
+            if (!this.props.outs || this.props.outs === 'all') {
+                this.send()
+            }
+        },
+        onBlur () {
+            if (this.props.outs === 'end') {
+                this.send()
+            }
+        },
+        send () {
+            this.value = Number(this.value)
             const msg = this.messages[this.id] || {}
             msg.payload = this.value
             this.$store.commit('data/bind', msg)
