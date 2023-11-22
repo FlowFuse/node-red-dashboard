@@ -39,7 +39,7 @@
         },
         {
             "property": "delay",
-            "changes": -1,
+            "changes": null,
             "notes": null
         },
         {
@@ -49,8 +49,8 @@
         },
         {
             "property": "send on blur",
-            "changes": "modified",
-            "notes": "This is now the default behaviour in Dashboard 2.0. Once an input has it's value changed, and the user moves focus away, a <code>msg</code> is sent on."
+            "changes": null,
+            "notes": null
         },
         {
             "property": "payload",
@@ -61,6 +61,16 @@
             "property": "topic",
             "changes": null,
             "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "send on delay",
+            "notes": "This will overrides the 'delay' setting, and provides explcit control over when the message is sent."
+        },
+        {
+            "property": "send on enter",
+            "notes": "This will send a message when the user presses <enter> in the text input."
         }
     ]
 }
