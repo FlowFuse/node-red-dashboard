@@ -119,10 +119,66 @@ module.exports = function(RED) {
 
 ## Guides
 
+### The Basics of VueJS
+
+Aware that a lot of developers that may want to contribute to Dashboard 2.0, may be new to VueJS, so we've detailed a few fundamentals here.
+
+It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across Dashboard 2.0 and in our examples for readibility.
+
+With the Options API, a Vue component has the following structure:
+
+```vue
+<template>
+    <!-- HTML template for the component -->
+    <!-- You can reference any variables defined on your components directly here, e.g. -->
+    <div>{{ myVar }}</div>
+</template>
+
+<script>
+export default {
+    // any properties that are passed to the component
+    // in Dashboard 2.0, these 3 are the ones provided:
+    props: ['id', 'props', 'state'],
+    // any data that you want to be reactive and available across your component
+    // within the <script> reference these variables with this.<myVar>
+    // within the HTML, you don't need the "this." prefix
+    data () {
+        return {
+            myVar: 'Hello World'
+        }
+    },
+    // Computed properties are variables that automatically update when their dependencies change
+    computed: {
+        myComputedProp () {
+            return this.myVar + '!'
+        }
+    },
+    // any methods that are used within the component
+    methods: {
+        myMethod () {
+            alert(this.myVar)
+        }
+    },
+    // Runs when the component is built and loaded into the DOM
+    mounted () {
+        alert('Component has mounted')
+    },
+    // Runs when the component is removed
+    unmounted () {
+        alert('Component has been removed')
+    }
+}
+</script>
+
+<style>
+/* any CSS styling for the component */
+</style>
+```
+
+
 ### Using Vuetify Components
 
 You're free to define complety custom HTML/CSS when defining your widgets, but we've also provided native support for all of [Vuetify's Component Library](https://vuetifyjs.com/en/components/all/) to get your started with a wide range of UI components that you may want to utilise.
-
 
 ### Accessing Properties
 
