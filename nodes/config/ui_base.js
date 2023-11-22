@@ -70,7 +70,7 @@ module.exports = function (RED) {
 
             if (packageJson) {
                 Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
-                    return packageName.includes('node-red-dashboard-')
+                    return packageName.includes('node-red-dashboard-2-')
                 }).map(([packageName, _packageVersion]) => {
                     const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
                     const packagePath = path.join(modulePath, 'package.json')
