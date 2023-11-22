@@ -64,9 +64,9 @@ export default {
     methods: {
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
-            this.lastSent = this.value
         },
         onChange: function () {
+            this.lastSent = this.value
             if (this.props.sendOnDelay) {
                 // is send on delay enabled, if so, set a timeout to send the message
                 if (this.delayTimer) {
