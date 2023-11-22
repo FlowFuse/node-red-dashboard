@@ -10,6 +10,12 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Custom
+node_modules
+dist
+dist-ssr
+*.local
+
 # Runtime data
 pids
 *.pid
@@ -132,5 +138,5 @@ dist
 .github/.DS_Store
 .DS_Store
 
-
+# Vitepress
 docs/.vitepress/cache/

@@ -34,6 +34,11 @@ module.exports = function (RED) {
                 ui.deregister(page, group, widgetNode)
             }
         }
+
+        // Return the UI Base Node this page lives in
+        node.getBase = function () {
+            return RED.nodes.getNode(config.ui)
+        }
     }
     RED.nodes.registerType('ui-page', UIPageNode)
 }

@@ -2,7 +2,8 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
 import { VueHeadMixin, createHead } from '@unhead/vue'
-import { createApp } from 'vue'
+import * as Vue from 'vue'
+import * as vuex from 'vuex'
 import App from './App.vue'
 import { io } from 'socket.io-client'
 import router from './router.mjs'
@@ -13,6 +14,8 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+
+import './stylesheets/common.css'
 
 import store from './store/index.mjs'
 
@@ -78,7 +81,9 @@ socket.on('connect_error', (err) => {
 /**
  * Create VueJS App
  */
-const app = createApp(App)
+window.Vue = Vue // make VueJS available globally for third-party NR widgets
+window.vuex = vuex // make Vuex available globally for third-party NR widgets
+const app = Vue.createApp(App)
     .use(store)
     .use(vuetify)
     .use(router)

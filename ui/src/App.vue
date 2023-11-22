@@ -18,6 +18,7 @@ import { markRaw } from 'vue' // eslint-disable-line import/order
 
 import DebugView from './debug/Debug.vue' // import the Debug View for a Dashboard
 import layouts from './layouts/index.mjs' // import all layouts
+import { importExternalComponent } from './util.mjs'
 import widgetComponents from './widgets/index.mjs' // import all Vue Widget Components
 
 export default {
@@ -155,8 +156,21 @@ export default {
             // map their respective Vue component for rendering on a page
             Object.keys(payload.widgets).forEach(id => {
                 const widget = payload.widgets[id]
+
                 // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
                 widget.component = markRaw(widgetComponents[widget.type] || widgetComponents['ui-template'])
+                if (widgetComponents[widget.type]) {
+                    // Core Widgets
+                    // allow for types not defined in code Dashboard, but assume they're utilising ui-template foundations as recommended
+                    widget.component = markRaw(widgetComponents[widget.type])
+                } else if (widget.src) {
+                    // Third Party Widgets
+                    const resource = `${widget.src.package}/${widget.src.src}`
+                    widget.component = markRaw(importExternalComponent(resource, widget.src.name, widget.src.component))
+                } else {
+                    // Old Third Party Widgets
+                    widget.component = markRaw(widgetComponents['ui-template'])
+                }
             })
 
             // store this data in our VueX store for access across the app

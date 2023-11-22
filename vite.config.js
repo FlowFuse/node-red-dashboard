@@ -16,7 +16,8 @@ export default defineConfig({
     plugins: [vue()],
     root: 'ui',
     build: {
-        outDir: '../dist'
+        outDir: '../dist',
+        emptyOutDir: true
     },
     base: '/dashboard/'
 })

@@ -133,7 +133,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .nrdb-table {
 
 }

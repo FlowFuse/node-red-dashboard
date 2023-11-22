@@ -15,6 +15,12 @@
         "name": "Joe Pavitt",
         "url": "https://github.com/joepavitt"
     },
+    "contributors": [
+        {
+            "name": "Pez Cuckow",
+            "url": "https://github.com/pezmc"
+        }
+    ],
     "files": [
         "dist/*",
         "nodes/*"
@@ -22,7 +28,8 @@
     "scripts": {
         "build": "vite build",
         "build:dev": "NODE_ENV=development npm run build",
-        "dev": "vite",
+        "dev": "NODE_ENV=development vite build --watch",
+        "dev:prod": "vite build --watch",
         "docs:build": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
         "lint": "npm run lint:js && npm run lint:package",
@@ -31,8 +38,6 @@
         "lint:js:fix": "yarn lint:js --fix",
         "lint:package": "sort-package-json --check 'package.json'",
         "lint:package:fix": "sort-package-json 'package.json'",
-        "preview": "vite build && vite preview",
-        "serve": "npm run dev",
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
     },
@@ -46,7 +51,7 @@
     "devDependencies": {
         "@mdi/font": "~6.9.96",
         "@unhead/vue": "^1.7.4",
-        "@vitejs/plugin-vue": "^4.4.1",
+        "@vitejs/plugin-vue": "^4.5.0",
         "chart.js": "^4.4.0",
         "dompurify": "^3.0.5",
         "eslint": "^8.53.0",
@@ -73,8 +78,8 @@
         "sinon": "^15.2.0",
         "socket.io-client": "^4.7.2",
         "sort-package-json": "^2.6.0",
-        "vite": "^4.5.0",
-        "vitepress": "^1.0.0-beta.7",
+        "vite": "^5.0.0",
+        "vitepress": "^1.0.0-rc.26",
         "vue-router": "^4.2.4",
         "vuetify": "^3.4.1",
         "vuex": "^4.1.0"

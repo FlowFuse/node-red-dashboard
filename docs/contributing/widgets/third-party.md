@@ -2,44 +2,95 @@
 
 If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and ideas for additions to the [core collection](../../nodes/widgets.md) of Widgets.
 
-We do also realise though that there are many occassions where a standalone repository/package works better as was very popular in Dashboard 1.0.
+We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Dashboard 1.0.
 
-## Quick Links
+## How Widgets are Loaded
 
-Here is a quick summary of the features and fucntionality available to third-party widgets.
+Dashboard 2.0 is built on top of [VueJS](https://vuejs.org/), and as such, all widgets needs to be mapped to a Vue component. The process works as follows:
 
-- **Custom Dependencies** - ([link](#injecting-head-tags-dependencies)) Injection of external widget dependencies (e.g. other JavaScript libraries) via `<head>`.
-- **Defining Content to Render** - ([link](#defining-html-to-render)) `format` defines the HTML to render in the Dashboard.
-- **On Input** - ([link](#defining-oninput-functionality)) `onInput` defines behaviour of the widget in Dashboard when it receives a message in Node-RED.
-- **On Load** - ([link](#optional-config-options)) `onMounted` defines functionality when a widget first loads in Dashboard.
-- **Custom Functions** - ([link](#custom-functionality)) Define general functions that can be called from within your widget at any point of your choosing
-- **Extend Built-In Events** - ([link](#ui-template-functionality)) Our built in `send` function can be called within your widget's template, and will send a message back to Node-RED, with any content of your choosing.
-- **Custom SocketIO Event Handlers** - ([link](#custom-socketio-events)) If you want to extend the communication between Dashboard and Node-RED, you can emit your own SocketIO events from Dashboard, and have respective handlers for those events in Node-RED.
+1. Dashboard 2.0 client connects to Node-RED
+2. Node-RED sends `ui-config` object contianing details of all pages, themes, groups & widgets
+3. In the event handler, we loop over all widget's found in the `ui-config`:
+    - If the widget `type` matches a core component, we map it to that component
+    - If the widget is a third-party widget, we load the relevant `.umd.js` file, exposed by the widget's `/resources` folder.
+3. Dashboard 2.0 loads the relevant Layout (e.g. Grid, Fixed or Notebook) depending on the active URL/page.
+4. Within that layout manager, we loop over the widgets, and render their respective Vue components.
+    - Every component is passed `id`, `props` and `state` of the widget.
 
-## Basic Folder Structure
+## Getting Started
 
-The following explanation of how to build your own third party widgets will reference the [Example Node](https://github.com/FlowFuse/node-red-dashboard-example-node) that we've open sourced, showing various integration examples of features available.
+We have created an [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) that will provide foundations for your widget. It includes plenty of examples for functionality you'll likely need.
+
+It's base repository has the following file/folder structure:
 
 As with any Node-RED nodes, you'll need to start with two files:
 
-- `/nodes/ui-example.html` - defines the node’s properties, edit dialog and help text.
+- `/nodes/ui-example.html` - defines the node’s properties, edit UI and help text.
 - `/nodes/ui-example.js` - defines the node's server-side behaviours
 
-Each Widget in Dashboard also consists of a `.vue` file to define how a widget is rendered in the Dashboard front-end.
+Each Widget then needs to have client-side code defined that control _how_ the widget is rendered within a Dashboard. Any content within `/ui` will be packaged up into a `.umd.js` file that Dashboard loads at runtime.
 
-- `/ui/UIExample.vue` - Defines the contents the `<template>` of a Vue component
+- `/ui/components/` - folder containing `.vue` files for any Vue components you require
+- `/ui/index.js` - Exports any Vue components that need to be imported into Dashbaord 2.0
 
-Finally, any functions that you want to define, that will run as part of your client-side Vue component, can be defined in a standalone module.
+Configuration of the node and widgets are controlled across two files:
 
-- `/ui/methods.js` - Defines a collection of client-side Vue/JS functions.
+- `vite.config.js` - contains the details of what to package up into the widget's built `.umd.js` file.
+- `package.json` - must contain a `node-red-dashboard-2` section that defines the widgets that Dashboard can import.
 
-## Registering your Node & Widget
+### Developing Locally
+
+To start working with your own third-party widget, locally on your machine:
+
+1. Install Node-RED
+2. Install `@flowfuse/node-red-dashboard` into Node-RED via the "Manage Palette" option.
+2. Fork our [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) and clone it locally to your machine.
+3. Navigate to your local Node-RED directory and install the local copy of the Example Node:
+```bash
+npm install /path/to/your/local/node-red-dashboard-example-node
+```
+4. Inside the Example Node directory, build the Example Node's `.umd.js` file, this will generate it's `/resources` folder, loaded by Node-RED.
+```bash
+npm run build
+```
+
+_Note: Any local changes you make inside the `/ui` folder of the third party widget, you'll need to re-run `npm run build` in order to update the `umd.js` file, which is what Dashboard loads to render the widget._
+
+## Configuring your Widget
+
+### Naming Your Widget
+
+In order to import external widgets into the Dashboard core, Dashboard's `ui-base` config node reads Node-RED's `package.json` and checks for any packages that have been installed into Node-RED with `node-red-dashboard-2-` in the package name.
+
+As such, when defining your own integration, please make sure it's named appropriately: 
+
+```json 
+"name": "node-red-dashboard-2-<your-widget-name>"
+```
+
+### Defining Your Widget
+
+Within your own `package.json`, you'll need to define a `node-red-dashboard-2` section that then tells Dashboard _how_ to load your widget. An example from `ui-example` is as follows:
+
+```json
+"node-red-dashboard-2": {
+    "version": "0.8.0",   // the minimum version of Dashboard 2.0 supported
+    "widgets": {
+        "ui-example": {   // this key must match the "type" of your widget, registered in Node-RED
+            "output": "ui-example.umd.js", // the name of the built .js file that will be imported into Dashboard, configured in vite.config.js
+            "component": "UIExample"       // the name of the primary Vue component that will be rendered as your widget in Dashboard
+        }
+    }
+}
+```
+
+### Registering your Node & Widget
 
 _More details: [Registration](../guides/registration.md)_
 
 Traditionally with Node-RED, you have to register your node using `RED.nodes.registerType("ui-example", UIExampleNode)`, this is still the case with Dashboard, but you must _also_ register the widget with Dashboard too.
 
-Dashboard registration is built upon is a `.register()` function (see [docs](../guides/registration.md)). This function is available to any `ui-base`, `ui-page` or `ui-group`. For `ui-group` and `ui-page`, it brokers the function up to the `ui-base` where a store is maintained of all widgets in the Dashboard.
+Dashboard registration is built upon a `.register()` function (see [docs](../guides/registration.md)). This function is available to any `ui-base`, `ui-page` or `ui-group`. For `ui-group` and `ui-page`, it brokers the function up to the `ui-base` where a store is maintained of all widgets in the Dashboard.
 
 Your widget should define one of these as a property in your Node-RED node, most likely, it'll be `ui-group`, if you want your widget to render _inside_ a Group in the Dashboard.
 
@@ -54,9 +105,6 @@ module.exports = function(RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
-        config.type = 'ui-example'     // provide a relevant widget type 
-        config.templateScope = 'local' // required by ui-template
-
         /**
          * Further config & setup to go here
          */
@@ -69,232 +117,283 @@ module.exports = function(RED) {
 }
 ```
 
-## Configuring your Node
+## Guides
 
-The following is a summary of the the Node-RED node configuration parameters (`config`) available, when registering your widget with Dashboard's `.register` function:
+### The Basics of VueJS
 
-```js
-group.register(node, config, evts)
-```
+Aware that a lot of developers that may want to contribute to Dashboard 2.0, may be new to VueJS, so we've detailed a few fundamentals here.
 
-You can extend this as much as you need to in order to add further customisation to your widget. All of these options are then made available in your widget's `.vue` file via the `this.props` object.
+It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across Dashboard 2.0 and in our examples for readibility.
 
-### Essential Config Options:
+With the Options API, a Vue component has the following structure:
 
-You must choose _one_ of these properties to include such that your Widget has a direct owner. Whichever you choose, you'll then use that owner's `.register()` function to register your widget.
+```vue
+<template>
+    <!-- HTML template for the component -->
+    <!-- You can reference any variables defined on your components directly here, e.g. -->
+    <div>{{ myVar }}</div>
+</template>
 
-You must expose this option in your node's `.html` file too so that users can define which instance (of `ui-group`, `ui-page`, `ui-base`) your widget will be bound to.
-
-|property |  description |
-|--|--|
-| `group`  | The most common use case, where your widget will render as part of a Group in the Dashboard. |
-| `page`   | If your widget should be constrained to a full/single page, then this is appropriate. |
-| `base`   | If your widget performs independant of any page/group, then bind it to the `ui-base`. |
-
-The following properties should then _all_ be defined, and can be done so in your node's `.js` file constructor.
-
-|property | example | description |
-|--|--|--|
-| `type`           | `ui-example`   | A suitable, lowercase, kebab-case type for your widget |
-| `templateScope`  | `local`        | Required by `ui-template` that all third=party widgets extend |
-| `format`         | `<p>Hello</p>` | A string of HTML to render for your widget |
-| `head`           | see [example](#injecting-head-tags-dependencies)    | An object detailing the relevant `script`, `meta`, `style` or `link` tags to add. |
-
-### Optional Config Options:
-
-These options, whilst defined server-side, are passed to the client-side Vue component, and are used to customise the client-side behaviour of your widget.
-
-|property | example | description |
-|--|--|--|
-| `onMounted`  |     | Stringified function to run when your widget loads in Dashboard. |
-| `onInput`    | see [example](#defining-oninput-functionality) | Stringified function that will run client-side, whenever your node receives an input in Node-RED. |
-| `methods`    | see [example](#custom-functionality) | An object, where each key is the method name, and the value is a stringified function. These methods will then be exposed to your widget via the widgets's Vue component. |
-
-
-## Example Configurations
-
-Here, we go into detail about how to define the various config options available to you.
-
-### Injecting `<head>` Tags & Dependencies
-
-A likely scenario is that you'll want to inject some `<script>` tags into the `<head>` of your Dashboard's UI, in order to load dependencies for your custom widget. To do this, you can set `config.head`, for example:
-
-```js
-config.head = {
-    script: [
-        { type: 'text/javascript', defer: 'defer', src: 'https://code.jquery.com/jquery-3.7.1.min.js' },
-        { type: 'text/javascript', defer: 'defer', src: 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js' }
-    ]
+<script>
+export default {
+    // any properties that are passed to the component
+    // in Dashboard 2.0, these 3 are the ones provided:
+    props: ['id', 'props', 'state'],
+    // any data that you want to be reactive and available across your component
+    // within the <script> reference these variables with this.<myVar>
+    // within the HTML, you don't need the "this." prefix
+    data () {
+        return {
+            myVar: 'Hello World'
+        }
+    },
+    // Computed properties are variables that automatically update when their dependencies change
+    computed: {
+        myComputedProp () {
+            return this.myVar + '!'
+        }
+    },
+    // any methods that are used within the component
+    methods: {
+        myMethod () {
+            alert(this.myVar)
+        }
+    },
+    // Runs when the component is built and loaded into the DOM
+    mounted () {
+        alert('Component has mounted')
+    },
+    // Runs when the component is removed
+    unmounted () {
+        alert('Component has been removed')
+    }
 }
+</script>
+
+<style>
+/* any CSS styling for the component */
+</style>
 ```
 
-This will then be rendered into the head as follows:
 
-```html
-<script
-    defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
-    data-template-name="My Widget"  data-template-id="e1sa12jwc"
-    data-template-scope="local">
+### Using Vuetify Components
+
+You're free to define complety custom HTML/CSS when defining your widgets, but we've also provided native support for all of [Vuetify's Component Library](https://vuetifyjs.com/en/components/all/) to get your started with a wide range of UI components that you may want to utilise.
+
+### Accessing Properties
+
+When widgets are rendered in a Dashboard layout, they are passed a small collection of properties that can be used to customise the widget's behaviour:
+
+|property | description |
+|--|--|
+| `id` | The ID of the widget, assigned by Node-RED |
+| `props` | The properties defined in Node-RED, e.g. `this.props.name` or `this.props.group` |
+| `state` | The state of the widget, e.g. `this.state.enabled` or `this.state.visible` |
+
+When rendering these in your own Vue component, you can access them as follows:
+
+```vue
+<template>
+    <div>ID: {{ id }}</div>
+    <div>Name: {{ props.name }}</div>
+    <div>Group: {{ props.group }}</div>
+</template>
+
+<script>
+export default {
+    props: ['id', 'props', 'state'],
+    mounted () {
+        // runs on load of the widget
+        alert(this.id)
+    }
+}
 </script>
 ```
 
-Note that Dashboard will also inject `data-` attributes to detail the source of any tag added dynamically so that you have full visibility on _where_ the tag came from when needing to debug, etc.
+### Communicating with Node-RED
 
-With this same mechanism, you can also define `<meta>` (for site description and meta data) or `<link>` tags (for custom CSS and fonts), e.g:
+Events are sent back and forth between Node-RED and Dashboard 2.0 with SocketIO. You can see a full breakdown of these events in our [Events Architecture](../guides/events.md) guide.
 
-```js
-config.head = {
-    meta: [
-        { name: 'description', content: 'A custom description of the page' }
-        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' },
-    ],
-    link: [
-        { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css?family=Roboto' }
-    ]
-}
-```
+#### Receiving Node-RED Messages
 
-### Defining HTML to Render
-
-The `ui-template` (which your third-party widget will extend) relies on a `format` property to define the relevant HTML to render, as a result, we can inject our own content with something like:
-
+When your node receives a `msg` in Node-RED, the Dashboard 2.0 client will receive a `msg-input` event via SocketIO. You can subscribe to this event within your own widget's Vue component with:
 
 ```js
-fs.readFile(path.join(__dirname, '../ui', 'UIExample.vue'), 'utf8', (err, html) => {
-    config.format = html
-})
-```
-
-This will read our `UIExample.vue` as a string, and then bind it to the node.
-
-### Defining `onInput` Functionality
-
-Here we can define functionality that runs client-side (in the Dashboard) whenever the node receives a `msg` in Node-RED.
-
-The contents of `onInput` are written as if contained within a `.vue` file, this means that you can use `this` freely and access any relevant `data`, `props` or `methods` as you wish, and even manipulate the widget's HTML e.g:
-
-```js
-function onInput (msg) {
-    // because this will get evaluated client-side, we have access to vue/this
-    const vue = this
-    // get an elemnt of the DOM inside this widget with a ref="my-widget", and update it's innerHTML
-    vue.$refs['my-widget'].innerHTML = msg.payload
-    // call Dashboard's built-in .send() function
-    vue.send({
-        payload: 'Created onInput'
-    })
-}
-```
-
-Note the use of VueJS's `$refs` for DOM selection - you can read more about this [here](https://vuejs.org/guide/essentials/template-refs.html).
-
-In our `ui-example.js` file, we can append this to our `config` with:
-
-```js
-// import our client-side functions
-const methods = require('../ui/methods')
-
-// methods that will be available to the widget in the Dashboard
-config.onInput = methods.onInput
-```
-
-### Custom Functionality
-
-We can extend VueJS's [methods](https://vuejs.org/api/options-state.html#methods) by using `config.methods`:
-
-```js
-// methods that will be available to the widget in the Dashboard
-config.methods = {
-    test: methods.test
-}
-```
-
-These functions can be called directly from your `.vue` file too, e.g:
-
-```vue
-<p @click="test()">
-    This is a 3rd Party Widget
-</p>
-```
-
-As with the [Defining onInput Functionality](#defining-oninput-functionality) you also have access to the full `vue` object, e.g:
-
-```js
-function test () {
-    // because this will get evaluated client-side, we have access to vue/this
-    const vue = this
+export default {
+    props: ['id', 'props', 'state'],
+    // rest of your vue component here
+    mounted () {
+        this.$socket.on('msg-input' + this.id, (msg) => {
+            // do something with the msg
+        })
+    },
+    unmounted () {
+        // unsubscribe from the event when the widget is destroyed
+        this.$socket.off('msg-input:' + this.id)
     
-    // log the Widget's ID & name
-    console.log(this.id, this.props.name)
+    }
 }
 ```
 
-## Custom SocketIO Events
+#### Sending Node-RED Messages
 
-It is also possible to extend our own [Events Framework](../guides/events.md) with your own events traffic, sending events from the Dashboard UI back into your node.
+You can send a `msg` on to any connected nodes in Node-RED by calling one of the following events via SocketIO:
 
-Definition needs to happen in two places:
+- `this.$socket.emit('widget-action', this.id, msg)`: sends any `msg` onto any connected nodes in Node-RED.
+- `this.$socket.emit('widget-change', this.id, msg)`: the same as `widget-action`, but _also_ stores that latest message in the Node-RED datastore for this widget so that state can be restored when the Dashboard is refreshed.
 
-- Client - where you need to `emit` the event
-- Node-RED - where you need to listen to those events, and define appropriate handlers
+#### Custom SocketIO Events
 
-### Emit from Dashboard
-
-You can `emit` an event from within any of your [Custom Functionality](#custom-functionality) using the in-built `vue.$socket.emit()` function, e.g:
+If you would like to implement your own SocketIO events and handlers, you can do so in your `.vue` component with:
 
 ```js
-// emit 'my-custom-event' with a topic of the widget's id, and msg of { payload: "Test" } 
-vue.$socket.emit('my-custom-event', this.id, {
-    payload: "Test"
-})
+this.$socket.emit('my-custom-event', this.id, msg)
 ```
 
-### Handle Event in Node-RED
-
-The event handlers can be added to our `evts` object passed into the `.register` function, like so:
-
+Then, where you register your node with Dashboard on the server-side (inside your node's `.js` file), you can define the relevant event handler:
 
 ```js
-const evts = {
+evts = {
     onSocket: {
-        'my-custom-event': function (id, msg) {
-            console.log('my-custom-event', id, msg)
+        // subscribe to custom events
+        'my-custom-event': function (conn, id, msg) {
+            // emit a msg in Node-RED from this node
+            node.send(msg)
         }
     }
 }
 group.register(node, config, evts)
 ```
 
-## UI Template Functionality
+### Data Retention & Data Stores
 
-Because we wrap third party widgets in a `ui-template` node, you have access to the same properties & functions.
+We use the concept of data stores on both the client and server side of Dashboard 2.0. These are used to centralise storage of the latest state and data associated to a widget.
 
-### Properties
+Data stores are a mapping of the widget/node's ID to the latest data received into that widget. This is most commonly used to restore state when the Dashboard is refreshed.
 
-- `id` - The Widget's ID, assigned by Node-RED
-- `props` - Properties defined in Node-RED, e.g. `this.props.name` or `this.props.group`
+#### Node-RED Data Store
 
-For example, we could loop over all properties and render their respective property key:
+Node-RED's data store is made accessible for third-party widgets via the associated `ui-base`.
 
-```vue
-<h1>Widget ID: {{ id }}</h1>
-<ul>
-    <li v-for="(value, key, index) in props">
-        <label>{{ key }}</label>
-    </li>
-</ul>
+To access this in your widget's `.js` file, you can use:
+
+```js
+const group = RED.nodes.getNode(config.group)
+const base = group.getBase()
 ```
 
-### Functions
+Then, whenever you want to store data in the datastore, you can do so with:
 
-- `send` - Send a `msg` (defined by the input to this function call) from this node in the Node-RED flow.
-
-Let's consider:
-
-```vue
-<p @click="send({'payload': 'Hello World'})">
-    This is a 3rd Party Widget
-</p>
+```js
+base.stores.data.save(node.id, msg)
 ```
 
-This, when clicked, will send a `msg` in Node-RED to any nodes connected to the output of this node.
+#### Node-RED State Store
+
+State refers to any properties of your widget that have changed in runtime, and would differ from that set in the Node-RED editor.
+
+For example, the `ui-dropdown` can have it's `options` overriden with a `msg.options` message sent to the node. This updates `options` would be stored against the node in the state store.
+
+#### Client-Side Data Store
+
+In Dashboard 2.0's client-side, we use VueX to manage the centralised state of a UI.
+
+With VueX you can call `mapState` which will automatically bind the store to your Vue component, e.g:
+
+```vue
+<template>
+    <!-- Retrieve the latest data values from widget with <id> -->
+    {{ messages[id] }}
+</template>
+<script>
+// import mapState from VueX
+import { mapState } from 'vuex'
+
+export default {
+    props: ['id', 'props', 'state'],
+    // ... rest of your component here
+    computed: {// map the store's messages to our own Vue component
+        ...mapState('data', ['messages'])
+    },
+    mounted () {
+        // alerts the most recent message on load of the widget
+        alert(this.messages[this.id])
+    }
+}
+</script>
+```
+
+Then, to add data to the store:
+
+```js
+this.$store.commit('data/bind', {
+    widgetId: this.id,
+    msg
+})
+```
+
+#### Loading State
+
+When Dashboard 2.0 loads, it will send a `widget-load` event to all widgets in the Dashboard. This will contain the latest value from the Node-RED datastore. You can subscribe to this event in your widget with:
+
+```js
+export default {
+    props: ['id', 'props', 'state'],
+    // rest of your component here
+    mounted () {
+        this.$socket.on('widget-load' + this.id, (msg) => {
+            // do something with the msg
+        })
+    },
+    unmounted () {
+        // unsubscribe from the event when the widget is destroyed
+        this.$socket.off('widget-load:' + this.id)
+    
+    }
+}
+```
+
+
+### Styling with Vuetify & CSS
+
+We can define our own CSS within the widget's repository, importing them into a `.vue` component as follows:
+
+```vue
+<style scoped>
+.ui-example-wrapper {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+}
+</style>
+```
+
+Vuetify also comes with a handful of utility classes to assist with styling, which can all be used out of the box:
+
+- [Responsive Displays](https://vuetifyjs.com/en/styles/display/#display)
+- [Flex](https://vuetifyjs.com/en/styles/flex/)
+- [Spacing](https://vuetifyjs.com/en/styles/spacing/#how-it-works)
+- [Text & Typography](https://vuetifyjs.com/en/styles/text-and-typography/#typography)
+
+
+
+### External Dependencies
+
+Your widget can have any number of `npm` dependencies. These will all be bundled into the `.umd.js` file that Dashboard loads at runtime.
+
+In `ui-example` we have a dependency on `to-title-case`, which we import into, and use in, our Vue component as follows:
+
+```js
+import toTitleCase from 'to-title-case'
+
+export default {
+    // rest of component here
+    computed: {
+        titleCase () {
+            return toTitleCase(this.input.title)
+        }
+    }
+}
+```
+
+You can also load in other Vue components from within your own repository as with any VueJS component.

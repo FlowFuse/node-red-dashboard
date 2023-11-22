@@ -1,7 +1,6 @@
 <script>
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
-import 'highlight.js/styles/default.css'
 import { marked } from 'marked'
 import mermaid from 'mermaid'
 import { h } from 'vue'

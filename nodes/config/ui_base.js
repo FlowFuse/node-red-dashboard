@@ -1,4 +1,4 @@
-// const Emitter = require('events').EventEmitter
+const fs = require('fs')
 const path = require('path')
 
 const v = require('../../package.json').version
@@ -30,7 +30,8 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
-        settings: {}
+        settings: {},
+        contribs: {}
     }
 
     /**
@@ -56,6 +57,41 @@ module.exports = function (RED) {
                     uiShared.httpMiddleware = uiShared.settings.middleware
                 }
             }
+
+            /**
+             * Load in third party widgets
+             */
+            let packagePath, packageJson
+            if (RED.settings?.userDir) {
+                packagePath = path.join(RED.settings.userDir, 'package.json')
+                packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+            } else {
+                node.log('Cannot import third party widgets. No access to Node-RED package.json')
+            }
+
+            if (packageJson) {
+                Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
+                    return packageName.includes('node-red-dashboard-2-')
+                }).map(([packageName, _packageVersion]) => {
+                    const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
+                    const packagePath = path.join(modulePath, 'package.json')
+                    // get third party package.json
+                    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+                    if (packageJson?.['node-red-dashboard-2']) {
+                        // loop over object of widgets
+                        Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([widgetName, widgetConfig]) => {
+                            uiShared.contribs[widgetName] = {
+                                package: packageName,
+                                name: widgetName,
+                                src: widgetConfig.output,
+                                component: widgetConfig.component
+                            }
+                        })
+                    }
+                    return packageJson
+                })
+            }
+
             /**
              * Configure Web Server to handle UI traffic
              */
@@ -279,10 +315,15 @@ module.exports = function (RED) {
 
             // check if any widgets have defined custom socket events
             // most common with third-party widgets that are not part of core Dashboard 2.0
+            const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
                     for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                        socket.on(eventName, handler)
+                        // we only need add the listener for a given event type the once
+                        if (registered.indexOf(widget.type) === -1) {
+                            socket.on(eventName, handler.bind(null, socket))
+                            registered.push(widget.type)
+                        }
                     }
                 }
             })
@@ -471,6 +512,10 @@ module.exports = function (RED) {
             widgets: new Map()
         }
 
+        node.stores = {
+            data: datastore
+        }
+
         /**
          * Queue up a config emit to the UI. This is a debounced function
          * NOTES:
@@ -520,7 +565,8 @@ module.exports = function (RED) {
                     enabled: datastore.get(widgetConfig.id)?.enabled || true,
                     visible: datastore.get(widgetConfig.id)?.visible || true
                 },
-                hooks: widgetEvents
+                hooks: widgetEvents,
+                src: uiShared.contribs[widgetConfig.type]
             }
 
             delete widget.props.id
