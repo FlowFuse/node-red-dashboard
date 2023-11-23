@@ -293,7 +293,18 @@ Scatter Plots accept a variety of payload formats. The following are all valid:
 
 Bar charts can only be configured with a "Categorical" x-axis type, the series that each data point will group into is then defined by the "Series" property, with the "y" proeprty defining the value of each bar.
 
-#### Payloads
+#### Configuration
+
+- **X Axis Type**: `Categorical`
+- **Series**: Define how to separate your data into individual bars
+    - `msg.<variable>`: Each message sent to the chart will assign to the category depending on `msg.<variable>`. In Dashboard 1.0 this was the default behaviour, where `msg.topic` would control the series of the data, and this is still supported in Dashboard 2.0.
+    - `string`: Each message received will always bind to the same bar, this restricts the chart to only being able to show a single column/category of data.
+    - `key:<key>`: Each message, or object within an array payload, will be assigned the category based on it's value `<key>`. If you have raw numerical data, and not an object, leave this blank.
+    - `JSON:`: This combines the "Series" and "y" options, where you can provide an Array of strings, pointing to the property/value that you want to render. The category label is then defined by the proeprty itself.
+- **Y**: Describe how to retrieve the value you want to plot on the y-axis. Leave blank if you're sending raw numerical data, otherwise, provide the key (which can be nested) of the value that should be plotted onto the x-axis, e.g. `{"nested": {"value": 34}}` would plot `34` on the y-axis if you set this to `nested.value`.
+
+
+#### Examples
 
 The payload will heavily depend on the "Series" value used, as such, we provide examples of each as follows:
 
