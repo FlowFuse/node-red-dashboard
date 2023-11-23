@@ -35,6 +35,8 @@ export default {
     flex-direction: row;
     gap: 2px;
     font-size: 1rem;
+    color: #717171;
+    font-family: Helvetica;
 }
 .nrdb-ui-text-value {
     font-weight: 600;
