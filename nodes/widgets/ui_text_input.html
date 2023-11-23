@@ -26,7 +26,11 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 mode: { value: 'text', required: true },
+                delay: { value: 300, validate: function (v) { return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true } },
                 passthru: { value: true },
+                sendOnDelay: { value: false },
+                sendOnBlur: { value: true },
+                sendOnEnter: { value: true },
                 className: { value: '' }
             },
             inputs: 1,
@@ -52,6 +56,31 @@
                     show: {
                         effect: 'slideDown',
                         delay: 150
+                    }
+                })
+
+                $('#node-input-mode').on('change', (evt) => {
+                    const mode = $('#node-input-mode').find(':selected').val()
+                    if (mode === 'textarea') {
+                        this.sendOnEnter = false
+                        $('#node-input-container-sendOnEnter').hide()
+                    } else {
+                        $('#node-input-container-sendOnEnter').show()
+                    }
+                })
+
+                $('#node-input-delay').on('change', (evt) => {
+                    const delay = $('#node-input-delay').val()
+                    if (delay === '' || delay === '0') {
+                        this.sendOnDelay = false
+                        if ($('#node-input-sendOnDelay').is(':checked')) {
+                            $('#node-input-sendOnDelay').click()
+                        }
+                    } else {
+                        this.sendOnDelay = true
+                        if (!$('#node-input-sendOnDelay').is(':checked')) {
+                            $('#node-input-sendOnDelay').click()
+                        }
                     }
                 })
             },
@@ -95,7 +124,7 @@
             </a>
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row form-row-flex">
         <label for="node-input-mode"><i class="fa fa-keyboard-o"></i> Mode</label>
         <select id="node-input-mode">
             <option value="text">text input (single line)</option>
@@ -110,33 +139,40 @@
             <option value="week">week picker</option>
             <option value="month">month picker</option>
         </select>
-        <!--<label for="node-input-delay" style="text-align:right; width:100px"><i class="fa fa-clock-o"></i> Delay (ms)</label>
-        <input type="text" style="width:58px" id="node-input-delay">-->
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
-        <input type="text" id="node-input-topic">
-        <input type="hidden" id="node-input-topicType">
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
-    <!--<div class="form-row">
-        <label style="width:auto" for="node-input-sendOnBlur">Send value on focus leave: </label>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
+    </div>
+    <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
+        <input type="checkbox" checked id="node-input-sendOnDelay" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnDelay"> Delay</label>
+        <div id="node-input-delay-box">
+            <input type="text" style="width:58px" id="node-input-delay">
+            <label for="node-input-delay">(ms)</label>
+        </div>
+    </div>
+    <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnBlur"> Focus Leave</label>
+    </div>
+    <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
     </div>
-    <div class="form-row">
-        <label style="padding-left: 25px; margin-right: -25px">Payload</label>
+    <div class="form-row" style="padding-left: 25px;">
+        <label style="margin-right: -25px">Payload</label>
         <label style="width:auto">Current value</label>
     </div>
-    <div class="form-row">
-        <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px">Topic</label>
+    <div class="form-row" style="padding-left: 25px;">
+        <label for="node-input-topic" style="margin-right:-25px">Topic</label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
-    </div>-->
-    <div class="form-tips">Setting <b>Delay</b> to 0 waits for Enter or Tab key, to send input.</span></div>
+    </div>
 </script>
