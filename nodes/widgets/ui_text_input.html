@@ -28,7 +28,7 @@
                 mode: { value: 'text', required: true },
                 delay: { value: 300, validate: function (v) { return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true } },
                 passthru: { value: true },
-                sendOnDelay: { value: true },
+                sendOnDelay: { value: false },
                 sendOnBlur: { value: true },
                 sendOnEnter: { value: true },
                 className: { value: '' }
