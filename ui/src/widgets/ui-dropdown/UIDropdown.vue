@@ -1,4 +1,3 @@
-<!-- eslint-disable no-console -->
 <template>
     <v-combobox
         v-model="value"
@@ -38,7 +37,6 @@ export default {
         options: {
             get () {
                 const items = this.items || this.props.options
-                console.log('options', items)
                 return items.map((item) => {
                     if (typeof item !== 'object') {
                         return {
@@ -70,7 +68,6 @@ export default {
     methods: {
         // given the last received msg into this node, load the state
         onLoad (msg) {
-            console.log(msg)
             // update vuex store to reflect server-state
             this.$store.commit('data/bind', {
                 widgetId: this.id,
@@ -128,7 +125,6 @@ export default {
             this.$socket.emit('widget-change', this.id, msg.payload)
         },
         select (value) {
-            console.log('select', value)
             if (value) {
                 // first, if we have a single value, we need to convert it to an array
                 if (!Array.isArray(value)) {

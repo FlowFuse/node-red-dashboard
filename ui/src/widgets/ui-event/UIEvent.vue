@@ -48,7 +48,6 @@ export default {
             const msg = {
                 page
             }
-            console.log('trigger', evt, msg)
             this.$socket.emit('ui-event', evt, msg)
         }
     }
