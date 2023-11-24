@@ -535,6 +535,11 @@ module.exports = function (RED) {
         }
 
         /**
+         * Allow for any child node to emit to all connected UIs
+         */
+        node.emit = emit
+
+        /**
          * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node
          * @param {*} page
          * @param {*} widget

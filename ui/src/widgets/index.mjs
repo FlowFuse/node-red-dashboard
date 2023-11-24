@@ -1,5 +1,6 @@
 import UIButton from './ui-button/UIButton.vue'
 import UIChart from './ui-chart/UIChart.vue'
+import UIControl from './ui-control/UIControl.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
 import UIEvent from './ui-event/UIEvent.vue'
 import UIForm from './ui-form/UIForm.vue'
@@ -17,6 +18,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 export {
     UIButton,
     UIChart,
+    UIControl,
     UIDropdown,
     UIEvent,
     UIForm,
@@ -38,6 +40,7 @@ export { useDataTracker } from './data-tracker.mjs'
 export default {
     'ui-button': UIButton,
     'ui-chart': UIChart,
+    'ui-control': UIControl,
     'ui-dropdown': UIDropdown,
     'ui-event': UIEvent,
     'ui-form': UIForm,
