@@ -1,0 +1,39 @@
+<script type="text/javascript">
+    (function () {
+        RED.nodes.registerType('ui-event', {
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest'),
+            defaults: {
+                ui: { type: 'ui-base', value: '', required: true },
+                name: { value: '' }
+            },
+            inputs: 0,
+            outputs: 1,
+            icon: 'font-awesome/fa-arrow-circle-right',
+            paletteLabel: 'event',
+            oneditprepare: function () {
+                // topic
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+            },
+            label: function () {
+                return this.name || 'ui-event'
+            },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-event">
+    <div class="form-row">
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <input type="text" id="node-input-ui">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
