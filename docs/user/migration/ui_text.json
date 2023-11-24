@@ -25,7 +25,7 @@
         {
             "property": "format",
             "changes": -1,
-            "notes": null
+            "notes": "<a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/390\" target=\"_blank\">Issue #390</a>"
         },
         {
             "property": "layout",

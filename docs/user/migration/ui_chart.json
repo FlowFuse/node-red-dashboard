@@ -25,7 +25,7 @@
         {
             "property": "type",
             "changes": -2,
-            "notes": "Line and Bar (V) are already migrated. There is still work to be done to support Bar (H), Pie, Polar and Radar charts. Scatter plots have also been added."    
+            "notes": "Line and Bar (V) are already migrated. There is still work to be done to support <a href='https://github.com/FlowFuse/node-red-dashboard/issues/378' target='_blank'>Bar (H)</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/379' target='_blank'>Pie</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/380' target='_blank'>Polar</a> and <a href='https://github.com/FlowFuse/node-red-dashboard/issues/381' target='_blank'>Radar</a> charts. Scatter plots have also been added."    
         },
         {
             "property": "legend",
@@ -35,7 +35,7 @@
         {
             "property": "interpolate",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/384' target='_blank'>Issue #384</a>"
         },
         {
             "property": "x-axis limit",
@@ -45,11 +45,11 @@
         {
             "property": "x-axis label",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/382' target='_blank'>Issue #382</a>"
         },
         {
             "property": "y-axis min/max",
-            "changes": -1,
+            "changes": null,
             "notes": null
         },
         {
@@ -60,7 +60,7 @@
         {
             "property": "blank label",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/383' target='_blank'>Issue #383</a>"
         }
     ],
     "new_properties": [

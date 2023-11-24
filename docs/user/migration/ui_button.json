@@ -25,22 +25,22 @@
         {
             "property": "icon",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/322' target='_blank'>Issue #322</a>"
         },
         {
             "property": "tooltip",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/374' target='_blank'>Issue #374</a>"
         },
         {
             "property": "color",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/375' target='_blank'>Issue #375</a>"
         },
         {
             "property": "background",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/375' target='_blank'>Issue #375</a>"
         },
         {
             "property": "payload",
@@ -55,12 +55,34 @@
         {
             "property": "emulate click",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/209' target='_blank'>Issue #209</a>"
         },
         {
             "property": "class",
             "changes": null,
             "notes": null
+        }
+    ],
+    "msgs": [
+        {
+            "property": "label",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/376' target='_blank'>Issue #376</a>"
+        },
+        {
+            "property": "icon",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/376' target='_blank'>Issue #376</a>"
+        },
+        {
+            "property": "enabled/disabled",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/352' target='_blank'>Issue #352</a>"
+        },
+        {
+            "property": "visible/hidden",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/377' target='_blank'>Issue #377</a>"
         }
     ]
 }

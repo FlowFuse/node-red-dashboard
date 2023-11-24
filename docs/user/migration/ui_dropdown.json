@@ -25,12 +25,12 @@
         {
             "property": "tooltip",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/385' target='_blank'>Issue #385</a>"
         },
         {
             "property": "placeholder",
             "changes": -1,
-            "notes": null
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/386' target='_blank'>Issue #386</a>"
         },
         {
             "property": "options",

@@ -59,9 +59,16 @@
             "notes": "On 'submit', this property defines whether or not the form clears it's data in the Dashboard."
         }
     ],
-    "msgs": [{
-        "property": "msg.properties",
-        "changes": -1,
-        "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/287'>issue</a>"
-    }]
+    "msgs": [
+        {
+            "property": "msg.properties",
+            "changes": -1,
+            "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/287'>Issue #287</a>"
+        },
+        {
+            "property": "msg.payload",
+            "changes": -1,
+            "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/363'>Issue #363</a>"
+        }
+    ]
 }

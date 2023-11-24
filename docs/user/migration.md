@@ -62,6 +62,8 @@ The following details a direct comparison of all properties available on each no
 
 <MigrationWidgetProfile :profile="widgets['ui_audio']" />
 
+You can track progress, and input thoughts and ideas on this here: [Widget: Audio #52](https://github.com/FlowFuse/node-red-dashboard/issues/52)
+
 ### `ui_button`
 
 <MigrationWidgetProfile :profile="widgets['ui_button']" />
@@ -156,13 +158,19 @@ There has also been a [request](https://github.com/FlowFuse/node-red-dashboard/i
 
 <MigrationWidgetProfile :profile="widgets['ui_gauge']" />
 
+You can track progress of this development effort here: [Issue #12](https://github.com/FlowFuse/node-red-dashboard/issues/12)
+
 ### `ui_link`
 
 <MigrationWidgetProfile :profile="widgets['ui_link']" />
 
+You can track progress of this development effort here: [Issue #387](https://github.com/FlowFuse/node-red-dashboard/issues/387)
+
 ### `ui_numeric`
 
 Whilst this widget has no explicitely been transferred into Dashboard 2.0, the functionality is still available in the `ui-text-input` widget, where you can select the _"type"_ to be _"number"_.
+
+You can track progress of this development effort here: [Issue #41](https://github.com/FlowFuse/node-red-dashboard/issues/41)
 
 ### `ui_slider`
 
@@ -193,6 +201,8 @@ Whilst this widget has no explicitely been transferred into Dashboard 2.0, the f
 ### `ui_control`
 
 <MigrationWidgetProfile :profile="widgets['ui_control']" />
+
+Track progress, and input ideas here: [UI Control #258](https://github.com/FlowFuse/node-red-dashboard/issues/258).
 
 
 ## Theming
