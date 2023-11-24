@@ -14,7 +14,8 @@
         "colors": {
             "light": "var(--nrdb-node-light)",
             "medium": "var(--nrdb-node-medium)",
-            "dark": "var(--nrdb-node-dark)"
+            "dark": "var(--nrdb-node-dark)",
+            "darkest": "var(--nrdb-node-darkest)"
         }
     }
 }

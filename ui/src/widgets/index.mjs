@@ -2,6 +2,7 @@ import UIButton from './ui-button/UIButton.vue'
 import UIChart from './ui-chart/UIChart.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
 import UIForm from './ui-form/UIForm.vue'
+import UIEvent from './ui-event/UIEvent'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
@@ -17,6 +18,7 @@ export {
     UIButton,
     UIChart,
     UIDropdown,
+    UIEvent,
     UIForm,
     UIMarkdown,
     UINotification,
@@ -37,6 +39,7 @@ export default {
     'ui-button': UIButton,
     'ui-chart': UIChart,
     'ui-dropdown': UIDropdown,
+    'ui-event': UIEvent,
     'ui-form': UIForm,
     'ui-markdown': UIMarkdown,
     'ui-notification': UINotification,
