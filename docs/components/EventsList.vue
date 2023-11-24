@@ -17,6 +17,7 @@
     </table>
 </template>
 <script setup>
+// eslint-disable-next-line import/named
 import { useData } from 'vitepress'
 const { page } = useData()
 </script>
