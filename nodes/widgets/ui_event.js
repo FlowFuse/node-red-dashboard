@@ -9,7 +9,7 @@ module.exports = function (RED) {
 
         const evts = {
             onSocket: {
-                'ui-event': function (evt, payload) {
+                'ui-event': function (conn, evt, payload) {
                     node.send({
                         topic: evt,
                         payload

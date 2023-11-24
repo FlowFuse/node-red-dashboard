@@ -29,6 +29,26 @@ Currently, we support the following events:
 
 <EventsList />
 
+### Example: Page View
+
+Each time a user views a page, the `ui-event` node will emit:
+
+```js
+msg = {
+    topic: '$pageview',
+    payload: {
+        page: {
+            name: 'Page Name',
+            path: '/page/path'
+            id: '1234',
+            theme: 'dark',
+            layout: 'default',
+            _groups: []
+        }
+    }
+}
+```
+
 ## Custom Events
 
 In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embeded `$socket` operator directly, for example:

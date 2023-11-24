@@ -2,7 +2,7 @@
     <table style="width: 100%;">
         <thead>
             <tr>
-                <th>Event</th>
+                <th>Event/Topic</th>
                 <th>Payload</th>
                 <th>Description</th>
             </tr>
