@@ -7,7 +7,7 @@
     
         RED.nodes.registerType('ui-control', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
-            color: '@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest',
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest'),
             defaults: {
                 name: { value: '' },
                 ui: { type: 'ui-base', value: '', required: true },
@@ -16,7 +16,7 @@
             inputs: 1,
             outputs: 1,
             align: 'right',
-            icon: 'ui_link.png',
+            icon: 'font-awesome/fa-arrow-circle-right',
             paletteLabel: 'ui control',
             label: function () { return this.name || 'ui control' },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
