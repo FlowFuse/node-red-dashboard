@@ -32,7 +32,7 @@ features:
   - icon:
       src: /newspaper.svg
     title: "Latest Blog Post"
-    link: https://flowfuse.com/blog/2023/09/dashboard-notebook-layout/
+    link: https://flowfuse.com/blog/2023/11/dashboard-0-8-0/
     linkText: View Blog Post
-    details: Checkout our latest blog post - "Dynamic Markdown, Tables & Notebooks with Dashboard 2.0"
+    details: Checkout our latest blog post - "Overhauling the Dashboard 2.0 Build Pipeline"
 ---
