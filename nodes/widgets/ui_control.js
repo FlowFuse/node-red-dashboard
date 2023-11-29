@@ -40,6 +40,23 @@ module.exports = function (RED) {
                             statestore.set(p.id, 'visible', false)
                         })
                     }
+                    // const pMap = RED.nodes.forEach
+                    if ('enable' in pages) {
+                        // we are setting visibility: true
+                        pages.enable.forEach(function (page) {
+                            const p = allPages[page]
+                            // update the state store for each page
+                            statestore.set(p.id, 'disabled', false)
+                        })
+                    }
+                    if ('disable' in pages) {
+                        // we are setting visibility: true
+                        pages.disable.forEach(function (page) {
+                            const p = allPages[page]
+                            // update the state store for each page
+                            statestore.set(p.id, 'disabled', true)
+                        })
+                    }
                     // send to front end in order to action there too
                     ui.emit('ui-control', {
                         pages

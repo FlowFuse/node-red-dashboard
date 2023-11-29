@@ -121,7 +121,6 @@ const mutations = {
      * @returns
      */
     setProperty (state, { item, itemId, property, value }) {
-        console.log('setProperty', item, itemId, property, value)
         state[item + 's'][itemId][property] = value
     }
 }

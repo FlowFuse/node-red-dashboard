@@ -56,6 +56,30 @@ export default {
                         })
                     })
                 }
+                if ('disable' in msg.pages) {
+                    // we are setting visibility: true
+                    msg.pages.disable.forEach((pageName) => {
+                        const p = this.findBy('page', 'name', pageName)
+                        this.$store.commit('ui/setProperty', {
+                            item: 'page',
+                            itemId: p.id,
+                            property: 'disabled',
+                            value: true
+                        })
+                    })
+                }
+                if ('enable' in msg.pages) {
+                    // we are setting visibility: false
+                    msg.pages.enable.forEach((pageName) => {
+                        const p = this.findBy('page', 'name', pageName)
+                        this.$store.commit('ui/setProperty', {
+                            item: 'page',
+                            itemId: p.id,
+                            property: 'disabled',
+                            value: false
+                        })
+                    })
+                }
             }
 
             if ('groups' in msg) {

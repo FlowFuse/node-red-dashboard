@@ -20,6 +20,7 @@
                 <v-list nav>
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
+                        :disabled="page.disabled"
                         prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
                     />
@@ -113,10 +114,15 @@ export default {
     watch: {
         theme: function () {
             this.updateTheme()
+        },
+        pages: {
+            handler: function () {
+                console.log('pages changed')
+            },
+            deep: true
         }
     },
     mounted () {
-        console.log('BaselineLayout mounted. siteTemplates:', this.siteTemplates(this.$route.meta.dashboard), 'pageTemplates:', this.pageTemplates(this.$route.meta.id))
         this.updateTheme()
     },
     methods: {

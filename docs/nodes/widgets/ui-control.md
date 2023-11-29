@@ -52,10 +52,31 @@ You can programmaticaly show/hide groups and pages with the following payload in
 ```js
 msg.payload = {
     pages: {
-        show: ['<Page Name>', '<Page Name>']
+        show: ['<Page Name>', '<Page Name>'],
+        hide: ['<Page Name>']
     }
     groups: {
-        hide: ['<Group Name>', '<Group Name>']
+        show: ['<Group Name>', '<Group Name>'],
+        hide: ['<Group Name>']
+    }
+}
+```
+
+_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+
+### Enable/Disable
+
+You can programmaticaly disable/enable groups and pages with the following payload into `ui-control`:
+
+```js
+msg.payload = {
+    pages: {
+        enable: ['<Page Name>', '<Page Name>'],
+        disable: ['<Page Name>']
+    }
+    groups: {
+        enable: ['<Group Name>', '<Group Name>'],
+        disable: ['<Group Name>']
     }
 }
 ```
