@@ -277,6 +277,15 @@ module.exports = function (RED) {
                 }
             }
 
+            // loop over pages - check statestore if we've had any dynamic properties set
+            for (const [id, group] of node.ui.groups) {
+                const state = statestore.getAll(id)
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    node.ui.groups.set(id, { ...group, ...state })
+                }
+            }
+
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
                 dashboards: Object.fromEntries(node.ui.dashboards),

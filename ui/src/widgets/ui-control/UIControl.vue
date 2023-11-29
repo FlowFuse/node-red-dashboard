@@ -57,6 +57,33 @@ export default {
                     })
                 }
             }
+
+            if ('groups' in msg) {
+                if ('show' in msg.groups) {
+                    // we are setting visibility: true
+                    msg.groups.show.forEach((groupName) => {
+                        const g = this.findBy('group', 'name', groupName)
+                        this.$store.commit('ui/setProperty', {
+                            item: 'group',
+                            itemId: g.id,
+                            property: 'visible',
+                            value: true
+                        })
+                    })
+                }
+                if ('hide' in msg.groups) {
+                    // we are setting visibility: false
+                    msg.groups.hide.forEach((groupName) => {
+                        const g = this.findBy('group', 'name', groupName)
+                        this.$store.commit('ui/setProperty', {
+                            item: 'group',
+                            itemId: g.id,
+                            property: 'visible',
+                            value: false
+                        })
+                    })
+                }
+            }
         })
     },
     unmounted () {

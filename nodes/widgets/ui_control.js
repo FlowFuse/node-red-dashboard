@@ -38,10 +38,8 @@ module.exports = function (RED) {
                             const p = allPages[page]
                             // update the state store for each page
                             statestore.set(p.id, 'visible', false)
-                            console.log('hide', p.id)
                         })
                     }
-                    console.log(pages)
                     // send to front end in order to action there too
                     ui.emit('ui-control', {
                         pages
@@ -56,7 +54,7 @@ module.exports = function (RED) {
                         if (n.type === 'ui-page') {
                             if (n.name === page) {
                                 // send a message to the ui to switch to this tab
-                                ui.emit('ui-control', { page, socketid: msg.socketid })
+                                ui.emit('ui-control', { page })
                                 pageFound = true
                             }
                         }
@@ -67,14 +65,31 @@ module.exports = function (RED) {
                 }
                 // show or hide ui groups
                 if ('groups' in msg.payload || 'group' in msg.payload) {
-                    if ('hide' in msg.payload.group) {
-                        // loop over the groups in this array
-
-                        const groups = RED.nodes.filterNodes({ type: 'ui-group' })
-                        console.log(groups)
-                        // statestore.set(node.id, 'group', msg.payload.group.hide)
+                    const groups = msg.payload.groups || msg.payload.group
+                    // get a map of group name to group object
+                    const allGroups = {}
+                    RED.nodes.eachNode((n) => {
+                        if (n.type === 'ui-group') {
+                            allGroups[n.name] = n
+                        }
+                    })
+                    if ('show' in groups) {
+                        // we are setting visibility: true
+                        groups.show.forEach(function (group) {
+                            const g = allGroups[group]
+                            // update the state store for each page
+                            statestore.set(g.id, 'visible', true)
+                        })
                     }
-                    ui.emit('ui-control', { group: msg.payload.group, socketid: msg.socketid })
+                    if ('hide' in groups) {
+                        // we are setting visibility: true
+                        groups.hide.forEach(function (group) {
+                            const g = allGroups[group]
+                            // update the state store for each page
+                            statestore.set(g.id, 'visible', false)
+                        })
+                    }
+                    ui.emit('ui-control', { groups })
                 }
 
                 // send specific visible/hidden commands via SocketIO here,

@@ -2,7 +2,7 @@
     <BaselineLayout :page-title="$route.meta.title">
         <div v-if="gridGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
             <div
-                v-for="g in gridGroups"
+                v-for="g in orderedGroups"
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
@@ -55,8 +55,16 @@ export default {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
-        gridGroups: function () {
+        orderedGroups: function () {
+            // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
+                // only show hte groups that haven't had their "visible" property set to false
+                .filter((g) => {
+                    if ('visible' in g) {
+                        return g.visible
+                    }
+                    return true
+                })
             return groups
         },
         page: function () {
