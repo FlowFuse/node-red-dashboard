@@ -27,7 +27,7 @@
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
             <div class="nrdb-layout-overlay">
-                <!-- Render any widgets with a 'ui' scope, e.g. ui-notification -->
+                <!-- Render any widgets with a 'ui' scope, e.g. ui-notification, ui-event, ui-control -->
                 <component
                     :is="widget.component"
                     v-for="widget in uiWidgets"
@@ -95,7 +95,14 @@ export default {
             return theme
         },
         orderedPages: function () {
-            return Object.values(this.pages).sort((a, b) => a.order - b.order)
+            return Object.values(this.pages)
+                .filter((p) => {
+                    if ('visible' in p && !p.visible) {
+                        return false
+                    }
+                    return true
+                })
+                .sort((a, b) => a.order - b.order)
         },
         uiWidgets: function () {
             // get widgets scoped to the UI, not a group/page
