@@ -10,7 +10,7 @@
                 :style="`grid-column-end: span ${ g.width }`"
             >
                 <v-card variant="outlined" class="bg-group-background">
-                    <template v-if="g.disp" #title>
+                    <template v-if="g.showTitle" #title>
                         {{ g.name }}
                     </template>
                     <template #text>

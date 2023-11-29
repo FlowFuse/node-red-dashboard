@@ -9,7 +9,7 @@
                 :class="getGroupClass(g)"
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
-                    <template v-if="g.disp" #title>
+                    <template v-if="g.showTitle" #title>
                         {{ g.name }}
                     </template>
                     <template #text>

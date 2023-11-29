@@ -10,13 +10,42 @@ module.exports = function (RED) {
 
         const evts = {
             onInput: function (msg, send, done) {
-                console.log(msg)
                 // handle the logic here of what to do when input is received
 
                 if (typeof msg.payload !== 'object') { msg.payload = { tab: msg.payload } }
                 // show/hide or enable/disable tabs
-                if ('tabs' in msg.payload) {
-                    ui.emit('ui-control', { tabs: msg.payload.tabs, socketid: msg.socketid })
+                if ('tabs' in msg.payload || 'pages' in msg.payload) {
+                    const pages = msg.payload.pages || msg.payload.tabs
+                    // get a map of page name to page object
+                    const allPages = {}
+                    RED.nodes.eachNode((n) => {
+                        if (n.type === 'ui-page') {
+                            allPages[n.name] = n
+                        }
+                    })
+                    // const pMap = RED.nodes.forEach
+                    if ('show' in pages) {
+                        // we are setting visibility: true
+                        pages.show.forEach(function (page) {
+                            const p = allPages[page]
+                            // update the state store for each page
+                            statestore.set(p.id, 'visible', true)
+                        })
+                    }
+                    if ('hide' in pages) {
+                        // we are setting visibility: true
+                        pages.hide.forEach(function (page) {
+                            const p = allPages[page]
+                            // update the state store for each page
+                            statestore.set(p.id, 'visible', false)
+                            console.log('hide', p.id)
+                        })
+                    }
+                    console.log(pages)
+                    // send to front end in order to action there too
+                    ui.emit('ui-control', {
+                        pages
+                    })
                 }
                 // switch to tab name (or number)
                 if ('tab' in msg.payload || 'page' in msg.payload) {
@@ -27,7 +56,7 @@ module.exports = function (RED) {
                         if (n.type === 'ui-page') {
                             if (n.name === page) {
                                 // send a message to the ui to switch to this tab
-                                ui.emit('ui-control', { tab: page, socketid: msg.socketid })
+                                ui.emit('ui-control', { page, socketid: msg.socketid })
                                 pageFound = true
                             }
                         }
@@ -37,7 +66,7 @@ module.exports = function (RED) {
                     }
                 }
                 // show or hide ui groups
-                if ('group' in msg.payload) {
+                if ('groups' in msg.payload || 'group' in msg.payload) {
                     if ('hide' in msg.payload.group) {
                         // loop over the groups in this array
 

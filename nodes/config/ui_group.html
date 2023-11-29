@@ -10,7 +10,7 @@
             width: { value: 6 },
             height: { value: 1 },
             order: { value: -1 },
-            disp: { value: true }, // show title on group card
+            showTitle: { value: true }, // show title on group card
             className: { value: '' }
         },
         label: function () {
@@ -18,6 +18,12 @@
             return `${this.name} [${page}]` || 'UI Group'
         },
         oneditprepare: function () {
+            console.log('this.showTitle')
+            console.log(this.showTitle)
+            if (this.disp) {
+                console.log(this.disp)
+                this.showTitle = this.disp
+            }
             $('#node-config-input-size').elementSizer({
                 width: '#node-config-input-width',
                 height: '#node-config-input-height',
@@ -43,7 +49,8 @@
         <button class="editor-button" id="node-config-input-size"></button>
     </div>
     <div class="form-row">
-        <input style="margin:8px 0 10px 102px; width:20px;" type="checkbox" checked id="node-config-input-disp"> <label style="width:auto" for="node-config-input-disp"><span data-i18n="ui-group.display-name"></span></label>
+        <input style="margin:8px 0 10px 102px; width:20px;" type="checkbox" checked id="node-config-input-showTitle">
+        <label style="width:auto" for="node-config-input-showTitle"><span data-i18n="ui-group.display-name"></span></label>
     </div>
     <div class="form-row" id="text-row-class">
         <label for="node-config-input-className"><i class="fa fa-code"></i> Class</label>

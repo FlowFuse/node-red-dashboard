@@ -53,6 +53,18 @@ const getters = {
             })
         }
     },
+    /**
+     *
+     * @param {*} item - 'page' || 'group' || 'widget'
+     * @returns
+     */
+    findBy: (state) => (item, prop, value) => {
+        if (state[item + 's']) {
+            return Object.values(state[item + 's']).find((i) => {
+                return i[prop] === value
+            })
+        }
+    },
     siteTemplates: (state) => (dashboardId) => {
         if (state.widgets) {
             const siteTemplates = Object.values(state.widgets).filter((w) => {
@@ -102,6 +114,15 @@ const mutations = {
         if ('visible' in data) {
             state.widgets[wId].state.visible = data.visible
         }
+    },
+    /**
+     *
+     * @param {*} item - 'page' || 'group' || 'widget'
+     * @returns
+     */
+    setProperty (state, { item, itemId, property, value }) {
+        console.log('setProperty', item, itemId, property, value)
+        state[item + 's'][itemId][property] = value
     }
 }
 

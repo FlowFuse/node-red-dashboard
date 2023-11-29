@@ -32,3 +32,32 @@ Functionality is generally divided into two main features:
 ## Controls List
 
 Currently, we support the following controls:
+
+### Navigation
+
+You can programmaticaly force navigation with the following payload into `ui-control`:
+
+```js
+msg.payload = {
+    page: '<Page Name>',
+}
+```
+
+_Note:_ `page` can also be subbed with `tab` as per Dashboard 1.0
+
+### Show/Hide
+
+You can programmaticaly show/hide groups and pages with the following payload into `ui-control`:
+
+```js
+msg.payload = {
+    pages: {
+        show: ['<Page Name>', '<Page Name>']
+    }
+    groups: {
+        hide: ['<Group Name>', '<Group Name>']
+    }
+}
+```
+
+_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.

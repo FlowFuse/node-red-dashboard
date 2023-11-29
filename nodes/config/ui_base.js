@@ -99,12 +99,12 @@ module.exports = function (RED) {
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
             // debugging endpoints
-            uiShared.app.get(config.path + '/_debug/datastore/:widgetid', uiShared.httpMiddleware, (req, res) => {
-                return res.json(datastore.get(req.params.widgetid))
+            uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(datastore.get(req.params.itemid))
             })
 
-            uiShared.app.get(config.path + '/_debug/statestore/:widgetid', uiShared.httpMiddleware, (req, res) => {
-                return res.json(statestore.getAll(req.params.widgetid))
+            uiShared.app.get(config.path + '/_debug/statestore/:itemid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(statestore.getAll(req.params.itemid))
             })
 
             // serve dashboard
@@ -259,13 +259,21 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
-            const widgets = node.ui.widgets
             // loop over widgets - check statestore if we've had any dynamic properties set
-            for (const [id, widget] of widgets) {
+            for (const [id, widget] of node.ui.widgets) {
                 const state = statestore.getAll(id)
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
                     widget.props = { ...widget.props, ...state }
+                }
+            }
+
+            // loop over pages - check statestore if we've had any dynamic properties set
+            for (const [id, page] of node.ui.pages) {
+                const state = statestore.getAll(id)
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    node.ui.pages.set(id, { ...page, ...state })
                 }
             }
 

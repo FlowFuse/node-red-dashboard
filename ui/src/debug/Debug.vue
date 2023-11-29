@@ -33,9 +33,31 @@
                         <v-chip v-for="(filter, $index) in filters.pages" :key="filter.key" closable @click:close="clearFilter('pages', $index)">{{ filter.key }}: {{ filter.value }}</v-chip>
                     </div>
                 </div>
-                <v-data-table :headers="headers.pages" :items="items.pages" :items-per-page="-1">
+                <v-data-table :headers="headers.pages" :items="items.pages" show-expand :items-per-page="-1">
                     <template #item.filter.groups="{ item }">
                         <v-btn variant="outlined" @click="applyFilter('groups', 'page', item.id)">Show Groups</v-btn>
+                    </template>
+                    <template #expanded-row="{ columns, item }">
+                        <tr>
+                            <td :colspan="columns.length" class="nested-table">
+                                <v-tabs
+                                    v-model="view.nested"
+                                >
+                                    <v-tab :value="'properties'">Properties</v-tab>
+                                    <v-tab :value="'statestore'">Dynamic Properties</v-tab>
+                                </v-tabs>
+                                <v-window v-model="view.nested">
+                                    <v-window-item value="properties">
+                                        <v-data-table color="white" :items="Object.entries(item).map(function(e){ return { 'property': e[0], 'value': e[1] }})" :items-per-page="-1">
+                                            <template #bottom />
+                                        </v-data-table>
+                                    </v-window-item>
+                                    <v-window-item value="statestore">
+                                        <debug-data type="page" :item="item.id" store="state" />
+                                    </v-window-item>
+                                </v-window>
+                            </td>
+                        </tr>
                     </template>
                 </v-data-table>
             </v-window-item>
@@ -54,12 +76,34 @@
                     variant="outlined"
                     hide-details
                 />
-                <v-data-table :headers="headers.groups" :items="items.groups" :items-per-page="-1" :search="search.groups">
+                <v-data-table :headers="headers.groups" :items="items.groups" :items-per-page="-1" show-expand :search="search.groups">
                     <template #item.size="{ item }">
                         <span>{{ item.width }}x{{ item.height || 'auto' }}</span>
                     </template>
                     <template #item.filter.widgets="{ item }">
                         <v-btn variant="outlined" @click="applyFilter('widgets', 'props.group', item.id)">Show Widgets</v-btn>
+                    </template>
+                    <template #expanded-row="{ columns, item }">
+                        <tr>
+                            <td :colspan="columns.length" class="nested-table">
+                                <v-tabs
+                                    v-model="view.nested"
+                                >
+                                    <v-tab :value="'properties'">Properties</v-tab>
+                                    <v-tab :value="'statestore'">Dynamic Properties</v-tab>
+                                </v-tabs>
+                                <v-window v-model="view.nested">
+                                    <v-window-item value="properties">
+                                        <v-data-table color="white" :items="Object.entries(item).map(function(e){ return { 'property': e[0], 'value': e[1] }})" :items-per-page="-1">
+                                            <template #bottom />
+                                        </v-data-table>
+                                    </v-window-item>
+                                    <v-window-item value="statestore">
+                                        <debug-data :item="item.id" store="state" />
+                                    </v-window-item>
+                                </v-window>
+                            </td>
+                        </tr>
                     </template>
                 </v-data-table>
             </v-window-item>
@@ -102,7 +146,7 @@
                                         <debug-data :widget="item.id" store="data" />
                                     </v-window-item>
                                     <v-window-item value="statestore">
-                                        <debug-data :widget="item.id" store="state" />
+                                        <debug-data :item="item.id" store="state" />
                                     </v-window-item>
                                 </v-window>
                             </td>
