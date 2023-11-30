@@ -10,9 +10,10 @@ module.exports = function (RED) {
         const evts = {
             onSocket: {
                 'ui-event': function (conn, id, evt, payload) {
+                    const wNode = RED.nodes.getNode(node.id)
                     if (id === node.id) {
                         // this was sent by this particular node
-                        node.send({
+                        wNode.send({
                             topic: evt,
                             payload,
                             socketid: conn.id,

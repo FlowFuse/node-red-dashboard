@@ -5,6 +5,7 @@ props:
 ---
 
 <script setup>
+    import AddedIn from '../../components/AddedIn.vue'
 </script>
 
 # Markdown Viewer `ui-markdown`
@@ -70,7 +71,7 @@ function () {
 | `msg.payload` | {{ msg.payload || 'Placeholder' }} |
 ````
 
-## Mermaid Charts
+## Mermaid Charts <AddedIn version="0.5.0" />
 
 The `ui-markdown` widget also supports the injection of [Mermaid](https://mermaid.js.org/intro/). To do so, you can include a mermaid chart definition inside a Markdown fenced code block, defined with the `mermaid` type:
 

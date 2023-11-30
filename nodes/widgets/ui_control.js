@@ -22,6 +22,7 @@ module.exports = function (RED) {
 
         const evts = {
             onInput: function (msg, send, done) {
+                const wNode = RED.nodes.getNode(node.id)
                 // handle the logic here of what to do when input is received
 
                 if (typeof msg.payload !== 'object') {
@@ -114,12 +115,13 @@ module.exports = function (RED) {
                 // send specific visible/hidden commands via SocketIO here,
                 // so all logic stays server-side
 
-                node.send({ payload: 'input' })
+                wNode.send({ payload: 'input' })
             },
             onSocket: {
                 connection: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
-                        node.send({
+                        const wNode = RED.nodes.getNode(node.id)
+                        wNode.send({
                             payload: 'connect',
                             socketid: conn.id,
                             socketip: conn.client.conn.remoteAddress
@@ -128,7 +130,8 @@ module.exports = function (RED) {
                 },
                 disconnect: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
-                        node.send({
+                        const wNode = RED.nodes.getNode(node.id)
+                        wNode.send({
                             payload: 'lost',
                             socketid: conn.id,
                             socketip: conn.client.conn.remoteAddress
@@ -136,10 +139,12 @@ module.exports = function (RED) {
                     }
                 },
                 'ui-control': function (conn, id, evt, payload) {
+                    console.log('ui-control', id, evt, payload, id, node.id)
                     if (id === node.id && (config.events === 'all' || config.events === 'change')) {
                         // this message was sent by this particular node
                         if (evt === 'change') {
-                            node.send({
+                            const wNode = RED.nodes.getNode(node.id)
+                            wNode.send({
                                 payload: 'change',
                                 tab: payload.page, // index of tab
                                 name: payload.name, // page name

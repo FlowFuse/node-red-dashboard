@@ -17,9 +17,10 @@
 
 <script setup>
     import EventsList from '../../components/EventsList.vue'
+    import AddedIn from '../../components/AddedIn.vue'
 </script>
 
-# Control `ui-control`
+# Control `ui-control` <AddedIn version="0.9.0" />
 
 This widget doesn't render any content into your Dashboard. Instead, it provides an interface for you to control the behaviour of your Dashboard from within the Node-RED Editor.
 

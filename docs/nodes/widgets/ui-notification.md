@@ -10,7 +10,11 @@ props:
     Class: Appends CSS classes to the widget
 ---
 
-# Notification `ui-notification`
+<script setup>
+    import AddedIn from '../../components/AddedIn.vue'
+</script>
+
+# Notification `ui-notification` <AddedIn version="0.5.0" />
 
 Known in Dashboard 1.0 as a "Toast", this widget displays text/HTML in a small window that will appear on the screen for a defined duration of time (`timeout`) and at a defined location on the screen (`position`).
 

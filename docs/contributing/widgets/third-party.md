@@ -1,4 +1,8 @@
-# Building Third Party Widgets
+<script setup>
+    import AddedIn from '../../components/AddedIn.vue'
+</script>
+
+# Building Third Party Widgets <AddedIn version="0.8.0" />
 
 If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and ideas for additions to the [core collection](../../nodes/widgets.md) of Widgets.
 
