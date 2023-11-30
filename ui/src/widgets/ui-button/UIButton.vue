@@ -22,7 +22,6 @@ export default {
     },
     methods: {
         action ($evt) {
-            console.log('button clicked', $evt)
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,

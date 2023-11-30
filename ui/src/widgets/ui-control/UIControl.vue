@@ -19,8 +19,19 @@ export default {
         ...mapGetters('ui', ['findBy'])
     },
     mounted () {
+        const vue = this
         // listen for messages
         this.$socket.on('ui-control', (msg) => {
+            function set (type, name, prop, value) {
+                const item = vue.findBy(type, 'name', name)
+                vue.$store.commit('ui/setProperty', {
+                    item: type,
+                    itemId: item.id,
+                    property: prop,
+                    value
+                })
+            }
+
             if ('page' in msg) {
                 const page = msg.page || msg.tab
                 // navigate to the tab/page
@@ -34,50 +45,26 @@ export default {
             if ('pages' in msg) {
                 if ('show' in msg.pages) {
                     // we are setting visibility: true
-                    msg.pages.show.forEach((pageName) => {
-                        const p = this.findBy('page', 'name', pageName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'page',
-                            itemId: p.id,
-                            property: 'visible',
-                            value: true
-                        })
+                    msg.pages.show.forEach((name) => {
+                        set('page', name, 'visible', true)
                     })
                 }
                 if ('hide' in msg.pages) {
                     // we are setting visibility: false
                     msg.pages.hide.forEach((pageName) => {
-                        const p = this.findBy('page', 'name', pageName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'page',
-                            itemId: p.id,
-                            property: 'visible',
-                            value: false
-                        })
+                        set('page', name, 'visible', false)
                     })
                 }
                 if ('disable' in msg.pages) {
                     // we are setting visibility: true
-                    msg.pages.disable.forEach((pageName) => {
-                        const p = this.findBy('page', 'name', pageName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'page',
-                            itemId: p.id,
-                            property: 'disabled',
-                            value: true
-                        })
+                    msg.pages.disable.forEach((name) => {
+                        set('page', name, 'disabled', true)
                     })
                 }
                 if ('enable' in msg.pages) {
                     // we are setting visibility: false
-                    msg.pages.enable.forEach((pageName) => {
-                        const p = this.findBy('page', 'name', pageName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'page',
-                            itemId: p.id,
-                            property: 'disabled',
-                            value: false
-                        })
+                    msg.pages.enable.forEach((name) => {
+                        set('page', name, 'disabled', false)
                     })
                 }
             }
@@ -85,26 +72,26 @@ export default {
             if ('groups' in msg) {
                 if ('show' in msg.groups) {
                     // we are setting visibility: true
-                    msg.groups.show.forEach((groupName) => {
-                        const g = this.findBy('group', 'name', groupName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'group',
-                            itemId: g.id,
-                            property: 'visible',
-                            value: true
-                        })
+                    msg.groups.show.forEach((name) => {
+                        set('group', name, 'visible', true)
                     })
                 }
                 if ('hide' in msg.groups) {
                     // we are setting visibility: false
-                    msg.groups.hide.forEach((groupName) => {
-                        const g = this.findBy('group', 'name', groupName)
-                        this.$store.commit('ui/setProperty', {
-                            item: 'group',
-                            itemId: g.id,
-                            property: 'visible',
-                            value: false
-                        })
+                    msg.groups.hide.forEach((name) => {
+                        set('group', name, 'visible', false)
+                    })
+                }
+                if ('disable' in msg.groups) {
+                    // we are setting visibility: true
+                    msg.groups.disable.forEach((name) => {
+                        set('group', name, 'disabled', true)
+                    })
+                }
+                if ('enable' in msg.groups) {
+                    // we are setting visibility: false
+                    msg.groups.enable.forEach((name) => {
+                        set('group', name, 'disabled', false)
                     })
                 }
             }

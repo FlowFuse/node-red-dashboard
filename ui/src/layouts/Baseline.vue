@@ -114,12 +114,6 @@ export default {
     watch: {
         theme: function () {
             this.updateTheme()
-        },
-        pages: {
-            handler: function () {
-                console.log('pages changed')
-            },
-            deep: true
         }
     },
     mounted () {

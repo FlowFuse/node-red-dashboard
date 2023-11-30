@@ -8,60 +8,20 @@ module.exports = function (RED) {
         // which ui does this widget belong to
         const ui = RED.nodes.getNode(config.ui)
 
+        function updateStore (all, items, prop, value) {
+            items.forEach(function (item) {
+                const i = all[item]
+                // update the state store for each page
+                statestore.set(i.id, prop, value)
+            })
+        }
+
         const evts = {
             onInput: function (msg, send, done) {
                 // handle the logic here of what to do when input is received
 
                 if (typeof msg.payload !== 'object') { msg.payload = { tab: msg.payload } }
-                // show/hide or enable/disable tabs
-                if ('tabs' in msg.payload || 'pages' in msg.payload) {
-                    const pages = msg.payload.pages || msg.payload.tabs
-                    // get a map of page name to page object
-                    const allPages = {}
-                    RED.nodes.eachNode((n) => {
-                        if (n.type === 'ui-page') {
-                            allPages[n.name] = n
-                        }
-                    })
-                    // const pMap = RED.nodes.forEach
-                    if ('show' in pages) {
-                        // we are setting visibility: true
-                        pages.show.forEach(function (page) {
-                            const p = allPages[page]
-                            // update the state store for each page
-                            statestore.set(p.id, 'visible', true)
-                        })
-                    }
-                    if ('hide' in pages) {
-                        // we are setting visibility: true
-                        pages.hide.forEach(function (page) {
-                            const p = allPages[page]
-                            // update the state store for each page
-                            statestore.set(p.id, 'visible', false)
-                        })
-                    }
-                    // const pMap = RED.nodes.forEach
-                    if ('enable' in pages) {
-                        // we are setting visibility: true
-                        pages.enable.forEach(function (page) {
-                            const p = allPages[page]
-                            // update the state store for each page
-                            statestore.set(p.id, 'disabled', false)
-                        })
-                    }
-                    if ('disable' in pages) {
-                        // we are setting visibility: true
-                        pages.disable.forEach(function (page) {
-                            const p = allPages[page]
-                            // update the state store for each page
-                            statestore.set(p.id, 'disabled', true)
-                        })
-                    }
-                    // send to front end in order to action there too
-                    ui.emit('ui-control', {
-                        pages
-                    })
-                }
+
                 // switch to tab name (or number)
                 if ('tab' in msg.payload || 'page' in msg.payload) {
                     const page = msg.payload.page || msg.payload.tab
@@ -80,6 +40,38 @@ module.exports = function (RED) {
                         node.error("No page with the name '" + page + "' found")
                     }
                 }
+
+                // show/hide or enable/disable tabs
+                if ('tabs' in msg.payload || 'pages' in msg.payload) {
+                    const pages = msg.payload.pages || msg.payload.tabs
+                    // get a map of page name to page object
+                    const allPages = {}
+                    RED.nodes.eachNode((n) => {
+                        if (n.type === 'ui-page') {
+                            allPages[n.name] = n
+                        }
+                    })
+
+                    // const pMap = RED.nodes.forEach
+                    if ('show' in pages) {
+                        updateStore(allPages, pages.show, 'visible', true)
+                    }
+                    if ('hide' in pages) {
+                        updateStore(allPages, pages.hide, 'visible', false)
+                    }
+                    if ('enable' in pages) {
+                        updateStore(allPages, pages.enable, 'disabled', false)
+                    }
+                    if ('disable' in pages) {
+                        updateStore(allPages, pages.disable, 'disabled', false)
+                    }
+
+                    // send to front end in order to action there too
+                    ui.emit('ui-control', {
+                        pages
+                    })
+                }
+
                 // show or hide ui groups
                 if ('groups' in msg.payload || 'group' in msg.payload) {
                     const groups = msg.payload.groups || msg.payload.group
@@ -91,20 +83,16 @@ module.exports = function (RED) {
                         }
                     })
                     if ('show' in groups) {
-                        // we are setting visibility: true
-                        groups.show.forEach(function (group) {
-                            const g = allGroups[group]
-                            // update the state store for each page
-                            statestore.set(g.id, 'visible', true)
-                        })
+                        updateStore(allGroups, groups.show, 'visible', true)
                     }
                     if ('hide' in groups) {
-                        // we are setting visibility: true
-                        groups.hide.forEach(function (group) {
-                            const g = allGroups[group]
-                            // update the state store for each page
-                            statestore.set(g.id, 'visible', false)
-                        })
+                        updateStore(allGroups, groups.hide, 'visible', false)
+                    }
+                    if ('enable' in groups) {
+                        updateStore(allGroups, groups.enable, 'disabled', false)
+                    }
+                    if ('disable' in groups) {
+                        updateStore(allGroups, groups.disable, 'disabled', true)
                     }
                     ui.emit('ui-control', { groups })
                 }
@@ -120,9 +108,6 @@ module.exports = function (RED) {
         ui.register(null, null, node, config, evts)
 
         // this.events = config.events || 'all'
-
-        // this.on('input', function (msg) {
-        // })
 
         // const sendconnect = function (id, ip) {
         //     node.send({ payload: 'connect', socketid: id, socketip: ip })

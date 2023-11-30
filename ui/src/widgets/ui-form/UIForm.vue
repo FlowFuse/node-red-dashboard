@@ -81,7 +81,6 @@ export default {
             if (row.required) {
                 // is required
                 return [(v) => {
-                    console.log('v', v)
                     return !!v || row.label + ' is required'
                 }]
             } else {

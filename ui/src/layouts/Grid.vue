@@ -1,11 +1,12 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div v-if="gridGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
+        <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
             <div
                 v-for="g in orderedGroups"
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
+                :disabled="g.disabled"
                 :class="getGroupClass(g)"
                 :style="`grid-column-end: span ${ g.width }`"
             >
