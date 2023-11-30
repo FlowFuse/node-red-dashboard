@@ -115,6 +115,37 @@ module.exports = function (RED) {
                 // so all logic stays server-side
 
                 node.send({ payload: 'input' })
+            },
+            onSocket: {
+                connection: function (conn) {
+                    node.send({
+                        payload: 'connect',
+                        socketid: conn.id,
+                        socketip: conn.client.conn.remoteAddress
+                    })
+                },
+                disconnect: function (conn, id, msg) {
+                    node.send({
+                        payload: 'lost',
+                        socketid: conn.id,
+                        socketip: conn.client.conn.remoteAddress
+                    })
+                },
+                'ui-control': function (conn, id, evt, payload) {
+                    console.log('ui-control', node.id, id, evt, payload)
+                    if (id === node.id) {
+                        // this message was sent by this particular node
+                        if (evt === 'change') {
+                            node.send({
+                                payload: 'change',
+                                tab: payload.page, // index of tab
+                                name: payload.name, // page name
+                                socketid: conn.id,
+                                socketip: conn.client.conn.remoteAddress
+                            })
+                        }
+                    }
+                }
             }
         }
 

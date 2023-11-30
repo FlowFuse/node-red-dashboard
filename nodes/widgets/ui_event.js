@@ -9,11 +9,16 @@ module.exports = function (RED) {
 
         const evts = {
             onSocket: {
-                'ui-event': function (conn, evt, payload) {
-                    node.send({
-                        topic: evt,
-                        payload
-                    })
+                'ui-event': function (conn, id, evt, payload) {
+                    if (id === node.id) {
+                        // this was sent by this particular node
+                        node.send({
+                            topic: evt,
+                            payload,
+                            socketid: conn.id,
+                            socketip: conn.client.conn.remoteAddress
+                        })
+                    }
                 }
             }
         }

@@ -325,7 +325,7 @@ module.exports = function (RED) {
             })
         }
 
-        function setupEventHandlers (socket) {
+        function setupEventHandlers (socket, onConnection) {
             socket.on('widget-action', onAction.bind(null, socket))
             socket.on('widget-change', onChange.bind(null, socket))
             socket.on('widget-load', onLoad.bind(null, socket))
@@ -335,12 +335,20 @@ module.exports = function (RED) {
             const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
-                    for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                        // we only need add the listener for a given event type the once
-                        if (registered.indexOf(widget.type) === -1) {
-                            socket.on(eventName, handler.bind(null, socket))
-                            registered.push(widget.type)
+                    if (registered.indexOf(widget.type) === -1) {
+                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            // we only need add the listener for a given event type the once
+                            console.log('registering', eventName, 'for', widget.type)
+                            if (eventName === 'connection') {
+                                if (onConnection) {
+                                    // these handlers are setup as part of an onConnection event, so trigegr these now
+                                    handler(socket)
+                                }
+                            } else {
+                                socket.on(eventName, handler.bind(null, socket))
+                            }
                         }
+                        registered.push(widget.type)
                     }
                 }
             })
@@ -358,16 +366,19 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
+            console.log('new connection', socket.id)
             // record mapping from connection to he ui-base node
             socket._baseId = node.id
 
             // node.connections[socket.id] = socket // store the connection for later use
             uiShared.connections[socket.id] = socket // store the connection for later use
+
             emitConfig(socket)
 
             // clean up then re-register listeners
-            cleanupEventHandlers(socket)
-            setupEventHandlers(socket)
+            // cleanupEventHandlers(socket)
+            // setup connections, and fire any 'on('connection')' events
+            setupEventHandlers(socket, true)
         }
         /**
          * Handles a widget-action event from the UI

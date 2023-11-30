@@ -36,6 +36,8 @@ Each time a user views a page, the `ui-event` node will emit:
 ```js
 msg = {
     topic: '$pageview',
+    socketid: '1234',
+    socketip: '127.0.0.1'
     payload: {
         page: {
             name: 'Page Name',

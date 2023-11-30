@@ -28,7 +28,7 @@
         hide: ['&lt;Page Name&gt;']
     }
     groups: {
-        show: ['&lt;Group Name&gt;', '&lt;Group Name&gt;'],
+        show: ['&lt;Page Name&gt;:&lt;Group Name&gt;', '&lt;Group Name&gt;'],
         hide: ['&lt;Group Name&gt;']
     }
 }</pre>
@@ -52,8 +52,6 @@
     <li><code>socketip</code> - the ip address from where the connection originated.
     <li><code>tab</code> - the number of the tab. (only for 'change' event).
     <li><code>name</code> - the name of the tab. (only for 'change' event).
-    <li><code>group</code> - the name of the group. (only for 'group' event).
-    <li><code>open</code> - the state of the group. (only for 'group' event).
     </ul>
     <p>Optional - report only connect events - useful to use to trigger a resend of data to a new client without needing to filter out other events.</p>
 </script>

@@ -112,3 +112,45 @@ _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can 
 ## Events List
 
 In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Dashboard 1.0 here too.
+
+### Connection Status
+
+We follow the Dashboard 1.0 convention for emitting socket-based events from the `ui-control` node.
+
+#### .on('connection')
+
+When a new Dashboard client connects to Node-RED, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'connect',
+    socketid: '<socketid>',
+    socketip: '<socketip>'
+}
+```
+
+#### .on('disconnect')
+
+When a Dashboard client disconnects from Node-RED, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'lost',
+    socketid: '<socketid>',
+    socketip: '<socketip>'
+}
+```
+
+### Change Tab/Page
+
+When a user changes the active tab or page, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'change',
+    socketid: '<socketid>',
+    socketip: '<socketip>',
+    tab: '<Page Index>',
+    name: '<Page Name>'
+}
+```

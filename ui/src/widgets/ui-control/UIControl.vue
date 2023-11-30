@@ -18,7 +18,18 @@ export default {
         ...mapState('ui', ['pages', 'groups', 'widgets']),
         ...mapGetters('ui', ['findBy'])
     },
+    watch: {
+        '$route.meta.id': {
+            handler (val) {
+                // this only fire if we switch between two pages of the same layout type,
+                // the full component isn't torn down, so we can watch for changes
+                this.routeChanged()
+            }
+        }
+    },
     mounted () {
+        // if this is being built, then we';ve just laoded a new page
+        this.routeChanged()
         const vue = this
         // listen for messages
         this.$socket.on('ui-control:' + this.id, (msg) => {
@@ -158,6 +169,20 @@ export default {
     },
     unmounted () {
         this.$socket.off('ui-control')
+    },
+    methods: {
+        routeChanged () {
+            const pages = Object.values(this.pages).sort((a, b) => {
+                return a.order - b.order
+            })
+            const index = pages.findIndex((p) => {
+                return p.id === this.$route.meta.id
+            })
+            this.$socket.emit('ui-control', this.id, 'change', {
+                page: index,
+                name: this.pages[this.$route.meta.id].name
+            })
+        }
     }
 }
 </script>
