@@ -118,22 +118,25 @@ module.exports = function (RED) {
             },
             onSocket: {
                 connection: function (conn) {
-                    node.send({
-                        payload: 'connect',
-                        socketid: conn.id,
-                        socketip: conn.client.conn.remoteAddress
-                    })
+                    if (config.events === 'all' || config.events === 'connect') {
+                        node.send({
+                            payload: 'connect',
+                            socketid: conn.id,
+                            socketip: conn.client.conn.remoteAddress
+                        })
+                    }
                 },
-                disconnect: function (conn, id, msg) {
-                    node.send({
-                        payload: 'lost',
-                        socketid: conn.id,
-                        socketip: conn.client.conn.remoteAddress
-                    })
+                disconnect: function (conn) {
+                    if (config.events === 'all' || config.events === 'connect') {
+                        node.send({
+                            payload: 'lost',
+                            socketid: conn.id,
+                            socketip: conn.client.conn.remoteAddress
+                        })
+                    }
                 },
                 'ui-control': function (conn, id, evt, payload) {
-                    console.log('ui-control', node.id, id, evt, payload)
-                    if (id === node.id) {
+                    if (id === node.id && (config.events === 'all' || config.events === 'change')) {
                         // this message was sent by this particular node
                         if (evt === 'change') {
                             node.send({
