@@ -16,28 +16,44 @@ module.exports = function (RED) {
             })
         }
 
+        function emit (payload) {
+            ui.emit('ui-control:' + node.id, payload)
+        }
+
         const evts = {
             onInput: function (msg, send, done) {
                 // handle the logic here of what to do when input is received
 
-                if (typeof msg.payload !== 'object') { msg.payload = { tab: msg.payload } }
+                if (typeof msg.payload !== 'object') {
+                    msg.payload = { page: msg.payload }
+                }
 
                 // switch to tab name (or number)
                 if ('tab' in msg.payload || 'page' in msg.payload) {
-                    const page = msg.payload.page || msg.payload.tab
-                    let pageFound = false
-                    // check we have a valid tab/page name
-                    RED.nodes.eachNode(function (n) {
-                        if (n.type === 'ui-page') {
-                            if (n.name === page) {
-                                // send a message to the ui to switch to this tab
-                                ui.emit('ui-control', { page })
-                                pageFound = true
+                    let page = msg.payload.page || msg.payload.tab
+
+                    page = (page === undefined) ? '' : page
+
+                    if (page === '-1' || page === '+1' || typeof (page) === 'number' || page === '') {
+                        // special case for -1 and +1 to switch to previous/next tab
+                        // number to pick specific index
+                        // "" to refresh the page
+                        emit({ page })
+                    } else {
+                        let pageFound = false
+                        // check we have a valid tab/page name
+                        RED.nodes.eachNode(function (n) {
+                            if (n.type === 'ui-page') {
+                                if (n.name === page) {
+                                    // send a message to the ui to switch to this tab
+                                    emit({ page })
+                                    pageFound = true
+                                }
                             }
+                        })
+                        if (!pageFound) {
+                            node.error("No page with the name '" + page + "' found")
                         }
-                    })
-                    if (!pageFound) {
-                        node.error("No page with the name '" + page + "' found")
                     }
                 }
 
@@ -67,9 +83,7 @@ module.exports = function (RED) {
                     }
 
                     // send to front end in order to action there too
-                    ui.emit('ui-control', {
-                        pages
-                    })
+                    emit({ pages })
                 }
 
                 // show or hide ui groups
@@ -94,7 +108,7 @@ module.exports = function (RED) {
                     if ('disable' in groups) {
                         updateStore(allGroups, groups.disable, 'disabled', true)
                     }
-                    ui.emit('ui-control', { groups })
+                    emit({ groups })
                 }
 
                 // send specific visible/hidden commands via SocketIO here,

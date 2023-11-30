@@ -132,9 +132,6 @@ export default {
 </script>
 
 <style scoped>
-.nrdb-table {
-
-}
 .nrdb-table-nodata {
     text-align: center;
 }

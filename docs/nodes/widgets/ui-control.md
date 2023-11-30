@@ -35,15 +35,41 @@ Currently, we support the following controls:
 
 ### Navigation
 
-You can programmaticaly force navigation with the following payload into `ui-control`:
+You can programmaticaly force navigation with the following payloads with `ui-control`:
+
+#### Change Page
+
+Explicitely choose the page you want to navigate to:
 
 ```js
+// String
+msg.payload = '<Page Name>'
+
+// Object
 msg.payload = {
     page: '<Page Name>',
 }
 ```
 
-_Note:_ `page` can also be subbed with `tab` as per Dashboard 1.0
+#### Next/Previous
+
+Navigate to the next or previous page in the list:
+
+```js
+// Next Page
+msg.payload = "+1"
+
+// Previous Page
+msg.payload = "-1"
+```
+
+#### Refresh
+
+You can force a refresh of the current view by sending a blank string payload:
+
+```js
+msg.payload = ""
+```
 
 ### Show/Hide
 
@@ -82,3 +108,7 @@ msg.payload = {
 ```
 
 _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+
+## Events List
+
+In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Dashboard 1.0 here too.
