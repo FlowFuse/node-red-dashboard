@@ -1,0 +1,157 @@
+---
+{
+    "events": [
+        {
+            "event": "$pageview",
+            "payload": "{ page }",
+            "description": "Sent whenever a user <i>views</i> a given page on the Dashboard"
+        },
+        {
+            "event": "$pageleave",
+            "payload": "{ page }",
+            "description": "Sent whenever a user <i>leaves</i> a given page on the Dashboard"
+        }
+    ]
+}
+---
+
+<script setup>
+    import EventsList from '../../components/EventsList.vue'
+    import AddedIn from '../../components/AddedIn.vue'
+</script>
+
+# Control `ui-control` <AddedIn version="0.9.0" />
+
+This widget doesn't render any content into your Dashboard. Instead, it provides an interface for you to control the behaviour of your Dashboard from within the Node-RED Editor.
+
+Functionality is generally divided into two main features:
+
+- **Navigation**: Force the user to move to a new page
+- **Display**: Show/Hide groups and pages
+- **Disability**: Enable/Disable groups and pages, this still shows them, but prevents interaction
+
+## Controls List
+
+Currently, we support the following controls:
+
+### Navigation
+
+You can programmaticaly force navigation with the following payloads with `ui-control`:
+
+#### Change Page
+
+Explicitely choose the page you want to navigate to:
+
+```js
+// String
+msg.payload = '<Page Name>'
+
+// Object
+msg.payload = {
+    page: '<Page Name>',
+}
+```
+
+#### Next/Previous
+
+Navigate to the next or previous page in the list:
+
+```js
+// Next Page
+msg.payload = "+1"
+
+// Previous Page
+msg.payload = "-1"
+```
+
+#### Refresh
+
+You can force a refresh of the current view by sending a blank string payload:
+
+```js
+msg.payload = ""
+```
+
+### Show/Hide
+
+You can programmaticaly show/hide groups and pages with the following payload into `ui-control`:
+
+```js
+msg.payload = {
+    pages: {
+        show: ['<Page Name>', '<Page Name>'],
+        hide: ['<Page Name>']
+    }
+    groups: {
+        show: ['<Group Name>', '<Group Name>'],
+        hide: ['<Group Name>']
+    }
+}
+```
+
+_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+
+### Enable/Disable
+
+You can programmaticaly disable/enable groups and pages with the following payload into `ui-control`:
+
+```js
+msg.payload = {
+    pages: {
+        enable: ['<Page Name>', '<Page Name>'],
+        disable: ['<Page Name>']
+    }
+    groups: {
+        enable: ['<Group Name>', '<Group Name>'],
+        disable: ['<Group Name>']
+    }
+}
+```
+
+_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+
+## Events List
+
+In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Dashboard 1.0 here too.
+
+### Connection Status
+
+We follow the Dashboard 1.0 convention for emitting socket-based events from the `ui-control` node.
+
+#### .on('connection')
+
+When a new Dashboard client connects to Node-RED, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'connect',
+    socketid: '<socketid>',
+    socketip: '<socketip>'
+}
+```
+
+#### .on('disconnect')
+
+When a Dashboard client disconnects from Node-RED, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'lost',
+    socketid: '<socketid>',
+    socketip: '<socketip>'
+}
+```
+
+### Change Tab/Page
+
+When a user changes the active tab or page, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'change',
+    socketid: '<socketid>',
+    socketip: '<socketip>',
+    tab: '<Page Index>',
+    name: '<Page Name>'
+}
+```

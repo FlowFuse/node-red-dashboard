@@ -99,12 +99,12 @@ module.exports = function (RED) {
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
             // debugging endpoints
-            uiShared.app.get(config.path + '/_debug/datastore/:widgetid', uiShared.httpMiddleware, (req, res) => {
-                return res.json(datastore.get(req.params.widgetid))
+            uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(datastore.get(req.params.itemid))
             })
 
-            uiShared.app.get(config.path + '/_debug/statestore/:widgetid', uiShared.httpMiddleware, (req, res) => {
-                return res.json(statestore.getAll(req.params.widgetid))
+            uiShared.app.get(config.path + '/_debug/statestore/:itemid', uiShared.httpMiddleware, (req, res) => {
+                return res.json(statestore.getAll(req.params.itemid))
             })
 
             // serve dashboard
@@ -259,13 +259,30 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
-            const widgets = node.ui.widgets
             // loop over widgets - check statestore if we've had any dynamic properties set
-            for (const [id, widget] of widgets) {
+            for (const [id, widget] of node.ui.widgets) {
                 const state = statestore.getAll(id)
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
                     widget.props = { ...widget.props, ...state }
+                }
+            }
+
+            // loop over pages - check statestore if we've had any dynamic properties set
+            for (const [id, page] of node.ui.pages) {
+                const state = statestore.getAll(id)
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    node.ui.pages.set(id, { ...page, ...state })
+                }
+            }
+
+            // loop over groups - check statestore if we've had any dynamic properties set
+            for (const [id, group] of node.ui.groups) {
+                const state = statestore.getAll(id)
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    node.ui.groups.set(id, { ...group, ...state })
                 }
             }
 
@@ -308,7 +325,7 @@ module.exports = function (RED) {
             })
         }
 
-        function setupEventHandlers (socket) {
+        function setupEventHandlers (socket, onConnection) {
             socket.on('widget-action', onAction.bind(null, socket))
             socket.on('widget-change', onChange.bind(null, socket))
             socket.on('widget-load', onLoad.bind(null, socket))
@@ -318,12 +335,19 @@ module.exports = function (RED) {
             const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
-                    for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                        // we only need add the listener for a given event type the once
-                        if (registered.indexOf(widget.type) === -1) {
-                            socket.on(eventName, handler.bind(null, socket))
-                            registered.push(widget.type)
+                    if (registered.indexOf(widget.type) === -1) {
+                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            // we only need add the listener for a given event type the once
+                            if (eventName === 'connection') {
+                                if (onConnection) {
+                                    // these handlers are setup as part of an onConnection event, so trigegr these now
+                                    handler(socket)
+                                }
+                            } else {
+                                socket.on(eventName, handler.bind(null, socket))
+                            }
                         }
+                        registered.push(widget.type)
                     }
                 }
             })
@@ -341,16 +365,19 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
+            console.log('new connection', socket.id)
             // record mapping from connection to he ui-base node
             socket._baseId = node.id
 
             // node.connections[socket.id] = socket // store the connection for later use
             uiShared.connections[socket.id] = socket // store the connection for later use
+
             emitConfig(socket)
 
             // clean up then re-register listeners
-            cleanupEventHandlers(socket)
-            setupEventHandlers(socket)
+            // cleanupEventHandlers(socket)
+            // setup connections, and fire any 'on('connection')' events
+            setupEventHandlers(socket, true)
         }
         /**
          * Handles a widget-action event from the UI
@@ -536,6 +563,11 @@ module.exports = function (RED) {
                 }
             }, 300)
         }
+
+        /**
+         * Allow for any child node to emit to all connected UIs
+         */
+        node.emit = emit
 
         /**
          * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node

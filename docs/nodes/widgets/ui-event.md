@@ -17,9 +17,10 @@
 
 <script setup>
     import EventsList from '../../components/EventsList.vue'
+    import AddedIn from '../../components/AddedIn.vue'
 </script>
 
-# Event `ui-event`
+# Event `ui-event` <AddedIn version="0.9.0" />
 
 This widget doesn't render any content into your Dashboard. Instead, it listens for user-driven behaviour and events in your Dashboard and emits accordingly into the Node-RED Editor when those events have taken place.
 
@@ -36,6 +37,8 @@ Each time a user views a page, the `ui-event` node will emit:
 ```js
 msg = {
     topic: '$pageview',
+    socketid: '1234',
+    socketip: '127.0.0.1'
     payload: {
         page: {
             name: 'Page Name',

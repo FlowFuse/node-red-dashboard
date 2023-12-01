@@ -1,4 +1,8 @@
-# Layout: Notebook
+<script setup>
+    import AddedIn from '../components/AddedIn.vue'
+</script>
+
+# Layout: Notebook <AddedIn version="0.4.0" />
 
 This layout mimics a traditional Jupyter Notebook, where the layout will stretch to 100% width, up to a maximum width of 1024px, and will centrally align.
 

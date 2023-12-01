@@ -20,6 +20,7 @@
                 <v-list nav>
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
+                        :disabled="page.disabled"
                         prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
                     />
@@ -27,7 +28,7 @@
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
             <div class="nrdb-layout-overlay">
-                <!-- Render any widgets with a 'ui' scope, e.g. ui-notification -->
+                <!-- Render any widgets with a 'ui' scope, e.g. ui-notification, ui-event, ui-control -->
                 <component
                     :is="widget.component"
                     v-for="widget in uiWidgets"
@@ -95,7 +96,14 @@ export default {
             return theme
         },
         orderedPages: function () {
-            return Object.values(this.pages).sort((a, b) => a.order - b.order)
+            return Object.values(this.pages)
+                .filter((p) => {
+                    if ('visible' in p && !p.visible) {
+                        return false
+                    }
+                    return true
+                })
+                .sort((a, b) => a.order - b.order)
         },
         uiWidgets: function () {
             // get widgets scoped to the UI, not a group/page
@@ -109,7 +117,6 @@ export default {
         }
     },
     mounted () {
-        console.log('BaselineLayout mounted. siteTemplates:', this.siteTemplates(this.$route.meta.dashboard), 'pageTemplates:', this.pageTemplates(this.$route.meta.id))
         this.updateTheme()
     },
     methods: {

@@ -17,4 +17,20 @@
             <b>$pageleave</b> - Emits whenever a user leaves a page.
         </li>
     </ul>
+    <p>An example output <code>msg</code> is as follows:</p>
+        <pre>msg = {
+    topic: '$pageview',
+    socketid: '1234',
+    socketip: '127.0.0.1'
+    payload: {
+        page: {
+            name: 'Page Name',
+            path: '/page/path'
+            id: '1234',
+            theme: 'dark',
+            layout: 'default',
+            _groups: []
+        }
+    }
+}</pre>
 </script>

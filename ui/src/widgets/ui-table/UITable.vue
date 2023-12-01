@@ -115,14 +115,12 @@ export default {
     },
     methods: {
         calculatePaginatedRows () {
-            console.log('calculatePaginatedRows', this.pagination.page, this.props.maxrows)
             if (this.props.maxrows > 0) {
                 this.pagination.pages = Math.ceil(this.rows?.length / this.props.maxrows)
                 this.pagination.rows = this.rows?.slice(
                     (this.pagination.page - 1) * this.props.maxrows,
                     (this.pagination.page) * this.props.maxrows
                 )
-                console.log('updated', this.pagination.pages, this.pagination.rows)
             } else {
                 this.pagination.page = 1
                 this.pagination.pages = 0
@@ -134,9 +132,6 @@ export default {
 </script>
 
 <style scoped>
-.nrdb-table {
-
-}
 .nrdb-table-nodata {
     text-align: center;
 }

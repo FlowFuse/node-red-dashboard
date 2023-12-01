@@ -6,11 +6,12 @@
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
+                :disabled="g.disabled"
                 :class="getGroupClass(g)"
                 :style="{'width': ((rowHeight * 2 * g.width) + 'px')}"
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
-                    <template v-if="g.disp" #title>
+                    <template v-if="g.showTitle" #title>
                         {{ g.name }}
                     </template>
                     <template #text>
@@ -54,7 +55,15 @@ export default {
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
         orderedGroups: function () {
+            // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
+                // only show hte groups that haven't had their "visible" property set to false
+                .filter((g) => {
+                    if ('visible' in g) {
+                        return g.visible
+                    }
+                    return true
+                })
             return groups
         },
         page: function () {

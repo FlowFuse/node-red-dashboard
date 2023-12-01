@@ -8,7 +8,7 @@
 export default {
     name: 'DebugData',
     props: {
-        widget: { type: String, required: true },
+        item: { type: String, required: true },
         store: { type: String, required: true }
     },
     data () {
@@ -25,7 +25,7 @@ export default {
     methods: {
         getData () {
             const xhr = new XMLHttpRequest()
-            xhr.open('GET', `/dashboard/_debug/${this.store}store/${this.widget}`)
+            xhr.open('GET', `/dashboard/_debug/${this.store}store/${this.item}`)
             xhr.send()
             xhr.responseType = 'json'
             xhr.onload = () => {

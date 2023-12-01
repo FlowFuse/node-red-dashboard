@@ -4,6 +4,7 @@
 
     import uiButton from './migration/ui_button.json'
     import uiChart from './migration/ui_chart.json'
+    import uiControl from './migration/ui_control.json'
     import uiDropdown from './migration/ui_dropdown.json'
     import uiForm from './migration/ui_form.json'
     import uiSlider from './migration/ui_slider.json'
@@ -16,6 +17,7 @@
     const widgets = ref({
         'ui_button': uiButton,
         'ui_chart': uiChart,
+        'ui_control': uiControl,
         'ui_dropdown': uiDropdown,
         'ui_form': uiForm,
         'ui_slider': uiSlider,
@@ -140,6 +142,16 @@ is currently _not_ supported. If this is of particular importance, please do voi
 
 Whilst there is currently not an explicit `ui_colour_picker` widget, the `ui_text_input` widget can be used to achieve the same result, by setting _"type"_ to _"color"_
 
+### `ui_control`
+
+<MigrationWidgetProfile :profile="widgets['ui_control']" />
+
+#### Controls List
+
+All Dashboard 1.0 controls are supported in Dashboard 2.0, with the exception of the `open/close` control for a group, which is currently not supported.
+
+You can see detailed documentation of the available controls, and emitted events [here](/nodes/widgets/ui-control.html).
+
 ### `ui_date_picker`
 
 Whilst there is currently not an explicit `ui_date_picker` widget, the `ui_text_input` widget can be used to achieve the same result, by setting _"type"_ to _"date"_,  _"time"_,  _"week"_ or  _"month"_.
@@ -196,13 +208,6 @@ You can track progress of this development effort here: [Issue #41](https://gith
 ### `ui_toast`
 
 <MigrationWidgetProfile :profile="widgets['ui_toast']" />
-
-
-### `ui_control`
-
-<MigrationWidgetProfile :profile="widgets['ui_control']" />
-
-Track progress, and input ideas here: [UI Control #258](https://github.com/FlowFuse/node-red-dashboard/issues/258).
 
 
 ## Theming

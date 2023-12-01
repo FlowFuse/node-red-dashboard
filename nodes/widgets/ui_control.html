@@ -1,0 +1,51 @@
+<script type="text/javascript">
+    (function () {
+        // convert to i18 text
+        function c_ (x) {
+            return RED._('@flowfuse/node-red-dashboard/ui-control:ui-control.' + x)
+        }
+    
+        RED.nodes.registerType('ui-control', {
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest'),
+            defaults: {
+                name: { value: '' },
+                ui: { type: 'ui-base', value: '', required: true },
+                events: { value: 'all' }
+            },
+            inputs: 1,
+            outputs: 1,
+            align: 'right',
+            icon: 'font-awesome/fa-arrow-circle-right',
+            paletteLabel: 'ui control',
+            label: function () { return this.name || 'ui control' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            outputLabels: function () { return this.events },
+            oneditprepare: function () {
+                const node = this
+                const sel = $('#node-input-events')
+                for (const name of ['all', 'change', 'connect']) {
+                    const text = c_('events.' + name)
+                    $('<option/>').val(name).text(text).appendTo(sel)
+                }
+                $(sel).val(node.events)
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-control">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="ui-control.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]ui-control.placeholder.name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <input type="text" id="node-input-ui">
+    </div>
+    <div class="form-row">
+        <label for="node-input-events"><i class="fa fa-sign-out"></i> <span data-i18n="ui-control.label.output"></span></label>
+        <select id="node-input-events" style="width:70%;">
+        </select>
+    </div>
+</script>

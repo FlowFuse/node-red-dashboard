@@ -1,0 +1,57 @@
+
+<script type="text/html" data-help-name="ui-control">
+    <p>Allows dynamic control of the Dashboard.</p>
+    <h3>Controls List</h3>
+    <h4>Navigation</h4>
+    <p>Control which page is shown to a user, by programmatically changing the page.</p>
+    <p><b>Change Page:</b> The default function is to change the currently displayed page. The following optins are supported for the <code>msg.payload</code></p>
+    <ul>
+        <li><code>"Page Name"</code> - String</li>
+        <li><code>{"page":"Page Name"}</code> - Object</li>
+        <li><code>2</code> - The numerical index (from 0) of the page to be displayed</li>
+    </ul>
+    <p><b>Next/Previous:</b> You can also send string in the format:</p>
+    <ul>
+        <li><code>"+1"</code> - Next Page</li>
+        <li><code>"-1"</code> - Previous Page</li>
+    </ul>
+    <p><b>Refresh:</b> Sending a blank tab name <code>""</code> will refresh the current page.</p>
+    <ul>
+        <li><code>""</code></li>
+        <li><code>{"page":""}</code></li>
+    </ul>
+    <h4>Show/Hide Pages & Groups</h4>
+    <p>Dashboard pages & groups can be shown and hidden by sending a <code>msg.payload</code> object with the format
+    <pre>msg.payload = {
+    pages: {
+        show: ['&lt;Page Name&gt;', '&lt;Page Name&gt;'],
+        hide: ['&lt;Page Name&gt;']
+    }
+    groups: {
+        show: ['&lt;Page Name&gt;:&lt;Group Name&gt;', '&lt;Group Name&gt;'],
+        hide: ['&lt;Group Name&gt;']
+    }
+}</pre>
+    <h4>Enable/Disable Pages & Groups</h4>
+    <p>Dashboard pages & groups can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format
+    <pre>msg.payload = {
+    pages: {
+        enable: ['&lt;Page Name&gt;', '&lt;Page Name&gt;'],
+        disable: ['&lt;Page Name&gt;']
+    }
+    groups: {
+        enable: ['&lt;Group Name&gt;', '&lt;Group Name&gt;'],
+        disable: ['&lt;Group Name&gt;']
+    }
+}</pre>
+    <h3>Events List</h3>
+    <p>When any browser client connects or loses connection, changes tab, or expands or collapses a group this node will emit a <code>msg</code> containing:</p>
+    <ul>
+    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>group</i>.
+    <li><code>socketid</code> - the ID of the socket (this will change every time the browser reloads the page).
+    <li><code>socketip</code> - the ip address from where the connection originated.
+    <li><code>tab</code> - the number of the tab. (only for 'change' event).
+    <li><code>name</code> - the name of the tab. (only for 'change' event).
+    </ul>
+    <p>Optional - report only connect events - useful to use to trigger a resend of data to a new client without needing to filter out other events.</p>
+</script>

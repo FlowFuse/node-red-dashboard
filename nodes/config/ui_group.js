@@ -7,6 +7,12 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config)
         const node = this
 
+        if (!('showTitle' in config)) {
+            // migration backwards compatibility
+            // we now use showTitle, not disp, but older flows still may have disp
+            config.showTitle = config.disp || true
+        }
+
         node.on('close', function (removed, done) {
             node.deregister() // deregister self
             done()

@@ -9,9 +9,10 @@ props:
 ---
 
 <script setup>
+    import AddedIn from '../../components/AddedIn.vue'
 </script>
 
-# Data Table `ui-table`
+# Data Table `ui-table` <AddedIn version="0.4.0" />
 
 Renders a set of data in a tabular format. Expects an input (`msg.payload`) in the format of:
 

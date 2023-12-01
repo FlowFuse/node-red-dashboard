@@ -107,7 +107,8 @@
             "ui-notification": "nodes/widgets/ui_notification.js",
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
-            "ui-event": "nodes/widgets/ui_event.js"
+            "ui-event": "nodes/widgets/ui_event.js",
+            "ui-control": "nodes/widgets/ui_control.js"
         }
     },
     "overrides": {

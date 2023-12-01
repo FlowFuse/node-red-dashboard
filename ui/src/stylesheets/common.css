@@ -79,6 +79,15 @@ main {
 }
 
 /**
+* Common Group Styling
+*/
+.nrdb-ui-group[disabled=true] {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/**
 * Common Widget Styling
 */  
 .nrdb-ui-widget {

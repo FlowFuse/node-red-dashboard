@@ -1,0 +1,13 @@
+{
+    "ui-control": {
+        "label": {
+            "name": "Name",
+            "output": "Output"
+        },
+        "events": {
+            "all": "All Events",
+            "change": "Page/Tab Change Events Only",
+            "connect": "Connection Events Only"
+        }
+    }
+  }
