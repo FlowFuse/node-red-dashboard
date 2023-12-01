@@ -26,6 +26,13 @@ export default {
             })
         }
 
+        const parser = new DOMParser()
+        const htmlDoc = parser.parseFromString(props.props.format, 'text/html')
+
+        // check whether we have a fully defined Vue component, or _just_ HTML
+        const templates = htmlDoc.getElementsByTagName('template')
+        const template = templates.length ? templates[0] : props.props.format
+
         useDataTracker(props.id)
         return () => h({
             props: ['id', 'props'],
@@ -87,7 +94,7 @@ export default {
                 // }
                 return setup
             },
-            template: props.props.templateScope !== 'local' ? undefined : props.props.format,
+            template: props.props.templateScope !== 'local' ? undefined : template,
             computed: {
                 ...mapState('data', ['messages']),
                 msg () {
