@@ -80,7 +80,6 @@ module.exports = function (RED) {
 
                 // function to process a data point being appended to a line/scatter chart
                 function addToLine (payload, series) {
-                    console.log(payload, series)
                     const datapoint = {}
                     datapoint.category = series
                     // construct our datapoint
@@ -178,7 +177,6 @@ module.exports = function (RED) {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         }))
-                        console.log(datastore.get(node.id))
                     } else if (maxPoints && config.removeOlderPoints) {
                         // account for multiple lines?
                         // client-side does this for _each_ line
