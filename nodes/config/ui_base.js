@@ -362,6 +362,8 @@ module.exports = function (RED) {
         async function onAction (conn, id, msg) {
             console.log('conn:' + conn.id, 'on:widget-action:' + id, msg)
 
+            msg.socketid = conn.id
+
             // ensure msg is an object. Assume the incoming data is the payload if not
             if (!msg || typeof msg !== 'object') {
                 msg = { payload: msg }
@@ -410,6 +412,7 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             let msg = datastore.get(id) || {}
+            msg.socketid = conn.id
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
                     msg.payload = value.payload
