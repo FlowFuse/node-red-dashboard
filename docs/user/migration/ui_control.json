@@ -1,11 +1,16 @@
 {
     "node": "ui_button",
-    "description": "Button",
+    "description": "Send events to Dashboard in order to show/hide content, disable/enable content and navigate between pages",
     "properties": [
         {
-            "property": "label",
-            "changes": "label",
-            "notes": "label"
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "events",
+            "changes": null,
+            "notes": "All events supported except for the group open/close events. Track <a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/406\" target=\"blank\">#406 progress here</a>."
         }
     ]
 }
