@@ -277,7 +277,7 @@ module.exports = function (RED) {
                 }
             }
 
-            // loop over pages - check statestore if we've had any dynamic properties set
+            // loop over groups - check statestore if we've had any dynamic properties set
             for (const [id, group] of node.ui.groups) {
                 const state = statestore.getAll(id)
                 if (state) {
@@ -338,7 +338,6 @@ module.exports = function (RED) {
                     if (registered.indexOf(widget.type) === -1) {
                         for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
                             // we only need add the listener for a given event type the once
-                            console.log('registering', eventName, 'for', widget.type)
                             if (eventName === 'connection') {
                                 if (onConnection) {
                                     // these handlers are setup as part of an onConnection event, so trigegr these now
