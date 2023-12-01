@@ -26,7 +26,7 @@ export default {
                 this.$socket.emit('ui-event', this.id, '$pageleave', oldMsg)
 
                 const newMsg = this.createPayload(this.pages[val])
-                this.$socket.emit('ui-event', this.id, '$peageview', newMsg)
+                this.$socket.emit('ui-event', this.id, '$pageview', newMsg)
             }
         }
     },
