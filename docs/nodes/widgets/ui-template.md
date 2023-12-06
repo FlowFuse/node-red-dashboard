@@ -25,7 +25,7 @@ Provide custom JS and HTML (including any [Vuetify components](https://vuetifyjs
 
 ## Built In Functionality
 
-Any Vue Components that you define in `ui-template` extend the underlying `ui-template` Vue component. This cinludes a collection of builtin methods, data and supported Widgets.
+Any Vue Components that you define in `ui-template` extend the underlying `ui-template` Vue component. This includes a collection of builtin methods, data and supported Widgets. You can also render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`).
 
 ### Vuetify Widgets
 
