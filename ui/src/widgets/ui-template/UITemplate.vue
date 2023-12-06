@@ -2,6 +2,8 @@
 
 import { h } from 'vue'
 
+import VueParser from '../../util/vue.acorn.js'
+
 import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
@@ -13,19 +15,6 @@ export default {
         props: { type: Object, default: () => ({}) }
     },
     setup (props) {
-        // check if we have any addiitonal methods defined
-        // commonly used by 3rd party widgets
-        const methods = {}
-        if (props.props.methods) {
-            Object.entries(props.props.methods).forEach((entry, index) => {
-                // eslint-disable-next-line no-unused-vars
-                const key = entry[0]
-                const value = entry[1]
-                // eslint-disable-next-line no-eval
-                eval('methods[key] = ' + value)
-            })
-        }
-
         const parser = new DOMParser()
         const htmlDoc = parser.parseFromString(props.props.format, 'text/html')
 
@@ -33,7 +22,45 @@ export default {
         const templates = htmlDoc.getElementsByTagName('template')
         const template = templates.length ? templates[0] : props.props.format
 
+        const scripts = htmlDoc.getElementsByTagName('script')
+        let component
+        let head
+
+        if (scripts.length) {
+            // parse the Vue component, which is mostly stringified
+            for (let s = 0; s < scripts.length; s++) {
+                const script = scripts[s]
+                // check we're loading of a script file or if it's raw JS/Vue, or a
+                if (script.getAttribute('src')) {
+                    head = head || []
+                    head.push({
+                        type: 'script',
+                        data: {
+                            src: script.getAttribute('src'),
+                            defer: script.getAttribute('defer'),
+                            async: script.getAttribute('async')
+                        }
+                    })
+                } else {
+                    const parsed = VueParser.parse(script.innerHTML)
+                    if (parsed.beforeCreate) {
+                        component = {
+                            ...component,
+                            beforeCreate: parsed.beforeCreate
+                        }
+                    } else {
+                        component = {
+                            ...component,
+                            ...parsed
+                        }
+                    }
+                }
+            }
+        }
+
         useDataTracker(props.id)
+
+        // here we inject the UI Template Vue Template code into our own, in order to extend base functionality
         return () => h({
             props: ['id', 'props'],
             inject: ['$socket'],
@@ -48,11 +75,11 @@ export default {
                 const setup = {}
 
                 if (!_props || _props.templateScope === 'local') {
-                    if (!_props.head) {
+                    if (!head) {
                         return {}
-                    } else if (Array.isArray(_props.head) && _props.head.length > 0) {
+                    } else if (Array.isArray(head) && head.length > 0) {
                         // loop through the head items and add them to the setup config
-                        _props.head.forEach((item) => {
+                        head.forEach((item) => {
                             // check that we have a data object defining the properties of the tag
                             if (item.data) {
                                 // types supported by @unhead/vue:
@@ -95,6 +122,9 @@ export default {
                 return setup
             },
             template: props.props.templateScope !== 'local' ? undefined : template,
+            watch: {
+                ...component?.watch
+            },
             computed: {
                 ...mapState('data', ['messages']),
                 msg () {
@@ -112,7 +142,8 @@ export default {
                         msg.payload = val
                         this.messages[this.id] = msg
                     }
-                }
+                },
+                ...component?.computed
             },
             methods: {
                 send (msg) {
@@ -123,7 +154,14 @@ export default {
                 submit ($evt) {
                     this.$parent.submit(this, $evt)
                 },
-                ...methods
+                ...component?.methods
+            },
+            created () {
+                if (component?.beforeCreate) {
+                    // run any generic JS code user has defined outisde of a VueJS component
+                    // eslint-disable-next-line no-eval
+                    eval(component.beforeCreate)
+                }
             },
             mounted () {
                 // if we have an onInput event handler, setup a subscription on SocketIO to ensure we catch the events
@@ -131,9 +169,8 @@ export default {
                     // eslint-disable-next-line no-eval
                     eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
                 }
-                if (this.props.onMounted) {
-                    // eslint-disable-next-line no-eval
-                    eval(`const onMounted = ${this.props.onMounted}; onMounted();`)
+                if (component?.mounted) {
+                    component.mounted.call(this)
                 }
             },
             unmounted () {
@@ -142,7 +179,11 @@ export default {
                     // eslint-disable-next-line no-eval
                     this.$socket.off(`msg-input:${this.id}`)
                 }
-            }
+                if (component?.unmounted) {
+                    component.unmounted.call(this)
+                }
+            },
+            data: component ? component.data : null
         }, {
             id: props.id,
             props: props.props
