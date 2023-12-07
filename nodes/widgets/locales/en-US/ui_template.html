@@ -17,14 +17,14 @@ and access incoming data to the node via the `msg` object, e.g:
 <pre>
 &lt;template&gt;
   &lt;div&gt;
-      &lt;h2&gt;Counter</h2&gt;
-      &lt;p&gt;Current Count: {{ count }}</p&gt;
-      &lt;p&gt;Formatted Count: {{ formattedCount }}</p&gt;
-      &lt;v-btn @click="increase()"&gt;Increment</v-btn&gt;
+      &lt;h2&gt;Counter&lt;/h2&gt;
+      &lt;p&gt;Current Count: {{ count }}&lt;/p&gt;
+      &lt;p class="test-class"&gt;Formatted Count: {{ formattedCount }}&lt;/p&gt;
+      &lt;v-btn @click="increase()"&gt;Increment&lt;/v-btn&gt;
       &lt;/div&gt;
 &lt;/template&gt;
 
-&lt;script>
+&lt;script&gt;
   export default {
       data() {
           // define variables available component-wide
@@ -55,6 +55,12 @@ and access incoming data to the node via the `msg` object, e.g:
           }
       }
   }
+&lt;/script&gt;
+
+&lt;style&gt;
+.test-class {
+  color: red;
+}
 &lt;/script&gt;
 </pre>
 
