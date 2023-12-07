@@ -99,7 +99,7 @@ For example, here we define a counter widget:
     <div>
         <h2>Counter</h2>
         <p>Current Count: {{ count }}</p>
-        <p>Formatted Count: {{ formattedCount }}</p>
+        <p class="my-class">Formatted Count: {{ formattedCount }}</p>
         <v-btn @click="increase()">Increment</v-btn>
     </div>
 </template>
@@ -136,6 +136,12 @@ For example, here we define a counter widget:
         }
     }
 </script>
+<style>
+    /* define any styles here - supports raw CSS */
+    .my-class {
+        color: red;
+    }
+</style>
 ```
 
 Anything returned from the `data` function is automatically made available to the `<template>`. This means that we can use the `count` variable in our template, and it will automatically update as the variable changes.
