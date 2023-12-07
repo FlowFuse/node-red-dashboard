@@ -1,30 +1,74 @@
 <script type="text/markdown" data-help-name="ui-template">
+  (see [full docs](https://dashboard.flowfuse.com/nodes/widgets/ui-template.html))
+
+The content of `ui-template` is controlled by the "Type" property.
+
 Provides a means to render custom content or a set of node-styles depending on scope.
-* HTML (including any <a href="https://vuetifyjs.com/en/components/all/" target="blank">
-  Vuetify component</a>) can be rendered in the Dashboard when the scope is set to **Widget in Group**
-* Custom CSS can be included in the Dashboard when the scope is set to **Page style** or **Site style**. 
-  If using this for CSS, you do not need to include any &lt;style&gt; tags, as these will be automatically added.
+- **Widget:** A Vue Component (including any <a href="https://vuetifyjs.com/en/components/all/" target="blank">
+  Vuetify component</a>) that is rendered in the Dashboard.
+- **CSS (All Pages):** Define custom CSS classes/styling that applies to the entire Dashboard.
+- **CSS (Single Page):** Define custom CSS classes/styling that applies just a single page of your Dashboard
 
-### Details - Widget in Group
-When the scope is set to **Widget in Group**, the template will be rendered in the Dashboard as HTML.
+### Type: Widget
+When the scope is set to **Widget**, the template will be rendered in the Dashboard as HTML.
 You can render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`)
-  and access incoming data to the node via the `msg` object, e.g:
-```
-&lt;span&gt;{{ msg?.payload }}&lt;/span&gt;
-&lt;div v-if="msg?.payload === 'hello'"&gt;
-  I will be visible if msg.payload equals 'hello'
-&lt;/div&gt;
-```
+and access incoming data to the node via the `msg` object, e.g:
 
-#### **send(msg)**
-The template comes with two built-in functions the first of which is a `send(msg)` function that
-  can be used to send a `msg` from the template, e.g:
+<pre>
+&lt;template&gt;
+  &lt;div&gt;
+      &lt;h2&gt;Counter</h2&gt;
+      &lt;p&gt;Current Count: {{ count }}</p&gt;
+      &lt;p&gt;Formatted Count: {{ formattedCount }}</p&gt;
+      &lt;v-btn @click="increase()"&gt;Increment</v-btn&gt;
+      &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script>
+  export default {
+      data() {
+          // define variables available component-wide
+          // (in &lt;template&gt; and component functions)
+          return {
+              count: 0
+          }
+      },
+      watch: {
+          // watch for any changes of "count"
+          count() {
+              if (this.count % 5 === 0) {
+                  this.send({payload: 'Multiple of 5'})
+              }
+          }
+      },
+      computed: {
+          // automatically compute this variable
+          // whenever VueJS deems appropriate
+          formattedCount() {
+              return `${this.count} Apples`
+          }
+      },
+      methods: {
+          // expose a method to our &lt;template&gt; and Vue Application
+          increase() {
+              this.count++
+          }
+      }
+  }
+&lt;/script&gt;
+</pre>
+
+#### Built In Functions
+
+The template comes with two built-in functions:
+
+`send(msg)` -  Can be used to send a `msg` from the template, e.g:
+
 ```html
-&lt;v-btn @click="send({'hello': 'world'})"&gt;&lt;/v-btn&gt;
+<v-btn @click="send({'hello': 'world'})"></v-btn>
 ```
 
-#### **submit()**
-The second built-in function can be attached to a form. The `msg` sent will be an object
+`submit()` - Can be attached to a `<form />`. The `msg` sent will be an object
   representation of the `FormData` from the attached form, e.g:
 ```html
 &lt;form @submit.prevent="submit"&gt;
@@ -38,7 +82,43 @@ Would send the following `msg` when submitted:
 { "first": <value>, "last": <value> }
 ```
 
-### Details - Site Scoped Style
+#### Sending on Click
+Here, we call it when someone clicks our "Send Hello World" button:
+
+```vue
+<v-btn @click="send({payload: 'Hello World'})">Send Hello World</v-btn>
+```
+
+#### Sending on Change
+Or another example, where the payload is automatically sent any time the `v-model` is changed:
+
+```vue
+<v-rating hover :length="5" :size="32" v-model="value"
+    active-color="primary" @update:modelValue="send({payload: value})"/>
+```
+
+#### Reading Node Input
+
+Whenever a `ui-template` receives a `msg` in Node-RED, that is automatically assigned to the `msg` variable in the template.
+
+Additionally, we also bind a computed variable `value` to `msg.payload`. This means that you can access the `msg` object in your template, as well as binding the `value` variable to any widgets you use. 
+
+Such an example would be:
+
+```html
+<div>
+    <h2>Latest <code>msg</code> received:</h2>
+    <pre>{{ msg }}</pre>
+</div>
+```
+
+#### Vuetify Widgets
+
+The `ui-template` node also has access to the [Vuetify component library](https://vuetifyjs.com/en/components/all/) by default. The library provides a large number of pre-built widgets that you can use in your Dashboard.
+
+These are particularly useful as they provide easy access to a large number of pre-built widgets that aren't necessarily included in the core nodes of Node-RED Dashboard 2.0.
+
+### Type - CSS (All Pages)
 When the scope is set to **Site Scoped Style**, the CSS in the template will be added to the `head` of all pages.
 e.g.
 ```css
@@ -47,7 +127,7 @@ e.g.
 }
 ```
 
-### Details - Page Scoped Style
+### Type: CSS (Single Page)
 When the scope is set to **Site Scoped Style**, the CSS in the template will be added to the `head` of the selected page.
 e.g.
 ```css
