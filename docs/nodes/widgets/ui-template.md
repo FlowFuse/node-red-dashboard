@@ -245,11 +245,4 @@ You are not limited to having to use a Vue components, as you can also write raw
 
 ## Examples
 
-![Examples of UI Template](/images/node-examples/ui-template.png "Examples of UI Template"){data-zoomable}
-*Examples of variants of ui-template, one with a functional form, and another showing use of random Vuetify components.*
-
-### Built In Functions 
-The template also has access to two built-in functions:
-s
-_Note: Currently restricted to custom HTML only, but there are plans to add `<style>` and `<script>` editors in the future too (track [here](https://github.com/FlowFuse/node-red-dashboard/issues/115))._
-
+- [Building a Custom Video Player with UI Template](https://flowfuse.com/blog/2023/12/dashboard-0-10-0/)
