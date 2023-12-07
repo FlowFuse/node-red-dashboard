@@ -22,9 +22,28 @@ export default {
         const templates = htmlDoc.getElementsByTagName('template')
         const template = templates.length ? templates[0] : props.props.format
 
+        let head
+
+        /* Check for any CSS <style> tags */
+        const styles = htmlDoc.getElementsByTagName('style')
+
+        if (styles.length) {
+            // parse the CSS and add to the head
+            for (let s = 0; s < styles.length; s++) {
+                const style = styles[s]
+                head = head || []
+                head.push({
+                    type: 'style',
+                    data: {
+                        innerHTML: style.innerHTML
+                    }
+                })
+            }
+        }
+
+        /* Check for any <script> elements */
         const scripts = htmlDoc.getElementsByTagName('script')
         let component
-        let head
 
         if (scripts.length) {
             // parse the Vue component, which is mostly stringified
@@ -34,7 +53,7 @@ export default {
                 if (script.getAttribute('src')) {
                     head = head || []
                     head.push({
-                        type: 'script',
+                        type: 'style',
                         data: {
                             src: script.getAttribute('src'),
                             defer: script.getAttribute('defer'),
@@ -90,6 +109,9 @@ export default {
                                 item.data['data-template-name'] = _props.name
                                 item.data['data-template-scope'] = _props.templateScope
                                 item.data['data-template-id'] = this.id
+                                if (_props.innerHTML) {
+                                    item.data.innerHTML = _props.innerHTML
+                                }
 
                                 setup[item.type].push(item.data)
                             }
