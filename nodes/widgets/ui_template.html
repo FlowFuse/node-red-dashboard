@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    (function () {
+    (async function () {
         // convert to i18 text
         function c_ (x) {
             return RED._('@flowfuse/node-red-dashboard/ui-template:ui-template.' + x)
@@ -8,6 +8,67 @@
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
+
+        const template = []
+
+        template.push('<template>')
+        template.push('    <div>')
+        template.push('        <h2>Counter</h2>')
+        template.push('        <p>Current Count: {{ count }}</p>')
+        template.push('        <p class="my-class">Formatted Count: {{ formattedCount }}</p>')
+        template.push('        <v-btn @click="increase()">Increment</v-btn>')
+        template.push('    </div>')
+        template.push('</template>')
+        template.push('')
+        template.push('<script>')
+        template.push('    export default {')
+        template.push('        data() {')
+        template.push('            // define variables available component-wide')
+        template.push('            // (in <template> and component functions)')
+        template.push('            return {')
+        template.push('                count: 0')
+        template.push('            }')
+        template.push('        },')
+        template.push('        watch: {')
+        template.push('            // watch for any changes of "count"')
+        template.push('            count: function () {')
+        template.push('                if (this.count % 5 === 0) {')
+        template.push('                    this.send({payload: \'Multiple of 5\'})')
+        template.push('                }')
+        template.push('            }')
+        template.push('        },')
+        template.push('        computed: {')
+        template.push('            // automatically compute this variable')
+        template.push('            // whenever VueJS deems appropriate')
+        template.push('            formattedCount: function () {')
+        template.push('                return this.count + \'Apples\'')
+        template.push('            }')
+        template.push('        },')
+        template.push('        methods: {')
+        template.push('            // expose a method to our <template> and Vue Application')
+        template.push('            increase: function () {')
+        template.push('                this.count++')
+        template.push('            }')
+        template.push('        },')
+        template.push('        mounted() {')
+        template.push('            // code here when the component is first loaded')
+        template.push('        },')
+        template.push('        unmounted() {')
+        template.push('            // code here when the component is removed from the Dashboard')
+        template.push('            // i.e. when the user navigates away from the page')
+        template.push('        }')
+        template.push('    }')
+        // eslint complaingin about unterminated string literal - need to do this oddity to get around it
+        template.push('</' + 'script>')
+        template.push('<style>')
+        template.push('    /* define any styles here - supports raw CSS */')
+        template.push('    .my-class {')
+        template.push('        color: red;')
+        template.push('    }')
+        template.push('</style>')
+
+        const defaultTemplate = template.join('\n')
+
         RED.nodes.registerType('ui-template', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.dark'),
@@ -33,7 +94,7 @@
                 },
                 height: { value: 0 },
                 head: { value: '' },
-                format: { value: '<div>{{ msg.payload }}</div>' },
+                format: { value: defaultTemplate },
                 storeOutMessages: { value: true },
                 fwdInMessages: { value: true },
                 resendOnRefresh: { value: true },
