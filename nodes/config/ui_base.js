@@ -69,8 +69,8 @@ module.exports = function (RED) {
                 node.log('Cannot import third party widgets. No access to Node-RED package.json')
             }
 
-            if (packageJson) {
-                Object.entries(packageJson.dependencies).filter(([packageName, _packageVersion]) => {
+            if (packageJson && packageJson.dependencies) {
+                Object.entries(packageJson.dependencies)?.filter(([packageName, _packageVersion]) => {
                     return packageName.includes('node-red-dashboard-2-')
                 }).map(([packageName, _packageVersion]) => {
                     const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
