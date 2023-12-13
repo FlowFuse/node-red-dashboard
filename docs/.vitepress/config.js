@@ -123,7 +123,7 @@ export default ({ mode }) => {
               ]
             },
             {
-              text: 'Guides',
+              text: 'Useful Guides',
               collapsed: false,
               items: [
                 { text: 'Repo Structure', link: '/contributing/guides/repo' },
@@ -131,6 +131,13 @@ export default ({ mode }) => {
                 { text: 'State Management', link: '/contributing/guides/state-management' },
                 { text: 'Layout Managers', link: '/contributing/guides/layouts' },
                 { text: 'Registering Widgets', link: '/contributing/guides/registration' }
+              ]
+            },
+            {
+              text: 'Plugins',
+              collapsed: false,
+              items: [
+                { text: 'Adding Plugins', link: '/contributing/plugins/' }
               ]
             }
           ]
