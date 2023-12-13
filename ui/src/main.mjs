@@ -19,8 +19,6 @@ import './stylesheets/common.css'
 
 import store from './store/index.mjs'
 
-import './stylesheets/common.css'
-
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
     dark: false,
@@ -52,48 +50,52 @@ const vuetify = createVuetify({
 /*
  * Configure SocketIO Client to Interact with Node-RED
  */
-// Inspect the current URL to determine the correct path to use for socket.io.
-// for example, the base path might be `:1880/` or if `httpNodeRoot` is set, it could be something like `:1880/nr/endpoints/v1`
-// 1. determine the base path to use (grab everything before the first /dashboard)
-// 2. append '/socket.io' to the base path
-// TODO: determine what to do when /dashboard is called something else (support multiple dashboards github #23 )
-//       possible idea: pass the base path as a query param from the side bar, extract it then redirect?
-const url = new URL(window.location.href)
-const basePath = url.pathname.split('/dashboard')[0]
-const path = basePath + '/dashboard/socket.io'
-const socket = io({
-    path
-})
 
-// handle final disconnection
-socket.on('disconnect', (reason) => {
-    console.log('SIO disconnected', reason)
-})
+// GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
+fetch('_setup')
+    .then((response) => {
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+            return response.json()
+        }
+        return null
+    })
+    .then((setup) => {
+        const socket = io(setup.socketio)
 
-socket.on('connect', () => {
-    console.log('SIO connected')
-})
+        // handle final disconnection
+        socket.on('disconnect', (reason) => {
+            console.log('SIO disconnected', reason)
+        })
 
-socket.on('connect_error', (err) => {
-    console.log('SIO connect error:', err, err.data)
-})
+        socket.on('connect', () => {
+            console.log('SIO connected')
+        })
 
-/**
- * Create VueJS App
- */
-window.Vue = Vue // make VueJS available globally for third-party NR widgets
-window.vuex = vuex // make Vuex available globally for third-party NR widgets
-const app = Vue.createApp(App)
-    .use(store)
-    .use(vuetify)
-    .use(router)
+        socket.on('connect_error', (err) => {
+            console.log('SIO connect error:', err, err.data)
+        })
 
-const head = createHead()
-app.use(head)
-app.mixin(VueHeadMixin)
+        /**
+         * Create VueJS App
+         */
+        window.Vue = Vue // make VueJS available globally for third-party NR widgets
+        window.vuex = vuex // make Vuex available globally for third-party NR widgets
+        const app = Vue.createApp(App)
+            .use(store)
+            .use(vuetify)
+            .use(router)
 
-// make the socket service available app-wide via this.$socket
-app.provide('$socket', socket)
+        const head = createHead()
+        app.use(head)
+        app.mixin(VueHeadMixin)
 
-// mount the VueJS app into <div id="app"></div> in /ui/public/index.html
-app.mount('#app')
+        // make the socket service available app-wide via this.$socket
+        app.provide('$socket', socket)
+
+        // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
+        app.mount('#app')
+    })
+    .catch((err) => {
+        console.log('auth error:', err)
+    })

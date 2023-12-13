@@ -98,6 +98,22 @@ module.exports = function (RED) {
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
+            uiShared.app.get(config.path + '/_setup', uiShared.httpMiddleware, (req, res) => {
+                let resp = {
+                    socketio: {
+                        path: config.path + '/socketio'
+                    }
+                }
+                // Hook API - init(RED, app, httpMiddleware, config)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onSetup) {
+                        const _resp = plugin.hooks.onSetup(RED, config, req, res)
+                        resp = { ...resp, ..._resp }
+                    }
+                })
+                return res.json(resp)
+            })
+
             // debugging endpoints
             uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, (req, res) => {
                 return res.json(datastore.get(req.params.itemid))
@@ -365,7 +381,6 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
-            console.log('new connection', socket.id)
             // record mapping from connection to he ui-base node
             socket._baseId = node.id
 
@@ -387,7 +402,11 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onAction (conn, id, msg) {
-            console.log('conn:' + conn.id, 'on:widget-action:' + id, msg)
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onAction) {
+                    msg = plugin.hooks.onAction(conn, id, msg)
+                }
+            })
 
             msg.socketid = conn.id
 
@@ -439,6 +458,13 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             let msg = datastore.get(id) || {}
+
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onChange) {
+                    msg = plugin.hooks.onChange(conn, id, msg)
+                }
+            })
+
             msg.socketid = conn.id
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
@@ -479,7 +505,12 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
-                const msg = datastore.get(id)
+                let msg = datastore.get(id)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onLoad) {
+                        msg = plugin.hooks.onLoad(conn, id, msg)
+                    }
+                })
                 conn.emit('widget-load:' + id, msg)
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
