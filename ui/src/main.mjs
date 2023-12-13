@@ -54,11 +54,7 @@ const vuetify = createVuetify({
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then((response) => {
-        const contentType = response.headers.get('content-type')
-        if (contentType && contentType.indexOf('application/json') !== -1) {
-            return response.json()
-        }
-        return null
+        return response.json()
     })
     .then((setup) => {
         const socket = io(setup.socketio)

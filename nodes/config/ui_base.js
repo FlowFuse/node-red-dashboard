@@ -101,10 +101,10 @@ module.exports = function (RED) {
             uiShared.app.get(config.path + '/_setup', uiShared.httpMiddleware, (req, res) => {
                 let resp = {
                     socketio: {
-                        path: config.path + '/socketio'
+                        path: `${config.path}/socket.io`
                     }
                 }
-                // Hook API - init(RED, app, httpMiddleware, config)
+                // Hook API - onSetup(RED, config, req, res)
                 RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                     if (plugin.hooks?.onSetup) {
                         const _resp = plugin.hooks.onSetup(RED, config, req, res)
