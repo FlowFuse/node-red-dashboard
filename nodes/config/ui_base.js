@@ -402,11 +402,17 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onAction (conn, id, msg) {
+            // Hooks API - onAction(conn, id, msg)
             RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
-                if (plugin.hooks?.onAction) {
+                if (plugin.hooks?.onAction && msg) {
                     msg = plugin.hooks.onAction(conn, id, msg)
                 }
             })
+
+            if (!msg) {
+                // a plugin has made msg blank - meaning that we don't want to send it on
+                return
+            }
 
             msg.socketid = conn.id
 
@@ -465,6 +471,11 @@ module.exports = function (RED) {
                 }
             })
 
+            if (!msg) {
+                // a plugin has made msg blank - meaning that we don't want to send it on
+                return
+            }
+
             msg.socketid = conn.id
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
@@ -511,6 +522,12 @@ module.exports = function (RED) {
                         msg = plugin.hooks.onLoad(conn, id, msg)
                     }
                 })
+
+                if (!msg) {
+                    // a plugin has made msg blank - meaning that we do anything else
+                    return
+                }
+
                 conn.emit('widget-load:' + id, msg)
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED

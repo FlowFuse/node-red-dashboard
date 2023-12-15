@@ -102,3 +102,5 @@ module.exports = function(RED) {
     })
  }
  ```
+
+ If any of `onAction`, `onChange` or `onLoad` return `null`, then the `msg` will abruptly stop there, and not be sent on any further in the flow.
