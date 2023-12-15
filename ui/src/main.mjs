@@ -57,6 +57,8 @@ fetch('_setup')
         return response.json()
     })
     .then((setup) => {
+        store.commit('setup/set', setup)
+
         const socket = io(setup.socketio)
 
         // handle final disconnection
