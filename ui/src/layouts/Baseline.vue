@@ -13,6 +13,9 @@
                 <v-app-bar-nav-icon @click="drawer = !drawer" />
             </template>
             <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
+            <template #append>
+                <div id="app-bar-actions" />
+            </template>
         </v-app-bar>
 
         <v-main>
