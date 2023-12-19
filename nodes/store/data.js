@@ -1,5 +1,15 @@
 const data = {}
 
+/**
+ * Checks if a client/ocket ID has been assigned tot his message,
+ * if so, do not store this in our centralised datastore
+ * @param {*} msg
+ * @returns
+ */
+function isScopedMessage (msg) {
+    return !!msg.socketid
+}
+
 const getters = {
     // given a widget id, return the latest msg received
     msg (id) {
@@ -14,15 +24,19 @@ const setters = {
     },
     // given a widget id, and msg, store that latest value
     save (id, msg) {
-        data[id] = msg
+        if (!isScopedMessage(msg)) {
+            data[id] = msg
+        }
     },
     // given a widget id, and msg, store in an array of history of values
     // useful for charting widgets
     append (id, msg) {
-        if (!data[id]) {
-            data[id] = []
+        if (!isScopedMessage(msg)) {
+            if (!data[id]) {
+                data[id] = []
+            }
+            data[id].push(msg)
         }
-        data[id].push(msg)
     }
 }
 

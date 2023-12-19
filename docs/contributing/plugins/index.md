@@ -63,6 +63,15 @@ module.exports = function(RED) {
                 }
             },
             /**
+             * onInput - called when a node receives a message
+             * @param {object} msg - Node-RED msg object
+             * @returns {object} - Returns Node-RED msg object
+             */ 
+            onInput: (msg) => {
+                // modify msg in anyway you like
+                return msg
+            },
+            /**
              * onAction - called when a D2.0 widget emits the `widget-action` event via SocketIO
              * @param {object} conn - SocketIO connection object
              * @param {object} id - Unique Node/Widget ID
@@ -103,4 +112,4 @@ module.exports = function(RED) {
  }
  ```
 
- If any of `onAction`, `onChange` or `onLoad` return `null`, then the `msg` will abruptly stop there, and not be sent on any further in the flow.
+ If any of `onInput`, `onAction`, `onChange` or `onLoad` return `null`, then the `msg` will abruptly stop there, and not be sent on any further in the flow.

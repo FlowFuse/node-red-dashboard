@@ -228,16 +228,28 @@ module.exports = function (RED) {
         node.uiShared = null // remove reference to ui object
         done && done()
     }
+    /**
+     * Adds socket/client data to a msg payload, if enabled
+     *
+     */
+    function addConnectionCredentials (msg, conn, config) {
+        msg.socketid = conn.id
+        return msg
+    }
 
     /**
-     * Emit an event to all connected UIs
-     * @param {String} event
-     * @param {Object} data
+     * Checksm, given a received msg, and the associated SocketIO connection
+     * whether the msg has been configured to only be sent to particular connections
+     * @param {*} conn - SocketIO Connection Object
+     * @param {*} msg  -
      */
-    function emit (event, data) {
-        Object.values(uiShared.connections).forEach(conn => {
-            conn.emit(event, data)
-        })
+    function isValidConnection (conn, msg) {
+        if (msg.socketid) {
+            // if a particular socketid has been defined,
+            // we only send comms on the connection that matches that id
+            return msg.socketid === conn.id
+        }
+        return true
     }
 
     /**
@@ -269,6 +281,22 @@ module.exports = function (RED) {
 
         // Configure & Run Express Server
         init(node, n)
+
+        /**
+         * Emit an event to all connected UIs
+         * @param {String} event
+         * @param {Object} msg
+         * @param {Object} wNode - the Node-RED node that is emitting the event
+         */
+        function emit (event, msg, wNode) {
+            Object.values(uiShared.connections).forEach(conn => {
+                const nodeAllowsConstraints = n.acceptsClientConfig.includes(wNode.type)
+                console.log(nodeAllowsConstraints, isValidConnection(conn, msg), wNode.type)
+                if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
+                    conn.emit(event, msg)
+                }
+            })
+        }
 
         /**
          * Emit UI Config to all connected UIs
@@ -414,7 +442,7 @@ module.exports = function (RED) {
                 return
             }
 
-            msg.socketid = conn.id
+            msg = addConnectionCredentials(msg, conn, n)
 
             // ensure msg is an object. Assume the incoming data is the payload if not
             if (!msg || typeof msg !== 'object') {
@@ -476,7 +504,8 @@ module.exports = function (RED) {
                 return
             }
 
-            msg.socketid = conn.id
+            msg = addConnectionCredentials(msg, conn, n)
+
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
                     msg.payload = value.payload
@@ -732,6 +761,18 @@ module.exports = function (RED) {
                     return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
                 }
 
+                // Hooks API - onInput(msg)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onInput) {
+                        msg = plugin.hooks.onInput(msg)
+                    }
+                })
+
+                if (!msg) {
+                    // a plugin has made msg blank - meaning that we do anything else
+                    return
+                }
+
                 try {
                     // pre-process the msg before running our onInput function
                     if (widgetEvents?.beforeSend) {
@@ -761,7 +802,7 @@ module.exports = function (RED) {
                     }
 
                     // emit to all connected UIs
-                    emit('msg-input:' + widget.id, msg)
+                    emit('msg-input:' + widget.id, msg, wNode)
 
                     done()
                 } catch (err) {
