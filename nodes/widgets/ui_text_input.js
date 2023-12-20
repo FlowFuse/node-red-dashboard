@@ -17,7 +17,7 @@ module.exports = function (RED) {
             onChange: true,
             onInput: function (msg, send) {
                 // store the latest msg passed to node
-                datastore.save(node.id, msg)
+                datastore.save(group.getBase(), node, msg)
                 // only send msg on if we have passthru enabled
                 if (config.passthru) {
                     send(msg)

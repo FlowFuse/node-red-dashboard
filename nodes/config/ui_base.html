@@ -50,9 +50,16 @@
     .red-ui-editableList-border .red-ui-editableList-border {
         border: 0;
     }
+    #node-config-stateless-nodes .red-ui-treeList-label.selected {
+        background-color: #e3f2fd;
+    }
     /* Dashboard 2.0 Sidebar */
-    .nrdb2-layout-order-editor {
+    .nrdb2-sidebar-tab-content {
         padding: 8px 10px;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
     .nrdb2-layout-helptext {
         padding: 0 0 9px;
@@ -120,6 +127,7 @@
 (function () {
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
+    const sidebar = $(sidebarContentTemplate)
 
     // convert to i18 text
     function c_ (x) {
@@ -143,7 +151,7 @@
             if (callNow) func.apply(context, args)
         }
     }
-    let treeList
+
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -156,8 +164,7 @@
                 required: true
             },
             includeClientData: {
-                value: true,
-                required: true
+                value: true
             },
             acceptsClientConfig: {
                 value: ['ui-notification', 'ui-control']
@@ -166,51 +173,15 @@
         label: function () {
             return `${this.name} [${this.path}]` || 'UI Config'
         },
-        oneditprepare: function () {
-            const widgets = RED.nodes.registry.getNodeTypes().filter((nodeType) => {
-                const type = RED.nodes.getType(nodeType)
-                return /^ui-/.test(nodeType) && type.category !== 'config' && type.inputs > 0
-            })
-
-            treeList = $('#node-config-stateless-nodes')
-                .css({ width: '100%', height: 'auto' })
-                .treeList({
-                    data: widgets.map((w) => {
-                        const isSelected = this.acceptsClientConfig?.includes(w)
-                        return {
-                            label: w,
-                            checkbox: true,
-                            selected: isSelected
-                        }
-                    })
-                })
-        },
-        oneditsave: function () {
-            console.log(this)
-            const widgets = treeList.treeList('data')
-            console.log(widgets.filter((w) => w.selected).map((w) => w.label))
-            this.acceptsClientConfig = widgets.filter((w) => w.selected).map((w) => w.label)
-            console.log(this.acceptsClientConfig)
-        },
-        oneditresize: function () {
-            let elementsHeight = 0
-            $('#node-config-dialog-edit-form').children().each(function (i) {
-                const child = $(this)
-                if (child.attr('id') !== 'node-config-stateless-nodes-container') {
-                    elementsHeight += child.height()
-                }
-            })
-
-            const listHeight = $('.red-ui-tray-content').height() - elementsHeight
-            $('#node-config-stateless-nodes').height(listHeight)
+        onpaletteadd: function () {
+            // add the Dashboard 2.0 sidebar
+            addSidebar()
         }
     })
 
     /**
      * Add Custom Dashboard Side Menu
      * */
-
-    const sidebar = $(sidebarContentTemplate)
 
     function uiLink (id, name, path) {
         const base = RED.settings.httpNodeRoot || '/'
@@ -226,7 +197,6 @@
         const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">Edit Settings <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
 
         editSettingsButton.on('click', function () {
-            console.log('id', id)
             RED.editor.editConfig('', 'ui-base', id)
         })
 
@@ -524,7 +494,7 @@
 
     function buildLayoutOrderEditor (parent) {
         // layout/order editor
-        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(parent)
+        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor nrdb2-sidebar-tab-content' }).appendTo(parent)
 
         // section header - Pages
         const pagesHeader = $('<div>', { class: 'nrdb2-layout-order-editor--pages' }).appendTo(divTabs)
@@ -650,59 +620,79 @@
         updateLayoutVisibility(layoutDisplayLevel)
     }
 
-    RED.sidebar.addTab({
-        id: 'dashboard-2.0',
-        label: 'Dashboard 2.0',
-        name: 'Dashboard 2.0',
-        content: sidebar,
-        closeable: true,
-        pinned: true,
-        disableOnEdit: true,
-        iconClass: 'fa fa-bar-chart',
-        action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
-        onchange: function () {
-            sidebar.empty()
+    function addSidebarTab (label, id, tabs, sidebar) {
+        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="width: 90px"><a class="red-ui-tab-label" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
 
-            // UI Base Header
-            RED.nodes.eachConfig(function (n) {
-                if (n.type === 'ui-base') {
-                    sidebar.append(uiLink(n.id, n.name, n.path))
-                }
-            })
+        // Add in Tab Content
+        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px)"></div>`).appendTo(sidebar)
+        return content
+    }
 
-            const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
-            const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)
+    function addSidebar () {
+        RED.sidebar.addTab({
+            id: 'dashboard-2.0',
+            label: 'Dashboard 2.0',
+            name: 'Dashboard 2.0',
+            content: sidebar,
+            closeable: true,
+            pinned: true,
+            disableOnEdit: true,
+            iconClass: 'fa fa-bar-chart',
+            action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
+            onchange: () => {
+                sidebar.empty()
 
-            const layoutLabel = c_('label.layout')
+                // UI Base Header
+                RED.nodes.eachConfig(function (n) {
+                    if (n.type === 'ui-base') {
+                        const base = n
+                        sidebar.append(uiLink(base.id, base.name, base.path))
+                        const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
 
-            // Add in Tabs
-            // Tab - Pages
-            $('<li id="dashboard-2-tab-pages" class="red-ui-tab" style="width: 90px"><a class="red-ui-tab-label" title="Layout"><span>' + layoutLabel + '</span></a></li>').appendTo(ulDashboardTabs)
-            // Add in Tab Content
-            const pagesTabContent = $('<div id="dashboard-2-pages" class="red-ui-tab-content"></div>').appendTo(sidebar)
+                        const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)
 
-            // default to first tab
-            ulDashboardTabs.children().first().addClass('active')
+                        const layoutLabel = c_('label.layout')
 
-            // on tab click, show the tab content, and hide the others
-            ulDashboardTabs.children().on('click', function (evt) {
-                const tab = $(this)
-                const tabContent = $('#' + tab.attr('id').replace('-tab', ''))
-                ulDashboardTabs.children().removeClass('active')
-                tab.addClass('active')
-                $('.red-ui-tab-content').hide()
-                tabContent.show()
-                evt.preventDefault()
-            })
+                        // Add in Tabs
+                        // Tab - Pages
+                        const pagesContent = addSidebarTab(layoutLabel, 'pages', ulDashboardTabs, sidebar)
 
-            // add page/layout editor
-            buildLayoutOrderEditor(pagesTabContent)
-        }
-    })
+                        // check for any third-party tab definitions
+                        RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
+                            if (plugin.tabs) {
+                                plugin.tabs.forEach(tab => {
+                                    // add tab to sidebar
+                                    const container = addSidebarTab('FF Auth', 'ff-auth', ulDashboardTabs, sidebar)
+                                    container.hide()
+                                    tab.init(base, container)
+                                })
+                            }
+                        })
 
-    RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
-        RED.sidebar.show('flowfuse-nr-tools')
-    })
+                        // default to first tab
+                        ulDashboardTabs.children().first().addClass('active')
+
+                        // on tab click, show the tab content, and hide the others
+                        ulDashboardTabs.children().on('click', function (evt) {
+                            const tab = $(this)
+                            const tabContent = $('#' + tab.attr('id').replace('-tab', ''))
+                            ulDashboardTabs.children().removeClass('active')
+                            tab.addClass('active')
+                            $('.red-ui-tab-content').hide()
+                            tabContent.show()
+                            evt.preventDefault()
+                        })
+
+                        // add page/layout editor
+                        buildLayoutOrderEditor(pagesContent)
+                    }
+                })
+            }
+        })
+        RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
+            RED.sidebar.show('flowfuse-nr-tools')
+        })
+    }
 
     /**
      * jQuery widget to provide a selector for the sizing (width & height) of a widget & group
@@ -917,19 +907,5 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
-    </div>
-    <div class="form-row form-row-flex">
-        <input type="checkbox" checked id="node-input-includeClientData">
-        <label style="width:auto" for="node-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Include Client Data</label>
-    </div>
-    <p class="nrdb2-helptext" style="margin-top: -12px;">
-        <i class="fa fa-info-circle"></i> This option will include the Socket ID in all messages transmitted by Dashboard 2.0
-    </p>
-    <div id="node-config-stateless-nodes-container" class="form-row">
-        <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Accept Client Constraints</label>
-        <p class="nrdb2-helptext" style="margin-top: -4px;">
-            <i class="fa fa-info-circle"></i> Defines whether the respective node type will consider received client data, and constrain communications to just that client.
-        </p>
-        <div id="node-config-stateless-nodes"></div>
     </div>
 </script>

@@ -37,6 +37,8 @@ Let's take a quick example to give an overview of the structure of a Dashboard p
 
 ### index.js
 
+A plugin's `js` file will define runtime behaviours for the Dashboard 2.0. This is where you will define your hooks, and any other code that you want to run when the Dashboard 2.0 is instantiated, or messages are sent back and forth between the Dashboard and Node-RED.
+
 ```js
 module.exports = function(RED) {
     RED.plugins.registerPlugin("node-red-dashboard-2-<plugin-name>", {
@@ -113,3 +115,29 @@ module.exports = function(RED) {
  ```
 
  If any of `onInput`, `onAction`, `onChange` or `onLoad` return `null`, then the `msg` will abruptly stop there, and not be sent on any further in the flow.
+
+ ### index.html
+
+This defines any client/editor plugins. This allows for definiton of Node-RED Editor features such as injecting content into the Dashboard 2.0 sidebar.
+
+ ```html
+ <script type="text/javascript">
+    RED.plugins.registerPlugin('node-red-dashboard-2-<plugin-name>', {
+        type: 'node-red-dashboard-2',
+        tabs: [
+            {
+                id: 'my-tab-id',
+                label: 'My Tab',
+                /**
+                 * Runs when tabs are first created
+                 * @param {object} base - ui-base node for which this sidebar represents
+                 * @param {object} parent - DOM element to append content to
+                 */
+                init (base, parent) {
+                    // add some content to the tab
+                }
+            }
+        ]
+    })
+</script>
+ ```

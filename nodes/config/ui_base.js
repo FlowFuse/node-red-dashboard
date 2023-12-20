@@ -41,6 +41,11 @@ module.exports = function (RED) {
      */
     function init (node, config) {
         node.uiShared = uiShared // ensure we have a uiShared object on the node (for testing mainly)
+
+        // expose these properties at runtime
+        node.acceptsClientConfig = config.acceptsClientConfig || [] // which node types can be scoped to a specific client
+        node.includeClientData = config.includeClientData || false // whether to include client data in msg payloads
+
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!uiShared.app) {
             uiShared.app = RED.httpNode || RED.httpAdmin
@@ -107,7 +112,7 @@ module.exports = function (RED) {
                 // Hook API - onSetup(RED, config, req, res)
                 RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                     if (plugin.hooks?.onSetup) {
-                        const _resp = plugin.hooks.onSetup(RED, config, req, res)
+                        const _resp = plugin.hooks.onSetup(config, req, res)
                         resp = { ...resp, ..._resp }
                     }
                 })
@@ -228,29 +233,6 @@ module.exports = function (RED) {
         node.uiShared = null // remove reference to ui object
         done && done()
     }
-    /**
-     * Adds socket/client data to a msg payload, if enabled
-     *
-     */
-    function addConnectionCredentials (msg, conn, config) {
-        msg.socketid = conn.id
-        return msg
-    }
-
-    /**
-     * Checksm, given a received msg, and the associated SocketIO connection
-     * whether the msg has been configured to only be sent to particular connections
-     * @param {*} conn - SocketIO Connection Object
-     * @param {*} msg  -
-     */
-    function isValidConnection (conn, msg) {
-        if (msg.socketid) {
-            // if a particular socketid has been defined,
-            // we only send comms on the connection that matches that id
-            return msg.socketid === conn.id
-        }
-        return true
-    }
 
     /**
      * UI Base Node Constructor. Called each time Node-RED deploy creates / recreates a u-base node.
@@ -291,11 +273,36 @@ module.exports = function (RED) {
         function emit (event, msg, wNode) {
             Object.values(uiShared.connections).forEach(conn => {
                 const nodeAllowsConstraints = n.acceptsClientConfig.includes(wNode.type)
-                console.log(nodeAllowsConstraints, isValidConnection(conn, msg), wNode.type)
                 if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
                     conn.emit(event, msg)
                 }
             })
+        }
+
+        /**
+         * Adds socket/client data to a msg payload, if enabled
+         *
+         */
+        function addConnectionCredentials (msg, conn, config) {
+            if (n.includeClientData) {
+                msg.socketid = conn.id
+            }
+            return msg
+        }
+
+        /**
+         * Checksm, given a received msg, and the associated SocketIO connection
+         * whether the msg has been configured to only be sent to particular connections
+         * @param {*} conn - SocketIO Connection Object
+         * @param {*} msg  -
+         */
+        function isValidConnection (conn, msg) {
+            if (msg.socketid) {
+                // if a particular socketid has been defined,
+                // we only send comms on the connection that matches that id
+                return msg.socketid === conn.id
+            }
+            return true
         }
 
         /**
@@ -518,7 +525,7 @@ module.exports = function (RED) {
                 if (widgetEvents?.beforeSend) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
-                datastore.save(id, msg)
+                datastore.save(n, wNode, msg)
                 wNode.send(msg) // send the msg onwards
             }
 
@@ -786,7 +793,7 @@ module.exports = function (RED) {
                         // msg could be null if the beforeSend errors and returns null
                         if (msg) {
                             // store the latest msg passed to node
-                            datastore.save(widgetNode.id, msg)
+                            datastore.save(n, widgetNode, msg)
 
                             if (widgetConfig.topic || widgetConfig.topicType) {
                                 msg = await appendTopic(RED, widgetConfig, wNode, msg)

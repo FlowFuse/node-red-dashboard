@@ -33,7 +33,7 @@ module.exports = function (RED) {
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
                 msg.payload = value ? on : off
 
-                datastore.save(node.id, msg)
+                datastore.save(group.getBase(), node, msg)
 
                 // simulate Node-RED node receiving an input
                 wNode.send(msg)
@@ -56,7 +56,7 @@ module.exports = function (RED) {
                 }
                 if (!error) {
                     // store the latest msg passed to node
-                    datastore.save(node.id, msg)
+                    datastore.save(group.getBase(), node, msg)
 
                     node.status({
                         fill: msg.payload ? 'green' : 'red',
