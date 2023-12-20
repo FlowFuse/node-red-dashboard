@@ -285,7 +285,10 @@ module.exports = function (RED) {
          */
         function addConnectionCredentials (msg, conn, config) {
             if (n.includeClientData) {
-                msg.socketid = conn.id
+                if (!msg._client) {
+                    msg._client = {}
+                }
+                msg._client = { ...msg._client, ...{ socketId: conn.id } }
             }
             return msg
         }
@@ -297,10 +300,10 @@ module.exports = function (RED) {
          * @param {*} msg  -
          */
         function isValidConnection (conn, msg) {
-            if (msg.socketid) {
+            if (msg._client?.socketId) {
                 // if a particular socketid has been defined,
                 // we only send comms on the connection that matches that id
-                return msg.socketid === conn.id
+                return msg._client?.socketId === conn.id
             }
             return true
         }
