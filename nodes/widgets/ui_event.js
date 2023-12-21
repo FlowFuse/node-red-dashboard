@@ -1,3 +1,5 @@
+const { addConnectionCredentials } = require('../utils/index.js')
+
 module.exports = function (RED) {
     function EventNode (config) {
         const node = this
@@ -13,12 +15,12 @@ module.exports = function (RED) {
                     const wNode = RED.nodes.getNode(node.id)
                     if (id === node.id) {
                         // this was sent by this particular node
-                        wNode.send({
+                        let msg = {
                             topic: evt,
-                            payload,
-                            socketid: conn.id,
-                            socketip: conn.client.conn.remoteAddress
-                        })
+                            payload
+                        }
+                        msg = addConnectionCredentials(RED, msg, conn, ui)
+                        wNode.send(msg)
                     }
                 }
             }

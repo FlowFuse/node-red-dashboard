@@ -13,6 +13,8 @@ In our architecture, we use two standalone stores:
 - `datastore`: A store for the latest `msg` received by a widget in the Editor.
 - `statestore`: A store for all dynamic properties set against widgets in the Editor.
 
+Each store will run checks to ensure that any provided messages are permitted to be stored. An example of where this would get blocked is if `msg._client.socketid` is specified and the relevant node type is setup to listen to socket constraints (by default, this is `ui-control` and `ui-notification`).
+
 ## Data Store
 
 The server-side `datastore` is a centralised store for all messages received by widgets in the Editor. It is a simple key-value store, where the key is the widget's id, and the value is the message received by the widget. In some cases, e.g. `ui-chart` instead of recording _just_ the latest `msg` received, we actually store a history.
@@ -22,8 +24,12 @@ The server-side `datastore` is a centralised store for all messages received by 
 When a widget receives a message, the default `node.on('input')` handler will store the received message, mapped to the widget's id into the datastore using:
 
 ```js
-datastore.save(node.id, msg)
+datastore.save(base, node, msg)
 ```
+
+- `base`: The `ui_base` node that the store is attached to
+- `node`: The Node-RED node object we're storing state for
+- `msg`: The message that was received by the node
 
 This will store the latest message received by the widget, which can be retrieved by that same widget on load using:
 
@@ -42,8 +48,12 @@ This ensures, on refresh of the client, or when new clients connect after data h
 With `.append`, we can store multiple messages against the same widget, representing a history of state, rather than a single point reference to the _last_ value only.
 
 ```js
-datastore.append(node.id, msg)
+datastore.append(base, node, msg)
 ```
+
+- `base`: The `ui_base` node that the store is attached to
+- `node`: The Node-RED node object we're storing state for
+- `msg`: The message that was received by the node
 
 This is used in `ui-chart` to store the history of data points, where each data point could have been an individual message received by the widget.
 
@@ -84,8 +94,14 @@ statestore.getProperty(node.id, property)
 Given a widget ID and property, store the associated value in the appropriate mapping
 
 ```js
-statestore.set(node.id, property, value)
+statestore.set(base, node, msg, property, value)
 ```
+
+- `base`: The `ui_base` node that the store is attached to
+- `node`: The Node-RED node object we're storing state for
+- `msg`: The message that was received by the node
+- `property`: The property name to store
+- `value`: The value to store against the property
 
 ### `statestore.reset`
 

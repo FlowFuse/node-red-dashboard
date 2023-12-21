@@ -4,7 +4,7 @@ const path = require('path')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -283,20 +283,6 @@ module.exports = function (RED) {
         }
 
         /**
-         * Adds socket/client data to a msg payload, if enabled
-         *
-         */
-        function addConnectionCredentials (msg, conn, config) {
-            if (n.includeClientData) {
-                if (!msg._client) {
-                    msg._client = {}
-                }
-                msg._client = { ...msg._client, ...{ socketId: conn.id } }
-            }
-            return msg
-        }
-
-        /**
          * Checks, given a received msg, and the associated SocketIO connection
          * whether the msg has been configured to only be sent to particular connections
          * @param {*} conn - SocketIO Connection Object
@@ -402,20 +388,18 @@ module.exports = function (RED) {
             const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
-                    if (registered.indexOf(widget.type) === -1) {
-                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                            // we only need add the listener for a given event type the once
-                            if (eventName === 'connection') {
-                                if (onConnection) {
-                                    // these handlers are setup as part of an onConnection event, so trigegr these now
-                                    handler(socket)
-                                }
-                            } else {
-                                socket.on(eventName, handler.bind(null, socket))
+                    for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                        // we only need add the listener for a given event type the once
+                        if (eventName === 'connection') {
+                            if (onConnection) {
+                                // these handlers are setup as part of an onConnection event, so trigegr these now
+                                handler(socket)
                             }
+                        } else {
+                            socket.on(eventName, handler.bind(null, socket))
                         }
-                        registered.push(widget.type)
                     }
+                    registered.push(widget.type)
                 }
             })
 
@@ -465,7 +449,7 @@ module.exports = function (RED) {
                 return
             }
 
-            msg = addConnectionCredentials(msg, conn, n)
+            msg = addConnectionCredentials(RED, msg, conn, n)
 
             // ensure msg is an object. Assume the incoming data is the payload if not
             if (!msg || typeof msg !== 'object') {
@@ -527,7 +511,7 @@ module.exports = function (RED) {
                 return
             }
 
-            msg = addConnectionCredentials(msg, conn, n)
+            msg = addConnectionCredentials(RED, msg, conn, n)
 
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
@@ -682,6 +666,16 @@ module.exports = function (RED) {
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
             // store our UI state properties under the .state key too
+
+            // default states
+            if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
+                statestore.set(n, widgetConfig, null, 'enabled', true)
+            }
+            if (!statestore.getProperty(widgetConfig.id, 'visible')) {
+                statestore.set(n, widgetConfig, null, 'visible', true)
+            }
+
+            // build widget object
             const widget = {
                 id: widgetConfig.id,
                 type: widgetConfig.type,
@@ -690,6 +684,10 @@ module.exports = function (RED) {
                     width: widgetConfig.width || 3,
                     height: widgetConfig.height || 1,
                     order: widgetConfig.order || 0
+                },
+                state: {
+                    enabled: statestore.getProperty(widgetConfig.id, 'enabled'),
+                    visible: statestore.getProperty(widgetConfig.id, 'visible')
                 },
                 hooks: widgetEvents,
                 src: uiShared.contribs[widgetConfig.type]

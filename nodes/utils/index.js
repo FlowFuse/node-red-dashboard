@@ -29,7 +29,27 @@ async function appendTopic (RED, config, wNode, msg) {
     return msg
 }
 
+/**
+ * Adds socket/client data to a msg payload, if enabled
+ *
+ */
+function addConnectionCredentials (RED, msg, conn, config) {
+    if (config.includeClientData) {
+        if (!msg._client) {
+            msg._client = {}
+        }
+        RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+            if (plugin.hooks?.onAddConnectionCredentials && msg) {
+                msg = plugin.hooks.onAddConnectionCredentials(conn, msg)
+            }
+        })
+        msg._client = { ...msg._client, ...{ socketId: conn.id } }
+    }
+    return msg
+}
+
 module.exports = {
     asyncEvaluateNodeProperty,
-    appendTopic
+    appendTopic,
+    addConnectionCredentials
 }

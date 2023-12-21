@@ -14,7 +14,7 @@ module.exports = function (RED) {
             beforeSend: function (msg) {
                 if (msg.options) {
                     // dynamically set "options" property
-                    statestore.set(node.id, 'options', msg.options)
+                    statestore.set(group.getBase(), node, msg, 'options', msg.options)
                 }
                 return msg
             }
