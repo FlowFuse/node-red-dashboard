@@ -109,6 +109,48 @@ module.exports = function(RED) {
                 msg.myField = "Hello World"
                 return msg
             }
+            /**
+             * onAddConnectionCredentials - called when a D2.0 is about to send a message in Node-RED
+             * @param {object} conn - SocketIO connection object
+             * @param {object} msg - Node-RED msg object
+             * @returns {object} - Returns Node-RED msg object
+             */ 
+            onAddConnectionCredentials: (conn, msg) => {
+                // modify msg in anyway you like
+                msg._client.socketIp = conn.request.socket.remoteAddress
+                return msg
+            },
+            /**
+             * onIsValidConnection - Checks whether, given a msg structure and Socket connection,
+             * any _client data specified allows for this message to be sent, e.g.
+             * if the msg._client.socketid is the same as the connection's ID
+             * @param {object} conn - SocketIO connection object
+             * @param {object} msg - Node-RED msg object
+             * @returns {boolean} - Is a valid connection or not
+             */ 
+            onIsValidConnection: (conn, msg) => {
+                if (msg._client?.socketId) {
+                    // if socketId is specified, check that it matches the connection's ID
+                    return msg._client.socketId === conn.id
+                }
+                // if no specifics provided, then allow the message to be sent
+                return true
+            },
+            /**
+             * onCanSaveInStore - Checks whether, given a msg structure, the msg can be saved in the store
+             * Saving into a store is generally a bad idea if we're dealing with messages only intended for
+             * particular clients (e.g. a msg._client.socketId is specified)
+             * @param {object} msg - Node-RED msg object
+             * @returns {boolean} - Is okay to store this, or not
+             */
+            onCanSaveInStore: (msg) => {
+                if (msg._client?.socketId) {
+                    // if socketId is specified, then don't save in store
+                    return false
+                }
+                return true
+            },
+
         }
     })
  }
