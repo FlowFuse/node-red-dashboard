@@ -1,5 +1,9 @@
 const data = {}
 
+const config = {
+    RED: null
+}
+
 /**
  * Checks if a Client/Socket ID has been assigned to this message,
  * and whether the node type is being scoped to a specific client.
@@ -7,17 +11,37 @@ const data = {}
  * @param {*} msg
  * @returns
  */
-function isScopedMessage (base, node, msg) {
+function canSaveInStore (base, node, msg) {
+    // gets a list of node types that allow for client configuration/limits
     const constrained = base.acceptsClientConfig
-    if (constrained.includes(node.type) && msg.socketid) {
-        // we are in a node type that allows for definition of specific clients,
-        // and a client has been defined
-        return true
+
+    const checks = []
+
+    if (constrained.includes(node.type)) {
+        // core check
+        if (msg._client?.socketId) {
+            // we are in a node type that allows for definition of specific clients,
+            // and a client has been defined
+            checks.push(false)
+        }
+        // plugin checks
+
+        // loop over plugins and check if any have defined a custom isValidConnection function
+        // if so, use that to determine if the connection is valid
+        for (const plugin of config.RED.plugins.getByType('node-red-dashboard-2')) {
+            if (plugin.hooks?.onCanSaveInStore) {
+                checks.push(plugin.hooks.onCanSaveInStore(msg))
+            }
+        }
     }
-    return false
+
+    return checks.length === 0 || !checks.includes(false)
 }
 
 const getters = {
+    RED () {
+        return config.RED
+    },
     // given a widget id, return the latest msg received
     msg (id) {
         return data[id]
@@ -25,6 +49,10 @@ const getters = {
 }
 
 const setters = {
+    // map the instance of Node-RED to this module
+    setConfig (RED) {
+        config.RED = RED
+    },
     // remove data associated to a given widget
     clear (id) {
         delete data[id]
@@ -36,14 +64,25 @@ const setters = {
      * @param {*} msg - the msg to be stored
      */
     save (base, node, msg) {
-        if (!isScopedMessage(base, node, msg)) {
-            data[node.id] = msg
+        if (Array.isArray(msg)) {
+            /// need to check msg by msg
+            const filtered = []
+            for (const m of msg) {
+                if (canSaveInStore(base, node, m)) {
+                    filtered.push(m)
+                }
+            }
+            data[node.id] = filtered
+        } else {
+            if (canSaveInStore(base, node, msg)) {
+                data[node.id] = msg
+            }
         }
     },
     // given a widget id, and msg, store in an array of history of values
     // useful for charting widgets
     append (base, node, msg) {
-        if (!isScopedMessage(base, node, msg)) {
+        if (canSaveInStore(base, node, msg)) {
             if (!data[node.id]) {
                 data[node.id] = []
             }
@@ -54,6 +93,8 @@ const setters = {
 
 module.exports = {
     get: getters.msg,
+    RED: getters.RED,
+    setConfig: setters.setConfig,
     save: setters.save,
     append: setters.append,
     clear: setters.clear

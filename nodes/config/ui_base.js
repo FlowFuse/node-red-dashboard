@@ -17,6 +17,9 @@ module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
 
+    datastore.setConfig(RED)
+    statestore.setConfig(RED)
+
     /**
      * @typedef {import('socket.io/dist').Socket} Socket
      * @typedef {import('socket.io/dist').Server} Server
@@ -294,18 +297,28 @@ module.exports = function (RED) {
         }
 
         /**
-         * Checksm, given a received msg, and the associated SocketIO connection
+         * Checks, given a received msg, and the associated SocketIO connection
          * whether the msg has been configured to only be sent to particular connections
          * @param {*} conn - SocketIO Connection Object
          * @param {*} msg  -
          */
         function isValidConnection (conn, msg) {
+            const checks = []
+            // loop over plugins and check if any have defined a custom isValidConnection function
+            // if so, use that to determine if the connection is valid
+            for (const plugin of RED.plugins.getByType('node-red-dashboard-2')) {
+                if (plugin.hooks?.onIsValidConnection) {
+                    checks.push(plugin.hooks.onIsValidConnection(conn, msg))
+                }
+            }
+            // conduct the core check too
             if (msg._client?.socketId) {
                 // if a particular socketid has been defined,
                 // we only send comms on the connection that matches that id
-                return msg._client?.socketId === conn.id
+                checks.push(msg._client?.socketId === conn.id)
             }
-            return true
+            // if ANY check says this is valid - we send the msg
+            return checks.includes(true)
         }
 
         /**
@@ -677,10 +690,6 @@ module.exports = function (RED) {
                     width: widgetConfig.width || 3,
                     height: widgetConfig.height || 1,
                     order: widgetConfig.order || 0
-                },
-                state: {
-                    enabled: datastore.get(widgetConfig.id)?.enabled || true,
-                    visible: datastore.get(widgetConfig.id)?.visible || true
                 },
                 hooks: widgetEvents,
                 src: uiShared.contribs[widgetConfig.type]
