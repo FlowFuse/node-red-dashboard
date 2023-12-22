@@ -59,9 +59,9 @@ module.exports = function (RED) {
                     datastore.save(node.id, msg)
 
                     node.status({
-                        fill: msg.payload === on ? 'green' : 'red',
+                        fill: (msg.payload === true || msg.payload === on) ? 'green' : 'red',
                         shape: 'ring',
-                        text: msg.payload === on ? states[1] : states[0]
+                        text: (msg.payload === true || msg.payload === on) ? states[1] : states[0]
                     })
 
                     if (config.passthru) {
