@@ -3,5 +3,7 @@
     "type": "ui-base",
     "name": "UI Name",
     "path": "/ui",
-    "port": ""
+    "port": "",
+    "includeClientData": true,
+    "acceptsClientConfig": ["ui-notification", "ui-control"]
 }
