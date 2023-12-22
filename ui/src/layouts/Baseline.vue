@@ -13,6 +13,9 @@
                 <v-app-bar-nav-icon @click="drawer = !drawer" />
             </template>
             <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
+            <template #append>
+                <div id="app-bar-actions" />
+            </template>
         </v-app-bar>
 
         <v-main>
@@ -21,7 +24,8 @@
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
                         :disabled="page.disabled"
-                        prepend-icon="mdi-home" :title="`${page.name} (${page.route.path})`"
+                        :prepend-icon="`mdi-${page.icon || 'home'}`"
+                        :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
                     />
                 </v-list>

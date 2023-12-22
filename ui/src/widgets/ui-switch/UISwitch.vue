@@ -79,6 +79,9 @@ export default {
 .nrdb-switch label {
     flex-grow: 1;
 }
+.nrdb-switch .v-switch {
+    flex-grow: 0;
+}
 .nrdb-switch .v-selection-control {
     justify-content: flex-end;
 }
