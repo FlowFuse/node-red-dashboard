@@ -15,6 +15,10 @@
                 value: '/',
                 required: false
             },
+            icon: {
+                value: 'home',
+                required: false
+            },
             layout: {
                 value: '',
                 required: true
@@ -54,31 +58,36 @@
 
 <script type="text/html" data-template-name="ui-page">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
+        <label for="node-config-input-name"><i class="w-16 fa fa-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <label for="node-config-input-ui"><i class="w-16 fa fa-sitemap"></i> UI</label>
         <input type="text" id="node-config-input-ui">
     </div>
     <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
+        <label for="node-config-input-path"><i class="w-16 fa fa-link"></i> Path</label>
         <input type="text" id="node-config-input-path">
     </div>
     <div class="form-row">
-        <label for="node-config-input-theme"><i class="fa fa-bookmark"></i> Theme</label>
+        <label for="node-config-input-icon"><i class="w-16 fa fa-home"></i> Icon</label>
+        <input type="text" id="node-config-input-icon">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-theme"><i class="w-16 fa fa-paint-brush"></i> Theme</label>
         <input type="text" id="node-config-input-theme">
     </div>
     <div class="form-row">
-        <label for="node-config-input-layout"><i class="fa fa-bookmark"></i> Layout</label>
+        <label for="node-config-input-layout"><i class="w-16 fa fa-th"></i> Layout</label>
         <input type="text" id="node-config-input-layout">
         <input type="hidden" id="node-config-input-layoutType">
     </div>
     <div class="form-row" id="text-row-class">
-        <label for="node-config-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-config-input-className"><i class="w-16 fa fa-code"></i> Class</label>
         <input type="text" id="node-config-input-className" placeholder="Optional CSS class name(s) for page"/>
     </div>
     <div class="form-row">
         <button onclick="RED.sidebar.show('dashboard-2.0')" class="editor-button editor-button-small">Open Dashboard 2.0 Sidebar</button>
     </div>
+
 </script>
