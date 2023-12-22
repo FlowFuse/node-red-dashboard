@@ -172,7 +172,7 @@ describe('ui-switch node', function () {
                 // we need to be sure that the helperAfterSwitch node has run first
                 setTimeout(() => {
                     try {
-                        sNode.warn.should.be.called()
+                        sNode.warn.called.should.be.true()
                         msgSent.should.be.false()
                         resolve()
                     } catch (err) {
