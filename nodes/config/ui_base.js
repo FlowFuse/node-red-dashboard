@@ -45,9 +45,19 @@ module.exports = function (RED) {
     function init (node, config) {
         node.uiShared = uiShared // ensure we have a uiShared object on the node (for testing mainly)
 
+        if (!config.acceptsClientConfig) {
+            // for those upgrading, we need this for backwards compatibility
+            config.acceptsClientConfig = ['ui-control', 'ui-notification']
+        }
+
+        if (!('includeClientData' in config)) {
+            // for those upgrading, we need this for backwards compatibility
+            config.includeClientData = true
+        }
+
         // expose these properties at runtime
-        node.acceptsClientConfig = config.acceptsClientConfig || [] // which node types can be scoped to a specific client
-        node.includeClientData = config.includeClientData || false // whether to include client data in msg payloads
+        node.acceptsClientConfig = config.acceptsClientConfig // which node types can be scoped to a specific client
+        node.includeClientData = config.includeClientData // whether to include client data in msg payloads
 
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!uiShared.app) {
@@ -275,7 +285,7 @@ module.exports = function (RED) {
          */
         function emit (event, msg, wNode) {
             Object.values(uiShared.connections).forEach(conn => {
-                const nodeAllowsConstraints = n.acceptsClientConfig.includes(wNode.type)
+                const nodeAllowsConstraints = n.acceptsClientConfig?.includes(wNode.type)
                 if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
                     conn.emit(event, msg)
                 }
