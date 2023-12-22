@@ -66,7 +66,6 @@ export default {
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange: function () {
-            this.lastSent = this.value
             if (this.props.sendOnDelay) {
                 // is send on delay enabled, if so, set a timeout to send the message
                 if (this.delayTimer) {
@@ -77,9 +76,11 @@ export default {
             }
         },
         onBlur: function () {
+            console.log('onBlur', this.lastSent, this.value)
             if (this.props.sendOnBlur && this.lastSent !== this.value) {
                 // check if this value has already been sent, as not going to want it sent twice
                 this.send()
+                this.lastSent = this.value
             }
         },
         onEnter: function () {
