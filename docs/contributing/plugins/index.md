@@ -1,4 +1,8 @@
-# Building Dashboard Plugins
+<script setup>
+    import AddedIn from '../../components/AddedIn.vue';
+</script>
+
+# Building Dashboard Plugins <AddedIn version="0.11.0"/>
 
 Node-RED supports the development of custom plugins that add behaviour and functionality to the Node-RED runtime. A really common use case of plugins is [custom Node-RED Themes](https://nodered.org/docs/api/ui/themes/), which modify the overall CSS/appearance of the underlying Node-RED Editor.
 
@@ -108,7 +112,7 @@ module.exports = function(RED) {
                 // modify msg in anyway you like
                 msg.myField = "Hello World"
                 return msg
-            }
+            },
             /**
              * onAddConnectionCredentials - called when a D2.0 is about to send a message in Node-RED
              * @param {object} conn - SocketIO connection object
