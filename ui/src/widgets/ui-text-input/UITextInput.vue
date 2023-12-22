@@ -64,6 +64,7 @@ export default {
     methods: {
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
+            this.lastSent = this.value
         },
         onChange: function () {
             if (this.props.sendOnDelay) {
@@ -76,11 +77,9 @@ export default {
             }
         },
         onBlur: function () {
-            console.log('onBlur', this.lastSent, this.value)
-            if (this.props.sendOnBlur && this.lastSent !== this.value) {
+            if (this.props.sendOnBlur && this.lastSent !== this.value && this.value) {
                 // check if this value has already been sent, as not going to want it sent twice
                 this.send()
-                this.lastSent = this.value
             }
         },
         onEnter: function () {
