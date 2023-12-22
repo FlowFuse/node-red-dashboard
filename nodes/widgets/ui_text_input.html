@@ -26,7 +26,12 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 mode: { value: 'text', required: true },
-                delay: { value: 300, validate: function (v) { return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true } },
+                delay: {
+                    value: 300,
+                    validate: function (v) {
+                        return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true
+                    }
+                },
                 passthru: { value: true },
                 sendOnDelay: { value: false },
                 sendOnBlur: { value: true },
@@ -66,21 +71,6 @@
                         $('#node-input-container-sendOnEnter').hide()
                     } else {
                         $('#node-input-container-sendOnEnter').show()
-                    }
-                })
-
-                $('#node-input-delay').on('change', (evt) => {
-                    const delay = $('#node-input-delay').val()
-                    if (delay === '' || delay === '0') {
-                        this.sendOnDelay = false
-                        if ($('#node-input-sendOnDelay').is(':checked')) {
-                            $('#node-input-sendOnDelay').click()
-                        }
-                    } else {
-                        this.sendOnDelay = true
-                        if (!$('#node-input-sendOnDelay').is(':checked')) {
-                            $('#node-input-sendOnDelay').click()
-                        }
                     }
                 })
             },
