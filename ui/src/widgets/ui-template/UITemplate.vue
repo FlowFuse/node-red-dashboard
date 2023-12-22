@@ -49,7 +49,6 @@ export default {
             // parse the Vue component, which is mostly stringified
             for (let s = 0; s < scripts.length; s++) {
                 const script = scripts[s]
-                console.log(script)
                 // check we're loading of a script file or if it's raw JS/Vue, or a
                 if (script.getAttribute('src')) {
                     head = head || []
@@ -61,7 +60,6 @@ export default {
                             async: script.getAttribute('async')
                         }
                     })
-                    console.log(head)
                 } else {
                     const parsed = VueParser.parse(script.innerHTML)
                     if (parsed.beforeCreate) {
@@ -151,6 +149,7 @@ export default {
             },
             computed: {
                 ...mapState('data', ['messages']),
+                ...mapState('setup', ['setup']),
                 msg () {
                     return this.messages[this.id] || {}
                 },

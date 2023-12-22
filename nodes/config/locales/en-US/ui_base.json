@@ -2,7 +2,9 @@
     "ui-base" : {
         "auto": "auto",
         "label": {
-            "category": "dashboard 2"
+            "category": "dashboard 2",
+            "layout": "Layout",
+            "settings": "Settings"
         },
         "layout": {
             "pages": "Pages",

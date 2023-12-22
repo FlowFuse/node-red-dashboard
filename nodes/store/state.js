@@ -1,25 +1,78 @@
 // Store to manage any dynamic properties set
 
 const state = {}
+const config = {
+    RED: null
+}
+
+/**
+ * Checks if a Client/Socket ID has been assigned to this message,
+ * and whether the node type is being scoped to a specific client.
+ * If so, do not store this in our centralised datastore
+ * @param {*} msg
+ * @returns
+ */
+function canSaveInStore (base, node, msg) {
+    // gets a list of node types that allow for client configuration/limits
+    const constrained = base.acceptsClientConfig
+
+    const checks = []
+
+    if (constrained.includes(node.type) && msg) {
+        // core check
+        if (msg._client?.socketId) {
+            // we are in a node type that allows for definition of specific clients,
+            // and a client has been defined
+            checks.push(false)
+        }
+        // plugin checks
+
+        // loop over plugins and check if any have defined a custom isValidConnection function
+        // if so, use that to determine if the connection is valid
+        for (const plugin of config.RED.plugins.getByType('node-red-dashboard-2')) {
+            if (plugin.hooks?.onCanSaveInStore) {
+                checks.push(plugin.hooks.onCanSaveInStore(msg))
+            }
+        }
+    }
+
+    return checks.length === 0 || !checks.includes(false)
+}
 
 const getters = {
+    RED () {
+        return config.RED
+    },
     // given a widget id, return all dynamically set properties
     all (id) {
         return state[id]
     },
     // given a widget id, return a specific dynamically set property
     property (id, property) {
-        return state[id][property]
+        return state[id] ? state[id][property] : undefined
     }
 }
 
 const setters = {
-    // given a widget id, property and value
-    set (id, prop, value) {
-        if (!state[id]) {
-            state[id] = {}
+    // map the instance of Node-RED to this module
+    setConfig (RED) {
+        config.RED = RED
+    },
+    /**
+     *
+     * @param {*} base  - associated ui-base node
+     * @param {*} node  - the Node-RED node object we're storing state for
+     * @param {*} msg   - the full received msg (allows us to check for credentials/socketid constraints)
+     * @param {*} prop  - the proeprty we are setting on the node
+     * @param {*} value - the value we are setting
+     */
+    set (base, node, msg, prop, value) {
+        if (canSaveInStore(base, node, msg)) {
+            if (!state[node.id]) {
+                state[node.id] = {}
+            }
+            state[node.id][prop] = value
         }
-        state[id][prop] = value
     },
     // remove data associated to a given widget
     reset (id) {
@@ -30,6 +83,8 @@ const setters = {
 module.exports = {
     getAll: getters.all,
     getProperty: getters.property,
+    RED: getters.RED,
+    setConfig: setters.setConfig,
     set: setters.set,
     reset: setters.reset
 }

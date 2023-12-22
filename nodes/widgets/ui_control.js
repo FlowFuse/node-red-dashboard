@@ -1,5 +1,7 @@
 const statestore = require('../store/state.js')
 
+const { addConnectionCredentials } = require('../utils/index.js')
+
 module.exports = function (RED) {
     function UiControlNode (config) {
         const node = this
@@ -8,11 +10,11 @@ module.exports = function (RED) {
         // which ui does this widget belong to
         const ui = RED.nodes.getNode(config.ui)
 
-        function updateStore (all, items, prop, value) {
+        function updateStore (all, items, msg, prop, value) {
             items.forEach(function (item) {
                 const i = all[item]
                 // update the state store for each page
-                statestore.set(i.id, prop, value)
+                statestore.set(ui, i, msg, prop, value)
             })
         }
 
@@ -71,16 +73,16 @@ module.exports = function (RED) {
 
                     // const pMap = RED.nodes.forEach
                     if ('show' in pages) {
-                        updateStore(allPages, pages.show, 'visible', true)
+                        updateStore(allPages, pages.show, msg, 'visible', true)
                     }
                     if ('hide' in pages) {
-                        updateStore(allPages, pages.hide, 'visible', false)
+                        updateStore(allPages, pages.hide, msg, 'visible', false)
                     }
                     if ('enable' in pages) {
-                        updateStore(allPages, pages.enable, 'disabled', false)
+                        updateStore(allPages, pages.enable, msg, 'disabled', false)
                     }
                     if ('disable' in pages) {
-                        updateStore(allPages, pages.disable, 'disabled', false)
+                        updateStore(allPages, pages.disable, msg, 'disabled', false)
                     }
 
                     // send to front end in order to action there too
@@ -121,36 +123,37 @@ module.exports = function (RED) {
                 connection: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
                         const wNode = RED.nodes.getNode(node.id)
-                        wNode.send({
-                            payload: 'connect',
-                            socketid: conn.id,
-                            socketip: conn.client.conn.remoteAddress
-                        })
+                        let msg = {
+                            payload: 'connect'
+                        }
+                        msg = addConnectionCredentials(RED, msg, conn, ui)
+                        wNode.send(msg)
                     }
                 },
                 disconnect: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
                         const wNode = RED.nodes.getNode(node.id)
-                        wNode.send({
-                            payload: 'lost',
-                            socketid: conn.id,
-                            socketip: conn.client.conn.remoteAddress
-                        })
+                        let msg = {
+                            payload: 'lost'
+                        }
+                        msg = addConnectionCredentials(RED, msg, conn, ui)
+                        wNode.send(msg)
                     }
                 },
                 'ui-control': function (conn, id, evt, payload) {
                     console.log('ui-control', id, evt, payload, id, node.id)
                     if (id === node.id && (config.events === 'all' || config.events === 'change')) {
                         // this message was sent by this particular node
+                        console.log('inside')
                         if (evt === 'change') {
                             const wNode = RED.nodes.getNode(node.id)
-                            wNode.send({
+                            let msg = {
                                 payload: 'change',
                                 tab: payload.page, // index of tab
-                                name: payload.name, // page name
-                                socketid: conn.id,
-                                socketip: conn.client.conn.remoteAddress
-                            })
+                                name: payload.name // page name
+                            }
+                            msg = addConnectionCredentials(RED, msg, conn, ui)
+                            wNode.send(msg)
                         }
                     }
                 }

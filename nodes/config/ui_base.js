@@ -4,7 +4,7 @@ const path = require('path')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -16,6 +16,9 @@ function join (...paths) {
 module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
+
+    datastore.setConfig(RED)
+    statestore.setConfig(RED)
 
     /**
      * @typedef {import('socket.io/dist').Socket} Socket
@@ -41,6 +44,11 @@ module.exports = function (RED) {
      */
     function init (node, config) {
         node.uiShared = uiShared // ensure we have a uiShared object on the node (for testing mainly)
+
+        // expose these properties at runtime
+        node.acceptsClientConfig = config.acceptsClientConfig || [] // which node types can be scoped to a specific client
+        node.includeClientData = config.includeClientData || false // whether to include client data in msg payloads
+
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!uiShared.app) {
             uiShared.app = RED.httpNode || RED.httpAdmin
@@ -97,6 +105,22 @@ module.exports = function (RED) {
              */
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
+
+            uiShared.app.get(config.path + '/_setup', uiShared.httpMiddleware, (req, res) => {
+                let resp = {
+                    socketio: {
+                        path: `${config.path}/socket.io`
+                    }
+                }
+                // Hook API - onSetup(RED, config, req, res)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onSetup) {
+                        const _resp = plugin.hooks.onSetup(config, req, res)
+                        resp = { ...resp, ..._resp }
+                    }
+                })
+                return res.json(resp)
+            })
 
             // debugging endpoints
             uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, (req, res) => {
@@ -214,17 +238,6 @@ module.exports = function (RED) {
     }
 
     /**
-     * Emit an event to all connected UIs
-     * @param {String} event
-     * @param {Object} data
-     */
-    function emit (event, data) {
-        Object.values(uiShared.connections).forEach(conn => {
-            conn.emit(event, data)
-        })
-    }
-
-    /**
      * UI Base Node Constructor. Called each time Node-RED deploy creates / recreates a u-base node.
      * * _whether this constructor is called depends on if there are any changes to THIS node_
      * * _A full Deploy will always call this function as every node is destroyed and re-created_
@@ -253,6 +266,46 @@ module.exports = function (RED) {
 
         // Configure & Run Express Server
         init(node, n)
+
+        /**
+         * Emit an event to all connected UIs
+         * @param {String} event
+         * @param {Object} msg
+         * @param {Object} wNode - the Node-RED node that is emitting the event
+         */
+        function emit (event, msg, wNode) {
+            Object.values(uiShared.connections).forEach(conn => {
+                const nodeAllowsConstraints = n.acceptsClientConfig.includes(wNode.type)
+                if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
+                    conn.emit(event, msg)
+                }
+            })
+        }
+
+        /**
+         * Checks, given a received msg, and the associated SocketIO connection
+         * whether the msg has been configured to only be sent to particular connections
+         * @param {*} conn - SocketIO Connection Object
+         * @param {*} msg  -
+         */
+        function isValidConnection (conn, msg) {
+            const checks = []
+            // loop over plugins and check if any have defined a custom isValidConnection function
+            // if so, use that to determine if the connection is valid
+            for (const plugin of RED.plugins.getByType('node-red-dashboard-2')) {
+                if (plugin.hooks?.onIsValidConnection) {
+                    checks.push(plugin.hooks.onIsValidConnection(conn, msg))
+                }
+            }
+            // conduct the core check too
+            if (msg._client?.socketId) {
+                // if a particular socketid has been defined,
+                // we only send comms on the connection that matches that id
+                checks.push(msg._client?.socketId === conn.id)
+            }
+            // if ANY check says this is valid - we send the msg
+            return checks.includes(true)
+        }
 
         /**
          * Emit UI Config to all connected UIs
@@ -335,20 +388,18 @@ module.exports = function (RED) {
             const registered = [] // track which widget types we've already subscribed for
             node.ui?.widgets?.forEach((widget) => {
                 if (widget.hooks?.onSocket) {
-                    if (registered.indexOf(widget.type) === -1) {
-                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
-                            // we only need add the listener for a given event type the once
-                            if (eventName === 'connection') {
-                                if (onConnection) {
-                                    // these handlers are setup as part of an onConnection event, so trigegr these now
-                                    handler(socket)
-                                }
-                            } else {
-                                socket.on(eventName, handler.bind(null, socket))
+                    for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                        // we only need add the listener for a given event type the once
+                        if (eventName === 'connection') {
+                            if (onConnection) {
+                                // these handlers are setup as part of an onConnection event, so trigegr these now
+                                handler(socket)
                             }
+                        } else {
+                            socket.on(eventName, handler.bind(null, socket))
                         }
-                        registered.push(widget.type)
                     }
+                    registered.push(widget.type)
                 }
             })
 
@@ -365,7 +416,6 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
-            console.log('new connection', socket.id)
             // record mapping from connection to he ui-base node
             socket._baseId = node.id
 
@@ -387,9 +437,19 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onAction (conn, id, msg) {
-            console.log('conn:' + conn.id, 'on:widget-action:' + id, msg)
+            // Hooks API - onAction(conn, id, msg)
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onAction && msg) {
+                    msg = plugin.hooks.onAction(conn, id, msg)
+                }
+            })
 
-            msg.socketid = conn.id
+            if (!msg) {
+                // a plugin has made msg blank - meaning that we don't want to send it on
+                return
+            }
+
+            msg = addConnectionCredentials(RED, msg, conn, n)
 
             // ensure msg is an object. Assume the incoming data is the payload if not
             if (!msg || typeof msg !== 'object') {
@@ -439,7 +499,20 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             let msg = datastore.get(id) || {}
-            msg.socketid = conn.id
+
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onChange) {
+                    msg = plugin.hooks.onChange(conn, id, msg)
+                }
+            })
+
+            if (!msg) {
+                // a plugin has made msg blank - meaning that we don't want to send it on
+                return
+            }
+
+            msg = addConnectionCredentials(RED, msg, conn, n)
+
             async function defaultHandler (value) {
                 if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
                     msg.payload = value.payload
@@ -452,7 +525,7 @@ module.exports = function (RED) {
                 if (widgetEvents?.beforeSend) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
-                datastore.save(id, msg)
+                datastore.save(n, wNode, msg)
                 wNode.send(msg) // send the msg onwards
             }
 
@@ -479,7 +552,18 @@ module.exports = function (RED) {
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
-                const msg = datastore.get(id)
+                let msg = datastore.get(id)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onLoad) {
+                        msg = plugin.hooks.onLoad(conn, id, msg)
+                    }
+                })
+
+                if (!msg) {
+                    // a plugin has made msg blank - meaning that we do anything else
+                    return
+                }
+
                 conn.emit('widget-load:' + id, msg)
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
@@ -582,6 +666,16 @@ module.exports = function (RED) {
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
             // store our UI state properties under the .state key too
+
+            // default states
+            if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
+                statestore.set(n, widgetConfig, null, 'enabled', true)
+            }
+            if (!statestore.getProperty(widgetConfig.id, 'visible')) {
+                statestore.set(n, widgetConfig, null, 'visible', true)
+            }
+
+            // build widget object
             const widget = {
                 id: widgetConfig.id,
                 type: widgetConfig.type,
@@ -592,8 +686,8 @@ module.exports = function (RED) {
                     order: widgetConfig.order || 0
                 },
                 state: {
-                    enabled: datastore.get(widgetConfig.id)?.enabled || true,
-                    visible: datastore.get(widgetConfig.id)?.visible || true
+                    enabled: statestore.getProperty(widgetConfig.id, 'enabled'),
+                    visible: statestore.getProperty(widgetConfig.id, 'visible')
                 },
                 hooks: widgetEvents,
                 src: uiShared.contribs[widgetConfig.type]
@@ -684,6 +778,18 @@ module.exports = function (RED) {
                     return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
                 }
 
+                // Hooks API - onInput(msg)
+                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.hooks?.onInput) {
+                        msg = plugin.hooks.onInput(msg)
+                    }
+                })
+
+                if (!msg) {
+                    // a plugin has made msg blank - meaning that we do anything else
+                    return
+                }
+
                 try {
                     // pre-process the msg before running our onInput function
                     if (widgetEvents?.beforeSend) {
@@ -697,7 +803,7 @@ module.exports = function (RED) {
                         // msg could be null if the beforeSend errors and returns null
                         if (msg) {
                             // store the latest msg passed to node
-                            datastore.save(widgetNode.id, msg)
+                            datastore.save(n, widgetNode, msg)
 
                             if (widgetConfig.topic || widgetConfig.topicType) {
                                 msg = await appendTopic(RED, widgetConfig, wNode, msg)
@@ -713,7 +819,7 @@ module.exports = function (RED) {
                     }
 
                     // emit to all connected UIs
-                    emit('msg-input:' + widget.id, msg)
+                    emit('msg-input:' + widget.id, msg, wNode)
 
                     done()
                 } catch (err) {

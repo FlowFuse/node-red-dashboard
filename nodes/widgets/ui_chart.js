@@ -9,6 +9,7 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
+        const base = group.getBase()
 
         function getProperty (value, property) {
             const props = property.split('.')
@@ -135,15 +136,15 @@ module.exports = function (RED) {
             onInput: function (msg, send, done) {
                 // use our own custom onInput in order to store history of msg payloads
                 if (!datastore.get(node.id)) {
-                    datastore.save(node.id, [])
+                    datastore.save(base, node, [])
                 }
                 if (Array.isArray(msg.payload) && !msg.payload.length) {
                     // clear history
-                    datastore.save(node.id, [])
+                    datastore.save(base, node, [])
                 } else {
                     if (!Array.isArray(msg.payload)) {
                         // quick clone of msg, and store in history
-                        datastore.append(node.id, {
+                        datastore.append(base, node, {
                             ...msg
                         })
                     } else {
@@ -156,7 +157,7 @@ module.exports = function (RED) {
                                 payload,
                                 _datapoint: d
                             }
-                            datastore.append(node.id, m)
+                            datastore.append(base, node, m)
                         })
                     }
 
@@ -173,7 +174,7 @@ module.exports = function (RED) {
                             seen[series] = index
                         })
                         const indices = Object.values(seen)
-                        datastore.save(node.id, _msg.filter((msg, index) => {
+                        datastore.save(base, node, _msg.filter((msg, index) => {
                             // return only the msgs with the latest index for each topic/label
                             return indices.includes(index)
                         }))
@@ -194,7 +195,7 @@ module.exports = function (RED) {
                                 lineCounts[label]++
                             }
                         }
-                        datastore.save(node.id, _msg)
+                        datastore.save(base, node, _msg)
                     }
 
                     if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
@@ -211,7 +212,7 @@ module.exports = function (RED) {
                             }
                             return timestamp > cutoff
                         })
-                        datastore.save(node.id, _msg)
+                        datastore.save(base, node, _msg)
                     }
 
                     // check sizing limits

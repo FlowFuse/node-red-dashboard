@@ -74,7 +74,7 @@
         "mermaid": "^10.4.0",
         "mocha": "^10.2.0",
         "node-red": "^3.1.0",
-        "node-red-node-test-helper": "^0.3.2",
+        "node-red-node-test-helper": "^0.3.3",
         "should": "^13.2.3",
         "should-sinon": "^0.0.6",
         "sinon": "^15.2.0",

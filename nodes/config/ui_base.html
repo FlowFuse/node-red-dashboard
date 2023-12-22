@@ -15,6 +15,12 @@
         margin: 0;
         width: auto;
     }
+    .nrdb2-helptext {
+        font-size: 0.75rem;
+        line-height: 0.825rem;
+        color: #aaa;
+        font-style: italic;
+    }
     .w-16 {
         width: 16px;
     }
@@ -36,6 +42,10 @@
     #ff-node-red-dashboard .red-ui-sidebar-header label {
         margin-bottom: 0;
     }
+    #ff-node-red-dashboard .red-ui-sidebar-header-actions {
+        gap: 4px;
+        display: flex;
+    }
     #ff-node-red-dashboard .red-ui-editableList-container {
         padding: 0;
     }
@@ -43,9 +53,16 @@
     .red-ui-editableList-border .red-ui-editableList-border {
         border: 0;
     }
+    #node-config-stateless-nodes .red-ui-treeList-label.selected {
+        background-color: #e3f2fd;
+    }
     /* Dashboard 2.0 Sidebar */
-    .nrdb2-layout-order-editor {
+    .nrdb2-sidebar-tab-content {
         padding: 8px 10px;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
     .nrdb2-layout-helptext {
         padding: 0 0 9px;
@@ -113,6 +130,7 @@
 (function () {
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
+    const sidebar = $(sidebarContentTemplate)
 
     // convert to i18 text
     function c_ (x) {
@@ -136,6 +154,7 @@
             if (callNow) func.apply(context, args)
         }
     }
+
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -146,10 +165,20 @@
             path: {
                 value: '/dashboard',
                 required: true
+            },
+            includeClientData: {
+                value: true
+            },
+            acceptsClientConfig: {
+                value: ['ui-notification', 'ui-control']
             }
         },
         label: function () {
             return `${this.name} [${this.path}]` || 'UI Config'
+        },
+        onpaletteadd: function () {
+            // add the Dashboard 2.0 sidebar
+            addSidebar()
         }
     })
 
@@ -157,14 +186,30 @@
      * Add Custom Dashboard Side Menu
      * */
 
-    const sidebar = $(sidebarContentTemplate)
-
-    function uiLink (name, path) {
+    function uiLink (id, name, path) {
         const base = RED.settings.httpNodeRoot || '/'
         const basePart = base.endsWith('/') ? base : `${base}/`
         const dashPart = path.startsWith('/') ? path.slice(1) : path
         const fullPath = `${basePart}${dashPart}`
-        return `<div class="red-ui-sidebar-header"><label>${name}</label><a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a></div>`
+
+        const header = $('<div class="red-ui-sidebar-header"></div>')
+        const label = $('<label></label>').text(name)
+
+        const actions = $('<div class="red-ui-sidebar-header-actions"></div>')
+
+        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">Edit Settings <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
+
+        editSettingsButton.on('click', function () {
+            RED.editor.editConfig('', 'ui-base', id)
+        })
+
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a>`)
+
+        label.appendTo(header)
+        editSettingsButton.appendTo(actions)
+        openDashboardButton.appendTo(actions)
+        actions.appendTo(header)
+        return header
     }
 
     /**
@@ -450,9 +495,9 @@
         }
     }
 
-    function buildLayoutOrderEditor () {
+    function buildLayoutOrderEditor (parent) {
         // layout/order editor
-        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor' }).appendTo(sidebar)
+        const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor nrdb2-sidebar-tab-content' }).appendTo(parent)
 
         // section header - Pages
         const pagesHeader = $('<div>', { class: 'nrdb2-layout-order-editor--pages' }).appendTo(divTabs)
@@ -578,32 +623,79 @@
         updateLayoutVisibility(layoutDisplayLevel)
     }
 
-    RED.sidebar.addTab({
-        id: 'dashboard-2.0',
-        label: 'Dashboard 2.0',
-        name: 'Dashboard 2.0',
-        content: sidebar,
-        closeable: true,
-        pinned: true,
-        disableOnEdit: true,
-        iconClass: 'fa fa-bar-chart',
-        action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
-        onchange: function () {
-            sidebar.empty()
-            RED.nodes.eachConfig(function (n) {
-                if (n.type === 'ui-base') {
-                    sidebar.append(uiLink(n.name, n.path))
-                }
-            })
+    function addSidebarTab (label, id, tabs, sidebar) {
+        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="width: 90px"><a class="red-ui-tab-label" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
 
-            // add layout editor
-            buildLayoutOrderEditor()
-        }
-    })
+        // Add in Tab Content
+        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px)"></div>`).appendTo(sidebar)
+        return content
+    }
 
-    RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
-        RED.sidebar.show('flowfuse-nr-tools')
-    })
+    function addSidebar () {
+        RED.sidebar.addTab({
+            id: 'dashboard-2.0',
+            label: 'Dashboard 2.0',
+            name: 'Dashboard 2.0',
+            content: sidebar,
+            closeable: true,
+            pinned: true,
+            disableOnEdit: true,
+            iconClass: 'fa fa-bar-chart',
+            action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
+            onchange: () => {
+                sidebar.empty()
+
+                // UI Base Header
+                RED.nodes.eachConfig(function (n) {
+                    if (n.type === 'ui-base') {
+                        const base = n
+                        sidebar.append(uiLink(base.id, base.name, base.path))
+                        const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
+
+                        const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)
+
+                        const layoutLabel = c_('label.layout')
+
+                        // Add in Tabs
+                        // Tab - Pages
+                        const pagesContent = addSidebarTab(layoutLabel, 'pages', ulDashboardTabs, sidebar)
+
+                        // check for any third-party tab definitions
+                        RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
+                            if (plugin.tabs) {
+                                plugin.tabs.forEach(tab => {
+                                    // add tab to sidebar
+                                    const container = addSidebarTab('FF Auth', 'ff-auth', ulDashboardTabs, sidebar)
+                                    container.hide()
+                                    tab.init(base, container)
+                                })
+                            }
+                        })
+
+                        // default to first tab
+                        ulDashboardTabs.children().first().addClass('active')
+
+                        // on tab click, show the tab content, and hide the others
+                        ulDashboardTabs.children().on('click', function (evt) {
+                            const tab = $(this)
+                            const tabContent = $('#' + tab.attr('id').replace('-tab', ''))
+                            ulDashboardTabs.children().removeClass('active')
+                            tab.addClass('active')
+                            $('.red-ui-tab-content').hide()
+                            tabContent.show()
+                            evt.preventDefault()
+                        })
+
+                        // add page/layout editor
+                        buildLayoutOrderEditor(pagesContent)
+                    }
+                })
+            }
+        })
+        RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
+            RED.sidebar.show('flowfuse-nr-tools')
+        })
+    }
 
     /**
      * jQuery widget to provide a selector for the sizing (width & height) of a widget & group

@@ -112,13 +112,14 @@ describe('ui-button node', function () {
         await new Promise((resolve, reject) => {
             hNode.on('input', (msg) => {
                 try {
-                    socket.emit.should.be.calledOnce()
+                    socket.emit.calledOnce.should.be.true()
                     const args = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
                     args[0].should.equal('msg-input:' + button.id)
                     args[1].should.be.an.Object()
                     args[1].should.have.property('payload', 'I was clicked')
                     resolve()
                 } catch (err) {
+                    console.error(err)
                     reject(err)
                 }
             })
