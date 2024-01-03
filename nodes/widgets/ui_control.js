@@ -19,7 +19,7 @@ module.exports = function (RED) {
         }
 
         function emit (payload) {
-            ui.emit('ui-control:' + node.id, payload)
+            ui.emit('ui-control:' + node.id, payload, node)
         }
 
         const evts = {
