@@ -1,6 +1,10 @@
 <template>
     <v-app>
-        <router-view v-if="!status" />
+        <div v-if="loading" class="nrdb-splash-loading">
+            <DashboardLoading />
+            Loading...
+        </div>
+        <router-view v-else-if="!status" />
         <div v-else class="nrdb-placeholder-container">
             <div class="nrdb-placeholder">
                 <img src="./assets/logo.png">
@@ -16,14 +20,23 @@
 import { mapState } from 'vuex'
 import { markRaw } from 'vue' // eslint-disable-line import/order
 
+import DashboardLoading from './components/loading.vue'
 import DebugView from './debug/Debug.vue' // import the Debug View for a Dashboard
 import layouts from './layouts/index.mjs' // import all layouts
 import { importExternalComponent } from './util.mjs'
-import widgetComponents from './widgets/index.mjs' // import all Vue Widget Components
+import widgetComponents from './widgets/index.mjs' // import all Vue Widget Components\
 
 export default {
     name: 'App',
+    components: {
+        DashboardLoading
+    },
     inject: ['$socket'],
+    data () {
+        return {
+            loading: true
+        }
+    },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
         status: function () {
@@ -103,6 +116,7 @@ export default {
     },
     created () {
         this.$socket.on('ui-config', (topic, payload) => {
+            this.loading = false
             console.log('ui-config received. topic:', topic, 'payload:', payload)
 
             // Create Debug Endpoints
