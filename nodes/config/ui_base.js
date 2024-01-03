@@ -285,7 +285,7 @@ module.exports = function (RED) {
          */
         function emit (event, msg, wNode) {
             Object.values(uiShared.connections).forEach(conn => {
-                const nodeAllowsConstraints = n.acceptsClientConfig?.includes(wNode.type)
+                const nodeAllowsConstraints = wNode ? n.acceptsClientConfig?.includes(wNode.type) : true
                 if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
                     conn.emit(event, msg)
                 }
@@ -314,7 +314,7 @@ module.exports = function (RED) {
                 checks.push(msg._client?.socketId === conn.id)
             }
             // if ANY check says this is valid - we send the msg
-            return checks.includes(true)
+            return !checks.length || checks.includes(true)
         }
 
         /**
