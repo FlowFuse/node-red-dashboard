@@ -141,10 +141,8 @@ module.exports = function (RED) {
                     }
                 },
                 'ui-control': function (conn, id, evt, payload) {
-                    console.log('ui-control', id, evt, payload, id, node.id)
                     if (id === node.id && (config.events === 'all' || config.events === 'change')) {
                         // this message was sent by this particular node
-                        console.log('inside')
                         if (evt === 'change') {
                             const wNode = RED.nodes.getNode(node.id)
                             let msg = {
