@@ -61,6 +61,8 @@
                 yAxisProperty: { value: null },
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                pointShape: { value: 'circle' },
+                pointRadius: { value: 3 },
                 showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
                 removeOlderUnit: { value: '3600', required: true },
@@ -144,6 +146,29 @@
                     typeField: $('#node-input-yAxisPropertyType'),
                     types: [propertyType]
                 })
+
+                $('#node-input-pointShape').typedInput({
+                    type: 'pointShape',
+                    default: 'circle',
+                    typeField: $('#node-input-pointShapeType'),
+                    types: [{
+                        value: 'circle',
+                        options: [
+                            { value: 'circle', label: 'Circle' },
+                            { value: 'cross', label: 'Cross' },
+                            { value: 'crossRot', label: 'Cross Rotated' },
+                            { value: 'crossRot', label: 'Cross Rotated' },
+                            { value: 'dash', label: 'Dash' },
+                            { value: 'line', label: 'Line' },
+                            { value: 'rect', label: 'Rectangle' },
+                            { value: 'rectRounded', label: 'Rounded Rectangle' },
+                            { value: 'rectRot', label: 'Rotated Rectangle' },
+                            { value: 'star', label: 'Star' },
+                            { value: 'triangle', label: 'Triangle' },
+                            { value: false, label: 'None' }
+                        ]
+                    }]
+                })
     
                 // handle event when chart's type is changed
                 $('#node-input-chartType').on('change', (evt) => {
@@ -162,8 +187,9 @@
                         $('#node-input-xAxisType').typedInput('type', 'time')
                         // show x-axis property setting
                         $('#node-container-xAxisProperty').show()
-                        // show x-axis limit options
+                        // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
+                        $('#point-radius-show').show()
                     } else {
                         // for bar
                         // types - categorical
@@ -176,8 +202,9 @@
                         $('#node-input-xAxisType').typedInput('type', 'category')
                         // show x-axis property setting
                         $('#node-container-xAxisProperty').hide()
-                        // hide x-axis limit options
+                        // hide x-axis limit options & points sizing
                         $('#x-axis-show').hide()
+                        $('#point-radius-show').hide()
                     }
                 })
     
@@ -269,6 +296,18 @@
         <div>
             <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> Show Legend </label>
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+        </div>
+    </div>
+    <div class="form-row form-row-flex" id="point-radius-show">
+        <label for="node-input-pointRadius" data-i18n="ui-chart.label.pointStyle"></label>
+        <div style="margin-right: 6px;">
+            <label for="node-input-pointShape" style="width: auto;" data-i18n="ui-chart.label.pointShape"></label>
+            <input type="text" id="node-input-pointShape">
+            <input type="hidden" id="node-input-pointShapeType">
+        </div>
+        <div>
+            <label for="node-input-pointRadius" style="width: auto;" data-i18n="ui-chart.label.pointRadius"></label>
+            <input type="number" id="node-input-pointRadius">
         </div>
     </div>
     <div class="form-row">
