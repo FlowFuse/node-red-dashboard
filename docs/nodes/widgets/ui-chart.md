@@ -6,6 +6,8 @@ props:
     Class: The text shown within the button.
     Chart Type: <code>Line</code> | <code>Bar</code> | <code>Scatter</code>
     Show Legend: Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.
+    Point Shape: Define the shape of the point shown in Scatter & Line charts.
+    Point Radius: Define the radius (in pixels) of each point rendered onto a Scatter or Line chart.
     X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
