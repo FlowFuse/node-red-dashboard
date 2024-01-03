@@ -14,7 +14,10 @@
             "last": "last",
             "yAxis": "Y-Axis",
             "min": "min.",
-            "max": "max."
+            "max": "max.",
+            "pointStyle": "Point Style",
+            "pointShape": "Shape",
+            "pointRadius": "Radius (px)"
         }
     }
   }

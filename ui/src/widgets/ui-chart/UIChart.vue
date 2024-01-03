@@ -242,8 +242,12 @@ export default {
             const index = datalabels?.indexOf(label)
             // the chart is empty, we're adding a new series
             if (index === -1) {
+                const radius = this.props.pointRadius ? this.props.pointRadius : 4
                 this.chart.data.datasets.push({
                     borderColor: this.props.colors[datalabels.length],
+                    pointStyle: this.props.pointShape || 'circle',
+                    pointRadius: radius,
+                    pointHoverRadius: radius * 1.25,
                     label,
                     data: [datapoint]
                 })

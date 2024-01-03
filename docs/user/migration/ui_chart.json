@@ -33,6 +33,11 @@
             "notes": null
         },
         {
+            "property": "cutout",
+            "changes": "improved",
+            "notes": "We now support both the 'size' and 'shape' of dots in a Scater and Line chart."
+        },
+        {
             "property": "interpolate",
             "changes": -1,
             "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/384' target='_blank'>Issue #384</a>"
