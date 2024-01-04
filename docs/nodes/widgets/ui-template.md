@@ -206,6 +206,40 @@ We can also `watch` any of these `data` variables, and react accordingly. For ex
 
 We use a `computed` variable which will automatically update whenever the `count` variable changes. This allows us to format the `count` variable in a way that is more useful to us to display, without affecting the underlying `count` variable.
 
+### Teleports
+
+You can use [Vue's Teleport](https://v3.vuejs.org/guide/teleport.html) feature to render content to a specific location in the DOM. We provide some pre-defined locations that you can use:
+
+- `#app-bar-actions` - Renders content to the right-hand side of the Dashboard's App Bar.
+
+To use a teleport, you can use the following syntax:
+
+```vue
+<template>
+    <Teleport v-if="mounted" to="#app-bar-actions">
+        <v-btn>My Action</v-btn>
+    </Teleport>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                mounted: false
+            }
+        },
+        mounted() {
+            this.mounted = true
+        }
+    }
+</script>
+```
+
+This would result in:
+
+![Example of Teleporting content to the App Bar](/assets/images/appbar-teleport.png "Example of Teleporting content to the App Bar"){data-zoomable}
+
+Note the use of `v-if="mounted"` in the `<Teleport />` tag. For some reason, Vue complains when trying to render a Teleport inside our `ui-template`, before the component has fully mounted, Including this `v-if` statement prevents this error.
+
 ## Additional Examples
 
 Any Vue Components that you define in `ui-template` extend the underlying `ui-template` Vue component. This includes a collection of builtin methods, data and supported Widgets. You can also render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`).
