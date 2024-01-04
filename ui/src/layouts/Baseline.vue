@@ -111,7 +111,7 @@ export default {
         },
         uiWidgets: function () {
             // get widgets scoped to the UI, not a group/page
-            const widgets = Object.values(this.widgets).filter(w => Object.hasOwn(w.props, 'ui'))
+            const widgets = Object.values(this.widgets).filter(w => Object.hasOwn(w.props, 'ui') && !!w.props.ui)
             return widgets
         }
     },

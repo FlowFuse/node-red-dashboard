@@ -2,7 +2,9 @@
     "ui-template": {
         "label": {
             "scope": "Type",
-            "local": "Widget",
+            "widget-group": "Widget (Group-Scoped)",
+            "widget-page": "Widget (Page-Scoped)",
+            "widget-ui": "Widget (UI-Scoped)",
             "site-style": "CSS (All Pages)",
             "page-style": "CSS (Single Page)",
             "group": "Group",

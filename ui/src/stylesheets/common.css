@@ -29,6 +29,11 @@ main {
     padding: var(--nrdb-main-padding);
 }
 
+#app-bar-actions {
+    display: flex;
+    gap: 6px;
+}
+
 /**
 * Loading Animation
 */

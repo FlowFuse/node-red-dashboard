@@ -32,6 +32,17 @@
                 </v-card>
             </div>
         </div>
+        <div>
+            <!-- Render any widgets with a 'page' scope -->
+            <component
+                :is="widget.component"
+                v-for="widget in pageWidgets"
+                :id="widget.id"
+                :key="widget.id"
+                :props="widget.props"
+                :state="widget.state"
+            />
+        </div>
     </BaselineLayout>
 </template>
 
@@ -53,7 +64,7 @@ export default {
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
-        ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup']),
+        ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
         orderedGroups: function () {
             // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
@@ -65,6 +76,9 @@ export default {
                     return true
                 })
             return groups
+        },
+        pageWidgets: function () {
+            return this.widgetsByPage(this.$route.meta.id)
         },
         page: function () {
             return this.pages[this.$route.meta.id]
