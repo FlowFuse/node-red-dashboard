@@ -48,7 +48,7 @@
         "escodegen": "^2.1.0",
         "express": "^4.18.2",
         "socket.io": "^4.7.1",
-        "vue": "^3.3.4"
+        "vue": "^3.4.5"
     },
     "devDependencies": {
         "@mdi/font": "~6.9.96",

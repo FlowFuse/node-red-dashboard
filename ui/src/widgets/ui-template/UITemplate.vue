@@ -128,19 +128,6 @@ export default {
                         }
                     ]
                 }
-                // future?
-                // if (_props.format && (_props.templateScope === 'page:script' || _props.templateScope === 'site:script')) {
-                //     setup.script = [{ textContent: _props.format, id: `${_props.name || _props.templateScope}-${_props.id}` }]
-                // }
-                // if (hasProperty(_props, 'script')) {
-                //     setup.script = [_props.head.script]
-                // }
-                // if (hasProperty(_props, 'meta')) {
-                //     setup.meta = [_props.head.meta]
-                // }
-                // if (hasProperty(_props, 'link')) {
-                //     setup.link = [_props.head.link]
-                // }
                 return setup
             },
             template: props.props.templateScope !== 'local' ? undefined : template,
