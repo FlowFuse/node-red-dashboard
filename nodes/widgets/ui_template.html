@@ -74,8 +74,8 @@
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.dark'),
             defaults: {
                 group: { type: 'ui-group', required: true }, // for when template is scoped to 'local' (default)
-                dashboard: { type: 'ui-base', required: false }, // for when template is scoped to 'site'
                 page: { type: 'ui-page', required: false }, // for when template is scoped to 'page'
+                ui: { type: 'ui-base', required: false }, // for when template is scoped to 'site'
                 name: { value: '' },
                 order: { value: 0 },
                 width: {
@@ -108,7 +108,9 @@
             label: function () {
                 if (this.name) { return this.name }
                 const knownLabels = {
-                    local: 'template',
+                    local: 'template', // widget:group - kept as local for backward compatability
+                    'widget:page': 'template',
+                    'widget:ui': 'template',
                     'site:style': 'site style',
                     'page:style': 'page style'
                 }
@@ -151,28 +153,38 @@
                 $templateScope.on('change', function () {
                     that._def.defaults.group.required = false
                     that._def.defaults.page.required = false
-                    that._def.defaults.dashboard.required = false
-                    $('#template-row-group, #template-row-page, #template-row-dashboard, #template-row-class').hide()
+                    that._def.defaults.ui.required = false
+                    $('#template-row-group, #template-row-page, #template-row-ui, #template-row-class').hide()
                     switch ($templateScope.val()) {
                     case 'site:style':
-                        $('#template-row-dashboard').show()
-                        that._def.defaults.dashboard.required = true
+                        $('#template-row-ui').show()
+                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/css')
                         break
                     case 'page:style':
                         $('#template-row-page').show()
-                        that._def.defaults.dashboard.required = true
+                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/css')
                         break
                     case 'site:script':
-                        $('#template-row-dashboard').show()
-                        that._def.defaults.dashboard.required = true
+                        $('#template-row-ui').show()
+                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/javascript')
                         break
                     case 'page:script':
                         $('#template-row-page').show()
-                        that._def.defaults.dashboard.required = true
+                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/javascript')
+                        break
+                    case 'widget:ui':
+                        $('#template-row-ui').show()
+                        that._def.defaults.ui.required = true
+                        that.editor.getSession().setMode('ace/mode/html')
+                        break
+                    case 'widget:page':
+                        $('#template-row-page').show()
+                        that._def.defaults.page.required = true
+                        that.editor.getSession().setMode('ace/mode/html')
                         break
                     default:
                         $('#template-row-group, #template-row-class').show()
@@ -240,6 +252,25 @@
                 $('#node-input-format').val(this.editor.getValue())
                 this.editor.destroy()
                 delete this.editor
+
+                // ensure we only have one of group/page/dashboard defined
+                const scope = $('#node-input-templateScope').val()
+                if (scope === 'local') {
+                    $('#node-input-ui').val('_ADD_')
+                    $('#node-input-page').val('_ADD_')
+                } else if (scope === 'widget:page') {
+                    $('#node-input-ui').val('_ADD_')
+                    $('#node-input-group').val('_ADD_')
+                } else if (scope === 'widget:ui') {
+                    $('#node-input-page').val('_ADD_')
+                    $('#node-input-group').val('_ADD_')
+                } else if (scope === 'site:style') {
+                    $('#node-input-page').val('_ADD_')
+                    $('#node-input-group').val('_ADD_')
+                } else if (scope === 'page:style') {
+                    $('#node-input-ui').val('_ADD_')
+                    $('#node-input-group').val('_ADD_')
+                }
             },
             oneditcancel: function () {
                 this.editor.destroy()
@@ -275,24 +306,26 @@
     <div class="form-row">
         <label for="node-input-temlplateScope"><i class="fa fa-dot-circle-o"></i> <span data-i18n="ui-template.label.scope"></span></label>
         <select style="width:76%" id="node-input-templateScope">
-            <option value="local" data-i18n="ui-template.label.local"></option>
+            <option value="local" data-i18n="ui-template.label.widget-group"></option>
+            <option value="widget:page" data-i18n="ui-template.label.widget-page"></option>
+            <option value="widget:ui" data-i18n="ui-template.label.widget-ui"></option>
             <option value="site:style" data-i18n="ui-template.label.site-style"></option>
             <option value="page:style" data-i18n="ui-template.label.page-style"></option>
             <!-- FUTURE? <option value="site:script" data-i18n="ui-template.label.site-script"></option>
             <option value="page:script" data-i18n="ui-template.label.page-script"></option> -->
         </select>
     </div>
-    <div id="template-row-group" class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
-        <input type="text" id="node-input-group">
-    </div>
-    <div id="template-row-dashboard" class="form-row">
-        <label for="node-input-dashboard"><i class="fa fa-bookmark"></i> Dashboard</label>
-        <input type="text" id="node-input-dashboard">
+    <div id="template-row-ui" class="form-row">
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <input type="text" id="node-input-ui">
     </div>
     <div id="template-row-page" class="form-row">
         <label for="node-input-page"><i class="fa fa-bookmark"></i> Page</label>
         <input type="text" id="node-input-page">
+    </div>
+    <div id="template-row-group" class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
         <label><i class="fa fa-object-group"></i> Size</label>

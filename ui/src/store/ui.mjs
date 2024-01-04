@@ -38,6 +38,15 @@ const getters = {
             })
         }
     },
+    widgetsByPage: (state) => (pageId) => {
+        if (state.widgets) {
+            const widgetsOnPage = Object.values(state.widgets).filter((w) => {
+                // return all widgets that belong to the specified group (so long as it is not a non-local scoped ui-template)
+                return w.props.page && w.props.page === pageId
+            })
+            return widgetsOnPage
+        }
+    },
     widgetsByGroup: (state) => (groupId) => {
         if (state.widgets) {
             const widgetsInGroup = Object.values(state.widgets).filter((w) => {

@@ -5,14 +5,24 @@ module.exports = function (RED) {
         // create node in Node-RED
         RED.nodes.createNode(this, config)
 
-        // which group are we rendering this widget
-        const group = RED.nodes.getNode(config.group)
-
         const evts = {
             onAction: true // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
         }
-        // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+
+        // which group are we rendering this widget
+        if (config.group) {
+            const group = RED.nodes.getNode(config.group)
+            // inform the dashboard UI that we are adding this node
+            group.register(node, config, evts)
+        } else if (config.page) {
+            const page = RED.nodes.getNode(config.page)
+            // inform the dashboard UI that we are adding this node
+            page.register(null, node, config, evts)
+        } else if (config.ui) {
+            const ui = RED.nodes.getNode(config.ui)
+            // inform the dashboard UI that we are adding this node
+            ui.register(null, null, node, config, evts)
+        }
     }
 
     RED.nodes.registerType('ui-template', TemplateNode)

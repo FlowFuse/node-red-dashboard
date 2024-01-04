@@ -93,7 +93,7 @@ export default {
 
                 const setup = {}
 
-                if (!_props || _props.templateScope === 'local') {
+                if (!_props || ['local', 'widget:page', 'widget:ui'].includes(_props.templateScope)) {
                     if (!head) {
                         return {}
                     } else if (Array.isArray(head) && head.length > 0) {
@@ -130,7 +130,7 @@ export default {
                 }
                 return setup
             },
-            template: props.props.templateScope !== 'local' ? undefined : template,
+            template: ['local', 'widget:page', 'widget:ui'].includes(props.props.templateScope) ? template : undefined,
             watch: {
                 ...component?.watch
             },
