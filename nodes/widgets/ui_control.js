@@ -161,49 +161,13 @@ module.exports = function (RED) {
         // inform the dashboard UI that we are adding this node
         ui.register(null, null, node, config, evts)
 
-        // this.events = config.events || 'all'
-
-        // const sendconnect = function (id, ip) {
-        //     node.send({ payload: 'connect', socketid: id, socketip: ip })
-        // }
-
-        // const sendlost = function (id, ip) {
-        //     node.send({ payload: 'lost', socketid: id, socketip: ip })
-        // }
-
-        // const sendchange = function (index, name, id, ip, p) {
-        //     node.send({ payload: 'change', tab: index, name, socketid: id, socketip: ip, params: p })
-        // }
-
-        // const sendcollapse = function (group, state, id, ip) {
-        //     node.send({ payload: 'group', group, open: state, socketid: id, socketip: ip })
-        // }
-
-        // if (node.events === 'connect') {
-        //     ui.ev.on('newsocket', sendconnect)
-        // } else if (node.events === 'change') {
-        //     ui.ev.on('changetab', sendchange)
-        //     ui.ev.on('collapse', sendcollapse)
-        // } else {
-        //     ui.ev.on('newsocket', sendconnect)
-        //     ui.ev.on('changetab', sendchange)
-        //     ui.ev.on('collapse', sendcollapse)
-        //     ui.ev.on('endsocket', sendlost)
-        // }
-
-        // this.on('close', function () {
-        //     if (node.events === 'connect') {
-        //         ui.ev.removeListener('newsocket', sendconnect)
-        //     } else if (node.events === 'change') {
-        //         ui.ev.removeListener('changetab', sendchange)
-        //         ui.ev.removeListener('collapse', sendcollapse)
-        //     } else {
-        //         ui.ev.removeListener('newsocket', sendconnect)
-        //         ui.ev.removeListener('changetab', sendchange)
-        //         ui.ev.removeListener('collapse', sendcollapse)
-        //         ui.ev.removeListener('endsocket', sendlost)
-        //     }
-        // })
+        node.on('close', function (removed, done) {
+            if (removed) {
+                // handle node being removed
+                ui?.deregister(null, null, node)
+            }
+            done()
+        })
     }
     RED.nodes.registerType('ui-control', UiControlNode)
 }

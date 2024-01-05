@@ -13,7 +13,11 @@ module.exports = function (RED) {
             onSocket: {
                 'ui-event': function (conn, id, evt, payload) {
                     const wNode = RED.nodes.getNode(node.id)
-                    if (id === node.id) {
+                    if (!wNode) {
+                        console.log('ui-event node not found', id)
+                    }
+                    if (wNode && id === node.id) {
+                        console.log('running ui-event handler', id)
                         // this was sent by this particular node
                         let msg = {
                             topic: evt,
@@ -27,7 +31,15 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        ui.register(null, null, node, config, evts)
+        ui?.register(null, null, node, config, evts)
+
+        node.on('close', function (removed, done) {
+            if (removed) {
+                // handle node being removed
+                ui?.deregister(null, null, node)
+            }
+            done()
+        })
     }
     RED.nodes.registerType('ui-event', EventNode)
 }
