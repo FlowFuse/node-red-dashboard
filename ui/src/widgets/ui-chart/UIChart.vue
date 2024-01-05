@@ -146,6 +146,10 @@ export default {
                 // clear the chart if msg.payload = [] is received
                 this.clear()
             } else {
+                if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
+                    // clear the chart
+                    this.clear()
+                }
                 // update the chart
                 this.add(msg)
             }
