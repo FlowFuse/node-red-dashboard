@@ -61,6 +61,7 @@
                 yAxisProperty: { value: null },
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                action: { value: 'append' },
                 pointShape: { value: 'circle' },
                 pointRadius: { value: 4 },
                 showLegend: { value: true },
@@ -297,6 +298,13 @@
             <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> Show Legend </label>
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-action" data-i18n="ui-chart.label.action"></label></label>
+        <select id="node-input-action">
+            <option value="append" data-i18n="ui-chart.label.append"></option>
+            <option value="replace" data-i18n="ui-chart.label.replace"></option>
+        </select>
     </div>
     <div class="form-row form-row-flex" id="point-radius-show">
         <label for="node-input-pointRadius" data-i18n="ui-chart.label.pointStyle"></label>

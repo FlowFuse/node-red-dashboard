@@ -20,3 +20,7 @@ nav#VPSidebarNav p {
 img + em {
     font-size: 0.875rem;
 }
+
+.vp-doc h3 {
+    margin-bottom: 16px;
+}
