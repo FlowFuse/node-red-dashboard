@@ -44,6 +44,13 @@ export default {
                 const val = this.value
                 if (typeof (val) === 'boolean') {
                     return val
+                } else if (typeof (val) === 'object') {
+                    // don't make a decision either way, unless it matches, exactly, the defined on/off values
+                    if (JSON.stringify(val) === JSON.stringify(this.props.evaluated.on)) {
+                        return true
+                    } else if (JSON.stringify(val) === JSON.stringify(this.props.evaluated.off)) {
+                        return false
+                    }
                 } else if (this.props.evaluated) {
                     return val === this.props.evaluated.on
                 }
