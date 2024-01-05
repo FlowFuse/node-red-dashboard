@@ -406,7 +406,9 @@ module.exports = function (RED) {
                                 handler(socket)
                             }
                         } else {
-                            socket.on(eventName, handler.bind(null, socket))
+                            widget._onSocketHandlers = widget._socketIO || {}
+                            widget._onSocketHandlers[eventName] = handler.bind(null, socket)
+                            socket.on(eventName, widget._onSocketHandlers[eventName])
                         }
                     }
                     registered.push(widget.type)
@@ -500,7 +502,7 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onChange (conn, id, value) {
-            console.log('conn:' + conn.id, 'on:widget-change:' + id, value)
+            // console.log('conn:' + conn.id, 'on:widget-change:' + id, value)
 
             // get widget node and configuration
             const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
@@ -554,7 +556,7 @@ module.exports = function (RED) {
         }
 
         async function onLoad (conn, id, msg) {
-            console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
+            // console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
 
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
             if (!wNode) {
@@ -860,6 +862,21 @@ module.exports = function (RED) {
             let changes = false
             // remove widget from our UI config
             if (widgetNode) {
+                const widget = node.ui.widgets.get(widgetNode.id)
+                if (widget.hooks.onSocket) {
+                    // We have some custom socketIO hooks to remove
+
+                    // loop over SocketIO connections
+                    for (const socket of Object.values(uiShared.connections)) {
+                        // loop over events
+                        for (const [eventName] of Object.entries(widget.hooks.onSocket)) {
+                            // remove the listener for this event
+                            if (widget._onSocketHandlers) {
+                                socket.off(eventName, widget._onSocketHandlers[eventName])
+                            }
+                        }
+                    }
+                }
                 node.ui.widgets.delete(widgetNode.id)
                 changes = true
             }
