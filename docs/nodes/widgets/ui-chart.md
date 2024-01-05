@@ -6,6 +6,9 @@ props:
     Class: The text shown within the button.
     Chart Type: <code>Line</code> | <code>Bar</code> | <code>Scatter</code>
     Show Legend: Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.
+    Action:
+        dynamic: true
+        description: Controls how new data is added to a chart. It will either "append", keeping existing data, or "replace", removing existing data, before adding any newly provided data points.
     Point Shape: Define the shape of the point shown in Scatter & Line charts.
     Point Radius: Define the radius (in pixels) of each point rendered onto a Scatter or Line chart.
     X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
@@ -32,9 +35,27 @@ Provides configuration options to create the following chart types:
 
 ### Removing Data
 
-In order to remove all data from a chart you can send a `msg.payload` of `[]` to the node.
+#### "Append" or "Replace"
 
-Most commonly, this is done by wiring a `ui-button` to the `ui-chart` node and configuring the button to send a JSON payload with a value of `[]`.
+The "Action" property on the chart allows you to control whether you:
+
+- Append: Any new data provided will be added to the existing data on the chart
+- Replace: Any existing data will first be removed, then new data will be added.
+
+If you ever want to override the property on a message-by-message basis, you can also do this by including a `msg.action` property, which will override the default behaviour. For example:
+
+```js
+msg = {
+    "action": "append",
+    "payload": 1
+}
+```
+
+Would append this data point to the chart, leaving existing data, even if the underlying chart has been configured to always "Replace".
+
+#### Clear All Data
+
+Alternatively, you can remove all data from a chart at any time by sending a `msg.payload` of `[]` to the node. Most commonly, this is done by wiring a `ui-button` to the `ui-chart` node and configuring the button to send a JSON payload with a value of `[]`.
 
 ## Working with Data
 
