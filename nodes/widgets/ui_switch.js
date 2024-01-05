@@ -46,13 +46,25 @@ module.exports = function (RED) {
                 // retrieve the assigned on/off value
                 const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
-                if (msg.payload === true || msg.payload === on) {
-                    msg.payload = on
-                } else if (msg.payload === false || msg.payload === off) {
-                    msg.payload = off
+
+                if (typeof msg.payload === 'object') {
+                    if (JSON.stringify(msg.payload) === JSON.stringify(on)) {
+                        msg.payload = on
+                    } else if (JSON.stringify(msg.payload) === JSON.stringify(off)) {
+                        msg.payload = off
+                    } else {
+                        // throw Node-RED error
+                        error = 'Invalid payload value'
+                    }
                 } else {
-                    // throw Node-RED error
-                    error = 'Invalid payload value'
+                    if (msg.payload === true || msg.payload === on) {
+                        msg.payload = on
+                    } else if (msg.payload === false || msg.payload === off) {
+                        msg.payload = off
+                    } else {
+                        // throw Node-RED error
+                        error = 'Invalid payload value'
+                    }
                 }
                 if (!error) {
                     // store the latest msg passed to node
