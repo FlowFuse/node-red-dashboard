@@ -19,6 +19,10 @@ props:
         <b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.
 ---
 
+<script setup>
+    import AddedIn from '../../components/AddedIn.vue';
+</script>
+
 # Chart `ui-chart`
 
 Provides configuration options to create the following chart types:
@@ -35,7 +39,7 @@ Provides configuration options to create the following chart types:
 
 ### Removing Data
 
-#### "Append" or "Replace"
+#### "Append" or "Replace" <AddedIn version="0.11.3" />
 
 The "Action" property on the chart allows you to control whether you:
 
