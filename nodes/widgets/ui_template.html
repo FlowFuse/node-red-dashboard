@@ -73,9 +73,24 @@
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.dark'),
             defaults: {
-                group: { type: 'ui-group', required: true }, // for when template is scoped to 'local' (default)
-                page: { type: 'ui-page', required: false }, // for when template is scoped to 'page'
-                ui: { type: 'ui-base', required: false }, // for when template is scoped to 'site'
+                group: {
+                    type: 'ui-group',
+                    validate: function () {
+                        return (this.templateScope === 'local' && !!this.group) || (this.templateScope !== 'local')
+                    }
+                }, // for when template is scoped to 'local' (default)
+                page: {
+                    type: 'ui-page',
+                    validate: function () {
+                        return (this.templateScope === 'widget:page' && !!this.page) || (this.templateScope !== 'widget:page')
+                    }
+                }, // for when template is scoped to 'page'
+                ui: {
+                    type: 'ui-base',
+                    validate: function () {
+                        return (this.templateScope === 'widget:ui' && !!this.ui) || (this.templateScope !== 'widget:ui')
+                    }
+                }, // for when template is scoped to 'site'
                 name: { value: '' },
                 order: { value: 0 },
                 width: {
