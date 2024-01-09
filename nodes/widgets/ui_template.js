@@ -9,6 +9,17 @@ module.exports = function (RED) {
             onAction: true // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
         }
 
+        if (config.templateScope === 'local') {
+            config.page = ''
+            config.ui = ''
+        } else if (config.templateScope === 'widget:page') {
+            config.ui = ''
+            config.group = ''
+        } else if (config.templateScope === 'widget:ui') {
+            config.page = ''
+            config.group = ''
+        }
+
         // which group are we rendering this widget
         if (config.group) {
             const group = RED.nodes.getNode(config.group)
