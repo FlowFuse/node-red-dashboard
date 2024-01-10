@@ -7,18 +7,14 @@ const config = {
 
 /**
  * Checks if a Client/Socket ID has been assigned to this message,
- * and whether the node type is being scoped to a specific client.
  * If so, do not store this in our centralised datastore
  * @param {*} msg
  * @returns
  */
 function canSaveInStore (base, node, msg) {
-    // gets a list of node types that allow for client configuration/limits
-    const constrained = base.acceptsClientConfig
-
     const checks = []
 
-    if (constrained.includes(node.type) && msg) {
+    if (msg) {
         // core check
         if (msg._client?.socketId) {
             // we are in a node type that allows for definition of specific clients,

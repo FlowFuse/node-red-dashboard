@@ -16,7 +16,7 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         ...mapState('ui', ['pages', 'groups', 'widgets']),
-        ...mapGetters('ui', ['findBy'])
+        ...mapGetters('ui', ['findBy', 'pageByName'])
     },
     watch: {
         '$route.meta.id': {
@@ -33,8 +33,9 @@ export default {
         const vue = this
         // listen for messages
         this.$socket.on('ui-control:' + this.id, (msg) => {
+            const payload = msg.payload
             function set (type, name, prop, value) {
-                const item = vue.findBy(type, 'name', name)
+                const item = vue.findBy(type, 'name', name)[0]
                 vue.$store.commit('ui/setProperty', {
                     item: type,
                     itemId: item.id,
@@ -43,8 +44,36 @@ export default {
                 })
             }
 
-            if ('page' in msg) {
-                let page = msg.tab || msg.page
+            function setGroup (name, prop, value) {
+                const [pageName, groupName] = name.split(':')
+                const groups = vue.findBy('group', 'name', groupName)
+                if (groups.length === 1) {
+                    set('group', groupName, prop, value)
+                } else {
+                    const pages = vue.pageByName(pageName)
+                    if (!pages.length) {
+                        console.error('page not found')
+                    } else {
+                        const pageId = pages[0].id
+                        const g = groups.find((g) => {
+                            return g.page === pageId
+                        })
+                        if (!g) {
+                            console.error(`group "${groupName}" not found on page "${pageName}"`)
+                        } else {
+                            vue.$store.commit('ui/setProperty', {
+                                item: 'group',
+                                itemId: g.id,
+                                property: prop,
+                                value
+                            })
+                        }
+                    }
+                }
+            }
+
+            if ('page' in payload) {
+                let page = payload.tab || payload.page
                 const pages = Object.values(this.pages).sort((a, b) => {
                     return a.order - b.order
                 })
@@ -112,56 +141,56 @@ export default {
                 }
             }
 
-            if ('pages' in msg) {
-                if ('show' in msg.pages) {
+            if ('pages' in payload) {
+                if ('show' in payload.pages) {
                     // we are setting visibility: true
-                    msg.pages.show.forEach((name) => {
-                        set('page', name, 'visible', true)
+                    payload.pages.show.forEach((pageName) => {
+                        set('page', pageName, 'visible', true)
                     })
                 }
-                if ('hide' in msg.pages) {
+                if ('hide' in payload.pages) {
                     // we are setting visibility: false
-                    msg.pages.hide.forEach((pageName) => {
-                        set('page', name, 'visible', false)
+                    payload.pages.hide.forEach((pageName) => {
+                        set('page', pageName, 'visible', false)
                     })
                 }
-                if ('disable' in msg.pages) {
+                if ('disable' in payload.pages) {
                     // we are setting visibility: true
-                    msg.pages.disable.forEach((name) => {
-                        set('page', name, 'disabled', true)
+                    payload.pages.disable.forEach((pageName) => {
+                        set('page', pageName, 'disabled', true)
                     })
                 }
-                if ('enable' in msg.pages) {
+                if ('enable' in payload.pages) {
                     // we are setting visibility: false
-                    msg.pages.enable.forEach((name) => {
-                        set('page', name, 'disabled', false)
+                    payload.pages.enable.forEach((pageName) => {
+                        set('page', pageName, 'disabled', false)
                     })
                 }
             }
 
-            if ('groups' in msg) {
-                if ('show' in msg.groups) {
+            if ('groups' in payload) {
+                if ('show' in payload.groups) {
                     // we are setting visibility: true
-                    msg.groups.show.forEach((name) => {
-                        set('group', name, 'visible', true)
+                    payload.groups.show.forEach((name) => {
+                        setGroup(name, 'visible', true)
                     })
                 }
-                if ('hide' in msg.groups) {
+                if ('hide' in payload.groups) {
                     // we are setting visibility: false
-                    msg.groups.hide.forEach((name) => {
-                        set('group', name, 'visible', false)
+                    payload.groups.hide.forEach((name) => {
+                        setGroup(name, 'visible', false)
                     })
                 }
-                if ('disable' in msg.groups) {
+                if ('disable' in payload.groups) {
                     // we are setting visibility: true
-                    msg.groups.disable.forEach((name) => {
-                        set('group', name, 'disabled', true)
+                    payload.groups.disable.forEach((name) => {
+                        setGroup(name, 'disabled', true)
                     })
                 }
-                if ('enable' in msg.groups) {
+                if ('enable' in payload.groups) {
                     // we are setting visibility: false
-                    msg.groups.enable.forEach((name) => {
-                        set('group', name, 'disabled', false)
+                    payload.groups.enable.forEach((name) => {
+                        setGroup(name, 'disabled', false)
                     })
                 }
             }

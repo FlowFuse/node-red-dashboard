@@ -24,6 +24,13 @@ const getters = {
     widgets (state) {
         return state.widgets
     },
+    pageByName: (state) => (name) => {
+        if (state.pages) {
+            return Object.values(state.pages).filter((p) => {
+                return p.name === name
+            })
+        }
+    },
     groupsByPage: (state) => (pageId) => {
         if (state.groups) {
             const groupsOnPage = Object.values(state.groups).filter((p) => {
@@ -69,7 +76,7 @@ const getters = {
      */
     findBy: (state) => (item, prop, value) => {
         if (state[item + 's']) {
-            return Object.values(state[item + 's']).find((i) => {
+            return Object.values(state[item + 's']).filter((i) => {
                 return i[prop] === value
             })
         }
