@@ -31,7 +31,9 @@
             order: {
                 value: -1
             },
-            className: { value: '' }
+            className: { value: '' },
+            visible: { value: true },
+            disabled: { value: false }
         },
         oneditprepare: function () {
             $('#node-config-input-layout').typedInput({
@@ -46,6 +48,34 @@
                 }],
                 typeField: '#node-input-layoutType'
             })
+
+            // backwards compatibility
+            if (this.visible === undefined) {
+                this.visible = true
+                $('#node-config-input-visible').val('true')
+            }
+            // backwards compatibility
+            if (this.disabled === undefined) {
+                this.disabled = false
+                $('#node-config-input-disabled').val('false')
+            }
+        },
+        oneditsave: function () {
+            // convert string to boolean
+            const visible = $('#node-config-input-visible').val()
+            if (visible === 'true') {
+                this.visible = true
+            } else {
+                this.visible = false
+            }
+    
+            // convert string to boolean
+            const disabled = $('#node-config-input-disabled').val()
+            if (disabled === 'true') {
+                this.disabled = true
+            } else {
+                this.disabled = false
+            }
         },
         label: function () {
             const baseNode = RED.nodes.node(this.ui)
@@ -85,6 +115,27 @@
     <div class="form-row" id="text-row-class">
         <label for="node-config-input-className"><i class="w-16 fa fa-code"></i> Class</label>
         <input type="text" id="node-config-input-className" placeholder="Optional CSS class name(s) for page"/>
+    </div>
+    <div class="form-row" style="font-weight: 600;">
+        <i class="w-16 fa fa-eye"></i> Default State
+    </div>
+    <div class="form-row">
+        <div style="display: flex; align-items: center; gap: 2px;">
+            <label for="node-config-input-visible" style="margin-bottom: 0">Visibility</label>
+            <select id="node-config-input-visible" style="width: 150px;">
+                <option value="true" data-i18n="ui-page.label.visible"></option>
+                <option value="false" data-i18n="ui-page.label.hidden"></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: flex; align-items: center; gap: 2px;">
+            <label for="node-config-input-disabled" style="margin-bottom: 0">Interactivity</label>
+            <select id="node-config-input-disabled" style="width: 150px;">
+                <option value="false" data-i18n="ui-page.label.active"></option>
+                <option value="true" data-i18n="ui-page.label.disabled"></option>
+            </select>
+        </div>
     </div>
     <div class="form-row">
         <button onclick="RED.sidebar.show('dashboard-2.0')" class="editor-button editor-button-small">Open Dashboard 2.0 Sidebar</button>
