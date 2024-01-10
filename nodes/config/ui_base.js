@@ -285,11 +285,23 @@ module.exports = function (RED) {
          */
         function emit (event, msg, wNode) {
             Object.values(uiShared.connections).forEach(conn => {
-                const nodeAllowsConstraints = wNode ? n.acceptsClientConfig?.includes(wNode.type) : true
-                if ((nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints) {
+                if (canSendTo(conn, wNode, msg)) {
                     conn.emit(event, msg)
                 }
             })
+        }
+
+        /**
+         * Checks, given a received msg, and the associated SocketIO connection
+         * whether the msg has been configured to only be sent to particular connections
+         * @param {*} conn   - SocketIO Connection Object
+         * @param {*} wNode  - The Node-RED node we are sending this to
+         * @param {*} msg    - The msg to be sent
+         * @returns {Boolean} - Whether the msg can be sent to this connection
+         */
+        function canSendTo (conn, wNode, msg) {
+            const nodeAllowsConstraints = wNode ? n.acceptsClientConfig?.includes(wNode.type) : true
+            return (nodeAllowsConstraints && isValidConnection(conn, msg)) || !nodeAllowsConstraints
         }
 
         /**

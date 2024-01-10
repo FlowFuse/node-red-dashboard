@@ -18,8 +18,8 @@ module.exports = function (RED) {
             })
         }
 
-        function emit (payload) {
-            ui.emit('ui-control:' + node.id, payload, node)
+        function emit (msg) {
+            ui.emit('ui-control:' + node.id, msg, node)
         }
 
         const evts = {
@@ -38,16 +38,20 @@ module.exports = function (RED) {
                     page = (page === undefined) ? '' : page
 
                     if (page === '-1' || page === '+1' || typeof (page) === 'number' || page === '') {
-                        // special case for -1 and +1 to switch to previous/next tab
-                        // number to pick specific index
-                        // "" to refresh the page
-                        emit({ page })
+                    // special case for -1 and +1 to switch to previous/next tab
+                    // number to pick specific index
+                    // "" to refresh the page
+                    // ensure consistency in payload format
+                        msg.payload.page = page
+                        emit(msg)
                     } else {
                         let pageFound = false
                         // check we have a valid tab/page name
                         RED.nodes.eachNode(function (n) {
                             if (n.type === 'ui-page') {
                                 if (n.name === page) {
+                                // ensure consistency in payload format
+                                    msg.payload.page = page
                                     // send a message to the ui to switch to this tab
                                     emit({ page })
                                     pageFound = true
@@ -85,8 +89,10 @@ module.exports = function (RED) {
                         updateStore(allPages, pages.disable, msg, 'disabled', false)
                     }
 
+                    // ensure consistency in payload format
+                    msg.payload.pages = pages
                     // send to front end in order to action there too
-                    emit({ pages })
+                    emit(msg)
                 }
 
                 // show or hide ui groups
@@ -100,24 +106,42 @@ module.exports = function (RED) {
                         }
                     })
                     if ('show' in groups) {
-                        updateStore(allGroups, groups.show, 'visible', true)
+                        const gs = groups.show.map((g) => {
+                            const levels = g.split(':')
+                            return levels.length > 1 ? levels[1] : g
+                        })
+                        updateStore(allGroups, gs, 'visible', true)
                     }
                     if ('hide' in groups) {
-                        updateStore(allGroups, groups.hide, 'visible', false)
+                        const gh = groups.hide.map((g) => {
+                            const levels = g.split(':')
+                            return levels.length > 1 ? levels[1] : g
+                        })
+                        updateStore(allGroups, gh, 'visible', false)
                     }
                     if ('enable' in groups) {
-                        updateStore(allGroups, groups.enable, 'disabled', false)
+                        const ge = groups.enable.map((g) => {
+                            const levels = g.split(':')
+                            return levels.length > 1 ? levels[1] : g
+                        })
+                        updateStore(allGroups, ge, 'disabled', false)
                     }
                     if ('disable' in groups) {
-                        updateStore(allGroups, groups.disable, 'disabled', true)
+                        const gd = groups.disable.map((g) => {
+                            const levels = g.split(':')
+                            return levels.length > 1 ? levels[1] : g
+                        })
+                        updateStore(allGroups, gd, 'disabled', true)
                     }
-                    emit({ groups })
+                    // ensure consistency in payload format
+                    msg.payload.groups = groups
+                    emit(msg)
+
+                    // send specific visible/hidden commands via SocketIO here,
+                    // so all logic stays server-side
+
+                    wNode.send({ payload: 'input' })
                 }
-
-                // send specific visible/hidden commands via SocketIO here,
-                // so all logic stays server-side
-
-                wNode.send({ payload: 'input' })
             },
             onSocket: {
                 connection: function (conn) {
