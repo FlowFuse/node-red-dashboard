@@ -1,0 +1,10 @@
+{
+    "ui-page" : {
+        "label": {
+            "visible": "Visible",
+            "hidden": "Hidden",
+            "active": "Active",
+            "disabled": "Disabled"
+        }
+    }
+}

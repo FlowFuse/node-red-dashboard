@@ -12,6 +12,22 @@ module.exports = function (RED) {
             done()
         })
 
+        // backward compatibility
+        if (!('disabled' in config)) {
+            // ensure we have a value
+            config.disabled = false
+        } else {
+            // ensure we have a boolean
+            config.disabled = (config.disabled === 'true' || config.disabled === true)
+        }
+        if (!('visible' in config)) {
+            // ensure we have a value
+            config.visible = true
+        } else {
+            // ensure we have a boolean
+            config.visible = (config.visible === 'true' || config.visible === true)
+        }
+
         /**
          * Function for widgets to register themselves with this page
          * Calls the parent UI Base "register" function and registers this page,

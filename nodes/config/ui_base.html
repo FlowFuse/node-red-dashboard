@@ -97,8 +97,21 @@
         overflow: hidden;
         white-space: nowrap;
     }
-    .nrdb2-sb-list-header-button-group {
+    .nrdb2-sb-list-header-actions {
         position: absolute;
+        gap: 4px; 
+        right: 1rem;
+        display: flex;
+        gap: 4px;
+    }
+    .nrdb2-sb-list-header-actions a {
+        cursor: pointer;
+    }
+    .nrdb2-sb-list-header-state-options {
+        display: flex;
+        gap: 4px;
+    }
+    .nrdb2-sb-list-header-button-group {
         right: 1rem;
         display: flex;
         gap: 4px;
@@ -305,12 +318,12 @@
 
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
-     * @param {Object} row - jQuery object to add this button group as a child element to
-     * @param {Object} row - The page/group/widget that these actions are bound to
+     * @param {Object} parent - jQuery object to add this button group as a child element to
+     * @param {Object} item - The page/group/widget that these actions are bound to
      */
-    function addRowActions (row, item) {
+    function addRowActions (parent, item) {
         const configNodes = ['ui-base', 'ui-page', 'ui-group']
-        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(row)
+        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
         if (!configNodes.includes(item.type)) {
             const focusButton = $('<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-bullseye"></i> ' + c_('layout.focus') + '</a>').appendTo(btnGroup)
             focusButton.on('click', function (evt) {
@@ -331,6 +344,98 @@
         })
     }
 
+    /**
+     * Add group of actions to the right-side of a row in the sidebar editable list.
+     * @param {Object} parent - jQuery object to add this button group as a child element to
+     * @param {Object} item - The page/group/widget that these actions are bound to
+     */
+    function addRowStateOptions (parent, item) {
+        const nodes = ['ui-page', 'ui-group']
+
+        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
+
+        if (nodes.includes(item.type)) {
+            const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
+            const visibleBtn = $('<a href="#" title="Hide" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
+            visibleBtn.on('click', function (evt) {
+                const events = []
+
+                evt.stopPropagation()
+                evt.preventDefault()
+
+                if (item.visible === 'true' || item.visible === true || item.visible === undefined) {
+                    // toggle to hidden
+                    item.visible = false
+                    $(this).prop('title', 'Show')
+                    $(this).find('i').addClass('fa-eye-slash').removeClass('fa-eye')
+                    events.push({
+                        t: 'edit',
+                        node: item,
+                        changes: {
+                            visible: true
+                        },
+                        dirty: item.dirty,
+                        changed: item.changed
+                    })
+                } else {
+                    // toggle to shown
+                    item.visible = true
+                    $(this).prop('title', 'Hide')
+                    $(this).find('i').addClass('fa-eye').removeClass('fa-eye-slash')
+                    events.push({
+                        t: 'edit',
+                        node: item,
+                        changes: {
+                            visible: false
+                        },
+                        dirty: item.dirty,
+                        changed: item.changed
+                    })
+                }
+                recordEvents(events)
+            })
+            const disabledIcon = (item.disabled === 'true' || item.disabled === true) ? 'fa-lock' : 'fa-unlock'
+            const disabledBtn = $('<a href="#" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + disabledIcon + '"></i></a>').appendTo(btnGroup)
+            disabledBtn.on('click', function (evt) {
+                const events = []
+
+                evt.stopPropagation()
+                evt.preventDefault()
+
+                if (item.disabled === 'true' || item.disabled === true) {
+                    // toggle to hidden
+                    item.disabled = false
+                    $(this).prop('title', 'Disable')
+                    $(this).find('i').addClass('fa-unlock').removeClass('fa-lock')
+                    events.push({
+                        t: 'edit',
+                        node: item,
+                        changes: {
+                            disabled: true
+                        },
+                        dirty: item.dirty,
+                        changed: item.changed
+                    })
+                } else {
+                    // toggle to shown
+                    item.disabled = true
+                    $(this).prop('title', 'Enable')
+                    $(this).find('i').addClass('fa-lock').removeClass('fa-unlock')
+                    events.push({
+                        t: 'edit',
+                        node: item,
+                        changes: {
+                            disabled: false
+                        },
+                        dirty: item.dirty,
+                        changed: item.changed
+                    })
+                }
+                recordEvents(events)
+            })
+        }
+    }
+
     // Adds child list of groups for a given page
     function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
         // ordered list of groupss to live within a container (e.g. page list item)
@@ -347,7 +452,9 @@
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
 
-                addRowActions(titleRow, group)
+                const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                addRowActions(actions, group)
+                addRowStateOptions(actions, group)
 
                 // adds widgets within this group
                 const widgets = widgetsByGroup[group.id] || []
@@ -412,7 +519,8 @@
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgeticon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
 
-                addRowActions(titleRow, widget)
+                const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                addRowActions(actions, widget)
             },
             sortItems: function (items) {
                 // track any changes
@@ -567,7 +675,9 @@
                 $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
 
                 // page - actions
-                addRowActions(titleRow, page)
+                const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                addRowActions(actions, page)
+                addRowStateOptions(actions, page)
 
                 // adds groups within this page
                 const groups = groupsByPage[page.id] || []
