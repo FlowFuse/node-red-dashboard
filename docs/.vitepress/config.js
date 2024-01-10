@@ -73,6 +73,7 @@ export default ({ mode }) => {
               items: [
                 { text: 'ui-base', link: '/nodes/config/ui-base' },
                 { text: 'ui-page', link: '/nodes/config/ui-page' },
+                { text: 'ui-group', link: '/nodes/config/ui-group' },
                 { text: 'ui-theme', link: '/nodes/config/ui-theme' }
               ]
             },
