@@ -11,7 +11,9 @@
             height: { value: 1 },
             order: { value: -1 },
             showTitle: { value: true }, // show title on group card
-            className: { value: '' }
+            className: { value: '' },
+            visible: { value: true },
+            disabled: { value: false }
         },
         label: function () {
             const page = RED.nodes.node(this.page)?.name || ''
@@ -26,8 +28,42 @@
                 height: '#node-config-input-height',
                 auto: false
             })
+    
+            // backwards compatibility
+            if (this.visible === undefined || this.visible === true) {
+                this.visible = true
+                $('#node-config-input-visible').val('true')
+            } else if (this.visible === false) {
+                this.visible = false
+                $('#node-config-input-visible').val('false')
+            }
+            // backwards compatibility
+            if (this.disabled === undefined || this.disabled === false) {
+                this.disabled = false
+                $('#node-config-input-disabled').val('false')
+            } else if (this.disabled === true) {
+                this.disabled = true
+                $('#node-config-input-disabled').val('true')
+            }
+        },
+        oneditsave: function () {
+            // convert string to boolean
+            const visible = $('#node-config-input-visible').val()
+            if (visible === 'true') {
+                this.visible = true
+            } else {
+                this.visible = false
+            }
+    
+            // convert string to boolean
+            const disabled = $('#node-config-input-disabled').val()
+            if (disabled === 'true') {
+                this.disabled = true
+            } else {
+                this.disabled = false
+            }
         }
-    })
+})
 </script>
 
 <script type="text/html" data-template-name="ui-group">
@@ -52,6 +88,27 @@
     <div class="form-row" id="text-row-class">
         <label for="node-config-input-className"><i class="fa fa-code"></i> Class</label>
         <input type="text" id="node-config-input-className" placeholder="Optional CSS class name(s) for group"/>
+    </div>
+    <div class="form-row" style="font-weight: 600;">
+        <i class="w-16 fa fa-eye"></i> Default State
+    </div>
+    <div class="form-row">
+        <div style="display: flex; align-items: center; gap: 2px;">
+            <label for="node-config-input-visible" style="margin-bottom: 0">Visibility</label>
+            <select id="node-config-input-visible" style="width: 150px;">
+                <option value="true" data-i18n="ui-group.label.visible"></option>
+                <option value="false" data-i18n="ui-group.label.hidden"></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: flex; align-items: center; gap: 2px;">
+            <label for="node-config-input-disabled" style="margin-bottom: 0">Interactivity</label>
+            <select id="node-config-input-disabled" style="width: 150px;">
+                <option value="false" data-i18n="ui-group.label.active"></option>
+                <option value="true" data-i18n="ui-group.label.disabled"></option>
+            </select>
+        </div>
     </div>
     <div class="form-row">
         <button onclick="RED.sidebar.show('dashboard-2.0')" class="editor-button editor-button-small">Open Dashboard 2.0 Sidebar</button>
