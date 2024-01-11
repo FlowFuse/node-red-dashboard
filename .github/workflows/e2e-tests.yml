@@ -15,7 +15,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Install Node-RED Dependencies
-        working-directory: ./fixtures/user-dir
+        working-directory: ./cypress/fixtures/user-dir/
         run: npm install
       - name: Run Linting Tests
         run: npm run lint
