@@ -1,4 +1,4 @@
-name: UI Tests
+name: E2E Tests
 on:
   push:
     branches:
@@ -22,7 +22,7 @@ jobs:
           install: false
           config-file: cypress.config.js
           build: npm run build
-          start: npm run cy:web-server
+          start: npm run cy:server
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
