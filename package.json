@@ -28,6 +28,9 @@
     "scripts": {
         "build": "vite build",
         "build:dev": "NODE_ENV=development npm run build",
+        "cy:open": "cypress open",
+        "cy:run": "cypress run",
+        "cy:server": "node-red -u ./cypress/fixtures/user-dir/ -p 1881",
         "dev": "NODE_ENV=development vite build --watch",
         "dev:prod": "vite build --watch",
         "docs:build": "vitepress build docs",
@@ -39,10 +42,7 @@
         "lint:package": "sort-package-json --check 'package.json'",
         "lint:package:fix": "sort-package-json 'package.json'",
         "test": "mocha \"test/**/*.spec.js\"",
-        "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\"",
-        "cy:run": "cypress run",
-        "cy:open": "cypress open",
-        "cy:server": "node-red -u ./cypress/fixtures/user-dir/ -p 1881"
+        "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\""
     },
     "dependencies": {
         "acorn": "^8.11.2",
