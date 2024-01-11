@@ -55,10 +55,21 @@ Cypress.Commands.add('loadFlows', loadFlows)
 Cypress.Commands.add('deployFlow', deployFlow)
 
 Cypress.Commands.add('deployFixture', (fixture) => {
+    let helperApi = null
     loadFlows().then((rev) => {
-        cy.fixture('flows/' + fixture)
+        cy.fixture('flows/context-api')
             .then((flow) => {
-                return deployFlow(rev, flow)
+                helperApi = flow
+                return cy.fixture('flows/' + fixture)
+            })
+            .then((flow) => {
+                const flows = [...flow, ...helperApi]
+                console.log(flows)
+                return deployFlow(rev, flows)
             })
     })
+})
+
+Cypress.Commands.add('checkOutput', (field, value) => {
+    cy.request('GET', '/context/flow').its(`body.msg.${field}`).should('eq', value)
 })

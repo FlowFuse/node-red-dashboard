@@ -112,9 +112,7 @@
         "x": 100,
         "y": 80,
         "wires": [
-            [
-                "test-helper"
-            ]
+            ["test-helper"]
         ]
     },
     {
@@ -144,61 +142,5 @@
                 "test-helper"
             ]
         ]
-    },
-    {
-        "id": "node-red-tab",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "node-red-http-in-store-context",
-        "type": "http in",
-        "z": "node-red-tab",
-        "name": "",
-        "url": "/context/flow",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 130,
-        "y": 200,
-        "wires": [
-            [
-                "fcn-store-context"
-            ]
-        ]
-    },
-    {
-        "id": "fcn-store-context",
-        "type": "function",
-        "z": "node-red-tab",
-        "name": "function 1",
-        "func": "msg.payload = {\n    msg: flow.get('msg')\n}\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 300,
-        "y": 200,
-        "wires": [
-            [
-                "node-red-http-out-store-context"
-            ]
-        ]
-    },
-    {
-        "id": "node-red-http-out-store-context",
-        "type": "http response",
-        "z": "node-red-tab",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 430,
-        "y": 200,
-        "wires": []
     }
 ]

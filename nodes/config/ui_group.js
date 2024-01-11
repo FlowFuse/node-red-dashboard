@@ -16,7 +16,7 @@ module.exports = function (RED) {
         }
 
         // register self
-        page.register(config)
+        page.getBase().register(null, config)
 
         node.on('close', function (removed, done) {
             node.deregister() // deregister self

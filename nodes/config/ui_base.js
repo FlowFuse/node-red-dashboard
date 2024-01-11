@@ -684,7 +684,6 @@ module.exports = function (RED) {
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
 
-            console.log('register', page, group)
             /**
              * Build UI Config
              */
@@ -692,6 +691,8 @@ module.exports = function (RED) {
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
             // store our UI state properties under the .state key too
+
+            let widget = null
             
             if (widgetNode && widgetConfig) {
                 // default states
@@ -703,7 +704,7 @@ module.exports = function (RED) {
                 }
 
                 // build widget object
-                const widget = {
+                widget = {
                     id: widgetConfig.id,
                     type: widgetConfig.type,
                     props: widgetConfig,
@@ -782,7 +783,7 @@ module.exports = function (RED) {
             }
 
             // map widgets on a group-by-group basis
-            if (widget && !node.ui.widgets.has(widget.id)) {
+            if (widgetNode && widgetConfig && !node.ui.widgets.has(widget.id)) {
                 node.ui.widgets.set(widget.id, widget)
             }
 

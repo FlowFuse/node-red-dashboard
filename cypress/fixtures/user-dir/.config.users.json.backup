@@ -14,6 +14,11 @@
             },
             "tours": {
                 "welcome": "3.1.0-git"
+            },
+            "dialog": {
+                "export": {
+                    "pretty": true
+                }
             }
         }
     }
