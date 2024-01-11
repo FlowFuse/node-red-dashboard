@@ -57,6 +57,7 @@ Cypress.Commands.add('deployFlow', deployFlow)
 Cypress.Commands.add('deployFixture', (fixture) => {
     let helperApi = null
     let rev = null
+    // eslint-disable-next-line promise/catch-or-return
     loadFlows()
         .then((_rev) => {
             rev = _rev
@@ -70,9 +71,6 @@ Cypress.Commands.add('deployFixture', (fixture) => {
             const flows = [...flow, ...helperApi]
             console.log(flows)
             return deployFlow(rev, flows)
-        })
-        .catch(() => {
-            console.error('Failed to load flows')
         })
 })
 

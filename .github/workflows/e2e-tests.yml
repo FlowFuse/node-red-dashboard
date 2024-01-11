@@ -28,5 +28,5 @@ jobs:
         with:
           name: cypress-output
           path: |
-            test/e2e/frontend/cypress/screenshots
-            test/e2e/frontend/cypress/videos
+            cypress/screenshots
+            cypress/videos

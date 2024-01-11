@@ -1,17 +1,7 @@
 describe('Node-RED Dashboard 2.0', () => {
     beforeEach(() => {
-        let rev = null
-        cy.loadFlows()
-            .then((_rev) => {
-                rev = _rev
-                return cy.fixture('flows/dashboard-basic')
-            })
-            .then((flow) => {
-                return cy.deployFlow(rev, flow)
-            })
-            .catch(() => {
-                console.error('Failed to load flows')
-            })
+        cy.deployFixture('dashboard-basic')
+        cy.visit('/dashboard')
     })
 
     it('will spin up an Express Server if a ui-base is provided', () => {

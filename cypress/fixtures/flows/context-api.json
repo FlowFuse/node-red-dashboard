@@ -29,7 +29,7 @@
         "type": "function",
         "z": "node-red-tab-helper-api",
         "name": "function 1",
-        "func": "msg.payload = {\n    msg: flow.get('msg')\n}\nreturn msg;",
+        "func": "msg.payload = {\n    msg: global.get('msg')\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
