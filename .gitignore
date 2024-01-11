@@ -140,3 +140,7 @@ dist
 
 # Vitepress
 docs/.vitepress/cache/
+
+# Node-RED Testing
+/cypress/fixtures/user-dir/flows.json
+/cypress/fixtures/user-dir/.flows.json.backup
