@@ -1,0 +1,32 @@
+name: UI Tests
+on:
+  push:
+    branches:
+      - main
+      - maintenance
+  pull_request:
+
+jobs:
+  needs: check-changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Linting Tests
+        run: npm run lint
+      - name: Run Dashboard E2E (Cypress) Tests
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          config-file: cypress.config.js
+          build: npm run build
+          start: npm run cy:web-server
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-output
+          path: |
+            test/e2e/frontend/cypress/screenshots
+            test/e2e/frontend/cypress/videos
