@@ -1,8 +1,8 @@
 [
     {
-        "id": "node-red-tab-buttons",
+        "id": "node-red-tab-text",
         "type": "tab",
-        "label": "UI Buttons",
+        "label": "UI Text",
         "disabled": false,
         "info": "",
         "env": []
@@ -45,27 +45,9 @@
         }
     },
     {
-        "id": "test-helper",
-        "type": "function",
-        "z": "node-red-tab-buttons",
-        "name": "Store Latest Msg",
-        "func": "flow.set('msg', msg)\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 80,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "dashboard-ui-group",
+        "id": "dashboard-test-text",
         "type": "ui-group",
-        "name": "Group 1",
+        "name": "UI Text Tests",
         "page": "dashboard-ui-page-1",
         "width": "6",
         "height": "1",
@@ -76,12 +58,12 @@
         "disabled": "false"
     },
     {
-        "id": "dashboard-ui-button-str",
+        "id": "dashboard-ui-button",
         "type": "ui-button",
-        "z": "node-red-tab-buttons",
-        "group": "dashboard-ui-group",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
         "name": "",
-        "label": "Button 1 (str)",
+        "label": "Inject Text",
         "order": 0,
         "width": 0,
         "height": 0,
@@ -91,42 +73,56 @@
         "bgcolor": "",
         "className": "",
         "icon": "",
-        "payload": "button 1 clicked",
+        "payload": "injected text",
         "payloadType": "str",
         "topic": "button-topic",
         "topicType": "str",
         "x": 100,
         "y": 80,
         "wires": [
-            ["test-helper"]
+            ["dashboard-ui-text-left"]
         ]
     },
     {
-        "id": "dashboard-ui-button-json",
-        "type": "ui-button",
-        "z": "node-red-tab-buttons",
-        "group": "dashboard-ui-group",
-        "name": "",
-        "label": "Button 1 (json)",
+        "id": "dashboard-ui-text-left",
+        "type": "ui-text",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
         "order": 0,
         "width": 0,
         "height": 0,
-        "passthru": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
+        "name": "",
+        "label": "Label",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
         "className": "",
-        "icon": "",
-        "payload": "{\"hello\": \"world\"}",
-        "payloadType": "json",
-        "topic": "",
-        "topicType": "str",
-        "x": 120,
-        "y": 120,
-        "wires": [
-            [
-                "test-helper"
-            ]
-        ]
+        "x": 250,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-text-center",
+        "type": "ui-text",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Label",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "style": true,
+        "font": "Courier,monospace",
+        "fontSize": "20",
+        "color": "#ff0000",
+        "className": "",
+        "x": 250,
+        "y": 100,
+        "wires": []
     }
 ]
