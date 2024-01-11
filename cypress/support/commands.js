@@ -56,18 +56,24 @@ Cypress.Commands.add('deployFlow', deployFlow)
 
 Cypress.Commands.add('deployFixture', (fixture) => {
     let helperApi = null
-    loadFlows().then((rev) => {
-        cy.fixture('flows/context-api')
-            .then((flow) => {
-                helperApi = flow
-                return cy.fixture('flows/' + fixture)
-            })
-            .then((flow) => {
-                const flows = [...flow, ...helperApi]
-                console.log(flows)
-                return deployFlow(rev, flows)
-            })
-    })
+    let rev = null
+    loadFlows()
+        .then((_rev) => {
+            rev = _rev
+            return cy.fixture('flows/context-api')
+        })
+        .then((flow) => {
+            helperApi = flow
+            return cy.fixture('flows/' + fixture)
+        })
+        .then((flow) => {
+            const flows = [...flow, ...helperApi]
+            console.log(flows)
+            return deployFlow(rev, flows)
+        })
+        .catch(() => {
+            console.error('Failed to load flows')
+        })
 })
 
 Cypress.Commands.add('checkOutput', (field, value) => {

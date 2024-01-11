@@ -683,7 +683,6 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
-
             /**
              * Build UI Config
              */
@@ -693,7 +692,7 @@ module.exports = function (RED) {
             // store our UI state properties under the .state key too
 
             let widget = null
-            
+
             if (widgetNode && widgetConfig) {
                 // default states
                 if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
@@ -795,11 +794,11 @@ module.exports = function (RED) {
                 widgetNode.getState = function () {
                     return datastore.get(widgetNode.id)
                 }
-    
+
                 /**
                  * Event Handlers
                  */
-    
+
                 // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
                 widgetNode?.on('input', async function (msg, send, done) {
                     // ensure we have latest instance of the widget's node
@@ -807,25 +806,25 @@ module.exports = function (RED) {
                     if (!wNode) {
                         return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
                     }
-    
+
                     // Hooks API - onInput(msg)
                     RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                         if (plugin.hooks?.onInput) {
                             msg = plugin.hooks.onInput(msg)
                         }
                     })
-    
+
                     if (!msg) {
                         // a plugin has made msg blank - meaning that we do anything else
                         return
                     }
-    
+
                     try {
                         // pre-process the msg before running our onInput function
                         if (widgetEvents?.beforeSend) {
                             msg = await widgetEvents.beforeSend(msg)
                         }
-    
+
                         // run any node-specific handler defined in the Widget's component
                         if (widgetEvents?.onInput) {
                             await widgetEvents?.onInput(msg, send)
@@ -834,7 +833,7 @@ module.exports = function (RED) {
                             if (msg) {
                                 // store the latest msg passed to node
                                 datastore.save(n, widgetNode, msg)
-    
+
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
@@ -847,10 +846,10 @@ module.exports = function (RED) {
                                 }
                             }
                         }
-    
+
                         // emit to all connected UIs
                         emit('msg-input:' + widget.id, msg, wNode)
-    
+
                         done()
                     } catch (err) {
                         if (err.type === 'warn') {
@@ -861,7 +860,7 @@ module.exports = function (RED) {
                         }
                     }
                 })
-    
+
                 // when a widget is "closed" remove it from this Base Node's knowledge
                 widgetNode?.on('close', function (removed, done) {
                     if (removed) {

@@ -4,10 +4,13 @@ describe('Node-RED', () => {
     beforeEach(() => {
         cy.loadFlows()
             .then((rev) => {
-                cy.fixture('flows/test')
+                return cy.fixture('flows/test')
                     .then((flow) => {
                         return cy.deployFlow(rev, flow)
                     })
+            })
+            .catch(() => {
+                console.error('Failed to load flows')
             })
     })
 

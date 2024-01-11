@@ -100,8 +100,9 @@ export default {
             if (page) {
                 const theme = this.themes[page?.theme].colors
                 return theme
+            } else {
+                return null
             }
-            return
         },
         orderedPages: function () {
             return Object.values(this.pages)

@@ -8,7 +8,8 @@
         "eslint:recommended", 
         "standard",
         "plugin:import/recommended",
-        "plugin:promise/recommended"
+        "plugin:promise/recommended",
+        "plugin:cypress/recommended"
     ],
     "globals":{
         "RED": "readonly"
