@@ -7,7 +7,8 @@ on:
   pull_request:
 
 jobs:
-  needs: check-changes
+  e2e-tests:
+    needs: check-changes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
