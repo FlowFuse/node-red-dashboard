@@ -14,6 +14,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Dependencies
         run: npm ci
+      - name: Install Node-RED Dependencies
+        working-directory: ./fixtures/user-dir
+        run: npm install
       - name: Run Linting Tests
         run: npm run lint
       - name: Run Dashboard E2E (Cypress) Tests
