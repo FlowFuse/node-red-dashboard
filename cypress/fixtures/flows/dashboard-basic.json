@@ -1,0 +1,11 @@
+[{
+    "id": "dashboard-ui-base",
+    "type": "ui-base",
+    "name": "UI Name",
+    "path": "/dashboard",
+    "includeClientData": true,
+    "acceptsClientConfig": [
+        "ui-notification",
+        "ui-control"
+    ]
+}]

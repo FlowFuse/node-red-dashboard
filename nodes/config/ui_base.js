@@ -683,6 +683,8 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
+
+            console.log('register', page, group)
             /**
              * Build UI Config
              */
@@ -690,60 +692,62 @@ module.exports = function (RED) {
             // strip widgetConfig of stuff we don't really care about (e.g. Node-RED x/y coordinates)
             // and leave us just with the properties set inside the Node-RED Editor, store as "props"
             // store our UI state properties under the .state key too
+            
+            if (widgetNode && widgetConfig) {
+                // default states
+                if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
+                    statestore.set(n, widgetConfig, null, 'enabled', true)
+                }
+                if (!statestore.getProperty(widgetConfig.id, 'visible')) {
+                    statestore.set(n, widgetConfig, null, 'visible', true)
+                }
 
-            // default states
-            if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
-                statestore.set(n, widgetConfig, null, 'enabled', true)
-            }
-            if (!statestore.getProperty(widgetConfig.id, 'visible')) {
-                statestore.set(n, widgetConfig, null, 'visible', true)
-            }
+                // build widget object
+                const widget = {
+                    id: widgetConfig.id,
+                    type: widgetConfig.type,
+                    props: widgetConfig,
+                    layout: {
+                        width: widgetConfig.width || 3,
+                        height: widgetConfig.height || 1,
+                        order: widgetConfig.order || 0
+                    },
+                    state: {
+                        enabled: statestore.getProperty(widgetConfig.id, 'enabled'),
+                        visible: statestore.getProperty(widgetConfig.id, 'visible')
+                    },
+                    hooks: widgetEvents,
+                    src: uiShared.contribs[widgetConfig.type]
+                }
 
-            // build widget object
-            const widget = {
-                id: widgetConfig.id,
-                type: widgetConfig.type,
-                props: widgetConfig,
-                layout: {
-                    width: widgetConfig.width || 3,
-                    height: widgetConfig.height || 1,
-                    order: widgetConfig.order || 0
-                },
-                state: {
-                    enabled: statestore.getProperty(widgetConfig.id, 'enabled'),
-                    visible: statestore.getProperty(widgetConfig.id, 'visible')
-                },
-                hooks: widgetEvents,
-                src: uiShared.contribs[widgetConfig.type]
-            }
+                delete widget.props.id
+                delete widget.props.type
+                delete widget.props.x
+                delete widget.props.y
+                delete widget.props.z
+                delete widget.props.wires
 
-            delete widget.props.id
-            delete widget.props.type
-            delete widget.props.x
-            delete widget.props.y
-            delete widget.props.z
-            delete widget.props.wires
+                if (widget.props.width === '0') {
+                    widget.props.width = null
+                }
+                if (widget.props.height === '0') {
+                    widget.props.height = null
+                }
 
-            if (widget.props.width === '0') {
-                widget.props.width = null
-            }
-            if (widget.props.height === '0') {
-                widget.props.height = null
-            }
+                // merge the statestore with our props toa ccount for dynamically set properties:
 
-            // merge the statestore with our props toa ccount for dynamically set properties:
-
-            // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
-            // and stringify them for transport over SocketIO
-            for (const [key, value] of Object.entries(widget.props)) {
-                // supported functions
-                const supported = ['onMounted', 'onInput']
-                if (supported.includes(key) && typeof value === 'function') {
-                    widget.props[key] = value.toString()
-                } else if (key === 'methods') {
-                    for (const [method, fcn] of Object.entries(widget.props.methods)) {
-                        if (typeof fcn === 'function') {
-                            widget.props.methods[method] = fcn.toString()
+                // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
+                // and stringify them for transport over SocketIO
+                for (const [key, value] of Object.entries(widget.props)) {
+                    // supported functions
+                    const supported = ['onMounted', 'onInput']
+                    if (supported.includes(key) && typeof value === 'function') {
+                        widget.props[key] = value.toString()
+                    } else if (key === 'methods') {
+                        for (const [method, fcn] of Object.entries(widget.props.methods)) {
+                            if (typeof fcn === 'function') {
+                                widget.props.methods[method] = fcn.toString()
+                            }
                         }
                     }
                 }
@@ -778,7 +782,7 @@ module.exports = function (RED) {
             }
 
             // map widgets on a group-by-group basis
-            if (!node.ui.widgets.has(widget.id)) {
+            if (widget && !node.ui.widgets.has(widget.id)) {
                 node.ui.widgets.set(widget.id, widget)
             }
 
@@ -786,87 +790,88 @@ module.exports = function (RED) {
              * Helper Function for testing
              */
 
-            widgetNode.getState = function () {
-                return datastore.get(widgetNode.id)
-            }
-
-            /**
-             * Event Handlers
-             */
-
-            // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
-            widgetNode.on('input', async function (msg, send, done) {
-                // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(widgetNode.id)
-                if (!wNode) {
-                    return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+            if (widgetNode) {
+                widgetNode.getState = function () {
+                    return datastore.get(widgetNode.id)
                 }
-
-                // Hooks API - onInput(msg)
-                RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
-                    if (plugin.hooks?.onInput) {
-                        msg = plugin.hooks.onInput(msg)
+    
+                /**
+                 * Event Handlers
+                 */
+    
+                // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
+                widgetNode?.on('input', async function (msg, send, done) {
+                    // ensure we have latest instance of the widget's node
+                    const wNode = RED.nodes.getNode(widgetNode.id)
+                    if (!wNode) {
+                        return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
                     }
-                })
-
-                if (!msg) {
-                    // a plugin has made msg blank - meaning that we do anything else
-                    return
-                }
-
-                try {
-                    // pre-process the msg before running our onInput function
-                    if (widgetEvents?.beforeSend) {
-                        msg = await widgetEvents.beforeSend(msg)
+    
+                    // Hooks API - onInput(msg)
+                    RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                        if (plugin.hooks?.onInput) {
+                            msg = plugin.hooks.onInput(msg)
+                        }
+                    })
+    
+                    if (!msg) {
+                        // a plugin has made msg blank - meaning that we do anything else
+                        return
                     }
-
-                    // run any node-specific handler defined in the Widget's component
-                    if (widgetEvents?.onInput) {
-                        await widgetEvents?.onInput(msg, send)
-                    } else {
-                        // msg could be null if the beforeSend errors and returns null
-                        if (msg) {
-                            // store the latest msg passed to node
-                            datastore.save(n, widgetNode, msg)
-
-                            if (widgetConfig.topic || widgetConfig.topicType) {
-                                msg = await appendTopic(RED, widgetConfig, wNode, msg)
-                            }
-                            if (Object.hasOwn(widgetConfig, 'passthru')) {
-                                if (widgetConfig.passthru) {
+    
+                    try {
+                        // pre-process the msg before running our onInput function
+                        if (widgetEvents?.beforeSend) {
+                            msg = await widgetEvents.beforeSend(msg)
+                        }
+    
+                        // run any node-specific handler defined in the Widget's component
+                        if (widgetEvents?.onInput) {
+                            await widgetEvents?.onInput(msg, send)
+                        } else {
+                            // msg could be null if the beforeSend errors and returns null
+                            if (msg) {
+                                // store the latest msg passed to node
+                                datastore.save(n, widgetNode, msg)
+    
+                                if (widgetConfig.topic || widgetConfig.topicType) {
+                                    msg = await appendTopic(RED, widgetConfig, wNode, msg)
+                                }
+                                if (Object.hasOwn(widgetConfig, 'passthru')) {
+                                    if (widgetConfig.passthru) {
+                                        send(msg)
+                                    }
+                                } else {
                                     send(msg)
                                 }
-                            } else {
-                                send(msg)
                             }
                         }
-                    }
-
-                    // emit to all connected UIs
-                    emit('msg-input:' + widget.id, msg, wNode)
-
-                    done()
-                } catch (err) {
-                    if (err.type === 'warn') {
-                        wNode.warn(err.message)
+    
+                        // emit to all connected UIs
+                        emit('msg-input:' + widget.id, msg, wNode)
+    
                         done()
-                    } else {
-                        done(err)
+                    } catch (err) {
+                        if (err.type === 'warn') {
+                            wNode.warn(err.message)
+                            done()
+                        } else {
+                            done(err)
+                        }
                     }
-                }
-            })
-
-            // when a widget is "closed" remove it from this Base Node's knowledge
-            widgetNode.on('close', function (removed, done) {
-                if (removed) {
-                    // widget has been removed from the Editor
-                    // clear any data from datastore
-                    datastore.clear(widgetNode.id)
-                }
-                node.deregister(null, null, widgetNode)
-                done()
-            })
-
+                })
+    
+                // when a widget is "closed" remove it from this Base Node's knowledge
+                widgetNode?.on('close', function (removed, done) {
+                    if (removed) {
+                        // widget has been removed from the Editor
+                        // clear any data from datastore
+                        datastore.clear(widgetNode.id)
+                    }
+                    node.deregister(null, null, widgetNode)
+                    done()
+                })
+            }
             node.requestEmitConfig() // queue up a config emit to the UI
         }
 
