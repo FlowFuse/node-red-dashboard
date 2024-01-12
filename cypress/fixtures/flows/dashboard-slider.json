@@ -1,0 +1,133 @@
+[
+    {
+        "id": "node-red-tab-slider",
+        "type": "tab",
+        "label": "UI Buttons",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "node-red-inject-ondeploy",
+        "type": "inject",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "25",
+        "payloadType": "num",
+        "x": 230,
+        "y": 100,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-slider",
+        "type": "ui-slider",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "My Slider",
+        "tooltip": "",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "str",
+        "thumbLabel": true,
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "className": "",
+        "x": 360,
+        "y": 100,
+        "wires": [
+            ["test-helper"]
+        ]
+    },
+    {
+        "id": "test-helper",
+        "type": "function",
+        "z": "node-red-tab-slider",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    }
+]
