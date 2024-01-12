@@ -120,6 +120,7 @@ export default ({ mode }) => {
               items: [
                 { text: 'Adding Core Widgets', link: '/contributing/widgets/core-widgets' },
                 { text: 'Third Party Widgets', link: '/contributing/widgets/third-party' },
+                { text: 'Testing', link: '/contributing/widgets/testing' },
                 { text: 'Debugging', link: '/contributing/widgets/debugging' }
               ]
             },
