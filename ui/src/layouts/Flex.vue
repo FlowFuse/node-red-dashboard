@@ -6,7 +6,7 @@
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
-                :disabled="g.disabled"
+                :disabled="g.disabled === true ? 'disabled' : null"
                 :class="getGroupClass(g)"
                 :style="{'width': ((rowHeight * 2 * g.width) + 'px')}"
             >

@@ -47,7 +47,7 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     })
 })
 
-describe.only('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
+describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
         cy.visit('/dashboard/controls')
@@ -82,5 +82,63 @@ describe.only('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 2)
         // close drawer
         cy.get('.v-navigation-drawer__scrim').click()
+    })
+})
+
+describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-controls')
+        cy.visit('/dashboard/controls')
+    })
+
+    it('can disable and enable a particular group', () => {
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.have.attr', 'disabled')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-disable').click()
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('have.attr', 'disabled')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-enable').click()
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.have.attr', 'disabled')
+    })
+
+    it('can hide and show a particular page from the navigation options', () => {
+        // open navigation
+        cy.get('.v-app-bar-nav-icon').click()
+        cy.get('[data-el="nav-drawer"]').should('be.visible')
+
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
+
+        // check all enabled
+        cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('not.have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
+
+        // close drawer
+        cy.get('.v-navigation-drawer__scrim').click()
+
+        // disable an entry
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-disable').click()
+
+        // open navigation
+        cy.get('.v-app-bar-nav-icon').click()
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
+
+        // check enable works
+        // close drawer
+        cy.get('.v-navigation-drawer__scrim').click()
+
+        // enable an entry
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-enable').click()
+
+        // open navigation
+        cy.get('.v-app-bar-nav-icon').click()
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
+        cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('not.have.class', 'v-list-item--disabled')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
     })
 })
