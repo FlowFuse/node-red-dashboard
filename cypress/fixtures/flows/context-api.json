@@ -54,5 +54,53 @@
         "x": 430,
         "y": 50,
         "wires": []
+    },
+    {
+        "id": "node-red-http-in-reset-context",
+        "type": "http in",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "url": "/context/reset",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "fcn-reset-context"
+            ]
+        ]
+    },
+    {
+        "id": "fcn-reset-context",
+        "type": "function",
+        "z": "node-red-tab-helper-api",
+        "name": "function 2",
+        "func": "global.set('msg', undefined)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "node-red-http-out-reset-context"
+            ]
+        ]
+    },
+    {
+        "id": "node-red-http-out-reset-context",
+        "type": "http response",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 430,
+        "y": 100,
+        "wires": []
     }
 ]

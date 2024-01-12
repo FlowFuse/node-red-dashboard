@@ -74,6 +74,10 @@ Cypress.Commands.add('deployFixture', (fixture) => {
         })
 })
 
-Cypress.Commands.add('checkOutput', (field, value) => {
-    cy.request('GET', '/context/flow').its(`body.msg.${field}`).should('eq', value)
+Cypress.Commands.add('resetContext', (field, value) => {
+    cy.request('POST', '/context/reset')
+})
+
+Cypress.Commands.add('checkOutput', (msg, value) => {
+    cy.request('GET', '/context/flow').its(`body.${msg}`).should('eq', value)
 })
