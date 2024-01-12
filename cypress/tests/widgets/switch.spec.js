@@ -1,5 +1,3 @@
-// test admin rights & access in FlowForge
-
 describe('Node-RED Dashboard 2.0 - Switches', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
