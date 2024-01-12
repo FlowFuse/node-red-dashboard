@@ -142,6 +142,8 @@ dist
 docs/.vitepress/cache/
 
 # Node-RED Testing
+/cypress/fixtures/user-dir/.config.nodes.json
+/cypress/fixtures/user-dir/.config.nodes.json.backup
 /cypress/fixtures/user-dir/flows.json
 /cypress/fixtures/user-dir/.flows.json.backup   
 /cypress/screenshots
