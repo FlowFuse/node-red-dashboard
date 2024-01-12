@@ -77,7 +77,7 @@
         "type": "ui-group",
         "name": "Navigation Controls",
         "page": "dashboard-ui-page-controls",
-        "width": "6",
+        "width": "3",
         "height": "1",
         "order": -1,
         "showTitle": true,
@@ -263,6 +263,144 @@
         "wires": [
             [
                 "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group-visibility",
+        "type": "ui-group",
+        "name": "Visibility Controls",
+        "page": "dashboard-ui-page-controls",
+        "width": "3",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-control-visibility",
+        "type": "ui-control",
+        "z": "node-red-tab-control",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 460,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-group-hide",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Group - Hide",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"hide\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 380,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-group-show",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Group - Show",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"show\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 420,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-page-show",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Page - Show",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"hide\":[\"Page 2\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 500,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-page-hide",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Page - Hide",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"hide\":[\"Page 1\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
             ]
         ]
     }

@@ -1,5 +1,3 @@
-// test admin rights & access in FlowForge
-
 describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
@@ -46,5 +44,43 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
         // our windows var should be cleared due to refresh
         cy.url().should('include', '/dashboard/controls')
         cy.window().should('not.have.property', 'test')
+    })
+})
+
+describe.only('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-controls')
+        cy.visit('/dashboard/controls')
+    })
+
+    it('can hide and show a particular group', () => {
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-hide').click()
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-show').click()
+        cy.get('#nrdb-ui-group-dashboard-ui-group').should('exist')
+    })
+
+    it('can hide and show a particular page from the navigation options', () => {
+        // open navigation
+        cy.get('.v-app-bar-nav-icon').click()
+        cy.get('[data-el="nav-drawer"]').should('be.visible')
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
+        cy.get('[data-nav="dashboard-ui-page-controls"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
+        // close drawer
+        cy.get('.v-navigation-drawer__scrim').click()
+
+        // hide page
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-hide').click()
+
+        // open navigation
+        cy.get('.v-app-bar-nav-icon').click()
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 2)
+        // close drawer
+        cy.get('.v-navigation-drawer__scrim').click()
     })
 })
