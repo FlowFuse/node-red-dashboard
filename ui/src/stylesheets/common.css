@@ -105,7 +105,7 @@ main {
 /**
 * Common Group Styling
 */
-.nrdb-ui-group[disabled=true] {
+.nrdb-ui-group[disabled] {
     opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;

@@ -6,7 +6,7 @@
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
-                :disabled="g.disabled"
+                :disabled="g.disabled === true ? 'disabled' : null"
                 :class="getGroupClass(g)"
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">

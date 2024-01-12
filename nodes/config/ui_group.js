@@ -7,11 +7,16 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config)
         const node = this
 
+        const page = RED.nodes.getNode(config.page)
+
         if (!('showTitle' in config)) {
             // migration backwards compatibility
             // we now use showTitle, not disp, but older flows still may have disp
             config.showTitle = config.disp || true
         }
+
+        // register self
+        page.getBase().register(null, config)
 
         node.on('close', function (removed, done) {
             node.deregister() // deregister self
@@ -25,13 +30,11 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (widgetNode, widgetConfig, widgetEvents) {
-            const page = RED.nodes.getNode(config.page)
             const group = config
             page.register(group, widgetNode, widgetConfig, widgetEvents)
         }
 
         node.deregister = function (widgetNode) {
-            const page = RED.nodes.getNode(config.page)
             const group = config
             page.deregister(group, widgetNode)
         }

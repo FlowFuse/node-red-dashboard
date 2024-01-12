@@ -1,0 +1,35 @@
+name: E2E Tests
+on:
+  push:
+    branches:
+      - main
+      - maintenance
+  pull_request:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: npm ci
+      - name: Install Node-RED Dependencies
+        working-directory: ./cypress/fixtures/user-dir/
+        run: npm install
+      - name: Run Linting Tests
+        run: npm run lint
+      - name: Run Dashboard E2E (Cypress) Tests
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          config-file: cypress.config.js
+          build: npm run build
+          start: npm run cy:server
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-output
+          path: |
+            cypress/screenshots
+            cypress/videos

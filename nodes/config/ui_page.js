@@ -28,6 +28,11 @@ module.exports = function (RED) {
             config.visible = (config.visible === 'true' || config.visible === true)
         }
 
+        const ui = RED.nodes.getNode(config.ui)
+
+        // register self
+        ui.register(config)
+
         /**
          * Function for widgets to register themselves with this page
          * Calls the parent UI Base "register" function and registers this page,
@@ -35,7 +40,6 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (group, widgetNode, widgetConfig, widgetEvents) {
-            const ui = RED.nodes.getNode(config.ui)
             const page = config
             if (ui) {
                 ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
@@ -44,7 +48,6 @@ module.exports = function (RED) {
             }
         }
         node.deregister = function (group, widgetNode) {
-            const ui = RED.nodes.getNode(config.ui)
             const page = config
             if (ui) {
                 ui.deregister(page, group, widgetNode)

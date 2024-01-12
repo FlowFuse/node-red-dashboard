@@ -1,0 +1,545 @@
+[
+    {
+        "id": "node-red-tab-control",
+        "type": "tab",
+        "label": "UI Control",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-controls",
+        "type": "ui-page",
+        "name": "Controls",
+        "ui": "dashboard-ui-base",
+        "path": "/controls",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-2",
+        "type": "ui-page",
+        "name": "Page 2",
+        "ui": "dashboard-ui-base",
+        "path": "/page2",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Navigation Controls",
+        "page": "dashboard-ui-page-controls",
+        "width": "3",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-control",
+        "type": "ui-control",
+        "z": "node-red-tab-control",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 400,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-page1",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Page 1",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Page 1",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-page2",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Page 2",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"page\": \"Page 2\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-prev",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Previous Page",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "-1",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-next",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Next Page",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "+1",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-index",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Page Index",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-nav-refresh",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Nav: Refresh",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group-visibility",
+        "type": "ui-group",
+        "name": "Visibility Controls",
+        "page": "dashboard-ui-page-controls",
+        "width": "3",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-control-visibility",
+        "type": "ui-control",
+        "z": "node-red-tab-control",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 460,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-group-hide",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Group - Hide",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"hide\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 380,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-group-show",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Group - Show",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"show\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 420,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-page-show",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Page - Show",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"hide\":[\"Page 2\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 500,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-vis-page-hide",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-visibility",
+        "name": "",
+        "label": "Visibility: Page - Hide",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"hide\":[\"Page 1\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "dashboard-ui-control-visibility"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group-interactivity",
+        "type": "ui-group",
+        "name": "Interactivity Controls",
+        "page": "dashboard-ui-page-controls",
+        "width": "3",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-control-interactivity",
+        "type": "ui-control",
+        "z": "node-red-tab-control",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 460,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-int-group-disable",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-interactivity",
+        "name": "",
+        "label": "Interactivity: Group - Disable",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"disable\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 580,
+        "wires": [
+            [
+                "dashboard-ui-control-interactivity"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-int-group-enable",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-interactivity",
+        "name": "",
+        "label": "Interactivity: Group - Enable",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"enable\":[\"Controls:Navigation Controls\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 620,
+        "wires": [
+            [
+                "dashboard-ui-control-interactivity"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-int-page-enable",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-interactivity",
+        "name": "",
+        "label": "Interactivity: Page - Enable",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"enable\":[\"Page 1\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 700,
+        "wires": [
+            [
+                "dashboard-ui-control-interactivity"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-int-page-disable",
+        "type": "ui-button",
+        "z": "node-red-tab-control",
+        "group": "dashboard-ui-group-interactivity",
+        "name": "",
+        "label": "Interactivity: Page - Disable",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"pages\":{\"disable\":[\"Page 1\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 660,
+        "wires": [
+            [
+                "dashboard-ui-control-interactivity"
+            ]
+        ]
+    }
+]

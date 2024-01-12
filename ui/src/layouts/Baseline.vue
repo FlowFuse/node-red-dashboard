@@ -19,14 +19,15 @@
         </v-app-bar>
 
         <v-main>
-            <v-navigation-drawer v-model="drawer">
+            <v-navigation-drawer v-model="drawer" data-el="nav-drawer">
                 <v-list nav>
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
-                        :disabled="page.disabled"
+                        :disabled="page.disabled || undefined"
                         :prepend-icon="`mdi-${page.icon || 'home'}`"
                         :title="`${page.name} (${page.route.path})`"
                         :to="{name: page.route.name}" link
+                        :data-nav="page.id"
                     />
                 </v-list>
             </v-navigation-drawer>
@@ -96,8 +97,12 @@ export default {
 
         theme: function () {
             const page = this.pages[this.$route.meta.id]
-            const theme = this.themes[page.theme].colors
-            return theme
+            if (page) {
+                const theme = this.themes[page?.theme].colors
+                return theme
+            } else {
+                return null
+            }
         },
         orderedPages: function () {
             return Object.values(this.pages)
@@ -133,17 +138,19 @@ export default {
         },
         updateTheme () {
             const theme = this.$vuetify.theme.themes.nrdb.colors
-            // convert NR Theming to Vuetify Theming
-            theme.surface = this.theme.surface
-            // primary bg
-            theme.primary = this.theme.primary
-            // primary font - auto calculated
-            theme['on-primary'] = getContrast(this.theme.primary)
-            // UI Background
-            theme.background = this.theme.bgPage
-            // Group Background
-            theme['group-background'] = this.theme.groupBg
-            theme['group-outline'] = this.theme.groupOutline
+            if (this.theme) {
+                // convert NR Theming to Vuetify Theming
+                theme.surface = this.theme.surface
+                // primary bg
+                theme.primary = this.theme.primary
+                // primary font - auto calculated
+                theme['on-primary'] = getContrast(this.theme.primary)
+                // UI Background
+                theme.background = this.theme.bgPage
+                // Group Background
+                theme['group-background'] = this.theme.groupBg
+                theme['group-outline'] = this.theme.groupOutline
+            }
         }
     }
 }

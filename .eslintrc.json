@@ -8,7 +8,8 @@
         "eslint:recommended", 
         "standard",
         "plugin:import/recommended",
-        "plugin:promise/recommended"
+        "plugin:promise/recommended",
+        "plugin:cypress/recommended"
     ],
     "globals":{
         "RED": "readonly"
@@ -115,6 +116,27 @@
             "parserOptions": {
                 "sourceType": "module",
                 "ecmaVersion": 2022
+            }
+        },
+
+        // Cypress is used for E2E
+        {
+            "files": "test/e2e/**",
+            "env": {
+                "cypress/globals": true
+            },
+            "extends": ["plugin:cypress/recommended"],
+            "plugins": ["cypress"],
+            "rules": {
+                // plugin:cypress
+                "cypress/require-data-selectors": "warn",
+                "cypress/assertion-before-screenshot": "error",
+                "cypress/no-force": "warn",
+                "cypress/no-pause": "error",
+
+                // plugin:n
+                "promise/always-return": "off",
+                "promise/catch-or-return": "off"
             }
         }
     ]
