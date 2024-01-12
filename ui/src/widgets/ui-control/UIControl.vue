@@ -28,7 +28,7 @@ export default {
         }
     },
     mounted () {
-        // if this is being built, then we';ve just laoded a new page
+        // if this is being built, then we';ve just loaded a new page
         this.routeChanged()
         const vue = this
         // listen for messages

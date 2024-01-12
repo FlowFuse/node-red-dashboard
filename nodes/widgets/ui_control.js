@@ -50,10 +50,10 @@ module.exports = function (RED) {
                         RED.nodes.eachNode(function (n) {
                             if (n.type === 'ui-page') {
                                 if (n.name === page) {
-                                // ensure consistency in payload format
+                                    // ensure consistency in payload format
                                     msg.payload.page = page
                                     // send a message to the ui to switch to this tab
-                                    emit({ page })
+                                    emit(msg)
                                     pageFound = true
                                 }
                             }
