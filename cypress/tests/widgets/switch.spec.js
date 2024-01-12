@@ -17,16 +17,13 @@ describe('Node-RED Dashboard 2.0 - Switches', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
     })
 
-    it('can be set to the on state via incoming payload', () => {
+    it('can be set to the on state via incoming payload & passes the value through', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
         // Emitting strings
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'v-switch')
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'active')
-    })
 
-    it('does pass on a value is passthru is set to true', () => {
-        cy.resetContext()
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
+        // check passthruy worked
         cy.checkOutput('msg.payload', 'on')
     })
 
