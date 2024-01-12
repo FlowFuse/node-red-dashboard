@@ -42,6 +42,9 @@ export default {
             this.value = val
         }
     },
+    mounted () {
+        this.value = this.messages[this.id]?.payload
+    },
     methods: {
         onChange () {
             if (!this.props.outs || this.props.outs === 'all') {
