@@ -128,5 +128,33 @@
                 "test-helper"
             ]
         ]
+    },
+    {
+        "id": "dashboard-ui-button-global",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button 2 (global)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "test",
+        "payloadType": "global",
+        "topic": "button-global-topic",
+        "topicType": "str",
+        "x": 120,
+        "y": 180,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
     }
 ]

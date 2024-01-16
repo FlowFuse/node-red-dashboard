@@ -29,7 +29,7 @@
         "type": "function",
         "z": "node-red-tab-helper-api",
         "name": "function 1",
-        "func": "msg.payload = {\n    msg: global.get('msg')\n}\nreturn msg;",
+        "func": "msg.payload = {} \n\nconst key = msg.req.query?.key || 'msg'\n\nconst body = {}\nbody[key] = global.get(key)\n\nmsg.payload = body\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -101,6 +101,54 @@
         "headers": {},
         "x": 430,
         "y": 100,
+        "wires": []
+    },
+    {
+        "id": "http-in-store-global",
+        "type": "http in",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "url": "/context/global",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "fcn-store-global"
+            ]
+        ]
+    },
+    {
+        "id": "fcn-store-global",
+        "type": "function",
+        "z": "node-red-tab-helper-api",
+        "name": "Set Global Var",
+        "func": "function createNestedObject(keys, value) {\n    const keyParts = keys.split('.');\n    const result = {};\n    let current = result;\n\n    for (let i = 0; i < keyParts.length; i++) {\n        const key = keyParts[i];\n        if (i === keyParts.length - 1) {\n            current[key] = value;\n        } else {\n            current[key] = {};\n            current = current[key];\n        }\n    }\n\n    return result;\n}\n\nconst keys = msg.payload.key.split('.')\n\nif (keys.length > 1) {\n    const nested = createNestedObject(msg.payload.key, msg.payload.value)\n    global.set(keys[0], nested[keys[0]])\n} else {\n    global.set(msg.payload.key, msg.payload.value)\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 160,
+        "wires": [
+            [
+                "http-out-store-global"
+            ]
+        ]
+    },
+    {
+        "id": "http-out-store-global",
+        "type": "http response",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 490,
+        "y": 160,
         "wires": []
     }
 ]

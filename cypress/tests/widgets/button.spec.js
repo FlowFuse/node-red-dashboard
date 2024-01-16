@@ -15,4 +15,14 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
         cy.checkOutput('msg.payload.hello', 'world')
         cy.checkOutput('msg.topic', 'button-json-topic')
     })
+
+    it('can retrieve global variables when clicked', () => {
+        // set global. var via helper API
+        cy.setGlobalVar('test', 'global-var')
+        cy.checkOutput('test', 'global-var')
+
+        // Emitting global var
+        cy.clickAndWait(cy.get('button').contains('Button 2 (global)'))
+        cy.checkOutput('msg.payload', 'global-var')
+    })
 })
