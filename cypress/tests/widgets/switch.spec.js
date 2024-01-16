@@ -67,7 +67,7 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
 
     it('does send a msg if the switch in Dashboard is clicked', () => {
         // set to on
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on'))
         // click the switch directly
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').click()
         // should now be off
