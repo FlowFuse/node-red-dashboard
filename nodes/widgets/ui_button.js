@@ -22,6 +22,7 @@ module.exports = function (RED) {
                         if (parts.length === 0) {
                             throw new Error()
                         }
+                        payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
                     } catch (err) {
                         node.warn('Invalid payload property expression - defaulting to node id')
                         payload = node.id
