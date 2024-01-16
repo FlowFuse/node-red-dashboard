@@ -33,6 +33,21 @@ describe('Node-RED Dashboard 2.0 - Switches', () => {
         // should now be off
         cy.checkOutput('msg.payload', 'off')
     })
+
+    it('maintains state on page refresh', () => {
+        // set to on
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
+        // click the switch directly
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('input').click()
+        // should now be off
+        cy.checkOutput('msg.payload', 'off')
+
+        // refresh page
+        cy.reload()
+        // should still be off
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'v-switch')
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
+    })
 })
 
 describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
