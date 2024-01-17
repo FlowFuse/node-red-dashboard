@@ -1,7 +1,7 @@
 <template>
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
-        <v-switch v-if="!icon" v-model="state" :class="{'active': state}" hide-details="auto" color="primary" @click="onChange" />
+        <v-switch v-if="!icon" v-model="state" :class="{'active': state}" hide-details="auto" color="primary" @update:model-value="onChange" />
         <v-btn v-else variant="text" :icon="icon" :color="color" @click="toggle" />
     </div>
 </template>
@@ -64,10 +64,10 @@ export default {
         }
     },
     methods: {
-        onChange () {
+        onChange (val) {
             // only runs when clicked/changed in UI.
             // inverted as the store doesn't quite update quick enough, but this is reliable method
-            this.$socket.emit('widget-change', this.id, !this.value)
+            this.$socket.emit('widget-change', this.id, val)
         },
         toggle () {
             this.state = !this.state
