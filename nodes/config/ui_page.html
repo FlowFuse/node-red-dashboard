@@ -12,7 +12,7 @@
                 required: true
             },
             path: {
-                value: '/',
+                value: -1,
                 required: false
             },
             icon: {
@@ -32,10 +32,21 @@
                 value: -1
             },
             className: { value: '' },
-            visible: { value: true },
-            disabled: { value: false }
+            visible: { value: 'true' },
+            disabled: { value: 'false' }
         },
         oneditprepare: function () {
+            if (this.path === -1) {
+                // we have no path set yet
+                let pageCount = 0
+                RED.nodes.eachConfig((cNode) => {
+                    pageCount += cNode.type === 'ui-page' ? 1 : 0
+                })
+                this.path = '/page' + (pageCount + 1)
+                $('#node-config-input-path').val(this.path)
+                console.log('setting path to', this.path)
+            }
+
             $('#node-config-input-layout').typedInput({
                 type: 'layout',
                 types: [{
