@@ -184,6 +184,9 @@
             },
             acceptsClientConfig: {
                 value: ['ui-notification', 'ui-control']
+            },
+            showPathInSidebar: {
+                value: false
             }
         },
         label: function () {
@@ -1020,5 +1023,12 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;"><span data-i18n="ui-base.label.sidebar"></span></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPathInSidebar">
+        <label style="width:auto" for="node-config-input-showPathInSidebar"><span data-i18n="ui-base.label.showPath"></span></label>
     </div>
 </script>

@@ -25,7 +25,7 @@
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
                         :disabled="page.disabled || undefined"
                         :prepend-icon="`mdi-${page.icon || 'home'}`"
-                        :title="`${page.name}`"
+                        :title="getPageLabel(page)"
                         :to="{name: page.route.name}" link
                         :data-nav="page.id"
                     />
@@ -92,7 +92,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('ui', ['pages', 'themes', 'pageData', 'widgets']),
+        ...mapState('ui', ['dashboards', 'pages', 'themes', 'pageData', 'widgets']),
         ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
 
         theme: function () {
@@ -120,6 +120,10 @@ export default {
                 return Object.hasOwn(w.props, 'ui') && !!w.props.ui && !w.props.group && !w.props.page
             })
             return widgets
+        },
+        dashboard: function () {
+            const dId = Object.keys(this.dashboards)[0]
+            return this.dashboards[dId]
         }
     },
     watch: {
@@ -151,6 +155,9 @@ export default {
                 theme['group-background'] = this.theme.groupBg
                 theme['group-outline'] = this.theme.groupOutline
             }
+        },
+        getPageLabel (page) {
+            return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         }
     }
 }

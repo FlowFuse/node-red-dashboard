@@ -4,7 +4,9 @@
         "label": {
             "category": "dashboard 2",
             "layout": "Layout",
-            "settings": "Settings"
+            "settings": "Settings",
+            "sidebar": "Sidebar Options",
+            "showPath": "Include Page Path in Label"
         },
         "layout": {
             "pages": "Pages",
