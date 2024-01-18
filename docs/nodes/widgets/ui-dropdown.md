@@ -11,6 +11,9 @@ dynamic:
     Options:
         payload: msg.options
         structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>

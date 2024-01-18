@@ -12,7 +12,8 @@
         "plugin:cypress/recommended"
     ],
     "globals":{
-        "RED": "readonly"
+        "RED": "readonly",
+        "$": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2022

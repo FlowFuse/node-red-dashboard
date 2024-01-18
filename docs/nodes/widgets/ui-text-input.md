@@ -9,6 +9,10 @@ props:
     Delay: If "Send on Delay" is true, then the value in the text input will be send after this (ms) delay.
     Send On "Focus Leave": Sends a msg when the text input loses focus. Will only send if the value has changed from the last msg sent
     Send On "Press Enter": Sends a msg when the user presses the enter key. Will always send, even if the value has not changed.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -21,6 +25,10 @@ Adds a single text input row to your dashboard, with a configurable "type" (text
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

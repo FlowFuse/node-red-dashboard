@@ -340,6 +340,7 @@ module.exports = function (RED) {
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
                     widget.props = { ...widget.props, ...state }
+                    widget.state = { ...widget.state, ...state }
                 }
             }
 
@@ -695,11 +696,14 @@ module.exports = function (RED) {
 
             if (widgetNode && widgetConfig) {
                 // default states
-                if (!statestore.getProperty(widgetConfig.id, 'enabled')) {
+                if (statestore.getProperty(widgetConfig.id, 'enabled') === undefined) {
                     statestore.set(n, widgetConfig, null, 'enabled', true)
                 }
-                if (!statestore.getProperty(widgetConfig.id, 'visible')) {
+                if (statestore.getProperty(widgetConfig.id, 'visible') === undefined) {
                     statestore.set(n, widgetConfig, null, 'visible', true)
+                }
+                if (statestore.getProperty(widgetConfig.id, 'class') === undefined) {
+                    statestore.set(n, widgetConfig, null, 'class', '')
                 }
 
                 // build widget object
@@ -712,10 +716,7 @@ module.exports = function (RED) {
                         height: widgetConfig.height || 1,
                         order: widgetConfig.order || 0
                     },
-                    state: {
-                        enabled: statestore.getProperty(widgetConfig.id, 'enabled'),
-                        visible: statestore.getProperty(widgetConfig.id, 'visible')
-                    },
+                    state: statestore.getAll(widgetConfig.id),
                     hooks: widgetEvents,
                     src: uiShared.contribs[widgetConfig.type]
                 }
@@ -823,6 +824,17 @@ module.exports = function (RED) {
                         // pre-process the msg before running our onInput function
                         if (widgetEvents?.beforeSend) {
                             msg = await widgetEvents.beforeSend(msg)
+                        }
+
+                        // standard dynamic property handlers
+                        if (Object.prototype.hasOwnProperty.call(msg, 'enabled')) {
+                            statestore.set(n, widgetNode, msg, 'enabled', msg.enabled)
+                        }
+                        if (Object.prototype.hasOwnProperty.call(msg, 'visible')) {
+                            statestore.set(n, widgetNode, msg, 'visible', msg.visible)
+                        }
+                        if (Object.prototype.hasOwnProperty.call(msg, 'class')) {
+                            statestore.set(n, widgetNode, msg, 'class', msg.class)
                         }
 
                         // run any node-specific handler defined in the Widget's component

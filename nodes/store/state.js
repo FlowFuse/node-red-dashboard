@@ -45,7 +45,11 @@ const getters = {
     },
     // given a widget id, return a specific dynamically set property
     property (id, property) {
-        return state[id] ? state[id][property] : undefined
+        if (Object.prototype.hasOwnProperty.call(state, id)) {
+            return state[id][property]
+        } else {
+            return undefined
+        }
     }
 }
 
