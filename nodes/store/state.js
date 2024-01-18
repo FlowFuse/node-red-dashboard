@@ -16,10 +16,15 @@ function canSaveInStore (base, node, msg) {
 
     if (msg) {
         // core check
-        if (msg._client?.socketId) {
+        if (base.acceptsClientConfig.includes(node.type)) {
             // we are in a node type that allows for definition of specific clients,
-            // and a client has been defined
-            checks.push(false)
+            if (msg._client?.socketId) {
+                // and a client has been defined
+                checks.push(false)
+            } else {
+                // whilst this node does allow for constraints, none were defined in this message
+                checks.push(true)
+            }
         }
         // plugin checks
 

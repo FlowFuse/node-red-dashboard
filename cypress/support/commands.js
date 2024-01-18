@@ -93,3 +93,9 @@ Cypress.Commands.add('clickAndWait', (element, wait) => {
     element.click()
     cy.wait(wait)
 })
+
+Cypress.Commands.add('reloadDashboard', () => {
+    cy.intercept('GET', '/dashboard/_setup').as('setup')
+    cy.reload(true)
+    cy.wait('@setup')
+})

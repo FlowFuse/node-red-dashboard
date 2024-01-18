@@ -47,42 +47,50 @@ module.exports = function (RED) {
                 const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
 
-                if (typeof msg.payload === 'object') {
-                    if (JSON.stringify(msg.payload) === JSON.stringify(on)) {
-                        msg.payload = on
-                    } else if (JSON.stringify(msg.payload) === JSON.stringify(off)) {
-                        msg.payload = off
-                    } else {
-                        // throw Node-RED error
-                        error = 'Invalid payload value'
-                    }
-                } else {
-                    if (msg.payload === true || msg.payload === on) {
-                        msg.payload = on
-                    } else if (msg.payload === false || msg.payload === off) {
-                        msg.payload = off
-                    } else {
-                        // throw Node-RED error
-                        error = 'Invalid payload value'
-                    }
-                }
-                if (!error) {
-                    // store the latest msg passed to node
+                if (msg.payload === undefined) {
+                    // may be setting class dynamically or something else that doesn't require a payload
                     datastore.save(group.getBase(), node, msg)
-
-                    node.status({
-                        fill: (msg.payload === true || msg.payload === on) ? 'green' : 'red',
-                        shape: 'ring',
-                        text: (msg.payload === true || msg.payload === on) ? states[1] : states[0]
-                    })
-
                     if (config.passthru) {
                         send(msg)
                     }
                 } else {
-                    const err = new Error(error)
-                    err.type = 'warn'
-                    throw err
+                    if (typeof msg.payload === 'object') {
+                        if (JSON.stringify(msg.payload) === JSON.stringify(on)) {
+                            msg.payload = on
+                        } else if (JSON.stringify(msg.payload) === JSON.stringify(off)) {
+                            msg.payload = off
+                        } else {
+                            // throw Node-RED error
+                            error = 'Invalid payload value'
+                        }
+                    } else {
+                        if (msg.payload === true || msg.payload === on) {
+                            msg.payload = on
+                        } else if (msg.payload === false || msg.payload === off) {
+                            msg.payload = off
+                        } else {
+                            // throw Node-RED error
+                            error = 'Invalid payload value'
+                        }
+                    }
+                    if (!error) {
+                        // store the latest msg passed to node
+                        datastore.save(group.getBase(), node, msg)
+
+                        node.status({
+                            fill: (msg.payload === true || msg.payload === on) ? 'green' : 'red',
+                            shape: 'ring',
+                            text: (msg.payload === true || msg.payload === on) ? states[1] : states[0]
+                        })
+
+                        if (config.passthru) {
+                            send(msg)
+                        }
+                    } else {
+                        const err = new Error(error)
+                        err.type = 'warn'
+                        throw err
+                    }
                 }
             },
             beforeSend: async function (msg) {

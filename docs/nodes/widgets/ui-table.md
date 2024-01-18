@@ -6,6 +6,10 @@ props:
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control.
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
     Columns: If "Auto Columns" is false, then these columns are used when rendering the table instead.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -33,6 +37,10 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Examples
 
