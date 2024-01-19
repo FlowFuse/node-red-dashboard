@@ -7,6 +7,10 @@ controls:
     enabled:
         example: true | false
         description: Allow control over whether or not the button is clickable.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -19,6 +23,10 @@ Adds a clickable button to your dashboard.
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Controls
 

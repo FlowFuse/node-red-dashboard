@@ -14,6 +14,10 @@ props:
     Two Columns: Will render the form as a two-column layout.
     Reset on Submit: If checked, the form will be reset to an empty state after the form is submitted.
     Topic: Defines how to compute the topic, included in the `msg` object, when the form is submitted.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -26,6 +30,10 @@ Adds a form to user interface which helps to collect multiple value from the use
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

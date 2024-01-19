@@ -1,6 +1,6 @@
 <template>
     <v-radio-group
-        v-model="value" class="nrdb-ui-radio-group"
+        v-model="value" class="nrdb-ui-radio-group" :disabled="!state.enabled"
         :class="'nrdb-ui-radio-group--cols-' + props.columns + ' ' + className"
         :label="label" variant="outlined" hide-details="auto"
     >
@@ -21,7 +21,8 @@ export default {
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     setup (props) {
         useDataTracker(props.id)

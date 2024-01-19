@@ -8,6 +8,10 @@ props:
     Font: If "style" is enabled, this will define the font of the text.
     Text Size: If "style" is enabled, this will define the size of the text.
     Text Color: If "style" is enabled, this will define the color of the text.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -20,6 +24,10 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

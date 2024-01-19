@@ -39,6 +39,13 @@ export function useDataTracker (widgetId, onInput, onLoad) {
                     })
                 }
 
+                if ('class' in msg) {
+                    store.commit('ui/widgetState', {
+                        widgetId,
+                        class: msg.class
+                    })
+                }
+
                 if (onInput) {
                     // sometimes we need to have different behaviour
                     onInput(msg)

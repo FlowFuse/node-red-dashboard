@@ -89,14 +89,11 @@ export default {
             const classes = []
             // ensure each widget has a class for its type
             classes.push(`nrdb-${widget.type}`)
-            // add any class set in the widget's properties
-            const widgetProperties = this.properties[widget.id]
             if (widget.props.className) {
                 classes.push(widget.props.className)
             }
-            // add dynamically set class
-            if (widgetProperties && widgetProperties.class) {
-                classes.push(widgetProperties.class)
+            if (widget.state.class) {
+                classes.push(widget.state.class)
             }
             return classes.join(' ')
         },

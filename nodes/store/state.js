@@ -16,10 +16,15 @@ function canSaveInStore (base, node, msg) {
 
     if (msg) {
         // core check
-        if (msg._client?.socketId) {
+        if (base.acceptsClientConfig.includes(node.type)) {
             // we are in a node type that allows for definition of specific clients,
-            // and a client has been defined
-            checks.push(false)
+            if (msg._client?.socketId) {
+                // and a client has been defined
+                checks.push(false)
+            } else {
+                // whilst this node does allow for constraints, none were defined in this message
+                checks.push(true)
+            }
         }
         // plugin checks
 
@@ -45,7 +50,11 @@ const getters = {
     },
     // given a widget id, return a specific dynamically set property
     property (id, property) {
-        return state[id] ? state[id][property] : undefined
+        if (Object.prototype.hasOwnProperty.call(state, id)) {
+            return state[id][property]
+        } else {
+            return undefined
+        }
     }
 }
 

@@ -121,7 +121,6 @@ const mutations = {
         state.widgets = widgets
     },
     widgetState (state, data) {
-        // TODO: Assumed widget is on the current page
         const wId = data.widgetId
 
         if ('enabled' in data) {
@@ -129,6 +128,9 @@ const mutations = {
         }
         if ('visible' in data) {
             state.widgets[wId].state.visible = data.visible
+        }
+        if ('class' in data) {
+            state.widgets[wId].state.class = data.class
         }
     },
     /**

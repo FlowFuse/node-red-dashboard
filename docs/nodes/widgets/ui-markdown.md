@@ -2,6 +2,10 @@
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Content: The markdown to be passed to the UI and rendered
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -29,6 +33,10 @@ If you're looking for a quick cheat sheet on how to write Markdown, you can chec
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

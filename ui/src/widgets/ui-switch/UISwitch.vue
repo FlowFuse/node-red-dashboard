@@ -1,8 +1,8 @@
 <template>
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
-        <v-switch v-if="!icon" v-model="state" :class="{'active': state}" hide-details="auto" color="primary" @update:model-value="onChange" />
-        <v-btn v-else variant="text" :icon="icon" :color="color" @click="toggle" />
+        <v-switch v-if="!icon" v-model="status" :disabled="!state.enabled" :class="{'active': status}" hide-details="auto" color="primary" @update:model-value="onChange" />
+        <v-btn v-else variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
     </div>
 </template>
 
@@ -15,7 +15,8 @@ export default {
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     setup (props) {
         useDataTracker(props.id)
@@ -24,7 +25,7 @@ export default {
         ...mapState('data', ['messages']),
         icon: function () {
             if (this.props.onicon && this.props.officon) {
-                const icon = this.state ? this.props.onicon : this.props.officon
+                const icon = this.status ? this.props.onicon : this.props.officon
                 return 'mdi-' + icon
             } else {
                 return null
@@ -32,14 +33,14 @@ export default {
         },
         color: function () {
             if (this.props.oncolor || this.props.offcolor) {
-                return this.state ? this.props.oncolor : this.props.offcolor
+                return this.status ? this.props.oncolor : this.props.offcolor
             }
             return null
         },
         value: function () {
             return this.messages[this.id]?.payload
         },
-        state: {
+        status: {
             get () {
                 const val = this.value
                 if (typeof (val) === 'boolean') {
@@ -70,8 +71,8 @@ export default {
             this.$socket.emit('widget-change', this.id, val)
         },
         toggle () {
-            this.state = !this.state
-            this.$socket.emit('widget-change', this.id, this.state)
+            this.status = !this.status
+            this.$socket.emit('widget-change', this.id, this.status)
         }
     }
 }

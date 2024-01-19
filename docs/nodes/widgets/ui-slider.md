@@ -6,6 +6,10 @@ props:
     Thumb Label: If true, will so a label on hte slider's thumb when moved/focussed.
     Range: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
     Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -18,6 +22,10 @@ Adds a slider to your dashboard that will emit values in Node-RED under `msg.pay
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example - Basic
 

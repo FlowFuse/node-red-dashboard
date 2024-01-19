@@ -5,6 +5,10 @@ props:
     Options: A list of the options available in the radio group. Each row defines a `label` (shown alongisde each radio button) and `value` (emitted on selection) property.
     Columns: The number of grid columns within which to render the radio group. This is useful for when you want to render the options horizontally, or if you have many ptions and want to save vertical space.
     Topic: The `msg.topic` that will be included in any emitted values
+dynamic:
+    Class:
+        payload: msg.class
+        structure: ["String"]
 ---
 
 <script setup>
@@ -17,6 +21,10 @@ Adds a Radio Group to your dashboard that will emit values in Node-RED under `ms
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 
