@@ -1,0 +1,937 @@
+[
+    {
+        "id": "node-red-tab-slider",
+        "type": "tab",
+        "label": "UI Buttons",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group-widgets",
+        "type": "ui-group",
+        "name": "Dynamic Classes",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-buttons",
+        "type": "ui-group",
+        "name": "Send msg.class Payloads",
+        "page": "dashboard-ui-page-1",
+        "width": "3",
+        "height": "1",
+        "order": 0,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-button-enabled-test",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Button",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 580,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-switch-enabled-test",
+        "type": "ui-switch",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "label": "UI Switch",
+        "group": "dashboard-ui-group-widgets",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 580,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-button",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-button)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "c05d73f197287bc4"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-switch",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-switch)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 140,
+        "wires": [
+            [
+                "802dea402dd2ef67"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-chart",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-chart)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 180,
+        "wires": [
+            [
+                "c049106debef3e50"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-text-input",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-text-input)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 260,
+        "wires": [
+            [
+                "7c5c1fb6e61debb7"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-table",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-table)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "ba12f80ce718e134"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-text",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-text)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "909b50e2bb08a6be"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-slider",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-slider)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 380,
+        "wires": [
+            [
+                "e1bf48bfaa74e497"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-markdown",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-markdown)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "726d394a5af802d3"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-dropdown",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-dropdown)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "c14a04cb5a878501"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-chart-enabled-test",
+        "type": "ui-chart",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Chart",
+        "order": 9007199254740991,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "time",
+        "yAxisProperty": "",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 580,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-text-enabled-test",
+        "type": "ui-text",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "UI Text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 570,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-table-enabled-test",
+        "type": "ui-table",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "UI Table",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "autocols": true,
+        "columns": [],
+        "x": 580,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-text-input-enabled-test",
+        "type": "ui-text-input",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Text Input",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "mode": "text",
+        "delay": 300,
+        "passthru": true,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "x": 590,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-markdown-enabled-test",
+        "type": "ui-markdown",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "UI Markdown",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "content": "# Markdown Content\n\nGoes here...",
+        "className": "",
+        "x": 600,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-slider-enabled-test",
+        "type": "ui-slider",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Slider",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "thumbLabel": true,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 580,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-dropdown-enabled-test",
+        "type": "ui-dropdown",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Dropdown",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 590,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-radio-group-enabled-test",
+        "type": "ui-radio-group",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "UI Radio Group",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 600,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-trigger-radio-group",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Disabled (ui-radio-group)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"enabled\": false}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "3ea84a845bbf8f75"
+            ]
+        ]
+    },
+    {
+        "id": "c05d73f197287bc4",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 100,
+        "wires": [
+            [
+                "dashboard-ui-button-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "802dea402dd2ef67",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 140,
+        "wires": [
+            [
+                "dashboard-ui-switch-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "c049106debef3e50",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 180,
+        "wires": [
+            [
+                "dashboard-ui-chart-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "ba12f80ce718e134",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 220,
+        "wires": [
+            [
+                "dashboard-ui-table-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "7c5c1fb6e61debb7",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 260,
+        "wires": [
+            [
+                "dashboard-ui-text-input-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "909b50e2bb08a6be",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 300,
+        "wires": [
+            [
+                "dashboard-ui-text-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "726d394a5af802d3",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 340,
+        "wires": [
+            [
+                "dashboard-ui-markdown-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "e1bf48bfaa74e497",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 380,
+        "wires": [
+            [
+                "dashboard-ui-slider-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "c14a04cb5a878501",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 420,
+        "wires": [
+            [
+                "dashboard-ui-dropdown-enabled-test"
+            ]
+        ]
+    },
+    {
+        "id": "3ea84a845bbf8f75",
+        "type": "change",
+        "z": "3069e2ce342ccdc8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "enabled",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 460,
+        "wires": [
+            [
+                "dashboard-ui-radio-group-enabled-test"
+            ]
+        ]
+    }
+]
