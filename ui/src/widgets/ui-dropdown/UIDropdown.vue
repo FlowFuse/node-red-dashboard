@@ -1,6 +1,7 @@
 <template>
     <v-combobox
         v-model="value"
+        :disabled="!state.enabled"
         :class="className"
         :label="props.label"
         :multiple="props.multiple"
@@ -24,7 +25,8 @@ export default {
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
