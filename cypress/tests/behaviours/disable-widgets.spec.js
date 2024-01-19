@@ -57,17 +57,17 @@ describe('Node-RED Dashboard 2.0 - Can enable/disable widgets with msg.enabled f
         cy.get('#nrdb-ui-widget-1ae7b1574d0c8d63').should('have.class', 'test-class')
     })
 
-    it.skip('UI Text Input', () => {
+    it('UI Text Input', () => {
         // Emitting strings
         cy.get('button').contains('Send Disabled (ui-text-input)').click()
 
         // check in our Dashboard that the class has been applied
-        cy.get('#nrdb-ui-widget-9dc05f63a29525f0').should('have.class', 'test-class')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-input-enabled-test').find('.v-input').should('have.class', 'v-input--disabled')
 
         cy.reloadDashboard()
 
         // ensure state is still there and data has persisted
-        cy.get('#nrdb-ui-widget-9dc05f63a29525f0').should('have.class', 'test-class')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-input-enabled-test').find('.v-input').should('have.class', 'v-input--disabled')
     })
 
     it.skip('UI Table', () => {
