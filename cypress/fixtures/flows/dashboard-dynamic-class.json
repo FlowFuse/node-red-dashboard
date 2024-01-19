@@ -658,6 +658,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -685,6 +690,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -712,6 +722,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -739,6 +754,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -766,6 +786,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -793,6 +818,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -820,6 +850,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -847,6 +882,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
@@ -874,6 +914,11 @@
                 "pt": "msg",
                 "to": "test-class",
                 "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
             }
         ],
         "action": "",
