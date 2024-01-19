@@ -36,9 +36,9 @@ describe('Node-RED Dashboard 2.0 - Switches', () => {
 
     it('maintains state on page refresh', () => {
         // set to on
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on'))
         // click the switch directly
-        cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('input').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('input'))
         // should now be off
         cy.checkOutput('msg.payload', 'off')
 
