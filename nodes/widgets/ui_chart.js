@@ -142,6 +142,10 @@ module.exports = function (RED) {
                     // clear history
                     datastore.save(base, node, [])
                 } else {
+                    if (config.action === 'replace') {
+                        // clear our data store as we are replacing data
+                        datastore.save(base, node, [])
+                    }
                     if (!Array.isArray(msg.payload)) {
                         // quick clone of msg, and store in history
                         datastore.append(base, node, {
