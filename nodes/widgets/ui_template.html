@@ -111,7 +111,7 @@
                 head: { value: '' },
                 format: { value: defaultTemplate },
                 storeOutMessages: { value: true },
-                fwdInMessages: { value: true },
+                passthru: { value: true },
                 resendOnRefresh: { value: true },
                 templateScope: { value: 'local' },
                 className: { value: '' }
@@ -155,9 +155,9 @@
                     $('#node-input-storeOutMessages').prop('checked', true)
                 }
 
-                if (typeof this.fwdInMessages === 'undefined') {
-                    this.fwdInMessages = true
-                    $('#node-input-fwdInMessages').prop('checked', true)
+                if (typeof this.passthru === 'undefined') {
+                    this.passthru = true
+                    $('#node-input-passthru').prop('checked', true)
                 }
 
                 if (typeof this.templateScope === 'undefined') {
@@ -375,12 +375,13 @@
     <div class="form-row node-text-editor-row" style="display: block;">
         <div style="height:250px; min-height:100px" class="node-text-editor" id="node-input-format-editor" ></div>
     </div>
-    <!--<div id="template-pass-store">
+    <div id="template-pass-store">
         <div class="form-row" style="margin-bottom:0px;">
-            <input type="checkbox" id="node-input-fwdInMessages" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
-            <label for="node-input-fwdInMessages" style="width:70%;"> <span data-i18n="ui-template.label.pass-through"></span></label>
+            <input type="checkbox" id="node-input-passthru" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
+            <label for="node-input-passthru" style="width:70%;"> <span data-i18n="ui-template.label.pass-through"></span></label>
         </div>
-        <div class="form-row" style="margin-bottom:0px;">
+    </div>
+    <!--<div class="form-row" style="margin-bottom:0px;">
             <input type="checkbox" id="node-input-storeOutMessages" style="display:inline-block; margin-left:8px; width:auto; vertical-align:top;">
             <label for="node-input-storeOutMessages" style="width:70%;"> <span data-i18n="ui-template.label.store-state"></span></label>
         </div>
