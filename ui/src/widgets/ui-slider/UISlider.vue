@@ -2,7 +2,7 @@
 <!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
-        v-model="value" :label="props.label" hide-details="auto"
+        v-model="value" :disabled="!state.enabled" :label="props.label" hide-details="auto"
         :class="className" :thumb-label="props.thumbLabel || false"
         :min="props.min"
         :max="props.max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
@@ -18,7 +18,8 @@ export default {
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     setup (props) {
         useDataTracker(props.id)
