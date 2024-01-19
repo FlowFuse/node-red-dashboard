@@ -1,0 +1,186 @@
+[
+    {
+        "id": "node-red-tab-templates",
+        "type": "tab",
+        "label": "UI Templates",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-button-to-enabled",
+        "type": "ui-button",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button 1",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "payload 1",
+        "payloadType": "str",
+        "topic": "button",
+        "topicType": "str",
+        "x": 100,
+        "y": 60,
+        "wires": [
+            [
+                "dashboard-ui-template-pt-enabled"
+            ]
+        ]
+    },
+    {
+        "id": "test-helper",
+        "type": "function",
+        "z": "node-red-tab-templates",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-to-disabled",
+        "type": "ui-button",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button 2",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "payload 2",
+        "payloadType": "str",
+        "topic": "button",
+        "topicType": "str",
+        "x": 100,
+        "y": 100,
+        "wires": [
+            [
+                "dashboard-ui-template-pt-disabled"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-template-pt-enabled",
+        "type": "ui-template",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "page": "",
+        "ui": "",
+        "name": "Passthru Enabled",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    Passthru Enabled\n</template>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 290,
+        "y": 60,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-template-pt-disabled",
+        "type": "ui-template",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "page": "",
+        "ui": "",
+        "name": "Passthru Disabled",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    Passthru Disabled\n</template>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 290,
+        "y": 100,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    }
+]
