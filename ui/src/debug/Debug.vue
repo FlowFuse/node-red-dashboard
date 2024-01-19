@@ -143,7 +143,7 @@
                                         </v-data-table>
                                     </v-window-item>
                                     <v-window-item value="datastore">
-                                        <debug-data :widget="item.id" store="data" />
+                                        <debug-data :item="item.id" store="data" />
                                     </v-window-item>
                                     <v-window-item value="statestore">
                                         <debug-data :item="item.id" store="state" />
