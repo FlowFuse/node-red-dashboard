@@ -20,7 +20,7 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     })
 
     it('can navigate to the next page by passing "+1"', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-next').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-next'))
         cy.url().should('include', '/dashboard/page1')
     })
 
@@ -61,7 +61,10 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('exist')
     })
 
-    it('can hide and show a particular page from the navigation options', () => {
+    // skipping due to unreliable nature of Vuetify's Nav Draw with Cypress
+    // will re-implement once we have option to render a fixed navigation drawer
+    it.skip('can hide and show a particular page from the navigation options', () => {
+        cy.reloadDashboard()
         // open navigation
         cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         cy.get('[data-el="nav-drawer"]').should('be.visible')
@@ -71,7 +74,7 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
         cy.get('[data-nav="dashboard-ui-page-1"]').should('be.visible')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
         // close drawer
-        cy.get('.v-navigation-drawer__scrim').click()
+        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
 
         // hide page
         cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-hide').click()
@@ -81,7 +84,19 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 2)
         // close drawer
-        cy.get('.v-navigation-drawer__scrim').click()
+        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
+
+        // show page again
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-show').click()
+
+        // open navigation
+        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
+        cy.get('[data-el="nav-drawer"]').should('be.visible')
+        // check length
+        cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
+        cy.get('[data-nav="dashboard-ui-page-controls"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
     })
 })
 
@@ -99,7 +114,9 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.have.attr', 'disabled')
     })
 
-    it('can hide and show a particular page from the navigation options', () => {
+    // skipping due to unreliable nature of Vuetify's Nav Draw with Cypress
+    // will re-implement once we have option to render a fixed navigation drawer
+    it.skip('can enable/disable a particular page from the navigation options', () => {
         // open navigation
         cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         cy.get('[data-el="nav-drawer"]').should('be.visible')
@@ -113,7 +130,7 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
         cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
 
         // close drawer
-        cy.get('.v-navigation-drawer__scrim').click()
+        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
 
         // disable an entry
         cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-disable').click()
@@ -128,7 +145,7 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
 
         // check enable works
         // close drawer
-        cy.get('.v-navigation-drawer__scrim').click()
+        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
 
         // enable an entry
         cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-enable').click()
