@@ -20,6 +20,11 @@ module.exports = function (RED) {
             config.group = ''
         }
 
+        // ensure we have a value for passthru (default to true)
+        if (typeof config.passthru === 'undefined') {
+            config.passthru = true
+        }
+
         // which group are we rendering this widget
         if (config.group) {
             const group = RED.nodes.getNode(config.group)
