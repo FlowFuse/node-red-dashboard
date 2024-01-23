@@ -13,4 +13,15 @@ describe('Node-RED Dashboard 2.0 - Templates', () => {
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-to-disabled'))
         cy.checkOutput('msg.payload', 'payload 1')
     })
+
+    it('permits the sending of a full msg object', () => {
+        cy.clickAndWait(cy.get('[data-action="ui-button-full-msg"]'))
+        cy.checkOutput('msg.payload', 20)
+        cy.checkOutput('msg.topic', 'full-msg')
+    })
+
+    it('permits the sending a payload value and will auto-wrap into a msg structure', () => {
+        cy.clickAndWait(cy.get('[data-action="ui-button-payload-only"]'))
+        cy.checkOutput('msg.payload', 30)
+    })
 })

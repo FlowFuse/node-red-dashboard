@@ -43,7 +43,7 @@ You have access to a number of built-in variables in your `ui-template` node:
 
 We also offer some helper functions for the Node-RED integration too:
 
-- `this.send` - Send a message to the Node-RED flow. Currently limited to sending msg.payload only - [Issue #427](https://github.com/FlowFuse/node-red-dashboard/issues/427)
+- `this.send` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
 - `this.$socket.on('msg-input' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
 
 ### Example (Raw JavaScript)

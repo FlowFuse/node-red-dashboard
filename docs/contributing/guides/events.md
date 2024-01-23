@@ -29,13 +29,68 @@ Sent from UI to NR when the UI/widget is first loaded. Gives a chance for NR to 
 - ID: `<node-id>`
 - Payload: `<value>` - typically the payload data to be sent in the msg
 
-Sent from UI to NR when the value of a widget is changed from the UI, e.g. text input, slider
+Sent from UI to NR when the value of a widget is changed from the UI, e.g. text input, slider. Assumes the value emitted is the `msg.payload`.
+
+This takes hte previously received msg, and merges it with the newly received value, for example if the msg was:
+
+```json
+{
+    "payload": 30,
+    "topic": "on-change"
+}
+```
+
+and the `widget-change` received a new value of `40`, then the newly emitted message would be:
+
+```json
+{
+    "payload": 40,
+    "topic": "on-change"
+}
+```
+
+Any value received here will also be stored against the widget in the datastore.
 
 ### `widget-action`
 - ID: `<node-id>`
 - Payload: `<msg>`
 
-Sent from UI to NR when a widget is actioned, e.g. click of a button or upload of a file
+Sent from UI to NR when a widget is actioned, e.g. click of a button or upload of a file.
+
+### `widget-send`
+- ID: `<node-id>`
+- Payload: `<msg>`
+
+Generally used by `ui-template`. This event is wrapped by the Template's `send(msg)` function which allows users to define their own full `msg` objects to be emitted by a `ui-template` node. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object, e.g:
+
+```js
+send(10)
+```
+
+will result in a `msg` object of:
+
+```json
+{
+    "payload": 10 
+}
+```
+
+Similiarly, is instead an object is specified:
+
+```js
+send({ myVar: 10, topic: "my-topic" })
+```
+
+then the `msg` object will be:
+
+```json
+{
+    "myVar": 10,
+    "topic": "my-topic"
+}
+```
+
+Any `msg` emitted using this fucntion is also stored in the datastore associated with the widget.
 
 ## Event Payloads
 

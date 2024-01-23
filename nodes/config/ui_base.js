@@ -266,6 +266,7 @@ module.exports = function (RED) {
             const socket = uiShared.connections[id]
             if (uiShared.connections[id]._baseId === node.id) {
                 // re establish event handlers
+                socket.on('widget-send', onSend.bind(null, socket))
                 socket.on('widget-action', onAction.bind(null, socket))
                 socket.on('widget-change', onChange.bind(null, socket))
                 socket.on('widget-load', onLoad.bind(null, socket))
@@ -402,6 +403,7 @@ module.exports = function (RED) {
         }
 
         function setupEventHandlers (socket, onConnection) {
+            socket.on('widget-send', onSend.bind(null, socket))
             socket.on('widget-action', onAction.bind(null, socket))
             socket.on('widget-change', onChange.bind(null, socket))
             socket.on('widget-load', onLoad.bind(null, socket))
@@ -560,6 +562,60 @@ module.exports = function (RED) {
                 // but sometimes a node needs to do something specific (e.g. ui-switch)
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
                 await handler(value)
+            } catch (error) {
+                console.log(error)
+                let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
+                errorHandler = errorHandler || (typeof wNode.error === 'function' ? wNode.error : node.error)
+                errorHandler && errorHandler(error)
+            }
+        }
+
+        /**
+         * Handles a widget-send event from the UI
+         * This takes a msg input, and emits it from the relevant node (normally a template node)
+         * also stores in the data store, and does not consider any previously stored messages (unlike widget-change)
+         * @param {Socket} conn - socket.io socket connecting to the server
+         * @param {String} id - widget id sending the action
+         * @param {*} msg - The value to send to node-red. Typically this is the payload
+         * @returns void
+         */
+        async function onSend (conn, id, msg) {
+            // console.log('conn:' + conn.id, 'on:widget-send:' + id, msg)
+
+            // get widget node and configuration
+            const { wNode, widgetEvents } = getWidgetAndConfig(id)
+
+            if (!wNode) {
+                return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
+            }
+
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onSend) {
+                    msg = plugin.hooks.onSend(conn, id, msg)
+                }
+            })
+
+            if (!msg) {
+                // a plugin has made msg blank - meaning that we don't want to send it on
+                return
+            }
+
+            msg = addConnectionCredentials(RED, msg, conn, n)
+
+            async function defaultHandler (value) {
+                if (widgetEvents?.beforeSend) {
+                    msg = await widgetEvents.beforeSend(msg)
+                }
+                datastore.save(n, wNode, msg)
+                wNode.send(msg) // send the msg onwards
+            }
+
+            // wrap execution in a try/catch to ensure we don't crash Node-RED
+            try {
+                // Most of the time, we can just use this default handler,
+                // but sometimes a node needs to do something specific (e.g. ui-switch)
+                const handler = typeof (widgetEvents.onSend) === 'function' ? widgetEvents.onSend : defaultHandler
+                await handler(msg)
             } catch (error) {
                 console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null

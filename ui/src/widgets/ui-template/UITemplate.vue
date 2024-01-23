@@ -211,7 +211,7 @@ export default {
             msg._dashboard = msg._dashboard || {}
             msg._dashboard.sourceId = component.id
             msg._dashboard.templateId = this.id
-            this.$socket.emit('widget-change', this.id, msg) // widget-change will store msg state server-side
+            this.$socket.emit('widget-send', this.id, msg) // widget-change will store msg state server-side
         },
         submit (component, $evt) {
             // extract the form names and values from $evt.target & generate a msg

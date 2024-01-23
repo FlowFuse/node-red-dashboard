@@ -182,5 +182,57 @@
                 "test-helper"
             ]
         ]
+    },
+    {
+        "id": "dashboard-ui-template-payload-only",
+        "type": "ui-template",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "page": "",
+        "ui": "",
+        "name": "Payload Only",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <v-btn data-action=\"ui-button-payload-only\" @click=\"onClick\">Payload Only</v-btn>\n</template>\n\n<script>\n    export default {\n        methods: {\n            onClick: function () {\n                this.send(30)\n            }\n        }\n    }\n</script>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 310,
+        "y": 140,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-template-full-msg",
+        "type": "ui-template",
+        "z": "node-red-tab-templates",
+        "group": "dashboard-ui-group",
+        "page": "",
+        "ui": "",
+        "name": "Full Message",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <v-btn data-action=\"ui-button-full-msg\" @click=\"onClick\">Full Msg</v-btn>\n</template>\n\n<script>\n    export default {\n        methods: {\n            onClick: function () {\n                this.send({payload: 20, topic: 'full-msg'})\n            }\n        }\n    }\n</script>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
     }
 ]
