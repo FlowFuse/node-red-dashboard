@@ -9,11 +9,27 @@
             // colors
             colors: {
                 value: null
+            },
+            // sizes
+            sizes: {
+                value: null
             }
         },
         oneditprepare: function () {
             if (!this.colors) {
                 this.colors = {}
+                // set default values
+                this.colors.surface = '#ffffff'
+                this.colors.primary = '#0094CE'
+                // pages
+                this.colors.bgPage = '#eeeeee'
+                // groups
+                this.colors.groupBg = '#ffffff'
+                this.colors.groupOutline = '#cccccc'
+            }
+
+            if (!this.sizes) {
+                this.sizes = {}
                 // set default values
                 this.colors.surface = '#ffffff'
                 this.colors.primary = '#0094CE'
@@ -62,40 +78,60 @@
         <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Surface</label>
-        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
-        </label>
+    <h3 style="margin: 0; margin-bottom: 3px; border-bottom: 1px solid #eee;">Colors</h3>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> Dashboard</h4>
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Primary</label>
-        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
-        </label>
+    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+        <div>
+            <label>Navigation</label>
+            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
+        <div>
+            <label>Primary</label>
+            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
     </div>
-    <div class="form-row">
-        <h4 style="margin-bottom: 0;">Pages</h4>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> Pages</h4>
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Background</label>
+    <div class="form-row labels-right" style="margin-bottom: 3px;">
+        <label>Background</label>
         <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
             <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
         </label>
     </div>
-    <div class="form-row">
-        <h4 style="margin-bottom: 0;">Groups</h4>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> Groups</h4>
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Background</label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
-        </label>
-    </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Outline</label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
-        </label>
+    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+        <div>
+            <label>Background</label>
+            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
+        <div>
+            <label>Outline</label>
+            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
     </div>
 </script>
+
+<style>
+.labels-right label {
+    text-align: right;
+}
+.labels-right label:first-child {
+    padding-right: 3px;
+}
+.labels-right label:first-child:after {
+    content: ':';
+}
+</style>
