@@ -10,12 +10,11 @@
     grid-template-rows: auto;
 }
 
-.nr-db-layout-group--grid {
+.nrdb-layout-group--grid {
     grid-auto-rows: minmax(var(--widget-row-height), auto);
     padding: 0;
     grid-template-columns: repeat(6, 1fr);
     display: grid;
     flex-wrap: wrap;
-    padding: var(--layout-gap);
-    gap: var(--layout-gap);
+    gap: var(--widget-gap);
 }

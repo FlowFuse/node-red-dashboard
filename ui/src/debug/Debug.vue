@@ -232,7 +232,8 @@ export default {
                 themes: [
                     { title: 'ID', value: 'id' },
                     { title: 'Name', value: 'name' },
-                    { title: 'Colors', value: 'colors' }
+                    { title: 'Colors', value: 'colors' },
+                    { title: 'Sizes', value: 'sizes' }
                 ],
                 pages: [
                     { title: 'ID', value: 'id' },

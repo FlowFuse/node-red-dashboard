@@ -16,6 +16,10 @@
             }
         },
         oneditprepare: function () {
+            function hasProperty (obj, prop) {
+                return !!Object.prototype.hasOwnProperty.call(obj, prop)
+            }
+
             if (!this.colors) {
                 this.colors = {}
                 // set default values
@@ -30,14 +34,16 @@
 
             if (!this.sizes) {
                 this.sizes = {}
-                // set default values
-                this.colors.surface = '#ffffff'
-                this.colors.primary = '#0094CE'
-                // pages
-                this.colors.bgPage = '#eeeeee'
-                // groups
-                this.colors.groupBg = '#ffffff'
-                this.colors.groupOutline = '#cccccc'
+            }
+            // set default values
+            if (!hasProperty(this.sizes, 'pagePadding')) {
+                this.sizes.pagePadding = '12px'
+            }
+            if (!hasProperty(this.sizes, 'groupGap')) {
+                this.sizes.groupGap = '12px'
+            }
+            if (!hasProperty(this.sizes, 'widgetGap')) {
+                this.sizes.widgetGap = '12px'
             }
 
             // loop over keys in this.colors
@@ -46,6 +52,16 @@
                 const value = this.colors[color]
                 // set the value of the input
                 $('#node-config-input-' + color).val(value)
+            })
+
+            // loop over keys in this.sizes
+            Object.keys(this.sizes).forEach((size) => {
+                // get the value of the key
+                let value = this.sizes[size]
+                // value is a number, add `px` to the end
+                value += (parseFloat(value).toString() === value) ? 'px' : ''
+                // set the value of the input
+                $('#node-config-input-' + size).val(value)
             })
 
             // update label b/g to match the colour input values
@@ -66,6 +82,17 @@
                 // set the value of the input
                 this.colors[color] = $('#node-config-input-' + color).val()
             })
+
+            // update our config values from the input values
+            Object.keys(this.sizes).forEach((size) => {
+                // get the value of the key
+                let value = $('#node-config-input-' + size).val()
+                // value is a number, add `px` to the end
+                value += (parseFloat(value).toString() === value) ? 'px' : ''
+
+                // set the value of the input
+                this.sizes[size] = value
+            })
         },
         label: function () {
             return `${this.name}` || 'UI Theme'
@@ -78,7 +105,7 @@
         <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">
     </div>
-    <h3 style="margin: 0; margin-bottom: 3px; border-bottom: 1px solid #eee;">Colors</h3>
+    <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Colors</h3>
     <div class="form-row" style="margin-bottom: 3px;">
         <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> Dashboard</h4>
     </div>
@@ -121,6 +148,19 @@
                 <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
             </label>
         </div>
+    </div>
+    <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Sizings</h3>
+    <div class="form-row">
+        <label for="node-config-input-pagePadding">Page Padding</label>
+        <input type="text" id="node-config-input-pagePadding">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-groupGap">Group Gap</label>
+        <input type="text" id="node-config-input-groupGap">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-widgetGap">Widget Gap</label>
+        <input type="text" id="node-config-input-widgetGap">
     </div>
 </script>
 
