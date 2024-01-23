@@ -38,7 +38,7 @@ export default ({ mode }) => {
       ],
     ],
     themeConfig: {
-      // logo: '/logo.png',
+      logo: '/logo.png',
       nav: [
         { text: 'Docs', link: '/getting-started.html' },
         { text: 'Widgets', link: '/nodes/widgets.html' },
