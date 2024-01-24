@@ -42,6 +42,9 @@
             if (!hasProperty(this.sizes, 'groupGap')) {
                 this.sizes.groupGap = '12px'
             }
+            if (!hasProperty(this.sizes, 'groupBorderRadius')) {
+                this.sizes.groupBorderRadius = '4px'
+            }
             if (!hasProperty(this.sizes, 'widgetGap')) {
                 this.sizes.widgetGap = '12px'
             }
@@ -157,6 +160,10 @@
     <div class="form-row">
         <label for="node-config-input-groupGap">Group Gap</label>
         <input type="text" id="node-config-input-groupGap">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-groupBorderRadius">Group Border Radius</label>
+        <input type="text" id="node-config-input-groupBorderRadius">
     </div>
     <div class="form-row">
         <label for="node-config-input-widgetGap">Widget Gap</label>

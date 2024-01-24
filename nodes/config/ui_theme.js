@@ -23,6 +23,10 @@ module.exports = function (RED) {
             // set defaults at runtime if not set - for backward compatability
             sizes.groupGap = '12px'
         }
+        if (!hasProperty(sizes, 'groupBorderRadius')) {
+            // set defaults at runtime if not set - for backward compatability
+            sizes.groupBorderRadius = '4px'
+        }
         if (!hasProperty(sizes, 'widgetGap')) {
             // set defaults at runtime if not set - for backward compatability
             sizes.widgetGap = '12px'

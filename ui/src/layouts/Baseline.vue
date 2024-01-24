@@ -160,6 +160,7 @@ export default {
 
                 sizes['--page-padding'] = this.theme.sizes.pagePadding
                 sizes['--group-gap'] = this.theme.sizes.groupGap
+                sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
                 sizes['--widget-gap'] = this.theme.sizes.widgetGap
             }
             console.log(sizes)

@@ -111,6 +111,10 @@ main {
     cursor: not-allowed;
 }
 
+.nrdb-ui-group > .v-card {
+    border-radius: var(--group-border-radius)
+}
+
 /**
 * Common Widget Styling
 */  
