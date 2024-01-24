@@ -16,4 +16,4 @@ Each group is rendered within a `ui-page` as part of a [Layout](../../contributi
 
 ## Properties
 
-<PropsTable/>
+<PropsTable :hide-dynamic="true"/>
