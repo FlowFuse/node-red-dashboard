@@ -14,7 +14,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <div class="nr-db-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}px, auto)); `">
+                        <div class="nrdb-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}px, auto)); `">
                             <div
                                 v-for="w in widgetsByGroup(g.id)"
                                 :id="'nrdb-ui-widget-' + w.id"
@@ -127,11 +127,11 @@ export default {
     max-width: var(--layout-card-width);
     min-height: 100%;
     flex-wrap: wrap;
-    padding: var(--layout-gap);
+    padding: var(--page-padding);
 }
 .nrdb-layout--notebook > div {
     width: 100%;
-    margin-bottom: var(--layout-gap);
+    margin-bottom: var(--group-gap);
 }
 
 .v-card {

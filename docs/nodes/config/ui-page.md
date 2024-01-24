@@ -17,4 +17,4 @@ Each page will be rendered in a navigation drawer within the UI, and can be acce
 
 ## Properties
 
-<PropsTable/>
+<PropsTable :hide-dynamic="true"/>

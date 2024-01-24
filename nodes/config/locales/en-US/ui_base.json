@@ -4,6 +4,7 @@
         "label": {
             "category": "dashboard 2",
             "layout": "Layout",
+            "theming": "Theming",
             "settings": "Settings",
             "sidebar": "Sidebar Options",
             "showPath": "Include Page Path in Label"
@@ -14,6 +15,9 @@
             "focus": "Focus",
             "collapse": "Collapse",
             "expand": "Expand"
+        },
+        "themes": {
+            "header": "Themes"
         },
         "colors": {
             "light": "var(--nrdb-node-light)",

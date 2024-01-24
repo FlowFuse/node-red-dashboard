@@ -13,4 +13,4 @@ Some details here about the ui-base config node
 
 ## Properties
 
-<PropsTable/>
+<PropsTable :hide-dynamic="true"/>

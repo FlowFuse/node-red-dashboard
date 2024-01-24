@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nrdb-app nrdb-app--baseline">
+    <v-app class="nrdb-app nrdb-app--baseline" :style="customThemeDefinitions">
         <div v-for="siteTemplate in siteTemplates($route.meta.dashboard)" :key="siteTemplate.id" style="display: none">
             Loaded site template '{{ siteTemplate.id }}'
             <component :is="siteTemplate.component" :id="siteTemplate.id" :props="siteTemplate.props" :state="siteTemplate.state" />
@@ -88,7 +88,8 @@ export default {
     },
     data () {
         return {
-            drawer: false
+            drawer: false,
+            customThemeDefinitions: {}
         }
     },
     computed: {
@@ -98,8 +99,7 @@ export default {
         theme: function () {
             const page = this.pages[this.$route.meta.id]
             if (page) {
-                const theme = this.themes[page?.theme].colors
-                return theme
+                return this.themes[page?.theme]
             } else {
                 return null
             }
@@ -141,20 +141,30 @@ export default {
             })
         },
         updateTheme () {
-            const theme = this.$vuetify.theme.themes.nrdb.colors
+            const colors = this.$vuetify.theme.themes.nrdb.colors // Modify the Vuetify Theming
+            const sizes = this.customThemeDefinitions // Implement some of our own Theming
             if (this.theme) {
+                console.log('this.theme')
+                console.log(this.theme)
                 // convert NR Theming to Vuetify Theming
-                theme.surface = this.theme.surface
+                colors.surface = this.theme.colors.surface
                 // primary bg
-                theme.primary = this.theme.primary
+                colors.primary = this.theme.colors.primary
                 // primary font - auto calculated
-                theme['on-primary'] = getContrast(this.theme.primary)
+                colors['on-primary'] = getContrast(this.theme.colors.primary)
                 // UI Background
-                theme.background = this.theme.bgPage
+                colors.background = this.theme.colors.bgPage
                 // Group Background
-                theme['group-background'] = this.theme.groupBg
-                theme['group-outline'] = this.theme.groupOutline
+                colors['group-background'] = this.theme.colors.groupBg
+                colors['group-outline'] = this.theme.colors.groupOutline
+
+                sizes['--page-padding'] = this.theme.sizes.pagePadding
+                sizes['--group-gap'] = this.theme.sizes.groupGap
+                sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
+                sizes['--widget-gap'] = this.theme.sizes.widgetGap
             }
+            console.log(sizes)
+            console.log(this.customThemeDefinitions)
         },
         getPageLabel (page) {
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')

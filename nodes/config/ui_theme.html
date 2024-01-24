@@ -9,9 +9,17 @@
             // colors
             colors: {
                 value: null
+            },
+            // sizes
+            sizes: {
+                value: null
             }
         },
         oneditprepare: function () {
+            function hasProperty (obj, prop) {
+                return !!Object.prototype.hasOwnProperty.call(obj, prop)
+            }
+
             if (!this.colors) {
                 this.colors = {}
                 // set default values
@@ -24,12 +32,39 @@
                 this.colors.groupOutline = '#cccccc'
             }
 
+            if (!this.sizes) {
+                this.sizes = {}
+            }
+            // set default values
+            if (!hasProperty(this.sizes, 'pagePadding')) {
+                this.sizes.pagePadding = '12px'
+            }
+            if (!hasProperty(this.sizes, 'groupGap')) {
+                this.sizes.groupGap = '12px'
+            }
+            if (!hasProperty(this.sizes, 'groupBorderRadius')) {
+                this.sizes.groupBorderRadius = '4px'
+            }
+            if (!hasProperty(this.sizes, 'widgetGap')) {
+                this.sizes.widgetGap = '12px'
+            }
+
             // loop over keys in this.colors
             Object.keys(this.colors).forEach((color) => {
                 // get the value of the key
                 const value = this.colors[color]
                 // set the value of the input
                 $('#node-config-input-' + color).val(value)
+            })
+
+            // loop over keys in this.sizes
+            Object.keys(this.sizes).forEach((size) => {
+                // get the value of the key
+                let value = this.sizes[size]
+                // value is a number, add `px` to the end
+                value += (parseFloat(value).toString() === value) ? 'px' : ''
+                // set the value of the input
+                $('#node-config-input-' + size).val(value)
             })
 
             // update label b/g to match the colour input values
@@ -50,6 +85,17 @@
                 // set the value of the input
                 this.colors[color] = $('#node-config-input-' + color).val()
             })
+
+            // update our config values from the input values
+            Object.keys(this.sizes).forEach((size) => {
+                // get the value of the key
+                let value = $('#node-config-input-' + size).val()
+                // value is a number, add `px` to the end
+                value += (parseFloat(value).toString() === value) ? 'px' : ''
+
+                // set the value of the input
+                this.sizes[size] = value
+            })
         },
         label: function () {
             return `${this.name}` || 'UI Theme'
@@ -62,40 +108,77 @@
         <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
         <input type="text" id="node-config-input-name">
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Surface</label>
-        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
-        </label>
+    <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Colors</h3>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> Dashboard</h4>
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Primary</label>
-        <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
-        </label>
+    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+        <div>
+            <label>Navigation</label>
+            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
+        <div>
+            <label>Primary</label>
+            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
     </div>
-    <div class="form-row">
-        <h4 style="margin-bottom: 0;">Pages</h4>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> Pages</h4>
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Background</label>
+    <div class="form-row labels-right" style="margin-bottom: 3px;">
+        <label>Background</label>
         <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
             <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
         </label>
     </div>
+    <div class="form-row" style="margin-bottom: 3px;">
+        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> Groups</h4>
+    </div>
+    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+        <div>
+            <label>Background</label>
+            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
+        <div>
+            <label>Outline</label>
+            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
+            </label>
+        </div>
+    </div>
+    <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Sizings</h3>
     <div class="form-row">
-        <h4 style="margin-bottom: 0;">Groups</h4>
+        <label for="node-config-input-pagePadding">Page Padding</label>
+        <input type="text" id="node-config-input-pagePadding">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Background</label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
-        </label>
+        <label for="node-config-input-groupGap">Group Gap</label>
+        <input type="text" id="node-config-input-groupGap">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-bookmark"></i> Outline</label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
-        </label>
+        <label for="node-config-input-groupBorderRadius">Group Border Radius</label>
+        <input type="text" id="node-config-input-groupBorderRadius">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-widgetGap">Widget Gap</label>
+        <input type="text" id="node-config-input-widgetGap">
     </div>
 </script>
+
+<style>
+.labels-right label {
+    text-align: right;
+}
+.labels-right label:first-child {
+    padding-right: 3px;
+}
+.labels-right label:first-child:after {
+    content: ':';
+}
+</style>
