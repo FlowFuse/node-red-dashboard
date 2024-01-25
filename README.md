@@ -40,7 +40,7 @@ No dashboard is complete without data visualisation. Node-RED Dashboard 2.0 prov
 
 ### Flexible Customisation
 
-<img width="600" alt="Example of a custom data table in Dashboard 2.0" src="https://dashboard.flowfuse.com/images/template-examples/custom-data-table.png">
+<img width="600" alt="Example of a dashboard using custom templates to render a to-do list" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/10d2b81b-8dfe-4597-84c8-03c1776287d5">
 
 As with Dashboard 1.0, the new Dashboard 2.0, comes with a `ui-template` node which allows you define your own custom widgets and styling. 
 
