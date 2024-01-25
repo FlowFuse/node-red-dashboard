@@ -42,7 +42,7 @@ No dashboard is complete without data visualisation. Node-RED Dashboard 2.0 prov
 
 <img width="600" alt="Example of a dashboard using custom templates to render a to-do list" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/10d2b81b-8dfe-4597-84c8-03c1776287d5">
 
-As with Dashboard 1.0, the new Dashboard 2.0, comes with a `ui-template` node which allows you define your own custom widgets and styling. 
+As with Dashboard 1.0, the new Dashboard 2.0, comes with a `ui-template` node which allows you to define your own custom widgets and styling. 
 
 It provides a framework with which you can write raw HTML/JavaScript, define an entire Vue component to render something truly unique and interactive, and override _any_ of the styling of the dashboard using your own custom CSS declarations.
 
