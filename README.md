@@ -66,7 +66,7 @@ We strongly believe in the power of community. If you have suggestions, feedback
 
 ### Roadmap
 
-We are constantly reviewing the priority of our backlog, and have multuple public project management boards where you can keep an eye on what we're working on, and what's coming up next:
+We are constantly reviewing the priority of our backlog, and have multiple public project management boards where you can keep an eye on what we're working on, and what's coming up next:
 
 - [Activity Tracker](https://github.com/orgs/FlowFuse/projects/15/views/1): See what's being actively worked on, what's up next, and if there are any "Blocked" items you could help with.
 - [Dashboard 1.0 Feature Parity](https://github.com/orgs/FlowFuse/projects/15/views/5): We haven't quite yet achieved 100% feature parity with the original Node-RED Dashboard, and this board tracks the progress and priority of those features.
