@@ -83,13 +83,15 @@
                 page: {
                     type: 'ui-page',
                     validate: function () {
-                        return (this.templateScope === 'widget:page' && !!this.page) || (this.templateScope !== 'widget:page')
+                        const valid = (this.templateScope === 'widget:page' && !!this.page) || (this.templateScope !== 'widget:page')
+                        return valid
                     }
                 }, // for when template is scoped to 'page'
                 ui: {
                     type: 'ui-base',
                     validate: function () {
-                        return (this.templateScope === 'widget:ui' && !!this.ui) || (this.templateScope !== 'widget:ui')
+                        const valid = (this.templateScope === 'widget:ui' && !!this.ui) || (this.templateScope !== 'widget:ui')
+                        return valid
                     }
                 }, // for when template is scoped to 'site'
                 name: { value: '' },
@@ -167,44 +169,34 @@
                 }
 
                 $templateScope.on('change', function () {
-                    that._def.defaults.group.required = false
-                    that._def.defaults.page.required = false
-                    that._def.defaults.ui.required = false
                     $('#template-row-group, #template-row-page, #template-row-ui, #template-row-class').hide()
                     switch ($templateScope.val()) {
                     case 'site:style':
                         $('#template-row-ui').show()
-                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/css')
                         break
                     case 'page:style':
                         $('#template-row-page').show()
-                        that._def.defaults.page.required = true
                         that.editor.getSession().setMode('ace/mode/css')
                         break
                     case 'site:script':
                         $('#template-row-ui').show()
-                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/javascript')
                         break
                     case 'page:script':
                         $('#template-row-page').show()
-                        that._def.defaults.page.required = true
                         that.editor.getSession().setMode('ace/mode/javascript')
                         break
                     case 'widget:ui':
                         $('#template-row-ui').show()
-                        that._def.defaults.ui.required = true
                         that.editor.getSession().setMode('ace/mode/html')
                         break
                     case 'widget:page':
                         $('#template-row-page').show()
-                        that._def.defaults.page.required = true
                         that.editor.getSession().setMode('ace/mode/html')
                         break
                     default:
                         $('#template-row-group, #template-row-class').show()
-                        that._def.defaults.group.required = true
                         that.editor.getSession().setMode('ace/mode/html')
                         break
                     }
