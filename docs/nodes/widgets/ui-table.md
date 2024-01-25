@@ -49,3 +49,7 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 
 ![Example of a Paginated Table](/images/node-examples/ui-table-pagination.png "Example of a Paginated Table"){data-zoomable}
 *Example of a paginated table which has 10 rows of data, but with "Max Rows" set to 5.*
+
+## Custom Styling & Content
+
+If you're looking to add more customisation to how your data is rendered, you can do so by building your own data table inside a `ui-template`. Check out [this example](../../user/template-examples.md#custom-tables) for more details.

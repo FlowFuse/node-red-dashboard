@@ -60,7 +60,8 @@ export default ({ mode }) => {
           items: [
             { text: 'Settings', link: '/user/settings' },
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' },
-            { text: 'Migration Guide', link: '/user/migration' }
+            { text: 'Migration Guide', link: '/user/migration' },
+            { text: 'UI Template Examples', link: '/user/template-examples' }
           ]
         },
         {

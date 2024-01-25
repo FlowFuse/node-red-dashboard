@@ -734,7 +734,6 @@
     }
 
     function buildThemesEditor (parent) {
-        console.log('BUILD THEMES EDITOR')
         // layout/order editor
         const divTabs = $('.nrdb2-themes-editor').length ? $('.nrdb2-themes-editor') : $('<div>', { class: 'nrdb2-themes-editor nrdb2-sidebar-tab-content' }).appendTo(parent)
 
@@ -758,8 +757,6 @@
             addButton: false,
             addItem: function (container, i, theme) {
                 container.addClass('nrdb2-sb-pages-list-item')
-
-                console.log(theme)
 
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-themes-list-header' }).appendTo(container)
                 const tabicon = 'fa-paint-brush'
