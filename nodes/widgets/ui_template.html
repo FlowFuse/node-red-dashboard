@@ -76,7 +76,8 @@
                 group: {
                     type: 'ui-group',
                     validate: function () {
-                        return (this.templateScope === 'local' && !!this.group) || (this.templateScope !== 'local')
+                        const valid = (this.templateScope === 'local' && !!this.group) || (this.templateScope !== 'local')
+                        return valid
                     }
                 }, // for when template is scoped to 'local' (default)
                 page: {

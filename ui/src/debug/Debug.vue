@@ -250,6 +250,8 @@ export default {
                 ],
                 widgets: [
                     { title: 'ID', value: 'id' },
+                    { title: 'Name', value: 'props.name' },
+                    { title: 'Label', value: 'props.label' },
                     { title: 'Type', value: 'type' },
                     { title: 'Size', value: 'size' }
                 ]
