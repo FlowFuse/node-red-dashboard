@@ -25,14 +25,14 @@ features:
     linkText: View Available Widgets
   - icon:
       src: /nodes.svg
-    title: Connect to Anything
-    details: As a plugin for Node-RED, you have the vast collection of 4,000+ nodes at your disposal to easily integrate your Dashboard with APIs, Hardware and more.
-    link: https://flows.nodered.org/search?type=node
-    linkText: View Full List of Node-RED Integrations
+    title: Build Multi-User Dashboards!
+    details: Provide unique data to each user, build admin-only views, and track user activity with the FlowFuse User Addon.
+    link: https://flowfuse.com/blog/2024/01/dashboard-2-multi-user/
+    linkText: Read More
   - icon:
       src: /newspaper.svg
     title: "Latest Blog Post"
-    link: https://flowfuse.com/blog/2023/11/dashboard-0-8-0/
+    link: https://flowfuse.com/blog/2023/12/dashboard-0-10-0/
     linkText: View Blog Post
-    details: Checkout our latest blog post - "Overhauling the Dashboard 2.0 Build Pipeline"
+    details: Checkout our latest blog post - "Building a Custom Video Player"
 ---
