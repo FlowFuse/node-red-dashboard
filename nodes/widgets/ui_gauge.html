@@ -1,0 +1,259 @@
+<style>
+    input.gauge-color {
+        width: 100px;
+        text-align: center;
+    }
+    input.gauge-color::-webkit-color-swatch {
+        border: none;
+    }
+</style>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ui-gauge', {
+        category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+        color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
+        defaults: {
+            name: { value: '' },
+            group: { type: 'ui-group', required: true },
+            order: { value: 0 },
+            width: {
+                value: 0,
+                validate: function (v) {
+                    const width = v || 0
+                    const currentGroup = $('#node-input-group').val() || this.group
+                    const groupNode = RED.nodes.node(currentGroup)
+                    const valid = !groupNode || +width <= +groupNode.width
+                    $('#node-input-size').toggleClass('input-error', !valid)
+                    return valid
+                }
+            },
+            height: { value: 0 },
+            gtype: { value: 'circular' },
+            title: { value: 'gauge' },
+            label: { value: 'units' },
+            format: { value: '{{value}}' },
+            segments: {
+                value: [{
+                    color: '#00B500',
+                    from: 0
+                }, {
+                    color: '#E6E600',
+                    from: 4
+                }, {
+                    color: '#CA3838',
+                    from: 7
+                }]
+            },
+            angle: { value: 360 },
+            min: { value: 0, required: true, validate: RED.validators.number() },
+            max: { value: 10, required: true, validate: RED.validators.number() },
+            className: { value: '' }
+        },
+        inputs: 1,
+        outputs: 0,
+        inputLabels: function () { return this.min + ' - ' + this.max },
+        align: 'right',
+        icon: 'ui_gauge.png',
+        paletteLabel: 'gauge',
+        label: function () { return this.name || (~this.title.indexOf('{{') ? null : this.title) || ((this.gtype === 'gage') ? 'gauge' : this.gtype) || 'gauge' },
+        labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+        oneditprepare: function () {
+            // check for duplicate values
+            const unique = new Set(this.segments.map(function (o) { return o.from }))
+            if (this.segments.length === unique.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
+
+            function generateSegment (i, segment) {
+                const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                const row = $('<div/>').appendTo(container)
+                $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-segment-handle fa fa-bars"></i>').appendTo(row)
+
+                $('<input/>', { class: 'node-input-segment-color', type: 'color', style: 'margin-left:7px; width: 50px;', placeholder: 'Color', value: segment.color }).appendTo(row)
+                $('<input/>', { class: 'node-input-segment-from', type: 'text', style: 'margin-left:7px; width:calc(100% - 175px);', placeholder: 'From', value: segment.from }).appendTo(row)
+
+                const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
+                const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
+                $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
+
+                deleteButton.click(function () {
+                    container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                    container.fadeOut(300, function () {
+                        $(this).remove()
+                    })
+                })
+
+                $('#node-input-segments-container').append(container)
+            }
+
+            $('#node-input-add-segment').click(function () {
+                generateSegment($('#node-input-segments-container').children().length + 1, {})
+                $('#node-input-segments-container-div').scrollTop($('#node-input-segments-container-div').get(0).scrollHeight)
+            })
+
+            $('#node-input-segments-container').sortable({
+                axis: 'y',
+                handle: '.node-input-option-handle',
+                cursor: 'move'
+            })
+
+            for (let i = 0; i < this.segments.length; i++) {
+                const segment = this.segments[i]
+                console.log(segment)
+                generateSegment(i + 1, segment)
+            }
+            // const setColour = function (id, value) {
+            //     $(id).val(value)
+            //     $(id).css('background-color', value)
+            //     const rgb = tinycolor(value).toRgb()
+            //     const level = ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000
+            //     const textColor = (level >= 128) ? '#111111' : '#eeeeee'
+            //     $(id).css('color', textColor)
+            // }
+
+            // $('.gauge-color').on('change', function () {
+            //     setColour('#' + $(this).attr('id'), $(this).val())
+            // })
+
+            // const defaultColors = ['#00B500', '#E6E600', '#CA3838']
+
+            // if (this.colors) {
+            //     for (let i = 0; i < this.colors.length; i++) {
+            //         const value = this.colors[i] || defaultColors[i]
+            //         setColour('#node-input-color' + (i + 1), value)
+            //     }
+            // } else {
+            //     for (let j = 0; j < defaultColors.length; j++) {
+            //         setColour('#node-input-color' + (j + 1), defaultColors[j])
+            //     }
+            // }
+            // if (this.gtype === undefined) {
+            //     this.gtype = 'gage'
+            //     $('#node-input-gtype').val('gage')
+            // }
+            // $('#node-input-size').elementSizer({
+            //     width: '#node-input-width',
+            //     height: '#node-input-height',
+            //     group: '#node-input-group'
+            // })
+            // $('#node-input-gtype').on('change', function () {
+            //     if (($(this).val() === 'compass') || ($(this).val() === 'wave')) {
+            //         $('#ui-gauge-colours').hide()
+            //         $('#ui-gauge-segments').hide()
+            //     } else {
+            //         $('#ui-gauge-colours').show()
+            //         $('#ui-gauge-segments').show()
+            //     }
+            //     if ($(this).val() === 'gage') {
+            //         $('#ui-gauge-diff').show()
+            //     } else { $('#ui-gauge-diff').hide() }
+            // })
+            // $('#node-input-min').on('change', function () {
+            //     $('#seg-min').text($(this).val())
+            // })
+            // $('#node-input-max').on('change', function () {
+            //     $('#seg-max').text($(this).val())
+            // })
+        },
+        oneditsave: function () {
+            const segments = $('#node-input-segments-container').children()
+
+            const node = this
+            node.segments = []
+            segments.each(function (i) {
+                const segment = $(this)
+                const s = {
+                    from: segment.find('.node-input-segment-from').val(),
+                    color: segment.find('.node-input-segment-color').val()
+                }
+                node.segments.push(s)
+            })
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="ui-gauge">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> Size</label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-gtype"><i class="fa fa-list"></i> Type</label>
+        <select id="node-input-gtype" style="width:150px">
+            <segment value="gauge">Gauge</segment>
+            <segment value="donut">Donut</segment>
+            <segment value="compass">Compass</segment>
+            <segment value="wave">Level</segment>
+        </select>
+    </div>
+    <div id="ui-gauge-labels">
+        <div class="form-row">
+            <label for="node-input-title"><i class="fa fa-i-cursor"></i> Label</label>
+            <input type="text" id="node-input-title">
+        </div>
+        <div class="form-row" id="ui-gauge-format">
+            <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
+            <input type="text" id="node-input-format" placeholder="{{value}}">
+        </div>
+        <div class="form-row" id="ui-gauge-units">
+            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Units</label>
+            <input type="text" id="node-input-label" placeholder="segmental sub-label">
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-min">Range</label>
+        <span for="node-input-min">min</span>
+        <input type="text" id="node-input-min" style="width:80px">
+        <span for="node-input-max" style="margin-left:20px;">max</span>
+        <input type="text" id="node-input-max" style="width:80px">
+    </div>
+    <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Segments</label>
+        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
+            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b>All "from" values must be unique.</b></span>
+            <ol id="node-input-segments-container" style="list-style-type:none; margin:0;"></ol>
+        </div>
+        <!-- <a
+            data-html="true"
+            title="Dynamic Property: Send 'msg.segments' in order to override this property."
+            class="red-ui-button ui-node-popover-title"
+            style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+            <i style="font-family: ui-serif;">fx</i>
+        </a> -->
+    </div>
+    <div class="form-row">
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>segment</span></a>
+    </div>
+    <!-- <div class="form-row" id="ui-gauge-colours">
+        <label for="node-input-color1">Colour gradient</label>
+        <input type="color" id="node-input-color1" class="gauge-color" style="width:100px;"/>
+        <input type="color" id="node-input-color2" class="gauge-color" style="width:100px;"/>
+        <input type="color" id="node-input-color3" class="gauge-color" style="width:100px;"/>
+    </div>
+    <div class="form-row" id="ui-gauge-segments">
+        <label>Sectors</label>
+        <span id="seg-min" style="display:inline-block; width:40px;">0</span>...
+        <input type="text" id="node-input-seg1" style="text-align:center; width:87px;" placeholder="segmental"> ...
+        <input type="text" id="node-input-seg2" style="text-align:center; width:87px;" placeholder="segmental"> ...
+        <span id="seg-max" style="display:inline-block; width:40px; text-align:right">10</span>
+    </div> -->
+    <!-- <div class="form-row" id="ui-gauge-diff">
+        <label></label> Fill gauge from centre.
+        <input type="checkbox" id="node-input-diff" style="display:inline-block; width:auto; vertical-align:top;">
+    </div> -->
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
+        <input type="text" id="node-input-className" placeholder="segmental CSS class name(s) for widget"/>
+    </div>
+</script>

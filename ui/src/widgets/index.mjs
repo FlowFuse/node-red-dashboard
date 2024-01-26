@@ -4,6 +4,7 @@ import UIControl from './ui-control/UIControl.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
 import UIEvent from './ui-event/UIEvent.vue'
 import UIForm from './ui-form/UIForm.vue'
+import UIGauge from './ui-gauge/UIGauge.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
@@ -22,6 +23,7 @@ export {
     UIDropdown,
     UIEvent,
     UIForm,
+    UIGauge,
     UIMarkdown,
     UINotification,
     UIRadioGroup,
@@ -44,6 +46,7 @@ export default {
     'ui-dropdown': UIDropdown,
     'ui-event': UIEvent,
     'ui-form': UIForm,
+    'ui-gauge': UIGauge,
     'ui-markdown': UIMarkdown,
     'ui-notification': UINotification,
     'ui-radio-group': UIRadioGroup,
