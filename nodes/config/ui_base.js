@@ -386,6 +386,9 @@ module.exports = function (RED) {
                 socket.removeAllListeners('widget-load')
             } catch (_error) { /* do nothing */ }
             try {
+                socket.removeAllListeners('widget-send')
+            } catch (_error) { /* do nothing */ }
+            try {
                 socket.removeAllListeners('disconnect')
             } catch (_error) { /* do nothing */ }
 
