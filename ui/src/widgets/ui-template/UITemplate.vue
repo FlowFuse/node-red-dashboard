@@ -174,21 +174,13 @@ export default {
                 }
             },
             mounted () {
-                // if we have an onInput event handler, setup a subscription on SocketIO to ensure we catch the events
-                if (this.props.onInput) {
-                    // eslint-disable-next-line no-eval
-                    eval(`this.$socket.on('msg-input:${this.id}', ${this.props.onInput})`)
-                }
                 if (component?.mounted) {
                     component.mounted.call(this)
                 }
             },
             unmounted () {
-                // if we have an onInput event handler, remove the subscription on SocketIO
-                if (this.props.onInput) {
-                    // eslint-disable-next-line no-eval
-                    this.$socket.off(`msg-input:${this.id}`)
-                }
+                // eslint-disable-next-line no-eval
+                this.$socket.off(`msg-input:${this.id}`)
                 if (component?.unmounted) {
                     component.unmounted.call(this)
                 }
