@@ -28,3 +28,9 @@ If you want to have the notification show indefinitely, you can set `timeout` to
 
 ![Example of rendered Notification](/images/node-examples/ui-notification.png "Example of rendered Notification"){data-zoomable}
 *Example of rendered Notification in a Dashboard with a progress bar showing how long left until it will automatically close.*
+
+This notification was created using a `msg.payload` of:
+
+```html
+<h3>Generated Notification</h3><p>This is custom HTML injected into <b>Node-RED</b></p>
+```
