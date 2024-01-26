@@ -10,6 +10,10 @@ module.exports = function (RED) {
             onChange: true
         }
 
+        config.segments.forEach(segment => {
+            segment.from = Number(segment.from)
+        })
+
         // inform the dashboard UI that we are adding this node
         group.register(node, config, evts)
     }

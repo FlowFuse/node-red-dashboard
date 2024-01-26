@@ -44,7 +44,7 @@
                     from: 7
                 }]
             },
-            angle: { value: 360 },
+            angle: { value: 180 },
             min: { value: 0, required: true, validate: RED.validators.number() },
             max: { value: 10, required: true, validate: RED.validators.number() },
             className: { value: '' }
@@ -210,6 +210,10 @@
             <label for="node-input-label"><i class="fa fa-i-cursor"></i> Units</label>
             <input type="text" id="node-input-label" placeholder="segmental sub-label">
         </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-angle"><i class="fa fa-i-cursor"></i> Angle</label>
+        <input type="text" id="node-input-angle">
     </div>
     <div class="form-row">
         <label for="node-input-min">Range</label>
