@@ -32,7 +32,7 @@ features:
   - icon:
       src: /newspaper.svg
     title: "Latest Blog Post"
-    link: https://flowfuse.com/blog/2023/12/dashboard-0-10-0/
+    link: https://flowfuse.com/blog/2024/01/dashboard-2-ga/
     linkText: View Blog Post
-    details: Checkout our latest blog post - "Building a Custom Video Player"
+    details: Announcing the first stable release for Dashboard 2.0
 ---
