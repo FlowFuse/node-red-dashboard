@@ -1,6 +1,31 @@
 {
     "ui-chart": {
         "label": {
+            "line": "Line",
+            "bar": "Bar",
+            "scatter": "Scatter",
+            "circle": "Circle",
+            "cross": "Cross",
+            "crossRotated": "Cross Rotated",
+            "dash": "Dash",
+            "line2": "Line",
+            "rectangle": "Rectangle",
+            "roundedRectangle": "Rounded Rectangle",
+            "rotatedRectangle": "Rotated Rectangle",
+            "star": "Star",
+            "triangle": "Triangle",
+            "none": "None",
+            "timescale": "Timescale",
+            "linear": "Linear",
+            "categorical": "Categorical",
+            "group": "Group",
+            "size": "Size",
+            "label": "Label",
+            "optionalChartTitle": "optional chart title",
+            "class": "Class",
+            "optionalCssClassNames": "Optional CSS class name(s)",
+            "type": "Type",
+            "showLegend": "Show Legend",
             "seriesColors": "Series Colors",
             "seconds": "Seconds",
             "minutes": "Minutes",
@@ -15,6 +40,8 @@
             "yAxis": "Y-Axis",
             "min": "min.",
             "max": "max.",
+            "properties": "Properties",
+            "series": "Series:",
             "pointStyle": "Point Style",
             "pointShape": "Shape",
             "pointRadius": "Radius (px)",
@@ -23,4 +50,4 @@
             "replace": "Replace"
         }
     }
-  }
+}

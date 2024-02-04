@@ -117,9 +117,9 @@
                     types: [{
                         value: 'line',
                         options: [
-                            { value: 'line', label: 'Line' },
-                            { value: 'bar', label: 'Bar' },
-                            { value: 'scatter', label: 'Scatter' }
+                            { value: 'line', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.line') },
+                            { value: 'bar', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.bar') },
+                            { value: 'scatter', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.scatter') }
                         ]
                     }],
                     typeField: '#node-input-chartTypeType'
@@ -155,22 +155,21 @@
                     types: [{
                         value: 'circle',
                         options: [
-                            { value: 'circle', label: 'Circle' },
-                            { value: 'cross', label: 'Cross' },
-                            { value: 'crossRot', label: 'Cross Rotated' },
-                            { value: 'crossRot', label: 'Cross Rotated' },
-                            { value: 'dash', label: 'Dash' },
-                            { value: 'line', label: 'Line' },
-                            { value: 'rect', label: 'Rectangle' },
-                            { value: 'rectRounded', label: 'Rounded Rectangle' },
-                            { value: 'rectRot', label: 'Rotated Rectangle' },
-                            { value: 'star', label: 'Star' },
-                            { value: 'triangle', label: 'Triangle' },
-                            { value: false, label: 'None' }
+                            { value: 'circle', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.circle') },
+                            { value: 'cross', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cross') },
+                            { value: 'crossRot', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.crossRotated') },
+                            { value: 'dash', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dash') },
+                            { value: 'line', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.line2') },
+                            { value: 'rect', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.rectangle') },
+                            { value: 'rectRounded', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.roundedRectangle') },
+                            { value: 'rectRot', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.rotatedRectangle') },
+                            { value: 'star', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.star') },
+                            { value: 'triangle', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.triangle') },
+                            { value: false, label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none') }
                         ]
                     }]
                 })
-    
+
                 // handle event when chart's type is changed
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $('#node-input-chartType').typedInput('value')
@@ -181,8 +180,8 @@
                         $('#node-input-xAxisType').typedInput('types', [{
                             value: 'linear',
                             options: [
-                                { value: 'time', label: 'Timescale' },
-                                { value: 'linear', label: 'Linear' }
+                                { value: 'time', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
+                                { value: 'linear', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') }
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'time')
@@ -197,7 +196,7 @@
                         $('#node-input-xAxisType').typedInput('types', [{
                             value: 'linear',
                             options: [
-                                { value: 'category', label: 'Categorical' }
+                                { value: 'category', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'category')
@@ -208,7 +207,7 @@
                         $('#point-radius-show').hide()
                     }
                 })
-    
+
                 // handle event when chart's type is changed
                 $('#node-input-category').change((evt) => {
                     const categoryType = $('#node-input-categoryType').val()
@@ -262,23 +261,23 @@
 
 <script type="text/html" data-template-name="ui-chart">
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-chart.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-chart.label.size"></span></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-chart.label.label"></span></label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-chart.label.optionalChartTitle">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-chart.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-chart.label.optionalCssClassNames" style="flex-grow: 1;">
             <a
                 data-html="true"
                 title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
@@ -290,12 +289,12 @@
     </div>
     <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
         <div>
-            <label for="node-input-chartType"><i class="fa fa-bookmark"></i> Type</label>
+            <label for="node-input-chartType"><i class="fa fa-bookmark"></i> <span data-i18n="ui-chart.label.type"></span></label>
             <input type="text" id="node-input-chartType">
             <input type="hidden" id="node-input-chartTypeType">
         </div>
         <div>
-            <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> Show Legend </label>
+            <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> <span data-i18n="ui-chart.label.showLegend"></span></label>
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
     </div>
@@ -346,10 +345,10 @@
         <input type="text" id="node-input-ymax" style="width:92px">
     </div>
     <div class="form-row">
-        <label>Properties</label>
+        <label data-i18n="ui-chart.label.properties"></label>
         <div id="node-container-axisKeys" class="node-chart-properties">
             <div id="node-container-category" class="node-chart-property">
-                <label style="width: auto" for="node-input-category">Series:</label>
+                <label style="width: auto" for="node-input-category" data-i18n="ui-chart.label.series"></label>
                 <input style="flex-grow: 1" type="text" id="node-input-category" placeholder="topic">
                 <input type="hidden" id="node-input-categoryType">
             </div>
