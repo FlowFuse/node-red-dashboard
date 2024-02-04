@@ -1,0 +1,36 @@
+<script type="text/html" data-help-name="ui-chart">
+    <h3>プロパティ</h3>
+    <dl class="message-properties">
+        <dt>ラベル <span class="property-type">文字列</span></dt>
+        <dd>ダッシュボード上に描画されたグラフに表示されるテキスト。</dd>
+        <dt>種類 <span class="property-type">折れ線グラフ | 棒グラフ | 散布図</span></dt>
+        <dd>データを描画するグラフの種類を選択します。グラフの種類ごとに受け付けるデータの構造が異なることに注意。</dd>
+        <dt>凡例を表示 <span class="property-type">真偽値</span></dt>
+        <dd>タイトルとグラフの間に凡例を表示するか否かを設定します。凡例のそれぞれの名前は <code>msg.topic</code> の文字列が使われます。</dd>
+        <dt>動作 <span class="property-type">追加 | 置換</span></dt>
+        <dd>新規のデータをグラフに追加する方法を設定します。「追加」を選択すると、既存のデータが保持されます。「置換」を選択すると、全ての既存データが削除されます。</dd>
+        <dt>X-軸の種類 <span class="property-type">数値軸 | 分類軸 | 時間軸</span></dt>
+        <dd>本オプションでは、グラフのX-軸に描画する軸の種類をカスタマイズできます。</dd>
+        <dt>プロパティ <span class="property-type">文字列</span></dt>
+        <dd>
+            <p><b>系列:</b> 本ウィジェットで用いるデータの系列を設定します。デフォルトは <code>msg.topic</code> であり、各トピックはそれぞれ新規に線や棒を描画します。単一のmsgオブジェクトから複数のデータを表示するためのJSON配列を渡すこともできます。</p>
+            <p><b>X:</b> 折れ線グラフと散布図のみで利用できます。ここには、X-軸に出力する値のキー(ネスト可能)を定義します。もし入力しないままにすると、X-軸は現在時刻が用いられます。</p>
+            <p><b>Y:</b> X-軸に出力する値のキー(<code>'nested.value'</code> の様にネスト可能)を定義します。グラフに表示する値が単一の数値の場合、この値は無視されます。</p>
+        </dd>
+    </dl>
+    <h3>入力</h3>
+    <p>Chartノードには、様々な形式のデータを渡すことができます。これらは「X-軸の種類」(例えば、数値軸、分類軸、時間軸)によって変化します。</p>
+    <dl class="message-properties">
+        <dt>数値 <span class="property-type">数値軸 | 分類軸 | 時間軸</span></dt>
+        <dd><pre>msg.payload = 5</pre>入力があった現在時刻をX-軸として、単一の値をY-軸へ出力します。</dd>
+        <dt>系列 <span class="property-type">数値軸 | 分類軸 | 時間軸</span></dt>
+        <dd><pre>msg.topic = '系列1'</pre>入力メッセージ毎に、異なる <code>msg.topic</code> の値を用いることで、複数の系列を同じグラフに表示できます。</dd>
+        <dt>オブジェクト <span class="property-type">数値軸</span></dt>
+        <dd><pre>msg.payload = {x: 10, y: 15}</pre>このデータ型は「折れ線グラフ」や「散布図」の数値軸でのみサポートされます。</dd>
+    </dl>
+    <h3>動的プロパティ</h3>
+    <dl class="message-properties">
+        <dt>msg.action <span class="property-type">append | replace</span></dt>
+        <dd>ノードに設定したデフォルトの動作プロパティを上書きするために用います。データの「追加」や「置換」を行いたい場合に用います。</dd>
+    </dl>
+</script>

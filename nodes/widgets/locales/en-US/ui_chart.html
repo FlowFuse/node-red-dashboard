@@ -1,50 +1,51 @@
-
 <script type="text/html" data-help-name="ui-chart">
     <h3>Properties</h3>
     <dl class="message-properties">
-        <dt>Label <span class="property-type">str</span></dt>
+        <dt>Label <span class="property-type">string</span></dt>
         <dd>Text shown above the rendered chart in the Dashboard.</dd>
-        <dt>Type <span class="property-type">line | bar | scatter</span></dt>
+        <dt>Type <span class="property-type">Line | Bar | Scatter</span></dt>
         <dd>Choose the type of graph that you wish to render data with. Note
             that different data structures are accepted for different chart types.</dd>
-        <dt>Show Legend <span class="property-type">bool</span></dt>
+        <dt>Show Legend <span class="property-type">boolean</span></dt>
         <dd>Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.</dd>
-        <dt>Action <span class="property-type">append | replace</span></dt>
+        <dt>Action <span class="property-type">Append | Replace</span></dt>
         <dd>
             Define how new data is added to the Chart. "Append" will keep
             existing data, "Replace" will remove all existing data.
         </dd>
-        <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
+        <dt>X-Axis Type <span class="property-type">Linear | Categorical | Timescale</span></dt>
         <dd>
-            For charts with an x-axis, this option allows customisation
+            For charts with an X-axis, this option allows customisation
             of the type of axis to render.
         </dd>
         <dt>Properties <span class="property-type">string</span></dt>
         <dd>
             <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array, which will plot multiple data points from a single msg object.</p>
-            <p><b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</p>
-            <p><b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.</p>
+            <p><b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the X-axis. If left blank, the X-value will be calculated as the current timestamp.</p>
+            <p><b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the X-axis. This value is ignored if injecting single numerical values into the chart.</p>
         </dd>
     </dl>
     <h3>Input</h3>
     <p>Data can be passed into the Chart node in a variety of formats,
-    depending on the "X-Axis Type" (e.g. linear, categorical, time).</p>
+    depending on the "X-Axis Type" (e.g. Linear, Categorical, Timescale).</p>
     <dl class="message-properties">
-        <dt>Numerical <span class="property-type">linear | categorical | time</span></dt>
+        <dt>Numerical <span class="property-type">Linear | Categorical | Timescale</span></dt>
         <dd><pre>msg.payload = 5</pre> A single value, that will be plotted
-            in the y-axis, and the current time of injection as the x-value.</dd>
-        <dt>Series <span class="property-type">linear | categorical | time</span></dt>
+            in the Y-axis, and the current time of injection as the X-value.</dd>
+        <dt>Series <span class="property-type">Linear | Categorical | Timescale</span></dt>
         <dd><pre>msg.topic = 'Series 1'</pre> Multiple series can
-            be shown on the same chart by using a different msg.topic value on each
+            be shown on the same chart by using a different <code>msg.topic</code> value on each
             input message.</dd>
-        <dt>Object <span class="property-type">linear</span></dt>
+        <dt>Object <span class="property-type">Linear</span></dt>
         <dd><pre>msg.payload = {x: 10, y: 15}</pre>This type of data is only
             supported on linear plots, e.g. "Line" or "Scatter" charts.</dd>
     </dl>
     <h3>Dynamic Proeprties</h3>
-    <dt>msg.action <span class="property-type">append | replace</span></dt>
-    <dd>
-        Can be used to override the default action property set in the node's configuration.
-        Use this if sometimes you want to "append" data, and sometimes you want to "replace" it.
-    </dd>
+    <dl class="message-properties">
+        <dt>msg.action <span class="property-type">append | replace</span></dt>
+        <dd>
+            Can be used to override the default action property set in the node's configuration.
+            Use this if sometimes you want to "append" data, and sometimes you want to "replace" it.
+        </dd>
+    </dl>
 </script>

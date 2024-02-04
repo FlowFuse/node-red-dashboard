@@ -95,7 +95,7 @@
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
-                const propertyType = { value: 'property', label: 'key:' }
+                const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
 
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
@@ -354,11 +354,11 @@
             </div>
             <div id="node-container-xAxisProperty" class="node-chart-property">
                 <label style="width: auto" for="node-input-xAxisProperty">X:</label>
-                <input style="flex-grow: 1" type="text" id="node-input-xAxisProperty" placeholder="msg.payload[key] or msg.payload[n][key]">
+                <input style="flex-grow: 1" type="text" id="node-input-xAxisProperty" data-i18n="[placeholder]ui-chart.label.propertyPlaceholder">
             </div>
             <div id="node-container-yAxisProperty" class="node-chart-property">
                 <label style="width: auto" for="node-input-yAxisProperty">Y:</label>
-                <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" placeholder="msg.payload[key] or msg.payload[n][key]">
+                <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" data-i18n="[placeholder]ui-chart.label.propertyPlaceholder">
             </div>
         </div>
     </div>

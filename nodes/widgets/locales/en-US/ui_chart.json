@@ -42,6 +42,8 @@
             "max": "max.",
             "properties": "Properties",
             "series": "Series:",
+            "key": "key:",
+            "propertyPlaceholder": "msg.payload[key] or msg.payload[n][key]",
             "pointStyle": "Point Style",
             "pointShape": "Shape",
             "pointRadius": "Radius (px)",
