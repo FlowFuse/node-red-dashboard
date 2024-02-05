@@ -1,0 +1,20 @@
+{
+    "ui-group": {
+        "label": {
+            "name": "名前",
+            "page": "ページ",
+            "size": "サイズ",
+            "display-name": "グループ名を表示",
+            "className": "クラス",
+            "classNamePlaceholder": "グループのための任意のCSSクラス名",
+            "defaultState": "標準状態",
+            "visibility": "画面表示",
+            "visible": "表示",
+            "hidden": "非表示",
+            "interactivity": "画面操作",
+            "active": "有効",
+            "disabled": "無効",
+            "openDashboardSidebar": "ダッシュボード2.0のサイドバーを開く"
+        }
+    }
+}
