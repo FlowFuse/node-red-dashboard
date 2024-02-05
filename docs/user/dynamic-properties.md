@@ -17,7 +17,7 @@ If we consider an example with a `ui-button`, you can send the following `msg` t
 }
 ```
 
-Please note that for `class` updates, the class is appended the the widget's container, so this means that your class' style definitions may need to take that into account. If you want to affect the background-color of a button for example:
+Please note that for `class` updates, the class is appended the widget's container, so this means that your class' style definitions may need to take that into account. If you want to affect the background-color of a button for example:
 
 ```css
 .my-class button.v-btn {
