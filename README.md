@@ -62,7 +62,7 @@ The new `ui-markdown` widget allows you to build rich, interactive applications 
 
 As an open-source project, Node-RED Dashboard 2.0 openly welcomes all forms of contributions, whether those are ideas, bug reports, or code contributions through Pull Requests. 
 
-We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [Github issue](https://github.com/FlowFuse/node-red-dashboard/issues/new/choose). We also highly encourage open-source contributions.
+We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [GitHub issue](https://github.com/FlowFuse/node-red-dashboard/issues/new/choose). We also highly encourage open-source contributions.
 
 ### Roadmap
 
