@@ -28,9 +28,9 @@
                 }
             },
             height: { value: 0 },
-            gtype: { value: 'circular' },
+            gtype: { value: 'gauge-half' },
             title: { value: 'gauge' },
-            label: { value: 'units' },
+            units: { value: 'units' },
             format: { value: '{{value}}' },
             segments: {
                 value: [{
@@ -47,6 +47,14 @@
             angle: { value: 180 },
             min: { value: 0, required: true, validate: RED.validators.number() },
             max: { value: 10, required: true, validate: RED.validators.number() },
+            // sizes
+            sizeThickness: { value: 16, validate: RED.validators.number() },
+            sizeGap: { value: 4, validate: RED.validators.number() },
+            sizeKeyThickness: { value: 8, validate: RED.validators.number() },
+            // style
+            styleRounded: { value: true },
+            styleGlow: { value: false },
+            // CSS
             className: { value: '' }
         },
         inputs: 1,
@@ -191,10 +199,11 @@
     <div class="form-row">
         <label for="node-input-gtype"><i class="fa fa-list"></i> Type</label>
         <select id="node-input-gtype" style="width:150px">
-            <segment value="gauge">Gauge</segment>
-            <segment value="donut">Donut</segment>
+            <option value="gauge-full">Gauge (Full)</option>
+            <option value="gauge-half">Gauge (Half)</option>
+            <!-- <segment value="donut">Donut</segment>
             <segment value="compass">Compass</segment>
-            <segment value="wave">Level</segment>
+            <segment value="wave">Level</segment> -->
         </select>
     </div>
     <div id="ui-gauge-labels">
@@ -202,13 +211,13 @@
             <label for="node-input-title"><i class="fa fa-i-cursor"></i> Label</label>
             <input type="text" id="node-input-title">
         </div>
-        <div class="form-row" id="ui-gauge-format">
+        <!-- <div class="form-row" id="ui-gauge-format">
             <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
             <input type="text" id="node-input-format" placeholder="{{value}}">
-        </div>
+        </div> -->
         <div class="form-row" id="ui-gauge-units">
-            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Units</label>
-            <input type="text" id="node-input-label" placeholder="segmental sub-label">
+            <label for="node-input-units"><i class="fa fa-i-cursor"></i> Units</label>
+            <input type="text" id="node-input-units" placeholder="segmental sub-label">
         </div>
     </div>
     <div class="form-row">
@@ -238,6 +247,34 @@
     </div>
     <div class="form-row">
         <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>segment</span></a>
+    </div>
+    <div class="form-row">
+        <h3>Sizes</h3>
+    </div>
+    <div class="form-row form-row-flex">
+        <div>
+            <label for="node-input-sizeThickness"><i class="fa fa-i-cursor"></i> Gauge</label>
+            <input type="text" id="node-input-sizeThickness" style="width:75px">
+        </div>
+        <div>
+            <label for="node-input-sizeGap"><i class="fa fa-i-cursor"></i> Gap</label>
+            <input type="text" id="node-input-sizeGap" style="width:75px">
+        </div>
+        <div>
+            <label for="node-input-sizeKeyThickness"><i class="fa fa-i-cursor"></i> Key</label>
+            <input type="text" id="node-input-sizeKeyThickness" style="width:75px">
+        </div>
+    </div>
+    <div class="form-row">
+        <h3>Style</h3>
+    </div>
+    <div class="form-row form-row-flex" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-styleRounded" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-styleRounded"> Rounded</label>
+    </div>
+    <div class="form-row form-row-flex" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-styleGlow" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-styleGlow"> Glow</label>
     </div>
     <!-- <div class="form-row" id="ui-gauge-colours">
         <label for="node-input-color1">Colour gradient</label>

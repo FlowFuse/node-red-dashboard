@@ -1,10 +1,17 @@
 <template>
-    Gauge Goes Here
     <svg ref="gauge">
         <g id="sections" />
         <g id="backdrop" />
         <g id="arc" />
-        <g id="labels" /></svg>
+        <g id="limits">
+            <text ref="limits-min">{{ props.min }}</text>
+            <text ref="limits-max" style="text-anchor: end">{{ props.max }}</text>
+        </g>
+    </svg>
+    <div ref="value" class="nrdb-ui-gauge-text nrdb-ui-gauge-value">
+        <span>{{ value }}</span>
+        <label>{{ props.units }}</label>
+    </div>
 </template>
 
 <script>
@@ -29,9 +36,9 @@ export default {
             svg: null,
             lastAngle: 0,
             sizes: {
-                sectionPadding: 4,
-                sectionThickness: 8,
-                gaugeThickness: 16
+                gaugeThickness: this.props.sizeThickness,
+                gap: this.props.sizeGap,
+                keyThickness: this.props.sizeKeyThickness
             }
         }
     },
@@ -47,8 +54,11 @@ export default {
         }
     },
     mounted () {
-        this.draw()
-        this.update(5)
+        // had an odd SVG sizing issue, better to draw nextTick
+        this.$nextTick(() => {
+            this.draw()
+            this.update(5)
+        })
     },
     methods: {
         draw () {
@@ -62,16 +72,16 @@ export default {
             this.resize()
             const r = this.r
 
-            const gaugeR = r - this.sizes.sectionPadding - this.sizes.sectionThickness
+            const gaugeR = r - this.sizes.gap - this.sizes.keyThickness
 
-            console.log(this.$refs.gauge)
             this.svg = d3.select(this.$refs.gauge)
 
             let transform = ''
+
             if (angle <= 180) {
-                transform = `translate(${this.width / 2},${this.height})`
+                transform = `translate(${this.width / 2}, ${this.height})`
             } else {
-                transform = `translate(${this.width / 2},${this.height / 2})`
+                transform = `translate(${this.width / 2}, ${this.height / 2})`
             }
 
             // draw backdrop
@@ -80,7 +90,7 @@ export default {
                 .outerRadius(gaugeR)
                 .startAngle(-angle / 2)
                 .endAngle(angle / 2)
-                .cornerRadius(this.sizes.gaugeThickness)
+                .cornerRadius(this.props.styleRounded ? this.sizes.gaugeThickness : 0)
 
             const backdrop = this.svg.select('#backdrop')
             backdrop.append('path')
@@ -88,19 +98,20 @@ export default {
                 .attr('transform', transform)
                 .style('fill', '#e3e3e3')
 
+            this.$nextTick(() => {
+                this.positionMinMaxLabels()
+            })
+
             // add arc
             const arc = this.svg.select('#arc')
             arc.append('path')
                 .attr('transform', transform)
 
-            // draw segments
-            console.log(segments)
-
             let cAngle = -angle / 2
             this.lastAngle = -angle / 2
 
             const sectionsArc = d3.arc()
-                .innerRadius(r - this.sizes.sectionThickness)
+                .innerRadius(r - this.sizes.keyThickness)
                 .outerRadius(r)
                 .startAngle(() => {
                     return cAngle
@@ -131,8 +142,8 @@ export default {
                 .style('fill', (d) => d.color)
         },
         resize () {
-            this.width = this.$refs.gauge.parentElement.clientWidth
-            this.height = this.$refs.gauge.parentElement.clientHeight
+            this.width = this.$refs.gauge.clientWidth
+            this.height = this.$refs.gauge.clientHeight
 
             const minDimension = Math.min(this.width, this.height)
 
@@ -145,10 +156,9 @@ export default {
         },
         update (value) {
             const vue = this
-            console.log('value', value)
 
             const angle = this.props.angle * Math.PI / 180 // convert to radians
-            const gaugeR = this.r - this.sizes.sectionPadding - this.sizes.sectionThickness
+            const gaugeR = this.r - this.sizes.gap - this.sizes.keyThickness
 
             // update the gauge
             const arc = this.svg.select('#arc')
@@ -157,7 +167,7 @@ export default {
                 .innerRadius(gaugeR - this.sizes.gaugeThickness)
                 .outerRadius(gaugeR)
                 .startAngle(-angle / 2)
-                .cornerRadius(20)
+                .cornerRadius(this.props.styleRounded ? this.sizes.gaugeThickness : 0)
 
             const arcTween = function (to) {
                 const from = {
@@ -193,14 +203,67 @@ export default {
                 }
             })
             return color
+        },
+        positionMinMaxLabels () {
+            const min = this.$refs['limits-min']
+            const max = this.$refs['limits-max']
+
+            // get the backdrop bounding box
+            const bbox = this.svg.select('#backdrop').node().getBBox()
+
+            // position min in the botom-left
+            const thickness = parseFloat(this.props.sizeThickness)
+            const padding = 8
+
+            const minX = bbox.x + thickness + padding
+            min.style.transform = `translate(${minX}px, ${bbox.y + bbox.height}px)`
+
+            const maxX = bbox.x + bbox.width - thickness - padding
+            max.style.transform = `translate(${maxX}px, ${bbox.y + bbox.height}px)`
         }
     }
 }
 </script>
 
-<style scoped>
+<style>
+.nrdb-ui-gauge {
+    position: relative;
+}
 .nrdb-ui-gauge svg {
     width: 100%;
     height: 100%;
+}
+.nrdb-ui-gauge-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.nrdb-ui-gauge-value {
+    position: absolute;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    flex-wrap: wrap;
+    top: 25%;
+}
+
+.nrdb-ui-gauge-value span {
+    font-weight: bold;
+    font-size: 2.5rem;
+    line-height: 2.75rem;
+}
+
+.nrdb-ui-gauge-value label {
+    font-size: 0.75rem;
+    line-height: 0.825rem;
+}
+
+.nrdb-ui-gauge-limits label {
+    position: absolute;
+    bottom: 0;
+    opacity: 0.5;
 }
 </style>
