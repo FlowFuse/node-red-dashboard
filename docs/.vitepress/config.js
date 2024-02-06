@@ -37,6 +37,17 @@ export default ({ mode }) => {
         "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-MNGVF5NCF7');",
       ],
     ],
+    transformPageData(pageData) {
+      const canonicalUrl = `https://dashboard.flowfuse.com/${pageData.relativePath}`
+        .replace(/index\.md$/, '')
+        .replace(/\.md$/, '.html')
+  
+      pageData.frontmatter.head ??= []
+      pageData.frontmatter.head.push([
+        'link',
+        { rel: 'canonical', href: canonicalUrl }
+      ])
+    },
     themeConfig: {
       logo: '/logo.png',
       nav: [
