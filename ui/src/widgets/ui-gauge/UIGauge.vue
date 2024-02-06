@@ -80,6 +80,7 @@ export default {
                 .outerRadius(gaugeR)
                 .startAngle(-angle / 2)
                 .endAngle(angle / 2)
+                .cornerRadius(this.sizes.gaugeThickness)
 
             const backdrop = this.svg.select('#backdrop')
             backdrop.append('path')
@@ -156,6 +157,7 @@ export default {
                 .innerRadius(gaugeR - this.sizes.gaugeThickness)
                 .outerRadius(gaugeR)
                 .startAngle(-angle / 2)
+                .cornerRadius(20)
 
             const arcTween = function (to) {
                 const from = {
