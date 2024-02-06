@@ -1,8 +1,32 @@
 <template>
     <svg ref="gauge">
+        <defs>
+            <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+                <feOffset dy="2" dx="3" />
+                <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
+
+                <feFlood flood-color="#444444" flood-opacity="0.75" />
+                <feComposite in2="shadowDiff" operator="in" />
+                <feComposite in2="SourceGraphic" operator="over" result="firstfilter" />
+
+                <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2" />
+                <feOffset dy="-2" dx="-3" />
+                <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
+
+                <feFlood flood-color="#444444" flood-opacity="0.75" />
+                <feComposite in2="shadowDiff" operator="in" />
+                <feComposite in2="firstfilter" operator="over" />
+            </filter>
+        </defs>
+
         <g id="sections" />
         <g id="backdrop" />
         <g id="arc" />
+        <g id="needle-container">
+            <rect id="needle-mask" />
+            <g id="needle" />
+        </g>
         <g id="limits">
             <text ref="limits-min">{{ props.min }}</text>
             <text ref="limits-max" style="text-anchor: end">{{ props.max }}</text>
@@ -102,6 +126,34 @@ export default {
                 this.positionMinMaxLabels()
             })
 
+            // draw needle
+            const needleMask = this.svg.select('#needle-mask')
+            const needleR = 3
+            const needleL = parseFloat(this.sizes.gaugeThickness) + parseFloat(this.sizes.gap) + parseFloat(this.sizes.keyThickness)
+            needleMask
+                .attr('width', this.r * 2)
+                .attr('height', this.r)
+                .style('transform-box', 'fill-box')
+                .style('transform-origin', '0% 100%')
+                .style('transform', () => {
+                    return `translate(${(this.width / 2) - this.r}px, ${0}px)`
+                })
+
+            const needle = this.svg.select('#needle')
+                .style('transform', () => {
+                    return `translate(${(this.width / 2) - this.r}px, ${this.height}px)`
+                })
+            needle.append('circle')
+                .attr('r', needleR)
+                .attr('transform', () => {
+                    return `translate(${needleL}, 0)`
+                })
+            needle.append('polygon')
+                .attr('points', () => {
+                    const width = needleL
+                    return `${width},-${needleR} ${width},${needleR} 0,0`
+                })
+
             // add arc
             const arc = this.svg.select('#arc')
             arc.append('path')
@@ -185,9 +237,17 @@ export default {
                 .datum({
                     endAngle: this.valueToAngle(value) + (-angle / 2)
                 })
+                // .attr('filter', 'url(#innershadow)')
                 .transition().duration(1000)
                 .attrTween('d', arcTween)
                 .style('fill', this.valueToColor(value))
+
+            this.svg.select('#needle-container')
+                .transition().duration(1000)
+                .style('transform', () => {
+                    const deg = ((value - this.props.min) / (this.props.max - this.props.min)) * this.props.angle
+                    return `rotate(${deg}deg)`
+                })
         },
         valueToAngle (value) {
             const angle = this.props.angle * Math.PI / 180 // convert to radians
@@ -265,5 +325,13 @@ export default {
     position: absolute;
     bottom: 0;
     opacity: 0.5;
+}
+
+.nrdb-ui-gauge #needle-container {
+    transform-origin: 50% 100%;
+}
+
+.nrdb-ui-gauge #needle-mask {
+    opacity: 0;
 }
 </style>
