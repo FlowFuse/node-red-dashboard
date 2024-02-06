@@ -1,0 +1,23 @@
+{
+    "ui-base": {
+        "auto": "自動",
+        "label": {
+            "category": "ダッシュボード2",
+            "layout": "配置",
+            "theming": "テーマ",
+            "settings": "設定",
+            "sidebar": "サイドバーの設定",
+            "showPath": "ラベルにページのパスを含める"
+        },
+        "layout": {
+            "pages": "ページ",
+            "edit": "編集",
+            "focus": "焦点を当てる",
+            "collapse": "折り畳む",
+            "expand": "展開"
+        },
+        "themes": {
+            "header": "テーマ"
+        }
+    }
+}
