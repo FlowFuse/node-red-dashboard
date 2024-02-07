@@ -7,6 +7,7 @@
     import uiControl from './migration/ui_control.json'
     import uiDropdown from './migration/ui_dropdown.json'
     import uiForm from './migration/ui_form.json'
+    import uiGauge from './migration/ui_gauge.json'
     import uiSlider from './migration/ui_slider.json'
     import uiSwitch from './migration/ui_switch.json'
     import uiTemplate from './migration/ui_template.json'
@@ -20,6 +21,7 @@
         'ui_control': uiControl,
         'ui_dropdown': uiDropdown,
         'ui_form': uiForm,
+        'ui_gauge': uiGauge,
         'ui_slider': uiSlider,
         'ui_switch': uiSwitch,
         'ui_template': uiTemplate,
@@ -169,8 +171,6 @@ There has also been a [request](https://github.com/FlowFuse/node-red-dashboard/i
 ### `ui_gauge`
 
 <MigrationWidgetProfile :profile="widgets['ui_gauge']" />
-
-You can track progress of this development effort here: [Issue #12](https://github.com/FlowFuse/node-red-dashboard/issues/12)
 
 ### `ui_link`
 

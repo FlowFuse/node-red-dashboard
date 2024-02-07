@@ -1,0 +1,83 @@
+{
+    "node": "ui_dropdown",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "title",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "gtype",
+            "changes": -2,
+            "notes": "Half Gauges and 3/4 Gauages are supported, currently no support for 'Compass', 'Levels' and 'Donut'"
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": "Changed to 'units'"
+        },
+        {
+            "property": "format",
+            "changes": -3,
+            "notes": "Replaced with 'prefix' and 'suffix' options"
+        },
+        {
+            "property": "seg1",
+            "changes": -3,
+            "notes": "Replaced with more flexible segments systems"
+        },
+        {
+            "property": "seg2",
+            "changes": -3,
+            "notes": "Replaced with more flexible segments systems"
+        },
+        {
+            "property": "colors",
+            "changes": -3,
+            "notes": "Replaced with more flexible segments systems"
+        },
+        {
+            "property": "diff",
+            "changes": -3,
+            "notes": ""
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "gstyle",
+            "notes": "Allows for control over whether the arc is rounded or a 'needle' style"
+        },
+        {
+            "property": "prefix",
+            "notes": "Text shown before the value in the center of the gauge"
+        },
+        {
+            "property": "suffix",
+            "notes": "Text shown after the value in the center of the gauge"
+        },
+        {
+            "property": "segments",
+            "notes": "Array of objects that define the segments of the gauge"
+        }
+    ]
+}
