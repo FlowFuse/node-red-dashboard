@@ -1,6 +1,6 @@
 <template>
     <svg ref="gauge" :style="{height: gaugeHeight}">
-        <defs>
+        <!-- <defs>
             <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
                 <feOffset dy="2" dx="3" />
@@ -18,14 +18,20 @@
                 <feComposite in2="shadowDiff" operator="in" />
                 <feComposite in2="firstfilter" operator="over" />
             </filter>
-        </defs>
+        </defs> -->
 
         <g id="sections" />
-        <g id="backdrop" />
-        <g id="arc" />
+        <g id="backdrop">
+            <path /></g>
+        <g id="arc">
+            <path />
+        </g>
         <g id="needle-container">
             <rect id="needle-mask" />
-            <g id="needle" />
+            <g id="needle">
+                <circle />
+                <polygon />
+            </g>
         </g>
         <g id="limits">
             <text ref="limits-min">{{ props.min }}</text>
@@ -88,28 +94,40 @@ export default {
         }
     },
     mounted () {
+        // on resize handler for window resizing
+        window.addEventListener('resize', this.onResize)
+
         // had an odd SVG sizing issue, better to draw nextTick
         this.$nextTick(() => {
-            console.log('mounted')
-            this.draw()
+            this.resize()
             if (this.value === undefined) {
-                this.update(this.props.min)
+                this.update(this.props.min, 0)
             } else {
-                this.update(this.value)
+                this.update(this.value, 0)
             }
         })
     },
+    unmounted () {
+        window.removeEventListener('resize', this.onResize)
+    },
     methods: {
-        draw () {
-            // data
-            const segments = this.props.segments
+        resize () {
+            this.width = this.$refs.gauge.clientWidth
+            this.height = this.$refs.gauge.clientHeight
 
-            // sizings
-            this.resize()
+            if (this.props.gtype === 'gauge-half') {
+                const minDimension = Math.min(this.width / 2, this.height)
+                this.r = minDimension
+            } else {
+                const minDimension = Math.min(this.width, this.height)
+                this.r = minDimension / 2
+            }
+        },
+        update (value, duration = 1000) {
+            this.svg = d3.select(this.$refs.gauge)
+            const vue = this
 
             const gaugeR = this.r - this.sizes.gap - this.sizes.keyThickness
-
-            this.svg = d3.select(this.$refs.gauge)
 
             let transform = ''
 
@@ -132,102 +150,19 @@ export default {
                 })
 
             const backdrop = this.svg.select('#backdrop')
-            backdrop.append('path')
+            backdrop.select('path')
                 .attr('d', this.arcs.backdrop)
                 .attr('transform', transform)
                 .style('fill', '#e3e3e3')
-
-            // draw needle
-            const needleMask = this.svg.select('#needle-mask')
-            const needleR = 3
-            const needleL = parseFloat(this.sizes.gaugeThickness) + parseFloat(this.sizes.gap) + parseFloat(this.sizes.keyThickness)
-            needleMask
-                .attr('width', this.r * 2)
-                .attr('height', () => {
-                    return this.sizes.angle > Math.PI ? this.r * 2 : this.r
-                })
-                .style('transform-box', 'fill-box')
-                .style('transform-origin', () => {
-                    return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
-                })
-                .style('transform', () => {
-                    return `translate(${(this.width / 2) - this.r}px, ${0}px)`
-                })
-
-            const needle = this.svg.select('#needle')
-                .style('opacity', () => {
-                    return this.props.gstyle === 'needle' ? 1 : 0
-                })
-                .style('transform', () => {
-                    const x = (this.width / 2) - this.r
-                    const y = this.sizes.angle > Math.PI ? this.height / 2 : this.height
-                    return `translate(${x}px, ${y}px)`
-                })
-            needle.append('circle')
-                .attr('r', needleR)
-                .attr('transform', () => {
-                    const y = -this.r + needleL
-                    return `translate(${this.r}, ${y})`
-                })
-            needle.append('polygon')
-                .attr('points', () => {
-                    const x = this.r
-                    const y = -this.r + needleL
-                    return `${x + needleR},${y} ${x - needleR},${y} ${x},${-this.r}`
-                })
-            // set needle position to default
-            this.svg.select('#needle-container')
-                .style('transform', () => {
-                    const rad = (this.valueToAngle(this.props.min) + (Math.PI / 2) - (this.sizes.angle / 2))
-                    const deg = rad * (180 / Math.PI) - 90
-                    return `rotate(${deg}deg)`
-                })
-
-            // add arc
-            const arc = this.svg.select('#arc')
-            arc.append('path')
-                .attr('transform', transform)
-
-            this.lastAngle = -this.sizes.angle / 2
-
-            const sections = this.svg.select('#sections')
-            this.updateSegmentArc()
-
-            sections
-                .selectAll('path')
-                .data(segments)
-                .enter()
-                .append('path')
-                .attr('d', this.arcs.sections)
-                .attr('transform', transform)
-                .style('fill', (d) => d.color)
-        },
-        resize () {
-            this.width = this.$refs.gauge.clientWidth
-            this.height = this.$refs.gauge.clientHeight
-
-            const minDimension = Math.min(this.width, this.height)
-
-            this.r = this.props.gtype === 'gauge-half' ? minDimension : minDimension / 2
-        },
-        update (value) {
-            const vue = this
-
-            const gaugeR = this.r - this.sizes.gap - this.sizes.keyThickness
-
-            // update backdrop
-            this.arcs.backdrop
-                .startAngle(-this.sizes.angle / 2)
-                .endAngle(this.sizes.angle / 2)
-                .cornerRadius(() => {
-                    return this.props.gstyle === 'rounded' ? this.sizes.gaugeThickness : 0
-                })
 
             this.svg.select('#backdrop').select('path')
                 .attr('d', this.arcs.backdrop)
 
             // update the gauge
             const arc = this.svg.select('#arc')
+
+            arc.select('path')
+                .attr('transform', transform)
 
             const gaugeArc = d3.arc()
                 .innerRadius(gaugeR - this.sizes.gaugeThickness)
@@ -254,11 +189,13 @@ export default {
                     endAngle: this.valueToAngle(value) + (-this.sizes.angle / 2)
                 })
                 // .attr('filter', 'url(#innershadow)')
-                .transition().duration(1000)
+                .transition().duration(duration)
                 .attrTween('d', arcTween)
                 .style('fill', this.valueToColor(value))
 
             // update sections
+            this.updateSegmentArc()
+
             const segments = this.props.segments
             this.svg.select('#sections')
                 .selectAll('path')
@@ -266,7 +203,6 @@ export default {
                 .enter()
                 .append('path')
 
-            this.updateSegmentArc()
             this.svg.select('#sections')
                 .selectAll('path')
                 .data(segments)
@@ -275,15 +211,57 @@ export default {
 
             this.svg.select('#sections').selectAll('path')
                 .attr('d', this.arcs.sections)
-                // .attr('transform', transform)
+                .attr('transform', transform)
                 .style('fill', (d) => d.color)
 
             // update needle
+            const needleMask = this.svg.select('#needle-mask')
+            const needleR = 3
+            const needleL = parseFloat(this.sizes.gaugeThickness) + parseFloat(this.sizes.gap) + parseFloat(this.sizes.keyThickness)
+
+            needleMask
+                .attr('width', this.r * 2)
+                .attr('height', () => {
+                    return this.sizes.angle > Math.PI ? this.r * 2 : this.r
+                })
+                .style('transform-box', 'fill-box')
+                .style('transform-origin', () => {
+                    return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
+                })
+                .style('transform', () => {
+                    return `translate(${(this.width / 2) - this.r}px, ${0}px)`
+                })
+
+            const needle = this.svg.select('#needle')
+                .style('opacity', () => {
+                    return this.props.gstyle === 'needle' ? 1 : 0
+                })
+                .style('transform', () => {
+                    const x = (this.width / 2) - this.r
+                    const y = this.sizes.angle > Math.PI ? this.height / 2 : this.height
+                    return `translate(${x}px, ${y}px)`
+                })
+            needle.select('circle')
+                .attr('r', needleR)
+                .attr('transform', () => {
+                    const y = -this.r + needleL
+                    return `translate(${this.r}, ${y})`
+                })
+            needle.select('polygon')
+                .attr('points', () => {
+                    const x = this.r
+                    const y = -this.r + needleL
+                    return `${x + needleR},${y} ${x - needleR},${y} ${x},${-this.r}`
+                })
+
+            // set needle position to default
+            // this.svg.select('#needle-container')
+
             this.svg.select('#needle-container')
                 .style('transform-origin', () => {
                     return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
                 })
-                .transition().duration(1000)
+                .transition().duration(duration)
                 .styleTween('transform', () => {
                     // default transition travels the wrong way if gauage is over 180deg
                     // shortcutting the gauge, so we build our own transition route
@@ -367,6 +345,16 @@ export default {
                         return this.sizes.angle / 2
                     }
                 })
+        },
+        onResize () {
+            this.$nextTick(() => {
+                this.resize()
+                if (this.value === undefined) {
+                    this.update(this.props.min, 0)
+                } else {
+                    this.update(this.value, 0)
+                }
+            })
         }
     }
 }
