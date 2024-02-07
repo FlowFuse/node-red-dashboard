@@ -85,6 +85,7 @@
         "sinon": "^15.2.0",
         "socket.io-client": "^4.7.2",
         "sort-package-json": "^2.6.0",
+        "visual-heatmap": "git+https://github.com/bartbutenaers/visual-heatmap.git",
         "vite": "^5.0.0",
         "vitepress": "^1.0.0-rc.40",
         "vue-router": "^4.2.4",
@@ -115,7 +116,8 @@
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
-            "ui-control": "nodes/widgets/ui_control.js"
+            "ui-control": "nodes/widgets/ui_control.js",
+            "ui-heatmap": "nodes/widgets/ui_heatmap.js"
         }
     },
     "overrides": {

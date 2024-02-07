@@ -1,0 +1,207 @@
+<script type="text/javascript">
+    (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
+        RED.nodes.registerType('ui-heatmap', {
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                label: { value: 'heatmap' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width <= +groupNode.width
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                passthru: { value: true },
+                className: { value: '' },
+                // Heatmap specific properties
+                rows: { value: 10, required: true},
+                columns: { value: 10, required: true},
+                pointRadius: { value: 20.0 },
+                pointRadius: { value: 20.0 },
+                minDataValue: { value: null },
+                maxDataValue: { value: null },
+                blurFactor: { value: 1.0 },
+                opacityFactor: { value: 1.0 },
+                rotationAngle: { value: 0.0 },
+                translateX: { value: 0 },
+                translateY: { value: 0 },
+                zoomFactor: { value: 1.0 },
+                colorGradient: { value: [{
+                        color: [0, 0, 0, 0.00],
+                        offset: 0
+                    }, {
+                        color: [0, 0, 255, 0.2],
+                        offset: 0.2
+                    }, {
+                        color: [0, 255, 0, 0.5],
+                        offset: 0.45
+                    }, {
+                        color: [255, 255, 0, 1.0],
+                        offset: 0.85
+                    }, {
+                        color: [255, 0, 0, 1.0],
+                        offset: 1.0
+                    }]
+                },
+                backgroundImageUrl: { value: "" }
+            },
+            inputs: 1,
+            outputs: 1,
+            outputLabels: function () { return this.mode },
+            icon: 'font-awesome/fa-i-cursor',
+            paletteLabel: 'heatmap',
+            oneditprepare: function () {
+                $('#node-input-size').elementSizer({
+                    width: '#node-input-width',
+                    height: '#node-input-height',
+                    group: '#node-input-group'
+                })
+
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
+                $('#node-input-backgroundImageUrl').typedInput({
+                    default: 'str',
+                    types: ['str']
+                })
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+
+                $('#node-input-mode').on('change', (evt) => {
+                    const mode = $('#node-input-mode').find(':selected').val()
+                    if (mode === 'textarea') {
+                        this.sendOnEnter = false
+                        $('#node-input-container-sendOnEnter').hide()
+                    } else {
+                        $('#node-input-container-sendOnEnter').show()
+                    }
+                })
+
+                $('#node-input-delay').on('change', (evt) => {
+                    const delay = $('#node-input-delay').val()
+                    if (delay === '' || delay === '0') {
+                        this.sendOnDelay = false
+                        if ($('#node-input-sendOnDelay').is(':checked')) {
+                            $('#node-input-sendOnDelay').click()
+                        }
+                    } else {
+                        this.sendOnDelay = true
+                        if (!$('#node-input-sendOnDelay').is(':checked')) {
+                            $('#node-input-sendOnDelay').click()
+                        }
+                    }
+                })
+            },
+            label: function () {
+                return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
+            },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-heatmap">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> Size</label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Class names can also be set by sending a message to the node with a msg.topic of 'ui-property:class' and a payload containing the class name(s) to be applied. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-rows"><i class="fa fa-arrows-alt"></i> Grid size</label>
+        <span for="node-input-rows">Rows</span>
+        <input type="text" id="node-input-rows" style="width:80px" min="1">
+        <span for="node-input-columns" style="margin-left:20px;"> Columns</span>
+        <input type="text" id="node-input-columns" style="width:80px" min="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pointRadius"><i class="fa fa-bullseye"></i> Radius</label>
+        <input type="number" id="node-input-pointRadius" min="1" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-minDataValue"><i class="fa fa-level-up"></i> Min value</label>
+        <input type="number" id="node-input-minDataValue" min="0" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxDataValue"><i class="fa fa-level-down"></i> Max value</label>
+        <input type="number" id="node-input-maxDataValue" min="0" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-blurFactor"><i class="fa fa-soundcloud"></i> Blur</label>
+        <input type="number" id="node-input-blurFactor" min="0" max="1" step="0.1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-opacityFactor"><i class="fa fa-low-vision"></i> Opacity</label>
+        <input type="number" id="node-input-opacityFactor" min="0" max="1" step="0.1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-rotationAngle"><i class="fa fa-repeat"></i> Angle</label>
+        <input type="number" id="node-input-rotationAngle" min="0" max="360" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-translateX"><i class="fa fa-arrows-h"></i> X</label>
+        <input type="number" id="node-input-translateX" min="0" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-translateY"><i class="fa fa-arrows-v"></i> Y</label>
+        <input type="number" id="node-input-translateY" min="0" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-zoomFactor"><i class="fa fa-search"></i> Zoom</label>
+        <input type="number" id="node-input-zoomFactor" min="1.0" step="0.1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-backgroundImageUrl"><i class="fa fa-picture-o"></i> Background</label>
+        <input type="text" id="node-input-backgroundImageUrl">
+    </div>
+</script>
