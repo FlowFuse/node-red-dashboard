@@ -1,46 +1,49 @@
 <template>
-    <svg ref="gauge" :style="{height: gaugeHeight}">
-        <!-- <defs>
-            <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-                <feOffset dy="2" dx="3" />
-                <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
+    <div style="display: flex;flex-direction: column; gap: 4px;">
+        <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <svg ref="gauge" :style="{'min-height': gaugeHeight}">
+            <!-- <defs>
+                <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+                    <feOffset dy="2" dx="3" />
+                    <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
 
-                <feFlood flood-color="#444444" flood-opacity="0.75" />
-                <feComposite in2="shadowDiff" operator="in" />
-                <feComposite in2="SourceGraphic" operator="over" result="firstfilter" />
+                    <feFlood flood-color="#444444" flood-opacity="0.75" />
+                    <feComposite in2="shadowDiff" operator="in" />
+                    <feComposite in2="SourceGraphic" operator="over" result="firstfilter" />
 
-                <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2" />
-                <feOffset dy="-2" dx="-3" />
-                <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
+                    <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2" />
+                    <feOffset dy="-2" dx="-3" />
+                    <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
 
-                <feFlood flood-color="#444444" flood-opacity="0.75" />
-                <feComposite in2="shadowDiff" operator="in" />
-                <feComposite in2="firstfilter" operator="over" />
-            </filter>
-        </defs> -->
+                    <feFlood flood-color="#444444" flood-opacity="0.75" />
+                    <feComposite in2="shadowDiff" operator="in" />
+                    <feComposite in2="firstfilter" operator="over" />
+                </filter>
+            </defs> -->
 
-        <g id="sections" />
-        <g id="backdrop">
-            <path /></g>
-        <g id="arc">
-            <path />
-        </g>
-        <g id="needle-container">
-            <rect id="needle-mask" />
-            <g id="needle">
-                <circle />
-                <polygon />
+            <g id="sections" />
+            <g id="backdrop">
+                <path /></g>
+            <g id="arc">
+                <path />
             </g>
-        </g>
-        <g id="limits">
-            <text ref="limits-min">{{ props.min }}</text>
-            <text ref="limits-max" style="text-anchor: end">{{ props.max }}</text>
-        </g>
-    </svg>
-    <div ref="value" class="nrdb-ui-gauge-value" :class="'nrdb-ui-' + props.gtype">
-        <span>{{ value || props.min }}</span>
-        <label>{{ props.units }}</label>
+            <g id="needle-container">
+                <rect id="needle-mask" />
+                <g id="needle">
+                    <circle />
+                    <polygon />
+                </g>
+            </g>
+            <g id="limits">
+                <text ref="limits-min">{{ props.min }}</text>
+                <text ref="limits-max" style="text-anchor: end">{{ props.max }}</text>
+            </g>
+        </svg>
+        <div ref="value" class="nrdb-ui-gauge-value" :class="'nrdb-ui-' + props.gtype">
+            <span>{{ props.prefix }}{{ value || props.min }}{{ props.suffix }}</span>
+            <label>{{ props.units }}</label>
+        </div>
     </div>
 </template>
 
@@ -69,7 +72,8 @@ export default {
                 gaugeThickness: this.props.sizeThickness,
                 gap: this.props.sizeGap,
                 keyThickness: this.props.sizeKeyThickness,
-                angle: 0
+                angle: 0,
+                fudge: -6 // padding for half-gauages within the SVG canvas
             },
             arcs: {
                 backdrop: null,
@@ -117,7 +121,7 @@ export default {
 
             if (this.props.gtype === 'gauge-half') {
                 const minDimension = Math.min(this.width / 2, this.height)
-                this.r = minDimension
+                this.r = minDimension + this.sizes.fudge
             } else {
                 const minDimension = Math.min(this.width, this.height)
                 this.r = minDimension / 2
@@ -132,7 +136,7 @@ export default {
             let transform = ''
 
             if (this.props.gtype === 'gauge-half') {
-                transform = `translate(${this.width / 2}, ${this.height})`
+                transform = `translate(${this.width / 2}, ${this.height + this.sizes.fudge})`
                 this.sizes.angle = Math.PI
             } else {
                 transform = `translate(${this.width / 2}, ${this.height / 2})`
@@ -153,7 +157,6 @@ export default {
             backdrop.select('path')
                 .attr('d', this.arcs.backdrop)
                 .attr('transform', transform)
-                .style('fill', '#e3e3e3')
 
             this.svg.select('#backdrop').select('path')
                 .attr('d', this.arcs.backdrop)
@@ -268,9 +271,10 @@ export default {
                     const start = this.lastAngle
                     const end = this.valueToNeedleAngle(value)
                     function tween (t) {
-                        const transform = d3.interpolate(start, end)(t)
-                        const deg = transform * (180 / Math.PI)
-                        return `rotate(${deg}deg)`
+                        const rotate = d3.interpolate(start, end)(t)
+                        const deg = rotate * (180 / Math.PI)
+                        // -6 is fudge factor to ensure needle is visible and doesn't have half hanging out of SVG window
+                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)`
                     }
                     return tween
                 })
@@ -369,6 +373,13 @@ export default {
     height: 100%;
 }
 
+.nrdb-ui-gauge-title {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
 .nrdb-ui-gauge-34 {
     top: 0%;
     gap: 4px;
@@ -401,15 +412,38 @@ export default {
     line-height: 0.825rem;
 }
 
+.nrdb-ui-gauge #backdrop path {
+    fill: rgb(var(--v-theme-background));
+}
+
+.nrdb-ui-gauge #sections path {
+    stroke: rgb(var(--v-theme-group-background));
+    stroke-width: 2px;
+}
+
 .nrdb-ui-gauge #limits {
     opacity: 0.5;
+    fill: rgb(var(--v-theme-on-group-background));
 }
 
 .nrdb-ui-gauge #needle-container {
     pointer-events: none;
 }
 
+/*
+    Adds shaadow to the needle, went back and forth on whether looks better,
+    leaving in case for future
+*/
+/* .nrdb-ui-gauge #needle {
+    filter: drop-shadow(0px 0px 2px rgb(0 0 0 / 0.4));
+} */
+
 .nrdb-ui-gauge #needle-mask {
     opacity: 0;
+}
+
+.nrdb-ui-gauge #needle circle,
+.nrdb-ui-gauge #needle polygon {
+    fill: rgb(var(--v-theme-on-group-background));
 }
 </style>
