@@ -29,6 +29,7 @@
             },
             height: { value: 0 },
             gtype: { value: 'gauge-half' },
+            gstyle: { value: 'needle' },
             title: { value: 'gauge' },
             units: { value: 'units' },
             format: { value: '{{value}}' },
@@ -44,7 +45,6 @@
                     from: 7
                 }]
             },
-            angle: { value: 180 },
             min: { value: 0, required: true, validate: RED.validators.number() },
             max: { value: 10, required: true, validate: RED.validators.number() },
             // sizes
@@ -66,6 +66,12 @@
         label: function () { return this.name || (~this.title.indexOf('{{') ? null : this.title) || ((this.gtype === 'gage') ? 'gauge' : this.gtype) || 'gauge' },
         labelStyle: function () { return this.name ? 'node_label_italic' : '' },
         oneditprepare: function () {
+            $('#node-input-size').elementSizer({
+                width: '#node-input-width',
+                height: '#node-input-height',
+                group: '#node-input-group'
+            })
+
             // check for duplicate values
             const unique = new Set(this.segments.map(function (o) { return o.from }))
             if (this.segments.length === unique.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
@@ -140,11 +146,6 @@
             //     this.gtype = 'gage'
             //     $('#node-input-gtype').val('gage')
             // }
-            // $('#node-input-size').elementSizer({
-            //     width: '#node-input-width',
-            //     height: '#node-input-height',
-            //     group: '#node-input-group'
-            // })
             // $('#node-input-gtype').on('change', function () {
             //     if (($(this).val() === 'compass') || ($(this).val() === 'wave')) {
             //         $('#ui-gauge-colours').hide()
@@ -199,11 +200,19 @@
     <div class="form-row">
         <label for="node-input-gtype"><i class="fa fa-list"></i> Type</label>
         <select id="node-input-gtype" style="width:150px">
-            <option value="gauge-full">Gauge (Full)</option>
+            <option value="gauge-34">Gauge (3/4)</option>
             <option value="gauge-half">Gauge (Half)</option>
             <!-- <segment value="donut">Donut</segment>
             <segment value="compass">Compass</segment>
             <segment value="wave">Level</segment> -->
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-gstyle"><i class="fa fa-list"></i> Style</label>
+        <select id="node-input-gstyle" style="width:150px">
+            <option value="needle">Needle</option>
+            <option value="rounded">Rounded</option>
+            <!-- <option value=rounded">Rounded</option> -->
         </select>
     </div>
     <div id="ui-gauge-labels">
@@ -219,10 +228,6 @@
             <label for="node-input-units"><i class="fa fa-i-cursor"></i> Units</label>
             <input type="text" id="node-input-units" placeholder="segmental sub-label">
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-angle"><i class="fa fa-i-cursor"></i> Angle</label>
-        <input type="text" id="node-input-angle">
     </div>
     <div class="form-row">
         <label for="node-input-min">Range</label>
