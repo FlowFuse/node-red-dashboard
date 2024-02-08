@@ -249,7 +249,7 @@ export default {
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
                 this.chart.data.datasets.push({
                     borderColor: this.props.colors[datalabels.length],
-                    pointStyle: this.props.pointShape || 'circle',
+                    pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
