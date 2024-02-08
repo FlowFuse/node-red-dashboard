@@ -99,6 +99,7 @@ export default ({ mode }) => {
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-event', link: '/nodes/widgets/ui-event' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
+                { text: 'ui-gauge', link: '/nodes/widgets/ui-gauge' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },
                 { text: 'ui-notification', link: '/nodes/widgets/ui-notification' },
                 { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
