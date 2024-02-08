@@ -16,10 +16,12 @@ props:
     Sizes (Segments): (px) How thick the segments are rendered.
 ---
 
+
 <script setup>
+    import AddedIn from '../../components/AddedIn.vue';
 </script>
 
-# Gauge `ui-gauge`
+# Gauge `ui-gauge` <AddedIn version="1.1.0"/>
 
 Adds a Guage Chart to your Dashboard. This can be configured with custom types (half, 3/4), styles (rounded, needle) and segmentation with examples detailed [below](#examples).
 
