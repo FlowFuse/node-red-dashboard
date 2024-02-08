@@ -1,0 +1,32 @@
+{
+    "ui-gauge": {
+        "label": {
+            "name": "Name",
+            "group": "Group",
+            "size": "Size",
+            "type": "Type",
+            "style": "Style",
+            "gaugeHalf": "Half Gauge",
+            "gauge34": "3/4 Gauge",
+            "needle": "Needle",
+            "rounded": "Rounded",
+            "limits": "Limits",
+            "range": "Range",
+            "min": "min.",
+            "max": "max.",
+            "segments": "Segments",
+            "labelling": "Labelling",
+            "label": "Label",
+            "prefix": "Prefix",
+            "suffix": "Suffix",
+            "sizes": "Sizes",
+            "gauge": "Gauge",
+            "gap": "Gap",
+            "styling": "Styling",
+            "class": "Class"
+        },
+        "errors": {
+            "unique": "All 'from' values must be unique."
+        }
+    }
+  }

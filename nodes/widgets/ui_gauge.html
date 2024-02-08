@@ -137,51 +137,51 @@
 
 <script type="text/html" data-template-name="ui-gauge">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-gauge.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-gauge.label.size"></span></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-gtype"><i class="fa fa-list"></i> Type</label>
+        <label for="node-input-gtype"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.type"></span></label>
         <select id="node-input-gtype" style="width:150px">
-            <option value="gauge-34">Gauge (3/4)</option>
-            <option value="gauge-half">Gauge (Half)</option>
+            <option value="gauge-34" data-i18n="ui-gauge.label.gauge34"></option>
+            <option value="gauge-half" data-i18n="ui-gauge.label.gaugeHalf"></option>
             <!-- <segment value="donut">Donut</segment>
             <segment value="compass">Compass</segment>
             <segment value="wave">Level</segment> -->
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-gstyle"><i class="fa fa-list"></i> Style</label>
+        <label for="node-input-gstyle"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.style"></span></label>
         <select id="node-input-gstyle" style="width:150px">
-            <option value="needle">Needle</option>
-            <option value="rounded">Rounded</option>
+            <option value="needle" data-i18n="ui-gauge.label.needle"></option>
+            <option value="rounded" data-i18n="ui-gauge.label.rounded"></option>
             <!-- <option value=rounded">Rounded</option> -->
         </select>
     </div>
     <div class="form-row">
-        <h3>Limits</h3>
+        <h3><span data-i18n="ui-gauge.label.limits"></span></h3>
     </div>
     <div class="form-row">
-        <label for="node-input-min"><i class="fa fa-arrows-h"></i>Range</label>
-        <span for="node-input-min">min</span>
+        <label for="node-input-min"><i class="fa fa-arrows-h"></i><span data-i18n="ui-gauge.label.range"></span></label>
+        <span for="node-input-min"><span data-i18n="ui-gauge.label.min"></span></span>
         <input type="text" id="node-input-min" style="width:80px">
-        <span for="node-input-max" style="margin-left:20px;">max</span>
+        <span for="node-input-max" style="margin-left:20px;"><span data-i18n="ui-gauge.label.max"></span></span>
         <input type="text" id="node-input-max" style="width:80px">
     </div>
     <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
-        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Segments</label>
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
         <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
-            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b>All "from" values must be unique.</b></span>
+            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b data-i18n="ui-gauge.errors.unique"></b></span>
             <ol id="node-input-segments-container" style="list-style-type:none; margin:0;"></ol>
         </div>
         <!-- <a
@@ -193,68 +193,51 @@
         </a> -->
     </div>
     <div class="form-row">
-        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>segment</span></a>
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
     </div>
     <div class="form-row">
-        <h3>Labelling</h3>
+        <h3 data-i18n="ui-gauge.label.labelling"></h3>
     </div>
     <div id="ui-gauge-labels">
         <div class="form-row">
-            <label for="node-input-title"><i class="fa fa-tag"></i> Label</label>
+            <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
             <input type="text" id="node-input-title">
         </div>
         <div class="form-row form-row-flex">
             <div>
-                <label for="node-input-prefix"><i class="fa fa-tag"></i> Prefix</label>
+                <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
                 <input type="text" id="node-input-prefix" style="width: 75px">
             </div>
             <div>
-                <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> Suffix</label>
+                <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
                 <input type="text" id="node-input-suffix" style="width: 75px">
             </div>
         </div>
         <div class="form-row" id="ui-gauge-units">
-            <label for="node-input-units"><i class="fa fa-calculator"></i> Units</label>
+            <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
             <input type="text" id="node-input-units" placeholder="segmental sub-label">
         </div>
     </div>
     <div class="form-row">
-        <h3>Sizes</h3>
+        <h3 data-i18n="ui-gauge.label.sizes"></h3>
     </div>
     <div class="form-row">
-        <label for="node-input-sizeThickness"><i class="fa fa-arrows-h"></i> Gauge</label>
+        <label for="node-input-sizeThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gauge"></span></label>
         <input type="text" id="node-input-sizeThickness" style="width:75px; margin-right: 3px;">px
     </div>
     <div class="form-row">
-        <label for="node-input-sizeGap"><i class="fa fa-arrows-h"></i> Gap</label>
+        <label for="node-input-sizeGap"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gap"></span></label>
         <input type="text" id="node-input-sizeGap" style="width:75px; margin-right: 3px;">px
     </div>
     <div class="form-row">
-        <label for="node-input-sizeKeyThickness"><i class="fa fa-arrows-h"></i> Segments</label>
+        <label for="node-input-sizeKeyThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
         <input type="text" id="node-input-sizeKeyThickness" style="width:75px; margin-right: 3px;">px
     </div>
-    <!-- <div class="form-row" id="ui-gauge-colours">
-        <label for="node-input-color1">Colour gradient</label>
-        <input type="color" id="node-input-color1" class="gauge-color" style="width:100px;"/>
-        <input type="color" id="node-input-color2" class="gauge-color" style="width:100px;"/>
-        <input type="color" id="node-input-color3" class="gauge-color" style="width:100px;"/>
-    </div>
-    <div class="form-row" id="ui-gauge-segments">
-        <label>Sectors</label>
-        <span id="seg-min" style="display:inline-block; width:40px;">0</span>...
-        <input type="text" id="node-input-seg1" style="text-align:center; width:87px;" placeholder="segmental"> ...
-        <input type="text" id="node-input-seg2" style="text-align:center; width:87px;" placeholder="segmental"> ...
-        <span id="seg-max" style="display:inline-block; width:40px; text-align:right">10</span>
-    </div> -->
-    <!-- <div class="form-row" id="ui-gauge-diff">
-        <label></label> Fill gauge from centre.
-        <input type="checkbox" id="node-input-diff" style="display:inline-block; width:auto; vertical-align:top;">
-    </div> -->
     <div class="form-row">
-        <h3>Styling</h3>
+        <h3 data-i18n="ui-gauge.label.styling"></h3>
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i>  Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-gauge.label.class"></span></label>
         <input type="text" id="node-input-className" placeholder="segmental CSS class name(s) for widget"/>
     </div>
 </script>
