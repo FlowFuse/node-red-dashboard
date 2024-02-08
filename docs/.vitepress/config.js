@@ -37,6 +37,17 @@ export default ({ mode }) => {
         "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-MNGVF5NCF7');",
       ],
     ],
+    transformPageData(pageData) {
+      const canonicalUrl = `https://dashboard.flowfuse.com/${pageData.relativePath}`
+        .replace(/index\.md$/, '')
+        .replace(/\.md$/, '.html')
+  
+      pageData.frontmatter.head ??= []
+      pageData.frontmatter.head.push([
+        'link',
+        { rel: 'canonical', href: canonicalUrl }
+      ])
+    },
     themeConfig: {
       logo: '/logo.png',
       nav: [
@@ -88,6 +99,7 @@ export default ({ mode }) => {
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-event', link: '/nodes/widgets/ui-event' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
+                { text: 'ui-gauge', link: '/nodes/widgets/ui-gauge' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },
                 { text: 'ui-notification', link: '/nodes/widgets/ui-notification' },
                 { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },

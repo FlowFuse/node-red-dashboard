@@ -1,0 +1,243 @@
+<style>
+    input.gauge-color {
+        width: 100px;
+        text-align: center;
+    }
+    input.gauge-color::-webkit-color-swatch {
+        border: none;
+    }
+</style>
+
+<script type="text/javascript">
+    RED.nodes.registerType('ui-gauge', {
+        category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+        color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
+        defaults: {
+            name: { value: '' },
+            group: { type: 'ui-group', required: true },
+            order: { value: 0 },
+            width: {
+                value: 0,
+                validate: function (v) {
+                    const width = v || 0
+                    const currentGroup = $('#node-input-group').val() || this.group
+                    const groupNode = RED.nodes.node(currentGroup)
+                    const valid = !groupNode || +width <= +groupNode.width
+                    $('#node-input-size').toggleClass('input-error', !valid)
+                    return valid
+                }
+            },
+            height: { value: 0 },
+            gtype: { value: 'gauge-half' },
+            gstyle: { value: 'needle' },
+            title: { value: 'gauge' },
+            units: { value: 'units' },
+            prefix: { value: '' },
+            suffix: { value: '' },
+            segments: {
+                value: [{
+                    color: '#5CD65C',
+                    from: 0
+                }, {
+                    color: '#FFC800',
+                    from: 4
+                }, {
+                    color: '#EA5353',
+                    from: 7
+                }]
+            },
+            min: { value: 0, required: true, validate: RED.validators.number() },
+            max: { value: 10, required: true, validate: RED.validators.number() },
+            // sizes
+            sizeThickness: { value: 16, validate: RED.validators.number() },
+            sizeGap: { value: 4, validate: RED.validators.number() },
+            sizeKeyThickness: { value: 8, validate: RED.validators.number() },
+            // style
+            styleRounded: { value: true },
+            styleGlow: { value: false },
+            // CSS
+            className: { value: '' }
+        },
+        inputs: 1,
+        outputs: 0,
+        inputLabels: function () { return this.min + ' - ' + this.max },
+        align: 'right',
+        icon: 'ui-gauge.svg',
+        paletteLabel: 'gauge',
+        label: function () { return this.name || this.title || this.gtype },
+        labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+        oneditprepare: function () {
+            $('#node-input-size').elementSizer({
+                width: '#node-input-width',
+                height: '#node-input-height',
+                group: '#node-input-group'
+            })
+
+            // check for duplicate values
+            const unique = new Set(this.segments.map(function (o) { return o.from }))
+            if (this.segments.length === unique.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
+
+            function generateSegment (i, segment) {
+                const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
+                const row = $('<div/>').appendTo(container)
+                $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
+                $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+
+                $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-segment-handle fa fa-bars"></i>').appendTo(row)
+
+                $('<input/>', { class: 'node-input-segment-color', type: 'color', style: 'margin-left:7px; width: 50px;', placeholder: 'Color', value: segment.color }).appendTo(row)
+                $('<input/>', { class: 'node-input-segment-from', type: 'text', style: 'margin-left:7px; width:calc(100% - 175px);', placeholder: 'From', value: segment.from }).appendTo(row)
+
+                const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
+                const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
+                $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
+
+                deleteButton.click(function () {
+                    container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
+                    container.fadeOut(300, function () {
+                        $(this).remove()
+                    })
+                })
+
+                $('#node-input-segments-container').append(container)
+            }
+
+            $('#node-input-add-segment').click(function () {
+                generateSegment($('#node-input-segments-container').children().length + 1, {})
+                $('#node-input-segments-container-div').scrollTop($('#node-input-segments-container-div').get(0).scrollHeight)
+            })
+
+            $('#node-input-segments-container').sortable({
+                axis: 'y',
+                handle: '.node-input-option-handle',
+                cursor: 'move'
+            })
+
+            for (let i = 0; i < this.segments.length; i++) {
+                const segment = this.segments[i]
+                generateSegment(i + 1, segment)
+            }
+        },
+        oneditsave: function () {
+            const segments = $('#node-input-segments-container').children()
+
+            const node = this
+            node.segments = []
+            segments.each(function (i) {
+                const segment = $(this)
+                const s = {
+                    from: segment.find('.node-input-segment-from').val(),
+                    color: segment.find('.node-input-segment-color').val()
+                }
+                node.segments.push(s)
+            })
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="ui-gauge">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.name"></span></label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-gauge.label.group"></span></label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-gauge.label.size"></span></label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-gtype"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.type"></span></label>
+        <select id="node-input-gtype" style="width:150px">
+            <option value="gauge-34" data-i18n="ui-gauge.label.gauge34"></option>
+            <option value="gauge-half" data-i18n="ui-gauge.label.gaugeHalf"></option>
+            <!-- <segment value="donut">Donut</segment>
+            <segment value="compass">Compass</segment>
+            <segment value="wave">Level</segment> -->
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-gstyle"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.style"></span></label>
+        <select id="node-input-gstyle" style="width:150px">
+            <option value="needle" data-i18n="ui-gauge.label.needle"></option>
+            <option value="rounded" data-i18n="ui-gauge.label.rounded"></option>
+            <!-- <option value=rounded">Rounded</option> -->
+        </select>
+    </div>
+    <div class="form-row">
+        <h3><span data-i18n="ui-gauge.label.limits"></span></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-min"><i class="fa fa-arrows-h"></i><span data-i18n="ui-gauge.label.range"></span></label>
+        <span for="node-input-min"><span data-i18n="ui-gauge.label.min"></span></span>
+        <input type="text" id="node-input-min" style="width:80px">
+        <span for="node-input-max" style="margin-left:20px;"><span data-i18n="ui-gauge.label.max"></span></span>
+        <input type="text" id="node-input-max" style="width:80px">
+    </div>
+    <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
+        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
+            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b data-i18n="ui-gauge.errors.unique"></b></span>
+            <ol id="node-input-segments-container" style="list-style-type:none; margin:0;"></ol>
+        </div>
+        <!-- <a
+            data-html="true"
+            title="Dynamic Property: Send 'msg.segments' in order to override this property."
+            class="red-ui-button ui-node-popover-title"
+            style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+            <i style="font-family: ui-serif;">fx</i>
+        </a> -->
+    </div>
+    <div class="form-row">
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
+    </div>
+    <div class="form-row">
+        <h3 data-i18n="ui-gauge.label.labelling"></h3>
+    </div>
+    <div id="ui-gauge-labels">
+        <div class="form-row">
+            <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
+            <input type="text" id="node-input-title">
+        </div>
+        <div class="form-row form-row-flex">
+            <div>
+                <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
+                <input type="text" id="node-input-prefix" style="width: 75px">
+            </div>
+            <div>
+                <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
+                <input type="text" id="node-input-suffix" style="width: 75px">
+            </div>
+        </div>
+        <div class="form-row" id="ui-gauge-units">
+            <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
+            <input type="text" id="node-input-units" placeholder="segmental sub-label">
+        </div>
+    </div>
+    <div class="form-row">
+        <h3 data-i18n="ui-gauge.label.sizes"></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-sizeThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gauge"></span></label>
+        <input type="text" id="node-input-sizeThickness" style="width:75px; margin-right: 3px;">px
+    </div>
+    <div class="form-row">
+        <label for="node-input-sizeGap"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gap"></span></label>
+        <input type="text" id="node-input-sizeGap" style="width:75px; margin-right: 3px;">px
+    </div>
+    <div class="form-row">
+        <label for="node-input-sizeKeyThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
+        <input type="text" id="node-input-sizeKeyThickness" style="width:75px; margin-right: 3px;">px
+    </div>
+    <div class="form-row">
+        <h3 data-i18n="ui-gauge.label.styling"></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-gauge.label.class"></span></label>
+        <input type="text" id="node-input-className" placeholder="segmental CSS class name(s) for widget"/>
+    </div>
+</script>

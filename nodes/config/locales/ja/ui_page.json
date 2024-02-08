@@ -1,0 +1,25 @@
+{
+    "ui-page": {
+        "label": {
+            "name": "名前",
+            "ui": "UI",
+            "path": "パス",
+            "icon": "アイコン",
+            "theme": "テーマ",
+            "layout": "配置",
+            "grid": "グリッド",
+            "fixed": "固定",
+            "notebook": "ノートブック",
+            "class": "クラス",
+            "classNamePlaceholder": "ページのための任意のCSSクラス名",
+            "defaultState": "標準状態",
+            "visibility": "画面表示",
+            "visible": "表示",
+            "hidden": "非表示",
+            "interactivity": "画面操作",
+            "active": "有効",
+            "disabled": "無効",
+            "openDashboardSidebar": "ダッシュボード2.0のサイドバーを開く"
+        }
+    }
+}
