@@ -1,0 +1,918 @@
+[
+    {
+        "id": "d0c36237eeebb6d5",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "72",
+        "payloadType": "num",
+        "x": 290,
+        "y": 200,
+        "wires": [
+            [
+                "130fa4d5c69fd905"
+            ]
+        ]
+    },
+    {
+        "id": "130fa4d5c69fd905",
+        "type": "ui-gauge",
+        "z": "0758321f1687e812",
+        "name": "Temperature",
+        "group": "d4e26bfea20b1062",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "gauge",
+        "units": "°F",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#3d10e0"
+            },
+            {
+                "from": "65",
+                "color": "#00ff4c"
+            },
+            {
+                "from": "73",
+                "color": "#ea5353"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 450,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e2baeb6bbc1edbaa",
+        "type": "ui-form",
+        "z": "0758321f1687e812",
+        "name": "",
+        "group": "d4e26bfea20b1062",
+        "label": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Temp",
+                "key": "Temp",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "Temp": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": false,
+        "topic": "payload",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 90,
+        "y": 260,
+        "wires": [
+            [
+                "434adaf87c152c28"
+            ]
+        ]
+    },
+    {
+        "id": "434adaf87c152c28",
+        "type": "change",
+        "z": "0758321f1687e812",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.Temp",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 260,
+        "y": 260,
+        "wires": [
+            [
+                "20fe1756366c8e39"
+            ]
+        ]
+    },
+    {
+        "id": "20fe1756366c8e39",
+        "type": "ui-gauge",
+        "z": "0758321f1687e812",
+        "name": "Temperature",
+        "group": "d4e26bfea20b1062",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "gauge",
+        "units": "°F",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#3d10e0"
+            },
+            {
+                "from": "65",
+                "color": "#00ff4c"
+            },
+            {
+                "from": "73",
+                "color": "#ea5353"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 450,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "f64abb39012dfbf7",
+        "type": "ui-text-input",
+        "z": "0758321f1687e812",
+        "group": "d4e26bfea20b1062",
+        "name": "Temp Setpoint",
+        "label": "Number",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "mode": "number",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "x": 260,
+        "y": 320,
+        "wires": [
+            [
+                "07cccb1132285b1d"
+            ]
+        ]
+    },
+    {
+        "id": "07cccb1132285b1d",
+        "type": "debug",
+        "z": "0758321f1687e812",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "d3da83fae5463c26",
+        "type": "ui-button",
+        "z": "0758321f1687e812",
+        "group": "d4e26bfea20b1062",
+        "name": "",
+        "label": "Enter",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 90,
+        "y": 320,
+        "wires": [
+            [
+                "f64abb39012dfbf7"
+            ]
+        ]
+    },
+    {
+        "id": "fb46cdf35fa7a2a4",
+        "type": "ui-dropdown",
+        "z": "0758321f1687e812",
+        "group": "d4e26bfea20b1062",
+        "name": "Speed Setting",
+        "label": "Select Option:",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Low Speed Setting",
+                "value": "23",
+                "type": "str"
+            },
+            {
+                "label": "Medium Speed Setting",
+                "value": "28",
+                "type": "str"
+            },
+            {
+                "label": "High Speed Setting",
+                "value": "32",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 380,
+        "wires": [
+            [
+                "b6220ad74b7061b8"
+            ]
+        ]
+    },
+    {
+        "id": "b6220ad74b7061b8",
+        "type": "debug",
+        "z": "0758321f1687e812",
+        "name": "debug 20",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "c68b5b27e2406dac",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "options",
+                "v": "[{\"value\":\"cheddar\",\"label\":\"Cheddar\"},{\"value\":\"brie\",\"label\":\"Brie\"},{\"value\":\"parmesan\",\"label\":\"Parmesan\"},{\"value\":\"gruyere\",\"label\":\"Gruyere\"}]",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 90,
+        "y": 480,
+        "wires": [
+            [
+                "511030e7cf60fd3d"
+            ]
+        ]
+    },
+    {
+        "id": "511030e7cf60fd3d",
+        "type": "ui-dropdown",
+        "z": "0758321f1687e812",
+        "group": "6a1c991d6cbbe85f",
+        "name": "",
+        "label": "Select Option:",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 280,
+        "y": 480,
+        "wires": [
+            [
+                "605f48154038b399"
+            ]
+        ]
+    },
+    {
+        "id": "605f48154038b399",
+        "type": "debug",
+        "z": "0758321f1687e812",
+        "name": "debug 21",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "972184369b9c2039",
+        "type": "ui-radio-group",
+        "z": "0758321f1687e812",
+        "group": "6a1c991d6cbbe85f",
+        "name": "Emotion Meter",
+        "label": "Select Option:",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Happy",
+                "value": "Happy",
+                "type": "str"
+            },
+            {
+                "label": "Sad",
+                "value": "Sad",
+                "type": "str"
+            },
+            {
+                "label": "Scared",
+                "value": "Scared",
+                "type": "str"
+            },
+            {
+                "label": "Indifferent",
+                "value": "Indifferent",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 280,
+        "y": 540,
+        "wires": [
+            [
+                "c1bacd6c8805dae3"
+            ]
+        ]
+    },
+    {
+        "id": "c1bacd6c8805dae3",
+        "type": "ui-text",
+        "z": "0758321f1687e812",
+        "group": "6a1c991d6cbbe85f",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Emotion:",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 460,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "beaecd4993da0288",
+        "type": "ui-switch",
+        "z": "0758321f1687e812",
+        "name": "",
+        "label": "switch",
+        "group": "6a1c991d6cbbe85f",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "onvalue": "Machine Started",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "Machine Stopped",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 310,
+        "y": 600,
+        "wires": [
+            [
+                "e1f9ad3e5063e8ae"
+            ]
+        ]
+    },
+    {
+        "id": "e1f9ad3e5063e8ae",
+        "type": "ui-notification",
+        "z": "0758321f1687e812",
+        "ui": "c8bad6f51057de42",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 0,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "raw": false,
+        "className": "",
+        "name": "",
+        "x": 490,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "957b7c524cb5d739",
+        "type": "ui-table",
+        "z": "0758321f1687e812",
+        "group": "6a1c991d6cbbe85f",
+        "name": "",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "autocols": true,
+        "columns": [],
+        "x": 450,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "ffc8df6824d41b85",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"id\":\"abc123\",\"value\":75,\"zip_code\":\"10001\",\"latitude\":40.748817,\"longitude\":-73.985428},{\"id\":\"def456\",\"value\":42,\"zip_code\":\"90210\",\"latitude\":34.0901,\"longitude\":-118.4065},{\"id\":\"ghi789\",\"value\":90,\"zip_code\":\"94103\",\"latitude\":37.7749,\"longitude\":-122.4194}]",
+        "payloadType": "json",
+        "x": 310,
+        "y": 640,
+        "wires": [
+            [
+                "957b7c524cb5d739"
+            ]
+        ]
+    },
+    {
+        "id": "efccfdf502300871",
+        "type": "ui-chart",
+        "z": "0758321f1687e812",
+        "group": "25fd57f07b6dd778",
+        "name": "",
+        "label": "chart",
+        "order": 9007199254740991,
+        "chartType": "line",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisProperty": "datestamp",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "time",
+        "yAxisProperty": "temp",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 450,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f5ecbfed2f015b37",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Line chart temp for 3 different locations",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"location\":\"New York\",\"temp\":56,\"datestamp\":1643784000},{\"location\":\"Los Angeles\",\"temp\":67,\"datestamp\":1643784000},{\"location\":\"Chicago\",\"temp\":44,\"datestamp\":1643784000},{\"location\":\"New York\",\"temp\":60,\"datestamp\":1643798400},{\"location\":\"Los Angeles\",\"temp\":71,\"datestamp\":1643798400},{\"location\":\"Chicago\",\"temp\":48,\"datestamp\":1643798400},{\"location\":\"New York\",\"temp\":65,\"datestamp\":1643812800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1643812800},{\"location\":\"Chicago\",\"temp\":52,\"datestamp\":1643812800},{\"location\":\"New York\",\"temp\":69,\"datestamp\":1643827200},{\"location\":\"Los Angeles\",\"temp\":77,\"datestamp\":1643827200},{\"location\":\"Chicago\",\"temp\":56,\"datestamp\":1643827200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643841600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643841600},{\"location\":\"Chicago\",\"temp\":60,\"datestamp\":1643841600},{\"location\":\"New York\",\"temp\":77,\"datestamp\":1643856000},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643856000},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1643856000},{\"location\":\"New York\",\"temp\":80,\"datestamp\":1643870400},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643870400},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1643870400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643884800},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643884800},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1643884800},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643899200},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643899200},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1643899200},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Los Angeles\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1643913600},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643928000},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643928000},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1643928000},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1643942400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643956800},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643956800},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1643956800},{\"location\":\"New York\",\"temp\":79,\"datestamp\":1643971200},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643971200},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1643971200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643985600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643985600},{\"location\":\"Chicago\",\"temp\":100,\"datestamp\":1643985600},{\"location\":\"New York\",\"temp\":66,\"datestamp\":1644000000},{\"location\":\"Los Angeles\",\"temp\":78,\"datestamp\":1644000000},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1644000000},{\"location\":\"New York\",\"temp\":59,\"datestamp\":1644014400},{\"location\":\"Los Angeles\",\"temp\":76,\"datestamp\":1644014400},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1644014400},{\"location\":\"New York\",\"temp\":53,\"datestamp\":1644028800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1644028800},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1644028800},{\"location\":\"New York\",\"temp\":47,\"datestamp\":1644043200},{\"location\":\"Los Angeles\",\"temp\":72,\"datestamp\":1644043200},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1644043200},{\"location\":\"New York\",\"temp\":42,\"datestamp\":1644057600},{\"location\":\"Los Angeles\",\"temp\":70,\"datestamp\":1644057600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1644057600},{\"location\":\"New York\",\"temp\":39,\"datestamp\":1644072000},{\"location\":\"Los Angeles\",\"temp\":68,\"datestamp\":1644072000},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1644072000},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644086400},{\"location\":\"Los Angeles\",\"temp\":66,\"datestamp\":1644086400},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1644086400},{\"location\":\"New York\",\"temp\":36,\"datestamp\":1644100800},{\"location\":\"Los Angeles\",\"temp\":64,\"datestamp\":1644100800},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1644100800},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644115200},{\"location\":\"Los Angeles\",\"temp\":62,\"datestamp\":1644115200},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1644115200}]",
+        "payloadType": "json",
+        "x": 210,
+        "y": 700,
+        "wires": [
+            [
+                "efccfdf502300871"
+            ]
+        ]
+    },
+    {
+        "id": "2a23595f05d3331e",
+        "type": "ui-chart",
+        "z": "0758321f1687e812",
+        "group": "25fd57f07b6dd778",
+        "name": "",
+        "label": "Sales in Million",
+        "order": 9007199254740991,
+        "chartType": "bar",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "category",
+        "yAxisProperty": "sales_millions",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 480,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "859712660c965a5e",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Bar Chart for Sales",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"location\":\"New York\",\"sales_millions\":3.2},{\"location\":\"Los Angeles\",\"sales_millions\":2.5},{\"location\":\"Chicago\",\"sales_millions\":1.8},{\"location\":\"Houston\",\"sales_millions\":2.9},{\"location\":\"Miami\",\"sales_millions\":2.1}]",
+        "payloadType": "json",
+        "x": 210,
+        "y": 760,
+        "wires": [
+            [
+                "2a23595f05d3331e"
+            ]
+        ]
+    },
+    {
+        "id": "91ced026339a3eeb",
+        "type": "ui-chart",
+        "z": "0758321f1687e812",
+        "group": "25fd57f07b6dd778",
+        "name": "",
+        "label": "chart",
+        "order": 9007199254740991,
+        "chartType": "scatter",
+        "category": "",
+        "categoryType": "str",
+        "xAxisProperty": "x",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "linear",
+        "yAxisProperty": "y",
+        "ymin": "",
+        "ymax": "",
+        "action": "replace",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 450,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "937b42a40fdcf424",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"x\":0.5,\"y\":45.2},{\"x\":1.3,\"y\":48.7},{\"x\":2.1,\"y\":52.4},{\"x\":3.7,\"y\":56.8},{\"x\":4.2,\"y\":60.3},{\"x\":5.5,\"y\":63.6},{\"x\":6.2,\"y\":67.1},{\"x\":7.3,\"y\":69.5},{\"x\":8.4,\"y\":71.9},{\"x\":9.1,\"y\":74.3},{\"x\":10,\"y\":75.7},{\"x\":10.7,\"y\":76.9},{\"x\":11.5,\"y\":78.2},{\"x\":12.2,\"y\":79.6},{\"x\":13.4,\"y\":81.1},{\"x\":14.7,\"y\":82.9},{\"x\":15.1,\"y\":84.1},{\"x\":16.5,\"y\":85.3},{\"x\":17.3,\"y\":86.5},{\"x\":18.6,\"y\":87.6},{\"x\":19.2,\"y\":88.7},{\"x\":20.4,\"y\":89.7},{\"x\":21.1,\"y\":90.6},{\"x\":22.3,\"y\":91.4},{\"x\":23.7,\"y\":92.1},{\"x\":24.2,\"y\":92.8},{\"x\":25.6,\"y\":93.4},{\"x\":26.3,\"y\":94},{\"x\":27.5,\"y\":94.5},{\"x\":28.1,\"y\":94.9},{\"x\":29.4,\"y\":95.2},{\"x\":30.2,\"y\":95.5},{\"x\":31.6,\"y\":95.7},{\"x\":32.3,\"y\":95.8},{\"x\":33.5,\"y\":95.9},{\"x\":34.2,\"y\":96},{\"x\":35.4,\"y\":96},{\"x\":36.1,\"y\":96},{\"x\":37.3,\"y\":95.9},{\"x\":38.7,\"y\":95.8},{\"x\":39.2,\"y\":95.6},{\"x\":40.5,\"y\":95.4},{\"x\":41.2,\"y\":95.1},{\"x\":42.4,\"y\":94.7},{\"x\":43.7,\"y\":94.3},{\"x\":44.1,\"y\":93.8},{\"x\":45.5,\"y\":93.3},{\"x\":46.3,\"y\":92.8},{\"x\":47.6,\"y\":92.2},{\"x\":48.1,\"y\":91.6},{\"x\":49.4,\"y\":91},{\"x\":50.2,\"y\":90.3},{\"x\":51.5,\"y\":89.6},{\"x\":52.2,\"y\":88.8},{\"x\":53.4,\"y\":88},{\"x\":54.7,\"y\":87.2},{\"x\":55.1,\"y\":86.3},{\"x\":56.5,\"y\":85.4},{\"x\":57.3,\"y\":84.4},{\"x\":58.6,\"y\":83.4},{\"x\":59.2,\"y\":82.4},{\"x\":60.4,\"y\":81.3},{\"x\":61.1,\"y\":80.2},{\"x\":62.3,\"y\":79},{\"x\":63.7,\"y\":77.8},{\"x\":64.2,\"y\":76.6},{\"x\":65.6,\"y\":75.4},{\"x\":66.3,\"y\":74.1},{\"x\":67.5,\"y\":72.8},{\"x\":68.1,\"y\":71.5},{\"x\":69.4,\"y\":70.1},{\"x\":70.2,\"y\":68.7},{\"x\":71.6,\"y\":67.3},{\"x\":72.3,\"y\":65.8},{\"x\":73.5,\"y\":64.3},{\"x\":74.2,\"y\":62.8},{\"x\":75.4,\"y\":61.2},{\"x\":76.7,\"y\":59.6},{\"x\":77.1,\"y\":58},{\"x\":78.5,\"y\":56.4},{\"x\":79.3,\"y\":54.8},{\"x\":80.6,\"y\":53.1},{\"x\":81.2,\"y\":51.4},{\"x\":82.4,\"y\":49.7},{\"x\":83.7,\"y\":47.9},{\"x\":84.1,\"y\":46.2},{\"x\":85.5,\"y\":44.4},{\"x\":86.3,\"y\":42.6},{\"x\":87.6,\"y\":40.8},{\"x\":88.1,\"y\":39},{\"x\":89.4,\"y\":37.1},{\"x\":90.2,\"y\":35.3},{\"x\":91.6,\"y\":33.4},{\"x\":92.3,\"y\":31.6},{\"x\":93.5,\"y\":29.7},{\"x\":94.2,\"y\":27.8},{\"x\":95.4,\"y\":25.9},{\"x\":96.7,\"y\":24},{\"x\":97.1,\"y\":22.1},{\"x\":98.5,\"y\":20.2},{\"x\":99.3,\"y\":18.3},{\"x\":100,\"y\":16.4}]",
+        "payloadType": "json",
+        "x": 250,
+        "y": 820,
+        "wires": [
+            [
+                "91ced026339a3eeb"
+            ]
+        ]
+    },
+    {
+        "id": "45fc71e9f522a663",
+        "type": "ui-markdown",
+        "z": "0758321f1687e812",
+        "group": "57ffc1ae3287d533",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "content": "# Dashboard 2.0 Documentation\n\n## Quick start Guides Below:\n\n[Getting Started](https://dashboard.flowfuse.com/getting-started.html)\n\n[Migration Guide](https://dashboard.flowfuse.com/user/migration.html)\n\n[UI Template Examples](https://dashboard.flowfuse.com/user/template-examples.html)\n\n[Charts](https://dashboard.flowfuse.com/nodes/widgets/ui-chart.html)\n\n## [Issues](https://github.com/FlowFuse/node-red-dashboard/issues)\n\n## [Contributions](https://dashboard.flowfuse.com/contributing/)\n\n## [FlowFuse](https://flowfuse.com/)\n",
+        "className": "",
+        "x": 470,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d4e26bfea20b1062",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "71775b7f13799fbe",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "6a1c991d6cbbe85f",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "1de1554045af459d",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c8bad6f51057de42",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false
+    },
+    {
+        "id": "25fd57f07b6dd778",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "ea1fa55aa4759694",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "57ffc1ae3287d533",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "ba1b924a535eb860",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "71775b7f13799fbe",
+        "type": "ui-page",
+        "name": "page1",
+        "ui": "c8bad6f51057de42",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "41e95e8bf7b330e6",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "1de1554045af459d",
+        "type": "ui-page",
+        "name": "Page2",
+        "ui": "c8bad6f51057de42",
+        "path": "/page2",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "41e95e8bf7b330e6",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ea1fa55aa4759694",
+        "type": "ui-page",
+        "name": "Page3",
+        "ui": "c8bad6f51057de42",
+        "path": "/page3",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "41e95e8bf7b330e6",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ba1b924a535eb860",
+        "type": "ui-page",
+        "name": "Markdown",
+        "ui": "c8bad6f51057de42",
+        "path": "/page4",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "41e95e8bf7b330e6",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "41e95e8bf7b330e6",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

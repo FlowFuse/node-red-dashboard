@@ -1,0 +1,125 @@
+[
+    {
+        "id": "d0c36237eeebb6d5",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "72",
+        "payloadType": "num",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "130fa4d5c69fd905"
+            ]
+        ]
+    },
+    {
+        "id": "130fa4d5c69fd905",
+        "type": "ui-gauge",
+        "z": "0758321f1687e812",
+        "name": "Temperature",
+        "group": "d4e26bfea20b1062",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "gauge",
+        "units": "°F",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#3d10e0"
+            },
+            {
+                "from": "65",
+                "color": "#00ff4c"
+            },
+            {
+                "from": "73",
+                "color": "#ea5353"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 350,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d4e26bfea20b1062",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "71775b7f13799fbe",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "71775b7f13799fbe",
+        "type": "ui-page",
+        "name": "page1",
+        "ui": "c8bad6f51057de42",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "41e95e8bf7b330e6",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c8bad6f51057de42",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false
+    },
+    {
+        "id": "41e95e8bf7b330e6",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]
