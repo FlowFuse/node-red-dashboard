@@ -14,7 +14,7 @@ This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts
 
 [Vue.js](https://vuejs.org/) is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. It is a popular choice for building modern web applications.
 
-We chose Vue.js over other popular frameworks like React and Angular because of its shallow learning curve, and ease of use/readibility for non-front-end developers.
+We chose Vue.js over other popular frameworks like React and Angular because of its shallow learning curve, and ease of use/readability for non-front-end developers.
 
 We also utilise the [Vuetify component library](https://vuetifyjs.com/en/components/all/), which is a Material Design component framework for Vue.js. It aims to provide clean, semantic and reusable components that make building your application a breeze.
 

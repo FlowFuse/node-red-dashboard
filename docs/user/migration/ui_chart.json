@@ -35,7 +35,7 @@
         {
             "property": "cutout",
             "changes": "improved",
-            "notes": "We now support both the 'size' and 'shape' of dots in a Scater and Line chart."
+            "notes": "We now support both the 'size' and 'shape' of dots in a Scatter and Line chart."
         },
         {
             "property": "interpolate",
@@ -75,7 +75,7 @@
         },
         {
             "property": "series",
-            "notes": "Allows custommisation of the msg property, or nested json key that defines which 'series' a given datapoint belongs to.<br /><br />In Dashboard 1.0, this was <i>always</i> <code>msg.topic</code>."
+            "notes": "Allows customisation of the msg property, or nested json key that defines which 'series' a given datapoint belongs to.<br /><br />In Dashboard 1.0, this was <i>always</i> <code>msg.topic</code>."
         },
         {
             "property": "x-property",

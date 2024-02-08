@@ -23,7 +23,7 @@ If you want to use `npm` to install your nodes, you can instead [follow these in
 Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can be configured and arranged in our own User Interface. The hierarchy of a Dashboard is as follows:
 
 - **Base** - Defines the base URL (e.g. `/dashboard`) for your Dashboard.
-- **Page** - A given page that a vistor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
+- **Page** - A given page that a visitor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
 - **Group** - A collection of widgets. Rendered onto a page.
 - **Widget** - A single widget (e.g. chart, button, form) created in Dashboard.
 
