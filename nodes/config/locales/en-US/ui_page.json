@@ -1,10 +1,25 @@
 {
-    "ui-page" : {
+    "ui-page": {
         "label": {
+            "name": "Name",
+            "ui": "UI",
+            "path": "Path",
+            "icon": "Icon",
+            "theme": "Theme",
+            "layout": "Layout",
+            "grid": "Grid",
+            "fixed": "Fixed",
+            "notebook": "Notebook",
+            "class": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s) for page",
+            "defaultState": "Default State",
+            "visibility": "Visibility",
             "visible": "Visible",
             "hidden": "Hidden",
+            "interactivity": "Interactivity",
             "active": "Active",
-            "disabled": "Disabled"
+            "disabled": "Disabled",
+            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar"
         }
     }
 }

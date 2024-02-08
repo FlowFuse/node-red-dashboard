@@ -1,20 +1,20 @@
 {
-    "ui-group" : {
-        "label" : {
-            "name" : "Name",
-            "tab" : "Tab",
-            "width" : "Width",
-            "default" : "Default",
-            "group" : "Group",
-            "unassigned" : "unassigned",
+    "ui-group": {
+        "label": {
+            "name": "Name",
+            "page": "Page",
+            "size": "Size",
+            "display-name": "Display group name",
             "className": "Class",
-            "classNamePlaceholder": "Optional CSS class name(s) for widget",
+            "classNamePlaceholder": "Optional CSS class name(s) for group",
+            "defaultState": "Default State",
+            "visibility": "Visibility",
             "visible": "Visible",
             "hidden": "Hidden",
+            "interactivity": "Interactivity",
             "active": "Active",
-            "disabled": "Disabled"
-        },
-        "display-name" : "Display group name",
-        "collapse-name" : "Allow group to be collapsed"
+            "disabled": "Disabled",
+            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar"
+        }
     }
 }
