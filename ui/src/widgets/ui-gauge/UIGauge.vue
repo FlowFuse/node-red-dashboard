@@ -381,7 +381,7 @@ export default {
 }
 
 .nrdb-ui-gauge-34 {
-    top: 0%;
+    top: 2%;
     gap: 4px;
 }
 
