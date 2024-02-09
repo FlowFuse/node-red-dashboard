@@ -1,0 +1,69 @@
+[
+    {
+        "id": "972184369b9c2039",
+        "type": "ui-radio-group",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "Emotion Meter",
+        "label": "Select Option:",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Happy",
+                "value": "Happy",
+                "type": "str"
+            },
+            {
+                "label": "Sad",
+                "value": "Sad",
+                "type": "str"
+            },
+            {
+                "label": "Scared",
+                "value": "Scared",
+                "type": "str"
+            },
+            {
+                "label": "Indifferent",
+                "value": "Indifferent",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 280,
+        "y": 540,
+        "wires": [
+            [
+                "c1bacd6c8805dae3"
+            ]
+        ]
+    },
+    {
+        "id": "c1bacd6c8805dae3",
+        "type": "ui-text",
+        "z": "0758321f1687e812",
+        "group": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Emotion:",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 460,
+        "y": 540,
+        "wires": []
+    }
+]

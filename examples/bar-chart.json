@@ -1,0 +1,75 @@
+[
+    {
+        "id": "2a23595f05d3331e",
+        "type": "ui-chart",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "label": "Sales in Million",
+        "order": 9007199254740991,
+        "chartType": "bar",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "category",
+        "yAxisProperty": "sales_millions",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 480,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "859712660c965a5e",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Bar Chart for Sales",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"location\":\"New York\",\"sales_millions\":3.2},{\"location\":\"Los Angeles\",\"sales_millions\":2.5},{\"location\":\"Chicago\",\"sales_millions\":1.8},{\"location\":\"Houston\",\"sales_millions\":2.9},{\"location\":\"Miami\",\"sales_millions\":2.1}]",
+        "payloadType": "json",
+        "x": 210,
+        "y": 760,
+        "wires": [
+            [
+                "2a23595f05d3331e"
+            ]
+        ]
+    }
+]

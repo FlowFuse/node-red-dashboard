@@ -1,0 +1,53 @@
+[
+    {
+        "id": "beaecd4993da0288",
+        "type": "ui-switch",
+        "z": "0758321f1687e812",
+        "name": "",
+        "label": "switch",
+        "group": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "onvalue": "Machine Started",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "Machine Stopped",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 310,
+        "y": 600,
+        "wires": [
+            [
+                "e1f9ad3e5063e8ae"
+            ]
+        ]
+    },
+    {
+        "id": "e1f9ad3e5063e8ae",
+        "type": "ui-notification",
+        "z": "0758321f1687e812",
+        "ui": "",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 0,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "raw": false,
+        "className": "",
+        "name": "",
+        "x": 490,
+        "y": 600,
+        "wires": []
+    }
+]

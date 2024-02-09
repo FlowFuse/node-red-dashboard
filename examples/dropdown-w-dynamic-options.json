@@ -1,0 +1,79 @@
+[
+    {
+        "id": "c68b5b27e2406dac",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "options",
+                "v": "[{\"value\":\"cheddar\",\"label\":\"Cheddar\"},{\"value\":\"brie\",\"label\":\"Brie\"},{\"value\":\"parmesan\",\"label\":\"Parmesan\"},{\"value\":\"gruyere\",\"label\":\"Gruyere\"}]",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 90,
+        "y": 480,
+        "wires": [
+            [
+                "511030e7cf60fd3d"
+            ]
+        ]
+    },
+    {
+        "id": "511030e7cf60fd3d",
+        "type": "ui-dropdown",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "label": "Select Option:",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 280,
+        "y": 480,
+        "wires": [
+            [
+                "605f48154038b399"
+            ]
+        ]
+    },
+    {
+        "id": "605f48154038b399",
+        "type": "debug",
+        "z": "0758321f1687e812",
+        "name": "debug 21",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 480,
+        "wires": []
+    }
+]

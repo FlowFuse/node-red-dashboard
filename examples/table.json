@@ -1,0 +1,48 @@
+[
+    {
+        "id": "957b7c524cb5d739",
+        "type": "ui-table",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "autocols": true,
+        "columns": [],
+        "x": 450,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "ffc8df6824d41b85",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"id\":\"abc123\",\"value\":75,\"zip_code\":\"10001\",\"latitude\":40.748817,\"longitude\":-73.985428},{\"id\":\"def456\",\"value\":42,\"zip_code\":\"90210\",\"latitude\":34.0901,\"longitude\":-118.4065},{\"id\":\"ghi789\",\"value\":90,\"zip_code\":\"94103\",\"latitude\":37.7749,\"longitude\":-122.4194}]",
+        "payloadType": "json",
+        "x": 310,
+        "y": 640,
+        "wires": [
+            [
+                "957b7c524cb5d739"
+            ]
+        ]
+    }
+]
