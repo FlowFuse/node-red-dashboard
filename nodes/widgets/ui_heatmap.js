@@ -9,6 +9,7 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
+        const base = group.getBase()
 
         function getProperty (value, property) {
             const props = property.split('.')
@@ -43,10 +44,11 @@ module.exports = function (RED) {
                             let convertedInputArray = [];
                             for (let row = 0; row < config.rows; row++) {
                                 for (let column = 0; column < config.columns; column++) {
+                                    let index = row * config.columns + column
                                     convertedInputArray.push({
                                         row: row,
                                         column: column,
-                                        value: msg.payload[row + column]
+                                        value: msg.payload[index]
                                     })
                                 }
                             }
@@ -70,13 +72,13 @@ module.exports = function (RED) {
 
                 if (msg.topic == 'setData') {
                     // When a new data array is being set, store a copy of it
-                    datastore.save(node.id, msg.payload.slice());
+                    datastore.save(base, node, msg.payload.slice());
                 }
                 else if (msg.topic == 'addData') {
                     // When new data (array) is being added, append a copy of it to the currently stored array
                     let storedData = datastore.get(node.id) || [];
                     storedData.push(msg.payload.slice());
-                    datastore.save(storedData);
+                    datastore.save(base, node, storedData);
                 }
 
                 send(msg)

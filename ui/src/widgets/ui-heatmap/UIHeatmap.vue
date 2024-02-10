@@ -4,7 +4,7 @@
 
 <script>
 
-import Heatmap from 'visual-heatmap/dist/visualHeatmap.esm.browser.min.js' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
+import Heatmap from 'visual-heatmap/dist/visualHeatmap.esm.min.js' // eslint-disable-line import/no-named-as-default, import/order, n/file-extension-in-import
 import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex' // eslint-disable-line import/order
@@ -53,11 +53,16 @@ export default {
         useDataTracker(this.id, this.onMsgInput)
     },
     mounted () {
+        this.cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
+        this.cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
+
+        // Convert the point radius to pixels (average of X and Y direction because gl_PointSize in webgl is the same in both directions)
+        let pointRadius = this.props.pointRadius * (this.cellWidth + this.cellHeight) / 2
+
         let heatmapInstance = Heatmap(this.$refs.heatmap_container, {
-            size: this.props.pointRadius,                               // Radius of the data point (in pixels)µ
+            size: pointRadius,                                          // Radius of the data point (in pixels)µ
             min: this.props.minDataValue,                               // Min data Value for relative gradient computation
             max: this.props.maxDataValue,                               // Max data Value for relative gradient computation
-            blur: this.props.blurFactor,                                // Blur factor
             opacity: this.props.opacityFactor,                          // Opacity factor
             rotationAngle: this.props.rotationAngle,                    // Rotation angle
             translate: [this.props.translateX, this.props.translateY],  // Translate vector [x, y]
@@ -94,13 +99,15 @@ export default {
             console.log(msg)
 
             if (msg.topic == 'setData' || msg.topic == 'addData') {
-                let cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
-                let cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
+                //let cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
+                //let cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
 
-                // Calculate for every grid cell the corresponding x and y coordinates (of the center point)
+                // Since the heatmap can be displayed on all kind of devices, the server side uses rows and columns
+                // (instead of X and Y coordinates).  As a result, the X and Y coordinates need to be calculated
+                // for every grid cell (i.e. coordinates of the cell center point).
                 msg.payload.forEach(cell => {
-                    cell.x = Math.floor((parseInt(cell.column) + 0.5) * cellWidth);
-                    cell.y = Math.floor((parseInt(cell.row) + 0.5) * cellHeight);
+                    cell.x = Math.floor((parseInt(cell.column) + 0.5) * this.cellWidth);
+                    cell.y = Math.floor((parseInt(cell.row) + 0.5) * this.cellHeight);
                 });
             }
 
@@ -134,9 +141,6 @@ export default {
                     break
                 case 'setSize':
                     this.heatmapInstance.setSize(msg.payload)
-                    break
-                case 'setBlur':
-                    this.heatmapInstance.setBlur(msg.payload)
                     break
                 case 'setOpacity':
                     this.heatmapInstance.setOpacity(msg.payload)
