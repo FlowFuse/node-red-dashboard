@@ -13,7 +13,7 @@
             "sizings": "サイズ",
             "pagePadding": "ページの余白",
             "groupGap": "グループ間の幅",
-            "groupBorderRadius": "グループの角丸半径",
+            "groupBorderRadius": "グループの角丸",
             "widgetGap": "部品間の幅"
         }
     }
