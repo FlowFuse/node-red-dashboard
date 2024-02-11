@@ -3,6 +3,83 @@
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
+
+        function isSortedAscending(arr) {
+            for (let i = 0; i < arr.length - 1; i++) {
+                if (arr[i + 1].offset - arr[i].offset < 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function hasDuplicates(arr) {
+            let uniqueObjects = new Set();
+            for (const obj of arr) {
+               let identifier = `${obj.opacity}-${obj.offset}-${obj.color}`;
+               if (uniqueObjects.has(identifier)) {
+                   return true; // Found a duplicate
+               }
+               uniqueObjects.add(identifier);
+            }
+            return false; // No duplicates found
+        }
+
+        // Validate the options to (choose and) show configuration error if any.
+        // Any changes for options (adds new or changes any value), calls validation.
+        function validateColorGradient(colorGradient){
+            // When no input parameter, copy all the options from the editableList to this a temporary object
+            if(!colorGradient) {
+                colorGradient = []
+
+                let colorGradientList = $("#node-input-colorgradient-container").editableList('items')
+                colorGradientList.each(function(i) {
+                    let colorGradientItem = $(this)
+                    let offset = colorGradientItem.find(".node-input-colorgradient-offset").val()
+                    let color = colorGradientItem.find(".node-input-colorgradient-color").val()
+                    let opacity = colorGradientItem.find(".node-input-colorgradient-opacity").val()
+                    colorGradient.push({offset:offset, color:color, opacity: opacity})
+                })
+            }
+
+            if (hasDuplicates(colorGradient)) {
+                $("#node-colorgradient-error").text("No duplicate rows allowed")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            else if(colorGradient.length < 2){
+                $("#node-colorgradient-error").text("Configure at least two lines")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            else if(!isSortedAscending(colorGradient)) {
+                $("#node-colorgradient-error").text("The offset values should be ascending")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            else if(colorGradient[0].offset != 0){
+                $("#node-colorgradient-error").text("The first offset should be 0")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            // A float is 1.0 when the remainder of a division by 1 is 0
+            else if(colorGradient[colorGradient.length - 1].offset % 1 !== 0){
+                $("#configError").text("The last offset should be 1.0")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            else if(!colorGradient.every(obj => { return obj.opacity >= 0.0 && obj.opacity <= 1.0 })) {
+                $("#node-colorgradient-error").text("All opacity values should be between 0.0 and 1.0")
+                $("#node-colorgradient-error").show();
+                return false
+            }
+            else {
+                // Valid color gradient
+                $("#node-colorgradient-error").hide();
+                return true
+            }
+        }
+
         RED.nodes.registerType('ui-heatmap', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
@@ -37,21 +114,34 @@
                 translateY: { value: 0 },
                 zoomFactor: { value: 1.0 },
                 colorGradient: { value: [{
-                        color: [0, 0, 0, 0.00],
+                        color: '#000000', // Black
+                        opacity: 0.00,
                         offset: 0
-                    }, {
-                        color: [0, 0, 255, 0.2],
+                    },
+                    {
+                        color: '#0000FF', // Blue
+                        opacity: 0.2,
                         offset: 0.2
-                    }, {
-                        color: [0, 255, 0, 0.5],
+                    },
+                    {
+                        color: '#00FF00', // Green
+                        opacity: 0.5,
                         offset: 0.45
-                    }, {
-                        color: [255, 255, 0, 1.0],
+                    },
+                    {
+                        color: '#FFFF00', // Yellow
+                        opacity: 1.0,
                         offset: 0.85
-                    }, {
-                        color: [255, 0, 0, 1.0],
+                    },
+                    {
+                        color: '#FF0000', // Red
+                        opacity: 1.0,
                         offset: 1.0
-                    }]
+                    }],
+                    validate: function (v) {
+                        debugger
+                        return validateColorGradient(v)
+                    }
                 },
                 backgroundImageUrl: { value: "" }
             },
@@ -61,10 +151,32 @@
             icon: 'font-awesome/fa-i-cursor',
             paletteLabel: 'heatmap',
             oneditprepare: function () {
+                let node = this
+
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
                     height: '#node-input-height',
                     group: '#node-input-group'
+                })
+
+                // Show tabsheets
+                node.tabs = RED.tabs.create({
+                    id: "node-heatmap-tabsheets",
+                    onchange: function(tab) {
+                        node.currentTabId = tab.id
+debugger
+                        // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
+                        $("#node-heatmap-tabsheets-content").children().hide()
+                        $("#" + tab.id).show()
+                    }
+                })
+                node.tabs.addTab({
+                    id: "node-heatmap-tabsheet-settings",
+                    label: "Settings"
+                })
+                node.tabs.addTab({
+                    id: "node-heatmap-tabsheet-colorgradient",
+                    label: "Color gradient"
                 })
 
                 $('#node-input-topic').typedInput({
@@ -109,6 +221,70 @@
                             $('#node-input-sendOnDelay').click()
                         }
                     }
+                })
+
+                let colorGradientList = $("#node-input-colorgradient-container").css('min-height','200px').editableList({
+                    header: $("<div>").css('padding-left','32px').append($.parseHTML(
+                       "<div style='width:30%; display: inline-grid'><b>Offset</b></div>" +
+                       "<div style='width:30%; display: inline-grid'><b>Color</b></div>" +
+                       "<div style='width:30%; display: inline-grid'><b>Opacity</b></div>" )),
+                    addItem: function(colorgradientContainer, i, colorGradientItem) {
+                        // Add a new row to the editableList
+                        let row = $('<div/>').appendTo(colorgradientContainer)
+
+                        // Column 1 : Add a numeric input field to the new row, that represents the offset
+                        let offsetField = $('<input/>',{class:"node-input-colorgradient-offset",type:"number",min:"0",max:"1",step:"0.01"}).css({"width":"30%","margin-left":"5px","margin-right":"5px"}).appendTo(row)
+                        offsetField.val(colorGradientItem.offset)
+                        offsetField.on("input", function() {
+                            validateColorGradient()
+                        })
+
+                        // Column 2 : Add a color input field to the new row, that represents the color
+                        let colorField = $('<input/>',{class:"node-input-colorgradient-color",type:"color"}).css({"width":"30%","margin-left":"5px","margin-right":"5px"}).appendTo(row)
+                        colorField.val(colorGradientItem.color)
+                        colorField.on("input", function() {
+                            validateColorGradient()
+                        })
+
+
+                        // Column 3 : Add a numeric input field to the new row, that represents the opacity
+                        let opacityField = $('<input/>',{class:"node-input-colorgradient-opacity",type:"number",min:"0",max:"1",step:"0.1"}).css({"width":"30%","margin-left":"5px"}).appendTo(row)
+                        opacityField.val(colorGradientItem.opacity)
+                        opacityField.on("input", function() {
+                            validateColorGradient()
+                        })
+
+                        validateColorGradient()
+                    },
+                    removeItem: function(data) {
+                        validateColorGradient()
+                    },
+                    sortItems: function(items) {
+                        validateColorGradient()
+                    },
+                    removable: true,
+                    sortable:true
+                })
+
+                // Copy all the color gradient items from this node to the editableList
+                if (node.colorGradient) {
+                    node.colorGradient.forEach(function (colorGradientItem, index) {
+                        colorGradientList.editableList('addItem', colorGradientItem)
+                    })
+                }
+            },
+            oneditsave: function() {
+                let node = this
+
+                // Copy all the color gradient items from the editableList to this node
+                node.colorGradient = []
+                let colorGradientList = $("#node-input-colorgradient-container").editableList('items')
+                colorGradientList.each(function(i) {
+                    let colorGradientItem = $(this)
+                    let offset = colorGradientItem.find(".node-input-colorgradient-offset").val()
+                    let color = colorGradientItem.find(".node-input-colorgradient-color").val()
+                    let opacity = colorGradientItem.find(".node-input-colorgradient-opacity").val()
+                    node.colorGradient.push({offset:offset, color:color, opacity: opacity})
                 })
             },
             label: function () {
@@ -156,46 +332,63 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
     <div class="form-row">
-        <label for="node-input-rows"><i class="fa fa-arrows-alt"></i> Grid size</label>
-        <span for="node-input-rows">Rows</span>
-        <input type="text" id="node-input-rows" style="width:80px" min="1">
-        <span for="node-input-columns" style="margin-left:20px;"> Columns</span>
-        <input type="text" id="node-input-columns" style="width:80px" min="1">
+        <!-- Tabsheets -->
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-heatmap-tabsheets"></ul>
     </div>
-    <div class="form-row">
-        <label for="node-input-pointRadius"><i class="fa fa-bullseye"></i> Radius</label>
-        <input type="number" id="node-input-pointRadius" min="0.1" step="0.1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-minDataValue"><i class="fa fa-level-up"></i> Min value</label>
-        <input type="number" id="node-input-minDataValue" min="0" step="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-maxDataValue"><i class="fa fa-level-down"></i> Max value</label>
-        <input type="number" id="node-input-maxDataValue" min="0" step="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-opacityFactor"><i class="fa fa-low-vision"></i> Opacity</label>
-        <input type="number" id="node-input-opacityFactor" min="0" max="1" step="0.1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-rotationAngle"><i class="fa fa-repeat"></i> Angle</label>
-        <input type="number" id="node-input-rotationAngle" min="0" max="360" step="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-translateX"><i class="fa fa-arrows-h"></i> X</label>
-        <input type="number" id="node-input-translateX" min="0" step="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-translateY"><i class="fa fa-arrows-v"></i> Y</label>
-        <input type="number" id="node-input-translateY" min="0" step="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-zoomFactor"><i class="fa fa-search"></i> Zoom</label>
-        <input type="number" id="node-input-zoomFactor" min="1.0" step="0.1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-backgroundImageUrl"><i class="fa fa-picture-o"></i> Background</label>
-        <input type="text" id="node-input-backgroundImageUrl">
-    </div>
+    <div id="node-heatmap-tabsheets-content" style="min-height: 150px">
+        <!-- Content of all tabsheets -->
+        <div id="node-heatmap-tabsheet-settings" class="node-heatmap-tabsheet-content" style="position: relative; margin-top: 30px;">
+            <div class="form-row">
+                <label for="node-input-rows"><i class="fa fa-arrows-alt"></i> Grid size</label>
+                <span for="node-input-rows">Rows</span>
+                <input type="text" id="node-input-rows" style="width:80px" min="1">
+                <span for="node-input-columns" style="margin-left:20px;"> Columns</span>
+                <input type="text" id="node-input-columns" style="width:80px" min="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-pointRadius"><i class="fa fa-bullseye"></i> Radius</label>
+                <input type="number" id="node-input-pointRadius" min="0.1" step="0.1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-minDataValue"><i class="fa fa-level-up"></i> Min value</label>
+                <input type="number" id="node-input-minDataValue" min="0" step="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-maxDataValue"><i class="fa fa-level-down"></i> Max value</label>
+                <input type="number" id="node-input-maxDataValue" min="0" step="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-opacityFactor"><i class="fa fa-low-vision"></i> Opacity</label>
+                <input type="number" id="node-input-opacityFactor" min="0" max="1" step="0.1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-rotationAngle"><i class="fa fa-repeat"></i> Angle</label>
+                <input type="number" id="node-input-rotationAngle" min="0" max="360" step="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-translateX"><i class="fa fa-arrows-h"></i> X</label>
+                <input type="number" id="node-input-translateX" min="0" step="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-translateY"><i class="fa fa-arrows-v"></i> Y</label>
+                <input type="number" id="node-input-translateY" min="0" step="1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-zoomFactor"><i class="fa fa-search"></i> Zoom</label>
+                <input type="number" id="node-input-zoomFactor" min="1.0" step="0.1">
+            </div>
+            <div class="form-row">
+                <label for="node-input-backgroundImageUrl"><i class="fa fa-picture-o"></i> Background</label>
+                <input type="text" id="node-input-backgroundImageUrl">
+            </div>
+        </div>
+        <div id="node-heatmap-tabsheet-colorgradient" class="node-heatmap-tabsheet-content" style="position: relative; margin-top: 30px;">
+            <div class="form-row">
+                <!-- Editable table container for color gradient -->
+                <ol id="node-input-colorgradient-container"></ol>
+            </div>
+            <div class="form-row" style="margin-bottom:0;">
+                <div id="node-colorgradient-error" class="form-tips" style="max-width: none;font-weight: bold;"></div>
+            </div>
+        </div>
 </script>

@@ -53,11 +53,22 @@ export default {
         useDataTracker(this.id, this.onMsgInput)
     },
     mounted () {
+        debugger
         this.cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
         this.cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
 
         // Convert the point radius to pixels (average of X and Y direction because gl_PointSize in webgl is the same in both directions)
         let pointRadius = this.props.pointRadius * (this.cellWidth + this.cellHeight) / 2
+
+        // The heatmap package expects rgba colors, so the original hex color (e.g. #FF00FF) and the opacity should be combined to [R,G,B,A]
+        const colorGradient = this.props.colorGradient.map(({ color, opacity, offset }) => {
+            let hexColor = color
+            let r = parseInt(hexColor.slice(1, 3), 16)
+            let g = parseInt(hexColor.slice(3, 5), 16)
+            let b = parseInt(hexColor.slice(5, 7), 16)
+            let rgba = [r, g, b, parseFloat(opacity)]
+            return {color: rgba, offset: parseFloat(offset)}
+        })
 
         let heatmapInstance = Heatmap(this.$refs.heatmap_container, {
             size: pointRadius,                                          // Radius of the data point (in pixels)µ
@@ -67,7 +78,7 @@ export default {
             rotationAngle: this.props.rotationAngle,                    // Rotation angle
             translate: [this.props.translateX, this.props.translateY],  // Translate vector [x, y]
             zoom: this.props.zoomFactor,                                // Zoom Factor
-            gradient: this.props.colorGradient,                         // Color Gradient (array of objects with color value and offset)
+            gradient: colorGradient,                                    // Color Gradient (array of objects with color value and offset)
             backgroundImage: {
                 url: this.props.colorGradient                           // Url of the background image
             }
