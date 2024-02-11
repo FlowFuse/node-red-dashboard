@@ -1,0 +1,20 @@
+{
+    "ui-theme": {
+        "label": {
+            "themeName": "テーマ名",
+            "colors": "配色",
+            "dashboard": "ダッシュボード",
+            "navigation": "案内",
+            "primary": "基本",
+            "pages": "ページ",
+            "background": "背景",
+            "groups": "グループ",
+            "outline": "輪郭",
+            "sizings": "サイズ",
+            "pagePadding": "ページの余白",
+            "groupGap": "グループ間の幅",
+            "groupBorderRadius": "グループの角丸半径",
+            "widgetGap": "部品間の幅"
+        }
+    }
+}
