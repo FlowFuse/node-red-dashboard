@@ -1,0 +1,14 @@
+{
+    "ui-table": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "maxRows": "Max Rows",
+            "columns": "Columns",
+            "autoCalculateColumns": "Auto Calculate Columns",
+            "key": "Key",
+            "label": "Label",
+            "column": "column"
+        }
+    }
+}
