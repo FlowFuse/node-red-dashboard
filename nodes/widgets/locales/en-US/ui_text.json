@@ -1,0 +1,20 @@
+{
+    "ui-text": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "label": "Label",
+            "class": "Class",
+            "optionalCssClassNames": "Optional CSS class name(s)",
+            "layout": "Layout",
+            "label2": "label",
+            "value": "value",
+            "style": "Style",
+            "applyStyle": "Apply Style",
+            "font": "Font",
+            "textSize": "Text Size",
+            "textColor": "Text Color",
+            "enterSampleHere": "Enter Sample Here"
+        }
+    }
+}
