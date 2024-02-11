@@ -2,6 +2,8 @@
     "ui-base": {
         "auto": "自動",
         "label": {
+            "uiName": "画面名",
+            "path": "パス",
             "category": "ダッシュボード2",
             "layout": "配置",
             "theming": "テーマ",

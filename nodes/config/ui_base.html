@@ -187,7 +187,7 @@
         category: 'config',
         defaults: {
             name: {
-                value: 'UI Name',
+                value: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.uiName'),
                 required: true
             },
             path: {
@@ -1089,19 +1089,19 @@
 
 <script type="text/html" data-template-name="ui-base">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
-        <input type="text" id="node-config-input-name">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
-        <label style="font-weight: 600; width: auto;"><span data-i18n="ui-base.label.sidebar"></span></label>
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>
     </div>
     <div class="form-row form-row-flex" style="align-items: center;">
         <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPathInSidebar">
-        <label style="width:auto" for="node-config-input-showPathInSidebar"><span data-i18n="ui-base.label.showPath"></span></label>
+        <label style="width:auto" for="node-config-input-showPathInSidebar" data-i18n="ui-base.label.showPath"></label>
     </div>
 </script>

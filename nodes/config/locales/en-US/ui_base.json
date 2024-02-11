@@ -1,7 +1,9 @@
 {
-    "ui-base" : {
+    "ui-base": {
         "auto": "auto",
         "label": {
+            "uiName": "UI Name",
+            "path": "Path",
             "category": "dashboard 2",
             "layout": "Layout",
             "theming": "Theming",
