@@ -1,0 +1,38 @@
+{
+    "ui-form": {
+        "label": {
+            "group": "グループ",
+            "size": "サイズ",
+            "label": "ラベル",
+            "optionalLabel": "任意のラベル",
+            "className": "クラス",
+            "classNamePlaceholder": "任意のCSSクラス名",
+            "formElements": "フォームの要素",
+            "type": "型",
+            "required": "必須",
+            "rows": "行数",
+            "remove": "削除",
+            "egName": "例: 名前",
+            "egName2": "例: name",
+            "text": "文字列",
+            "multiline": "複数行",
+            "number": "数値",
+            "email": "E-メール",
+            "password": "パスワード",
+            "checkbox": "チェックボックス",
+            "switch": "スイッチ",
+            "date": "日付",
+            "time": "時間",
+            "element": "要素",
+            "buttons": "ボタン",
+            "submit": "送信",
+            "submitButtonText": "送信ボタンの文字列",
+            "cancel": "中止",
+            "cancelButtonText": "中止ボタンの文字列",
+            "topic": "トピック",
+            "optionalMsgTopic": "任意のmsg.topic",
+            "splitLayout": "フォーム要素を2列に配置",
+            "resetOnSubmit": "送信後にフォームを初期化"
+        }
+    }
+}
