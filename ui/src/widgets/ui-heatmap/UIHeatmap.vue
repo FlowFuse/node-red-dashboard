@@ -48,7 +48,6 @@ export default {
         }
     },
     created () {
-        debugger
         // can't do this in setup as we have custom onInput function
         useDataTracker(this.id, this.onMsgInput)
     },
@@ -61,14 +60,7 @@ export default {
         let pointRadius = this.props.pointRadius * (this.cellWidth + this.cellHeight) / 2
 
         // The heatmap package expects rgba colors, so the original hex color (e.g. #FF00FF) and the opacity should be combined to [R,G,B,A]
-        const colorGradient = this.props.colorGradient.map(({ color, opacity, offset }) => {
-            let hexColor = color
-            let r = parseInt(hexColor.slice(1, 3), 16)
-            let g = parseInt(hexColor.slice(3, 5), 16)
-            let b = parseInt(hexColor.slice(5, 7), 16)
-            let rgba = [r, g, b, parseFloat(opacity)]
-            return {color: rgba, offset: parseFloat(offset)}
-        })
+        let colorGradient = this.convertGradient(this.props.colorGradient)
 
         let heatmapInstance = Heatmap(this.$refs.heatmap_container, {
             size: pointRadius,                                          // Radius of the data point (in pixels)µ
@@ -94,6 +86,17 @@ export default {
     },
     methods: {
 
+        convertGradient(colorGradient) {
+            // The heatmap package expects rgba colors, so the original hex color (e.g. #FF00FF) and the opacity should be combined to [R,G,B,A]
+            return colorGradient.map(({ color, opacity, offset }) => {
+                let hexColor = color
+                let r = parseInt(hexColor.slice(1, 3), 16)
+                let g = parseInt(hexColor.slice(3, 5), 16)
+                let b = parseInt(hexColor.slice(5, 7), 16)
+                let rgba = [r, g, b, parseFloat(opacity)]
+                return {color: rgba, offset: parseFloat(offset)}
+            })
+        },
         onLoad (history) {
             // we have received a history of data points
             // we need to add them to the heatmap
@@ -134,6 +137,11 @@ export default {
                     // array of data points with 'x', 'y' and 'value'
                     this.heatmapInstance.addData(msg.payload, false)
                     break
+                case 'setGradient':
+                    // TODO find a way to apply the same validation rules as in the flow editor config page
+                    let colorGradient = this.convertGradient(msg.payload)
+                    this.heatmapInstance.setGradient(colorGradient)
+                    break
                 case 'setMin':
                     this.heatmapInstance.setMin(msg.payload)
                     break
@@ -141,10 +149,9 @@ export default {
                     this.heatmapInstance.setMax(msg.payload)
                     break
                 case 'setTranslate':
-                    // array[x, y]
-                    this.heatmapInstance.setTranslate(msg.payload);
+                    this.heatmapInstance.setTranslate(msg.payload)
+                    break
                 case 'setZoom':
-                    // float
                     this.heatmapInstance.setZoom(msg.payload)
                     break
                 case 'setRotationAngle':

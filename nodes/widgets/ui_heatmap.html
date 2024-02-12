@@ -139,7 +139,6 @@
                         offset: 1.0
                     }],
                     validate: function (v) {
-                        debugger
                         return validateColorGradient(v)
                     }
                 },
@@ -164,7 +163,7 @@
                     id: "node-heatmap-tabsheets",
                     onchange: function(tab) {
                         node.currentTabId = tab.id
-debugger
+
                         // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
                         $("#node-heatmap-tabsheets-content").children().hide()
                         $("#" + tab.id).show()
@@ -388,7 +387,7 @@ debugger
                 <ol id="node-input-colorgradient-container"></ol>
             </div>
             <div class="form-row" style="margin-bottom:0;">
-                <div id="node-colorgradient-error" class="form-tips" style="max-width: none;font-weight: bold;"></div>
+                <div id="node-colorgradient-error" class="form-tips" style="max-width: none;font-weight: bold;color: red;"></div>
             </div>
         </div>
 </script>

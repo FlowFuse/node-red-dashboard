@@ -28,16 +28,17 @@ module.exports = function (RED) {
                 return msg
             },
             onInput: function (msg, send, done) {
-                debugger;
-                if (msg.topic == 'setData' || msg.topic == 'addData') {
-                    if (!Array.isArray(msg.payload)) {
-                        throw Error('For topic setData or addData the payload should contain an array');
-                    }
+                switch (msg.topic) {
+                    case 'setData':
+                        if (!Array.isArray(msg.payload) || msg.payload.length == 0) {
+                            throw Error('For topic setData the payload should contain an (non-empty) array');
+                        }
 
-                    if (msg.payload.length > 0) {
+                        // The input array can contain numeric values, or objects (with a row, column and value properties)
                         if (msg.payload.every(element => typeof element === "number")) {
-                            if (msg.payload.length != config.rows * config.columns) {
-                                throw Error('When the payload is an array of numbers, there should be row * column numbers');
+                        
+                            if (msg.payload.length > config.rows * config.columns) {
+                                throw Error('The array length should not exceed the number of grid cells');
                             }
 
                             // Convert the array of integers to an array of objects (containing x, y, value properties)
@@ -64,21 +65,38 @@ module.exports = function (RED) {
                                                      typeof item.column === "number" &&
                                                      item.column < config.columns &&
                                                      typeof item.value === "number")) {
-                                throw Error('The payload should be an array of numbers or an array of objects (with row,column,value properties)');
+                                throw Error('When setting data, the payload should be an array of numbers or an array of objects (with row,column and value properties)');
                             }
                         }
-                    }
-                }
 
-                if (msg.topic == 'setData') {
-                    // When a new data array is being set, store a copy of it
-                    datastore.save(base, node, msg.payload.slice());
-                }
-                else if (msg.topic == 'addData') {
-                    // When new data (array) is being added, append a copy of it to the currently stored array
-                    let storedData = datastore.get(node.id) || [];
-                    storedData.push(msg.payload.slice());
-                    datastore.save(base, node, storedData);
+                        // When a new data array is being set, store a copy of it
+                        datastore.save(base, node, msg.payload.slice());
+                        break;
+
+                    case 'addData':
+                        if (!Array.isArray(msg.payload) || msg.payload.length == 0) {
+                            throw Error('For topic setData the payload should contain an (non-empty) array');
+                        }
+
+                        // The input array can contain objects (with a row, column and value properties).
+                        // The array cannot contain numbers, because we would have no idea where to display these in the heatmap.
+                        if (!msg.payload.every(item => typeof item === "object" &&
+                                                 item.hasOwnProperty('row') &&
+                                                 item.hasOwnProperty('column') &&
+                                                 item.hasOwnProperty('value') &&
+                                                 typeof item.row === "number" &&
+                                                 item.row < config.rows &&
+                                                 typeof item.column === "number" &&
+                                                 item.column < config.columns &&
+                                                 typeof item.value === "number")) {
+                            throw Error('When adding data, the payload should be an array of objects (with row,column and value properties)');
+                        }
+
+                        // When new data (array) is being added, append a copy of it to the currently stored array
+                        let storedData = datastore.get(node.id) || [];
+                        storedData.push(msg.payload.slice());
+                        datastore.save(base, node, storedData);
+                        break;
                 }
 
                 send(msg)
