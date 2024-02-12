@@ -1,41 +1,72 @@
-
 <script type="text/html" data-help-name="ui-heatmap">
     <h3>Properties</h3>
     <dl class="message-properties">
-        <dt>Label <span class="property-type">str</span></dt>
-        <dd>Text shown above the rendered chart in the Dashboard.</dd>
-        <dt>Type <span class="property-type">line | bar | scatter</span></dt>
-        <dd>Choose the type of graph that you wish to render data with. Note
-            that different data structures are accepted for different chart types.</dd>
-        <dt>Show Legend <span class="property-type">bool</span></dt>
-        <dd>Defines whether or not a legend is shown between the title and the chart. Each label is driven by <code>msg.topic</code>.</dd>
-        <dt>X-Axis Type <span class="property-type">linear | categorical | time</span></dt>
+        <dt>Grid size <span class="property-type">rows | columns</span></dt>
+        <dd>Choose the dimensions of the grid, by specifying the number of rows and columns.</dd>
+        <dt>Radius <span class="property-type">number</span></dt>
+        <dd>Defines the radius of a data point, in times the size of a grid cell.</dd>
+        <dt>Min value <span class="property-type">number</span></dt>
         <dd>
-            For charts with an x-axis, this option allows customisation
-            of the type of axis to render.
+            Define the minimum data value, i.e. the data value that will correspond
+            to offset 0.0 in the color gradient.  If not specified, the minimum data
+            value is automatically adjusted to the minimum value in the input data.
         </dd>
-        <dt>Properties <span class="property-type">string</span></dt>
+        <dt>Max value <span class="property-type">number</span></dt>
         <dd>
-            <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array, which will plot multiple data points from a single msg object.</p>
-            <p><b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</p>
-            <p><b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.</p>
+            Define the maximum data value, i.e. the data value that will correspond
+            to offset 1.0 in the color gradient.  If not specified, the maximum data
+            value is automatically adjusted to the maximum value in the input data.
+        </dd>
+        <dt>Opacity <span class="property-type">number</span></dt>
+        <dd>
+            Define the opacity factor that will be applied to the entire heatmap.
+        </dd>
+        <dt>Angle <span class="property-type">number</span></dt>
+        <dd>
+            Define the rotation angle of the entire heatmap.
+        </dd>
+        <dt>X <span class="property-type">number</span></dt>
+        <dd>
+            Define the translation distance of the entire heatmap into the X direction.
+        </dd>
+        <dt>Y <span class="property-type">number</span></dt>
+        <dd>
+            Define the translation distance of the entire heatmap into the Y direction.
+        </dd>
+        <dt>Zoom <span class="property-type">number</span></dt>
+        <dd>
+            Define the zoom factor of the entire heatmap.
+        </dd>
+        <dt>Background <span class="property-type">number</span></dt>
+        <dd>
+            Define the url of the background image that needs to be drawn behind the
+            heatmap.  A base64 encoded url will contain the image data.
+        </dd>
+        <dt>Color gradient <span class="property-type">table</span></dt>
+        <dd>
+            <p><b>Offset:</b> The position at which a particular color starts in the gradient.</p>
+            <p><b>Color:</b> The visible hue, which represents a value or category (e.g. red
+            is hot and blue is cold).</p>
+            <p><b>Opacity:</b> How transparent the color is.</p>
         </dd>
     </dl>
     <h3>Input</h3>
-    <p>Data can be passed into the Chart node in a variety of formats,
-    depending on the "X-Axis Type" (e.g. linear, categorical, time).</p>
+    <p>Data can be passed into the Heatmap node in a variety of formats,
+    depending on the topic ("setData" or "addData").</p>
     <dl class="message-properties">
-        <dt>Numerical <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.payload = 5</pre> A single value, that will be plotted
-            in the y-axis, and the current time of injection as the x-value.</dd>
-        <dt>Series <span class="property-type">linear | categorical | time</span></dt>
-        <dd><pre>msg.topic = 'Series 1'</pre> Multiple series can
-            be shown on the same chart by using a different msg.topic value on each
-            input message.</dd>
-        <dt>Object <span class="property-type">linear</span></dt>
-        <dd><pre>msg.payload = {x: 10, y: 15}</pre>This type of data is only
-            supported on linear plots, e.g. "Line" or "Scatter" charts.</dd>
+        <dt>Numerical array <span class="property-type">numbers</span></dt>
+        <dd><pre>msg.payload = [1, 2, 3, 4, 5 ...]</pre> An array of numeric values which
+            will be drawn from left to right, and top to bottom.  This type of data is
+            only supported for topic "setData".</dd>
+        <dt>Object array <span class="property-type">objects</span></dt>
+        <dd><pre>msg.payload = [{row: 10, column: 15, value: 5}, ...]</pre>An array of 
+            numeric values which will be drawn at the specified grid cell.  This type 
+            of data is supported for both topics "addData" and "setData".</dd>
     </dl>
-    <h3>Details</h3>
-    <p></p>
+    <h3>Dynamic Properties</h3>
+    <dt>msg.topic <span class="property-type">append | replace</span></dt>
+    <dd>
+        Can be used to override the default settings in the config screen, by the new value
+        in the msg.payload.
+    </dd>
 </script>
