@@ -7,6 +7,9 @@
             "optionalIcon": "optional icon",
             "label": "Label",
             "optionalLabel": "optional label",
+            "button": "button",
+            "className": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s)",
             "tooltip": "Tooltip",
             "optionalTooltip": "optional tooltip",
             "color": "Color",
@@ -16,9 +19,7 @@
             "whenClicked": "When clicked, send:",
             "payload": "Payload",
             "topic": "Topic",
-            "emulateClick": "If msg arrives on input, emulate a button click:",
-            "className": "Class",
-            "classNamePlaceholder": "Optional CSS class name(s) for widget"
+            "emulateClick": "If msg arrives on input, emulate a button click:"
         }
     }
 }
