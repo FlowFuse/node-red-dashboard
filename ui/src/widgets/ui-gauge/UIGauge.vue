@@ -42,7 +42,7 @@
         </svg>
         <div ref="value" class="nrdb-ui-gauge-value" :class="'nrdb-ui-' + props.gtype">
             <span>{{ props.prefix }}{{ value || props.min }}{{ props.suffix }}</span>
-            <label v-if="props.icon || props.units"><v-icon v-if="props.icon" :icon="`mdi-${props.icon}`" />{{ props.units }}</label>
+            <label v-if="props.icon || props.units"><v-icon v-if="props.icon" :icon="`mdi-${icon}`" />{{ props.units }}</label>
         </div>
     </div>
 </template>
@@ -89,6 +89,9 @@ export default {
         },
         gaugeHeight: function () {
             return this.props.gtype === 'gauge-half' ? '150px' : '300px'
+        },
+        icon () {
+            return this.props.icon.replace(/^mdi-/, '')
         }
     },
     watch: {
@@ -410,6 +413,8 @@ export default {
 .nrdb-ui-gauge-value label {
     font-size: 0.75rem;
     line-height: 0.825rem;
+    display: flex;
+    align-items: center;
 }
 
 .nrdb-ui-gauge #backdrop path {
