@@ -78,6 +78,11 @@
         {
             "property": "segments",
             "notes": "Array of objects that define the segments of the gauge"
-        }
+        },
+        {
+            "property": "icon",
+            "notes": "Icon displayed beneath the gauge (from MDI)"
+        },
+        
     ]
 }
