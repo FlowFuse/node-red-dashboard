@@ -11,6 +11,7 @@ props:
     Prefix: Text to be added _before_ the value in the middle of the gauge.
     Suffix: Text to be shown _after_ the value in the middle of the gauge.
     Units: Small text to be shown below the value in the middle of the gauge.
+    Icon: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix.
     Sizes (Gauge): (px) How thick the arc and backdrop of the gauge are rendered.
     Sizes (Gap): (px) How big the gap/padding is between the Gauge and the "Segments"
     Sizes (Segments): (px) How thick the segments are rendered.
