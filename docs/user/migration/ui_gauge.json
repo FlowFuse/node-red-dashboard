@@ -82,7 +82,6 @@
         {
             "property": "icon",
             "notes": "Icon displayed beneath the gauge (from MDI)"
-        },
-        
+        }        
     ]
 }
