@@ -410,6 +410,8 @@ export default {
 .nrdb-ui-gauge-value label {
     font-size: 0.75rem;
     line-height: 0.825rem;
+    display: flex;
+    align-items: center;
 }
 
 .nrdb-ui-gauge #backdrop path {
