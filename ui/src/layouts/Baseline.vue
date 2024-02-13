@@ -24,7 +24,7 @@
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
                         :disabled="page.disabled || undefined"
-                        :prepend-icon="`mdi-${page.icon || 'home'}`"
+                        :prepend-icon="`mdi-${page.icon.replace(/^mdi-/, '') || 'home'}`"
                         :title="getPageLabel(page)"
                         :to="{name: page.route.name}" link
                         :data-nav="page.id"

@@ -26,7 +26,7 @@ export default {
         icon: function () {
             if (this.props.onicon && this.props.officon) {
                 const icon = this.status ? this.props.onicon : this.props.officon
-                return 'mdi-' + icon
+                return 'mdi-' + icon.replace(/^mdi-/, '')
             } else {
                 return null
             }
