@@ -52,12 +52,14 @@ export default {
         useDataTracker(this.id, this.onMsgInput)
     },
     mounted () {
-        debugger
         this.cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
         this.cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
 
         // Convert the point radius to pixels (average of X and Y direction because gl_PointSize in webgl is the same in both directions)
         let pointRadius = this.props.pointRadius * (this.cellWidth + this.cellHeight) / 2
+
+        translateX = Math.floor((parseInt(this.props.translateX) + 0.5) * this.cellWidth);
+        translateY = Math.floor((parseInt(this.props.translateY) + 0.5) * this.cellHeight);
 
         // The heatmap package expects rgba colors, so the original hex color (e.g. #FF00FF) and the opacity should be combined to [R,G,B,A]
         let colorGradient = this.convertGradient(this.props.colorGradient)
@@ -68,7 +70,7 @@ export default {
             max: this.props.maxDataValue,                               // Max data Value for relative gradient computation
             opacity: this.props.opacityFactor,                          // Opacity factor
             rotationAngle: this.props.rotationAngle,                    // Rotation angle
-            translate: [this.props.translateX, this.props.translateY],  // Translate vector [x, y]
+            translate: [translateX, translateY],                        // Translate vector [x, y]
             zoom: this.props.zoomFactor,                                // Zoom Factor
             gradient: colorGradient,                                    // Color Gradient (array of objects with color value and offset)
             backgroundImage: {
@@ -113,9 +115,6 @@ export default {
             console.log(msg)
 
             if (msg.topic == 'setData' || msg.topic == 'addData') {
-                //let cellWidth  = this.$refs.heatmap_container.clientWidth / (parseInt(this.props.columns));
-                //let cellHeight = this.$refs.heatmap_container.clientHeight / (parseInt(this.props.rows));
-
                 // Since the heatmap can be displayed on all kind of devices, the server side uses rows and columns
                 // (instead of X and Y coordinates).  As a result, the X and Y coordinates need to be calculated
                 // for every grid cell (i.e. coordinates of the cell center point).

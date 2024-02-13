@@ -30,13 +30,8 @@ dynamic:
     import AddedIn from '../../components/AddedIn.vue';
 </script>
 
-# Chart `ui-chart`
+# Heatmap `ui-heatmap`
 
-Provides configuration options to create the following chart types:
-
-- [Line Chart](#line-chart)
-- [Scatter Plot](#scatter-plot)
-- [Bar Chart](#bar-graph)
 
 ## Properties
 
@@ -158,7 +153,7 @@ msg = {
 
 ### Set translation
 
-You can set the translation value of the heatmap by sending a `msg.topic` of `setTranslate` to the node.  This allows you to move the entire heatmap in the X and/or Y direction.  The translation is specified as an array, with first the X translation and secondly the Y translation.
+You can set the translation value of the heatmap by sending a `msg.topic` of `setTranslate` to the node.  This allows you to move the entire heatmap in the X and/or Y direction.  The translation is specified as an array, with first the X translation and secondly the Y translation.  Both values are specified in grid cell units.
 
 ```js
 msg = {
