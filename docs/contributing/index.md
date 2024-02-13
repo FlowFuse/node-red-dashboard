@@ -56,24 +56,28 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 ## Making Changes
 
 1. **Make Changes:** Make any appropriate edits.
-    - **Node-RED Editor:** For Node-RED node changes, you'll work inside `/nodes` - changes here will require a restart of Node-RED (and refresh of the Node-RED Editor) to see the latest changes.
-    - **Dashboard/UI:** For Dashboard/UI changes, see `/ui` - changes here will require a rebuild of the Dashboard's UI, which can be done by running `npm run build` (as per Step 5. in "Clone & Build the Repository").
+   - **Node-RED Editor:** For Node-RED node changes, you'll work inside `/nodes` - changes here will require a restart of Node-RED (and refresh of the Node-RED Editor) to see the latest changes.
+      - For convenience you can use `npm run watch:node-red` which will restart Node-RED after any changes to `/nodes`
+      - This assumes Node-RED is installed at `~/.node-red` and you have `@flowfuse/node-red-dashboard` installed in that folder (as per step 3 above)
+   - **Dashboard/UI:** For Dashboard/UI changes, see `/ui` - changes here will require a rebuild of the Dashboard's UI, which can be done by running `npm run build` (as per Step 5. in "Clone & Build the Repository").
+      - For convenience you can use `npm run watch:dashboard` which will auto-rebuild after dashboard UI changes 
+   - The two watch commands are combined into one command under `npm run watch`
 
 2. **Refresh Browser:** Refresh the dashboard in the browser on `http(s)://your_hostname_or_ip_address:1880/dashboard`
 3. **Develop:** Repeat step 1 to 2 over and over again, until you're satisfied with your results.
-7. **Create Branch:** Once you're ready to publish your changes, in your cloned repository directory (e.g. `/yourname/development/node-red-dashboard`), create a new branch for all the files of your forked dashboard:
+4. **Create Branch:** Once you're ready to publish your changes, in your cloned repository directory (e.g. `/yourname/development/node-red-dashboard`), create a new branch for all the files of your forked dashboard:
    ```bash
    git checkout -b name_of_your_new_branch
    ```
-4. As soon as all your changes work fine, commit your changes:
+5. As soon as all your changes work fine, commit your changes:
     ```bash
     git commit -a -m "Description of your changes"
     ```
-15. Push the committed changes to the dashboard fork on your Github account:
+6.  Push the committed changes to the dashboard fork on your Github account:
     ```bash
     git push origin
     ```
-16. In your forked dashboard repository (on Github), switch to the new branch and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
+7.  In your forked dashboard repository (on Github), switch to the new branch and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
 
 
