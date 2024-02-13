@@ -9,6 +9,11 @@
         image: '/images/node-examples/ui-button.png',
         description: 'Adds a clickable button to your dashboard.'
     }, {
+        name: 'Heatmap',
+        widget: 'ui-heatmap',
+        image: '/images/node-examples/ui-heatmap.png',
+        description: 'Renders a heatmap.'
+    }, {
         name: 'Markdown',
         widget: 'ui-markdown',
         image: '/images/node-examples/ui-markdown.png',
