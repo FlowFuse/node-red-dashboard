@@ -91,7 +91,7 @@ export default {
             return this.props.gtype === 'gauge-half' ? '150px' : '300px'
         },
         icon () {
-            return this.props.icon.replace(/^mdi-/, '')
+            return this.props.icon?.replace(/^mdi-/, '')
         }
     },
     watch: {
