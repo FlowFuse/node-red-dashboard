@@ -58,8 +58,8 @@ export default {
         // Convert the point radius to pixels (average of X and Y direction because gl_PointSize in webgl is the same in both directions)
         let pointRadius = this.props.pointRadius * (this.cellWidth + this.cellHeight) / 2
 
-        translateX = Math.floor((parseInt(this.props.translateX) + 0.5) * this.cellWidth);
-        translateY = Math.floor((parseInt(this.props.translateY) + 0.5) * this.cellHeight);
+        let translateX = Math.floor((parseInt(this.props.translateX) + 0.5) * this.cellWidth);
+        let translateY = Math.floor((parseInt(this.props.translateY) + 0.5) * this.cellHeight);
 
         // The heatmap package expects rgba colors, so the original hex color (e.g. #FF00FF) and the opacity should be combined to [R,G,B,A]
         let colorGradient = this.convertGradient(this.props.colorGradient)
@@ -83,8 +83,7 @@ export default {
             maxDataValue = Number.MAX_SAFE_INTEGER;
         }
 
-        // don't want heatmap to be reactive, so we can use shallowRef
-        this.heatmapInstance = heatmapInstance  //shallowRef(heatmapInstance)
+        this.heatmapInstance = heatmapInstance
     },
     methods: {
 
@@ -108,12 +107,9 @@ export default {
             this.onMsgInput(history)
         },
         onMsgInput (msg) {
-            debugger
             // because this will get evaluated client-side, we have access to vue/this
             const vue = this
-            console.log('custom onInput handler:')
-            console.log(msg)
-
+            
             if (msg.topic == 'setData' || msg.topic == 'addData') {
                 // Since the heatmap can be displayed on all kind of devices, the server side uses rows and columns
                 // (instead of X and Y coordinates).  As a result, the X and Y coordinates need to be calculated
@@ -167,26 +163,18 @@ export default {
                     break
             }
             
-            // TODO in een functie moven
-            if (msg.topic == 'setData' || msg.topic == 'addData') {
-                // Get the canvas element which has been created by the visual-heatmap library
-                let canvas = this.$refs.heatmap_container.getElementsByTagName('canvas')[0];
-
-                // TODO moet text size automatisch berekend worden of instelbaar?  Of beide mogelijk?
-                let ctx = canvas.getContext("webgl");
-                ctx.font = "30px Arial";
-                ctx.fillStyle = "black";
-                ctx.textAlign = "center";
-
-                // Draw some text on top of the existing heatmap elements
-                // TODO eventueel een element.label tonen, die we op voorhand opvullen met bv. de waarde
-                this.heatmapInstance.rawData.every(element => ctx.fillText(element.value, element.x, element.y));
-            }
+            // TODO show labels on top of the heatmap
+            //if (msg.topic == 'setData' || msg.topic == 'addData') {
+            //    let canvas = this.$refs.heatmap_container.getElementsByTagName('canvas')[0];
+            //    let ctx = canvas.getContext("2D");
+            //    ctx.font = "30px Arial";
+            //    ctx.fillStyle = "black";
+            //    ctx.textAlign = "center";
+            //    this.heatmapInstance.rawData.every(element => ctx.fillText(element.value, element.x, element.y));
+            //}
         },
         clear () {
-            // TODO this.chart.data.labels = []
-            // TODO this.chart.data.datasets = []
-            // TODO this.chart.update()
+            // TODO ???
         }
     }
 }

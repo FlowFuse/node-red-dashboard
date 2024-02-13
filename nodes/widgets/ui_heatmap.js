@@ -97,6 +97,9 @@ module.exports = function (RED) {
                         storedData.push(msg.payload.slice());
                         datastore.save(base, node, storedData);
                         break;
+                    case 'clear':
+                        datastore.clear();
+                        break;
                 }
 
                 send(msg)
