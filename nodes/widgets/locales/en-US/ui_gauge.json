@@ -23,7 +23,9 @@
             "gauge": "Gauge",
             "gap": "Gap",
             "styling": "Styling",
-            "class": "Class"
+            "class": "Class",
+            "units": "Units",
+            "icon": "Icon"
         },
         "errors": {
             "unique": "All 'from' values must be unique."
