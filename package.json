@@ -44,7 +44,7 @@
         "test": "mocha \"test/**/*.spec.js\"",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\"",
         "watch": "npm-run-all --parallel watch:dashboard watch:node-red",
-        "watch:dashboard": "npx nodemon --watch ./ui --ext '*' --exec npm run build:dev",
+        "watch:dashboard": "npm run dev",
         "watch:node-red": "cd ~/.node-red && npx nodemon --watch $(realpath ./node_modules/@flowfuse/node-red-dashboard/nodes) --ext '*' --exec node-red"
     },
     "dependencies": {
