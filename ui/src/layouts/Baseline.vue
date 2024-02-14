@@ -23,6 +23,7 @@
                 v-if="navigationStyle !== 'hidden'"
                 v-model="drawer"
                 :rail="rail"
+                :rail-width="68"
                 data-el="nav-drawer"
                 :temporary="navigationStyle === 'temporary'"
                 :permanent="navigationStyle === 'icon'"
