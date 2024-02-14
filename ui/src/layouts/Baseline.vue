@@ -25,6 +25,7 @@
                 :rail="rail"
                 :rail-width="68"
                 data-el="nav-drawer"
+                :mobile-breakpoint="['none', 'fixed'].includes(navigationStyle) ? '0' : 'md'"
                 :temporary="navigationStyle === 'temporary'"
                 :permanent="navigationStyle === 'icon'"
             >
