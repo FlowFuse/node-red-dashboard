@@ -9,8 +9,8 @@
             <component :is="pageTemplate.component" :id="pageTemplate.id" :props="pageTemplate.props" :state="pageTemplate.state" />
         </div>
         <v-app-bar :elevation="1">
-            <template #prepend>
-                <v-app-bar-nav-icon @click="drawer = !drawer" />
+            <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
+                <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
             <template #append>
@@ -19,7 +19,14 @@
         </v-app-bar>
 
         <v-main>
-            <v-navigation-drawer v-model="drawer" data-el="nav-drawer">
+            <v-navigation-drawer
+                v-if="navigationStyle !== 'hidden'"
+                v-model="drawer"
+                :rail="rail"
+                data-el="nav-drawer"
+                :temporary="navigationStyle === 'temporary'"
+                :permanent="navigationStyle === 'icon'"
+            >
                 <v-list nav>
                     <v-list-item
                         v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
@@ -89,6 +96,7 @@ export default {
     data () {
         return {
             drawer: false,
+            rail: false,
             customThemeDefinitions: {}
         }
     },
@@ -124,11 +132,31 @@ export default {
         dashboard: function () {
             const dId = Object.keys(this.dashboards)[0]
             return this.dashboards[dId]
+        },
+        navigationStyle: function () {
+            const style = this.dashboard.navigationStyle
+            if (![null, 'default', 'fixed', 'icon', 'temporary', 'none'].includes(style)) {
+                console.warn(`Invalid navigationStyle value: ${style}`)
+                return 'default'
+            }
+            return style
         }
     },
     watch: {
         theme: function () {
             this.updateTheme()
+        },
+        navigationStyle: {
+            immediate: true,
+            handler () {
+                if (['fixed', 'icon'].includes(this.navigationStyle)) {
+                    this.drawer = true
+                }
+
+                if (['icon'].includes(this.navigationStyle)) {
+                    this.rail = true
+                }
+            }
         }
     },
     mounted () {
@@ -168,6 +196,18 @@ export default {
         },
         getPageLabel (page) {
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
+        },
+        handleNavigationClick () {
+            if (this.navigationStyle === 'fixed') {
+                return
+            }
+
+            if (this.navigationStyle === 'icon') {
+                // Toggle display of list item, rather than entire drawer
+                this.rail = !this.rail
+            } else {
+                this.drawer = !this.drawer
+            }
         }
     }
 }
