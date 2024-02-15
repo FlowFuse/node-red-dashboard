@@ -9,11 +9,11 @@
             "sidebar": "Sidebar Options",
             "showPath": "Include Page Path in Label",
             "navigationStyle": "Style",
-            "navigationStyleDefault": "Collapsing navigation (default)",
-            "navigationStyleFixed": "Fixed navigation",
+            "navigationStyleDefault": "Collapsing (default)",
+            "navigationStyleFixed": "Fixed",
             "navigationStyleIcon": "Collapse to icons",
             "navigationStyleTemporary": "Appear over content",
-            "navigationStyleNone": "Hide navigation entirely"
+            "navigationStyleNone": "Always hide"
         },
         "layout": {
             "pages": "Pages",
