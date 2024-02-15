@@ -16,7 +16,13 @@
             "pages": "Pages",
             "settings": "Settings",
             "sidebar": "Sidebar Options",
-            "showPath": "Include Page Path in Label"
+            "showPath": "Include Page Path in Label",
+            "navigationStyle": "Style",
+            "navigationStyleDefault": "Collapsing (default)",
+            "navigationStyleFixed": "Fixed",
+            "navigationStyleIcon": "Collapse to icons",
+            "navigationStyleTemporary": "Appear over content",
+            "navigationStyleNone": "Always hide"
         },
         "layout": {
             "pages": "Pages",

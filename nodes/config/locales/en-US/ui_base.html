@@ -1,0 +1,20 @@
+<script type="text/html" data-help-name="ui-base">
+    <p>UI Base</p>
+    <p>This is the foundational element for a Dashboard in Node-RED Dashboard 2.0</p>
+    <p>A Dashboard is driven by a baseline layout which can be modified with some of the following settings</p>
+    <dl class="message-properties">
+        <dt>
+            Sidebar Style
+            <span class="property-type">option</span>
+        </dt>
+        <dd>
+            <ul>
+                <li><b>Collapsing: </b>(default) This open will shift the entire content of the Dashboard when opened, and not be visisble at all when closed.</li>
+                <li><b>Fixed: </b>Will always remain open. At our mobile breakdpoint (768px), this value is overriden, and an "Appear Over" option is used.</li>
+                <li><b>Collapse to icons: </b>Similar to "Collapsing" when opened, but when closed, the icons for each page still show.</li>
+                <li><b>Appear over content: </b>Not visible when closed, and when open, will appear over the Dashboard content, without shifting it.</li>
+                <li><b>Always hide: </b>The sidebar will not be visible under any circumstances. All pages are still accesible via their direct links or a <code>ui-control</code> node.</li>
+            </ul>
+        </dd>
+    </dl>
+</script>
