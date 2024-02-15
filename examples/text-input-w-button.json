@@ -1,0 +1,73 @@
+[
+    {
+        "id": "f64abb39012dfbf7",
+        "type": "ui-text-input",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "Temp Setpoint",
+        "label": "Number",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "mode": "number",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "x": 260,
+        "y": 320,
+        "wires": [
+            [
+                "07cccb1132285b1d"
+            ]
+        ]
+    },
+    {
+        "id": "07cccb1132285b1d",
+        "type": "debug",
+        "z": "0758321f1687e812",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "d3da83fae5463c26",
+        "type": "ui-button",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "label": "Enter",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 90,
+        "y": 320,
+        "wires": [
+            [
+                "f64abb39012dfbf7"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,68 @@
+[
+    {
+        "id": "d0c36237eeebb6d5",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "72",
+        "payloadType": "num",
+        "x": 290,
+        "y": 200,
+        "wires": [
+            [
+                "130fa4d5c69fd905"
+            ]
+        ]
+    },
+    {
+        "id": "130fa4d5c69fd905",
+        "type": "ui-gauge",
+        "z": "0758321f1687e812",
+        "name": "Temperature",
+        "group": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "gauge",
+        "units": "°F",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#3d10e0"
+            },
+            {
+                "from": "65",
+                "color": "#00ff4c"
+            },
+            {
+                "from": "73",
+                "color": "#ea5353"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 450,
+        "y": 200,
+        "wires": []
+    }
+]

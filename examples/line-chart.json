@@ -1,0 +1,75 @@
+[
+    {
+        "id": "efccfdf502300871",
+        "type": "ui-chart",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "label": "chart",
+        "order": 9007199254740991,
+        "chartType": "line",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisProperty": "datestamp",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "time",
+        "yAxisProperty": "temp",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 450,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f5ecbfed2f015b37",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Line chart temp for 3 different locations",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"location\":\"New York\",\"temp\":56,\"datestamp\":1643784000},{\"location\":\"Los Angeles\",\"temp\":67,\"datestamp\":1643784000},{\"location\":\"Chicago\",\"temp\":44,\"datestamp\":1643784000},{\"location\":\"New York\",\"temp\":60,\"datestamp\":1643798400},{\"location\":\"Los Angeles\",\"temp\":71,\"datestamp\":1643798400},{\"location\":\"Chicago\",\"temp\":48,\"datestamp\":1643798400},{\"location\":\"New York\",\"temp\":65,\"datestamp\":1643812800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1643812800},{\"location\":\"Chicago\",\"temp\":52,\"datestamp\":1643812800},{\"location\":\"New York\",\"temp\":69,\"datestamp\":1643827200},{\"location\":\"Los Angeles\",\"temp\":77,\"datestamp\":1643827200},{\"location\":\"Chicago\",\"temp\":56,\"datestamp\":1643827200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643841600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643841600},{\"location\":\"Chicago\",\"temp\":60,\"datestamp\":1643841600},{\"location\":\"New York\",\"temp\":77,\"datestamp\":1643856000},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643856000},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1643856000},{\"location\":\"New York\",\"temp\":80,\"datestamp\":1643870400},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643870400},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1643870400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643884800},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643884800},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1643884800},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643899200},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643899200},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1643899200},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Los Angeles\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1643913600},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643928000},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643928000},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1643928000},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1643942400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643956800},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643956800},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1643956800},{\"location\":\"New York\",\"temp\":79,\"datestamp\":1643971200},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643971200},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1643971200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643985600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643985600},{\"location\":\"Chicago\",\"temp\":100,\"datestamp\":1643985600},{\"location\":\"New York\",\"temp\":66,\"datestamp\":1644000000},{\"location\":\"Los Angeles\",\"temp\":78,\"datestamp\":1644000000},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1644000000},{\"location\":\"New York\",\"temp\":59,\"datestamp\":1644014400},{\"location\":\"Los Angeles\",\"temp\":76,\"datestamp\":1644014400},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1644014400},{\"location\":\"New York\",\"temp\":53,\"datestamp\":1644028800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1644028800},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1644028800},{\"location\":\"New York\",\"temp\":47,\"datestamp\":1644043200},{\"location\":\"Los Angeles\",\"temp\":72,\"datestamp\":1644043200},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1644043200},{\"location\":\"New York\",\"temp\":42,\"datestamp\":1644057600},{\"location\":\"Los Angeles\",\"temp\":70,\"datestamp\":1644057600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1644057600},{\"location\":\"New York\",\"temp\":39,\"datestamp\":1644072000},{\"location\":\"Los Angeles\",\"temp\":68,\"datestamp\":1644072000},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1644072000},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644086400},{\"location\":\"Los Angeles\",\"temp\":66,\"datestamp\":1644086400},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1644086400},{\"location\":\"New York\",\"temp\":36,\"datestamp\":1644100800},{\"location\":\"Los Angeles\",\"temp\":64,\"datestamp\":1644100800},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1644100800},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644115200},{\"location\":\"Los Angeles\",\"temp\":62,\"datestamp\":1644115200},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1644115200}]",
+        "payloadType": "json",
+        "x": 210,
+        "y": 700,
+        "wires": [
+            [
+                "efccfdf502300871"
+            ]
+        ]
+    }
+]

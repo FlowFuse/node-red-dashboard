@@ -1,0 +1,19 @@
+[
+    {
+        "id": "45fc71e9f522a663",
+        "type": "ui-markdown",
+        "z": "0758321f1687e812",
+        "group": "",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "content": "# Dashboard 2.0 Documentation\n\n## Quick start Guides Below:\n\n[Getting Started](https://dashboard.flowfuse.com/getting-started.html)\n\n[Migration Guide](https://dashboard.flowfuse.com/user/migration.html)\n\n[UI Template Examples](https://dashboard.flowfuse.com/user/template-examples.html)\n\n[Charts](https://dashboard.flowfuse.com/nodes/widgets/ui-chart.html)\n\n## [Issues](https://github.com/FlowFuse/node-red-dashboard/issues)\n\n## [Contributions](https://dashboard.flowfuse.com/contributing/)\n\n## [FlowFuse](https://flowfuse.com/)\n",
+        "className": "",
+        "x": 470,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    }
+]
