@@ -23,7 +23,7 @@
                                 class="nrdb-ui-widget"
                                 :class="getWidgetClass(w)"
                                 style="display: grid"
-                                :style="`grid-template-rows: repeat(${w.props.height}, minmax(${rowHeight}px, auto)); grid-column-end: span ${ w.props.width || g.width }`"
+                                :style="`grid-template-rows: repeat(${w.props.height}, minmax(${rowHeight}px, auto));grid-row-end: span ${w.props.height}; grid-column-end: span ${ w.props.width || g.width }`"
                             >
                                 <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
                             </div>
