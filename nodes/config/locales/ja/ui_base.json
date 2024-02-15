@@ -2,9 +2,18 @@
     "ui-base": {
         "auto": "自動",
         "label": {
+            "uiName": "画面名",
+            "path": "パス",
             "category": "ダッシュボード2",
+            "dashboard2": "ダッシュボード2.0",
+            "editSettings": "設定を編集",
+            "openDashboard": "ダッシュボードを開く",
             "layout": "配置",
+            "layoutMessage": "部品やグループ、ページの並び替えや移動が可能です。",
             "theming": "テーマ",
+            "themingMessage": "ダッシュボードで定義した画面テーマを参照できます。",
+            "page": "ページ",
+            "pages": "ページ",
             "settings": "設定",
             "sidebar": "サイドバーの設定",
             "showPath": "ラベルにページのパスを含める"

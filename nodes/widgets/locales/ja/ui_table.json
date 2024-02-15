@@ -1,0 +1,14 @@
+{
+    "ui-table": {
+        "label": {
+            "group": "グループ",
+            "size": "サイズ",
+            "maxRows": "上限の行数",
+            "columns": "列",
+            "autoCalculateColumns": "列を自動判断",
+            "key": "キー",
+            "label": "ラベル",
+            "column": "列"
+        }
+    }
+}

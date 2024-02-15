@@ -206,27 +206,27 @@
 
 <script type="text/html" data-template-name="ui-text">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-text.label.group"></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-text.label.size"></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-text.label.label"></label>
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-text.label.class"></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-text.label.optionalCssClassNames" style="flex-grow: 1;">
             <a
                 data-html="true"
                 title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
@@ -241,36 +241,36 @@
         <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
     </div>-->
     <div class="form-row">
-        <label style="vertical-align: top"><i class="fa fa-th-large"></i> Layout</label>
+        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span data-i18n="ui-text.label.layout"></label>
         <div style="display:inline-block">
             <input type="hidden" id="node-input-layout">
             <input type="hidden" id="node-input-layoutAlign" >
             <div>
                 <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-left">
-                    <span class="nr-db-text-layout-label">label</span>
-                    <span class="nr-db-text-layout-value">value</span>
+                    <span class="nr-db-text-layout-label" data-i18n="ui-text.label.label2"></span>
+                    <span class="nr-db-text-layout-value" data-i18n="ui-text.label.value"></span>
                     <div class="nr-db-text-layout-checkbox"></div>
                 </a>
                 <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-center">
-                    <span class="nr-db-text-layout-label">label</span>
-                    <span class="nr-db-text-layout-value">value</span>
+                    <span class="nr-db-text-layout-label" data-i18n="ui-text.label.label2"></span>
+                    <span class="nr-db-text-layout-value" data-i18n="ui-text.label.value"></span>
                     <div class="nr-db-text-layout-checkbox"></div>
                 </a>
                 <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-right">
-                    <span class="nr-db-text-layout-label">label</span>
-                    <span class="nr-db-text-layout-value">value</span>
+                    <span class="nr-db-text-layout-label" data-i18n="ui-text.label.label2"></span>
+                    <span class="nr-db-text-layout-value" data-i18n="ui-text.label.value"></span>
                     <div class="nr-db-text-layout-checkbox"></div>
                 </a>
             </div>
             <div>
                 <a href="#" class="nr-db-text-layout nr-db-text-layout-row nr-db-text-layout-row-spread">
-                    <span class="nr-db-text-layout-label">label</span>
-                    <span class="nr-db-text-layout-value">value</span>
+                    <span class="nr-db-text-layout-label" data-i18n="ui-text.label.label2"></span>
+                    <span class="nr-db-text-layout-value" data-i18n="ui-text.label.value"></span>
                     <div class="nr-db-text-layout-checkbox"></div>
                 </a>
                 <a href="#" class="nr-db-text-layout nr-db-text-layout-col nr-db-text-layout-col-center">
-                    <span class="nr-db-text-layout-label">label</span>
-                    <span class="nr-db-text-layout-value">value</span>
+                    <span class="nr-db-text-layout-label" data-i18n="ui-text.label.label2"></span>
+                    <span class="nr-db-text-layout-value" data-i18n="ui-text.label.value"></span>
                     <div class="nr-db-text-layout-checkbox"></div>
                 </a>
             </div>
@@ -278,29 +278,29 @@
     </div>
 
     <div class="form-row">
-        <label><i class="fa fa-cog"></i> Style</label>
+        <label><i class="fa fa-cog"></i> <span data-i18n="ui-text.label.style"></label>
         <input type="checkbox" id="node-input-style" style="display: inline-block; width: auto; vertical-align: top; margin: 0 3px 0 0;"/>
-        <label for="node-input-style" style="width: 70%;"> Apply Style</label>
+        <label for="node-input-style" style="width: 70%;" data-i18n="ui-text.label.applyStyle"></label>
     </div>
 
     <div id="node-styles">
         <div class="form-row">
-            <label for="node-input-font"><i class="fa fa-font"></i>  Font</label>
+            <label for="node-input-font"><i class="fa fa-font"></i> <span data-i18n="ui-text.label.font"></label>
             <select id="node-select-font">
             </select>
             <input type="hidden" id="node-input-font"/>
         </div>
         <div class="form-row">
-            <label for="node-input-fontSize"><i class="fa fa-text-height"></i>  Text Size</label>
+            <label for="node-input-fontSize"><i class="fa fa-text-height"></i>  <span data-i18n="ui-text.label.textSize"></label>
             <input id="node-input-fontSize" value="16" style="width: 50px;"/>
         </div>
         <div class="form-row">
-            <label for="node-input-color"><i class="fa fa-tint"></i>  Text Color</label>
+            <label for="node-input-color"><i class="fa fa-tint"></i> <span data-i18n="ui-text.label.textColor"></label>
             <input type="color" id="node-input-color" style="width: 50px;"/>
         </div>
         <div class="form-row">
             <label>&nbsp;</label>
-            <input id="node-test-text" value="Enter Sample Here"/ style="width: 280px;">
+            <input id="node-test-text" data-i18n="[value]ui-text.label.enterSampleHere" style="width: 280px;">
         </div>
     </div>
 </script>

@@ -1,0 +1,20 @@
+{
+    "ui-text": {
+        "label": {
+            "group": "グループ",
+            "size": "サイズ",
+            "label": "ラベル",
+            "class": "クラス",
+            "optionalCssClassNames": "任意のCSSクラス名",
+            "layout": "配置",
+            "label2": "ラベル",
+            "value": "値",
+            "style": "様式",
+            "applyStyle": "様式を適用",
+            "font": "文字の種類",
+            "textSize": "文字サイズ",
+            "textColor": "文字の色",
+            "enterSampleHere": "ここに例文を入力"
+        }
+    }
+}

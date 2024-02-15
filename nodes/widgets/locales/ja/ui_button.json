@@ -1,0 +1,25 @@
+{
+    "ui-button": {
+        "label": {
+            "group": "グループ",
+            "size": "サイズ",
+            "icon": "アイコン",
+            "optionalIcon": "任意のアイコン",
+            "label": "ラベル",
+            "optionalLabel": "任意のラベル",
+            "button": "ボタン",
+            "className": "クラス",
+            "classNamePlaceholder": "任意のCSSクラス名",
+            "tooltip": "ツールチップ",
+            "optionalTooltip": "任意のツールチップ",
+            "color": "色",
+            "optionalColor": "任意の文字列とアイコンの色",
+            "background": "背景",
+            "optionalBackgroundColor": "任意の背景色",
+            "whenClicked": "クリックされた時に、以下のメッセージを送信:",
+            "payload": "ペイロード",
+            "topic": "トピック",
+            "emulateClick": "入力にメッセージが届けることでクリックを再現:"
+        }
+    }
+}

@@ -3,7 +3,7 @@
         category: 'config',
         defaults: {
             name: {
-                value: 'Group Name',
+                value: RED._('@flowfuse/node-red-dashboard/ui-group:ui-group.label.groupName'),
                 required: true
             },
             page: { type: 'ui-page', required: true },
@@ -68,8 +68,8 @@
 
 <script type="text/html" data-template-name="ui-group">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> <span data-i18n="ui-group.label.name"></label>
-        <input type="text" id="node-config-input-name">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
         <label for="node-config-input-page"><i class="fa fa-bookmark"></i> <span data-i18n="ui-group.label.page"></label>

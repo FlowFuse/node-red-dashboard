@@ -187,7 +187,7 @@
         category: 'config',
         defaults: {
             name: {
-                value: 'UI Name',
+                value: c_('label.uiName'),
                 required: true
             },
             path: {
@@ -231,13 +231,15 @@
 
         const actions = $('<div class="red-ui-sidebar-header-actions"></div>')
 
-        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">Edit Settings <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
+        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">'
+            + c_('label.editSettings') + ' <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
 
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
 
-        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">Open Dashboard<i style="margin-left: 3px;" class="fa fa-external-link"></i></a>`)
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">`
+            + c_('label.openDashboard') +` <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>`)
 
         label.appendTo(header)
         editSettingsButton.appendTo(actions)
@@ -653,7 +655,7 @@
             .appendTo(buttonGroup)
         RED.popover.tooltip(buttonExpand, c_('layout.expand'))
 
-        divTabs.append('<div class="nrdb2-layout-helptext">Here you can re-order and move your widgets, groups and pages.</div>')
+        divTabs.append('<div class="nrdb2-layout-helptext">' + c_('label.layoutMessage') + '</div>')
 
         const pages = {}
         const groupsByPage = {}
@@ -744,7 +746,7 @@
         const themeHeader = $('<div>', { class: 'nrdb2-sidebar-header' }).appendTo(divTabs)
         $('<b>').html(c_('themes.header')).appendTo(themeHeader)
 
-        divTabs.append('<div class="nrdb2-layout-helptext">Here you can can get quick access to your UI Themes, defined on your Dashboard.</div>')
+        divTabs.append('<div class="nrdb2-layout-helptext">' + c_('label.themingMessage') + '</div>')
 
         const themes = {}
 
@@ -765,7 +767,7 @@
                 const tabicon = 'fa-paint-brush'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(theme.name || theme.id).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' Page' + (theme.users.length > 1 ? 's' : '')).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('label.pages') : c_('label.page'))).appendTo(titleRow)
 
                 const palette = $('<div>', { class: 'nrdb2-sb-palette' }).appendTo(titleRow)
                 const colors = theme.colors
@@ -822,8 +824,8 @@
     function addSidebar () {
         RED.sidebar.addTab({
             id: 'dashboard-2.0',
-            label: 'Dashboard 2.0',
-            name: 'Dashboard 2.0',
+            label: c_('label.dashboard2'),
+            name: c_('label.dashboard2'),
             content: sidebar,
             closeable: true,
             pinned: true,
@@ -1092,16 +1094,16 @@
 
 <script type="text/html" data-template-name="ui-base">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
-        <input type="text" id="node-config-input-name">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> Path</label>
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
-        <label style="font-weight: 600; width: auto;"><span data-i18n="ui-base.label.sidebar"></span></label>
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>
     </div>
     <div class="form-row" style="align-items: center;">
         <label style="margin-right: 5px; margin-bottom: 0px;" for="node-config-input-navigationStyle"><span data-i18n="ui-base.label.navigationStyle"></span></label>
@@ -1113,8 +1115,8 @@
             <option value="none" data-i18n="ui-base.label.navigationStyleNone"></option>
         </select>
     </div>
-    <div class="form-row form-row-flex" style="align-items: center; padding-left: 8px">
-        <input style="margin-right: 16px" type="checkbox" id="node-config-input-showPathInSidebar">
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPathInSidebar">
         <label style="width:auto" for="node-config-input-showPathInSidebar"><span data-i18n="ui-base.label.showPath"></span></label>
     </div>
 </script>

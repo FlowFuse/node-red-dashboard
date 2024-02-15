@@ -5,6 +5,8 @@
             "size": "Size",
             "label": "Label",
             "optionalLabel": "optional label",
+            "className": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s)",
             "formElements": "Form elements",
             "type": "Type",
             "required": "Required",
@@ -23,14 +25,14 @@
             "time": "Time",
             "element": "element",
             "buttons": "Buttons",
+            "submit": "submit",
             "submitButtonText": "submit button text",
+            "cancel": "clear",
             "cancelButtonText": "cancel button text",
             "topic": "Topic",
             "optionalMsgTopic": "optional msg.topic",
-            "splitLayout":"Place the form elements in two columns",
-            "resetOnSubmit":"Reset the form when submitted",
-            "className": "Class",
-            "classNamePlaceholder": "Optional CSS class name(s) for widget"
+            "splitLayout": "Place the form elements in two columns",
+            "resetOnSubmit": "Reset the form when submitted"
         }
     }
-  }
+}

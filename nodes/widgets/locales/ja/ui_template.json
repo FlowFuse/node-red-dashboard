@@ -1,0 +1,23 @@
+{
+    "ui-template": {
+        "label": {
+            "scope": "種類",
+            "widget-group": "部品 (有効範囲-グループ)",
+            "widget-page": "部品 (有効範囲-ページ)",
+            "widget-ui": "部品 (有効範囲-画面)",
+            "site-style": "CSS (全てのページ)",
+            "page-style": "CSS (単一のページ)",
+            "ui": "画面",
+            "page": "ページ",
+            "group": "グループ",
+            "size": "サイズ",
+            "className": "クラス",
+            "classNamePlaceholder": "任意のCSSクラス名",
+            "pass-through": "入力メッセージをそのまま渡す",
+            "store-state": "出力メッセージを状態として保存",
+            "template": "テンプレート",
+            "expand": "展開",
+            "resend": "更新時に最後の値を再度読み込む"
+        }
+    }
+}

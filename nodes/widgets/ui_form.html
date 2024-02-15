@@ -45,8 +45,8 @@
                 },
                 formValue: { value: {} },
                 payload: { value: '' },
-                submit: { value: 'submit' },
-                cancel: { value: 'clear' },
+                submit: { value: c_('label.submit') },
+                cancel: { value: c_('label.cancel') },
                 resetOnSubmit: { value: true },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
@@ -84,7 +84,7 @@
 
                     // label field
                     $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName'), value: option.label }).appendTo(row)
-    
+
                     // key field
                     let keyClass = 'node-input-option-key'
                     if (!option.key) { keyClass = 'node-input-option-key input-error' }
@@ -98,7 +98,7 @@
                             }
                         }
                     })
-    
+
                     // type field
                     const typeField = $('<select/>', { class: 'node-input-option-type', type: 'text', style: 'margin-left:7px; width:16%' }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
 
@@ -125,7 +125,7 @@
 
                     // which input types don't need a 'require' option
                     const noReqd = ['checkbox', 'switch']
-    
+
                     // required
                     const requiredContainer = $('<div/>', { style: 'display:inline-block; height:34px; width:13%; vertical-align: middle' }).appendTo(row)
                     const requiredInnerContainer = $('<div/>', { style: 'left:35%; position:relative; width:30px' }).appendTo(requiredContainer)
@@ -133,7 +133,7 @@
                     const reqRow = $('<label />', { class: 'switch', style: 'top:10px; width:30px;' }).css('visibility', reqVis).appendTo(requiredInnerContainer)
                     const reqd = $('<input/>', { class: 'node-input-option-required', type: 'checkbox', checked: option.required, style: 'vertical-align:top;' }).appendTo(reqRow)// labelForRequried);//.typedInput({default:'str',types:['str', 'num']});
                     $('<div />', { class: 'slider round' }).appendTo(reqRow)
-    
+
                     // ui rows
                     const rowsVis = option.rows ? 'visible' : 'hidden'
                     const rowsField = $('<input/>', { class: 'node-input-option-rows', type: 'number', style: 'width:10%;', placeholder: 'Rows', value: option.rows }).css('visibility', rowsVis).appendTo(row)
@@ -311,9 +311,9 @@
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-form.label.optionalLabel">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-form.label.className"></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-form.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
                 title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."

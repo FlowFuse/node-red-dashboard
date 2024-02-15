@@ -1,7 +1,7 @@
 {
     "ui-group": {
         "label": {
-            "name": "Name",
+            "groupName": "Group Name",
             "page": "Page",
             "size": "Size",
             "display-name": "Display group name",

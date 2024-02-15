@@ -1,13 +1,13 @@
 {
     "ui-page": {
         "label": {
-            "name": "名前",
-            "ui": "UI",
+            "pageName": "ページ名",
+            "ui": "画面",
             "path": "パス",
             "icon": "アイコン",
             "theme": "テーマ",
             "layout": "配置",
-            "grid": "グリッド",
+            "grid": "格子",
             "fixed": "固定",
             "notebook": "ノートブック",
             "class": "クラス",
