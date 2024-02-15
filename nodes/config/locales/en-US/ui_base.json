@@ -1,10 +1,19 @@
 {
-    "ui-base" : {
+    "ui-base": {
         "auto": "auto",
         "label": {
+            "uiName": "UI Name",
+            "path": "Path",
             "category": "dashboard 2",
+            "dashboard2": "Dashboard 2.0",
+            "editSettings": "Edit Settings",
+            "openDashboard": "Open Dashboard",
             "layout": "Layout",
+            "layoutMessage": "Here you can re-order and move your widgets, groups and pages.",
             "theming": "Theming",
+            "themingMessage": "Here you can can get quick access to your UI Themes, defined on your Dashboard.",
+            "page": "Page",
+            "pages": "Pages",
             "settings": "Settings",
             "sidebar": "Sidebar Options",
             "showPath": "Include Page Path in Label"

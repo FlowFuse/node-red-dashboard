@@ -3,7 +3,7 @@
         category: 'config',
         defaults: {
             name: {
-                value: 'Page Name',
+                value: RED._('@flowfuse/node-red-dashboard/ui-page:ui-page.label.pageName'),
                 required: true
             },
             ui: {
@@ -99,8 +99,8 @@
 
 <script type="text/html" data-template-name="ui-page">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="w-16 fa fa-bookmark"></i> <span data-i18n="ui-page.label.name"></label>
-        <input type="text" id="node-config-input-name">
+        <label for="node-config-input-name"><i class="w-16 fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
         <label for="node-config-input-ui"><i class="w-16 fa fa-sitemap"></i> <span data-i18n="ui-page.label.ui"></label>

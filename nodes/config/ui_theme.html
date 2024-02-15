@@ -3,7 +3,7 @@
         category: 'config',
         defaults: {
             name: {
-                value: 'Theme Name',
+                value: RED._('@flowfuse/node-red-dashboard/ui-theme:ui-theme.label.themeName'),
                 required: true
             },
             // colors
@@ -105,68 +105,68 @@
 
 <script type="text/html" data-template-name="ui-theme">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> Name</label>
-        <input type="text" id="node-config-input-name">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
-    <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Colors</h3>
+    <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.colors"></h3>
     <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> Dashboard</h4>
+        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-theme.label.dashboard"></h4>
     </div>
     <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
         <div>
-            <label>Navigation</label>
+            <label data-i18n="ui-theme.label.navigation"></label>
             <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
                 <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
             </label>
         </div>
         <div>
-            <label>Primary</label>
+            <label data-i18n="ui-theme.label.primary"></label>
             <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
                 <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
             </label>
         </div>
     </div>
     <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> Pages</h4>
+        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages"></h4>
     </div>
     <div class="form-row labels-right" style="margin-bottom: 3px;">
-        <label>Background</label>
+        <label data-i18n="ui-theme.label.background"></label>
         <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
             <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
         </label>
     </div>
     <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> Groups</h4>
+        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
     </div>
     <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
         <div>
-            <label>Background</label>
+            <label data-i18n="ui-theme.label.background"></label>
             <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
                 <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
             </label>
         </div>
         <div>
-            <label>Outline</label>
+            <label data-i18n="ui-theme.label.outline"></label>
             <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
                 <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
             </label>
         </div>
     </div>
-    <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;">Sizings</h3>
+    <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.sizings"></h3>
     <div class="form-row">
-        <label for="node-config-input-pagePadding">Page Padding</label>
+        <label for="node-config-input-pagePadding" data-i18n="ui-theme.label.pagePadding"></label>
         <input type="text" id="node-config-input-pagePadding">
     </div>
     <div class="form-row">
-        <label for="node-config-input-groupGap">Group Gap</label>
+        <label for="node-config-input-groupGap" data-i18n="ui-theme.label.groupGap"></label>
         <input type="text" id="node-config-input-groupGap">
     </div>
     <div class="form-row">
-        <label for="node-config-input-groupBorderRadius">Group Border Radius</label>
+        <label for="node-config-input-groupBorderRadius" data-i18n="ui-theme.label.groupBorderRadius"></label>
         <input type="text" id="node-config-input-groupBorderRadius">
     </div>
     <div class="form-row">
-        <label for="node-config-input-widgetGap">Widget Gap</label>
+        <label for="node-config-input-widgetGap" data-i18n="ui-theme.label.widgetGap"></label>
         <input type="text" id="node-config-input-widgetGap">
     </div>
 </script>

@@ -1,7 +1,7 @@
 {
     "ui-page": {
         "label": {
-            "name": "Name",
+            "pageName": "Page Name",
             "ui": "UI",
             "path": "Path",
             "icon": "Icon",

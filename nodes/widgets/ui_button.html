@@ -9,7 +9,7 @@
             defaults: {
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
-                label: { value: 'button' },
+                label: { value: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.button') },
                 order: { value: 0 },
                 width: {
                     value: 0,
@@ -80,7 +80,7 @@
 
 <script type="text/html" data-template-name="ui-button">
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-button.label.group"></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
@@ -94,13 +94,13 @@
         <input type="text" id="node-input-icon" data-i18n="[placeholder]ui-button.label.optionalIcon">
     </div>-->
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-button.label.label"></label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-button.label.optionalLabel">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-button.label.className"></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-button.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
                 title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."

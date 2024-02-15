@@ -1,0 +1,20 @@
+{
+    "ui-theme": {
+        "label": {
+            "themeName": "Theme Name",
+            "colors": "Colors",
+            "dashboard": "Dashboard",
+            "navigation": "Navigation",
+            "primary": "Primary",
+            "pages": "Pages",
+            "background": "Background",
+            "groups": "Groups",
+            "outline": "Outline",
+            "sizings": "Sizings",
+            "pagePadding": "Page Padding",
+            "groupGap": "Group Gap",
+            "groupBorderRadius": "Group Border Radius",
+            "widgetGap": "Widget Gap"
+        }
+    }
+}
