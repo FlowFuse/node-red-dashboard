@@ -121,8 +121,9 @@ export default {
 
             // Create Debug Endpoints
             Object.values(payload.dashboards).forEach(ui => {
+                const path = (ui.root + ui.path + '_debug').replace(/\/\//g, '/')
                 this.$router?.addRoute({
-                    path: `${ui.path}/_debug`,
+                    path,
                     name: `${ui.id}_debug`,
                     component: DebugView,
                     meta: {
@@ -135,7 +136,8 @@ export default {
             Object.values(payload.pages).forEach(page => {
                 // check that the page's bound UI is also in our config
                 if (payload.dashboards[page.ui]) {
-                    const route = payload.dashboards[page.ui].path + page.path
+                    const ui = payload.dashboards[page.ui]
+                    const route = (ui.root + ui.path + page.path).replace(/\/\//g, '/')
                     const routeName = 'Page:' + page.name
                     this.$router?.addRoute({
                         path: route,

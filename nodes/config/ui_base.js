@@ -117,9 +117,14 @@ module.exports = function (RED) {
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
             uiShared.app.get(config.path + '/_setup', uiShared.httpMiddleware, (req, res) => {
+                let socketPath = join(RED.settings.httpNodeRoot, config.path, 'socket.io')
+                // if no leading /, add one (happens sometimes depending on httpNodeRoot in settings.js)
+                if (socketPath[0] !== '/') {
+                    socketPath = '/' + socketPath
+                }
                 let resp = {
                     socketio: {
-                        path: `${config.path}/socket.io`
+                        path: socketPath
                     }
                 }
                 // Hook API - onSetup(RED, config, req, res)
@@ -258,6 +263,8 @@ module.exports = function (RED) {
         const node = this
 
         node._created = Date.now()
+
+        n.root = RED.settings.httpNodeRoot || '/'
 
         /** @type {Object.<string, Socket>} */
         // node.connections = {} // store socket.io connections for this node

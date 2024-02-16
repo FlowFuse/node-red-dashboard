@@ -71,7 +71,7 @@ fetch('_setup')
         })
 
         socket.on('connect_error', (err) => {
-            console.log('SIO connect error:', err, err.data)
+            console.error('SIO connect error:', err, err.data)
         })
 
         /**
