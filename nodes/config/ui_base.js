@@ -453,7 +453,6 @@ module.exports = function (RED) {
          * @param {Socket} socket socket.io socket connecting to the server
          */
         function onConnection (socket) {
-            console.log('new connection', socket.id)
             // record mapping from connection to he ui-base node
             socket._baseId = node.id
 

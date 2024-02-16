@@ -17,7 +17,6 @@ module.exports = function (RED) {
                         console.log('ui-event node not found', id)
                     }
                     if (wNode && id === node.id) {
-                        console.log('running ui-event handler', id)
                         // this was sent by this particular node
                         let msg = {
                             topic: evt,

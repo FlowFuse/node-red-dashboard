@@ -174,8 +174,6 @@ export default {
             const colors = this.$vuetify.theme.themes.nrdb.colors // Modify the Vuetify Theming
             const sizes = this.customThemeDefinitions // Implement some of our own Theming
             if (this.theme) {
-                console.log('this.theme')
-                console.log(this.theme)
                 // convert NR Theming to Vuetify Theming
                 colors.surface = this.theme.colors.surface
                 // primary bg
@@ -193,8 +191,6 @@ export default {
                 sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
                 sizes['--widget-gap'] = this.theme.sizes.widgetGap
             }
-            console.log(sizes)
-            console.log(this.customThemeDefinitions)
         },
         getPageLabel (page) {
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
