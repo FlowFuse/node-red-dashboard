@@ -13,6 +13,17 @@ function join (...paths) {
     }).join('/')
 }
 
+/**
+ * Check if an object has a property
+ * TODO: move to test-able utility lib
+ * @param {Object} obj - Object to check for property
+ * @param {String} prop - Property to check for
+ * @returns {boolean}
+ */
+function hasProperty (obj, prop) {
+    return Object.prototype.hasOwnProperty.call(obj, prop)
+}
+
 module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
@@ -551,7 +562,7 @@ module.exports = function (RED) {
             msg = addConnectionCredentials(RED, msg, conn, n)
 
             async function defaultHandler (value) {
-                if (typeof (value) === 'object' && value !== null && Object.hasOwn(value, 'payload')) {
+                if (typeof (value) === 'object' && value !== null && hasProperty(value, 'payload')) {
                     msg.payload = value.payload
                 } else {
                     msg.payload = value
@@ -893,13 +904,13 @@ module.exports = function (RED) {
                         }
 
                         // standard dynamic property handlers
-                        if (Object.prototype.hasOwnProperty.call(msg, 'enabled')) {
+                        if (hasProperty(msg, 'enabled')) {
                             statestore.set(n, widgetNode, msg, 'enabled', msg.enabled)
                         }
-                        if (Object.prototype.hasOwnProperty.call(msg, 'visible')) {
+                        if (hasProperty(msg, 'visible')) {
                             statestore.set(n, widgetNode, msg, 'visible', msg.visible)
                         }
-                        if (Object.prototype.hasOwnProperty.call(msg, 'class')) {
+                        if (hasProperty(msg, 'class')) {
                             statestore.set(n, widgetNode, msg, 'class', msg.class)
                         }
 
@@ -915,7 +926,7 @@ module.exports = function (RED) {
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
-                                if (Object.hasOwn(widgetConfig, 'passthru')) {
+                                if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {
                                         send(msg)
                                     }
