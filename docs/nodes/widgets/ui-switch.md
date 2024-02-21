@@ -5,8 +5,8 @@ props:
     Label: The text shown within the button.
     On Payload: The type & value to output in <code>msg.payload</code> when the switch is turned on.
     Off Payload: The type & value to output in <code>msg.payload</code> when the switch is turned off.
-    On Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "on" state
-    Off Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "off" state
+    On Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "on" state. No need to include the <code>mdi</code> prefix.
+    Off Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "off" state. No need to include the <code>mdi</code> prefix.
     On Color: If provided with a icons, this colour is used for the icon when in "on" state
     Off Color: If provided with a icons, this colour is used for the icon when in "off" state
 dynamic:
