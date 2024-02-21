@@ -83,8 +83,8 @@ msg.payload = {
         hide: ['<Page Name>']
     }
     groups: {
-        show: ['<Group Name>', '<Group Name>'],
-        hide: ['<Group Name>']
+        show: ['<Page Name>:<Group Name>', '<Page Name>:<Group Name>'],
+        hide: ['<Page Name>:<Group Name>']
     }
 }
 ```
@@ -102,8 +102,8 @@ msg.payload = {
         disable: ['<Page Name>']
     }
     groups: {
-        enable: ['<Group Name>', '<Group Name>'],
-        disable: ['<Group Name>']
+        enable: ['<Page Name>:<Group Name>', '<Page Name>:<Group Name>'],
+        disable: ['<Page Name>:<Group Name>']
     }
 }
 ```
