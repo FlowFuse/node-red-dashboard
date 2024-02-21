@@ -53,10 +53,19 @@ const vuetify = createVuetify({
 
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
-    .then((response) => {
-        return response.json()
-    })
-    .then((setup) => {
+    .then(async (response) => {
+        const url = new URL(response.url)
+        const basePath = url.pathname.replace('/_setup', '')
+
+        // get the setup JSON from the server
+        const setup = await response.json()
+        setup.basePath = basePath
+
+        if (setup.socketio?.path) {
+            // TODO: be better here, rather than depend on /dashboard
+            setup.socketio.path = setup.socketio.path.replace('/dashboard', basePath)
+        }
+
         store.commit('setup/set', setup)
 
         const socket = io(setup.socketio)
