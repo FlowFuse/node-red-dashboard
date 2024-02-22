@@ -41,7 +41,7 @@
             </g>
         </svg>
         <div ref="value" class="nrdb-ui-gauge-value" :class="'nrdb-ui-' + props.gtype">
-            <span>{{ props.prefix }}{{ value || props.min }}{{ props.suffix }}</span>
+            <span>{{ props.prefix }}{{ value !== undefined ? value : props.min }}{{ props.suffix }}</span>
             <label v-if="props.icon || props.units"><v-icon v-if="props.icon" :icon="`mdi-${icon}`" />{{ props.units }}</label>
         </div>
     </div>
@@ -415,6 +415,7 @@ export default {
     line-height: 0.825rem;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .nrdb-ui-gauge #backdrop path {
