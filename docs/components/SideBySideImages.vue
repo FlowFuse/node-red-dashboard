@@ -1,8 +1,8 @@
 <template>
 <div class="side-by-side">
     <div class="side-by-side-images">
-        <img :src="left" data-zoomable />
-        <img :src="right" data-zoomable />
+        <img :src="left" ref="left-img" />
+        <img :src="right" ref="right-img" />
     </div>
     <em>{{ caption }}</em>
 </div>
@@ -28,7 +28,8 @@ export default {
         }
     },
     mounted () {
-        mediumZoom('[data-zoomable]')
+        mediumZoom(this.$refs['left-img'])
+        mediumZoom(this.$refs['right-img'])
     }
 }
 </script>
