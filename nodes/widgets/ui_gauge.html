@@ -9,6 +9,36 @@
 </style>
 
 <script type="text/javascript">
+    function validateGaugeSegments (segments) {
+        $('#node-input-validation-segments').hide()
+        const min = parseFloat(this.min)
+        const max = parseFloat(this.max)
+    
+        // check we havea  segment covering the smallest values of the gauge
+        let minCovered = false
+        for (let i = 0; i < segments.length; i++) {
+            const from = parseFloat(segments[i].from)
+            if (from <= min) {
+                minCovered = true
+            }
+        }
+        if (!minCovered) {
+            console.log('min not covered')
+            $('#node-input-validation-segments').text("It's advised to make sure your first segment's 'from' value and the gauge's 'min' value are the same.").show()
+        }
+        // check if we have any extra, unneccessary, segments
+        let extras = false
+        for (let i = 0; i < segments.length; i++) {
+            const from = parseFloat(segments[i].from)
+            if (from > max) {
+                extras = true
+            }
+        }
+        if (extras) {
+            $('#node-input-validation-segments').text('You have segments defined outside of the min/max range of your gauge').show()
+        }
+        return minCovered && !extras
+    }
     RED.nodes.registerType('ui-gauge', {
         category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
         color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -45,7 +75,8 @@
                 }, {
                     color: '#EA5353',
                     from: 7
-                }]
+                }],
+                validate: validateGaugeSegments
             },
             min: { value: 0, required: true, validate: RED.validators.number() },
             max: { value: 10, required: true, validate: RED.validators.number() },
@@ -77,6 +108,8 @@
             // check for duplicate values
             const unique = new Set(this.segments.map(function (o) { return o.from }))
             if (this.segments.length === unique.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
+
+            validateGaugeSegments.call(this, this.segments)
 
             function generateSegment (i, segment) {
                 const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
@@ -179,6 +212,7 @@
         <span for="node-input-max" style="margin-left:20px;"><span data-i18n="ui-gauge.label.max"></span></span>
         <input type="text" id="node-input-max" style="width:80px">
     </div>
+    <span id="node-input-validation-segments" style="color: var(--red-ui-text-color-error, #910000)"></span>
     <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
         <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
