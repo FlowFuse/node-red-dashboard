@@ -123,8 +123,6 @@ onChange: async function (msg, value) {
     const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
     msg.payload = value ? on : off
 
-    wNode._msg = msg
-
     // simulate Node-RED node receiving an input
     wNode.send(msg)
 }
