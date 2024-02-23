@@ -209,12 +209,6 @@ export default {
                 .enter()
                 .append('path')
 
-            this.svg.select('#sections')
-                .selectAll('path')
-                .data(segments)
-                .enter()
-                .append('path')
-
             this.svg.select('#sections').selectAll('path')
                 .attr('d', this.arcs.sections)
                 .attr('transform', transform)
@@ -342,8 +336,9 @@ export default {
                 .endAngle((d, i) => {
                     if (segments.length > i + 1) {
                         // go to next segment
-                        const to = segments[i + 1].from
-                        const segmentSize = to - d.from
+                        const to = Math.min(Math.max(segments[i + 1].from, minValue), maxValue)
+                        const from = Math.min(Math.max(d.from, minValue), maxValue)
+                        const segmentSize = to - from
                         const segmentAngle = this.sizes.angle * segmentSize / (maxValue - minValue)
                         cAngle += segmentAngle
                         return cAngle
