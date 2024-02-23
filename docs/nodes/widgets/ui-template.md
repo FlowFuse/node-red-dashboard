@@ -39,6 +39,10 @@ You have access to a number of built-in variables in your `ui-template` node:
 - `this.$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
 - `this.msg` - The last message received by the `ui-template` node.
 
+***Important Note:*** It is a good practice to utilise JavaScript's conditional operator (`?`) when accessing nested values inside say `msg.payload`.
+
+On first first, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+
 ### Built-in Functions
 
 We also offer some helper functions for the Node-RED integration too:
