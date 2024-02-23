@@ -62,8 +62,10 @@ fetch('_setup')
         setup.basePath = basePath
 
         if (setup.socketio?.path) {
-            // TODO: be better here, rather than depend on /dashboard
-            setup.socketio.path = setup.socketio.path.replace('/dashboard', basePath)
+            // get text before /socket.io and replace it with the calculated basePath
+            // basePath would have taken into account any proxy and/or httpNodeRoot settings
+            const replace = setup.socketio.path.split('/socket.io')[0]
+            setup.socketio.path = setup.socketio.path.replace(replace, basePath)
         }
 
         store.commit('setup/set', setup)
