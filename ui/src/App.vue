@@ -141,11 +141,10 @@ export default {
             Object.values(payload.pages).forEach(page => {
                 // check that the page's bound UI is also in our config
                 if (payload.dashboards[page.ui]) {
-                    const ui = payload.dashboards[page.ui]
-                    // re-write base path in case of proxy
-                    ui.path = this.setup.basePath
+                    // const ui = payload.dashboards[page.ui]
+                    // re-write base path in case of proxy & httpNodeRoot
+                    const route = (this.setup.basePath + page.path).replace(/\/\//g, '/')
 
-                    const route = (ui.root + ui.path + page.path).replace(/\/\//g, '/')
                     const routeName = 'Page:' + page.name
                     this.$router?.addRoute({
                         path: route,
