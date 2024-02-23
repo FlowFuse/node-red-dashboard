@@ -561,7 +561,7 @@ module.exports = function (RED) {
 
             msg = addConnectionCredentials(RED, msg, conn, n)
 
-            async function defaultHandler (value) {
+            async function defaultHandler (msg, value) {
                 if (typeof (value) === 'object' && value !== null && hasProperty(value, 'payload')) {
                     msg.payload = value.payload
                 } else {
@@ -582,7 +582,7 @@ module.exports = function (RED) {
                 // Most of the time, we can just use this default handler,
                 // but sometimes a node needs to do something specific (e.g. ui-switch)
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
-                await handler(value)
+                await handler(msg, value)
             } catch (error) {
                 console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null

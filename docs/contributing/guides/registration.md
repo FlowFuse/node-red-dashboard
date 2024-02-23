@@ -103,10 +103,14 @@ Similar to `onAction`, when used as a boolean, this flag will trigger the defaul
 Alternatively, you can override this default behaviour by providing a custom `onChange` function. An example of this is in the `ui-switch` node which needs to do `node.status` updates to in order for the Node-RED Editor to reflect it's latest status:
 
 ```js
-onChange: async function (value) {
+/**
+ * Handle the input from the widget
+ * @param {object} msg - the last known msg received (prior to this new value)
+ * @param {boolean} value - the updated value sent by the widget
+ */
+onChange: async function (msg, value) {
     // ensure we have latest instance of the widget's node
     const wNode = RED.nodes.getNode(node.id)
-    const msg = wNode._msg || {}
 
     node.status({
         fill: value ? 'green' : 'red',
