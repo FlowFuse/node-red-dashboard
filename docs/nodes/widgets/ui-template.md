@@ -41,7 +41,7 @@ You have access to a number of built-in variables in your `ui-template` node:
 
 ***Important Note:*** It is a good practice to utilise JavaScript's conditional operator (`?`) when accessing nested values inside say `msg.payload`.
 
-On first first, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
 
 ### Built-in Functions
 
