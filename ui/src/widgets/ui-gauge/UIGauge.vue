@@ -1,27 +1,7 @@
 <template>
-    <div style="display: flex;flex-direction: column; gap: 4px;">
-        <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
-        <svg ref="gauge" :style="{'min-height': gaugeHeight}">
-            <!-- <defs>
-                <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-                    <feOffset dy="2" dx="3" />
-                    <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
-
-                    <feFlood flood-color="#444444" flood-opacity="0.75" />
-                    <feComposite in2="shadowDiff" operator="in" />
-                    <feComposite in2="SourceGraphic" operator="over" result="firstfilter" />
-
-                    <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2" />
-                    <feOffset dy="-2" dx="-3" />
-                    <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
-
-                    <feFlood flood-color="#444444" flood-opacity="0.75" />
-                    <feComposite in2="shadowDiff" operator="in" />
-                    <feComposite in2="firstfilter" operator="over" />
-                </filter>
-            </defs> -->
-
+    <div ref="container" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${Math.min(props.width, Math.ceil(props.height / 2))}`">
+        <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <svg ref="gauge" width="0" height="0">
             <g id="sections" />
             <g id="backdrop">
                 <path /></g>
@@ -40,7 +20,7 @@
                 <text ref="limits-max" style="text-anchor: end">{{ props.max }}</text>
             </g>
         </svg>
-        <div ref="value" class="nrdb-ui-gauge-value" :class="'nrdb-ui-' + props.gtype">
+        <div ref="value" class="nrdb-ui-gauge-value" :class="`nrdb-ui-${props.gtype}`">
             <span>{{ props.prefix }}{{ value ?? props.min }}{{ props.suffix }}</span>
             <label v-if="props.icon || props.units"><v-icon v-if="props.icon" :icon="`mdi-${icon}`" />{{ props.units }}</label>
         </div>
@@ -73,7 +53,7 @@ export default {
                 gap: this.props.sizeGap,
                 keyThickness: this.props.sizeKeyThickness,
                 angle: 0,
-                fudge: -6 // padding for half-gauages within the SVG canvas
+                fudge: -6 // padding for half-gauages within the SVG canvas, otherwise needle overhangs
             },
             arcs: {
                 backdrop: null,
@@ -86,9 +66,6 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             return this.messages[this.id]?.payload
-        },
-        gaugeHeight: function () {
-            return this.props.gtype === 'gauge-half' ? '150px' : '300px'
         },
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
@@ -106,6 +83,7 @@ export default {
 
         // had an odd SVG sizing issue, better to draw nextTick
         this.$nextTick(() => {
+            // initial SVG size setting
             this.resize()
             if (this.value === undefined) {
                 this.update(this.props.min, 0)
@@ -119,14 +97,26 @@ export default {
     },
     methods: {
         resize () {
-            this.width = this.$refs.gauge.clientWidth
-            this.height = this.$refs.gauge.clientHeight
+            const labelHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
+
+            this.width = this.$refs.container.clientWidth
+            this.height = this.$refs.container.clientHeight - labelHeight
+
+            // heights for the SVG
+            const w = this.width
+            const h = this.height
+
+            console.log(w, h, labelHeight)
+
+            this.$refs.gauge.setAttribute('width', w)
+            this.$refs.gauge.setAttribute('height', h)
+            this.$refs.value.style.height = `${h}px`
 
             if (this.props.gtype === 'gauge-half') {
-                const minDimension = Math.min(this.width / 2, this.height)
+                const minDimension = Math.min(w / 2, h)
                 this.r = minDimension + this.sizes.fudge
             } else {
-                const minDimension = Math.min(this.width, this.height)
+                const minDimension = Math.min(w, h)
                 this.r = minDimension / 2
             }
         },
@@ -367,8 +357,9 @@ export default {
     position: relative;
 }
 .nrdb-ui-gauge svg {
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
+    flex-grow: 1;
 }
 
 .nrdb-ui-gauge-title {
@@ -376,17 +367,18 @@ export default {
     text-align: center;
     font-weight: bold;
     font-size: 1rem;
+    padding-bottom: 4px;
 }
 
+/* vertical positioning of the payload & units */
 .nrdb-ui-gauge-34 {
     top: 2%;
-    gap: 4px;
 }
-
 .nrdb-ui-gauge-half {
     top: 25%;
 }
 
+/* general styling od the payload & units */
 .nrdb-ui-gauge-value {
     position: absolute;
     width: 100%;
@@ -401,18 +393,15 @@ export default {
 
 .nrdb-ui-gauge-value span {
     font-weight: bold;
-    font-size: 2.5rem;
-    line-height: 2.75rem;
 }
 
 .nrdb-ui-gauge-value label {
-    font-size: 0.75rem;
-    line-height: 0.825rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* path styling */
 .nrdb-ui-gauge #backdrop path {
     fill: rgb(var(--v-theme-background));
 }
@@ -427,17 +416,11 @@ export default {
     fill: rgb(var(--v-theme-on-group-background));
 }
 
+/* needle styling */
+
 .nrdb-ui-gauge #needle-container {
     pointer-events: none;
 }
-
-/*
-    Adds shaadow to the needle, went back and forth on whether looks better,
-    leaving in case for future
-*/
-/* .nrdb-ui-gauge #needle {
-    filter: drop-shadow(0px 0px 2px rgb(0 0 0 / 0.4));
-} */
 
 .nrdb-ui-gauge #needle-mask {
     opacity: 0;
@@ -446,5 +429,31 @@ export default {
 .nrdb-ui-gauge #needle circle,
 .nrdb-ui-gauge #needle polygon {
     fill: rgb(var(--v-theme-on-group-background));
+}
+
+/* payload value font */
+.nrdb-ui-gauge-value span {
+    font-size: 2.5rem;
+    line-height: 2.75rem;
+}
+/* units font */
+.nrdb-ui-gauge-value label {
+    font-size: 0.75rem;
+    line-height: 0.825rem;
+}
+
+/* Size Overrides */
+.nrdb-ui-gauge-size-1 .nrdb-ui-gauge-value span {
+    font-size: 1rem;
+    line-height: 1.25rem;
+}
+
+.nrdb-ui-gauge-size-2 .nrdb-ui-gauge-value span {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+}
+.nrdb-ui-gauge-size-3 .nrdb-ui-gauge-value span {
+    font-size: 2rem;
+    line-height: 2.25rem;
 }
 </style>
