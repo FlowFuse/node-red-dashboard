@@ -1,0 +1,325 @@
+[
+    {
+        "id": "node-red-tab-button-groups",
+        "type": "tab",
+        "label": "UI Buttons",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "test-helper",
+        "type": "function",
+        "z": "node-red-tab-button-groups",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-button-group-1",
+        "type": "ui-button-group",
+        "z": "node-red-tab-button-groups",
+        "name": "Default",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": 6,
+        "height": 1,
+        "label": "Default",
+        "rounded": true,
+        "useThemeColors": true,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Option 1",
+                "icon": "",
+                "value": "option_1",
+                "valueType": "str",
+                "color": "#bdffbe"
+            },
+            {
+                "label": "Option 2",
+                "icon": "",
+                "value": "option_2",
+                "valueType": "str",
+                "color": "#7cb4de"
+            },
+            {
+                "label": "Option 3",
+                "icon": "",
+                "value": "option_3",
+                "valueType": "str",
+                "color": "#ffc629"
+            },
+            {
+                "label": "Option 4",
+                "icon": "",
+                "value": "option_4",
+                "valueType": "str",
+                "color": "#009999"
+            }
+        ],
+        "topic": "first-row",
+        "topicType": "str",
+        "x": 260,
+        "y": 60,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "0412af05efbf2907",
+        "type": "ui-button-group",
+        "z": "node-red-tab-button-groups",
+        "name": "With Icons",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": 6,
+        "height": 1,
+        "label": "With Icons",
+        "rounded": true,
+        "useThemeColors": true,
+        "passthru": true,
+        "options": [
+            {
+                "label": "Left",
+                "icon": "format-align-left",
+                "value": "0",
+                "valueType": "num",
+                "color": "#bdffbe"
+            },
+            {
+                "label": "Center",
+                "icon": "format-align-center",
+                "value": "1",
+                "valueType": "num",
+                "color": "#7cb4de"
+            },
+            {
+                "label": "Right",
+                "icon": "format-align-right",
+                "value": "2",
+                "valueType": "num",
+                "color": "#ffc629"
+            }
+        ],
+        "topic": "second-row",
+        "topicType": "str",
+        "x": 270,
+        "y": 100,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "ui-button-group-alpha",
+        "type": "ui-button-group",
+        "z": "node-red-tab-button-groups",
+        "name": "Icons Only",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": 6,
+        "height": 1,
+        "label": "Icons Only",
+        "rounded": false,
+        "useThemeColors": true,
+        "passthru": false,
+        "options": [
+            {
+                "label": "",
+                "icon": "alpha-a-circle",
+                "value": "option_0",
+                "valueType": "str",
+                "color": "#bdffbe"
+            },
+            {
+                "label": "",
+                "icon": "alpha-b-circle",
+                "value": "option_1",
+                "valueType": "str",
+                "color": "#7cb4de"
+            },
+            {
+                "label": "",
+                "icon": "alpha-c-circle",
+                "value": "option_2",
+                "valueType": "str",
+                "color": "#ffc629"
+            }
+        ],
+        "topic": "mss",
+        "topicType": "str",
+        "x": 270,
+        "y": 140,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "ui-button-group-colors",
+        "type": "ui-button-group",
+        "z": "node-red-tab-button-groups",
+        "name": "Custom Colors",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": 6,
+        "height": 1,
+        "label": "Custom Colors",
+        "rounded": false,
+        "useThemeColors": false,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Red",
+                "icon": "",
+                "value": "option_0",
+                "valueType": "str",
+                "color": "#ffdbdb"
+            },
+            {
+                "label": "Blue",
+                "icon": "",
+                "value": "option_1",
+                "valueType": "str",
+                "color": "#d6efff"
+            },
+            {
+                "label": "Green",
+                "icon": "",
+                "value": "option_2",
+                "valueType": "str",
+                "color": "#d9ffd1"
+            }
+        ],
+        "topic": "mss",
+        "topicType": "str",
+        "x": 280,
+        "y": 180,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "f04b97eec8a9b8e6",
+        "type": "ui-button",
+        "z": "node-red-tab-button-groups",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Inject Option 2",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "option_2",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 120,
+        "y": 60,
+        "wires": [
+            [
+                "dashboard-ui-button-group-1"
+            ]
+        ]
+    },
+    {
+        "id": "f32b18079def6a9a",
+        "type": "ui-button",
+        "z": "node-red-tab-button-groups",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Inject Index 1",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 120,
+        "y": 100,
+        "wires": [
+            [
+                "0412af05efbf2907"
+            ]
+        ]
+    }
+]
