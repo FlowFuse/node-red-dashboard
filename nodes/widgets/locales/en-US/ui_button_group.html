@@ -1,0 +1,26 @@
+
+<script type="text/html" data-help-name="ui-button-group">
+    <p>A Node-RED node to show a switch with multiple buttons in the Node-RED Dashboard.</p>
+    <p>The active selection can be dynamically set by sending a <code>msg.payload</code> which matches a respective option's value.</p>
+    <h3>Properties</h3>
+    <p><strong>Label:</strong><br/>
+    The label that will be displayed on the left side of the button.</p>
+    <p><strong>Appearance:</strong><br/>
+    Specify whether the shape of the widget should be rectangular or have rounded corners.</p>
+    <p><strong>Use theme colors:</strong><br/>
+    Specify whether the theme colors should be used. If not active, custom colors can be specified for each option separately.</p>
+    <p><strong>Passthrough:</strong><br/>
+    Specify whether input messages should be passed through as output messages
+    </p>
+    <p><strong>Options:</strong><br/>
+    Specify which options need to be displayed:
+        <ul>
+            <li><i>Label: </i>(optional) The description that will be displayed.</li>
+            <li><i>Icon: </i>(optional) The icon to display for the given option.</li>
+            <li><i>Value: </i>The value that will be send in input and output messages.</li>
+            <li><i>Color: </i>The color of the option in the switch.</li>
+        </ul>
+    </p>
+    <p><strong>Topic:</strong><br/>
+    The text that needs to be send in the <code>msg.topic</code> field.</p>
+</script>

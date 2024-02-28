@@ -196,7 +196,7 @@
     
                 node.options.push({ label, icon, value, valueType, color })
             })
-    }
+        }
     })
 </script>
 
@@ -206,32 +206,32 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-button.label.group"></label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-button-group.label.group"></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-button.label.size"></label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-button-group.label.size"></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-button-group.label.label"></span></label>
         <input type="text" id="node-input-label">
     </div>
     <div class='form-row'>
-        <label for='node-input-rounded'><i class='fa fa-gear'></i> Appearance</label>        
+        <label for='node-input-rounded'><i class='fa fa-gear'></i> <span data-i18n="ui-button-group.label.appearance"></span></label>        
         <span id="appearance-square" style="opacity:1; border:1px solid; padding: 3px 20px 2px 5px; "><i class="fa fa-square"></i></span>
         <input type="checkbox" id="node-input-rounded" style="display:inline-block; width:auto; vertical-align:baseline; margin-right:5px; margin-left:5px;">
         <span id="appearance-round" style="opacity:1; border:1px solid; border-radius:15px; padding: 3px 20px 2px 5px; "><i class="fa fa-circle"></i></span>     
     </div> 
     <div class="form-row">
-        <label for='node-input-useThemeColors'><i class='fa fa-paint-brush'></i> Colors</label>
+        <label for='node-input-useThemeColors'><i class='fa fa-paint-brush'></i> <span data-i18n="ui-button-group.label.colors"></span></label>
         <input type='checkbox' id='node-input-useThemeColors' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
-        <span for='node-input-useThemeColors'> Use theme colors</span>
+        <label for='node-input-useThemeColors' style="width: auto;"> <span data-i18n="ui-button-group.label.tcolors"></span></label>
     </div>
     <div class="form-row" style="margin-bottom:0;">
-        <label><i class="fa fa-list"></i> Options:</label>
+        <label><i class="fa fa-list"></i> <span data-i18n="ui-button-group.label.options"></span>:</label>
         <span id="configError" style="color:#DD0000"><b>All Values must be unique.</b></span>
     </div>
     <div class="form-row">       
@@ -247,76 +247,4 @@
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
-</script>
-
-<script type="text/html" data-help-name="ui_multistate_switch">
-    <p>A Node Red node to show a switch with multiple states in the Node-RED dashboard.</p>
-    <p><strong>Label:</strong><br/>
-    The label that will be displayed on the left side of the button.</p>
-    <p><strong>Appearance:</strong><br/>
-    Specify whether the shape of the widget should be rectangular or having rounded corners.</p>
-    <p><strong>Use theme colors:</strong><br/>
-    Specify whether the theme colors should be used.  If not active, custom colors can be specified for each option separately.</p>
-    <p><strong>Hide label of selected option:</strong><br/>
-    Specify whether the label of the selected option should be hidden, i.e. don't need to be displayed on top of the slider.</p>
-    <p>Note that this option can dynamically be overridden by input messages with <code>msg.topic="enable"</code> or <code>msg.topic="disable"</code>.</p>
-    <p><strong>Passthrough:</strong><br/>
-    Specify whether input messages should be passed through as output messages:
-        <ul>
-            <li><i>Never: </i>The input messages will never be passed through.</li>
-            <li><i>Always: </i>The input messages will always be passed through.</li>
-            <li><i>If state changes: </i>The input messages will only be passed through, when they change the switch state.</li>
-        </ul>
-    </p>
-    <p><strong>Input msg:</strong><br/>
-    Specify whether input messages should be accepted:
-        <ul>
-            <li><i>None: </i>The input messages will never be accepted.</li>
-            <li><i>All: </i>The input messages will always be accepted.</li>
-        </ul>
-    </p>
-    <p><strong>User input:</strong><br/>
-    Specify whether user input (i.e. click and touch events) should be accepted:
-        <ul>
-            <li><i>Disabled: </i>The user input will never be accepted.</li>
-            <li><i>Enabled and show: </i>The user input will be accepted, and the new state will be visualized.</li>
-            <li><i>Enabled but don't show: </i>The user input will be accepted, but the new state will not be visualized.</li>
-        </ul>
-        </ul>
-    </p>
-    <p><strong>Options:</strong><br/>
-    Specify which options need to be displayed:
-        <ul>
-            <li><i>Label: </i>The description that will be displayed.</li>
-            <li><i>Value: </i>The value that will be send in input and output messages.</li>
-            <li><i>Color: </i>The color of the option in the switch.</li>
-        </ul>
-    </p>
-    <p><strong>State field:</strong><br/>
-    The field in the input and output message that will contain the new switch state.</p>
-    <p><strong>User input field:</strong><br/>
-    The field in the input message that will contain a value, indicating whether the switch should be enabled or not.  Which means whether it allows user input (click/touch).  The value can be:
-        <ul>
-            <li><i>"enabled_show" (or true): </i>see user input modus "Enabled and show".</li>
-            <li><i>"enabled_not_show": </i>see user input modus "Enabled but don't show".</li>
-            <li><i>"disabled" (or false): </i>see user input modus "Disabled".</li>              
-        </ul>    
-    </p>
-    <p><strong>Passthrough field:</strong><br/>
-    The field in the input message that will contain a value, indicating whether the input messages should be passed through or not.  The value can be:
-        <ul>
-            <li><i>"never": </i>see passthrough modus "Never".</li>
-            <li><i>"always": </i>see passthrough modus "Allways".</li>
-            <li><i>"change": </i>see passthrough modus "If state changes".</li>                    
-        </ul>    
-    </p>
-    <p><strong>Input msg field:</strong><br/>
-    The field in the input message that will contain a value, indicating whether the input messages should be accepted or not.  The value can be:
-        <ul>
-            <li><i>"none": </i>see input msg modus "None".</li>
-            <li><i>"all": </i>see input msg modus "All".</li>                
-        </ul>    
-    </p>
-    <p><strong>Topic:</strong><br/>
-    The text that needs to be send in the <code>msg.topic</code> field.</p>
 </script>

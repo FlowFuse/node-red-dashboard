@@ -113,6 +113,10 @@ export default {
    background-color: rgb(var(--v-theme-group-background));
 }
 
+.nrdb-ui-button-group-wrapper .v-btn--variant-elevated {
+    --v-activated-opacity: 0;
+}
+
 .nrdb-ui-button-group-wrapper .icon-only .v-btn__prepend {
     margin-inline: 0;
 }
