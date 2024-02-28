@@ -109,6 +109,7 @@
             "ui-form": "nodes/widgets/ui_form.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js",
             "ui-button": "nodes/widgets/ui_button.js",
+            "ui-button-group": "nodes/widgets/ui_button_group.js",
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-radio-group": "nodes/widgets/ui_radio_group.js",
             "ui-slider": "nodes/widgets/ui_slider.js",

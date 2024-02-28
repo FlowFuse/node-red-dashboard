@@ -1,4 +1,5 @@
 import UIButton from './ui-button/UIButton.vue'
+import UIButtonGroup from './ui-button-group/UIButtonGroup.vue'
 import UIChart from './ui-chart/UIChart.vue'
 import UIControl from './ui-control/UIControl.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
@@ -18,6 +19,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 // Named exports for use in other components
 export {
     UIButton,
+    UIButtonGroup,
     UIChart,
     UIControl,
     UIDropdown,
@@ -41,6 +43,7 @@ export { useDataTracker } from './data-tracker.mjs'
 // Exported as an object for look up by widget name
 export default {
     'ui-button': UIButton,
+    'ui-button-group': UIButtonGroup,
     'ui-chart': UIChart,
     'ui-control': UIControl,
     'ui-dropdown': UIDropdown,
