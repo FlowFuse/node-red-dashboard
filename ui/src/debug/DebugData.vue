@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     name: 'DebugData',
     props: {
@@ -21,6 +22,9 @@ export default {
             data: null
         }
     },
+    computed: {
+        ...mapState('setup', ['setup'])
+    },
     created () {
         this.getData()
     },
@@ -30,7 +34,7 @@ export default {
     methods: {
         getData () {
             const xhr = new XMLHttpRequest()
-            xhr.open('GET', `/dashboard/_debug/${this.store}store/${this.item}`)
+            xhr.open('GET', `${this.setup.basePath}/_debug/${this.store}store/${this.item}`)
             xhr.send()
             xhr.responseType = 'json'
             xhr.onload = () => {

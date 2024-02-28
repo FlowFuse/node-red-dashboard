@@ -126,7 +126,7 @@ export default {
                 // if we are running on a proxy, we need to change ui.path to whatever our proxy has been configured as
                 ui.path = this.setup.basePath
 
-                const path = (ui.root + ui.path + '/_debug').replace(/\/\//g, '/')
+                const path = (ui.path + '/_debug').replace(/\/\//g, '/')
                 this.$router?.addRoute({
                     path,
                     name: `${ui.id}_debug`,
