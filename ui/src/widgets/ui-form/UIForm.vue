@@ -1,6 +1,6 @@
 <template>
     <label v-if="props.label" class="nrdb-ui-form-label">{{ props.label }}</label>
-    <v-form v-model="isValid" @submit.prevent="onSubmit">
+    <v-form v-model="isValid" validate-on="blur" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />

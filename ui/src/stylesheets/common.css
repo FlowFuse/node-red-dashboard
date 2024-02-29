@@ -163,6 +163,12 @@ main {
     padding-inline-start: 0;
 }
 
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+    background-color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+}
+
 /**
 * Widget: Radio Group
 */
