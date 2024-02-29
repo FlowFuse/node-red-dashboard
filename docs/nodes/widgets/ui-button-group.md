@@ -19,9 +19,10 @@ dynamic:
 ---
 
 <script setup>
+    import AddedIn from '../../components/AddedIn.vue';
 </script>
 
-# Button `ui-button-grup`
+# Button `ui-button-group` <AddedIn version="1.3.0" />
 
 Adds a set of buttons that act as a multi-state switch to your dashboard. When an individual button is clicked, it will become active and all other buttons in the group will become inactive, with the newly selected value being emitted from the node in Node-RED.
 
