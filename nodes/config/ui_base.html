@@ -890,19 +890,21 @@
                         if (widgetsByGroup[groupNameAsEnv]) {
                             // at this point, we know that the widgets in widgetsByGroup[groupNameAsEnv] belong to the group defined by the env var of the subflowinstance
                             // get the actual group id from the subflow instance env vars where the name matches the envDef.name
-                            const groupEnvVar = subflowInstance.env.find(env => env.name === envDef.name)
-                            if (groupEnvVar) {
-                                const groupId = groupEnvVar.value
-                                if (!widgetsByGroup[groupId]) {
-                                    widgetsByGroup[groupId] = []
+                            if (subflowInstance.env) {
+                                const groupEnvVar = subflowInstance.env.find(env => env.name === envDef.name)
+                                if (groupEnvVar) {
+                                    const groupId = groupEnvVar.value
+                                    if (!widgetsByGroup[groupId]) {
+                                        widgetsByGroup[groupId] = []
+                                    }
+                                    const sfItem = toDashboardItem(n)
+                                    sfItem.isSubflowInstance = true
+                                    if (!sfItem.label?.trim() || sfItem.label === sfItem.id) {
+                                        // label was defaulted to id, so we should try to get the label from the subflowDef
+                                        sfItem.label = RED.utils.getNodeLabel(subflowDef)
+                                    }
+                                    widgetsByGroup[groupId].push(sfItem)
                                 }
-                                const sfItem = toDashboardItem(n)
-                                sfItem.isSubflowInstance = true
-                                if (!sfItem.label?.trim() || sfItem.label === sfItem.id) {
-                                    // label was defaulted to id, so we should try to get the label from the subflowDef
-                                    sfItem.label = RED.utils.getNodeLabel(subflowDef)
-                                }
-                                widgetsByGroup[groupId].push(sfItem)
                             }
                         }
                     }
