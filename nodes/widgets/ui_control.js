@@ -13,8 +13,12 @@ module.exports = function (RED) {
         function updateStore (all, items, msg, prop, value) {
             items.forEach(function (item) {
                 const i = all[item]
-                // update the state store for each page
-                statestore.set(ui, i, msg, prop, value)
+                if (i) {
+                    // update the state store for each page
+                    statestore.set(ui, i, msg, prop, value)
+                } else {
+                    node.error('No item with the name ' + item + ' found')
+                }
             })
         }
 
@@ -110,28 +114,28 @@ module.exports = function (RED) {
                             const levels = g.split(':')
                             return levels.length > 1 ? levels[1] : g
                         })
-                        updateStore(allGroups, gs, 'visible', true)
+                        updateStore(allGroups, gs, msg, 'visible', true)
                     }
                     if ('hide' in groups) {
                         const gh = groups.hide.map((g) => {
                             const levels = g.split(':')
                             return levels.length > 1 ? levels[1] : g
                         })
-                        updateStore(allGroups, gh, 'visible', false)
+                        updateStore(allGroups, gh, msg, 'visible', false)
                     }
                     if ('enable' in groups) {
                         const ge = groups.enable.map((g) => {
                             const levels = g.split(':')
                             return levels.length > 1 ? levels[1] : g
                         })
-                        updateStore(allGroups, ge, 'disabled', false)
+                        updateStore(allGroups, ge, msg, 'disabled', false)
                     }
                     if ('disable' in groups) {
                         const gd = groups.disable.map((g) => {
                             const levels = g.split(':')
                             return levels.length > 1 ? levels[1] : g
                         })
-                        updateStore(allGroups, gd, 'disabled', true)
+                        updateStore(allGroups, gd, msg, 'disabled', true)
                     }
                     // ensure consistency in payload format
                     msg.payload.groups = groups

@@ -63,34 +63,26 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
 
     // skipping due to unreliable nature of Vuetify's Nav Draw with Cypress
     // will re-implement once we have option to render a fixed navigation drawer
-    it.skip('can hide and show a particular page from the navigation options', () => {
+    it('can hide and show a particular page from the navigation options', () => {
         cy.reloadDashboard()
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
+
         cy.get('[data-el="nav-drawer"]').should('be.visible')
+
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
         cy.get('[data-nav="dashboard-ui-page-controls"]').should('be.visible')
         cy.get('[data-nav="dashboard-ui-page-1"]').should('be.visible')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
-        // close drawer
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
 
         // hide page
         cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-hide').click()
 
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 2)
-        // close drawer
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
 
         // show page again
         cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-show').click()
 
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         cy.get('[data-el="nav-drawer"]').should('be.visible')
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
@@ -116,9 +108,7 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
 
     // skipping due to unreliable nature of Vuetify's Nav Draw with Cypress
     // will re-implement once we have option to render a fixed navigation drawer
-    it.skip('can enable/disable a particular page from the navigation options', () => {
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
+    it('can enable/disable a particular page from the navigation options', () => {
         cy.get('[data-el="nav-drawer"]').should('be.visible')
 
         // check length
@@ -129,29 +119,18 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
         cy.get('[data-nav="dashboard-ui-page-1"]').should('not.have.class', 'v-list-item--disabled')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
 
-        // close drawer
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
-
         // disable an entry
         cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-disable').click()
 
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
         cy.get('[data-nav="dashboard-ui-page-1"]').should('have.class', 'v-list-item--disabled')
         cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
 
-        // check enable works
-        // close drawer
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
-
         // enable an entry
         cy.get('#nrdb-ui-widget-dashboard-ui-button-int-page-enable').click()
 
-        // open navigation
-        cy.clickAndWait(cy.get('.v-app-bar-nav-icon'))
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 3)
         cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
