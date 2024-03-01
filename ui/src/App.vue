@@ -39,6 +39,7 @@ export default {
     },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
+        ...mapState('setup', ['setup']),
         status: function () {
             if (this.dashboards) {
                 const dashboards = Object.keys(this.dashboards)
@@ -121,7 +122,11 @@ export default {
 
             // Create Debug Endpoints
             Object.values(payload.dashboards).forEach(ui => {
-                const path = (ui.root + ui.path + '_debug').replace(/\/\//g, '/')
+                // currently, we can only have one ui
+                // if we are running on a proxy, we need to change ui.path to whatever our proxy has been configured as
+                ui.path = this.setup.basePath
+
+                const path = (ui.path + '/_debug').replace(/\/\//g, '/')
                 this.$router?.addRoute({
                     path,
                     name: `${ui.id}_debug`,
@@ -136,8 +141,10 @@ export default {
             Object.values(payload.pages).forEach(page => {
                 // check that the page's bound UI is also in our config
                 if (payload.dashboards[page.ui]) {
-                    const ui = payload.dashboards[page.ui]
-                    const route = (ui.root + ui.path + page.path).replace(/\/\//g, '/')
+                    // const ui = payload.dashboards[page.ui]
+                    // re-write base path in case of proxy & httpNodeRoot
+                    const route = (this.setup.basePath + page.path).replace(/\/\//g, '/')
+
                     const routeName = 'Page:' + page.name
                     this.$router?.addRoute({
                         path: route,

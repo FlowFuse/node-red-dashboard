@@ -1,0 +1,250 @@
+<script type="text/javascript">
+    function hasProperty (obj, prop) {
+        return Object.prototype.hasOwnProperty.call(obj, prop)
+    }
+    RED.nodes.registerType('ui-button-group', {
+        category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+        color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
+        defaults: {
+            name: { value: '' },
+            group: { type: 'ui-group', required: true },
+            order: { value: 0 },
+            width: {
+                value: 6,
+                validate: function (v) {
+                    const width = v || 0
+                    const currentGroup = $('#node-input-group').val() || this.group
+                    const groupNode = RED.nodes.node(currentGroup)
+                    const valid = !groupNode || +width <= +groupNode.width
+                    $('#node-input-size').toggleClass('input-error', !valid)
+                    return valid
+                }
+            },
+            height: { value: 1 },
+            label: { value: 'button group' },
+            rounded: { value: true },
+            useThemeColors: { value: true },
+            passthru: { value: false },
+            options: {
+                value: [],
+                validate: function (v) {
+                    const unique = new Set(v.map(function (o) { return o.value }))
+                    return v.length === unique.size && v.length > 1
+                }
+            },
+            topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+            topicType: { value: 'msg' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-toggle-off',
+        align: 'left',
+        paletteLabel: 'button group',
+        label: function () {
+            return this.name || (~this.label.indexOf('{{') ? null : this.label) || 'button group'
+        },
+        oneditprepare: function () {
+            $('#node-input-size').elementSizer({
+                width: '#node-input-width',
+                height: '#node-input-height',
+                group: '#node-input-group'
+            })
+
+            $('#node-input-topic').typedInput({
+                default: 'str',
+                typeField: $('#node-input-topicType'),
+                types: ['str', 'msg', 'flow', 'global']
+            })
+
+            // Add a default rounding of 0em to older nodes (version 1.0.0)
+            this.rounded = this.rounded ?? false
+    
+            // Add theme colors by default for older nodes (version 1.0.0)
+            this.useThemeColors = this.useThemeColors ?? true
+    
+            // Add an passThrough field value for older nodes (version 1.1.0 or below)
+            this.passthru = this.passthru ?? false
+    
+            $('#node-input-rounded').change(function () {
+                if (this.checked === true) {
+                    $('#appearance-square').css('opacity', '0.4')
+                    $('#appearance-round').css('opacity', '1')
+                } else {
+                    $('#appearance-square').css('opacity', '1')
+                    $('#appearance-round').css('opacity', '0.4')
+                }
+            })
+    
+            function getColor (idx) {
+                const colors = ['#009933', '#999999', '#ff6666', '#009999', '#cccc00', '#ff33cc', '#cc6600',
+                    '#99ff66', '#660033'
+                ]
+                if (idx > colors.length - 1) {
+                    return colors[Math.floor(Math.random() * colors.length)]
+                }
+                return colors[idx]
+            }
+
+            const optionsList = $('#node-input-options-container').css('min-height', '200px').editableList({
+
+                header: $('<div>').css({ 'padding-left': '32px', 'padding-right': '32px', gap: '10px', display: 'flex' }).append($.parseHTML(
+                    "<div style='width:30%; display: inline-grid'><b>Label</b></div>" +
+               "<div style='width:20%; display: inline-grid'><b>Icon</b></div>" +
+               "<div style='width:30%; display: inline-grid'><b>Value</b></div>" +
+               "<div style='width:10%; display: inline-grid' class='node-input-option-color'><b>Color</b></div>")),
+                addItem: function (container, i, option) {
+                    // Add a new row to the editableList
+                    const row = $('<div/>').appendTo(container)
+    
+                    // Column 1 : Add an input field (type string) to the new row, that represents the option label
+                    const labelField = $('<input/>', { class: 'node-input-option-label', type: 'text' }).css({ width: '30%', 'margin-left': '5px', 'margin-right': '5px' }).appendTo(row)
+                    labelField.val(option.label || '')
+
+                    // Column 2: Add an input field (type string) to the new row, that represents the option icon
+                    const iconField = $('<input/>', { class: 'node-input-option-icon', type: 'text' }).css({ width: '20%', 'margin-left': '5px', 'margin-right': '5px' }).appendTo(row)
+                    iconField.val(option.icon || '')
+
+                    // Column 3 : Add an input field (type string) to the new row, that represents the option value
+                    const valueField = $('<input/>', { class: 'node-input-option-value', type: 'text' }).css({ width: '30%', 'margin-left': '5px', 'margin-right': '5px' }).appendTo(row)
+                    valueField.typedInput({ types: ['str', 'num', 'bool'] })
+                    valueField.typedInput('type', option.valueType || 'str')
+                    valueField.typedInput('value', option.value || 'option_' + i)
+                    valueField.on('change', function (type, value) {
+                        validate()
+                    })
+    
+                    // Column 4 : Add an input field (type color) to the new row, that represents the option color
+                    // Before adding be sure if color field is needed to show or not.
+                    const colofield = $('#node-input-useThemeColors').prop('checked') ? 'none' : 'inline-block'
+                    const colorField = $('<input/>', { class: 'node-input-option-color', type: 'color' }).css({ width: '10%', 'margin-left': '5px', display: colofield }).appendTo(row)
+                    colorField.val(option.color || getColor(i))
+                    validate()
+                },
+                removeItem: function (data) {
+                    validate()
+                },
+                removable: true,
+                sortable: true
+            })
+    
+            // Show all the options (stored in this node) into the editableList
+            if (this.options) {
+                this.options.forEach(function (option, index) {
+                    optionsList.editableList('addItem', { label: option.label, icon: option.icon, value: option.value, valueType: option.valueType, color: option.color })
+                })
+            }
+    
+            $('#node-input-useThemeColors').on('change', function () {
+                const colorFields = $('.node-input-option-color')
+                if ($(this)[0].checked) {
+                    colorFields.hide()
+                } else {
+                    colorFields.show()
+                }
+            })
+
+            // Validate the options to (choose and) show configuration error if any.
+            // Any changes for options (adds new or changes any value), calls validation.
+
+            function validate () {
+                const that = this
+                // Copy all the options from the editableList to this node
+                this.options = []
+                const optionsList = $('#node-input-options-container').editableList('items')
+                optionsList.each(function (i) {
+                    const option = $(this)
+                    const label = option.find('.node-input-option-label').val()
+                    const icon = option.find('.node-input-option-icon').val()
+                    const value = option.find('.node-input-option-value').typedInput('value')
+                    const valueType = option.find('.node-input-option-value').typedInput('type')
+                    const color = option.find('.node-input-option-color').val()
+                    that.options.push({ label, icon, value, valueType, color })
+                })
+
+                // Using the Set to collect unique values and then comparing the count of elements.
+                const un = new Set(this.options.map(function (o) { return o.value }))
+                if (this.options.length !== un.size) {
+                    // console.log("configuration error - values not unique ")
+                    $('#configError').text('Values must be unique')
+                    $('#configError').show()
+                } else if (this.options.length < 2) {
+                    // console.log("configuration error - at least 2 options needed")
+                    $('#configError').text('Configure at least two options')
+                    $('#configError').show()
+                } else {
+                    // options valid
+                    $('#configError').hide()
+                }
+            }
+            if (this.options) {
+                validate()
+            }
+        },
+        oneditsave: function () {
+            const node = this
+
+            // Copy all the options from the editableList to this node
+            node.options = []
+            const optionsList = $('#node-input-options-container').editableList('items')
+            optionsList.each(function (i) {
+                const option = $(this)
+                const label = option.find('.node-input-option-label').val()
+                const icon = option.find('.node-input-option-icon').val()
+                const value = option.find('.node-input-option-value').typedInput('value')
+                const valueType = option.find('.node-input-option-value').typedInput('type')
+                const color = option.find('.node-input-option-color').val()
+    
+                node.options.push({ label, icon, value, valueType, color })
+            })
+        }
+    })
+</script>
+
+<script type="text/html" data-template-name="ui-button-group">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-button-group.label.group"></label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-button-group.label.size"></label>
+        <input type="hidden" id="node-input-width">
+        <input type="hidden" id="node-input-height">
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-button-group.label.label"></span></label>
+        <input type="text" id="node-input-label">
+    </div>
+    <div class='form-row'>
+        <label for='node-input-rounded'><i class='fa fa-gear'></i> <span data-i18n="ui-button-group.label.appearance"></span></label>        
+        <span id="appearance-square" style="opacity:1; border:1px solid; padding: 3px 20px 2px 5px; "><i class="fa fa-square"></i></span>
+        <input type="checkbox" id="node-input-rounded" style="display:inline-block; width:auto; vertical-align:baseline; margin-right:5px; margin-left:5px;">
+        <span id="appearance-round" style="opacity:1; border:1px solid; border-radius:15px; padding: 3px 20px 2px 5px; "><i class="fa fa-circle"></i></span>     
+    </div> 
+    <div class="form-row">
+        <label for='node-input-useThemeColors'><i class='fa fa-paint-brush'></i> <span data-i18n="ui-button-group.label.colors"></span></label>
+        <input type='checkbox' id='node-input-useThemeColors' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+        <label for='node-input-useThemeColors' style="width: auto;"> <span data-i18n="ui-button-group.label.tcolors"></span></label>
+    </div>
+    <div class="form-row" style="margin-bottom:0;">
+        <label><i class="fa fa-list"></i> <span data-i18n="ui-button-group.label.options"></span>:</label>
+        <span id="configError" style="color:#DD0000"><b>All Values must be unique.</b></span>
+    </div>
+    <div class="form-row">       
+        <!-- Table with input options -->
+        <ol id="node-input-options-container"></ol>
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="node-red:common.label.topic"></label>
+        <input type="text" id="node-input-topic" style="width:70%">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+</script>

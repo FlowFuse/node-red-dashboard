@@ -53,10 +53,21 @@ const vuetify = createVuetify({
 
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
-    .then((response) => {
-        return response.json()
-    })
-    .then((setup) => {
+    .then(async (response) => {
+        const url = new URL(response.url)
+        const basePath = url.pathname.replace('/_setup', '')
+
+        // get the setup JSON from the server
+        const setup = await response.json()
+        setup.basePath = basePath
+
+        if (setup.socketio?.path) {
+            // get text before /socket.io and replace it with the calculated basePath
+            // basePath would have taken into account any proxy and/or httpNodeRoot settings
+            const replace = setup.socketio.path.split('/socket.io')[0]
+            setup.socketio.path = setup.socketio.path.replace(replace, basePath)
+        }
+
         store.commit('setup/set', setup)
 
         const socket = io(setup.socketio)

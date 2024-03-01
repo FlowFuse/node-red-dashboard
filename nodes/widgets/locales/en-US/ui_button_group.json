@@ -1,0 +1,14 @@
+{
+    "ui-button-group": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "icon": "Icon",
+            "label": "Label",
+            "colors": "Colors",
+            "options": "Options",
+            "appearance": "Appearance",
+            "tcolors": "Use theme colors"
+        }
+    }
+}

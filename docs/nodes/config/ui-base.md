@@ -24,8 +24,8 @@ Some details here about the ui-base config node
 
 <SideBySideImages
     caption="Example of how the 'Collapsing' option looks when open (left) and closed (right)."
-    left="../../public/images/node-examples/ui-base-layout-default-open.png"
-    right="../../public/images/node-examples/ui-base-layout-sidebar-closed.png"
+    left="/images/node-examples/ui-base-layout-default-open.png"
+    right="/images/node-examples/ui-base-layout-sidebar-closed.png"
 />
 
 This open will shift the entire content of the Dashboard when opened, and not be visisble at all when closed.
@@ -43,16 +43,16 @@ Similar to "Collapsing" when opened, but when closed, the icons for each page st
 
 <SideBySideImages
     caption="Example of how the 'Collapsing' option looks when open (left) and closed (right)."
-    left="../../public/images/node-examples/ui-base-layout-default-open.png"
-    right="../../public/images/node-examples/ui-base-layout-icon-closed.png"
+    left="/images/node-examples/ui-base-layout-default-open.png"
+    right="/images/node-examples/ui-base-layout-icon-closed.png"
 />
 
 ### Appear over content
 
 <SideBySideImages
     caption="Example of how the 'Collapsing' option looks when open (left) and closed (right)."
-    left="../../public/images/node-examples/ui-base-layout-over-open.png"
-    right="../../public/images/node-examples/ui-base-layout-sidebar-closed.png"
+    left="/images/node-examples/ui-base-layout-over-open.png"
+    right="/images/node-examples/ui-base-layout-sidebar-closed.png"
 />
 
 Not visible when closed, and when open, will appear over the Dashboard content, without shifting it.
