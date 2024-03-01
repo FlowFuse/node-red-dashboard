@@ -23,10 +23,16 @@ export default {
                 // this only fire if we switch between two pages of the same layout type,
                 // the full component isn't torn down, so we can watch for changes
                 const oldMsg = this.createPayload(this.pages[oldVal])
-                this.$socket.emit('ui-event', this.id, '$pageleave', oldMsg)
+                this.$socket.emit('ui-event', this.id, {
+                    topic: '$pageleave',
+                    payload: oldMsg
+                })
 
                 const newMsg = this.createPayload(this.pages[val])
-                this.$socket.emit('ui-event', this.id, '$pageview', newMsg)
+                this.$socket.emit('ui-event', this.id, {
+                    topic: '$pageview',
+                    payload: newMsg
+                })
             }
         }
     },
@@ -47,8 +53,11 @@ export default {
             this.trigger('$pageleave')
         },
         trigger (evt) {
-            const msg = this.createPayload(this.page)
-            this.$socket.emit('ui-event', this.id, evt, msg)
+            const payload = this.createPayload(this.page)
+            this.$socket.emit('ui-event', this.id, {
+                topic: evt,
+                payload
+            })
         },
         createPayload (page) {
             page = { ...page }

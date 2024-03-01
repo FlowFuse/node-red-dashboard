@@ -11,17 +11,15 @@ module.exports = function (RED) {
 
         const evts = {
             onSocket: {
-                'ui-event': function (conn, id, evt, payload) {
+                'ui-event': function (conn, id, msg) {
                     const wNode = RED.nodes.getNode(node.id)
                     if (!wNode) {
                         console.log('ui-event node not found', id)
                     }
-                    if (wNode && id === node.id) {
+                    // possible to send to all ui-event nodes,
+                    // or just a specific one specified by id
+                    if ((wNode && id === node.id) || id === 'all') {
                         // this was sent by this particular node
-                        let msg = {
-                            topic: evt,
-                            payload
-                        }
                         msg = addConnectionCredentials(RED, msg, conn, ui)
                         wNode.send(msg)
                     }

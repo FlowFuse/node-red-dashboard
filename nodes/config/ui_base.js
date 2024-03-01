@@ -442,7 +442,7 @@ module.exports = function (RED) {
                                 handler(socket)
                             }
                         } else {
-                            widget._onSocketHandlers = widget._socketIO || {}
+                            widget._onSocketHandlers = widget._onSocketHandlers || {}
                             widget._onSocketHandlers[eventName] = handler.bind(null, socket)
                             socket.on(eventName, widget._onSocketHandlers[eventName])
                         }
