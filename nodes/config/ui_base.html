@@ -249,7 +249,7 @@
      * @returns {DashboardItem}
      */
     function toDashboardItem (node) {
-        console.log('dashboard 2: ui_base.html: toDashboardItem (node)', node)
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: toDashboardItem (node)', node) }
         /** @type {DashboardItem} */
         const item = {
             itemType: 'widget',
