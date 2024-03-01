@@ -789,7 +789,6 @@ module.exports = function (RED) {
                     src: uiShared.contribs[widgetConfig.type]
                 }
                 const parent = RED.nodes.getNode(widgetConfig.z)
-                // debugger
                 if (parent && parent.TYPE === 'subflow') {
                     const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')
                     let order = parseInt(orderEnv?.value)
