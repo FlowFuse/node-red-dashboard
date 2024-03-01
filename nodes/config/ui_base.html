@@ -155,7 +155,32 @@
 
 
 <script type="text/javascript">
+// #region typedefs for intellisense and better code completion/DX
+
+/**
+ * @typedef {Object} DashboardItem - A widget/group/page item that contains all of `WidgetInfo` properties
+ * @property {String} itemType - The type of item (e.g. 'widget', 'group', 'page')
+ * @property {String} id - The unique id of the item
+ * @property {String} name - The name of the item
+ * @property {String} type - The type of the item (e.g. 'ui-button', 'ui-template', 'ui-group', 'ui-page')
+ * @property {Number} order
+ * @property {String} label
+ * @property {String} icon
+ * @property {String} color
+ * @property {String} [group] - The group id that this widget belongs to
+ * @property {String} [page] - The page id that this group belongs to
+ * @property {String} [theme] - The theme id that this page belongs to
+ * @property {Boolean} [isSubflowInstance] - Whether or not this item is a subflow instance
+ * @property {Object} node - The actual node that this item represents
+ * @global
+ */
+
+/** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
+// #endregion
+
 (function () {
+    const url = new URL(window.location.href)
+    window._db2debug = url.searchParams.has('debug') || url.searchParams.has('debug-ui')
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
@@ -212,9 +237,70 @@
         },
         onpaletteadd: function () {
             // add the Dashboard 2.0 sidebar
+            if (RED._db2debug) { console.log('dashboard 2: ui_base.html: onpaletteadd ()') }
             addSidebar()
         }
     })
+
+    /**
+     * Utility function to convert a dashboard node to a DashboardItem
+     * Provides a better DX with type checking and intellisense
+     * @param {Object} node - The node to convert
+     * @returns {DashboardItem}
+     */
+    function toDashboardItem (node) {
+        console.log('dashboard 2: ui_base.html: toDashboardItem (node)', node)
+        /** @type {DashboardItem} */
+        const item = {
+            itemType: 'widget',
+            id: node.id,
+            name: node.name,
+            type: node.type,
+            order: node.order,
+            label: null,
+            icon: null,
+            color: null,
+            isSubflowInstance: false,
+            node
+        }
+        if (hasProperty(node, 'group')) { item.group = node.group }
+        if (hasProperty(node, 'page')) { item.page = node.page }
+        if (hasProperty(node, 'theme')) { item.theme = node.theme }
+        if (hasProperty(node, 'env') && Array.isArray(node.env) && /subflow:.+/.test(node.type)) {
+            const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+            if (envOrder) {
+                item.order = envOrder.value
+            }
+        }
+        switch (node.type) {
+        case 'ui-page':
+        case 'ui-group':
+        case 'ui-theme':
+        case 'ui-base':
+            item.itemType = node.type.replace('ui-', '')
+            break
+        default:
+            item.itemType = 'widget'
+            break
+        }
+        try {
+            item.order = parseInt(item.order)
+        } finally {
+            item.order = isNaN(item.order) ? 0 : item.order
+        }
+        try {
+            item.label = RED.utils.getNodeLabel(node)
+        } finally {
+            item.label = node.label || node.name || node.id
+        }
+        try {
+            item.icon = RED.utils.getNodeIcon(node)
+        } catch (_err) { }
+        try {
+            item.color = RED.utils.getNodeColor(node)
+        } catch (_err) { }
+        return item
+    }
 
     /**
      * Add Custom Dashboard Side Menu
@@ -231,15 +317,15 @@
 
         const actions = $('<div class="red-ui-sidebar-header-actions"></div>')
 
-        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">'
-            + c_('label.editSettings') + ' <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
+        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">' +
+            c_('label.editSettings') + ' <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
 
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
 
-        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">`
-            + c_('label.openDashboard') +` <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>`)
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
+            c_('label.openDashboard') + ' <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
 
         label.appendTo(header)
         editSettingsButton.appendTo(actions)
@@ -251,17 +337,42 @@
     /**
      * Add an editor to control the ordering of groups & widgets
      */
-
     function updateItemOrder (items, events) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: updateItemOrder (items, events)', items, events) }
         items.each((i, el) => {
-            const node = el.data('data')
-            const nodeBefore = RED.nodes.node(node.id)
-            if (node.order !== i + 1) {
-                const originalOrder = nodeBefore.order
+            /** @type {DashboardItem} */
+            const dbItem = el.data('data')
+            const node = dbItem?.node || {}
+            const setNodeOrder = (newOrder) => {
+                dbItem.order = newOrder
+                if (dbItem.isSubflowInstance) {
+                    node.env = node.env || []
+                    const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+                    if (envOrder) {
+                        envOrder.value = newOrder
+                    } else {
+                        node.env.push({ key: 'DB2_SF_ORDER', value: '' + newOrder, type: 'str' }) // db2 sort order
+                    }
+                } else {
+                    node.order = newOrder
+                }
+            }
+            const getNodeOrder = () => {
+                let order = dbItem.order // node.order
+                if (dbItem.isSubflowInstance && node.env) {
+                    const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+                    if (envOrder) { order = envOrder.value }
+                }
+                if (typeof order === 'string') { order = parseInt(order) }
+                if (isNaN(order)) { order = 0 }
+                return order || 0
+            }
+            const oldOrder = getNodeOrder()
+            if (oldOrder !== i + 1) {
                 const wasDirty = node.dirty
                 const wasChanged = node.changed
                 // update Node-RED node properties
-                node.order = i + 1 // start from 1, makes backup to SAFE_INT logic easier on frontend
+                setNodeOrder(i + 1)
                 node.dirty = true
                 node.changed = true
                 // generate a history event
@@ -269,7 +380,7 @@
                     t: 'edit',
                     node,
                     changes: {
-                        order: originalOrder
+                        order: oldOrder
                     },
                     dirty: wasDirty,
                     changed: wasChanged
@@ -300,7 +411,7 @@
 
         // note the state of the editor before pushing to history
         const isDirty = RED.nodes.dirty()
-        if (RED._db2debug) { console.log('recordEvents', isDirty, events) }
+        if (RED._db2debug) { console.log('dashboard 2: recordEvents ()', isDirty, events) }
 
         // add our changes to NR history and trigger whether or not we need to redeploy
         RED.history.push({
@@ -313,36 +424,61 @@
     }
 
     // watch for nodes changed, added, removed - use this to refresh the sidebar
+    let refreshBusy = false // this is set/reset inside refreshSidebarEditors
     const refreshSidebarEditorDebounced = debounce(refreshSidebarEditors, 300)
-    RED.events.on('nodes:change', function (event) {
-        if (RED._db2debug) { console.log('nodes:change', event) }
-        if (event.dirty && event.type && event.type.startsWith('ui-')) {
-            if (RED._db2debug) { console.log('nodes:change - this is a ui- node! queuing a call to refreshSidebarEditors') }
-            // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
-            refreshSidebarEditorDebounced()
+    /**
+     * Conditional refresh of the sidebar editor
+     * The refresh is only triggered if the event is a ui- node or a subflow that contains a ui- node
+     * Calls are debounced to prevent multiple calls to refreshSidebarEditors
+     * @param {Object} node - The node that was changed/added/removed
+     * @param {String} eventName - The name of the event that was fired
+     */
+    const conditionalSidebarRefresh = function (node, eventName) {
+        // if the layout editor is not in view, don't refresh
+        if ($('#ff-node-red-dashboard').parent().css('display') === 'none') { return }
+        if ($('#dashboard-2-pages').css('display') === 'none') { return }
+        // if a refresh is in progress, don't refresh
+        if (refreshBusy) { return }
+        if (RED._db2debug) { console.log('dashboard 2: conditionalSidebarRefresh (node, eventName)', node, eventName) }
+        if (node.dirty && node.type) {
+            let refresh = node.type.startsWith('ui-')
+            // if this is not a ui- node, it is perhaps a subflow?
+            if (!refresh && node.type.startsWith('subflow:')) {
+                // lets see if it has env vars linked to a `ui-` config or it has a DB2_SF_ORDER sort order key?
+                const subflowId = node.type.split(':')[1]
+                if (node.env && node.env.find(e => e.type?.startsWith('ui-') || node.env.find(e => e.key === 'DB2_SF_ORDER'))) {
+                    refresh = true
+                }
+                if (!refresh) {
+                    // check if the subflow definition contains any ui- nodes
+                    const subflowChildren = RED.nodes.filterNodes({ z: subflowId })
+                    if (subflowChildren.some(n => n.type.startsWith('ui-'))) {
+                        refresh = true
+                    }
+                }
+            }
+            if (refresh) {
+                if (RED._db2debug) { console.log(`dashboard 2: ${eventName} - this is a ui- node! queuing a call to refreshSidebarEditors`) }
+                // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
+                refreshSidebarEditorDebounced()
+            }
         }
+    }
+
+    RED.events.on('nodes:change', function (event) {
+        conditionalSidebarRefresh(event, 'nodes:change')
     })
     RED.events.on('nodes:add', function (event) {
-        if (RED._db2debug) { console.log('nodes:add', event) }
-        if (event.dirty && event.type && event.type.startsWith('ui-')) {
-            if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshSidebarEditors') }
-            // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
-            refreshSidebarEditorDebounced()
-        }
+        conditionalSidebarRefresh(event, 'nodes:add')
     })
     RED.events.on('nodes:remove', function (event) {
-        if (RED._db2debug) { console.log('nodes:remove', event) }
-        if (event.dirty && event.type && event.type.startsWith('ui-')) {
-            if (RED._db2debug) { console.log('nodes:remove - this is a ui- node! queuing a call to refreshSidebarEditors') }
-            // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
-            refreshSidebarEditorDebounced()
-        }
+        conditionalSidebarRefresh(event, 'nodes:remove')
     })
 
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
-     * @param {Object} item - The page/group/widget that these actions are bound to
+     * @param {WidgetInfo} item - The page/group/widget that these actions are bound to
      */
     function addRowActions (parent, item) {
         const configNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
@@ -360,7 +496,7 @@
             if (configNodes.includes(item.type)) {
                 RED.editor.editConfig('', item.type, item.id)
             } else {
-                RED.editor.edit(item)
+                RED.editor.edit(item?.node)
             }
             evt.stopPropagation()
             evt.preventDefault()
@@ -459,8 +595,15 @@
         }
     }
 
-    // Adds child list of groups for a given page
-    function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
+    /**
+     * Adds child list of groups for a given page
+     * @param {String} pageId - The id of the page that these groups belong to
+     * @param {Object} container - The jQuery object to append the groups list to
+     * @param {Object[]} groups - The list of groups to add to the list
+     * @param {DashboardItemLookup} widgetsByGroup - The lookup of widgets by group
+     * @param {Object} subflowInstances - The list of subflow instances
+     */
+    function addGroupOrderingList (pageId, container, groups, widgetsByGroup, subflowInstances) {
         // ordered list of groupss to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -494,7 +637,8 @@
 
                 // check if we have any new widgets added to this list
                 items.each((i, el) => {
-                    const widget = el.data('data')
+                    const dbItem = el.data('data')
+                    const widget = dbItem?.node || {}
                     if (widget.page !== pageId) {
                         const oldPageId = widget.page
                         widget.page = pageId
@@ -521,27 +665,45 @@
         })
 
         groups.forEach(function (group) {
-            if (RED._db2debug) { if (RED._db2debug) { console.log(group) } }
+            if (RED._db2debug) { if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addGroupOrderingList: adding group', group) } }
             groupsOL.editableList('addItem', group)
         })
     }
 
-    // Adds  list of widgets underneath a group
+    /**
+     *  Adds  list of widgets underneath a group
+     * @param {String} groupId - The id of the group that these widgets belong to
+     * @param {JQuery} container - The jQuery object to append the widgets list to
+     * @param {DashboardItem[]} widgets - The list of widgets to add to the list
+     */
     function addWidgetToList (groupId, container, widgets) {
-        // ordered list of groupss to live within a container (e.g. page list item)
+        // ordered list of groups to live within a container (e.g. page list item)
         const widgetsOL = $('<ol>', { class: 'nrdb2-sb-widget-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-widgets-list-header',
             addButton: false,
             height: 'auto',
             connectWith: '.nrdb2-sb-widget-list',
-            addItem: function (container, i, widget) {
+            addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-
-                const widgeticon = 'fa-image'
-                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgeticon }).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.name || widget.label || widget.type || widget.id).appendTo(titleRow)
-
+                const label = widget.label?.trim() || 'subflow:' + widget.id
+                if (widget.isSubflowInstance) {
+                    // subflow instances are not movable to other groups.
+                    // Add a class to the li to prevent dropping into other groups
+                    container.parent().addClass('red-ui-editableList-item-constrained')
+                    let widgetIcon = widget.icon || ''
+                    if (!widgetIcon.includes('fa-')) {
+                        widgetIcon = 'fa-sitemap'
+                    }
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgetIcon }).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-title' }).text(label).appendTo(titleRow)
+                    titleRow.addClass('nrdb2-sb-subflow-instance')
+                    titleRow.attr('title', 'Subflow Instance')
+                } else {
+                    const widgetIcon = 'fa-image'
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgetIcon }).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-title' }).text(label).appendTo(titleRow)
+                }
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)
             },
@@ -551,7 +713,8 @@
 
                 // check if we have any new widgets added to this list
                 items.each((i, el) => {
-                    const widget = el.data('data')
+                    const dbItem = el.data('data')
+                    const widget = dbItem?.node || {}
                     if (widget.group !== groupId) {
                         const oldGroupId = widget.group
                         widget.group = groupId
@@ -613,7 +776,7 @@
      * @param {0|1|2} level - 0 = collapse all, 1 = expand pages (groups collapsed), 2 = expand pages and groups (to expose widgets)
      */
     const updateLayoutVisibility = function (level) {
-        if (RED._db2debug) { console.log('updateLayoutVisibility', level) }
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: updateLayoutVisibility(level)', level) }
         if (level === 2) {
             expandLayoutItems(getGroupsInLayout())
             expandLayoutItems(getPagesInLayout())
@@ -627,6 +790,8 @@
     }
 
     function buildLayoutOrderEditor (parent) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: buildLayoutOrderEditor (parent)', parent) }
+
         // layout/order editor
         const divTabs = $('.nrdb2-layout-order-editor').length ? $('.nrdb2-layout-order-editor') : $('<div>', { class: 'nrdb2-layout-order-editor nrdb2-sidebar-tab-content' }).appendTo(parent)
 
@@ -657,30 +822,88 @@
 
         divTabs.append('<div class="nrdb2-layout-helptext">' + c_('label.layoutMessage') + '</div>')
 
+        /** @type {DashboardItemLookup} */
         const pages = {}
+        /** @type {DashboardItemLookup} */
         const groupsByPage = {}
+        /** @type {DashboardItemLookup} */
         const widgetsByGroup = {}
-
+        const widgetsBySubflowDef = {}
+        const subflowDefsWithWidgets = {}
+        const widgetsBelongingToSubflow = new Map()
+        const subflowInstances = {}
+        const subflowDefinitions = new Map()
+        const subflowDefIds = new Set()
         // get all pages & all groups
         RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-page' && !!n.ui) {
-                pages[n.id] = n
+                pages[n.id] = toDashboardItem(n)
             }
             if (n.type === 'ui-group' && !!n.page) {
                 if (!groupsByPage[n.page]) {
                     groupsByPage[n.page] = []
                 }
-                groupsByPage[n.page].push(n)
+                groupsByPage[n.page].push(toDashboardItem(n))
             }
         })
 
         // get all widgets
+        const uiNodesWithGroupProp = []
         RED.nodes.eachNode(function (n) {
             if (/^ui-/.test(n.type) && n.group) {
+                uiNodesWithGroupProp.push(n)
                 if (!widgetsByGroup[n.group]) {
                     widgetsByGroup[n.group] = []
                 }
-                widgetsByGroup[n.group].push(n)
+                widgetsByGroup[n.group].push(toDashboardItem(n))
+                if (n.z) {
+                    const subflowDef = RED.nodes.subflow(n.z)
+                    if (subflowDef) {
+                        subflowDefIds.add(subflowDef.id)
+                        widgetsBelongingToSubflow.set(n.id, subflowDef)
+                        subflowDefinitions.set('subflow:' + subflowDef.id, subflowDef)
+                        // get the env items that have type : "conf-types" and value : "ui-group"
+                        if (!widgetsBySubflowDef[subflowDef.id]) {
+                            widgetsBySubflowDef[subflowDef.id] = []
+                        }
+                        widgetsBySubflowDef[subflowDef.id].push(n)
+                        subflowDefsWithWidgets[subflowDef.id] = subflowDef
+                    }
+                }
+            }
+        })
+        // finally, get all subflow instances where the subflow has an an env var of `ui-group`
+        // const subflowDefIds = Object.keys(widgetsBySubflowDef).map(id => 'subflow:' + id)
+        RED.nodes.eachNode(function (n) {
+            if (subflowDefinitions.has(n.type)) {
+                const subflowDef = subflowDefinitions.get(n.type)
+                const subflowInstance = n
+                if (subflowDef && subflowDef.env && subflowDef.env.length > 0) {
+                    /** @type {{name:String, type:String, value:String}[]} */
+                    const envDefsWithUIGroup = subflowDef.env.filter(env => env.ui.type === 'conf-types' && env.type === 'ui-group')
+                    for (const envDef of envDefsWithUIGroup) {
+                        const groupNameAsEnv = '${' + envDef.name + '}'
+
+                        if (widgetsByGroup[groupNameAsEnv]) {
+                            // at this point, we know that the widgets in widgetsByGroup[groupNameAsEnv] belong to the group defined by the env var of the subflowinstance
+                            // get the actual group id from the subflow instance env vars where the name matches the envDef.name
+                            const groupEnvVar = subflowInstance.env.find(env => env.name === envDef.name)
+                            if (groupEnvVar) {
+                                const groupId = groupEnvVar.value
+                                if (!widgetsByGroup[groupId]) {
+                                    widgetsByGroup[groupId] = []
+                                }
+                                const sfItem = toDashboardItem(n)
+                                sfItem.isSubflowInstance = true
+                                if (!sfItem.label?.trim() || sfItem.label === sfItem.id) {
+                                    // label was defaulted to id, so we should try to get the label from the subflowDef
+                                    sfItem.label = RED.utils.getNodeLabel(subflowDef)
+                                }
+                                widgetsByGroup[groupId].push(sfItem)
+                            }
+                        }
+                    }
+                }
             }
         })
 
@@ -708,7 +931,7 @@
 
                 titleRow.click(titleToggle(page.id, groupsList, chevron))
 
-                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
+                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup, subflowInstances)
             },
             sortItems: function (items) {
                 // track any changes
@@ -724,7 +947,7 @@
         })
 
         Object.values(groupsByPage).sort((a, b) => a.order - b.order).forEach(function (groups) {
-            if (RED._db2debug) { console.log(groups) }
+            if (RED._db2debug) { console.log('dashboard 2: ui_base.html: buildLayoutOrderEditor: adding groups', groups) }
             const page = pages[groups[0].page]
             if (page) {
                 pagesOL.editableList('addItem', page)
@@ -790,27 +1013,32 @@
     }
 
     function refreshSidebarEditors () {
-        if (RED._db2debug) { console.log('refreshSidebarEditors called') }
-        const layoutOrderDiv = $('.nrdb2-layout-order-editor')
-        const themesDiv = $('.nrdb2-themes-editor')
-        // empty the list if any items exist
-        if (layoutOrderDiv.length) {
-            // TODO: create a lookup of which items are expanded / collapsed
-            layoutOrderDiv.empty()
-        }
-        if (themesDiv.length) {
-            // TODO: create a lookup of which items are expanded / collapsed
-            themesDiv.empty()
-        }
+        try {
+            refreshBusy = true
+            if (RED._db2debug) { console.log('dashboard 2: ui_base.html: refreshSidebarEditors ()') }
+            const layoutOrderDiv = $('.nrdb2-layout-order-editor')
+            const themesDiv = $('.nrdb2-themes-editor')
+            // empty the list if any items exist
+            if (layoutOrderDiv.length) {
+                // TODO: create a lookup of which items are expanded / collapsed
+                layoutOrderDiv.empty()
+            }
+            if (themesDiv.length) {
+                // TODO: create a lookup of which items are expanded / collapsed
+                themesDiv.empty()
+            }
 
-        // now rebuild
-        buildLayoutOrderEditor()
-        buildThemesEditor()
+            // now rebuild
+            buildLayoutOrderEditor()
+            buildThemesEditor()
 
-        // finally, restore previous state of expanded/collapsed items
-        // TODO: expand/collapse any items that were expanded before
-        // for now, we will just re-sync the display level
-        updateLayoutVisibility(layoutDisplayLevel)
+            // finally, restore previous state of expanded/collapsed items
+            // TODO: expand/collapse any items that were expanded before
+            // for now, we will just re-sync the display level
+            updateLayoutVisibility(layoutDisplayLevel)
+        } finally {
+            refreshBusy = false
+        }
     }
 
     function addSidebarTab (label, id, tabs, sidebar) {
@@ -822,6 +1050,7 @@
     }
 
     function addSidebar () {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addSidebar ()') }
         RED.sidebar.addTab({
             id: 'dashboard-2.0',
             label: c_('label.dashboard2'),
