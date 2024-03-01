@@ -440,7 +440,10 @@
         // if a refresh is in progress, don't refresh
         if (refreshBusy) { return }
         if (RED._db2debug) { console.log('dashboard 2: conditionalSidebarRefresh (node, eventName)', node, eventName) }
-        if (node.dirty && node.type) {
+
+        // first, check if the node.dirty flag is set or if the event is a nodes:remove (also ensure the node has a type property)
+        if ((node.dirty || eventName === 'nodes:remove') && node.type) {
+            // check if the node is a ui- node
             let refresh = node.type.startsWith('ui-')
             // if this is not a ui- node, it is perhaps a subflow?
             if (!refresh && node.type.startsWith('subflow:')) {
