@@ -190,8 +190,6 @@
 // #endregion
 
 (function () {
-    const url = new URL(window.location.href)
-    window._db2debug = url.searchParams.has('debug') || url.searchParams.has('debug-ui')
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
@@ -612,9 +610,8 @@
      * @param {Object} container - The jQuery object to append the groups list to
      * @param {Object[]} groups - The list of groups to add to the list
      * @param {DashboardItemLookup} widgetsByGroup - The lookup of widgets by group
-     * @param {Object} subflowInstances - The list of subflow instances
      */
-    function addGroupOrderingList (pageId, container, groups, widgetsByGroup, subflowInstances) {
+    function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
         // ordered list of groupss to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -832,12 +829,7 @@
         const groupsByPage = {}
         /** @type {DashboardItemLookup} */
         const widgetsByGroup = {}
-        const widgetsBySubflowDef = {}
-        const subflowDefsWithWidgets = {}
-        const widgetsBelongingToSubflow = new Map()
-        const subflowInstances = {}
         const subflowDefinitions = new Map()
-        const subflowDefIds = new Set()
         // get all pages & all groups
         RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-page' && !!n.ui) {
@@ -863,15 +855,7 @@
                 if (n.z) {
                     const subflowDef = RED.nodes.subflow(n.z)
                     if (subflowDef) {
-                        subflowDefIds.add(subflowDef.id)
-                        widgetsBelongingToSubflow.set(n.id, subflowDef)
                         subflowDefinitions.set('subflow:' + subflowDef.id, subflowDef)
-                        // get the env items that have type : "conf-types" and value : "ui-group"
-                        if (!widgetsBySubflowDef[subflowDef.id]) {
-                            widgetsBySubflowDef[subflowDef.id] = []
-                        }
-                        widgetsBySubflowDef[subflowDef.id].push(n)
-                        subflowDefsWithWidgets[subflowDef.id] = subflowDef
                     }
                 }
             }
@@ -939,7 +923,7 @@
 
                 titleRow.click(titleToggle(page.id, groupsList, chevron))
 
-                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup, subflowInstances)
+                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
             },
             sortItems: function (items) {
                 // track any changes
