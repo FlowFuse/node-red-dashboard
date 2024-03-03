@@ -169,7 +169,7 @@
 // #region typedefs for intellisense and better code completion/DX
 
 /**
- * @typedef {Object} DashboardItem - A widget/group/page item that contains all of `WidgetInfo` properties
+ * @typedef {Object} DashboardItem - A widget/group/page/subflow item
  * @property {String} itemType - The type of item (e.g. 'widget', 'group', 'page')
  * @property {String} id - The unique id of the item
  * @property {String} name - The name of the item
@@ -182,7 +182,7 @@
  * @property {String} [theme] - The theme id that this page belongs to
  * @property {Boolean} [isSubflowInstance] - Whether or not this item is a subflow instance
  * @property {String} [subflowName] - The name give to the subflow template (only applicable when `isSubflowInstance` is `true`)
- * @property {Object} node - The actual node that this item represents
+ * @property {Object} node - The actual node or subflow instance that this DashboardItem represents
  * @global
  */
 
@@ -487,7 +487,7 @@
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
-     * @param {WidgetInfo} item - The page/group/widget that these actions are bound to
+     * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      */
     function addRowActions (parent, item) {
         const configNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
@@ -515,7 +515,7 @@
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
-     * @param {Object} item - The page/group/widget that these actions are bound to
+     * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      */
     function addRowStateOptions (parent, item) {
         const nodes = ['ui-page', 'ui-group']
