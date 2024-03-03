@@ -291,7 +291,7 @@
         try {
             item.label = RED.utils.getNodeLabel(node)
         } finally {
-            item.label = node.label || node.name || node.id
+            item.label = item.label || node.type || node.id
         }
         try {
             item.icon = RED.utils.getNodeIcon(node)
