@@ -270,7 +270,6 @@ module.exports = function (RED) {
      * @param {Object} n - Node-RED node configuration as entered in the nodes editor
      */
     function UIBaseNode (n) {
-        // console.log('dashboard 2.0: UIBaseNode(n)', n)
         RED.nodes.createNode(this, n)
         const node = this
 
