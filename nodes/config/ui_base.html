@@ -515,13 +515,12 @@
     /**
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
-     * @param {DashboardItem} item - The page/group/widget that these actions are bound to
+     * @param {DashboardItem} dashboardItem - The page/group/widget that these actions are bound to
      */
-    function addRowStateOptions (parent, item) {
+    function addRowStateOptions (parent, dashboardItem) {
+        const item = dashboardItem.node
         const nodes = ['ui-page', 'ui-group']
-
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
-
         if (nodes.includes(item.type)) {
             const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
             const visibleBtn = $('<a href="#" title="Hide" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
