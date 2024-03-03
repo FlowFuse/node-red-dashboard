@@ -151,6 +151,17 @@
     .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
         margin-left: 3.5rem;
     }
+    /* apply subflow icon */
+    .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon.nrdb2-sb-subflow-icon {
+        background-color: currentColor;
+        display: inline-block;
+        mask-image: url(red/images/subflow_tab.svg);
+        mask-size: contain;
+        mask-position: center;
+        height: 18px;
+        width: 18px;
+        margin-left: 3.42rem;
+    }
 </style>
 
 
@@ -165,12 +176,12 @@
  * @property {String} type - The type of the item (e.g. 'ui-button', 'ui-template', 'ui-group', 'ui-page')
  * @property {Number} order
  * @property {String} label
- * @property {String} icon
  * @property {String} color
  * @property {String} [group] - The group id that this widget belongs to
  * @property {String} [page] - The page id that this group belongs to
  * @property {String} [theme] - The theme id that this page belongs to
  * @property {Boolean} [isSubflowInstance] - Whether or not this item is a subflow instance
+ * @property {String} [subflowName] - The name give to the subflow template (only applicable when `isSubflowInstance` is `true`)
  * @property {Object} node - The actual node that this item represents
  * @global
  */
@@ -293,9 +304,6 @@
         } finally {
             item.label = item.label || node.type || node.id
         }
-        try {
-            item.icon = RED.utils.getNodeIcon(node)
-        } catch (_err) { }
         try {
             item.color = RED.utils.getNodeColor(node)
         } catch (_err) { }
@@ -689,24 +697,17 @@
             addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                const label = widget.label?.trim() || 'subflow:' + widget.id
+                let widgetIcon = 'fa fa-image'
                 if (widget.isSubflowInstance) {
-                    // subflow instances are not movable to other groups.
-                    // Add a class to the li to prevent dropping into other groups
+                    // In this MVP, subflow instances are constrained to stay within own group.
                     container.parent().addClass('red-ui-editableList-item-constrained')
-                    let widgetIcon = widget.icon || ''
-                    if (!widgetIcon.includes('fa-')) {
-                        widgetIcon = 'fa-sitemap'
-                    }
-                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgetIcon }).appendTo(titleRow)
-                    $('<span>', { class: 'nrdb2-sb-title' }).text(label).appendTo(titleRow)
-                    titleRow.addClass('nrdb2-sb-subflow-instance')
-                    titleRow.attr('title', 'Subflow Instance')
-                } else {
-                    const widgetIcon = 'fa-image'
-                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon fa ' + widgetIcon }).appendTo(titleRow)
-                    $('<span>', { class: 'nrdb2-sb-title' }).text(label).appendTo(titleRow)
+                    // change the icon to use the built-in subflow icon
+                    widgetIcon = 'nrdb2-sb-subflow-icon'
+                    // apply a tooltip to further clarify this is a subflow
+                    titleRow.attr('title', widget.subflowName || 'Subflow instance')
                 }
+                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)
             },
@@ -875,8 +876,9 @@
                 }
             }
         })
-        // finally, get all subflow instances where the subflow has an an env var of `ui-group`
-        // const subflowDefIds = Object.keys(widgetsBySubflowDef).map(id => 'subflow:' + id)
+
+        // update `widgetsByGroup` for subflow instances where its env has an entry which
+        // is a ui-group
         RED.nodes.eachNode(function (n) {
             if (subflowDefinitions.has(n.type)) {
                 const subflowDef = subflowDefinitions.get(n.type)
@@ -888,7 +890,7 @@
                         const groupNameAsEnv = '${' + envDef.name + '}'
 
                         if (widgetsByGroup[groupNameAsEnv]) {
-                            // at this point, we know that the widgets in widgetsByGroup[groupNameAsEnv] belong to the group defined by the env var of the subflowinstance
+                            // at this point, we know that the widgets in widgetsByGroup[groupNameAsEnv] belong to the group defined by the env var of the subflow instance
                             // get the actual group id from the subflow instance env vars where the name matches the envDef.name
                             if (subflowInstance.env) {
                                 const groupEnvVar = subflowInstance.env.find(env => env.name === envDef.name)
@@ -899,9 +901,10 @@
                                     }
                                     const sfItem = toDashboardItem(n)
                                     sfItem.isSubflowInstance = true
+                                    sfItem.subflowName = RED.utils.getNodeLabel(subflowDef)
                                     if (!sfItem.label?.trim() || sfItem.label === sfItem.id) {
-                                        // label was defaulted to id, so we should try to get the label from the subflowDef
-                                        sfItem.label = RED.utils.getNodeLabel(subflowDef)
+                                        // label was defaulted to id, so we should use the label from the subflowDef
+                                        sfItem.label = sfItem.subflowName
                                     }
                                     widgetsByGroup[groupId].push(sfItem)
                                 }
