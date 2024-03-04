@@ -20,14 +20,14 @@
         description: 'Displays a message for a defined duration of time.'
     }, {
         name: 'Template',
-        widget: 'ui-notification',
+        widget: 'ui-template',
         image: '/images/node-examples/ui-template.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Renders custom templates on your dashboard.'
     }, {
         name: 'Text',
-        widget: 'ui-notification',
+        widget: 'ui-text',
         image: '/images/node-examples/ui-text.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Displays a non-editable text field on your dashboard.'
     }]
 
     const form = [{
@@ -42,36 +42,36 @@
         description: 'Adds a clickable button to your dashboard.'
     }, {
         name: 'Radio Group',
-        widget: 'ui-form',
+        widget: 'ui-radio-group',
         image: '/images/node-examples/ui-radio.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a radio group to your dashboard.'
     }, {
         name: 'Slider',
-        widget: 'ui-form',
+        widget: 'ui-slider',
         image: '/images/node-examples/ui-slider.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a slider to your dashboard.'
     }, {
         name: 'Switch',
-        widget: 'ui-form',
+        widget: 'ui-switch',
         image: '/images/node-examples/ui-switch.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a clickable switch to your dashboard.'
     }, {
         name: 'Text Input',
-        widget: 'ui-form',
+        widget: 'ui-text-input',
         image: '/images/node-examples/ui-text-input.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a text input to your dashboard.'
     }]
 
     const data = [{
         name: 'Chart',
         widget: 'ui-chart',
         image: '/images/node-examples/ui-chart-line.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a chart to your dashboard.'
     }, {
         name: 'Table',
-        widget: 'ui-button',
+        widget: 'ui-table',
         image: '/images/node-examples/ui-table.png',
-        description: 'Adds a clickable button to your dashboard.'
+        description: 'Adds a table to your dashboard.'
     }]
     const events = [{
         name: 'Event',
