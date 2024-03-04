@@ -10,7 +10,7 @@ props:
     import AddedIn from '../../components/AddedIn.vue';
 </script>
 
-# Text `ui-template` <AddedIn version="0.10.0"/>
+# Template `ui-template` <AddedIn version="0.10.0"/>
  
 Provide custom JS and HTML (including any [Vuetify components](https://vuetifyjs.com/en/components/all/)) to render in the Dashboard.
 
