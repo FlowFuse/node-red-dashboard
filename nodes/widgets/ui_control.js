@@ -17,7 +17,7 @@ module.exports = function (RED) {
                     // update the state store for each page
                     statestore.set(ui, i, msg, prop, value)
                 } else {
-                    node.error('No item with the name ' + item + ' found')
+                    node.error("No item with the name '" + item + "' found", msg)
                 }
             })
         }
