@@ -289,7 +289,7 @@ const base = group.getBase()
 Then, whenever you want to store data in the datastore, you can do so with:
 
 ```js
-base.stores.data.save(node.id, msg)
+base.stores.data.save(base, node.id, msg)
 ```
 
 #### Node-RED State Store
