@@ -16,11 +16,19 @@
         </v-tabs>
         <v-window v-model="view.tab">
             <v-window-item value="dashboards">
-                <v-data-table :headers="headers.dashboards" :items="items.dashboards" :items-per-page="-1">
+                <v-data-table :headers="headers.dashboards" :items="items.dashboards" show-expand :items-per-page="-1">
                     <template #item.filter.pages="{ item }">
                         <v-btn variant="outlined" @click="applyFilter('pages', 'ui', item.id)">Show Pages</v-btn>
                     </template>
-                    <template #bottom />
+                    <template #expanded-row="{ columns, item }">
+                        <tr>
+                            <td :colspan="columns.length" class="nested-table">
+                                <v-data-table color="white" :items="Object.entries(item).map(function(e){ return { 'property': e[0], 'value': e[1], 'type': typeof(e[1]) }})" :items-per-page="-1">
+                                    <template #bottom />
+                                </v-data-table>
+                            </td>
+                        </tr>
+                    </template>
                 </v-data-table>
             </v-window-item>
             <v-window-item value="themes">
@@ -94,7 +102,7 @@
                                 </v-tabs>
                                 <v-window v-model="view.nested">
                                     <v-window-item value="properties">
-                                        <v-data-table color="white" :items="Object.entries(item).map(function(e){ return { 'property': e[0], 'value': e[1] }})" :items-per-page="-1">
+                                        <v-data-table color="white" :items="Object.entries(item).map(function(e){ return { 'property': e[0], 'value': e[1], 'type': typeof(e[1]) }})" :items-per-page="-1">
                                             <template #bottom />
                                         </v-data-table>
                                     </v-window-item>
