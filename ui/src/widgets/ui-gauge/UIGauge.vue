@@ -48,7 +48,9 @@ export default {
         return {
             svg: null,
             lastAngle: 0,
+            r: 0, // radius
             sizes: {
+                titleHeight: 0,
                 gaugeThickness: this.props.sizeThickness,
                 gap: this.props.sizeGap,
                 keyThickness: this.props.sizeKeyThickness,
@@ -97,20 +99,17 @@ export default {
     },
     methods: {
         resize () {
-            const labelHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
+            this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
 
             this.width = this.$refs.container.clientWidth
-            this.height = this.$refs.container.clientHeight - labelHeight
+            this.height = this.$refs.container.clientHeight - this.sizes.titleHeight
 
             // heights for the SVG
             const w = this.width
             const h = this.height
 
-            console.log(w, h, labelHeight)
-
             this.$refs.gauge.setAttribute('width', w)
             this.$refs.gauge.setAttribute('height', h)
-            this.$refs.value.style.height = `${h}px`
 
             if (this.props.gtype === 'gauge-half') {
                 const minDimension = Math.min(w / 2, h)
@@ -147,17 +146,35 @@ export default {
                 })
 
             const backdrop = this.svg.select('#backdrop')
+                .attr('transform', transform)
+
             backdrop.select('path')
                 .attr('d', this.arcs.backdrop)
-                .attr('transform', transform)
 
             this.svg.select('#backdrop').select('path')
                 .attr('d', this.arcs.backdrop)
 
+            this.svg.select('#limits')
+                .attr('transform', transform)
+
+            // get backdrop sizing and place values labelling accordingly
+            const bdBbox = this.svg.select('#backdrop').node().getBBox()
+            d3.select(this.$refs.value)
+                .style('transform', () => {
+                    const x = (this.width - bdBbox.width) / 2
+                    let y
+                    if (this.props.gtype === 'gauge-half') {
+                        y = this.height + this.sizes.titleHeight - bdBbox.height
+                    } else {
+                        y = (this.height + this.sizes.titleHeight - bdBbox.height) / 2
+                    }
+                    return `translate(${x}px, ${y}px)`
+                })
+                .style('width', bdBbox.width + 'px')
+                .style('height', bdBbox.height + 'px')
+
             // update the gauge
             const arc = this.svg.select('#arc')
-
-            arc.select('path')
                 .attr('transform', transform)
 
             const gaugeArc = d3.arc()
@@ -360,6 +377,8 @@ export default {
     /* width: 100%; */
     /* height: 100%; */
     flex-grow: 1;
+    max-width: 100%;
+    position: relative;
 }
 
 .nrdb-ui-gauge-title {
@@ -368,14 +387,6 @@ export default {
     font-weight: bold;
     font-size: 1rem;
     padding-bottom: 4px;
-}
-
-/* vertical positioning of the payload & units */
-.nrdb-ui-gauge-34 {
-    top: 2%;
-}
-.nrdb-ui-gauge-half {
-    top: 25%;
 }
 
 /* general styling od the payload & units */

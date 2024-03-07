@@ -10,6 +10,13 @@ module.exports = function (RED) {
             onChange: true
         }
 
+        // ensure values are numerical, not strings
+        config.min = Number(config.min)
+        config.max = Number(config.max)
+        config.sizeThickness = Number(config.sizeThickness)
+        config.sizeGap = Number(config.sizeGap)
+        config.sizeKeyThickness = Number(config.sizeKeyThickness)
+
         config.segments.forEach(segment => {
             segment.from = Number(segment.from)
         })
