@@ -231,15 +231,15 @@
 
         const actions = $('<div class="red-ui-sidebar-header-actions"></div>')
 
-        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">'
-            + c_('label.editSettings') + ' <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
+        const editSettingsButton = $('<a id="edit-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">' +
+            c_('label.editSettings') + ' <i style="margin-left: 3px;" class="fa fa-cog"></i></a>')
 
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
 
-        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">`
-            + c_('label.openDashboard') +` <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>`)
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
+            c_('label.openDashboard') + ' <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
 
         label.appendTo(header)
         editSettingsButton.appendTo(actions)
@@ -312,6 +312,42 @@
         RED.view.redraw()
     }
 
+    function checkDuplicateUiBases () {
+        // check how many ui-bases we have and trim if already too many
+        const bases = []
+        const pages = []
+        RED.nodes.eachConfig((n) => {
+            if (n.type === 'ui-base') { bases.push(n) }
+            if (n.type === 'ui-page') { pages.push(n) }
+        })
+
+        // the eachConfig is in creation order, so we can remove from the end
+        // and keep the oldest ones
+        while (bases.length > 1) {
+            const n = bases.pop()
+            if (RED._db2debug) { console.log('ui-base removed', n) }
+            RED.nodes.remove(n.id)
+            RED.nodes.dirty(true)
+        }
+
+        if (bases.length > 0) {
+            const baseId = bases[0].id
+            // loop over pages and re-map the ui-base to the only ui-base available
+            pages.forEach((page) => {
+                page.ui = baseId
+            })
+
+            RED.nodes.eachNode((node) => {
+                if (node.type.startsWith('ui-')) {
+                    // check if the widgets are ui-scoped, and have a ui set to the removed ui-base nodes
+                    if (node.ui && node.ui !== '' && node.ui !== baseId) {
+                        node.ui = baseId
+                    }
+                }
+            })
+        }
+    }
+
     // watch for nodes changed, added, removed - use this to refresh the sidebar
     const refreshSidebarEditorDebounced = debounce(refreshSidebarEditors, 300)
     RED.events.on('nodes:change', function (event) {
@@ -322,12 +358,18 @@
             refreshSidebarEditorDebounced()
         }
     })
-    RED.events.on('nodes:add', function (event) {
-        if (RED._db2debug) { console.log('nodes:add', event) }
-        if (event.dirty && event.type && event.type.startsWith('ui-')) {
+    RED.events.on('nodes:add', function (node) {
+        if (RED._db2debug) { console.log('nodes:add', node) }
+        if (node.dirty && node.type && node.type.startsWith('ui-')) {
             if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshSidebarEditors') }
             // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
             refreshSidebarEditorDebounced()
+        }
+
+        // if we're adding a ui-base
+        if (node.type.startsWith('ui-')) {
+            // action on all ui- elements to ensure we've remapped (now) missing ui-base nodes
+            checkDuplicateUiBases()
         }
     })
     RED.events.on('nodes:remove', function (event) {
