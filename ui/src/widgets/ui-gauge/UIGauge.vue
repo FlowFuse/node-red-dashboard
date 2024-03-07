@@ -400,6 +400,7 @@ export default {
     flex-direction: column;
     text-align: center;
     flex-wrap: wrap;
+    padding-top: 6px;
 }
 
 .nrdb-ui-gauge-value span {
