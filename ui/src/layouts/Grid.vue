@@ -12,7 +12,7 @@
             >
                 <v-card variant="outlined" class="bg-group-background">
                     <template v-if="g.showTitle" #title>
-                        {{ g.name }} grid-template-rows: {{ g.height }} {{ rowHeight }}
+                        {{ g.name }}
                     </template>
                     <template #text>
                         <widget-group :group="g" :widgets="widgetsByGroup(g.id)" :row-height="rowHeight" />
