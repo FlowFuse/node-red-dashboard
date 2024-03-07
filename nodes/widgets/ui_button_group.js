@@ -11,6 +11,11 @@ module.exports = function (RED) {
             onChange: true
         }
 
+        // loop over the options and ensure we've got the correct types for each option
+        config.options.forEach(option => {
+            option.value = RED.util.evaluateNodeProperty(option.value, option.valueType, node)
+        })
+
         // inform the dashboard UI that we are adding this node
         if (group) {
             group.register(node, config, evts)

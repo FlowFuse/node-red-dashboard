@@ -15,7 +15,7 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
         // Emitting Number
         cy.clickAndWait(cy.get('button').contains('Left'))
         cy.checkOutput('msg.topic', 'second-row')
-        cy.checkOutput('msg.payload', '0')
+        cy.checkOutput('msg.payload', 0)
     })
 
     it('can have a selection made via msg.payload', () => {
