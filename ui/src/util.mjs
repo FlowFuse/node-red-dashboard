@@ -1,5 +1,7 @@
 import { defineAsyncComponent } from 'vue'
 
+import store from './store/index.mjs'
+
 /**
  * @description: Get a nested property value from an object by path
  * @param {object} obj - The object to retrieve the value from
@@ -140,6 +142,10 @@ export function escapeHTML (html, encode) {
     return html
 }
 
+function path (str) {
+    return str.replaceAll('//', '/')
+}
+
 /**
  * Load a UMD module asynchronously into the page
  *
@@ -153,6 +159,7 @@ export function escapeHTML (html, encode) {
  * @returns {Promise} Promise that resolves to the Vue Component
  */
 export function importExternalComponent (file, packageName, widgetName = null) {
+    const RED = store.state.setup.setup.RED
     return defineAsyncComponent(async () => {
         // Already loaded
         if (window[packageName]?.[widgetName]) {
@@ -163,7 +170,7 @@ export function importExternalComponent (file, packageName, widgetName = null) {
         window[packageName] = window[packageName] || {}
         window[packageName][widgetName] = (async () => {
             // Load the component library - umd assigns this to window[packageName]
-            await import(`/resources/${file}`)
+            await import(path(`${RED.httpAdminRoot}/resources/${file}`))
 
             if (!window[packageName]) {
                 throw new Error(`Loaded /resources/${file} but library ${packageName} not found, is that the correct name?`)
