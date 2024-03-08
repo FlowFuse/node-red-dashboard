@@ -74,7 +74,7 @@ Cypress.Commands.add('deployFixture', (fixture) => {
         })
 })
 
-Cypress.Commands.add('resetContext', (field, value) => {
+Cypress.Commands.add('resetContext', () => {
     cy.request('POST', '/context/reset')
 })
 
