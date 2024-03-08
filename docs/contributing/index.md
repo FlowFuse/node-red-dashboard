@@ -22,6 +22,7 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
 
 - [GitHub Account](https://github.com/) - You will need a GitHub account in order to make a copy of the code and contribute any changes.
 - [Node.js](https://nodejs.org/en/download) - Node.js will also come package with the Node Package Manager (`npm`) which is used to install dependencies, and run the Dashboard (and Node-RED) locally.
+- [Git](https://git-scm.com/downloads) - Git is used to clone the repository locally to your machine, and permits you to push changes back to the central repository on GitHub.
 
 ### Clone & Build the Repository
 
