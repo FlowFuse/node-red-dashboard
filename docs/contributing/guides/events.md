@@ -1,9 +1,54 @@
-# Event Architecture
+# Events Architecture
 
 An important part of the Dashboard is how Node-RED and the Dashboard communicate. This is achieved using [socket.io](https://socket.io/).
 
-![A flow diagram depicting how events flow between Node-RED and the Dashboard](../../assets/images/events-architecture.png){data-zoomable}
-*A flow diagram depicting how events flow between Node-RED (red) and the Dashboard (blue)*
+Here, you can find details on the primary communications that occur between Node-RED (blocks in red) and the Dashboard (blocks in blue). The blocks make reference to particular functions and files within the source code to help navigate and understand where to find the relevant code.
+
+Each of the cylindrical blocks directly refer to one of our client- or server-side stores, which are detailed in the [State Management](./state-management.md) guide.
+
+## Architecture
+
+We have broken the events architecture/traffic into three key groups:
+
+- **Loading**: The initial loading of the Dashboard, or when a new configuration is sent by Node-RED on a fresh "Deploy".
+- **Input**: When a message (`msg`) is received by a Dashboard node within Node-RED.
+- **Dashboard Actions**: When a user interacts with a widget, or a widget sends a message back to Node-RED.
+
+### "Loading" Event Flow
+
+![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) at deploy and first-load](../../assets/images/events-arch-load.jpg){data-zoomable}
+*A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) at deploy and first-load*
+
+Here we detail the initial "Setup" HTTP request, consequent SocketIO traffic and appropriate handlers that are run when a Dashboard is deployed (via the Node-RED "Deploy" option), as well as when a Dashboard-client is first loaded.
+
+Note the differentiation between a "Dashboard" loading, i.e. the full app and browser connection, and an individual "Widget" loading. The latter is fired for _each_ widget when it is mounted/rendered into the DOM.
+
+### "Input" Event Flow
+
+![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node](../../assets/images/events-arch-msg.jpg){data-zoomable}
+*A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node*
+
+This flow details the functions, and SocketIO traffic that occurs when a message is received by a Dashboard node within Node-RED. Note that most core Dashboard 2.0 widgets use the default `onInput` handler, but in some cases, a custom `onInput` handler is used where we want different behaviour.
+
+Our default server-side `onInput` handler handles the common use cases of:
+
+- Updating the widget's value into our server-side data store
+- Checking if the widget is configured to define a `msg.topic` and if so, updating the widget's `msg.topic` property
+- Check if the widget is configured with a `passthrough` option, and if so, check it's value before emitting the `msg` object to any connected nodes.
+- Emit the `msg` object to any connected nodes, if appropriate.
+
+### "Dashboard Actions" Event Flow
+
+Different widgets trigger different events depending on the specific use-cases. The following diagram shows the three types of events that the client can emit to the server, and how these are handled separately.
+
+![A flow diagram depicting how events traverse from Dashboard (blue) to Node-RED (red) when a user interacts with Dashboard](../../assets/images/events-arch-client-events.jpg){data-zoomable}
+*A flow diagram depicting how events traverse from Dashboard (blue) to Node-RED (red) when a user interacts with Dashboard*
+
+Some examples of events that are emitted from the Dashboard to Node-RED include:
+
+- `widget-change` - When a user changes the value of a widget, e.g. a slider or text input
+- `widget-action` - When a user interacts with a widget, and state of the widget is not important, e.g. a button click
+- `widget-send` - Used by `ui-template` to send a custom `msg` object, e.g. `send(msg)`, which will be stored in the server-side data store.
 
 ## Events List
 
