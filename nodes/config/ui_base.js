@@ -134,6 +134,10 @@ module.exports = function (RED) {
                     socketPath = '/' + socketPath
                 }
                 let resp = {
+                    RED: {
+                        httpAdminRoot: RED.settings.httpAdminRoot,
+                        httpNodeRoot: RED.settings.httpNodeRoot
+                    },
                     socketio: {
                         path: socketPath
                     }
