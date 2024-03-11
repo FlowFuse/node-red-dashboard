@@ -68,7 +68,7 @@ const setters = {
      * @param {*} base  - associated ui-base node
      * @param {*} node  - the Node-RED node object we're storing state for
      * @param {*} msg   - the full received msg (allows us to check for credentials/socketid constraints)
-     * @param {*} prop  - the proeprty we are setting on the node
+     * @param {*} prop  - the property we are setting on the node
      * @param {*} value - the value we are setting
      */
     set (base, node, msg, prop, value) {
