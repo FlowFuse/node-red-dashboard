@@ -73,7 +73,7 @@ export default {
             this.selection = msg.payload
         },
         onChange (value) {
-            if (value) {
+            if (value !== null && typeof value !== 'undefined') {
                 // Tell Node-RED a new value has been selected
                 this.$socket.emit('widget-change', this.id, value)
             }
