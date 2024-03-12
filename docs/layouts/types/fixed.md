@@ -6,5 +6,5 @@ It is built as a flexbox layout, with a single row of widgets. Width of each gro
 
 It will automatically move widgets to the next row if they don't fit within a given screen width. The height of each row is determined by the tallest widget in that row.
 
-![Fixed Layout](../assets/images/layout-eg-flex.png){data-zoomable}
+![Fixed Layout](../../assets/images/layout-eg-flex.png){data-zoomable}
 *An example UI rendered using the "Fixed" Layout*

@@ -118,9 +118,15 @@ export default ({ mode }) => {
           text: 'Layouts',
           collapsed: false,
           items: [
-            { text: 'Grid', link: '/layouts/grid' },
-            { text: 'Fixed', link: '/layouts/fixed' },
-            { text: 'Notebook', link: '/layouts/notebook' }
+            { text: 'Getting Started', link: '/layouts/' },
+            { 
+              text: 'Types',
+              items: [
+                { text: 'Grid', link: '/layouts/types/grid' },
+                { text: 'Fixed', link: '/layouts/types/fixed' },
+                { text: 'Notebook', link: '/layouts/types/notebook' }
+              ]
+            }
           ]
         },
         {
