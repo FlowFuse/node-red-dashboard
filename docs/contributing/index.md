@@ -4,11 +4,25 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 ## Project Structure
 
-- `/nodes` - 
-- `/ui` -
-- `/docs` -
+### `/nodes` 
+
+Contains the files that define each of the Node-RED nodes that make up the Dashboard 2.0 node set. You can read more about writing nodes for Node-RED [here](https://nodered.org/docs/creating-nodes/first-node).
+
+### `/ui`
+
+Contains our VueJS app that forms the core of Dashboard 2.0. Inside `/ui/src/widgets`, you will find a set of subdirectories, each containing a `.vue` file. It is these files that define the appearance and functionality a users sees when viewing the Dashboard. 
+
+### `/docs`
+
+A [VitePress](https://vitepress.dev/) documentation site that is used to generate the documentation for Dashboard 2.0 (what you're reading now).
 
 ## Installing Locally
+
+### Pre-requisites
+
+- [GitHub Account](https://github.com/) - You will need a GitHub account in order to make a copy of the code and contribute any changes.
+- [Node.js](https://nodejs.org/en/download) - Node.js will also come packaged with the Node Package Manager (`npm`) which is used to install dependencies, and run the Dashboard (and Node-RED) locally.
+- [Git](https://git-scm.com/downloads) - Git is used to clone the repository locally to your machine, and permits you to push changes back to the central repository on GitHub.
 
 ### Clone & Build the Repository
 
@@ -16,7 +30,7 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 2. **Fork Repository:** Fork this repository to your own Github account:
 
-   ![image](https://github.com/bartbutenaers/flowforge-nr-dashboard/assets/14224149/4a02c1ee-d143-4e18-ac47-47e6353ebdd1)
+   ![image](../assets/images/github-pr.png){data-zoomable}
 
 3. **Clone Git Repo:** Clone the forked repository from your Github account. This can be anywhere appropriate on your machine (e.g. `/yourname/development/`):
    ```bash
