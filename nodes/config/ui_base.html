@@ -358,6 +358,7 @@
             refreshSidebarEditorDebounced()
         }
     })
+    const checkDuplicateUiBasesDebounced = debounce(checkDuplicateUiBases, 25)
     RED.events.on('nodes:add', function (node) {
         if (RED._db2debug) { console.log('nodes:add', node) }
         if (node.dirty && node.type && node.type.startsWith('ui-')) {
@@ -369,7 +370,7 @@
         // if we're adding a ui-base
         if (node.type.startsWith('ui-')) {
             // action on all ui- elements to ensure we've remapped (now) missing ui-base nodes
-            checkDuplicateUiBases()
+            checkDuplicateUiBasesDebounced()
         }
     })
     RED.events.on('nodes:remove', function (event) {
