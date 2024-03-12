@@ -115,7 +115,7 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
 
 `cy.resetContext()`
 
-The above functions to assist with setting and checking output rely on Node-RED's "context" stores. If at any point you want to be sure they're reset and cleared, this function will clear the context stores, before proceeding to any further steps in your tests.
+The above function assists with setting and checking output that rely on Node-RED's "context" stores. This function can be used to be sure that you have a clean context store by restting it. This is best used _before_ using the [Store Output](#store-output-function-node) helper function to assign new values to the store.
 
 ### Reload Dashboard
 
