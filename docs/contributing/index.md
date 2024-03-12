@@ -10,7 +10,7 @@ Contains the files that define each of the Node-RED nodes that make up the Dashb
 
 ### `/ui`
 
-Contains our VueJS app that forms to core of Dashboard 2.0. Within this, `/ui/src/widgets`, you will find the respective `.vue` files for each of the Dashboard 2.0 widgets.
+Contains our VueJS app that forms the core of Dashboard 2.0. Inside `/ui/src/widgets`, you will find a set of subdirectories, each containing a `.vue` file. It is these files that define the appearance and functionality a users sees when viewing the Dashboard. 
 
 ### `/docs`
 
