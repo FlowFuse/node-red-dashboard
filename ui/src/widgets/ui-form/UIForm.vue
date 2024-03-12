@@ -64,6 +64,7 @@ export default {
         },
         clear () {
             this.reset()
+            this.isValid = false
         },
         reset () {
             this.props.options.forEach(row => {
@@ -73,7 +74,7 @@ export default {
                 } else if (row.type === 'number') {
                     this.input[row.key] = 0
                 } else {
-                    this.input[row.key] = ''
+                    this.input[row.key] = null
                 }
             })
         },
