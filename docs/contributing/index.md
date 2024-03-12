@@ -6,7 +6,7 @@ Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas
 
 ### `/nodes` 
 
-Contains the files each node withat define each of the Node-RED nodes that make up the Dashboard 2.0 node set. You can read more about writing nodes for Node-RED [here](https://nodered.org/docs/creating-nodes/first-node).
+Contains the files that define each of the Node-RED nodes that make up the Dashboard 2.0 node set. You can read more about writing nodes for Node-RED [here](https://nodered.org/docs/creating-nodes/first-node).
 
 ### `/ui`
 
