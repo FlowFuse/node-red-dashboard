@@ -1,8 +1,8 @@
 <template>
     <label v-if="props.label" class="nrdb-ui-form-label">{{ props.label }}</label>
-    <v-form v-model="isValid" validate-on="blur" @submit.prevent="onSubmit">
+    <v-form ref="form" v-model="isValid" validate-on="blur" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
-            <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row">
+            <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
                 <v-switch v-else-if="row.type === 'switch'" v-model="input[row.key]" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
                 <v-textarea
@@ -20,8 +20,8 @@
             </div>
         </div>
         <div class="nrdb-ui-form-actions">
-            <v-btn type="submit" variant="flat" size="large" :disabled="!isValid">{{ props.submit || 'submit' }}</v-btn>
-            <v-btn v-if="props.cancel" variant="outlined" size="large" @click="clear">{{ props.cancel }}</v-btn>
+            <v-btn data-action="form-submit" type="submit" variant="flat" size="large" :disabled="!isValid">{{ props.submit || 'submit' }}</v-btn>
+            <v-btn v-if="props.cancel" data-action="form-clear" variant="outlined" size="large" @click="clear">{{ props.cancel }}</v-btn>
         </div>
     </v-form>
 </template>
@@ -66,16 +66,7 @@ export default {
             this.reset()
         },
         reset () {
-            this.props.options.forEach(row => {
-            // set defaults
-                if (row.type === 'check' || row.type === 'switch') {
-                    this.input[row.key] = false
-                } else if (row.type === 'number') {
-                    this.input[row.key] = 0
-                } else {
-                    this.input[row.key] = ''
-                }
-            })
+            this.$refs.form.reset()
         },
         rules (row) {
             if (row.required) {
