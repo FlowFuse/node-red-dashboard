@@ -1,5 +1,7 @@
 :root {
     --vp-c-brand: #0094CE;
+    --vp-c-node-red: #ffe4e3;
+    --vp-c-node-red-dark: #B80C14;
 }
 
 img + em {
@@ -7,6 +9,11 @@ img + em {
     display: block;
 }
 
+video + em {
+    font-size: 0.875rem;
+    text-align: center;
+    display: block;
+}
 
 :root {
     /* --vp-home-hero-name-color: transparent; */

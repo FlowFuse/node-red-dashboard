@@ -765,6 +765,7 @@ module.exports = function (RED) {
          * @param {*} widget
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
+            // console.log('dashboard 2.0, UIBaseNode: node.register(...)', page, group, widgetNode, widgetConfig, widgetEvents)
             /**
              * Build UI Config
              */
@@ -801,12 +802,24 @@ module.exports = function (RED) {
                     hooks: widgetEvents,
                     src: uiShared.contribs[widgetConfig.type]
                 }
+                const parent = RED.nodes.getNode(widgetConfig.z)
+                if (parent && parent.TYPE === 'subflow') {
+                    const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')
+                    let order = parseInt(orderEnv?.value)
+                    if (isNaN(order)) {
+                        order = 0
+                    }
+                    widget.props.subflow = {
+                        id: widgetConfig.z,
+                        name: parent.subflowInstance?.name || parent.subflowDef.name,
+                        order
+                    }
+                }
 
                 delete widget.props.id
                 delete widget.props.type
                 delete widget.props.x
                 delete widget.props.y
-                delete widget.props.z
                 delete widget.props.wires
 
                 if (widget.props.width === '0') {
