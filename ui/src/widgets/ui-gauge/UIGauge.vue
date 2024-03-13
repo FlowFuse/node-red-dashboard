@@ -102,7 +102,7 @@ export default {
             this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
 
             this.width = this.$refs.container.clientWidth
-            this.height = this.$refs.container.clientHeight - this.sizes.titleHeight
+            this.height = this.props.height ? this.$refs.container.clientHeight - this.sizes.titleHeight : 150
 
             // heights for the SVG
             const w = this.width
