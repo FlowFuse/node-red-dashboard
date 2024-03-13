@@ -15,19 +15,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <div class="nrdb-group-widgets nrdb-layout-group--grid" :style="`grid-template-columns: repeat(${ g.width }, 1fr); grid-template-rows: repeat(${g.height}, minmax(${rowHeight}, auto)); `">
-                            <div
-                                v-for="w in widgetsByGroup(g.id)"
-                                :id="'nrdb-ui-widget-' + w.id"
-                                :key="w.id"
-                                class="nrdb-ui-widget"
-                                :class="getWidgetClass(w)"
-                                style="display: grid"
-                                :style="`grid-template-rows: repeat(${w.props.height}, minmax(${rowHeight}px, auto));grid-row-end: span ${w.props.height}; grid-column-end: span ${ w.props.width || g.width }`"
-                            >
-                                <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
-                            </div>
-                        </div>
+                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" :row-height="rowHeight" />
                     </template>
                 </v-card>
             </div>
@@ -49,13 +37,16 @@
 <script>
 // eslint-disable-next-line import/order
 import BaselineLayout from './Baseline.vue'
+import WidgetGroup from './Group.vue'
+
 // eslint-disable-next-line import/order, sort-imports
 import { mapState, mapGetters } from 'vuex'
 
 export default {
     name: 'LayoutGrid',
     components: {
-        BaselineLayout
+        BaselineLayout,
+        WidgetGroup
     },
     data () {
         return {

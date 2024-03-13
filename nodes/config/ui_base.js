@@ -134,6 +134,10 @@ module.exports = function (RED) {
                     socketPath = '/' + socketPath
                 }
                 let resp = {
+                    RED: {
+                        httpAdminRoot: RED.settings.httpAdminRoot,
+                        httpNodeRoot: RED.settings.httpNodeRoot
+                    },
                     socketio: {
                         path: socketPath
                     }
@@ -442,7 +446,7 @@ module.exports = function (RED) {
                                 handler(socket)
                             }
                         } else {
-                            widget._onSocketHandlers = widget._socketIO || {}
+                            widget._onSocketHandlers = widget._onSocketHandlers || {}
                             widget._onSocketHandlers[eventName] = handler.bind(null, socket)
                             socket.on(eventName, widget._onSocketHandlers[eventName])
                         }

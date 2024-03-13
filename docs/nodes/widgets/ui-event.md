@@ -37,8 +37,6 @@ Each time a user views a page, the `ui-event` node will emit:
 ```js
 msg = {
     topic: '$pageview',
-    socketid: '1234',
-    socketip: '127.0.0.1'
     payload: {
         page: {
             name: 'Page Name',
@@ -48,14 +46,31 @@ msg = {
             layout: 'default',
             _groups: []
         }
+    },
+    _client: {
+        socketId: '1234',
     }
 }
 ```
 
 ## Custom Events
 
-In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embeded `$socket` operator directly, for example:
+In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embeded `$socket` operator directly. 
+
+The `$socket.emit` function takes in 3 arguments:
+
+- The event name, in this case, `ui-event`
+- The `id` of the `ui-event` node you want to emit this to. You can also use `all` to emit to all `ui-event` nodes.
+- The full `msg` you want to send.
+
+So in the case where we want to send to a specific `ui-event` node:
 
 ```vue
-<v-btn @click="$socket.emit('ui-event', 'custom-event-name', msg)">Send Custom Event</v-btn>
+<v-btn @click="$socket.emit('ui-event', 'ui-event-node-id', msg)">Send Custom Event</v-btn>
+```
+
+Or, in the case where we brodcast to _all_ `ui-event` nodes:
+
+```vue
+<v-btn @click="$socket.emit('ui-event', 'all', msg)">Send Custom Event</v-btn>
 ```

@@ -10,7 +10,7 @@ props:
     import AddedIn from '../../components/AddedIn.vue';
 </script>
 
-# Text `ui-template` <AddedIn version="0.10.0"/>
+# Template `ui-template` <AddedIn version="0.10.0"/>
  
 Provide custom JS and HTML (including any [Vuetify components](https://vuetifyjs.com/en/components/all/)) to render in the Dashboard.
 
@@ -284,10 +284,10 @@ Or another example, where the payload is automatically sent any time the `v-mode
 
 ```vue
 <v-rating hover :length="5" :size="32" v-model="value"
-    active-color="primary" @update:modelValue="send({payload: value})"/>
+    active-color="primary" @update:model-value="send({payload: value})"/>
 ```
 
-`v-model` in Vue is a way of two-way binding a variable to a widget. Here, we bind the `value` variable to the `v-rating` widget. Then we watch for changes on that value with `@update:modelValue` and send the `value` variable to the Node-RED flow via `msg.payload`.
+`v-model` in Vue is a way of two-way binding a variable to a widget. Here, we bind the `value` variable to the `v-rating` widget. Then we watch for changes on that value with `@update:model-value` and send the `value` variable to the Node-RED flow via `msg.payload`.
 
 When changed, if wired to a "Debug" node, then we can see the resulting outcome is as follows:
 

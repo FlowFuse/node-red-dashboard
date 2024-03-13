@@ -429,6 +429,42 @@
         RED.view.redraw()
     }
 
+    function checkDuplicateUiBases () {
+        // check how many ui-bases we have and trim if already too many
+        const bases = []
+        const pages = []
+        RED.nodes.eachConfig((n) => {
+            if (n.type === 'ui-base') { bases.push(n) }
+            if (n.type === 'ui-page') { pages.push(n) }
+        })
+
+        // the eachConfig is in creation order, so we can remove from the end
+        // and keep the oldest ones
+        while (bases.length > 1) {
+            const n = bases.pop()
+            if (RED._db2debug) { console.log('ui-base removed', n) }
+            RED.nodes.remove(n.id)
+            RED.nodes.dirty(true)
+        }
+
+        if (bases.length > 0) {
+            const baseId = bases[0].id
+            // loop over pages and re-map the ui-base to the only ui-base available
+            pages.forEach((page) => {
+                page.ui = baseId
+            })
+
+            RED.nodes.eachNode((node) => {
+                if (node.type.startsWith('ui-')) {
+                    // check if the widgets are ui-scoped, and have a ui set to the removed ui-base nodes
+                    if (node.ui && node.ui !== '' && node.ui !== baseId) {
+                        node.ui = baseId
+                    }
+                }
+            })
+        }
+    }
+
     // watch for nodes changed, added, removed - use this to refresh the sidebar
     let refreshBusy = false // this is set/reset inside refreshSidebarEditors
     const refreshSidebarEditorDebounced = debounce(refreshSidebarEditors, 300)
@@ -477,8 +513,21 @@
     RED.events.on('nodes:change', function (event) {
         conditionalSidebarRefresh(event, 'nodes:change')
     })
-    RED.events.on('nodes:add', function (event) {
-        conditionalSidebarRefresh(event, 'nodes:add')
+
+    const checkDuplicateUiBasesDebounced = debounce(checkDuplicateUiBases, 25)
+    RED.events.on('nodes:add', function (node) {
+        if (RED._db2debug) { console.log('nodes:add', node) }
+        if (node.dirty && node.type && node.type.startsWith('ui-')) {
+            if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshSidebarEditors') }
+            // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
+            refreshSidebarEditorDebounced()
+        }
+
+        // if we're adding a ui-base
+        if (node.type.startsWith('ui-')) {
+            // action on all ui- elements to ensure we've remapped (now) missing ui-base nodes
+            checkDuplicateUiBasesDebounced()
+        }
     })
     RED.events.on('nodes:remove', function (event) {
         conditionalSidebarRefresh(event, 'nodes:remove')

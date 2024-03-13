@@ -1,30 +1,7 @@
 <template>
-    <div>
-        <v-table class="nrdb-table">
-            <thead>
-                <tr>
-                    <th v-for="(col, $index) in columns" :key="$index" class="text-left">{{ col.label }}</th>
-                </tr>
-            </thead>
-            <tbody v-if="rows">
-                <tr
-                    v-for="(row, $index) in pagination.rows"
-                    :key="$index"
-                >
-                    <td v-for="(col, $jndex) in columns" :key="$jndex">{{ row[col.key] }}</td>
-                </tr>
-            </tbody>
-            <tbody v-else class="nrdb-table-nodata">
-                <tr><td :colspan="columns.length">No Data</td></tr>
-            </tbody>
-        </v-table>
-        <v-pagination
-            v-if="rows && props.maxrows > 0"
-            v-model="pagination.page"
-            :length="pagination.pages"
-            rounded="0"
-        />
-    </div>
+    <v-data-table class="nrdb-table" :items="messages[id]?.payload" :items-per-page="itemsPerPage">
+        <template v-if="itemsPerPage === 0" #bottom />
+    </v-data-table>
 </template>
 
 <script>
@@ -68,11 +45,11 @@ export default {
                         })
                     }
                     return cols.map((col) => {
-                        return { key: col, label: col }
+                        return { key: col, title: col }
                     })
                 } else {
                     return [{
-                        key: '', label: ''
+                        key: '', title: ''
                     }]
                 }
             } else if (this.props.columns) {
@@ -80,7 +57,7 @@ export default {
             } else {
                 // even if auto cols is off, but we have no columns defined, still have a fall back
                 return [{
-                    key: '', label: ''
+                    key: '', title: ''
                 }]
             }
         },
@@ -91,6 +68,9 @@ export default {
             } else {
                 return undefined
             }
+        },
+        itemsPerPage () {
+            return this.props.maxrows || 0
         }
     },
     watch: {
@@ -131,11 +111,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-table-nodata {
     text-align: center;
 }
 .nrdb-table-nodata td {
     opacity: 0.5;
+}
+.nrdb-table.v-data-table .v-table__wrapper>table>thead>tr>th.v-data-table__th--sortable:hover,
+.nrdb-table.v-data-table .v-table__wrapper>table tbody>tr>th.v-data-table__th--sortable:hover
+{
+    color: rgba(var(--v-theme-on-group-background), var(--v-high-emphasis-opacity));
 }
 </style>

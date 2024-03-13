@@ -46,7 +46,7 @@
             group: { type: 'ui-group', required: true },
             order: { value: 0 },
             width: {
-                value: 0,
+                value: 3,
                 validate: function (v) {
                     const width = v || 0
                     const currentGroup = $('#node-input-group').val() || this.group
@@ -56,7 +56,7 @@
                     return valid
                 }
             },
-            height: { value: 0 },
+            height: { value: 3 },
             gtype: { value: 'gauge-half' },
             gstyle: { value: 'needle' },
             title: { value: 'gauge' },

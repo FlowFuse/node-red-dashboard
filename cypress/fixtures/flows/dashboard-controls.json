@@ -12,6 +12,7 @@
         "type": "ui-base",
         "name": "UI Name",
         "path": "/dashboard",
+        "navigationStyle": "fixed",
         "includeClientData": true,
         "acceptsClientConfig": [
             "ui-notification",
@@ -29,7 +30,7 @@
         "theme": "dashboard-ui-theme",
         "order": -1,
         "className": "",
-        "visible": "true",
+        "visible": true,
         "disabled": false
     },
     {
@@ -43,7 +44,7 @@
         "theme": "dashboard-ui-theme",
         "order": -1,
         "className": "",
-        "visible": "true",
+        "visible": true,
         "disabled": false
     },
     {
@@ -57,7 +58,7 @@
         "theme": "dashboard-ui-theme",
         "order": -1,
         "className": "",
-        "visible": "true",
+        "visible": true,
         "disabled": false
     },
     {
@@ -364,7 +365,7 @@
         "bgcolor": "",
         "className": "",
         "icon": "",
-        "payload": "{\"pages\":{\"hide\":[\"Page 2\"]}}",
+        "payload": "{\"pages\":{\"show\":[\"Page 1\"]}}",
         "payloadType": "json",
         "topic": "topic",
         "topicType": "msg",
