@@ -1,0 +1,47 @@
+name: 🐜 Report a bug
+description: File a bug on the FlowFuse platform
+labels: [needs-triage, bug]
+body:
+- type: textarea
+  attributes:
+    label: Current Behavior
+    description: A clear & concise description of what you're experiencing.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: A clear & concise description of what you expected to happen.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: Steps to reproduce the behavior.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Environment
+    description: Please tell us about your environment. Include any relevant information on how you are running Node-RED.
+    value: |
+        - Dashboard version:
+        - Node-RED version:
+        - Node.js version:
+        - npm version:
+        - Platform/OS:
+        - Browser:
+  validations:
+    required: false
+- type: dropdown
+  id: estimation
+  attributes:
+    label: Have you provided an initial effort estimate for this issue?
+    description: See our [handbook](https://flowfuse.com/handbook/development/releases/planning/#effort-estimation) for more details.
+    multiple: false
+    options:
+      - I have provided an initial effort estimate
+      - I am not a FlowFuse team member
+      - I can not provide an initial effort estimate
+  validations:
+      required: true
