@@ -9,21 +9,25 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 
     it('blurring a required field runs validation', () => {
-        cy.contains('Name: is required').should('not.exist')
+        cy.contains('Name is required').should('not.exist')
+        cy.get('[data-form="form-row-name"] input[type="text"]').should('not.be.disabled')
         cy.get('[data-form="form-row-name"] input[type="text"]').focus()
-        // blur the text input
-        cy.get('[data-form="form-row-name"] input[type="text"]').blur()
 
-        cy.contains('Name: is required').should('be.visible')
+        // blur the text input
+        cy.focused().blur()
+
+        cy.contains('Name is required').should('be.visible')
     })
 
     it('enables the submit button once required fields are completed', () => {
-        cy.contains('Name: is required').should('not.exist')
-        cy.get('[data-form="form-row-name"] input[type="text"]').focus()
-        cy.get('[data-form="form-row-name"] input[type="text"]').type('John Smith')
+        cy.contains('Name is required').should('not.exist')
 
-        // blur the text input to trigger validation
-        cy.get('[data-form="form-row-name"] input[type="text"]').blur()
+        cy.get('[data-form="form-row-name"] input[type="text"]').should('not.be.disabled')
+        // need to click first to allow for Vuetify's animation of label
+        cy.get('[data-form="form-row-name"]').click()
+        // then we can type into the input
+        cy.get('[data-form="form-row-name"] input[type="text"]').type('John Smith', { force: true })
+        cy.focused().blur()
 
         cy.get('[data-action="form-submit"]').should('not.be.disabled')
     })

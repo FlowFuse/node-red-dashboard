@@ -87,7 +87,7 @@
         "height": 0,
         "options": [
             {
-                "label": "Name:",
+                "label": "Name",
                 "key": "name",
                 "type": "text",
                 "required": true,
