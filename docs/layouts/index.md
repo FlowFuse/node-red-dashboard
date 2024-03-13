@@ -2,7 +2,7 @@
 
 Layouts are a configuration available on a page-by-page basis. They control how all of the [Groups](../nodes/config/ui-group) of widgets are laid out on a given [Page](../nodes/config/ui-page):
 
-![Screenshot of the layout options on a ui-page](../../assets/images/layouts-page-layout-option.png){data-zoomable}
+![Screenshot of the layout options on a ui-page](../assets/images/layouts-page-layout-option.png){data-zoomable}
 _Screenshot of the layout options on a `ui-page`_
 
 We currently offer three different layout options:
@@ -15,7 +15,7 @@ We currently offer three different layout options:
 
 A fundamental component of building out layouts in Dashboard 2.0 (which follows the Dashboard 1.0 principle) is the ability to control the size of each group and widget with the size selection widget:
 
-![Screenshot of the size selection widget for a ui-gauge](../../assets/images/layouts-sizing-options.png){data-zoomable}
+![Screenshot of the size selection widget for a ui-gauge](../assets/images/layouts-sizing-options.png){data-zoomable}
 _Screenshot of the size selection widget for a ui-gauge_
 
 Exactly what this sizing means does differ slightly depending on the layout you're using, but the general principle is that the size of a group or widget will control how much space it takes up in the layout. 
@@ -31,12 +31,12 @@ In addition to the core layout structure, defining how the groups are ordered an
 
 ### Configurable Options
 
-![Screenshot of the theme options available to control sizings of the layout](../../assets/images/layouts-theme-options.jpg){data-zoomable}
+![Screenshot of the theme options available to control sizings of the layout](../assets/images/layouts-theme-options.jpg){data-zoomable}
 _Screenshot of the theme options available to control sizings of the layout_
 
 Each color here correlates to the respective section in the following image:
 
-![Screenshot of the theme options available to control sizings of the layout](../../assets/images/layouts-theme-example.jpg){data-zoomable}
+![Screenshot of the theme options available to control sizings of the layout](../assets/images/layouts-theme-example.jpg){data-zoomable}
 _Screenshot of the theme options available to control sizings of the layout, here showing a "Grid" layout_
 
 - **Page Padding:** The spacing that encapsulates the full page's content, depicted above as the <span style="color: orange;">orange</span> space.
