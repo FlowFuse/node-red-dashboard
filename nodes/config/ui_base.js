@@ -883,6 +883,10 @@ module.exports = function (RED) {
 
                 // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
                 widgetNode?.on('input', async function (msg, send, done) {
+                    // clean msg - #668
+                    delete msg.res
+                    delete msg.req
+
                     // ensure we have latest instance of the widget's node
                     const wNode = RED.nodes.getNode(widgetNode.id)
                     if (!wNode) {
