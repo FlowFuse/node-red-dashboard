@@ -477,9 +477,6 @@
             nodes: [node.id],
             dirty: RED.nodes.dirty()
         })
-        RED.nodes.dirty(true)
-        RED.view.redraw()
-        RED.sidebar.config.refresh()
     }
 
     function mapDefaults (defaults) {
@@ -569,6 +566,10 @@
                     RED.editor.validateNode(node)
                 }
             })
+
+            RED.nodes.dirty(true)
+            RED.view.redraw()
+            RED.sidebar.config.refresh()
         }
     }
 
