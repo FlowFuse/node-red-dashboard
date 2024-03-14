@@ -465,6 +465,114 @@
         }
     }
 
+    function addConfigNode (node) {
+        if (!node.user) {
+            node.users = []
+        }
+        node.dirty = true
+        RED.nodes.add(node)
+        RED.editor.validateNode(node)
+        RED.history.push({
+            t: 'add',
+            nodes: [node.id],
+            dirty: RED.nodes.dirty()
+        })
+    }
+
+    function mapDefaults (defaults) {
+        const values = {}
+        for (const key in defaults) {
+            if (Object.prototype.hasOwnProperty.call(defaults, key)) {
+                values[key] = defaults[key].value
+            }
+        }
+        return values
+    }
+
+    function addLayoutsDefaults () {
+        const cNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
+        let exists = false
+        RED.nodes.eachConfig((n) => {
+            if (cNodes.includes(n.type)) {
+                exists = true
+            }
+        })
+
+        // check if we haven't got any of these yet
+        if (!exists) {
+            // Add Single Base Node
+            const base = RED.nodes.getType('ui-base')
+            const baseNode = {
+                _def: base,
+                id: RED.nodes.id(),
+                type: 'ui-base',
+                ...mapDefaults(base.defaults),
+                name: 'My Dashboard'
+            }
+
+            addConfigNode(baseNode)
+
+            const theme = RED.nodes.getType('ui-theme')
+            const themeNode = {
+                _def: theme,
+                id: RED.nodes.id(),
+                type: 'ui-theme',
+                ...mapDefaults(theme.defaults),
+                name: 'Default Theme'
+            }
+
+            addConfigNode(themeNode)
+
+            const page = RED.nodes.getType('ui-page')
+            const pageNode = {
+                _def: page,
+                id: RED.nodes.id(),
+                type: 'ui-page',
+                ...mapDefaults(page.defaults),
+                name: 'Page 1',
+                ui: baseNode.id,
+                theme: themeNode.id,
+                layout: 'grid'
+            }
+
+            addConfigNode(pageNode)
+
+            const group = RED.nodes.getType('ui-group')
+            const groupNode = {
+                _def: group,
+                id: RED.nodes.id(),
+                type: 'ui-group',
+                ...mapDefaults(group.defaults),
+                name: 'My Group',
+                page: pageNode.id
+            }
+
+            addConfigNode(groupNode)
+
+            // update existing `ui-` nodes to use the new base/page/theme/group
+            RED.nodes.eachNode((node) => {
+                if (node.type.startsWith('ui-')) {
+                    // if node has a group property
+                    if (hasProperty(node._def.defaults, 'group') && !node.group) {
+                        // group-scoped widgets - which is most of them
+                        node.group = groupNode.id
+                    } else if (hasProperty(node._def.defaults, 'page') && !node.page) {
+                        // page-scoped widgets
+                        node.page = pageNode.id
+                    } else if (hasProperty(node._def.defaults, 'ui') && !node.ui) {
+                        // base-scoped widgets, e.g. ui-notification/control
+                        node.ui = baseNode.id
+                    }
+                    RED.editor.validateNode(node)
+                }
+            })
+
+            RED.nodes.dirty(true)
+            RED.view.redraw()
+            RED.sidebar.config.refresh()
+        }
+    }
+
     // watch for nodes changed, added, removed - use this to refresh the sidebar
     let refreshBusy = false // this is set/reset inside refreshSidebarEditors
     const refreshSidebarEditorDebounced = debounce(refreshSidebarEditors, 300)
@@ -514,6 +622,7 @@
         conditionalSidebarRefresh(event, 'nodes:change')
     })
 
+    const addLayoutsDefaultsDebounced = debounce(addLayoutsDefaults, 25)
     const checkDuplicateUiBasesDebounced = debounce(checkDuplicateUiBases, 25)
     RED.events.on('nodes:add', function (node) {
         if (RED._db2debug) { console.log('nodes:add', node) }
@@ -527,6 +636,7 @@
         if (node.type.startsWith('ui-')) {
             // action on all ui- elements to ensure we've remapped (now) missing ui-base nodes
             checkDuplicateUiBasesDebounced()
+            addLayoutsDefaultsDebounced()
         }
     })
     RED.events.on('nodes:remove', function (event) {
