@@ -477,6 +477,7 @@
             nodes: [node.id],
             dirty: RED.nodes.dirty()
         })
+        RED.nodes.dirty(true)
     }
 
     function mapDefaults (defaults) {
@@ -487,6 +488,20 @@
             }
         }
         return values
+    }
+
+    function addDefaultTheme () {
+        const theme = RED.nodes.getType('ui-theme')
+        const themeNode = {
+            _def: theme,
+            id: RED.nodes.id(),
+            type: 'ui-theme',
+            ...mapDefaults(theme.defaults),
+            name: 'Default Theme'
+        }
+
+        addConfigNode(themeNode)
+        return themeNode
     }
 
     function addLayoutsDefaults () {
@@ -512,16 +527,7 @@
 
             addConfigNode(baseNode)
 
-            const theme = RED.nodes.getType('ui-theme')
-            const themeNode = {
-                _def: theme,
-                id: RED.nodes.id(),
-                type: 'ui-theme',
-                ...mapDefaults(theme.defaults),
-                name: 'Default Theme'
-            }
-
-            addConfigNode(themeNode)
+            const theme = addDefaultTheme()
 
             const page = RED.nodes.getType('ui-page')
             const pageNode = {
@@ -531,7 +537,7 @@
                 ...mapDefaults(page.defaults),
                 name: 'Page 1',
                 ui: baseNode.id,
-                theme: themeNode.id,
+                theme: theme.id,
                 layout: 'grid'
             }
 
@@ -567,7 +573,6 @@
                 }
             })
 
-            RED.nodes.dirty(true)
             RED.view.redraw()
             RED.sidebar.config.refresh()
         }
@@ -586,7 +591,6 @@
     const conditionalSidebarRefresh = function (node, eventName) {
         // if the layout editor is not in view, don't refresh
         if ($('#ff-node-red-dashboard').parent().css('display') === 'none') { return }
-        if ($('#dashboard-2-pages').css('display') === 'none') { return }
         // if a refresh is in progress, don't refresh
         if (refreshBusy) { return }
         if (RED._db2debug) { console.log('dashboard 2: conditionalSidebarRefresh (node, eventName)', node, eventName) }
@@ -1125,7 +1129,7 @@
         // add theme button
         $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('themes.theme') + '</a>')
             .click(function (evt) {
-                console.log('add theme')
+                themesOL.editableList('addItem')
                 evt.preventDefault()
             })
             .appendTo(buttonGroup)
@@ -1145,10 +1149,10 @@
             sortable: '.nrdb2-sb-pages-list-header',
             addButton: false,
             addItem: function (container, i, theme) {
-                console.log('theme')
-                console.log(theme)
-                if (!theme._def) {
+                if (!theme || !theme.id) {
                     // this is a new theme that's been added and we need to setup the basics
+                    theme = addDefaultTheme()
+                    RED.editor.editConfig('', theme.type, theme.id)
                 }
                 container.addClass('nrdb2-sb-pages-list-item')
 
