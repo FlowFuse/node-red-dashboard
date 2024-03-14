@@ -312,7 +312,7 @@
      * Add Custom Dashboard Side Menu
      * */
 
-    function uiLink (id, name, path) {
+    function dashboardLink (id, name, path) {
         const base = RED.settings.httpNodeRoot || '/'
         const basePart = base.endsWith('/') ? base : `${base}/`
         const dashPart = path.startsWith('/') ? path.slice(1) : path
@@ -1119,6 +1119,17 @@
         const themeHeader = $('<div>', { class: 'nrdb2-sidebar-header' }).appendTo(divTabs)
         $('<b>').html(c_('themes.header')).appendTo(themeHeader)
 
+        // button group
+        const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(themeHeader)
+
+        // add theme button
+        $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('themes.theme') + '</a>')
+            .click(function (evt) {
+                console.log('add theme')
+                evt.preventDefault()
+            })
+            .appendTo(buttonGroup)
+
         divTabs.append('<div class="nrdb2-layout-helptext">' + c_('label.themingMessage') + '</div>')
 
         const themes = {}
@@ -1134,6 +1145,11 @@
             sortable: '.nrdb2-sb-pages-list-header',
             addButton: false,
             addItem: function (container, i, theme) {
+                console.log('theme')
+                console.log(theme)
+                if (!theme._def) {
+                    // this is a new theme that's been added and we need to setup the basics
+                }
                 container.addClass('nrdb2-sb-pages-list-item')
 
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-themes-list-header' }).appendTo(container)
@@ -1218,7 +1234,7 @@
                 RED.nodes.eachConfig(function (n) {
                     if (n.type === 'ui-base') {
                         const base = n
-                        sidebar.append(uiLink(base.id, base.name, base.path))
+                        sidebar.append(dashboardLink(base.id, base.name, base.path))
                         const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
 
                         const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)

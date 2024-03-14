@@ -26,13 +26,15 @@
         },
         "layout": {
             "pages": "Pages",
+            "page": "Page",
             "edit": "Edit",
             "focus": "Focus",
             "collapse": "Collapse",
             "expand": "Expand"
         },
         "themes": {
-            "header": "Themes"
+            "header": "Themes",
+            "theme": "theme"
         },
         "colors": {
             "light": "var(--nrdb-node-light)",
