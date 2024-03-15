@@ -27,6 +27,7 @@
         "layout": {
             "pages": "Pages",
             "page": "Page",
+            "group": "Group",
             "edit": "Edit",
             "focus": "Focus",
             "collapse": "Collapse",

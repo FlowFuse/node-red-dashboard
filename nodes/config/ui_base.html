@@ -512,6 +512,21 @@
         return pageNode
     }
 
+    function addDefaultGroup (pageId) {
+        const group = RED.nodes.getType('ui-group')
+        const groupNode = {
+            _def: group,
+            id: RED.nodes.id(),
+            type: 'ui-group',
+            ...mapDefaults(group.defaults),
+            name: 'My Group',
+            page: pageId
+        }
+
+        addConfigNode(groupNode)
+        return groupNode
+    }
+
     function addDefaultTheme () {
         const theme = RED.nodes.getType('ui-theme')
         const themeNode = {
@@ -551,18 +566,7 @@
 
             const theme = addDefaultTheme()
             const page = addDefaultPage(base.id, theme.id)
-
-            const group = RED.nodes.getType('ui-group')
-            const groupNode = {
-                _def: group,
-                id: RED.nodes.id(),
-                type: 'ui-group',
-                ...mapDefaults(group.defaults),
-                name: 'My Group',
-                page: page.id
-            }
-
-            addConfigNode(groupNode)
+            const group = addDefaultGroup(page.id)
 
             // update existing `ui-` nodes to use the new base/page/theme/group
             RED.nodes.eachNode((node) => {
@@ -570,7 +574,7 @@
                     // if node has a group property
                     if (hasProperty(node._def.defaults, 'group') && !node.group) {
                         // group-scoped widgets - which is most of them
-                        node.group = groupNode.id
+                        node.group = group.id
                     } else if (hasProperty(node._def.defaults, 'page') && !node.page) {
                         // page-scoped widgets
                         node.page = page.id
@@ -661,7 +665,7 @@
      * @param {Object} parent - jQuery object to add this button group as a child element to
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      */
-    function addRowActions (parent, item) {
+    function addRowActions (parent, item, list) {
         const configNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
         if (!configNodes.includes(item.type)) {
@@ -671,6 +675,15 @@
                 evt.stopPropagation()
                 evt.preventDefault()
             })
+        }
+        if (item.type === 'ui-page') {
+            // add the "+ group" button
+            $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.group') + '</a>')
+                .click(function (evt) {
+                    list.editableList('addItem')
+                    evt.preventDefault()
+                })
+                .appendTo(btnGroup)
         }
         const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
         editButton.on('click', function (evt) {
@@ -783,13 +796,20 @@
      * @param {DashboardItemLookup} widgetsByGroup - The lookup of widgets by group
      */
     function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
-        // ordered list of groupss to live within a container (e.g. page list item)
+        // ordered list of groups to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
             addButton: false,
             height: 'auto',
             connectWith: '.nrdb2-sb-group-list',
             addItem: function (container, i, group) {
+                if (!group || !group.id) {
+                    console.log('add group', group, 'to', pageId)
+                    // this is a new page that's been added and we need to setup the basics
+                    group = addDefaultGroup(pageId)
+                    RED.editor.editConfig('', group.type, group.id)
+                }
+
                 const widgets = widgetsByGroup[group.id] || []
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
@@ -848,6 +868,8 @@
             if (RED._db2debug) { if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addGroupOrderingList: adding group', group) } }
             groupsOL.editableList('addItem', group)
         })
+
+        return groupsOL
     }
 
     /**
@@ -1103,16 +1125,14 @@
                 $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} Groups`).appendTo(titleRow)
 
+                // adds groups within this page
+                titleRow.click(titleToggle(page.id, groupsList, chevron))
+                const groupsOL = addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
+
                 // page - actions
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, page)
+                addRowActions(actions, page, groupsOL)
                 addRowStateOptions(actions, page)
-
-                // adds groups within this page
-
-                titleRow.click(titleToggle(page.id, groupsList, chevron))
-
-                addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
             },
             sortItems: function (items) {
                 // track any changes
