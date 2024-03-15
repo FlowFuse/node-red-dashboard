@@ -34,7 +34,7 @@
         },
         "themes": {
             "header": "Themes",
-            "theme": "theme"
+            "theme": "Theme"
         },
         "colors": {
             "light": "var(--nrdb-node-light)",
