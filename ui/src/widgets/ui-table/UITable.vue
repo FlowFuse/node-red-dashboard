@@ -174,6 +174,7 @@ export default {
 }
 
 .nrdb-table-row-selectable:hover {
+    cursor: pointer;
     background-color: rgba(var(--v-theme-on-group-background), var(--v-hover-opacity));
 }
 .nrdb-table-row-selectable:active {
