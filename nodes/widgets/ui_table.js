@@ -1,3 +1,5 @@
+const datastore = require('../store/data.js')
+
 module.exports = function (RED) {
     function TableNode (config) {
         const node = this
@@ -21,7 +23,14 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config)
+        group.register(node, config, {
+            onAction: true,
+            onInput: function (msg) {
+                // store the latest msg passed to node
+                datastore.save(group.getBase(), node, msg)
+                // do nothing else - do not pass the message on
+            }
+        })
     }
 
     RED.nodes.registerType('ui-table', TableNode)

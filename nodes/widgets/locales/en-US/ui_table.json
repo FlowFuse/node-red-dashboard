@@ -8,7 +8,13 @@
             "autoCalculateColumns": "Auto Calculate Columns",
             "key": "Key",
             "label": "Label",
-            "column": "column"
+            "column": "column",
+            "selection": "Selection"
+        },
+        "selection": {
+            "none": "None",
+            "checkbox": "Multi Selection",
+            "click": "Single Row Selection"
         }
     }
 }

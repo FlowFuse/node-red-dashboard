@@ -1,6 +1,20 @@
 <template>
-    <v-data-table class="nrdb-table" :items="messages[id]?.payload" :items-per-page="itemsPerPage">
+    <v-data-table
+        v-model="selected"
+        class="nrdb-table"
+        :items="messages[id]?.payload" :return-object="true"
+        :items-per-page="itemsPerPage"
+        :headers="headers" :show-select="props.selectionType === 'checkbox'"
+        @update:model-value="onMultiSelect"
+    >
         <template v-if="itemsPerPage === 0" #bottom />
+        <template #item="{ index, item, internalItem }">
+            <v-data-table-row
+                :index="index" :item="internalItem"
+                :class="{'nrdb-table-row-selectable': props.selectionType === 'click'}"
+                @click="props.selectionType === 'click' ? onRowClick(item) : {}"
+            />
+        </template>
     </v-data-table>
 </template>
 
@@ -21,6 +35,7 @@ export default {
     },
     data () {
         return {
+            selected: null,
             input: {},
             isValid: null,
             pagination: {
@@ -32,7 +47,7 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        columns () {
+        headers () {
             if (this.props.autocols) {
                 if (this.messages[this.id]?.payload) {
                     // loop over data and get keys
@@ -53,7 +68,12 @@ export default {
                     }]
                 }
             } else if (this.props.columns) {
-                return this.props.columns
+                return this.props.columns.map((col) => {
+                    return {
+                        key: col.key,
+                        title: col.label || col.title
+                    }
+                })
             } else {
                 // even if auto cols is off, but we have no columns defined, still have a fall back
                 return [{
@@ -106,12 +126,36 @@ export default {
                 this.pagination.pages = 0
                 this.pagination.rows = this.rows
             }
+        },
+        onRowClick (row) {
+            console.log(row)
+            const msg = {
+                payload: row
+            }
+            this.$socket.emit('widget-action', this.id, msg)
+        },
+        onMultiSelect (selected) {
+            console.log(selected)
+            const msg = {
+                payload: selected
+            }
+            this.$socket.emit('widget-action', this.id, msg)
         }
     }
 }
 </script>
 
 <style>
+.nrdb-table.v-table {
+    background: rgb(var(--v-theme-group-background));
+}
+
+.nrdb-table.v-table, .nrdb-table.v-table .v-table__wrapper > table > thead > tr > th {
+    color: rgb(var(--v-theme-on-group-background));
+}
+.nrdb-table.v-table .v-table__wrapper > table > thead > tr > th {
+    font-weight: 600;
+}
 .nrdb-table-nodata {
     text-align: center;
 }
@@ -122,5 +166,17 @@ export default {
 .nrdb-table.v-data-table .v-table__wrapper>table tbody>tr>th.v-data-table__th--sortable:hover
 {
     color: rgba(var(--v-theme-on-group-background), var(--v-high-emphasis-opacity));
+}
+
+/* .v-data-table__tr--clickable is being assigned wrongly by Vuetify - need to make our own */
+.nrdb-table .v-data-table__tr--clickable {
+    cursor: default;
+}
+
+.nrdb-table-row-selectable:hover {
+    background-color: rgba(var(--v-theme-on-group-background), var(--v-hover-opacity));
+}
+.nrdb-table-row-selectable:active {
+    background-color: rgba(var(--v-theme-on-group-background), var(--v-selected-opacity));
 }
 </style>

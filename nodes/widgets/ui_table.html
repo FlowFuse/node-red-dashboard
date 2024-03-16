@@ -21,13 +21,15 @@
                 },
                 height: { value: 0 },
                 maxrows: { value: 0, validate: RED.validators.number() },
+                passthru: { value: false },
                 autocols: { value: true },
+                selectionType: { value: 'rowClick' },
                 columns: {
                     value: null
                 }
             },
             inputs: 1,
-            outputs: 0,
+            outputs: 1,
             outputLabels: function () { return this.mode },
             icon: 'font-awesome/fa-table',
             paletteLabel: 'table',
@@ -62,7 +64,7 @@
                     $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-column-handle fa fa-bars"></i>').appendTo(row)
 
                     $('<input/>', { class: 'node-input-column-key', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key'), value: col.key }).appendTo(row)
-                    $('<input/>', { class: 'node-input-column-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.label'), value: col.label }).appendTo(row)
+                    $('<input/>', { class: 'node-input-column-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.label'), value: col.title }).appendTo(row)
 
                     const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
                     const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
@@ -80,7 +82,7 @@
 
                 $('#node-input-add-column').click(function () {
                     generateColumn($('#node-input-column-container').children().length + 1, {})
-                    $('#node-input-column-container-div').scrollTop($('#node-input-column-column-div').get(0).scrollHeight)
+                    $('#node-input-column-container-div').scrollTop($('#node-input-column-container-div').get(0).scrollHeight)
                 })
 
                 for (let i = 0; i < this.columns?.length; i++) {
@@ -129,6 +131,14 @@
     <div class="form-row">
         <label for="node-input-maxrows"><i class="fa fa-tag"></i> <span data-i18n="ui-table.label.maxRows"></label>
         <input type="number" id="node-input-maxrows">
+    </div>
+    <div class="form-row">
+        <label for="node-input-selectionType"><i class="fa fa-crosshairs"></i> <span data-i18n="ui-table.label.selection"></span></label>
+        <select id="node-input-selectionType">
+            <option value="none" data-i18n="ui-table.selection.none"></option>
+            <option value="checkbox" data-i18n="ui-table.selection.checkbox"></option>
+            <option value="click" data-i18n="ui-table.selection.click"></option>
+        </select>
     </div>
     <div class="form-row" style="display:flex;">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>
