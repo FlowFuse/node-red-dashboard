@@ -10,6 +10,7 @@
             "openDashboard": "Open Dashboard",
             "layout": "Layout",
             "layoutMessage": "Here you can re-order and move your widgets, groups and pages.",
+            "unattachedMessage": "The following Groups have do not have a parent page defined.",
             "theming": "Theming",
             "themingMessage": "Here you can can get quick access to your UI Themes, defined on your Dashboard.",
             "page": "Page",
@@ -26,13 +27,17 @@
         },
         "layout": {
             "pages": "Pages",
+            "page": "Page",
+            "group": "Group",
             "edit": "Edit",
             "focus": "Focus",
             "collapse": "Collapse",
-            "expand": "Expand"
+            "expand": "Expand",
+            "unattachedGroups": "Unattached Groups"
         },
         "themes": {
-            "header": "Themes"
+            "header": "Themes",
+            "theme": "Theme"
         },
         "colors": {
             "light": "var(--nrdb-node-light)",
