@@ -85,6 +85,11 @@
         padding: 0;
         border-bottom: 0;
     }
+    .nrdb2-sb-unattached-groups-list li {
+        padding: 0;
+        border-bottom: 0;
+        background-color: #ffefef;
+    }
     .nrdb2-sb-list-header {
         display: flex;
         gap: 6px;
@@ -676,15 +681,6 @@
                 evt.preventDefault()
             })
         }
-        if (item.type === 'ui-page') {
-            // add the "+ group" button
-            $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.group') + '</a>')
-                .click(function (evt) {
-                    list.editableList('addItem')
-                    evt.preventDefault()
-                })
-                .appendTo(btnGroup)
-        }
         const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
         editButton.on('click', function (evt) {
             if (configNodes.includes(item.type)) {
@@ -695,6 +691,15 @@
             evt.stopPropagation()
             evt.preventDefault()
         })
+        if (item.type === 'ui-page') {
+            // add the "+ group" button
+            $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.group') + '</a>')
+                .click(function (evt) {
+                    list.editableList('addItem')
+                    evt.preventDefault()
+                })
+                .appendTo(btnGroup)
+        }
     }
 
     /**
@@ -1029,6 +1034,7 @@
         const pages = {}
         /** @type {DashboardItemLookup} */
         const groupsByPage = {}
+        const unattachedGroups = []
         /** @type {DashboardItemLookup} */
         const widgetsByGroup = {}
         const subflowDefinitions = new Map()
@@ -1037,11 +1043,16 @@
             if (n.type === 'ui-page' && !!n.ui) {
                 pages[n.id] = toDashboardItem(n)
             }
-            if (n.type === 'ui-group' && !!n.page) {
-                if (!groupsByPage[n.page]) {
-                    groupsByPage[n.page] = []
+            if (n.type === 'ui-group') {
+                const p = n.page
+                if (!p) {
+                    unattachedGroups.push(toDashboardItem(n))
+                } else {
+                    if (!groupsByPage[p]) {
+                        groupsByPage[p] = []
+                    }
+                    groupsByPage[p].push(toDashboardItem(n))
                 }
-                groupsByPage[n.page].push(toDashboardItem(n))
             }
         })
 
@@ -1157,6 +1168,41 @@
 
             // })
         })
+
+        // add Unattached Groups to the bottom
+        if (unattachedGroups.length > 0) {
+            const unattachedGroupsSection = $('<div>', { class: 'nrdb2-sidebar-header', style: 'padding-top: 12px;' }).appendTo(divTabs)
+            $('<b>').html(c_('layout.unattachedGroups')).appendTo(unattachedGroupsSection)
+            divTabs.append('<div class="nrdb2-layout-helptext">' + c_('label.unattachedMessage') + '</div>')
+
+            // we have some groups bound to a page that no longer exists
+            const unattachedGroupsOL = $('<ol>', { class: 'nrdb2-sb-unattached-groups-list' }).appendTo(divTabs).editableList({
+                sortable: '.nrdb2-sb-unattached-groups-list-header',
+                addButton: false,
+                addItem: function (container, i, group) {
+                    if (!group || !group.id) {
+                        // this is a new group that's been added and we need to setup the basics
+                        group = addDefaultGroup()
+                        RED.editor.editConfig('', group.type, group.id)
+                    }
+                    container.addClass('nrdb2-sb-unattached-groups-list-item')
+
+                    const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-unattached-groups-list-header' }).appendTo(container)
+                    const tabicon = 'fa-table'
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-info' }).text('No Page Assigned').appendTo(titleRow)
+
+                    // group - actions
+                    const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                    addRowActions(actions, group)
+                }
+            })
+
+            unattachedGroups.forEach(function (group) {
+                unattachedGroupsOL.editableList('addItem', group)
+            })
+        }
 
         // call updateLayoutVisibility to sync display level
         updateLayoutVisibility(layoutDisplayLevel)
