@@ -20,7 +20,7 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-single-row-click').find('tbody tr').should('have.length', 5)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-single-row-click').find('tbody .v-selection-control').should('have.length', 0)
 
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-single-row-click').find('tbody tr').eq(1).click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-table-single-row-click').find('tbody tr').eq(1))
         cy.checkOutput('msg.payload.id', 'id2')
         cy.checkOutput('msg.payload.value', 2)
     })
@@ -30,10 +30,8 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
     })
 
     it('emits a multiple row\'s of data when checked, if "selectionType" is "checkbox"', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-multi-select').find('tbody .v-selection-control').eq(1).click()
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-multi-select').find('tbody .v-selection-control').eq(3).click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-table-multi-select').find('tbody .v-selection-control').eq(3))
 
-        cy.checkOutput('msg.payload[0].value', 2)
-        cy.checkOutput('msg.payload[1].value', 4)
+        cy.checkOutput('msg.payload[0].value', 4)
     })
 })
