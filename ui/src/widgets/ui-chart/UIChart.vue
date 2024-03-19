@@ -240,15 +240,16 @@ export default {
          */
         addToLine (datapoint, label) {
             // consider msg.topic (label) as the label for the series
-            const datalabels = [...new Set(this.chart.data.datasets?.map((set) => {
+            const dataLabels = [...new Set(this.chart.data.datasets?.map((set) => {
                 return set.label
             }))]
-            const index = datalabels?.indexOf(label)
+            const index = dataLabels?.indexOf(label)
             // the chart is empty, we're adding a new series
             if (index === -1) {
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
                 this.chart.data.datasets.push({
-                    borderColor: this.props.colors[datalabels.length],
+                    borderColor: this.props.colors[dataLabels.length],
+                    backgroundColor: this.props.colors[dataLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
