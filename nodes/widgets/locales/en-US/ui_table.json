@@ -9,12 +9,12 @@
             "key": "Key",
             "label": "Label",
             "column": "column",
-            "selection": "Selection"
+            "selection": "Interaction"
         },
         "selection": {
             "none": "None",
-            "checkbox": "Multi Selection",
-            "click": "Single Row Selection"
+            "checkbox": "Checkboxes",
+            "click": "Click"
         }
     }
 }

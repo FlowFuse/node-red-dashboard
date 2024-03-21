@@ -42,8 +42,8 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 ### Selection
 
 - **None**: No selection is allowed. The table will just display the data.
-- **Single Selection**: The full row becomes a clickable entity, and the `ui-table` node will _output the full object_ associated to a row when clicked.
-- **Multi Selection**: Each row has a checkbox, and the `ui-table` node will _output an array of objects_ associated to the checked rows when a checkbox is selected.
+- **Click**: The full row becomes a clickable entity, and the `ui-table` node will _output the full object_ associated to a row when clicked.
+- **Checkbox**: Each row has a checkbox, and the `ui-table` node will _output an array of objects_ associated to the checked rows when a checkbox is selected.
 
 ## Dynamic Properties
 
