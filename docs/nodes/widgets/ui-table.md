@@ -4,7 +4,7 @@ props:
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control.
-    Selection: Provides three options for table interaction - "None", "Multi Selection" and "Single Selection"
+    Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
     Columns: If "Auto Columns" is false, then these columns are used when rendering the table instead.
 dynamic:
