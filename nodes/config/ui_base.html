@@ -475,7 +475,7 @@
     }
 
     function addConfigNode (node) {
-        if (!node.user) {
+        if (!node.users) {
             node.users = []
         }
         node.dirty = true
@@ -570,7 +570,7 @@
             addConfigNode(baseNode)
 
             const theme = addDefaultTheme()
-            const page = addDefaultPage(base.id, theme.id)
+            const page = addDefaultPage(baseNode.id, theme.id)
             const group = addDefaultGroup(page.id)
 
             // update existing `ui-` nodes to use the new base/page/theme/group
