@@ -1,0 +1,190 @@
+[
+    {
+        "id": "test-helper",
+        "type": "function",
+        "z": "node-red-tab-tables",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-default",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Default",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "x": 300,
+        "y": 80,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "1ad285ca06fd711f",
+        "type": "inject",
+        "z": "node-red-tab-tables",
+        "name": "Inject Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.05",
+        "topic": "",
+        "payload": "[{\"value\":1,\"id\":\"id1\",\"name\":\"Name 1\"},{\"value\":2,\"id\":\"id2\",\"name\":\"Name 2\"},{\"value\":3,\"id\":\"id3\",\"name\":\"Name 3\"},{\"value\":4,\"id\":\"id4\",\"name\":\"Name 4\"},{\"value\":5,\"id\":\"id5\",\"name\":\"Name 5\"}]",
+        "payloadType": "json",
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "dashboard-ui-table-default",
+                "dashboard-ui-table-max-rows",
+                "dashboard-ui-table-single-row-click",
+                "dashboard-ui-table-multi-select"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-max-rows",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Max Rows: 2",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": "2",
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "x": 310,
+        "y": 120,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-single-row-click",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Single Row Selection",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "click",
+        "columns": [],
+        "x": 340,
+        "y": 160,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-multi-select",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Single Row Selection",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "checkbox",
+        "columns": [],
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    }
+]
