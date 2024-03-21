@@ -37,6 +37,12 @@
                 return this.name || 'table'
             },
             oneditprepare: function () {
+                // handle backward compatibility
+                const validSelectionTypes = ['none', 'checkbox', 'click']
+                if (!validSelectionTypes.includes(this.selectionType)) {
+                    $('#node-input-selectionType').val('none')
+                }
+    
                 $('#node-input-size').elementSizer({
                     width: '#node-input-width',
                     height: '#node-input-height',
