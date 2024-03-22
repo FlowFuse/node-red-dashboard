@@ -86,7 +86,7 @@ const setters = {
             if (!data[node.id]) {
                 data[node.id] = []
             }
-            data[node.id].push(structuredClone(msg))
+            data[node.id].push(config.RED.util.cloneMessage(msg))
         }
     }
 }
