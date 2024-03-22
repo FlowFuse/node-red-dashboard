@@ -173,19 +173,22 @@ export default {
         updateTheme () {
             const colors = this.$vuetify.theme.themes.nrdb.colors // Modify the Vuetify Theming
             const sizes = this.customThemeDefinitions // Implement some of our own Theming
+            // convert NR Theming to Vuetify Theming
             if (this.theme) {
-                // convert NR Theming to Vuetify Theming
-                colors.surface = this.theme.colors.surface
+                colors['navigation-background'] = this.theme.colors.surface
                 // primary bg
                 colors.primary = this.theme.colors.primary
                 // primary font - auto calculated
                 colors['on-primary'] = getContrast(this.theme.colors.primary)
                 // UI Background
                 colors.background = this.theme.colors.bgPage
-                // Group Background
+                // Group Styling
                 colors['group-background'] = this.theme.colors.groupBg
                 colors['group-outline'] = this.theme.colors.groupOutline
+                // widget background
+                colors.surface = this.theme.colors.groupBg
 
+                // sizes
                 sizes['--page-padding'] = this.theme.sizes.pagePadding
                 sizes['--group-gap'] = this.theme.sizes.groupGap
                 sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
