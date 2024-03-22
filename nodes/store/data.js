@@ -75,7 +75,7 @@ const setters = {
             data[node.id] = filtered
         } else {
             if (canSaveInStore(base, node, msg)) {
-                data[node.id] = structuredClone(msg)
+                data[node.id] = config.RED.util.cloneMessage(msg)
             }
         }
     },
