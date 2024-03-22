@@ -759,6 +759,17 @@ module.exports = function (RED) {
          */
         node.emit = emit
 
+        node.getBaseURL = function () {
+            // get the endpoint for the ui-base
+            const path = n.path || ''
+            // get our HTTP root, defined by NR Settings
+            const base = RED.settings.httpNodeRoot || '/'
+            const basePart = base.endsWith('/') ? base : `${base}/`
+            const dashPart = path.startsWith('/') ? path.slice(1) : path
+            const fullPath = `${basePart}${dashPart}`
+            return fullPath
+        }
+
         /**
          * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node
          * @param {*} page
