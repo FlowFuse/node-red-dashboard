@@ -69,13 +69,13 @@ const setters = {
             const filtered = []
             for (const m of msg) {
                 if (canSaveInStore(base, node, m)) {
-                    filtered.push(m)
+                    filtered.push(structuredClone(m))
                 }
             }
             data[node.id] = filtered
         } else {
             if (canSaveInStore(base, node, msg)) {
-                data[node.id] = msg
+                data[node.id] = structuredClone(msg)
             }
         }
     },
@@ -86,7 +86,7 @@ const setters = {
             if (!data[node.id]) {
                 data[node.id] = []
             }
-            data[node.id].push(msg)
+            data[node.id].push(structuredClone(msg))
         }
     }
 }
