@@ -69,7 +69,7 @@ const setters = {
             const filtered = []
             for (const m of msg) {
                 if (canSaveInStore(base, node, m)) {
-                    filtered.push(structuredClone(m))
+                    filtered.push(config.RED.util.cloneMessage(m))
                 }
             }
             data[node.id] = filtered
