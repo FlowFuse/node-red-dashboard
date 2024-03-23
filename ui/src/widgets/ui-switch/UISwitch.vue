@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}">
+    <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}" @click="toggle">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
         <v-switch v-if="!icon" v-model="status" :disabled="!state.enabled" :class="{'active': status}" hide-details="auto" color="primary" @update:model-value="onChange" />
         <v-btn v-else variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
@@ -83,9 +83,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 }
 .nrdb-switch label {
     flex-grow: 1;
+    cursor: inherit;
 }
 .nrdb-switch .v-switch {
     flex-grow: 0;
