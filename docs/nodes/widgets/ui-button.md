@@ -2,7 +2,9 @@
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown within the button.
+    Icon: Renders a Material Design icon within the button. There is no need to include the "mdi-" prefix. 
+    Icon Position: If "Icon" is defined, this property controls which side of the "Label" the icon will render on.
+    Label: The text shown within the button. If not provided, then the button will only render the icon.
 controls:
     enabled:
         example: true | false
