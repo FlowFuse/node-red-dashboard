@@ -30,6 +30,7 @@ const theme = {
     dark: false,
     colors: {
         background: '#fff',
+        'navigation-background': '#ffffff',
         'group-background': '#ffffff',
         primary: '#0000ff',
         accent: '#ff6b99',

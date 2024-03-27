@@ -357,3 +357,10 @@ main {
 .active .v-switch__thumb {
     opacity: 1.0;
 }
+
+/* Vuetify Overrides */
+.v-app-bar.v-toolbar,
+.v-navigation-drawer {
+    background: rgb(var(--v-theme-navigation-background));
+    color: rgba(var(--v-theme-on-navigation-background), var(--v-high-emphasis-opacity));
+}
