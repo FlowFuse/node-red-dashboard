@@ -53,11 +53,11 @@ It's worth stressing that support for config nodes within a subflow (and consequ
 In total, Dashboard 2.0 has 4 types of config nodes:
 
 - `ui-base` - Stores configuration for the full dashboard
-- `ui-page` - Stores configuration for a single page, there can be mltiple pages within a single `ui-base`.
+- `ui-page` - Stores configuration for a single page, there can be multiple pages within a single `ui-base`.
 - `ui-group` - Stores configuration for a single group, there can be multiple groups within a single `ui-page`.
 - `ui-theme` - Stores configuration for the theme of the dashboard. These themes are assigned on a page-by-page basis.
 
-Any of the first three here can be utilise within a subflow. It is not possible to use `ui-theme` as that's only a configurtion option on _another_ config node, `ui-page`.
+Any of the first three here can be utilise within a subflow. It is not possible to use `ui-theme` as that's only a configuration option on _another_ config node, `ui-page`.
 
 ![Screenshot of Node-RED, showing how to assign a ui-group type to a subflow property](../assets/images/subflow-config-group.png){data-zoomable}
 *Screenshot of Node-RED, showing how to assign a ui-group type to a subflow property*
@@ -69,11 +69,11 @@ Then, for each instance of our subflow, we can now define a `ui-group` to render
 
 #### Surfacing Node Properties
 
-If you have a Dashboard 2.0 node within a subflow, you can configure your nodes such that their properties can instead be defined at the subflow-level, and so be unique for each instance of that subdflow, e.g. a `ui-slider`'s label could be unique everytime you use the subflow. 
+If you have a Dashboard 2.0 node within a subflow, you can configure your nodes such that their properties can instead be defined at the subflow-level, and so be unique for each instance of that subflow, e.g. a `ui-slider`'s label could be unique every time you use the subflow. 
 
 Under the covers, subflows work by setting scoped Node-RED environment variables. These can then be utilised by the nodes within the subflow.
 
-Let's say we want to set the `label` of a `ui-slider` within a subflow through a property on the subflow itself. First we have a new property (Environment Vairable) on the subflow:
+Let's say we want to set the `label` of a `ui-slider` within a subflow through a property on the subflow itself. First we have a new property (Environment Variable) on the subflow:
 
 ![Screenshot of Node-RED, showing a "label" option defined on a subflow](../assets/images/subflow-config-label.png){data-zoomable}
 *Screenshot of Node-RED, showing a "label" option defined on a subflow*
@@ -85,12 +85,19 @@ To then access this in the child nodes, in our case the `ui-slider`, we can set 
 ![Screenshot of Node-RED, showing how to use the environment variable to dynamically set a property on a subflow's child node](../assets/images/subflow-config-label-slider.png){data-zoomable}
 *Screenshot of Node-RED, showing how to use the environment variable to dynamically set a property on a subflow's child node*
 
+##### Sizing
+
+When setting the size of a widget node like ui-text or ui-button within a subflow you will be presented with text input fields for width and height instead
+of the usual sizer widget. This is to permit setting the values externally via the subflow instance properties using the `${variable_name}` syntax.
+
+NOTE: You can still set the widget width and height to `0` to make the it perform auto sizing.
+
 ## Customising Appearance
 
 ![Screenshot of Node-RED, highlighting where the "Appearance" button is](../assets/images/subflow-appearance.png){data-zoomable}
 *Screenshot of Node-RED, highlighting where the "Appearance" button is*
 
-When editing a subflow's properties, you can click the "Appearance" tab in order to custmoise it's appearancde when the subflow is rendered in the workspace flows.
+When editing a subflow's properties, you can click the "Appearance" tab in order to customise it's appearance when the subflow is rendered in the workspace flows.
 
 You can control:
 

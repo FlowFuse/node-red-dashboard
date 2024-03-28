@@ -40,11 +40,24 @@
                 if (RED.editor.__debug === true) {
                     console.log('ui-markdown: oneditprepare')
                 }
-                $('#node-input-size').elementSizer({
-                    width: '#node-input-width',
-                    height: '#node-input-height',
-                    group: '#node-input-group'
-                })
+                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                if (RED.nodes.subflow(this.z)) {
+                    // change inputs from hidden to text & display them
+                    $('#node-input-width').attr('type', 'text')
+                    $('#node-input-height').attr('type', 'text')
+                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
+                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                } else {
+                    // not in a subflow, use the elementSizer
+                    $('div.form-row.nr-db-ui-element-sizer-row').show()
+                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('#node-input-size').elementSizer({
+                        width: '#node-input-width',
+                        height: '#node-input-height',
+                        group: '#node-input-group'
+                    })
+                }
                 this.editor = RED.editor.createEditor({
                     id: 'node-input-content-editor',
                     mode: 'ace/mode/markdown',
@@ -99,11 +112,17 @@
         <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
         <input style="flex-grow:1" type="text" id="node-input-group">
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
-        <input type="hidden" id="node-input-width">
-        <input type="hidden" id="node-input-height">
+    <div class="form-row nr-db-ui-element-sizer-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-markdown.label.size">Size</label>
         <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-markdown.label.width">Width</label>
+        <input type="hidden" id="node-input-width">
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-markdown.label.height">Height</label>
+        <input type="hidden" id="node-input-height">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
