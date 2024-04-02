@@ -6,9 +6,11 @@
 
 Node-RED supports the development of custom plugins that add behaviour and functionality to the Node-RED runtime. A really common use case of plugins is [custom Node-RED Themes](https://nodered.org/docs/api/ui/themes/), which modify the overall CSS/appearance of the underlying Node-RED Editor.
 
-Node-RED Dashboard 2.0 also supports plugins. This allows you to define custom behaviour for the Dashboard runtime. For now, we provide a collection of API hooks that allow the injection of code at various points in the Dashboard instantiation and runtime.
+Node-RED Dashboard 2.0 also supports plugins. This allows you to define custom behaviour for the Dashboard runtime, independent of particular nodes and widgets. For now, we provide a collection of [API hooks](#index-js) that allow the injection of code at various points in the Dashboard instantiation and runtime.
 
-To integrate, make sure your plugins are registered with `"type": "node-red-dashboard-2"` in the `package.json` file. This will tell Node-RED that this is a Dashboard 2.0 plugin.
+To integrate, make sure your Node-RED plugin is registered with `"type": "node-red-dashboard-2"` in the `package.json` file. This will tell Node-RED that this is a Dashboard 2.0 plugin.
+
+_Note: Plugins differ from [Third Party Widgets](../widgets/third-party.md). Third Party Widgets are built as nodes that become available in the Node-RED Editor, and can be dragged onto the Dashboard. Plugins are built to modify the behaviour of the Dashboard runtime itself._
 
 ## Plugin Structure
 

@@ -4,7 +4,12 @@
 
 # Building Third Party Widgets <AddedIn version="0.8.0" />
 
-If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and ideas for additions to the [core collection](../../nodes/widgets.md) of Widgets.
+A single widget consist of two key parts:
+
+1. A Node-RED node that will appear in the palette of the Node-RED Editor
+2. `.vue` and client-side code that renders the widget into a dashboard
+ 
+You can explore our collection of core widgets [here](../../nodes/widgets.md). If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and you can read more in our [Adding Core Widgets](./core-widgets.md) guide.
 
 We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Dashboard 1.0.
 
