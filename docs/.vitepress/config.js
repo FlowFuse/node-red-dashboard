@@ -54,6 +54,7 @@ export default ({ mode }) => {
         { text: 'Docs', link: '/getting-started.html' },
         { text: 'Widgets', link: '/nodes/widgets.html' },
         { text: 'Contributing', link: '/contributing/' },
+        { text: 'Forum', link: 'https://discourse.nodered.org/tag/dashboard-2' },
         { text: 'FlowFuse', link: 'https://flowfuse.com' },
         { text: 'GitHub', link: 'https://github.com/FlowFuse/node-red-dashboard' }
       ],
