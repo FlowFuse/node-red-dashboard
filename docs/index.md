@@ -13,26 +13,23 @@ hero:
       text: Getting Started
       link: /getting-started
     - theme: alt
+      text: Widget Collection
+      link: /getting-started
+    - theme: alt
       text: View on GitHub
       link: https://github.com/FlowFuse/node-red-dashboard
-
-features:
-  - icon: 
-      src: /bar-chart.svg
-    title: Diverse Widget Collection
-    details: From forms, to sliders, to charts, Dashboard contains a breadth of widgets to help you build the Dashboard you need.
-    link: /nodes/widgets
-    linkText: View Available Widgets
-  - icon:
-      src: /nodes.svg
-    title: Build Multi-User Dashboards!
-    details: Provide unique data to each user, build admin-only views, and track user activity with the FlowFuse User Addon.
-    link: https://flowfuse.com/blog/2024/01/dashboard-2-multi-user/
-    linkText: Read More
-  - icon:
-      src: /newspaper.svg
-    title: "Latest Blog Post"
-    link: https://flowfuse.com/blog/2024/01/dashboard-2-ga/
-    linkText: View Blog Post
-    details: Announcing the first stable release for Dashboard 2.0
 ---
+
+<script setup>
+    import HomeExtension from './components/HomeExtension.vue';
+    import RecommendedReading from './components/RecommendedReading.vue';
+</script>
+
+
+<HomeExtension>
+
+## Recommended Reading
+
+<RecommendedReading />
+
+</HomeExtension>
