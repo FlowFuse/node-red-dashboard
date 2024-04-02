@@ -44,11 +44,24 @@
             icon: 'font-awesome/fa-i-cursor',
             paletteLabel: 'text input',
             oneditprepare: function () {
-                $('#node-input-size').elementSizer({
-                    width: '#node-input-width',
-                    height: '#node-input-height',
-                    group: '#node-input-group'
-                })
+                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                if (RED.nodes.subflow(this.z)) {
+                    // change inputs from hidden to text & display them
+                    $('#node-input-width').attr('type', 'text')
+                    $('#node-input-height').attr('type', 'text')
+                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
+                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                } else {
+                    // not in a subflow, use the elementSizer
+                    $('div.form-row.nr-db-ui-element-sizer-row').show()
+                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('#node-input-size').elementSizer({
+                        width: '#node-input-width',
+                        height: '#node-input-height',
+                        group: '#node-input-group'
+                    })
+                }
                 // topic
                 $('#node-input-topic').typedInput({
                     default: 'str',
