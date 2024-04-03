@@ -6,6 +6,7 @@
             "size": "Size",
             "type": "Type",
             "style": "Style",
+            "gaugeTile": "Tile",
             "gaugeHalf": "Half Gauge",
             "gauge34": "3/4 Gauge",
             "needle": "Needle",
