@@ -25,6 +25,7 @@ hero:
 
     import HomeExtension from './components/HomeExtension.vue';
     import RecommendedReading from './components/RecommendedReading.vue';
+    import FlowFuseAdvert from './components/FlowFuseAdvert.vue';
     import CopyIcon from './components/icons/CopyIcon.vue';
 
     const copied = ref(false); 
@@ -47,6 +48,8 @@ hero:
 ## Recommended Reading
 
 <RecommendedReading />
+
+<FlowFuseAdvert />
 
 </HomeExtension>
 
@@ -76,4 +79,5 @@ hero:
     color: black;
   }
 }
+
 </style>
