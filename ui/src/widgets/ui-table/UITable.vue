@@ -11,7 +11,7 @@
         <template #item="{ index, item, internalItem }">
             <v-data-table-row
                 :index="index" :item="internalItem"
-                :class="{'nrdb-table-row-selectable': props.selectionType === 'click'}"
+                :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item}"
                 @click="props.selectionType === 'click' ? onRowClick(item) : {}"
             />
         </template>
@@ -128,14 +128,20 @@ export default {
             }
         },
         onRowClick (row) {
-            console.log(row)
+            if (this.selected === null) {
+                this.selected = row;
+            } else if (this.selected === row) {
+                this.selected = null;
+            } else {
+                this.selected = row;
+            }
+
             const msg = {
                 payload: row
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
         onMultiSelect (selected) {
-            console.log(selected)
             const msg = {
                 payload: selected
             }
@@ -179,5 +185,8 @@ export default {
 }
 .nrdb-table-row-selectable:active {
     background-color: rgba(var(--v-theme-on-group-background), var(--v-selected-opacity));
+}
+.nrdb-table-row-selected {
+    background-color: rgba(var(--v-theme-primary), var(--v-selected-opacity));
 }
 </style>
