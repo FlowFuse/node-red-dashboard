@@ -35,6 +35,7 @@ const articles = [
     .recommended-reading a {
         overflow: hidden;
         border-radius: 12px;
+        border: 2px solid transparent;
     }
     .recommended-reading img {
         transition: 0.15s transform;
