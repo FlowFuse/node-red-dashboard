@@ -58,7 +58,7 @@ export default ({ mode }) => {
       ],
       socialLinks: [
         { icon: 'github', link: 'https://github.com/FlowFuse/node-red-dashboard' },
-        { icon: 'twitter', link: 'https://twitter.com/FlowFuse' },
+        { icon: 'twitter', link: 'https://twitter.com/FlowFuseInc' },
         { icon: 'discord', link: 'https://discord.gg/2RrvW8dkrF' },
         { icon: 'youtube', link: 'https://www.youtube.com/channel/UCbBzP8NZbv3WDtlt4UouA-g' },
         {
@@ -67,9 +67,9 @@ export default ({ mode }) => {
           },
           link: 'https://discourse.nodered.org/tag/dashboard-2',
           ariaLabel: 'Node-RED Forum'
-        }
-
-        ],
+        },
+        { icon: 'npm', link: 'https://www.npmjs.com/package/@flowfuse/node-red-dashboard'}
+      ],
       outline: [2, 3],
       search: {
         provider: 'local'
