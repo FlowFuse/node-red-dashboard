@@ -1,5 +1,5 @@
 <template>
-  <div class="home-extension vp-doc container">
+  <div class="home-extension">
     <slot />
   </div>
 </template>
