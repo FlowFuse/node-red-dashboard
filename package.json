@@ -62,7 +62,7 @@
         "vue": "^3.4.5"
     },
     "devDependencies": {
-        "@mdi/font": "~6.9.96",
+        "@mdi/font": "^7.4.47",
         "@unhead/vue": "^1.7.4",
         "@vitejs/plugin-vue": "^4.5.0",
         "chart.js": "^4.4.0",
