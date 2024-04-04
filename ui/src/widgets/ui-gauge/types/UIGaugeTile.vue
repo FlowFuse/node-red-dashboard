@@ -35,7 +35,6 @@ export default {
                 return [r, g, b]
             }
             const rgb = hex2rgb(this.valueToColor(value))
-            console.log(rgb)
             if ((rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114) > 186) {
                 return 'black'
             } else {

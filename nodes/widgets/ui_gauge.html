@@ -170,15 +170,16 @@
                 if (type === 'gauge-tile') {
                     $('#node-input-container-sizes').hide()
                     $('#node-input-container-gstyle').hide()
+                    $('#node-input-container-label-extras').hide()
                 } else {
                     $('#node-input-container-sizes').show()
                     $('#node-input-container-gstyle').show()
+                    $('#node-input-container-label-extras').show()
                 }
             }
     
             $('#node-input-gtype').change(() => {
                 const gType = $('#node-input-gtype').val()
-                console.log('value changed', gType)
                 showTypeOptions(gType)
             })
         },
@@ -275,23 +276,25 @@
             <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
             <input type="text" id="node-input-title">
         </div>
-        <div class="form-row form-row-flex">
-            <div>
-                <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
-                <input type="text" id="node-input-prefix" style="width: 75px">
+        <div id="node-input-container-label-extras">
+            <div class="form-row form-row-flex">
+                <div>
+                    <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
+                    <input type="text" id="node-input-prefix" style="width: 75px">
+                </div>
+                <div>
+                    <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
+                    <input type="text" id="node-input-suffix" style="width: 75px">
+                </div>
             </div>
-            <div>
-                <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
-                <input type="text" id="node-input-suffix" style="width: 75px">
+            <div class="form-row" id="ui-gauge-units">
+                <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
+                <input type="text" id="node-input-units" placeholder="Unit">
             </div>
-        </div>
-        <div class="form-row" id="ui-gauge-units">
-            <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
-            <input type="text" id="node-input-units" placeholder="Unit">
-        </div>
-        <div class="form-row" id="ui-gauge-icon">
-            <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
-            <input type="text" id="node-input-icon" placeholder="Icon from mdi library, e.g. 'home'">
+            <div class="form-row" id="ui-gauge-icon">
+                <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
+                <input type="text" id="node-input-icon" placeholder="Icon from mdi library, e.g. 'home'">
+            </div>
         </div>
     </div>
     <div id="node-input-container-sizes">

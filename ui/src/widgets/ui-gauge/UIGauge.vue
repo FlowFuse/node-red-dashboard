@@ -33,15 +33,6 @@ export default {
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
         }
-    },
-    mounted () {
-        console.log('mounting gauge')
-    },
-    unmounted () {
-
-    },
-    methods: {
-
     }
 }
 </script>
