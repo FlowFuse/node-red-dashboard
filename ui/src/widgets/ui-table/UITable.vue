@@ -128,7 +128,7 @@ export default {
             }
         },
         onRowClick (row) {
-            this.selected = this.selected === row ? null : row;
+            this.selected = this.selected === row ? null : row
 
             const msg = {
                 payload: row
