@@ -2,7 +2,7 @@
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
-    Type: Defines the shape of the gauge, "Half Gauge" or "3/4 Gauge"
+    Type: Defines the shape of the gauge, "Tile", "Half Gauge" or "3/4 Gauge"
     Style: Defines the style of arc rendered, "Needle" or "Rounded"
     Range (min): The smallest value that can be shown on the gauge
     Range (max): The largest value that can be shown on the gauge
@@ -24,7 +24,14 @@ props:
 
 # Gauge `ui-gauge` <AddedIn version="1.1.0"/>
 
-Adds a Guage Chart to your Dashboard. This can be configured with custom types (half, 3/4), styles (rounded, needle) and segmentation with examples detailed [below](#examples).
+Adds a Gauge Chart to your Dashboard. This can be configured with custom types (half, 3/4), styles (rounded, needle) and segmentation with examples detailed [below](#examples).
+
+![Screenshot showing each gauge type side-by-side](/images/node-examples/ui-gauge-types.png "Screenshot showing each gauge type side-by-side"){data-zoomable}
+_Screenshot showing each gauge type side-by-side_
+
+## Input
+
+Values for the gauges can be set by sending a numerical value in `msg.payload`. The gauge will then update to reflect this value.
 
 ## Properties
 
@@ -67,4 +74,13 @@ Adds a Guage Chart to your Dashboard. This can be configured with custom types (
 
 ![Example of a 3/4 Gauge, showing a needle with segments and an arc](/images/node-examples/ui-gauge-34-needle.png "Example of a 3/4 Gauge, showing a needle with segments and an arc"){data-zoomable}
 *Example of a 3/4 Gauge, showing a needle with segments and an arc.*
+
+### Tile
+
+| Type | Label |
+| --- | --- |
+| Tile | My Tile |
+
+![Examples of some Tile Gauges](/images/node-examples/ui-gauge-34-needle.png "Examples of some Tile Gauges"){data-zoomable}
+*Examples of some Tile Gauges*
 
