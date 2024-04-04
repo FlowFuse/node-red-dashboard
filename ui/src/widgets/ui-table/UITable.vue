@@ -128,13 +128,7 @@ export default {
             }
         },
         onRowClick (row) {
-            if (this.selected === null) {
-                this.selected = row;
-            } else if (this.selected === row) {
-                this.selected = null;
-            } else {
-                this.selected = row;
-            }
+            this.selected = this.selected === row ? null : row;
 
             const msg = {
                 payload: row
