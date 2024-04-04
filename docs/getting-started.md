@@ -35,40 +35,35 @@ _Screen recording to show how easy it is to deploy your first Dashboard 2.0 appl
 
 In this case, we drop in a `ui-button`, click "Deploy" and then can see the button running live in our user interface.
 
-Notice too that Dashboard will automatically setup some underlying configurations for you (visible in the right-side menu):
-
-- `ui-base`: Each instance of Node-RED that uses Dashboard 2.0 must have a single `ui-base` element (we're hoping to add support for multiple in the future). This element contains all of the global settings for your Dashboard instance.
-- `ui-page`: A single Dashboard (`ui-base`) can consist of multiple pages, and can be navigated to using the left-side sidebar. Each page is then responsible for displaying a collection of `ui-group` elements.
-- `ui-group`: Each group contains a collection of widgets, and can be used to organize your Dashboard into logical sections.
-- `ui-theme`: Each `ui-page` can be assigned a given theme. Your "Themes" provide control over the aesthetic of your Dashboard like color, padding and margins.
+Notice too that Dashboard will automatically create a new group, page, theme and base Dashboard for you.
 
 ## Configuring your layout
 
-Dashboard 2.0 adds a dedicated sidebar to Node-RED to provide a centralized view of your pages, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
+Dashboard 2.0 adds a correspinding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
 
 ![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./assets/images/getting-started-sidebar.png){data-zoomable}
 _Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
 
-When defining your layout options, we break the choice into two sections:
+Layout options in a Dashboard 2.0 user interface are controlled by two main settings:
 
 - **Page Layout:** Controls how the `ui-groups`'s are presented on a given page in your application.
 - **Navigation Sidebar:** Defines the left-side navigation style, defined at the `ui-base` level.
 
-![Example of a "Grid" page layout, with "Collapsing" sidebar navigation.](./assets/images/getting-started-layout.png){data-zoomable}
-_Example of the "Grid" page layout, with "Collapsing" sidebar navigation._
+![Example of a "Grid" page layout, with a "Collapsing" sidebar navigation.](./assets/images/getting-started-layout.png){data-zoomable}
+_Example of the "Grid" page layout, with a "Collapsing" sidebar navigation._
 
-### Page Layout
+### Layout Options
 
-Currently, we have three different options for page layout:
+Currently, we have three different options for a page's layout:
 
-- **Grid:** ([docs](https://dashboard.flowfuse.com/layouts/types/grid.html)) This is the default layout for a page, and uses a 12-column grid system to layout your `ui-groups`. Widths of groups and widgets define the number of columns they will render in. So, a "width" of 6" would render to 50% of the screen. Grid layouts are entirely responsive, and will adjust to the size of the screen.
+- **Grid:** ([docs](https://dashboard.flowfuse.com/layouts/types/grid.html)) The default layout for a page. It uses a 12-column grid structure to layout the groups. The widths of each group or widget defines the number of columns they will render in. So, a "width" of 6" would render to 50% of the screen. Grid layouts are entirely responsive, and will adjust to the size of the screen.
 - **Fixed:** ([docs](https://dashboard.flowfuse.com/layouts/types/fixed.html)) Each component will render at a _fixed_ width, no matter what the screen size is. The "width" property is converted a fixed pixel value (multiples of 48px by default).
 - **Notebook:** ([docs](https://dashboard.flowfuse.com/layouts/types/notebook.html)) This layout will stretch to 100% width, up to a maximum width of 1024px, and will centrally align. It's particularly useful for storytelling (e.g. articles/blogs) or analysis type user interfaces (e.g. Jupyter Notebooks), where you want the user to digest content in a particular order through scrolling.
 
 
 ### Navigation Sidebar
 
-Dashboard 2.0 offers various options on the appearance of the navigation sidebar:
+Built into te frameowkr of hte UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behavior can be controlled. Options include:
 
 - **Collapsing:** When the sidebar is opened the page content will adjust with the width of the sidebar.
 - **Fixed:** The full sidebar will always be visible, and the page content will adjust to the width of the sidebar.
