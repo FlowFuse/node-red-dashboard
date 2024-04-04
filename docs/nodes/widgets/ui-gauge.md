@@ -81,6 +81,6 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 | --- | --- |
 | Tile | My Tile |
 
-![Examples of some Tile Gauges](/images/node-examples/ui-gauge-34-needle.png "Examples of some Tile Gauges"){data-zoomable}
+![Examples of some Tile Gauges](/images/node-examples/ui-gauge-tiles.png "Examples of some Tile Gauges"){data-zoomable}
 *Examples of some Tile Gauges*
 
