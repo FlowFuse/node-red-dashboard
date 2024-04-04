@@ -661,6 +661,7 @@
             addLayoutsDefaultsDebounced()
         }
     })
+
     RED.events.on('nodes:remove', function (event) {
         conditionalSidebarRefresh(event, 'nodes:remove')
     })
