@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${Math.min(props.width, Math.ceil(props.height / 2))}`">
+    <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${Math.min(props.width, Math.ceil(props.height / 2))}`">
         <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
         <svg ref="gauge" width="0" height="0">
             <g id="sections" />
