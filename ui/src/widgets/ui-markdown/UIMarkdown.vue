@@ -1,3 +1,10 @@
+<template>
+    <!-- <div ref="markdown" class="nrdb-ui-markdown-content" v-html="content" /> -->
+    <div ref="markdown" class="nrdb-ui-markdown-content">
+        <component :is="content" v-if="content" :id="id" :props="props" :msg="msg" />
+    </div>
+</template>
+
 <script>
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
@@ -50,69 +57,46 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        // handle {{ variable || 'placeholder' }} case where || is parsed as a table
-        const content = props.props.content.replace(/\|\|/g, 'mdORmd')
-        // convert to markdown
-        let md = marked.parse(content)
-        // reinject our || into the {{ }} where appropriate
-        md = md.replaceAll('mdORmd', '||')
-        return () => h({
-            props: ['id', 'props'],
-            errorCaptured: (err, vm, info) => {
-                console.error('errorCaptured', err, vm, info)
-                return false
-            },
-            template: `<div ref="markdown" class="nrdb-ui-markdown-content">${DOMPurify.sanitize(md)}</div>`,
-            computed: {
-                ...mapState('data', ['messages']),
-                ...mapGetters('data', ['getMsgProperty']),
-                msg () {
-                    if (this.messages[this.id]) {
-                        // re-render chart with new input
-                        this.renderMermaid()
-                    }
-                    return this.messages[this.id] || {}
-                }
-            },
-            mounted () {
-                this.renderMermaid()
-            },
-            methods: {
-                get (path, defaultValue) {
-                    return this.getMsgProperty(this.id, path, defaultValue)
-                },
-                renderMermaid () {
-                    if (this.$refs.markdown) {
-                        // remove the flag that mermaid uses to work out if an element has been processed
-                        this.$refs.markdown?.querySelector('.mermaid')?.removeAttribute('data-processed')
-                    }
-                    this.$nextTick(() => {
-                        // let Vue render the dynamic markdown first, then re-render the chart
-                        mermaid.run({
-                            querySelector: '.mermaid',
-                            suppressErrors: true
-                        })
-                    })
-                }
-            }
-        }, {
-            id: props.id,
-            props: props.props
-        })
+    data () {
+        return {
+            content: null
+        }
     },
     computed: {
-        ...mapState('data', ['messages'])
+        ...mapState('data', ['messages']),
+        msg () {
+            return this.messages[this.id] || {}
+        }
+    },
+    watch: {
+        'props.content': function () {
+            // when the node's config changes, re-render the content
+            this.parseContent()
+            this.renderMermaid()
+        }
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        useDataTracker(this.id, this.onMsgInput)
+        useDataTracker(this.id, this.onMsgInput, this.onMsgLoad)
+        // make sure we render something on first creation
+        this.parseContent()
+        this.renderMermaid()
     },
     errorCaptured: (err, vm, info) => {
         console.error('errorCaptured', err, vm, info)
         return false
     },
     methods: {
+        onMsgLoad: function (msg) {
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // if we're loading a msg from history,
+            // re-load the content to account for any new msg values
+            this.parseContent()
+            this.renderMermaid()
+        },
         onMsgInput: function (msg) {
             // compare new msg and old message
             // Mermaid doesn't like being told to re-render with the _exact_ same content,
@@ -124,6 +108,9 @@ export default {
                     msg
                 })
             }
+            // when we receive a new msg, re-render the content
+            this.parseContent()
+            this.renderMermaid()
         },
         msgChanged (oldMsg, newMsg) {
             const ignoreKeys = ['_event', '_msgid']
@@ -138,6 +125,40 @@ export default {
                     return true
                 }
             }
+        },
+        parseContent () {
+            // handle {{ variable || 'placeholder' }} case where || is parsed as a table
+            const content = this.props.content.replace(/\|\|/g, 'mdORmd')
+            // convert to markdown
+            let md = marked.parse(content)
+            // re-inject our || into the {{ }} where appropriate
+            md = md.replaceAll('mdORmd', '||')
+            const purified = DOMPurify.sanitize(md)
+
+            // make a new child component of parsed markdown & mermaid
+            const markdownComponent = {
+                props: {
+                    id: { type: String, required: true },
+                    props: { type: Object, default: () => ({}) },
+                    msg: { type: Object, default: () => ({}) }
+                },
+                template: `<div ref="markdown" class="nrdb-ui-markdown-content">${purified}</div>`
+            }
+
+            this.content = markdownComponent
+        },
+        renderMermaid () {
+            this.$nextTick(() => {
+                if (this.$refs.markdown) {
+                    // remove the flag that mermaid uses to work out if an element has been processed
+                    this.$refs.markdown?.querySelector('.mermaid')?.removeAttribute('data-processed')
+                }
+                // let Vue render the dynamic markdown first, then re-render the chart
+                mermaid.run({
+                    querySelector: '.mermaid',
+                    suppressErrors: true
+                })
+            })
         }
     }
 }
