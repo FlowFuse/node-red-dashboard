@@ -67,6 +67,12 @@ export default {
         },
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
+        },
+        segments () {
+            const segments = this.props.segments
+            return segments.sort((a, b) => {
+                return (a, b) => a.from - b.from
+            })
         }
     },
     watch: {
@@ -205,7 +211,7 @@ export default {
             // update sections
             this.updateSegmentArc()
 
-            const segments = this.props.segments
+            const segments = this.segments
             this.svg.select('#sections')
                 .selectAll('path')
                 .data(segments)
@@ -295,9 +301,8 @@ export default {
         },
         valueToColor (value) {
             // loop over ordered segments and find the segment this value lives inside
-            const segments = this.props.segments
             let color = ''
-            segments.forEach((s) => {
+            this.segments.forEach((s) => {
                 if (value >= s.from) {
                     color = s.color
                 }
@@ -325,7 +330,7 @@ export default {
             max.style.transform = `translate(${maxX}px, ${y}px)`
         },
         updateSegmentArc () {
-            const segments = this.props.segments
+            const segments = this.segments
             const minValue = this.props.min
             const maxValue = this.props.max
             let cAngle = -this.sizes.angle / 2

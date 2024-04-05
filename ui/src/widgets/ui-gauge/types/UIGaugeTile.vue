@@ -18,6 +18,8 @@ export default {
         valueToColor (value) {
             // loop over ordered segments and find the segment this value lives inside
             const segments = this.props.segments
+            segments.sort((a, b) => a.from - b.from)
+
             let color = segments[0].color
             segments.forEach((s) => {
                 if (value >= s.from) {
