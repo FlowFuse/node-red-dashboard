@@ -10,8 +10,6 @@ import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import { marked } from 'marked'
 import mermaid from 'mermaid'
-import { h } from 'vue'
-import { mapGetters, mapState } from 'vuex' // eslint-disable-line import/order
 
 import { useDataTracker } from '../data-tracker.mjs'
 
@@ -71,22 +69,24 @@ export default {
     watch: {
         'props.content': function () {
             // when the node's config changes, re-render the content
-            this.parseContent()
-            this.renderMermaid()
+            this.update()
         }
     },
     created () {
         // can't do this in setup as we have custom onInput function
         useDataTracker(this.id, this.onMsgInput, this.onMsgLoad)
         // make sure we render something on first creation
-        this.parseContent()
-        this.renderMermaid()
+        this.update()
     },
     errorCaptured: (err, vm, info) => {
         console.error('errorCaptured', err, vm, info)
         return false
     },
     methods: {
+        update () {
+            this.parseContent()
+            this.renderMermaid()
+        },
         onMsgLoad: function (msg) {
             this.$store.commit('data/bind', {
                 widgetId: this.id,
@@ -94,8 +94,7 @@ export default {
             })
             // if we're loading a msg from history,
             // re-load the content to account for any new msg values
-            this.parseContent()
-            this.renderMermaid()
+            this.update()
         },
         onMsgInput: function (msg) {
             // compare new msg and old message
@@ -109,8 +108,7 @@ export default {
                 })
             }
             // when we receive a new msg, re-render the content
-            this.parseContent()
-            this.renderMermaid()
+            this.update()
         },
         msgChanged (oldMsg, newMsg) {
             const ignoreKeys = ['_event', '_msgid']
