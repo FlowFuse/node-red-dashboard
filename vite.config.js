@@ -22,14 +22,14 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             manifest,
-            includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png'],
+            includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'assets/*.png', 'assets/*.woff2', 'assets/*.woff', 'assets/*.ttf', 'assets/*.eot'],
             // switch to "true" to enable sw on development
             devOptions: {
                 enabled: false
             },
             workbox: {
                 maximumFileSizeToCacheInBytes: 3000000,
-                globPatterns: ['**/*.{js,css,html}', '**/*.{svg,png,jpg,gif}'],
+                globPatterns: ['**/*.{js,css,html}', '**/*.{svg,png,jpg,gif,ttf,eot,woff,woff2}'],
                 cleanupOutdatedCaches: true
             }
         })

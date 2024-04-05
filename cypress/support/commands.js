@@ -55,6 +55,10 @@ Cypress.Commands.add('loadFlows', loadFlows)
 Cypress.Commands.add('deployFlow', deployFlow)
 
 Cypress.Commands.add('deployFixture', (fixture) => {
+    // disables service worker in testing due to ongoing issue with cypress - https://github.com/cypress-io/cypress/issues/27501
+    cy.intercept('/dashboard/sw.js', {
+        body: undefined
+    })
     let helperApi = null
     let rev = null
     // eslint-disable-next-line promise/catch-or-return
