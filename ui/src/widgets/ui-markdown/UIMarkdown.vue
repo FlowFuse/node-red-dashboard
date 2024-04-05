@@ -10,6 +10,7 @@ import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import { marked } from 'marked'
 import mermaid from 'mermaid'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 import { useDataTracker } from '../data-tracker.mjs'
 
