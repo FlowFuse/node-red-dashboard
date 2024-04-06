@@ -163,6 +163,25 @@
                 const segment = this.segments[i]
                 generateSegment(i + 1, segment)
             }
+
+            // only show relevant options
+
+            function showTypeOptions (type) {
+                if (type === 'gauge-tile') {
+                    $('#node-input-container-sizes').hide()
+                    $('#node-input-container-gstyle').hide()
+                    $('#node-input-container-label-extras').hide()
+                } else {
+                    $('#node-input-container-sizes').show()
+                    $('#node-input-container-gstyle').show()
+                    $('#node-input-container-label-extras').show()
+                }
+            }
+    
+            $('#node-input-gtype').change(() => {
+                const gType = $('#node-input-gtype').val()
+                showTypeOptions(gType)
+            })
         },
         oneditsave: function () {
             const segments = $('#node-input-segments-container').children()
@@ -205,6 +224,7 @@
     <div class="form-row">
         <label for="node-input-gtype"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.type"></span></label>
         <select id="node-input-gtype" style="width:150px">
+            <option value="gauge-tile" data-i18n="ui-gauge.label.gaugeTile"></option>
             <option value="gauge-34" data-i18n="ui-gauge.label.gauge34"></option>
             <option value="gauge-half" data-i18n="ui-gauge.label.gaugeHalf"></option>
             <!-- <segment value="donut">Donut</segment>
@@ -212,7 +232,7 @@
             <segment value="wave">Level</segment> -->
         </select>
     </div>
-    <div class="form-row">
+    <div id="node-input-container-gstyle" class="form-row">
         <label for="node-input-gstyle"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.style"></span></label>
         <select id="node-input-gstyle" style="width:150px">
             <option value="needle" data-i18n="ui-gauge.label.needle"></option>
@@ -256,42 +276,46 @@
             <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
             <input type="text" id="node-input-title">
         </div>
-        <div class="form-row form-row-flex">
-            <div>
-                <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
-                <input type="text" id="node-input-prefix" style="width: 75px">
+        <div id="node-input-container-label-extras">
+            <div class="form-row form-row-flex">
+                <div>
+                    <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
+                    <input type="text" id="node-input-prefix" style="width: 75px">
+                </div>
+                <div>
+                    <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
+                    <input type="text" id="node-input-suffix" style="width: 75px">
+                </div>
             </div>
-            <div>
-                <label for="node-input-suffix" style="margin-left: 48px;"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.suffix"></span></label>
-                <input type="text" id="node-input-suffix" style="width: 75px">
+            <div class="form-row" id="ui-gauge-units">
+                <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
+                <input type="text" id="node-input-units" placeholder="Unit">
+            </div>
+            <div class="form-row" id="ui-gauge-icon">
+                <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
+                <input type="text" id="node-input-icon" placeholder="Icon from mdi library, e.g. 'home'">
             </div>
         </div>
-        <div class="form-row" id="ui-gauge-units">
-            <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
-            <input type="text" id="node-input-units" placeholder="Unit">
+    </div>
+    <div id="node-input-container-sizes">
+        <div class="form-row">
+            <h3 data-i18n="ui-gauge.label.sizes"></h3>
         </div>
-        <div class="form-row" id="ui-gauge-icon">
-            <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
-            <input type="text" id="node-input-icon" placeholder="Icon from mdi library, e.g. 'home'">
+        <div class="form-row">
+            <label for="node-input-sizeThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gauge"></span></label>
+            <input type="text" id="node-input-sizeThickness" style="width:75px; margin-right: 3px;">px
         </div>
-    </div>
-    <div class="form-row">
-        <h3 data-i18n="ui-gauge.label.sizes"></h3>
-    </div>
-    <div class="form-row">
-        <label for="node-input-sizeThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gauge"></span></label>
-        <input type="text" id="node-input-sizeThickness" style="width:75px; margin-right: 3px;">px
-    </div>
-    <div class="form-row">
-        <label for="node-input-sizeGap"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gap"></span></label>
-        <input type="text" id="node-input-sizeGap" style="width:75px; margin-right: 3px;">px
-    </div>
-    <div class="form-row">
-        <label for="node-input-sizeKeyThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
-        <input type="text" id="node-input-sizeKeyThickness" style="width:75px; margin-right: 3px;">px
-    </div>
-    <div class="form-row">
-        <h3 data-i18n="ui-gauge.label.styling"></h3>
+        <div class="form-row">
+            <label for="node-input-sizeGap"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.gap"></span></label>
+            <input type="text" id="node-input-sizeGap" style="width:75px; margin-right: 3px;">px
+        </div>
+        <div class="form-row">
+            <label for="node-input-sizeKeyThickness"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
+            <input type="text" id="node-input-sizeKeyThickness" style="width:75px; margin-right: 3px;">px
+        </div>
+        <div class="form-row">
+            <h3 data-i18n="ui-gauge.label.styling"></h3>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i>  <span data-i18n="ui-gauge.label.class"></span></label>

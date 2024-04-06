@@ -17,7 +17,6 @@ The nodes will then be available in your editor for you to get started.
 
 If you want to use `npm` to install your nodes, you can instead [follow these instructions](https://nodered.org/docs/user-guide/runtime/adding-nodes)
 
-
 ## Dashboard Hierarchy
 
 Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can be configured and arranged in our own User Interface. The hierarchy of a Dashboard is as follows:
@@ -27,27 +26,50 @@ Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can
 - **Group** - A collection of widgets. Rendered onto a page.
 - **Widget** - A single widget (e.g. chart, button, form) created in Dashboard.
 
-## Building a Dashboard
+## Adding your first widgets
 
-To get started, drop any widget from the flows on the left-side of Node-RED onto the editor.
+With the nodes installed, getting started is as easy as choosing a node from the Palette (the left-hand side list of nodes) in Node-RED, and dropping it onto your canvas.
 
-![Install via "Manage Palette"](./assets/images/demo-add-widget.gif){data-zoomable}
-*Demo showing how to add a Dashboard widget to the Node-RED Editor*
+![Screen recording to show how easy it is to deploy your first Dashboard 2.0 application.](./assets/images/getting-started.gif){data-zoomable}
+_Screen recording to show how easy it is to deploy your first Dashboard 2.0 application._
 
-### Initial Manual Step 
+In this case, we drop in a `ui-button`, click "Deploy" and then can see the button running live in our user interface.
 
-For the first widget you add, you will need to double click your new widget, and create your first group, page, theme and base. Once you have created these, you can add more widgets to the same group freely, and add any more groups/pages as you need to.
+Notice too that Dashboard will automatically create a new group, page, theme and base Dashboard for you.
 
-_Note: we do have a plan to automate this initial manual step of creating group/page/base - [issue](https://github.com/FlowFuse/node-red-dashboard/issues/66)._
+## Configuring your layout
 
-## Managing your Dashboard
+Dashboard 2.0 adds a correspinding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
 
-Once you have created a few widgets, groups and/or pages, you may want to make use of the Dashboard 2.0 sidebar. Sidebars are available on the right-hand side of the Node-RED interface. The down chevron provides access to more if you don't see Dashboard 2.0 in the initial tabs.
+![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./assets/images/getting-started-sidebar.png){data-zoomable}
+_Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
 
-![Using the Dashboard 2.0 Sidebar"](./assets/images/demo-open-sidebar.gif){data-zoomable}
-*Demo showing how to open, and use, the Dashboard 2.0 sidebar*
+Layout options in a Dashboard 2.0 user interface are controlled by two main settings:
 
-The sidebar offers you a central place to manage your pages, groups and widgets. You can control the order that each of these appear in their respective parents, and even move widgets between groups, and groups between pages.
+- **Page Layout:** Controls how the `ui-groups`'s are presented on a given page in your application.
+- **Navigation Sidebar:** Defines the left-side navigation style, defined at the `ui-base` level.
+
+![Example of a "Grid" page layout, with a "Collapsing" sidebar navigation.](./assets/images/getting-started-layout.png){data-zoomable}
+_Example of the "Grid" page layout, with a "Collapsing" sidebar navigation._
+
+### Layout Options
+
+Currently, we have three different options for a page's layout:
+
+- **Grid:** ([docs](https://dashboard.flowfuse.com/layouts/types/grid.html)) The default layout for a page. It uses a 12-column grid structure to layout the groups. The widths of each group or widget defines the number of columns they will render in. So, a "width" of 6" would render to 50% of the screen. Grid layouts are entirely responsive, and will adjust to the size of the screen.
+- **Fixed:** ([docs](https://dashboard.flowfuse.com/layouts/types/fixed.html)) Each component will render at a _fixed_ width, no matter what the screen size is. The "width" property is converted a fixed pixel value (multiples of 48px by default).
+- **Notebook:** ([docs](https://dashboard.flowfuse.com/layouts/types/notebook.html)) This layout will stretch to 100% width, up to a maximum width of 1024px, and will centrally align. It's particularly useful for storytelling (e.g. articles/blogs) or analysis type user interfaces (e.g. Jupyter Notebooks), where you want the user to digest content in a particular order through scrolling.
+
+
+### Navigation Sidebar
+
+Built into te frameowkr of hte UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behavior can be controlled. Options include:
+
+- **Collapsing:** When the sidebar is opened the page content will adjust with the width of the sidebar.
+- **Fixed:** The full sidebar will always be visible, and the page content will adjust to the width of the sidebar.
+- **Collapse to Icons:** When minimized, users can still navigate between pages by clicking on the icons representing each page in the sidebar.
+- **Appear over Content:** When the sidebar is opened, the page is given an overlay, and the sidebar sits on top.
+- **Always Hide:** The sidebar will never show, and navigation between pages can instead be driven by [`ui-control`](https://dashboard.flowfuse.com/nodes/widgets/ui-control.html).
 
 ## Contributing
 

@@ -661,6 +661,7 @@
             addLayoutsDefaultsDebounced()
         }
     })
+
     RED.events.on('nodes:remove', function (event) {
         conditionalSidebarRefresh(event, 'nodes:remove')
     })
@@ -1308,7 +1309,7 @@
         $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="width: 90px"><a class="red-ui-tab-label" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
 
         // Add in Tab Content
-        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px)"></div>`).appendTo(sidebar)
+        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px);"></div>`).appendTo(sidebar)
         return content
     }
 
@@ -1353,9 +1354,6 @@
                             }
                         })
 
-                        // default to first tab
-                        ulDashboardTabs.children().first().addClass('active')
-
                         // on tab click, show the tab content, and hide the others
                         ulDashboardTabs.children().on('click', function (evt) {
                             const tab = $(this)
@@ -1366,6 +1364,9 @@
                             tabContent.show()
                             evt.preventDefault()
                         })
+
+                        // default to first tab
+                        ulDashboardTabs.children().first().trigger('click')
 
                         // add page/layout editor
                         buildLayoutOrderEditor(pagesContent)
