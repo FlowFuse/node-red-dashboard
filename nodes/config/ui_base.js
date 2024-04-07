@@ -1001,7 +1001,7 @@ module.exports = function (RED) {
             // remove widget from our UI config
             if (widgetNode) {
                 const widget = node.ui.widgets.get(widgetNode.id)
-                if (widget.hooks.onSocket) {
+                if (widget.hooks?.onSocket) {
                     // We have some custom socketIO hooks to remove
 
                     // loop over SocketIO connections

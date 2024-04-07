@@ -1,5 +1,12 @@
 # Adding New Core Widgets
 
+A single widget consist of two key parts:
+
+1. A Node-RED node that will appear in the palette of the Node-RED Editor
+2. `.vue` and client-side code that renders the widget into a dashboard
+ 
+You can explore our collection of core widgets [here](../../nodes/widgets.md).
+
 We are always open to Pull Requests and new ideas on widgets that can be added to the core Dashboard repository.
 
 When adding a new widget to the core collection, you will need to follow the steps below to ensure that the widget is available in the Node-RED editor and renders correctly in the UI.

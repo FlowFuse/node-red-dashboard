@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.6.1",
+    "version": "1.7.1",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -19,6 +19,10 @@
         {
             "name": "Pez Cuckow",
             "url": "https://github.com/pezmc"
+        },
+        {
+            "name": "FlowFuse",
+            "url": "https://flowfuse.com"
         }
     ],
     "files": [
@@ -58,7 +62,7 @@
         "vue": "^3.4.5"
     },
     "devDependencies": {
-        "@mdi/font": "~6.9.96",
+        "@mdi/font": "^7.4.47",
         "@unhead/vue": "^1.7.4",
         "@vitejs/plugin-vue": "^4.5.0",
         "chart.js": "^4.4.0",
@@ -91,7 +95,7 @@
         "socket.io-client": "^4.7.2",
         "sort-package-json": "^2.6.0",
         "vite": "^5.0.0",
-        "vitepress": "^1.0.0-rc.40",
+        "vitepress": "^1.0.2",
         "vue-router": "^4.2.4",
         "vuetify": "^3.4.10",
         "vuex": "^4.1.0"

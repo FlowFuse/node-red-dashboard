@@ -8,6 +8,7 @@ describe('Node-RED Dashboard 2.0', () => {
 
     it('will redirect to the default page when an unrecognised URL is given', () => {
         cy.url().should('include', '/dashboard/page1')
+        cy.get('.v-toolbar-title.v-app-bar-title').should('have.text', 'Page 1')
     })
 
     it('will have a navigation drawer, accessible via the top-left button, and can switch between pages here', () => {

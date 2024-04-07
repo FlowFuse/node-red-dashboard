@@ -1,0 +1,198 @@
+[
+    {
+        "id": "node-red-tab-gauges",
+        "type": "tab",
+        "label": "UI Gauges",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-gauge-tile",
+        "type": "ui-gauge",
+        "z": "node-red-tab-gauges",
+        "name": "Tile)",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-tile",
+        "gstyle": "needle",
+        "title": "Tile",
+        "units": "",
+        "icon": "home",
+        "prefix": "",
+        "suffix": "%",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#23d123"
+            },
+            {
+                "from": "30",
+                "color": "#ffc800"
+            },
+            {
+                "from": "60",
+                "color": "#ff0000"
+            },
+            {
+                "from": "80",
+                "color": "#630808"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "0",
+        "sizeGap": "0",
+        "sizeKeyThickness": "32",
+        "styleRounded": false,
+        "styleGlow": true,
+        "className": "",
+        "x": 100,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-gauge-dial-half",
+        "type": "ui-gauge",
+        "z": "node-red-tab-gauges",
+        "name": "Tile)",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Tile",
+        "units": "",
+        "icon": "home",
+        "prefix": "",
+        "suffix": "%",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#23d123"
+            },
+            {
+                "from": "30",
+                "color": "#ffc800"
+            },
+            {
+                "from": "60",
+                "color": "#ff0000"
+            },
+            {
+                "from": "80",
+                "color": "#630808"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "0",
+        "sizeGap": "0",
+        "sizeKeyThickness": "32",
+        "styleRounded": false,
+        "styleGlow": true,
+        "className": "",
+        "x": 100,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-gauge-dial-34",
+        "type": "ui-gauge",
+        "z": "node-red-tab-gauges",
+        "name": "Tile)",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "Tile",
+        "units": "",
+        "icon": "home",
+        "prefix": "",
+        "suffix": "%",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#23d123"
+            },
+            {
+                "from": "30",
+                "color": "#ffc800"
+            },
+            {
+                "from": "60",
+                "color": "#ff0000"
+            },
+            {
+                "from": "80",
+                "color": "#630808"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "0",
+        "sizeGap": "0",
+        "sizeKeyThickness": "32",
+        "styleRounded": false,
+        "styleGlow": true,
+        "className": "",
+        "x": 100,
+        "y": 180,
+        "wires": []
+    }
+]

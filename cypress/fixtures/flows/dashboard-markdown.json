@@ -1,0 +1,227 @@
+[
+    {
+        "id": "node-red-tab-markdown",
+        "type": "tab",
+        "label": "UI Markdown",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-markdown-static",
+        "type": "ui-markdown",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "content": "# Static Markdown",
+        "className": "",
+        "x": 330,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-markdown-1",
+        "type": "ui-markdown",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "content": "# Injected Payload Value\n\nGoes here - updated\n\nInjected content: {{ msg?.payload }}\n\n```mermaid\ngraph TD;\n    A-->B;\n    A-->C;\n    B-->D;\n    C-->D;\n    C-->F;\n```",
+        "className": "",
+        "x": 330,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-markdown-2",
+        "type": "ui-markdown",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "Dynamic Mermaid",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "content": "```mermaid\n{{ msg?.payload }}\n```",
+        "className": "",
+        "x": 350,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-str",
+        "type": "ui-button",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button (str)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "Hello World",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "dashboard-ui-markdown-1"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-num",
+        "type": "ui-button",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button (num)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "5",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 60,
+        "wires": [
+            [
+                "dashboard-ui-markdown-1"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-graph-E",
+        "type": "ui-button",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Graph with E",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "graph TD;     A-->B;     A-->C;     B-->D;     C-->E;",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-markdown-2"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-graph-F",
+        "type": "ui-button",
+        "z": "node-red-tab-markdown",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Graph with F",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "graph TD;     A-->B;     A-->C;     B-->D;     C-->F;",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-markdown-2"
+            ]
+        ]
+    }
+]
