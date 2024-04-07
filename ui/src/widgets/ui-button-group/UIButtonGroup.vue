@@ -1,6 +1,6 @@
 <template>
     <div class="nrdb-ui-button-group-wrapper">
-        <label v-if="props.label" class="v-label">
+        <label v-if="props.label" class="nrdb-ui-buttongroup-label">
             {{ props.label }}
         </label>
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" @update:model-value="onChange(selection)">
@@ -119,5 +119,10 @@ export default {
 
 .nrdb-ui-button-group-wrapper .icon-only .v-btn__prepend {
     margin-inline: 0;
+}
+.nrdb-ui-buttongroup-label {
+    font-size: 1rem;
+    color: #717171;
+    font-family: Helvetica;
 }
 </style>
