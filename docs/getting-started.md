@@ -1,3 +1,7 @@
+---
+description: Kickstart your Node-RED Dashboard 2.0 journey with this getting started guide. Perfect for beginners.
+---
+
 # Getting Started
 
 ## Installation

@@ -1,3 +1,7 @@
+---
+description: Get inspired with a variety of UI template examples in Node-RED Dashboard 2.0, enhancing your dashboard design process.
+---
+
 # UI Template Examples
 
 The UI Template node allows you to create custom widgets for your dashboard, as well as define custom CSS to style your dashboard in anyway you like.

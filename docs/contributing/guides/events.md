@@ -1,3 +1,7 @@
+---
+description: Dive deep into the events architecture of Node-RED Dashboard 2.0 for efficient data handling and UI interaction.
+---
+
 # Events Architecture
 
 An important part of the Dashboard is how Node-RED and the Dashboard communicate. This is achieved using [socket.io](https://socket.io/).

@@ -1,3 +1,7 @@
+---
+description: Master state management in Node-RED Dashboard 2.0 for maintaining a responsive and dynamic user interface.
+---
+
 # State Management
 
 Dashboard 2.0 provides a data store within Node-RED such that it's possible to refresh your Dashboard clients and data is retained. This is particularly useful for widgets like `ui-chart` where you may want to retain a history of data points, or for widgets like `ui-text` where you want to retain the last value displayed.

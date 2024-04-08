@@ -1,3 +1,7 @@
+---
+description: Efficient strategies and tips for debugging your Node-RED Dashboard 2.0 setups to ensure smooth operation.
+---
+
 # Debugging Dashboard 2.0
 
 Dashboard 2.0 comes with a built-in debugging tool to understand the data being configured for each dashboard, page, theme, group and widget.

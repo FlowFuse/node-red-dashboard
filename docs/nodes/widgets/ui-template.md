@@ -1,4 +1,5 @@
 ---
+description: Harness the power of ui-template in Node-RED Dashboard 2.0 to design custom widgets and unique dashboard layouts.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Scope: "Template nodes can be used  for 3 purposes/scopes: <ul><li><b>Widget (Group-Scoped):</b>A standard HTML/Vue widget rendered in a group in the Dashboard.</li><li><b>Widget (Page-Scoped):</b>A HTML/Vue widget that will render on a page, outside of any existing groups. Note that these widgets will render after any Groups. An example use case for this would be if you wanted to have a fixed footer on a given page.</li><li><b>Widget (UI-Scoped):</b>A HTML/Vue widget rendered on every page of the Dashboard. Most commonly used in conjuction with <a href=\"#teleports\">Teleports</a></li><li><b>CSS (All Pages):</b>Define custom CSS classes/styling that applies to the entire Dashboard.</li><li><b>CSS (Single Page):</b>Define custom CSS classes/styling that applies just a single page of your Dashboard.</li></ul>"

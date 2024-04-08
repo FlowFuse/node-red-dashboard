@@ -1,3 +1,7 @@
+---
+description: Customize your Node-RED Dashboard 2.0 experience with detailed settings for optimal dashboard performance and appearance.
+---
+
 # Settings
 
 Whilst most dashboard configuration is done within the Node-RED editor, some settings

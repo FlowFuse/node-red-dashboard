@@ -1,3 +1,7 @@
+---
+description: Explore how layout managers in Node-RED Dashboard 2.0 can help organize your dashboard's appearance effectively.
+---
+
 # Layout Managers
 
 Dashboard's UI is built around the central core of a "Layout Manager" which is responsible for rendering the UI, and managing the layout of the widgets within it.

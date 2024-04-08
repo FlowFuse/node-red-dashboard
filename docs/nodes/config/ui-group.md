@@ -1,4 +1,5 @@
 ---
+description: Group your widgets effectively in Node-RED Dashboard 2.0 for better organization and user navigation.
 props:
     Name: Descrptive name for this group, will show in the Node-RED Editor and as a label in the Dashboard.
     Page: The Page (<code>ui-page</code>) that this group will render on. 

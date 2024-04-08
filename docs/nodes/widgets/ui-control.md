@@ -1,5 +1,6 @@
 ---
 {
+    "description": "Master the ui-control widget in Node-RED Dashboard 2.0 to manage dashboard states and data flows.",
     "events": [
         {
             "event": "$pageview",

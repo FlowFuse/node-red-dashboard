@@ -1,4 +1,5 @@
 ---
+description: Employ the ui-text widget in Node-RED Dashboard 2.0 to display static or dynamic text content elegantly on your dashboard.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

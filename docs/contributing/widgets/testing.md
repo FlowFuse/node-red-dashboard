@@ -1,3 +1,7 @@
+---
+description: Comprehensive guide on end-to-end testing for Node-RED Dashboard 2.0, ensuring reliability and performance.
+---
+
 # E2E Testing
 
 E2E Testing consists of runnig a local environment, and automating interaction with the browser to test the widgets behaviour.

@@ -1,3 +1,7 @@
+---
+description: Learn how to use the fixed layout in Node-RED Dashboard 2.0 for static, stable dashboard designs.
+---
+
 # Layout: Fixed
 
 _Note: This layout still needs work to make it more flexible and practical, it is advised to use another layout for now._
