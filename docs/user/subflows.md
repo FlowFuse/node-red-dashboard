@@ -1,3 +1,7 @@
+---
+description: Maximize efficiency in Node-RED Dashboard 2.0 by leveraging subflows for reusable logic and streamlined development.
+---
+
 <script setup>
     import ComingSoon from '../components/ComingSoon.vue';
     import NodeREDVersion from '../components/NodeRedVersion.vue';

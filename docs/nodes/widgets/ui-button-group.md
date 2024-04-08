@@ -1,4 +1,5 @@
 ---
+description: Create grouped button interfaces in Node-RED Dashboard 2.0 for efficient action management.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

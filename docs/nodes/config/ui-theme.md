@@ -1,4 +1,5 @@
 ---
+description: Customize the look and feel of your dashboard with UI themes in Node-RED Dashboard 2.0.
 colors:
     Surface: Controls the color of the navigation and side menus
     Primary: Any interactive element is styled with this color, including buttons, sliders and focus state of input fields.

@@ -1,3 +1,7 @@
+---
+description: Guide to building custom plugins for Node-RED Dashboard 2.0, enhancing its capabilities with your functionality.
+---
+
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
 </script>

@@ -1,4 +1,5 @@
 import { loadEnv } from 'vite';
+const defaultMetaDescription = "Discover the features and benefits of Node-RED Dashboard 2.0, designed to streamline and enhance your Node-RED experience."
 
 export default ({ mode }) => {
   process.env = {...process.env, ...loadEnv(mode, process.cwd())};
@@ -9,7 +10,7 @@ export default ({ mode }) => {
         lang: 'en',
         label: 'English',
         title: 'Node-RED Dashboard 2.0',
-        description: 'Documentation for Node-RED Dashboard 2.0, a collection of nodes to build out data visualisations and dashboards in Node-RED',
+        description: defaultMetaDescription
       }
     },
     head: [
@@ -46,6 +47,16 @@ export default ({ mode }) => {
       pageData.frontmatter.head.push([
         'link',
         { rel: 'canonical', href: canonicalUrl }
+      ])
+
+      const metaDescription = 
+        pageData.frontmatter.description === undefined
+        ? defaultMetaDescription
+        : pageData.frontmatter.description
+
+      pageData.frontmatter.head.push([
+        'meta',
+        { name: 'description', content: metaDescription}
       ])
     },
     themeConfig: {

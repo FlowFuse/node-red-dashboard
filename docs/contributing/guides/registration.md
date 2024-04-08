@@ -1,3 +1,7 @@
+---
+description: Learn the process of widget registration in Node-RED Dashboard 2.0 to enhance your dashboard's functionality.
+---
+
 # Widget Registration
 
 Every `ui-base`, `ui-page` and `ui-group` has a `.register` function. The core registration function can be found in `ui-base`.

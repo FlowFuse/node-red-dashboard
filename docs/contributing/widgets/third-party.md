@@ -1,3 +1,6 @@
+---
+description: Expand Node-RED Dashboard 2.0 with third-party widgets. Learn how to build and integrate them.
+---
 <script setup>
     import AddedIn from '../../components/AddedIn.vue'
 </script>

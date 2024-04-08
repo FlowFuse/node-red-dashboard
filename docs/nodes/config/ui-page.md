@@ -1,4 +1,5 @@
 ---
+description: Manage your dashboard pages with ease in Node-RED Dashboard 2.0 for a streamlined user experience.
 props:
     UI: The UI (<code>ui-base</code>) that this page will be added to. 
     Path: Extending the parent UI path, defines where this page renders

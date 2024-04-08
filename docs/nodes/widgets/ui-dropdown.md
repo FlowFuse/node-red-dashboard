@@ -1,4 +1,5 @@
 ---
+description: Incorporate ui-dropdown in Node-RED Dashboard 2.0 for user selections and dynamic content filtering.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.

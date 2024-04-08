@@ -1,3 +1,7 @@
+---
+description: Join the development of Node-RED Dashboard 2.0. Learn how you can contribute to making it better for everyone.
+---
+
 # Contributing
 
 Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas we want to get built, and we'd love to have your help!

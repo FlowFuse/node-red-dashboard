@@ -1,3 +1,7 @@
+---
+description: Learn how to use dynamic properties in Node-RED Dashboard 2.0 to create flexible and responsive dashboard interfaces.
+---
+
 # Dynamic Properties
 
 Node-RED offers functionality to set properties of a node at runtime. This can be useful to generate dynamic functionality and behaviour, and in Node-RED Dashboard 2.0, this is possible on any field supported with the _"fx"_ icon.

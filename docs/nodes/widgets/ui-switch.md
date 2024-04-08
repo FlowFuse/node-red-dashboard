@@ -1,4 +1,5 @@
 ---
+description: Utilize the ui-switch widget in Node-RED Dashboard 2.0 to create interactive toggle controls for dynamic dashboard interactions.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

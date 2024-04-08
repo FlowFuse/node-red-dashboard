@@ -1,3 +1,7 @@
+---
+description: Explore the wide range of widgets available in Node-RED Dashboard 2.0 to enhance your dashboard's interactivity.
+---
+
 <script setup>
     import { ref } from 'vue'
     import WidgetCard from '../components/WidgetCard.vue'

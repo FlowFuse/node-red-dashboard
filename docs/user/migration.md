@@ -1,3 +1,6 @@
+---
+description: Easily migrate from Dashboard 1.0 to 2.0 with this comprehensive guide, ensuring a smooth transition for your projects.
+---
 <script setup>
     import { ref } from 'vue'
     import MigrationWidgetProfile from '../components/MigrationWidgetProfile.vue'

@@ -1,4 +1,5 @@
 ---
+description: Configure the base UI settings of Node-RED Dashboard 2.0 to tailor the dashboard environment to your needs.
 props:
     Path: The endpoint proceeding the host of Node-RED where your UI will be accessible
     Include Page Path in Label: The side navigation lists all available Pages for the Dashboard. By default, this will just show the page name, but this option allows you to also show the page's path.

@@ -1,3 +1,7 @@
+---
+description: Step-by-step guide on adding new core widgets to Node-RED Dashboard 2.0 to expand its interactive features.
+---
+
 # Adding New Core Widgets
 
 A single widget consist of two key parts:
