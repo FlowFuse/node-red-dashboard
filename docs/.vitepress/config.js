@@ -49,7 +49,7 @@ export default ({ mode }) => {
         { rel: 'canonical', href: canonicalUrl }
       ])
 
-      let metaDescription = 
+      const metaDescription = 
         pageData.frontmatter.description === undefined
         ? defaultMetaDescription
         : pageData.frontmatter.description

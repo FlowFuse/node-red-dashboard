@@ -1,6 +1,6 @@
 ---
 {
-    "description": "Master the ui-control widget in Node-RED Dashboard 2.0 to manage dashboard states and data flows.",
+    "description": "Dynamically control elements on your dashboard through ui-control for Node-RED Dashboard 2.0.",
     "events": [
         {
             "event": "$pageview",

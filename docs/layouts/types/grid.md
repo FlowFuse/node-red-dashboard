@@ -1,5 +1,5 @@
 ---
-description: Maximize dashboard space with the grid layout in Node-RED Dashboard 2.0, offering flexible organization.
+description: Create flexible and responsive layouts using a grid system for Node-RED Dashboard 2.0.
 ---
 
 # Layout: Grid
