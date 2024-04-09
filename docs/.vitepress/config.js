@@ -37,6 +37,14 @@ export default ({ mode }) => {
         {},
         "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-MNGVF5NCF7');",
       ],
+      [
+        'script',
+        {
+          id: 'hs-script-loader',
+          async: true,
+          src: "//js-eu1.hs-scripts.com/26586079.js",
+        },
+      ]
     ],
     transformPageData(pageData) {
       const canonicalUrl = `https://dashboard.flowfuse.com/${pageData.relativePath}`
