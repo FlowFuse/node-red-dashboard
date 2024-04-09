@@ -13,7 +13,7 @@
             <a href="https://flowfuse.com/product/why-flowfuse/">Learn More</a>
         </div>
         <div>
-            <img src="../assets/images/screenshot-flowfuse-applications.png">
+            <img src="../assets/images/screenshot-flowfuse-applications.png" alt="Image of the FlowFuse Platform">
         </div>
     </div>
 </template>
