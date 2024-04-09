@@ -1,3 +1,7 @@
+---
+description: Understand how the Node-RED Dashboard layouts can be configured for your applications.
+---
+
 # Layouts
 
 Layouts are a configuration available on a page-by-page basis. They control how all of the [Groups](../nodes/config/ui-group) of widgets are laid out on a given [Page](../nodes/config/ui-page):

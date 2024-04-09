@@ -1,4 +1,5 @@
 ---
+description: "Buttons create interactive UI's and can trigger flows in Node-RED"
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

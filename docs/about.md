@@ -1,5 +1,5 @@
 ---
-description: "Discover the features and benefits of Node-RED Dashboard 2.0, designed to streamline and enhance your Node-RED experience."
+description: "Learn about Dashboard 2.0 technology choices"
 ---
 
 # About Node-RED Dashboard 2.0
