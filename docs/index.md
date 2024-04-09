@@ -7,7 +7,7 @@ hero:
   tagline: An easy to use collection of nodes for Node-RED that allows you to create data-driven dashboards & data visualisations.
   image:
     src: /logo.png
-    alt: VitePress
+    alt: Node-RED Dashboard 2.0
   actions:
     - theme: brand
       text: Getting Started
