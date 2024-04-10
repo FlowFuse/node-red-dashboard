@@ -17,8 +17,6 @@
 import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
-debugger
-
 export default {
     name: 'DBUIRadioGroup',
     inject: ['$socket'],
@@ -120,8 +118,8 @@ export default {
         },
         select (value) {
             // An empty string value can be used to clear the current selection
-            if (value != "") {
-                let option = this.options.find((o) => {
+            if (value !== '') {
+                const option = this.options.find((o) => {
                     return o.value === value[0]
                 })
 
