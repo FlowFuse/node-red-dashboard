@@ -3,9 +3,10 @@
         v-model="value" class="nrdb-ui-radio-group" :disabled="!state.enabled"
         :class="'nrdb-ui-radio-group--cols-' + props.columns + ' ' + className"
         :label="label" variant="outlined" hide-details="auto"
+        @update:model-value="onChange"
     >
         <v-radio
-            v-for="option in props.options" :key="option.value"
+            v-for="option in options" :key="option.value"
             :label="option.label" :value="option.value"
         />
     </v-radio-group>
@@ -16,6 +17,8 @@
 import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+debugger
+
 export default {
     name: 'DBUIRadioGroup',
     inject: ['$socket'],
@@ -24,26 +27,110 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id)
+    data () {
+        return {
+            value: null,
+            items: null
+        }
     },
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
             return this.props.label
         },
-        value: {
+        options: {
             get () {
-                return this.messages[this.id]?.payload
+                const items = this.items || this.props.options
+                return items.map((item) => {
+                    if (typeof item !== 'object') {
+                        return {
+                            label: item,
+                            value: item
+                        }
+                    } else if (!('label' in item) || item.label === '') {
+                        return {
+                            label: item.value,
+                            value: item.value
+                        }
+                    } else {
+                        return item
+                    }
+                })
             },
-            set (val) {
-                if (this.value === val) {
-                    return // no change
+            set (value) {
+                this.items = value
+            }
+        }
+    },
+    created () {
+        // can't do this in setup as we are using custom onInput function that needs access to 'this'
+        useDataTracker(this.id, this.onInput, this.onLoad)
+
+        // let Node-RED know that this widget has loaded
+        this.$socket.emit('widget-load', this.id)
+    },
+    methods: {
+        // given the last received msg into this node, load the state
+        onLoad (msg) {
+            // update vuex store to reflect server-state
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            this.select(this.messages[this.id]?.payload)
+        },
+        onInput (msg) {
+            // update our vuex store with the value retrieved from Node-RED
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // When a msg comes in from Node-RED, we need support 2 operations:
+            // 1. add/replace the radio options (to support dynamic options e.g: radiobuttons populated from a database)
+            // 2. update the selected value(s)
+
+            const options = msg.options
+            if (options) {
+                // 1. add/replace the radio options
+                // TODO: Error handling if options is not an array
+                this.items = options
+            }
+
+            const payload = msg.payload
+            if (payload) {
+                // 2. update the selected value(s)
+                this.select(payload)
+            }
+        },
+        onChange () {
+            // ensure our data binding with vuex store is updated
+            const msg = this.messages[this.id] || {}
+            if (this.value) {
+                // return a single value
+                msg.payload = this.value
+            } else {
+                // return null
+                msg.payload = null
+            }
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            this.$socket.emit('widget-change', this.id, msg.payload)
+        },
+        select (value) {
+            if (value) {
+                let option = this.options.find((o) => {
+                    return o.value === value[0]
+                })
+
+                // if we didn't find any matching options, we stop here
+                if (!option) {
+                    return
                 }
-                const msg = this.messages[this.id] || {}
-                msg.payload = val
-                this.messages[this.id] = msg
-                this.$socket.emit('widget-change', this.id, val)
+
+                // ensure we set our local "value" to match
+                this.value = value
             }
         }
     }

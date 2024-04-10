@@ -1,3 +1,5 @@
+const statestore = require('../store/state.js')
+
 module.exports = function (RED) {
     function RadioGroupNode (config) {
         // create node in Node-RED
@@ -9,7 +11,14 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const evts = {
-            onChange: true
+            onChange: true,
+            beforeSend: function (msg) {
+                if (msg.options) {
+                    // dynamically set "options" property
+                    statestore.set(group.getBase(), node, msg, 'options', msg.options)
+                }
+                return msg
+            }
         }
 
         // inform the dashboard UI that we are adding this node
