@@ -96,11 +96,9 @@ export default {
                 this.items = options
             }
 
+            // 2. update the selected value(s)
             const payload = msg.payload
-            if (payload) {
-                // 2. update the selected value(s)
-                this.select(payload)
-            }
+            this.select(payload)
         },
         onChange () {
             // ensure our data binding with vuex store is updated
@@ -119,7 +117,8 @@ export default {
             this.$socket.emit('widget-change', this.id, msg.payload)
         },
         select (value) {
-            if (value) {
+            // An empty string value can be used to clear the current selection
+            if (value != "") {
                 let option = this.options.find((o) => {
                     return o.value === value[0]
                 })
@@ -128,10 +127,10 @@ export default {
                 if (!option) {
                     return
                 }
-
-                // ensure we set our local "value" to match
-                this.value = value
             }
+
+            // ensure we set our local "value" to match
+            this.value = value
         }
     }
 }
