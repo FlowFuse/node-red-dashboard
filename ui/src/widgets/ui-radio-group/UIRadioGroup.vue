@@ -98,7 +98,9 @@ export default {
 
             // 2. update the selected value(s)
             const payload = msg.payload
-            this.select(payload)
+            if (payload || payload === '') {
+                this.select(payload)
+            }
         },
         onChange () {
             // ensure our data binding with vuex store is updated
