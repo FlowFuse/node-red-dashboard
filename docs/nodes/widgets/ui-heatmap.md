@@ -1,4 +1,5 @@
 ---
+description: Use color gradients to represent the density or magnitude of data points across a two-dimensional area to identify patterns with Node-RED Dashboard 2.0
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
