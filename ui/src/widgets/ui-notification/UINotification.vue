@@ -98,7 +98,6 @@ export default {
         },
         close (sendMsg) {
             this.show = false
-debugger
             if (sendMsg) {
                 this.$socket.emit('widget-change', this.id, 'clicked')
             }
