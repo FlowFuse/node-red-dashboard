@@ -60,7 +60,7 @@ export default ({ mode }) => {
       ])
     },
     themeConfig: {
-      logo: '/logo.png',
+      logo: { src: '/logo.png', alt: 'Node-RED Dashboard 2.0 Logo' },
       nav: [
         { text: 'Docs', link: '/getting-started.html' },
         { text: 'Widgets', link: '/nodes/widgets.html' },

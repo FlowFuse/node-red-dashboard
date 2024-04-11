@@ -1,7 +1,7 @@
 <template>
     <div class="recommended-reading">
         <a v-for="a in articles" :key="a.title" :href="a.url">
-            <img :src="a.image">
+            <img :src="a.image" :alt="a.title">
         </a>
     </div>
 </template>
