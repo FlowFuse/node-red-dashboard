@@ -1,6 +1,9 @@
 /** https://github.com/vuejs/vue-loader/releases/tag/v12.2.0 */
 :deep(.v-field__input) {
     --v-field-input-min-height: calc(var(--widget-row-height) - 4px);
+}
+
+:deep(.v-field--variant-outlined) {
     --v-field-input-padding-top: 12px;
     --v-field-input-padding-bottom: 12px;
 }
