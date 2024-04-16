@@ -1306,7 +1306,7 @@
     }
 
     function addSidebarTab (label, id, tabs, sidebar) {
-        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="width: 90px"><a class="red-ui-tab-label" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
+        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
 
         // Add in Tab Content
         const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px);"></div>`).appendTo(sidebar)
@@ -1347,7 +1347,7 @@
                             if (plugin.tabs) {
                                 plugin.tabs.forEach(tab => {
                                     // add tab to sidebar
-                                    const container = addSidebarTab('FF Auth', 'ff-auth', ulDashboardTabs, sidebar)
+                                    const container = addSidebarTab(tab.label, tab.id, ulDashboardTabs, sidebar)
                                     container.hide()
                                     tab.init(base, container)
                                 })
