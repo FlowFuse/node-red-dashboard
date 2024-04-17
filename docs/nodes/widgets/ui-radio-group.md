@@ -7,6 +7,9 @@ props:
     Columns: The number of grid columns within which to render the radio group. This is useful for when you want to render the options horizontally, or if you have many ptions and want to save vertical space.
     Topic: The `msg.topic` that will be included in any emitted values
 dynamic:
+    Options:
+        payload: msg.options
+        structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
     Class:
         payload: msg.class
         structure: ["String"]
@@ -18,6 +21,14 @@ dynamic:
 # Radio Group `ui-radio-group`
 
 Adds a Radio Group to your dashboard that will emit values in Node-RED under `msg.payload` anytime a value is selected.
+
+## Programmatic Selections
+
+You can dynamically make selections for this dropdown by passing in the respective `value` to `msg.payload`, e.g. `msg.payload = "option1"`.
+
+### Clear Selection
+
+ To clear any selection for a dropdown, pass a `null` as `msg.payload`.
 
 ## Properties
 
