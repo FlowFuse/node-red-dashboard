@@ -119,7 +119,7 @@
 
                     // Column 3 : Add an input field (type string) to the new row, that represents the option value
                     const valueField = $('<input/>', { class: 'node-input-option-value', type: 'text' }).css({ width: '30%', 'margin-left': '5px', 'margin-right': '5px' }).appendTo(row)
-                    valueField.typedInput({ types: ['str', 'num', 'bool'] })
+                    valueField.typedInput({ types: ['str', 'num', 'bool', 'json'] })
                     valueField.typedInput('type', option.valueType || 'str')
                     valueField.typedInput('value', option.value || 'option_' + i)
                     valueField.on('change', function (type, value) {
