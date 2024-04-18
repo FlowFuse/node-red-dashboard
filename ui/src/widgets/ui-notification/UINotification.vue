@@ -109,7 +109,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-ui-notification {
     padding-top: 64px;
 }
@@ -120,7 +120,7 @@ export default {
     border-left: 6px solid var(--nrdb-ui-notification-color);
 }
 .nrdb-ui-notification .v-snackbar__content {
-    padding-left: 8px;
+    padding: 8px 12px;
 }
 
 .nrdb-ui-notification-countdown {
