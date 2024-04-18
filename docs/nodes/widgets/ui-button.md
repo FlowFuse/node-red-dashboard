@@ -6,6 +6,7 @@ props:
     Icon: Renders a Material Design icon within the button. There is no need to include the "mdi-" prefix. 
     Icon Position: If "Icon" is defined, this property controls which side of the "Label" the icon will render on.
     Label: The text shown within the button. If not provided, then the button will only render the icon.
+    Emulate Button Click: If enabled, any received message will trigger a button click, emitting the relevant payload and topic.
 controls:
     enabled:
         example: true | false
