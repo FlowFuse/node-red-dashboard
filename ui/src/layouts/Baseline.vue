@@ -37,6 +37,7 @@
                         :title="getPageLabel(page)"
                         :to="{name: page.route.name}" link
                         :data-nav="page.id"
+                        @click="selectPage(page)"
                     />
                 </v-list>
             </v-navigation-drawer>
@@ -209,6 +210,15 @@ export default {
             } else {
                 this.drawer = !this.drawer
             }
+        },
+        selectPage (page) {
+            console.log(this.navigationStyle)
+            if (this.navigationStyle === 'default') {
+                this.drawer = false
+            }
+            // this.$router.push({
+            //     name: page.route.name
+            // })
         }
     }
 }
