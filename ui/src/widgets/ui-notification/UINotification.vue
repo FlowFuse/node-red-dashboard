@@ -17,7 +17,7 @@
         <template v-if="props.allowDismiss" #actions>
             <v-btn
                 variant="text"
-                @click="close(true)"
+                @click="close('clicked')"
             >
                 {{ props.dismissText || "Close" }}
             </v-btn>
@@ -84,7 +84,7 @@ export default {
 
             this.timeouts.close = setTimeout(() => {
                 // close the notification after time has elapsed
-                this.close(false)
+                this.close('timeout')
             }, time)
 
             // update the progress bar every 100ms
@@ -96,11 +96,9 @@ export default {
                 this.countdown = 100 - (elapsed / parseFloat(this.props.displayTime)) * 100
             }, 100)
         },
-        close (sendMsg) {
+        close (payload) {
             this.show = false
-            if (sendMsg) {
-                this.$socket.emit('widget-change', this.id, 'clicked')
-            }
+            this.$socket.emit('widget-change', this.id, payload)
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
