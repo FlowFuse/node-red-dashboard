@@ -25,4 +25,16 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
         cy.clickAndWait(cy.get('button').contains('Button 2 (global)'))
         cy.checkOutput('msg.payload', 'global-var')
     })
+
+    it('will prevent emulation of a click when receiving a message, if configured that way', () => {
+        // Emitting global var
+        cy.clickAndWait(cy.get('button').contains('Button 3 (trigger)'))
+        cy.checkOutput('msg.payload', 'no-emulate', 'not.eq')
+    })
+
+    it('will allow emulation of a click when receiving a message, if configured that way', () => {
+        // Emitting global var
+        cy.clickAndWait(cy.get('button').contains('Button 4 (trigger)'))
+        cy.checkOutput('msg.payload', 'emulate')
+    })
 })
