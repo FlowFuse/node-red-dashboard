@@ -133,20 +133,23 @@ export default {
                     value = [value]
                 }
 
-                // now if this is a single selection, we just need to find the option with the matching value
-                if (!this.props.multiple) {
-                    value = this.options.find((o) => {
-                        return o.value === value[0]
-                    })
-                } else {
-                    // this is a multi selection, we need to find all the options with matching values
-                    value = this.options.filter((o) => {
-                        return value.includes(o.value)
-                    })
-                }
-                // if we didn't find any matching options, we stop here
-                if (!value) {
-                    return
+                // value [] is used to clear the current selection
+                if (value.length > 0) {
+                    // now if this is a single selection, we just need to find the option with the matching value
+                    if (!this.props.multiple) {
+                        value = this.options.find((o) => {
+                            return o.value === value[0]
+                        })
+                    } else {
+                        // this is a multi selection, we need to find all the options with matching values
+                        value = this.options.filter((o) => {
+                            return value.includes(o.value)
+                        })
+                    }
+                    // if we didn't find any matching options, we stop here (unless value is [])
+                    if (!value) {
+                        return
+                    }
                 }
 
                 // ensure we set our local "value" to match
