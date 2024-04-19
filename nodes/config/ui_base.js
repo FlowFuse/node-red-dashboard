@@ -181,7 +181,8 @@ module.exports = function (RED) {
                 const socketIoPath = join('/', fullPath, 'socket.io')
                 /** @type {import('socket.io/dist').ServerOptions} */
                 const serverOptions = {
-                    path: socketIoPath
+                    path: socketIoPath,
+                    maxHttpBufferSize: uiShared.settings.maxHttpBufferSize || 1e6 // SocketIO default size
                 }
                 // console.log('Creating socket.io server at path', socketIoPath) // disable - noisy in tests
                 // store reference to the SocketIO Server
