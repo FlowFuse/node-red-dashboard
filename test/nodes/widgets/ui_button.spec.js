@@ -31,7 +31,7 @@ describe('ui-button node', function () {
             order: 0,
             width: 0,
             height: 0,
-            passthru: true,
+            emulateClick: true,
             tooltip: '',
             color: '',
             bgcolor: '',

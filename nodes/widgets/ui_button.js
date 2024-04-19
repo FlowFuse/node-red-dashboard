@@ -1,3 +1,5 @@
+const { appendTopic } = require('../utils/index.js')
+
 module.exports = function (RED) {
     function ButtonNode (config) {
         // create node in Node-RED
@@ -7,49 +9,62 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
-        const evts = {
-            onAction: true,
-            beforeSend: async function (msg) {
-                let error = null
+        const beforeSend = async function (msg) {
+            let error = null
 
-                // retrieve the payload we're sending from this button
-                let payloadType = config.payloadType
-                let payload = config.payload
+            // retrieve the payload we're sending from this button
+            let payloadType = config.payloadType
+            let payload = config.payload
 
-                if (payloadType === 'flow' || payloadType === 'global') {
-                    try {
-                        const parts = RED.util.normalisePropertyExpression(payload)
-                        if (parts.length === 0) {
-                            throw new Error()
-                        }
-                        payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
-                    } catch (err) {
-                        node.warn('Invalid payload property expression - defaulting to node id')
-                        payload = node.id
-                        payloadType = 'str'
+            if (payloadType === 'flow' || payloadType === 'global') {
+                try {
+                    const parts = RED.util.normalisePropertyExpression(payload)
+                    if (parts.length === 0) {
+                        throw new Error()
                     }
-                } else if (payloadType === 'date') {
-                    payload = Date.now()
-                } else {
-                    try {
-                        payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
-                    } catch (err) {
-                        error = err
-                        if (payloadType === 'bin') {
-                            node.error('Badly formatted buffer')
-                        } else {
-                            node.error(err, payload)
-                        }
+                    payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
+                } catch (err) {
+                    node.warn('Invalid payload property expression - defaulting to node id')
+                    payload = node.id
+                    payloadType = 'str'
+                }
+            } else if (payloadType === 'date') {
+                payload = Date.now()
+            } else {
+                try {
+                    payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
+                } catch (err) {
+                    error = err
+                    if (payloadType === 'bin') {
+                        node.error('Badly formatted buffer')
+                    } else {
+                        node.error(err, payload)
                     }
                 }
+            }
 
-                msg.payload = payload
+            msg.payload = payload
 
-                if (!error) {
-                    return msg
-                } else {
-                    node.error(error)
-                    return null
+            if (!error) {
+                return msg
+            } else {
+                node.error(error)
+                return null
+            }
+        }
+
+        const evts = {
+            onAction: true,
+            beforeSend,
+            onInput: async function (msg) {
+                if (config.emulateClick) {
+                    msg = await beforeSend(msg)
+
+                    if (config.topic || config.topicType) {
+                        msg = await appendTopic(RED, config, node, msg)
+                    }
+
+                    node.send(msg)
                 }
             }
         }

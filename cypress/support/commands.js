@@ -78,9 +78,9 @@ Cypress.Commands.add('resetContext', () => {
     cy.request('POST', '/context/reset')
 })
 
-Cypress.Commands.add('checkOutput', (key, value) => {
+Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq') => {
     const parentKey = key.split('.')[0]
-    cy.request('GET', '/context/flow?key=' + parentKey).its(`body.${key}`).should('eq', value)
+    cy.request('GET', '/context/flow?key=' + parentKey).its(`body.${key}`).should(comparator, value)
 })
 
 Cypress.Commands.add('setGlobalVar', (key, value) => {
