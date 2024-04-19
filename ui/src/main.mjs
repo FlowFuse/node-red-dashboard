@@ -7,6 +7,7 @@ import * as vuex from 'vuex'
 import App from './App.vue'
 import { io } from 'socket.io-client'
 import router from './router.mjs'
+import Alerts from './services/alerts.js'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -52,6 +53,8 @@ const vuetify = createVuetify({
  * Configure SocketIO Client to Interact with Node-RED
  */
 
+// if our scoket disconnects, we should inform the user when it reconnects
+
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
@@ -73,13 +76,43 @@ fetch('_setup')
 
         const socket = io(setup.socketio)
 
+        let disconnected = false
+
+        function reconnect (interval = 1000) {
+            if (disconnected) {
+                socket.connect()
+                setTimeout(reconnect, interval)
+            }
+        }
+
+        window.tmpSocket = socket
+
         // handle final disconnection
         socket.on('disconnect', (reason) => {
+            disconnected = true
             console.log('SIO disconnected', reason)
+            // tell the user we're trying to connect
+            Alerts.emit('Connection Lost', 'Attempting to reconnect...', 'red', {
+                displayTime: 0,
+                allowDismiss: false,
+                showCountdown: false
+            })
+            // attempt to reconnect
+            reconnect()
         })
 
         socket.on('connect', () => {
             console.log('SIO connected')
+            // if we've just disconnected (i.e. aren't connecting for the first time)
+            if (disconnected) {
+                // send a notification/alert to the user to let them know the connection is live again
+                Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                    displayTime: 3,
+                    allowDismiss: true,
+                    showCountdown: true
+                })
+            }
+            disconnected = false
         })
 
         socket.on('connect_error', (err) => {
