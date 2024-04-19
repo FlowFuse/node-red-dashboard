@@ -82,8 +82,7 @@ export default {
             const opt = this.props.options?.find(option => {
                 if (typeof (val) === 'object') {
                     return (JSON.stringify(val) === JSON.stringify(option.value))
-                }
-                else {
+                } else {
                     return option.value === val
                 }
             })
