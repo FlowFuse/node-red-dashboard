@@ -98,7 +98,7 @@ export default {
         },
         close (payload) {
             this.show = false
-            this.$socket.emit('widget-change', this.id, payload)
+            this.$socket.emit('widget-action', this.id, payload)
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
