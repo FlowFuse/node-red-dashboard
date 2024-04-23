@@ -79,7 +79,13 @@ export default {
             }
         },
         findOptionByValue: function (val) {
-            const opt = this.props.options?.find(option => option.value === val)
+            const opt = this.props.options?.find(option => {
+                if (typeof (val) === 'object') {
+                    return (JSON.stringify(val) === JSON.stringify(option.value))
+                } else {
+                    return option.value === val
+                }
+            })
             if (opt) {
                 return opt
             }
