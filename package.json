@@ -39,6 +39,7 @@
         "dev:prod": "vite build --watch",
         "docs:build": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
+        "generate-pwa-assets": "pwa-assets-generator",
         "lint": "npm run lint:js && npm run lint:package",
         "lint:fix": "npm run lint:js:fix && npm run lint:package:fix",
         "lint:js": "eslint --ext .js,.vue,.cjs,.mjs .",
@@ -64,6 +65,7 @@
     "devDependencies": {
         "@mdi/font": "^7.4.47",
         "@unhead/vue": "^1.7.4",
+        "@vite-pwa/assets-generator": "^0.2.4",
         "@vitejs/plugin-vue": "^4.5.0",
         "chart.js": "^4.4.0",
         "cypress": "^13.6.2",
@@ -95,6 +97,7 @@
         "socket.io-client": "^4.7.2",
         "sort-package-json": "^2.6.0",
         "vite": "^5.0.0",
+        "vite-plugin-pwa": "^0.19.8",
         "vitepress": "^1.0.2",
         "vue-router": "^4.2.4",
         "vuetify": "^3.4.10",

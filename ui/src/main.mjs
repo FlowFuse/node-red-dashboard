@@ -19,6 +19,12 @@ import './stylesheets/common.css'
 
 import store from './store/index.mjs'
 
+// PWA
+import { registerSW } from 'virtual:pwa-register'
+
+// register service worker
+registerSW({ immediate: true })
+
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
     dark: false,
