@@ -9,14 +9,14 @@ describe('Node-RED Dashboard 2.0 - Switches', () => {
     })
 
     it('can be set to the off state via incoming boolean payload', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-off').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-off'))
         // Emitting strings
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'v-switch')
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
     })
 
     it('can be set to the on state via incoming payload & passes the value through', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on'))
         // Emitting strings
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'v-switch')
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('.v-input.v-input--horizontal').should('have.class', 'active')
@@ -27,7 +27,7 @@ describe('Node-RED Dashboard 2.0 - Switches', () => {
 
     it('does send a msg if the switch in Dashboard is clicked', () => {
         // set to on
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-bool-on'))
         // click the switch directly
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-bool').find('input').click()
         // should now be off
@@ -61,14 +61,14 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
     })
 
     it('can be set to the off state via incoming configured payload', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-str-off').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-str-off'))
         // Emitting strings
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').should('have.class', 'text-red')
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').find('i').should('have.class', 'mdi-wifi-off')
     })
 
     it('can be set to the on state via incoming payload', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on'))
         // Emitting strings
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').should('have.class', 'text-green')
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').find('i').should('have.class', 'mdi-wifi')
@@ -76,7 +76,7 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
 
     it('does not pass on a value is passthru is set to false', () => {
         cy.resetContext()
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on'))
         cy.checkOutput('msg', undefined)
     })
 
@@ -84,7 +84,7 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
         // set to on
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-str-on'))
         // click the switch directly
-        cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-switch-str').find('button'))
         // should now be off
         cy.checkOutput('msg.payload', 'off')
     })

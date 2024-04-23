@@ -6,12 +6,12 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
 
     it('can be clicked and outputs the correct payload & topic are emitted', () => {
         // Emitting strings
-        cy.get('button').contains('Button 1 (str)').click()
+        cy.clickAndWait(cy.get('button').contains('Button 1 (str)'))
         cy.checkOutput('msg.payload', 'button 1 clicked')
         cy.checkOutput('msg.topic', 'button-str-topic')
 
         // Emitting JSON
-        cy.get('button').contains('Button 1 (json)').click()
+        cy.clickAndWait(cy.get('button').contains('Button 1 (json)'))
         cy.checkOutput('msg.payload.hello', 'world')
         cy.checkOutput('msg.topic', 'button-json-topic')
     })
