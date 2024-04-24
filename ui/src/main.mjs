@@ -74,17 +74,57 @@ fetch('_setup')
 
         store.commit('setup/set', setup)
 
-        const socket = io(setup.socketio)
-
         let disconnected = false
         let disconnectedAt = null
 
         const MAX_TIMER = 300000 // 5 minutes
 
+        let socket = null
+
+        function connect () {
+            socket = io(setup.socketio)
+
+            // handle final disconnection
+            socket.on('disconnect', (reason) => {
+                disconnected = true
+                disconnectedAt = new Date()
+                // tell the user we're trying to connect
+                Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
+                    displayTime: 0,
+                    allowDismiss: false,
+                    showCountdown: false
+                })
+                socket.destroy()
+                // attempt to reconnect
+                reconnect()
+            })
+
+            socket.on('connect', () => {
+                console.log('SIO connected')
+                // if we've just disconnected (i.e. aren't connecting for the first time)
+                if (disconnected) {
+                    // send a notification/alert to the user to let them know the connection is live again
+                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                        displayTime: 3,
+                        allowDismiss: true,
+                        showCountdown: true
+                    })
+                }
+                disconnected = false
+            })
+
+            socket.on('connect_error', (err) => {
+                console.error('SIO connect error:', err, err.data)
+                socket.destroy()
+            })
+
+            return socket
+        }
+
         // default interval - every 5 seconds
         function reconnect (interval = 5000) {
             if (disconnected) {
-                socket.connect()
+                connect()
                 const now = new Date()
                 if (now - disconnectedAt > 60000) {
                     // trying for over 1 minute
@@ -97,40 +137,6 @@ fetch('_setup')
                 }
             }
         }
-
-        window.tmpSocket = socket
-
-        // handle final disconnection
-        socket.on('disconnect', (reason) => {
-            disconnected = true
-            disconnectedAt = new Date()
-            // tell the user we're trying to connect
-            Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
-                displayTime: 0,
-                allowDismiss: false,
-                showCountdown: false
-            })
-            // attempt to reconnect
-            reconnect()
-        })
-
-        socket.on('connect', () => {
-            console.log('SIO connected')
-            // if we've just disconnected (i.e. aren't connecting for the first time)
-            if (disconnected) {
-                // send a notification/alert to the user to let them know the connection is live again
-                Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                    displayTime: 3,
-                    allowDismiss: true,
-                    showCountdown: true
-                })
-            }
-            disconnected = false
-        })
-
-        socket.on('connect_error', (err) => {
-            console.error('SIO connect error:', err, err.data)
-        })
 
         /**
          * Create VueJS App
@@ -147,7 +153,7 @@ fetch('_setup')
         app.mixin(VueHeadMixin)
 
         // make the socket service available app-wide via this.$socket
-        app.provide('$socket', socket)
+        app.provide('$socket', connect())
 
         // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
         app.mount('#app')
