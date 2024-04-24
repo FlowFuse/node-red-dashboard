@@ -77,11 +77,24 @@ fetch('_setup')
         const socket = io(setup.socketio)
 
         let disconnected = false
+        let disconnectedAt = null
 
-        function reconnect (interval = 1000) {
+        const MAX_TIMER = 300000 // 5 minutes
+
+        // default interval - every 5 seconds
+        function reconnect (interval = 5000) {
             if (disconnected) {
                 socket.connect()
-                setTimeout(reconnect, interval)
+                const now = new Date()
+                if (now - disconnectedAt > 60000) {
+                    // trying for over 1 minute
+                    interval = 30000 // interval at 30 seconds
+                }
+                // if still within our maximum timer
+                if (now - disconnectedAt < MAX_TIMER) {
+                    // check for a connection again in <interval> milliseconds
+                    setTimeout(reconnect, interval)
+                }
             }
         }
 
@@ -90,9 +103,9 @@ fetch('_setup')
         // handle final disconnection
         socket.on('disconnect', (reason) => {
             disconnected = true
-            console.log('SIO disconnected', reason)
+            disconnectedAt = new Date()
             // tell the user we're trying to connect
-            Alerts.emit('Connection Lost', 'Attempting to reconnect...', 'red', {
+            Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
                 displayTime: 0,
                 allowDismiss: false,
                 showCountdown: false
