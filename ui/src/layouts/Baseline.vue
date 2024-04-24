@@ -37,6 +37,7 @@
                         :title="getPageLabel(page)"
                         :to="{name: page.route.name}" link
                         :data-nav="page.id"
+                        @click="closeNavigationDrawer()"
                     />
                 </v-list>
             </v-navigation-drawer>
@@ -208,6 +209,11 @@ export default {
                 this.rail = !this.rail
             } else {
                 this.drawer = !this.drawer
+            }
+        },
+        closeNavigationDrawer () {
+            if (this.navigationStyle === 'default') {
+                this.drawer = false
             }
         }
     }
