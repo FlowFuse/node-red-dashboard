@@ -5,17 +5,17 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     })
 
     it('can navigate to a page directly if passing the name of a page as a str payload', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-page1').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-page1'))
         cy.url().should('include', '/dashboard/page1')
     })
 
     it('can navigate to a page directly is passing a page name nested in an object under the .page key', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-page2').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-page2'))
         cy.url().should('include', '/dashboard/page2')
     })
 
     it('can navigate to the previous page by passing "-1"', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-prev').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-prev'))
         cy.url().should('include', '/dashboard/page2')
     })
 
@@ -25,7 +25,7 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     })
 
     it('can navigate to a specific index by passing a number', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-index').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-index'))
         cy.url().should('include', '/dashboard/page1')
     })
 
@@ -40,7 +40,7 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
             })
 
         cy.window().should('have.property', 'test', 'hello world')
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-refresh').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-refresh'))
         // our windows var should be cleared due to refresh
         cy.url().should('include', '/dashboard/controls')
         cy.window().should('not.have.property', 'test')
@@ -55,9 +55,9 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
 
     it('can hide and show a particular group', () => {
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-hide').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-hide'))
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-show').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-group-show'))
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('exist')
     })
 
@@ -75,13 +75,13 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
         cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
 
         // hide page
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-hide').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-hide'))
 
         // check length
         cy.get('.v-list.v-list--nav').find('a').should('have.length', 2)
 
         // show page again
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-show').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-vis-page-show'))
 
         cy.get('[data-el="nav-drawer"]').should('be.visible')
         // check length
@@ -100,9 +100,9 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
 
     it('can disable and enable a particular group', () => {
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.have.attr', 'disabled')
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-disable').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-disable'))
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('have.attr', 'disabled')
-        cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-enable').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-enable'))
         cy.get('#nrdb-ui-group-dashboard-ui-group').should('not.have.attr', 'disabled')
     })
 
