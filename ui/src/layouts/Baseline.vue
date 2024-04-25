@@ -52,6 +52,11 @@
                     :props="widget.props"
                     :state="widget.state"
                 />
+                <!-- Explicitly render a notification widget for our own internal alerting -->
+                <ui-notification
+                    id="inline-alert" ref="alert"
+                    :props="{position: 'top right', showCountdown: alert.showCountdown, displayTime: alert.displayTime, raw: true, allowDismiss: alert.allowDismiss}"
+                />
             </div>
         </v-main>
     </v-app>
@@ -59,6 +64,9 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+
+import Alerts from '../services/alerts'
+import UINotification from '../widgets/ui-notification/UINotification.vue'
 
 /**
  * Convert a hex to RGB color
@@ -90,6 +98,9 @@ function getContrast (bg) {
 
 export default {
     name: 'BaslineLayout',
+    components: {
+        'ui-notification': UINotification
+    },
     props: {
         pageTitle: {
             type: String,
@@ -100,7 +111,12 @@ export default {
         return {
             drawer: false,
             rail: false,
-            customThemeDefinitions: {}
+            customThemeDefinitions: {},
+            alert: {
+                displayTime: 0,
+                allowDismiss: false,
+                showCountdown: false
+            }
         }
     },
     computed: {
@@ -164,6 +180,16 @@ export default {
     },
     mounted () {
         this.updateTheme()
+        Alerts.subscribe((title, description, color, alertOptions) => {
+            this.$refs.alert.close()
+            this.alert = alertOptions
+            this.$nextTick(() => {
+                this.$refs.alert.onMsgInput({
+                    payload: `<h3>${title}</h3><p>${description}</p>`,
+                    color
+                })
+            })
+        })
     },
     methods: {
         go: function (name) {
