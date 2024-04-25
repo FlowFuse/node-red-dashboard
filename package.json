@@ -100,7 +100,7 @@
         "vite-plugin-pwa": "^0.19.8",
         "vitepress": "^1.0.2",
         "vue-router": "^4.2.4",
-        "vuetify": "^3.4.10",
+        "vuetify": "^3.5.17",
         "vuex": "^4.1.0"
     },
     "engines": {
