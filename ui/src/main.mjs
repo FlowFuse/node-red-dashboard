@@ -16,6 +16,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // Labs Imports
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { VSparkline } from 'vuetify/labs/VSparkline'
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
@@ -50,6 +51,7 @@ const theme = {
 const vuetify = createVuetify({
     components: {
         ...components,
+        VNumberInput,
         VSparkline,
         VTreeview
     },
