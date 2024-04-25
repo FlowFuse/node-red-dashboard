@@ -86,8 +86,10 @@ fetch('_setup')
 
             // handle final disconnection
             socket.on('disconnect', (reason) => {
-                disconnected = true
-                disconnectedAt = new Date()
+                if (!disconnected) {
+                    disconnectedAt = new Date()
+                    disconnected = true
+                }
                 // tell the user we're trying to connect
                 Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
                     displayTime: 0,
