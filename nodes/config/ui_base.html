@@ -1083,7 +1083,7 @@
                 const subflowInstance = n
                 if (subflowDef && subflowDef.env && subflowDef.env.length > 0) {
                     /** @type {{name:String, type:String, value:String}[]} */
-                    const envDefsWithUIGroup = subflowDef.env.filter(env => env.type === 'ui-group' && env.ui.type === 'conf-types')
+                    const envDefsWithUIGroup = subflowDef.env.filter(env => env.type === 'ui-group' && env.ui?.type === 'conf-types')
                     for (const envDef of envDefsWithUIGroup) {
                         const groupNameAsEnv = '${' + envDef.name + '}'
 
