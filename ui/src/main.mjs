@@ -77,6 +77,7 @@ fetch('_setup')
         let disconnected = false
         let disconnectedAt = null
 
+        let reconnectTO = null
         const MAX_TIMER = 300000 // 5 minutes
 
         let socket = null
@@ -113,6 +114,7 @@ fetch('_setup')
                     })
                 }
                 disconnected = false
+                clearTimeout(reconnectTO)
             })
 
             socket.on('connect_error', (err) => {
@@ -135,7 +137,7 @@ fetch('_setup')
                 // if still within our maximum timer
                 if (now - disconnectedAt < MAX_TIMER) {
                     // check for a connection again in <interval> milliseconds
-                    setTimeout(reconnect, interval)
+                    reconnectTO = setTimeout(reconnect, interval)
                 }
             }
         }
