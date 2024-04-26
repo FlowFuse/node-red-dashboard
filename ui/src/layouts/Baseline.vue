@@ -54,7 +54,7 @@
                 />
                 <!-- Explicitly render a notification widget for our own internal alerting -->
                 <ui-notification
-                    id="inline-alert" ref="alert"
+                    id="ui-inline-alert" ref="alert"
                     :props="{position: 'top right', showCountdown: alert.showCountdown, displayTime: alert.displayTime, raw: true, allowDismiss: alert.allowDismiss}"
                 />
             </div>

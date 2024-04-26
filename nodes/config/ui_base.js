@@ -654,7 +654,9 @@ module.exports = function (RED) {
             // console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
 
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
-            if (!wNode) {
+            // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
+            // Node-RED built nodes will be a random UUID
+            if (!wNode && !id.startsWith('ui-')) {
                 console.log('widget does not exist any more')
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
