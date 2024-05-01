@@ -120,7 +120,7 @@ export default {
             // An empty string value can be used to clear the current selection
             if (value !== '') {
                 const option = this.options.find((o) => {
-                    return o.value === value[0]
+                    return o.value === value
                 })
 
                 // if we didn't find any matching options, we stop here
