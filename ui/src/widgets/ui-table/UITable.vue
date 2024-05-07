@@ -1,10 +1,20 @@
 <template>
+    <v-text-field
+        v-if="props.showSearch"
+        v-model="search"
+        label="Search"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+        single-line
+    />
     <v-data-table
         v-model="selected"
         class="nrdb-table"
         :items="messages[id]?.payload" :return-object="true"
         :items-per-page="itemsPerPage"
         :headers="headers" :show-select="props.selectionType === 'checkbox'"
+        :search="search"
         @update:model-value="onMultiSelect"
     >
         <template v-if="itemsPerPage === 0" #bottom />
@@ -36,6 +46,7 @@ export default {
     data () {
         return {
             selected: null,
+            search: '',
             input: {},
             isValid: null,
             pagination: {
