@@ -63,6 +63,7 @@
         "vue": "^3.4.5"
     },
     "devDependencies": {
+        "@flowfuse/flow-renderer": "^0.3.0",
         "@mdi/font": "^7.4.47",
         "@unhead/vue": "^1.7.4",
         "@vite-pwa/assets-generator": "^0.2.4",

@@ -1,0 +1,111 @@
+[
+    {
+        "id": "dac1aa0396ea6855",
+        "type": "worldmap",
+        "z": "39687e2457e622f1",
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "OSMG",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "false",
+        "coords": "none",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 180,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "7a1cf7975e997a1b",
+        "type": "ui-template",
+        "z": "39687e2457e622f1",
+        "group": "15d2dfa55e99ea43",
+        "page": "",
+        "ui": "",
+        "name": "Worldmap iFrame",
+        "order": 0,
+        "width": "12",
+        "height": "12",
+        "head": "",
+        "format": "<template>\n    <iframe class=\"worldmap\" src=\"/worldmap\"></iframe>\n</template>\n\n<style>\n    .worldmap {\n        width:100%;\n        height:100%;\n    }\n</style>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 210,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "15d2dfa55e99ea43",
+        "type": "ui-group",
+        "name": "Worldmap",
+        "page": "e098e3047b4a4eaa",
+        "width": "12",
+        "height": "1",
+        "order": -1,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "e098e3047b4a4eaa",
+        "type": "ui-page",
+        "name": "Worldmap",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/worldmap",
+        "icon": "earth",
+        "layout": "grid",
+        "theme": "129e99574def90a3",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "showPathInSidebar": false,
+        "navigationStyle": "default"
+    },
+    {
+        "id": "129e99574def90a3",
+        "type": "ui-theme",
+        "name": "Another Theme",
+        "colors": {
+            "surface": "#000000",
+            "primary": "#ff4000",
+            "bgPage": "#f0f0f0",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9d9"
+        },
+        "sizes": {
+            "pagePadding": "9px",
+            "groupGap": "12px",
+            "groupBorderRadius": "9px",
+            "widgetGap": "6px"
+        }
+    }
+]
