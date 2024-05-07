@@ -2,6 +2,17 @@
 description: Get inspired with a variety of UI template examples in Node-RED Dashboard 2.0, enhancing your dashboard design process.
 ---
 
+
+<script setup>
+    import { ref } from 'vue'
+    import FlowViewer from '../components/FlowViewer.vue'
+    import ExampleFlowWorldmap from '../examples/template-worldmap.json'
+
+    const examples = ref({
+      'worldmap': ExampleFlowWorldmap
+    })
+</script>
+
 # UI Template Examples
 
 The UI Template node allows you to create custom widgets for your dashboard, as well as define custom CSS to style your dashboard in anyway you like.
@@ -96,6 +107,31 @@ Where we pass in data such as:
 ```
 
 Vuetify's Data Table will automatically render a column for each item in the data provided, by default it will just render it as text (as we do in `ui-table`). However, we can also use the `<template v-slot:item.property />` syntax to override how we render a particular cell.
+
+### World Map
+
+Node-RED has a very popular [worldmap node](https://flows.nodered.org/node/node-red-contrib-web-worldmap) which allows for intricate plotting of data on a globe. The node creates a new endpoint onto your web server at `/worldmap` (or whichever path you override the default with).
+
+![Example of a World Map](../assets/images/template-example-worldmap.png "Example of a World Map rendered in Dashboard 2.0"){data-zoomable}
+_Example of a World Map rendered in Dashboard 2.0_
+
+In order to display a worldmap into Dashboard 2.0, currently, the best way to do this is with a `ui-template` node:
+
+```vue
+<template>
+    <iframe src="/worldmap" class="worldmap"></iframe>
+</template>
+<style>
+  .worldmap {
+    width: 100%;
+    height: 100%;  
+  }
+</style>
+```
+
+#### Example Flow
+
+<FlowViewer :flow="examples['worldmap']" height="300px"/>
 
 ## Custom Styling
 
