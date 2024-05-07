@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import FlowRenderer from '@flowfuse/flow-renderer'
 
 export default {
     name: 'FlowViewer',
@@ -17,7 +16,8 @@ export default {
             default: '500px'
         }
     },
-    mounted () {
+    async mounted () {
+        const { default: FlowRenderer } = await import('@flowfuse/flow-renderer')
         this.$nextTick(() => {
             const renderer = new FlowRenderer()
             renderer.renderFlows(this.flow, { container: this.$el })
