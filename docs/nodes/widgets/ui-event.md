@@ -4,8 +4,8 @@
     "events": [
         {
             "event": "$pageview",
-            "payload": "{ page }",
-            "description": "Sent whenever a user <i>views</i> a given page on the Dashboard"
+            "payload": "{ page, query }",
+            "description": "Sent whenever a user <i>views</i> a given page on the Dashboard. Details the Dashboard-defined Page and any query parameters found in the URL."
         },
         {
             "event": "$pageleave",
@@ -31,7 +31,7 @@ Currently, we support the following events:
 
 <EventsList />
 
-### Example: Page View
+### Example: Page View (`$pageview`)
 
 Each time a user views a page, the `ui-event` node will emit:
 
@@ -46,6 +46,9 @@ msg = {
             theme: 'dark',
             layout: 'default',
             _groups: []
+        },
+        query: {
+            key: 'value'
         }
     },
     _client: {
