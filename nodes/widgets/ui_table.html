@@ -23,6 +23,7 @@
                 maxrows: { value: 0, validate: RED.validators.number() },
                 passthru: { value: false },
                 autocols: { value: true },
+                showSearch: { value: true },
                 selectionType: { value: 'none' },
                 columns: {
                     value: null
@@ -164,6 +165,13 @@
             <option value="click" data-i18n="ui-table.selection.click"></option>
             <option value="checkbox" data-i18n="ui-table.selection.checkbox"></option>
         </select>
+    </div>
+    <div class="form-row form-row-flex">
+        <label for="node-input-showSearch"><i class="fa fa-search"></i> <span data-i18n="ui-table.label.search"></label>
+        <div style="margin-bottom: 0px; width:calc(70% + 15px);">
+            <input type="checkbox" id="node-input-showSearch" style="display: inline-block; width: auto;">
+            <label  for="node-input-showSearch" data-i18n="ui-table.label.showSearch"></label>
+        </div>
     </div>
     <div class="form-row" style="display:flex;">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>

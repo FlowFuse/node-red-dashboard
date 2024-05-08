@@ -9,7 +9,9 @@
             "key": "Key",
             "label": "Label",
             "column": "column",
-            "selection": "Interaction"
+            "selection": "Interaction",
+            "search": "Search",
+            "showSearch": "Show"
         },
         "selection": {
             "none": "None",

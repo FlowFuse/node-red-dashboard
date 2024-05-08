@@ -6,6 +6,7 @@ props:
     Label: The text shown within the button.
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control.
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
+    Show Search: Defines whether or not to show a search bar above the table. Will permit searching and filtering across all columns.
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
     Columns: If "Auto Columns" is false, then these columns are used when rendering the table instead.
 dynamic:
@@ -52,16 +53,23 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 
 ## Examples
 
-### Default - No Selection Events
+### Search & Filter
+
+![Example of a Data Table with Search & Filter](/images/node-examples/ui-table-search.png "Example of a Data Table with Search & Filter"){data-zoomable}
+*Example of a Data Table with Search & Filter" enabled.*
+
+### Interaction
+
+#### Default - No Selection Events
 
 ![Example of a Data Table](/images/node-examples/ui-table.png "Example of a Data Table"){data-zoomable}
 *Example of a rendered data table in a Dashboard.*
 
-### Multi-Selection
+#### Multi-Selection
 ![Example of a table that has "Multi Selection" enabled](/images/node-examples/ui-table-multi.png "Example of a table that has 'Multi Selection' enabled"){data-zoomable}
 *Example of a table that has "Multi Selection" enabled.*
 
-### Single Row Selection
+#### Single Row Selection
 
 ![Example of a data table that enables a row to be selected/clicked](/images/node-examples/ui-table-click.png "Example of a data table that enables a row to be selected/clicked"){data-zoomable}
 *Example of a data table that enables a row to be selected/clicked.*
