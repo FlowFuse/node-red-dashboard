@@ -36,6 +36,8 @@ export default defineConfig({
     ],
     root: 'ui',
     build: {
+        // Skip minification in dev mode
+        minify: process.env.NODE_ENV !== 'development',
         outDir: '../dist',
         emptyOutDir: true
     },
