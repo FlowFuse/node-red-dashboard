@@ -56,15 +56,19 @@ To start working with your own third-party widget, locally on your machine:
 
 1. Install Node-RED
 2. Install `@flowfuse/node-red-dashboard` into Node-RED via the "Manage Palette" option.
-2. Fork our [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) and clone it locally to your machine.
-3. Navigate to your local Node-RED directory and install the local copy of the Example Node:
-```bash
-npm install /path/to/your/local/node-red-dashboard-example-node
-```
-4. Inside the Example Node directory, build the Example Node's `.umd.js` file, this will generate it's `/resources` folder, loaded by Node-RED.
-```bash
-npm run build
-```
+3. Fork our [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) and clone it locally to your machine.
+4. Navigate to your local Node-RED directory and install the local copy of the Example Node:
+   ```bash
+   npm install /path/to/your/local/node-red-dashboard-example-node
+   ```
+5. Optionally skip minification of the code, to simplify debugging of the frontend code in the browser.  On Linux this can be achieved by:
+   ```bash
+   export NODE_ENV=development
+   ```
+6. Inside the Example Node directory, build the Example Node's `.umd.js` file, this will generate it's `/resources` folder, loaded by Node-RED.
+   ```bash
+   npm run build
+   ```
 
 _Note: Any local changes you make inside the `/ui` folder of the third party widget, you'll need to re-run `npm run build` in order to update the `umd.js` file, which is what Dashboard loads to render the widget._
 
