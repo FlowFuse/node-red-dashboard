@@ -146,6 +146,10 @@ export default {
 </script>
 
 <style>
+.nrdb-ui-table {
+    overflow-y: auto;
+}
+
 .nrdb-table.v-table {
     background: rgb(var(--v-theme-group-background));
 }
