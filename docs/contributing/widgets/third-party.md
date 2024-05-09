@@ -61,7 +61,7 @@ To start working with your own third-party widget, locally on your machine:
    ```bash
    npm install /path/to/your/local/node-red-dashboard-example-node
    ```
-5. Optionally skip minification of the code, to simplify debugging of the frontend code in the browser.  On Linux this can be achieved by:
+5. Optionally generate a source map (to map the minified code to the original code), to simplify debugging of the frontend code in the browser.  On Linux this can be achieved by:
    ```bash
    export NODE_ENV=development
    ```
