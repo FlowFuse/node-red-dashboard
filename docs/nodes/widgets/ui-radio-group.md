@@ -28,7 +28,7 @@ You can dynamically make selections for this dropdown by passing in the respecti
 
 ### Clear Selection
 
- To clear any selection for a dropdown, pass a `null` as `msg.payload`.
+ To clear any selection for a dropdown, pass an empty string `""` as `msg.payload`.
 
 ## Properties
 
