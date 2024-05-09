@@ -36,9 +36,15 @@ export default {
     gap: 2px;
     font-size: 1rem;
     font-family: Helvetica;
+    flex-wrap: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .nrdb-ui-text-value {
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Layouts */
