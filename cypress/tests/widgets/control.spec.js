@@ -9,9 +9,10 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
         cy.url().should('include', '/dashboard/page1')
     })
 
-    it('can navigate to a page directly is passing a page name nested in an object under the .page key', () => {
+    it('can navigate to a page directly is passing a page name nested in an object under the .page key, and with the relevant query params when using .query', () => {
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-page2'))
         cy.url().should('include', '/dashboard/page2')
+        cy.url().should('include', '?key=value')
     })
 
     it('can navigate to the previous page by passing "-1"', () => {

@@ -53,6 +53,19 @@ msg.payload = {
 }
 ```
 
+With the object format, you can also specify query parameters with which to load the page:
+
+```js
+msg.payload = {
+    page: '<Page Name>',
+    query: {
+        hello: 'world'
+    }
+}
+```
+
+Which would navigate to a page with `?hello=world` appended to the URL.
+
 #### Next/Previous
 
 Navigate to the next or previous page in the list:

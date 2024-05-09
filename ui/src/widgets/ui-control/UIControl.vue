@@ -74,6 +74,7 @@ export default {
 
             if ('page' in payload) {
                 let page = payload.tab || payload.page
+                const query = payload.query
                 const pages = Object.values(this.pages).sort((a, b) => {
                     return a.order - b.order
                 })
@@ -135,7 +136,10 @@ export default {
                 }
                 // navigate to the tab/page
                 try {
-                    this.$router.push({ name: `Page:${page}` })
+                    this.$router.push({
+                        name: `Page:${page}`,
+                        query
+                    })
                 } catch (err) {
                     console.error(err)
                 }

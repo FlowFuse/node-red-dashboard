@@ -245,6 +245,21 @@ This would result in:
 
 Note the use of `v-if="mounted"` in the `<Teleport />` tag. For some reason, Vue complains when trying to render a Teleport inside our `ui-template`, before the component has fully mounted, Including this `v-if` statement prevents this error.
 
+### URL Parameters
+
+Vue has a built-in `this.$route` object which details the information about the active route. This includes any query parameters included in the URL (e.g. `/dashboard/my-page?query=param`), which can be defined when using a [UI Control](./ui-control.md#change-page) or when navigating to a page directly.
+
+An example of how to access these parameters is as follows:
+
+```vue
+<template>
+    <div>
+        <p>Query Parameter: {{ $route.query }}</p>
+    </div>
+</template>
+```
+
+
 ## Additional Examples
 
 Any Vue Components that you define in `ui-template` extend the underlying `ui-template` Vue component. This includes a collection of builtin methods, data and supported Widgets. You can also render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`).

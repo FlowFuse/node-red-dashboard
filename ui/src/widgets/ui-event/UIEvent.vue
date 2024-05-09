@@ -66,7 +66,8 @@ export default {
             delete page._users
             // form event data object
             return {
-                page
+                page,
+                query: this.$route.query
             }
         }
     }
