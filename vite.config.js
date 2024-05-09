@@ -36,6 +36,8 @@ export default defineConfig({
     ],
     root: 'ui',
     build: {
+        // Generate a source map in dev mode
+        sourcemap: process.env.NODE_ENV === 'development',
         outDir: '../dist',
         emptyOutDir: true
     },
