@@ -47,7 +47,12 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
    npm install
    ```
 
-5. **Build Dashboard:** Create a static build of the Dashboard's UI, based on Vue CLI (which has been installed in step 3):
+5. Optionally ***generate a source map*** (to map the minified dashboard code to the original code), to simplify debugging of the frontend dashboard code in the browser. On Linux this can be achieved by:
+   ```bash
+   export NODE_ENV=development
+   ```
+
+6. **Build Dashboard:** Create a static build of the Dashboard's UI, based on Vue CLI (which has been installed in step 3):
     ```bash
     npm run build
     ```
