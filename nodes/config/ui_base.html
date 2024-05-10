@@ -179,7 +179,7 @@
 
 /**
  * @typedef {Object} DashboardItem - A widget/group/page/subflow item
- * @property {String} itemType - The type of item (e.g. 'widget', 'group', 'page')
+ * @property {String} itemType - The type of item (e.g. 'widget', 'group', 'page', 'link')
  * @property {String} id - The unique id of the item
  * @property {String} name - The name of the item
  * @property {String} type - The type of the item (e.g. 'ui-button', 'ui-template', 'ui-group', 'ui-page')
@@ -283,6 +283,7 @@
         }
         if (hasProperty(node, 'group')) { item.group = node.group }
         if (hasProperty(node, 'page')) { item.page = node.page }
+        if (hasProperty(node, 'link')) { item.link = node.link }
         if (hasProperty(node, 'theme')) { item.theme = node.theme }
         if (hasProperty(node, 'env') && Array.isArray(node.env) && /subflow:.+/.test(node.type)) {
             const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
@@ -292,6 +293,7 @@
         }
         switch (node.type) {
         case 'ui-page':
+        case 'ui-link':
         case 'ui-group':
         case 'ui-theme':
         case 'ui-base':
@@ -517,6 +519,22 @@
         return pageNode
     }
 
+    function addDefaultLink (baseId) {
+        const link = RED.nodes.getType('ui-link')
+        const linkNode = {
+            _def: link,
+            id: RED.nodes.id(),
+            type: 'ui-link',
+            ...mapDefaults(link.defaults),
+            path: '/',
+            name: 'Link',
+            ui: baseId
+        }
+
+        addConfigNode(linkNode)
+        return linkNode
+    }
+
     function addDefaultGroup (pageId) {
         const group = RED.nodes.getType('ui-group')
         const groupNode = {
@@ -672,7 +690,7 @@
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      */
     function addRowActions (parent, item, list) {
-        const configNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
+        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
         if (!configNodes.includes(item.type)) {
             const focusButton = $('<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-bullseye"></i> ' + c_('layout.focus') + '</a>').appendTo(btnGroup)
@@ -710,7 +728,7 @@
      */
     function addRowStateOptions (parent, dashboardItem) {
         const item = dashboardItem.node
-        const nodes = ['ui-page', 'ui-group']
+        const nodes = ['ui-page', 'ui-link', 'ui-group']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
         if (nodes.includes(item.type)) {
             const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
@@ -1021,6 +1039,14 @@
             .appendTo(buttonGroup)
         RED.popover.tooltip(buttonExpand, c_('layout.expand'))
 
+        // add link button
+        $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.link') + '</a>')
+            .click(function (evt) {
+                pagesOL.editableList('addItem', { type: 'ui-link' })
+                evt.preventDefault()
+            })
+            .appendTo(buttonGroup)
+
         // add page button
         $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.page') + '</a>')
             .click(function (evt) {
@@ -1033,6 +1059,7 @@
 
         /** @type {DashboardItemLookup} */
         const pages = {}
+        const links = {}
         /** @type {DashboardItemLookup} */
         const groupsByPage = {}
         const unattachedGroups = []
@@ -1043,8 +1070,10 @@
         RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-page' && !!n.ui) {
                 pages[n.id] = toDashboardItem(n)
-            }
-            if (n.type === 'ui-group') {
+            } else if (n.type === 'ui-link') {
+                console.log('link', n)
+                links[n.id] = toDashboardItem(n)
+            } else if (n.type === 'ui-group') {
                 const p = n.page
                 if (!p) {
                     unattachedGroups.push(toDashboardItem(n))
@@ -1116,35 +1145,61 @@
         const pagesOL = $('<ol>', { class: 'nrdb2-sb-pages-list' }).appendTo(divTabs).editableList({
             sortable: '.nrdb2-sb-pages-list-header',
             addButton: false,
-            addItem: function (container, i, page) {
-                if (!page || !page.id) {
-                    // this is a new page that's been added and we need to setup the basics
-                    page = addDefaultPage()
-                    RED.editor.editConfig('', page.type, page.id)
+            addItem: function (container, i, item) {
+                if (item && item.type === 'ui-link') {
+                    // want to create a new link
+                    if (!item || !item.id) {
+                        // create a default link
+                        item = addDefaultLink()
+                        RED.editor.editConfig('', item.type, item.id)
+                    }
+                    // add it to the list of pages/links
+                    container.addClass('nrdb2-sb-pages-list-item')
+                    const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
+
+                    // build title row
+                    $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                    const linkIcon = 'fa-link'
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + linkIcon }).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-title' }).text(item.name || item.id).appendTo(titleRow)
+
+                    // link - actions
+                    const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                    // add "Edit" and "Focus" buttons
+                    addRowActions(actions, item)
+                    // Add visibility/disabled options
+                    addRowStateOptions(actions, item)
+                } else {
+                    // is a page, with groups and widgets inside
+                    if (!item || !item.id) {
+                        // this is a new page that's been added and we need to setup the basics
+                        item = addDefaultPage()
+                        RED.editor.editConfig('', item.type, item.id)
+                    }
+                    const groups = groupsByPage[item.id] || []
+
+                    container.addClass('nrdb2-sb-pages-list-item')
+
+                    const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
+                    const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
+
+                    // build title row
+                    $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
+                    const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+                    const tabicon = 'fa-object-group'
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-title' }).text(item.name || item.id).appendTo(titleRow)
+                    $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} Groups`).appendTo(titleRow)
+
+                    // adds groups within this page
+                    titleRow.click(titleToggle(item.id, groupsList, chevron))
+                    const groupsOL = addGroupOrderingList(item.id, groupsList, groups, widgetsByGroup)
+
+                    // page - actions
+                    const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+                    addRowActions(actions, item, groupsOL)
+                    addRowStateOptions(actions, item)
                 }
-                const groups = groupsByPage[page.id] || []
-
-                container.addClass('nrdb2-sb-pages-list-item')
-
-                const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
-                const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
-
-                // build title row
-                $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
-                const tabicon = 'fa-object-group'
-                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-title' }).text(page.name || page.id).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} Groups`).appendTo(titleRow)
-
-                // adds groups within this page
-                titleRow.click(titleToggle(page.id, groupsList, chevron))
-                const groupsOL = addGroupOrderingList(page.id, groupsList, groups, widgetsByGroup)
-
-                // page - actions
-                const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, page, groupsOL)
-                addRowStateOptions(actions, page)
             },
             sortItems: function (items) {
                 // track any changes
@@ -1159,15 +1214,22 @@
             }
         })
 
-        Object.values(pages).sort((a, b) => a.order - b.order).forEach(function (page) {
-            const groups = groupsByPage[page.id] || []
-            if (RED._db2debug) { console.log('dashboard 2: ui_base.html: buildLayoutOrderEditor: adding groups', groups) }
-            if (page) {
-                pagesOL.editableList('addItem', page)
-            }
-            // groups.forEach(() => {
+        const items = {
+            ...pages,
+            ...links
+        }
 
-            // })
+        console.log(pages, links, items)
+
+        Object.values(items).sort((a, b) => a.order - b.order).forEach(function (item) {
+            let groups = []
+            if (item.type === 'ui-page' && item.id) {
+                if (RED._db2debug) { console.log('dashboard 2: ui_base.html: buildLayoutOrderEditor: adding groups', groups) }
+                groups = groupsByPage[item.id] || []
+            }
+            if (item) {
+                pagesOL.editableList('addItem', item)
+            }
         })
 
         // add Unattached Groups to the bottom

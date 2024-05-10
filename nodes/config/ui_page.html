@@ -60,12 +60,12 @@
             })
 
             // backwards compatibility
-            if (this.visible === undefined) {
+            if (this.visible === undefined || this.visible === 'true') {
                 this.visible = true
                 $('#node-config-input-visible').val('true')
             }
             // backwards compatibility
-            if (this.disabled === undefined) {
+            if (this.disabled === undefined || this.visible === 'false') {
                 this.disabled = false
                 $('#node-config-input-disabled').val('false')
             }

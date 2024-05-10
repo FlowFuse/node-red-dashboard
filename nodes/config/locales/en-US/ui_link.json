@@ -1,0 +1,17 @@
+{
+    "ui-link": {
+        "label": {
+            "linkName": "Link",
+            "ui": "UI",
+            "path": "Path",
+            "icon": "Icon",
+            "defaultState": "Default State",
+            "visibility": "Visibility",
+            "visible": "Visible",
+            "hidden": "Hidden",
+            "interactivity": "Interactivity",
+            "active": "Active",
+            "disabled": "Disabled"
+        }
+    }
+}

@@ -35,7 +35,8 @@
                         :disabled="page.disabled || undefined"
                         :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
                         :title="getPageLabel(page)"
-                        :to="{name: page.route.name}" link
+                        :href="page.type === 'ui-link' ? page.path : null"
+                        :to="page.type === 'ui-page' ? { name: page.route.name } : null"
                         :data-nav="page.id"
                         @click="closeNavigationDrawer()"
                     />
