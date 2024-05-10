@@ -1,0 +1,102 @@
+[
+    {
+        "id": "b91222a816a4b3af",
+        "type": "ui-template",
+        "z": "9c18a4bf6ab4e5c1",
+        "group": "73a5677f40da71fe",
+        "page": "",
+        "ui": "",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <div id=\"app\">\n        <v-text-field v-model=\"search\" label=\"Search\" prepend-inner-icon=\"mdi-magnify\" single-line variant=\"outlined\"\n            hide-details></v-text-field>\n        <v-data-table v-model:search=\"search\" :headers=\"headers\" :items=\"msg?.payload\" class=\"elevation-1\" :items-per-page=\"20\">\n            <template v-slot:header.lowercase>\n                <div>custom <b>html</b> title</div>\n            </template>\n            <template v-slot:item.snake_case=\"{ item }\">\n                ${{ 3 * item.snake_case }}\n            </template>\n        </v-data-table>\n    </div>\n</template>\n\n<script>\n    export default {\n    data () {\n      return {\n        search: '',\n        headers: [\n            // a basic header definition\n            { title: 'kebab-case', key: 'kebab-case' },\n            { title: 'slithering', key: 'snake_case'},\n            // we can also use v-slot (see in HTML above) to define\n            // our titles with more customisation\n            { key: 'lowercase' },\n            // if we need to transform due to case sensitivity, we can do so like this:\n            { title: 'Date & Time', key: 'camel-case', value: item => item['camelCase']},\n            // we can also add JS transformation to our values too\n            { title: 'All Caps', key: 'macro-case', value: item => item['MACRO_CASE'].toUpperCase()}\n        ],\n      }\n    },\n  }\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 280,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cfa65c8026f897a7",
+        "type": "inject",
+        "z": "9c18a4bf6ab4e5c1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"lowercase\":\"abc\",\"kebab-case\":52,\"camelCase\":\"2024-05-05T16:00:00\",\"snake_case\":123,\"MACRO_CASE\":\"Some Text\"},{\"lowercase\":\"def\",\"kebab-case\":64,\"camelCase\":\"2024-05-05T16:00:00\",\"snake_case\":123,\"MACRO_CASE\":\"Some Different Text\"}]",
+        "payloadType": "json",
+        "x": 110,
+        "y": 60,
+        "wires": [
+            [
+                "b91222a816a4b3af"
+            ]
+        ]
+    },
+    {
+        "id": "73a5677f40da71fe",
+        "type": "ui-group",
+        "name": "Custom Tables",
+        "page": "a9b32250ebfa989b",
+        "width": "12",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "a9b32250ebfa989b",
+        "type": "ui-page",
+        "name": "Template Examples",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/templates",
+        "icon": "view-dashboard",
+        "layout": "flex",
+        "theme": "129e99574def90a3",
+        "order": 14,
+        "className": ""
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "showPathInSidebar": false,
+        "navigationStyle": "default"
+    },
+    {
+        "id": "129e99574def90a3",
+        "type": "ui-theme",
+        "name": "Another Theme",
+        "colors": {
+            "surface": "#000000",
+            "primary": "#ff4000",
+            "bgPage": "#f0f0f0",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9d9"
+        },
+        "sizes": {
+            "pagePadding": "9px",
+            "groupGap": "12px",
+            "groupBorderRadius": "9px",
+            "widgetGap": "6px"
+        }
+    }
+]

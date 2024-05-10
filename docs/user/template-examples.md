@@ -7,9 +7,11 @@ description: Get inspired with a variety of UI template examples in Node-RED Das
     import { ref } from 'vue'
     import FlowViewer from '../components/FlowViewer.vue'
     import ExampleFlowWorldmap from '../examples/template-worldmap.json'
+    import ExampleDataTable from '../examples/template-data-table.json'
 
     const examples = ref({
-      'worldmap': ExampleFlowWorldmap
+      'worldmap': ExampleFlowWorldmap,
+      'custom-data-table': ExampleDataTable
     })
 </script>
 
@@ -86,19 +88,19 @@ Where we pass in data such as:
 ```json
 [
     {
-        "Room": "Living Room",
+        "room": "Living Room",
         "id": "1234",
         "target": 18.1,
         "current": 20
     },
     {
-        "Room": "Bathroom Room",
+        "room": "Bathroom Room",
         "id": "5678",
         "target": 19.5,
         "current": 18
     },
     {
-        "Room": "Kitchen Room",
+        "room": "Kitchen Room",
         "id": "9101",
         "target": 18.1,
         "current": 17.6
@@ -107,6 +109,67 @@ Where we pass in data such as:
 ```
 
 Vuetify's Data Table will automatically render a column for each item in the data provided, by default it will just render it as text (as we do in `ui-table`). However, we can also use the `<template v-slot:item.property />` syntax to override how we render a particular cell.
+
+#### Important Note: Case Sensitivity
+
+This is only relevant if you wish to use `<template>` overrides in your `v-data-table` to customize the appearance of a cell or header.
+
+Due to a limitation in the way that HTML renders, you cannot use capital letters in DOM templates. This means that if you have a property in your data called `myProperty` or `My_Property`, then we need to transform it to an HTML-friendly format, before we can include it in `<template v-slot:item.property="{ item }">`. 
+
+This transformation can be achieved using the `v-data-table`'s `headers` option which allows us to map values and keys.
+
+```vue
+<template>
+    <div id="app">
+        <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
+        <v-data-table v-model:search="search" :headers="headers" :items="msg?.payload" class="elevation-1" :items-per-page="20">
+            <template v-slot:header.lowercase>
+                <div>custom <b>html</b> title</div>
+            </template>
+            <template v-slot:item.snake_case="{ item }">
+                ${{ 3 * item.snake_case }}
+            </template>
+        </v-data-table>
+    </div>
+</template>
+
+<script>
+    export default {
+    data () {
+      return {
+        search: '',
+        headers: [
+            // a basic header definition
+            { title: 'kebab-case', key: 'kebab-case' },
+            { title: 'slithering', key: 'snake_case'},
+            // we can also skip defining a title here,
+            // and use v-slot (see in HTML above) instead
+            { key: 'lowercase' },
+            // if we need to transform due to case sensitivity, we can do so like this:
+            { title: 'Date & Time', key: 'camel-case', value: item => item['camelCase']},
+            // we can also add JS transformation to our values too
+            { title: 'All Caps', key: 'macro-case', value: item => item['MACRO_CASE'].toUpperCase()}
+        ],
+      }
+    },
+  }
+</script>
+```
+
+In summary, the different ways to handle case sensitivity are:
+
+| Type | Transform Required |
+|------|--------------------|
+| `kebab-case` | No |
+| `snake_case` | No |
+| `lowercase` | No |
+| `camelCase` | Yes |
+| `MACRO_CASE` | Yes |
+
+You can try out the above example with this flow:
+
+<FlowViewer :flow="examples['custom-data-table']" height="200px"/>
 
 ### World Map
 
