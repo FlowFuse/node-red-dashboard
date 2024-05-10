@@ -43,7 +43,7 @@
                 </div>
                 <v-data-table :headers="headers.pages" :items="items.pages" show-expand :items-per-page="-1">
                     <template #item.filter.groups="{ item }">
-                        <v-btn variant="outlined" @click="applyFilter('groups', 'page', item.id)">Show Groups</v-btn>
+                        <v-btn v-if="item.type === 'ui-page'" variant="outlined" @click="applyFilter('groups', 'page', item.id)">Show Groups</v-btn>
                     </template>
                     <template #expanded-row="{ columns, item }">
                         <tr>
