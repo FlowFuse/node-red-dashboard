@@ -828,7 +828,6 @@
             connectWith: '.nrdb2-sb-group-list',
             addItem: function (container, i, group) {
                 if (!group || !group.id) {
-                    console.log('add group', group, 'to', pageId)
                     // this is a new page that's been added and we need to setup the basics
                     group = addDefaultGroup(pageId)
                     RED.editor.editConfig('', group.type, group.id)
@@ -1071,7 +1070,6 @@
             if (n.type === 'ui-page' && !!n.ui) {
                 pages[n.id] = toDashboardItem(n)
             } else if (n.type === 'ui-link') {
-                console.log('link', n)
                 links[n.id] = toDashboardItem(n)
             } else if (n.type === 'ui-group') {
                 const p = n.page
@@ -1218,8 +1216,6 @@
             ...pages,
             ...links
         }
-
-        console.log(pages, links, items)
 
         Object.values(items).sort((a, b) => a.order - b.order).forEach(function (item) {
             let groups = []
