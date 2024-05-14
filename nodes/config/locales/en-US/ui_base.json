@@ -28,6 +28,7 @@
         "layout": {
             "pages": "Pages",
             "page": "Page",
+            "link": "Link",
             "group": "Group",
             "edit": "Edit",
             "focus": "Focus",

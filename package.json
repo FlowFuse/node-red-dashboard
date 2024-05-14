@@ -112,6 +112,7 @@
         "nodes": {
             "ui-base": "nodes/config/ui_base.js",
             "ui-page": "nodes/config/ui_page.js",
+            "ui-link": "nodes/config/ui_link.js",
             "ui-group": "nodes/config/ui_group.js",
             "ui-theme": "nodes/config/ui_theme.js",
             "ui-form": "nodes/widgets/ui_form.js",

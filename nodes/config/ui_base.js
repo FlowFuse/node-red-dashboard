@@ -231,7 +231,7 @@ module.exports = function (RED) {
         const pageNodes = []
         const themes = []
         RED.nodes.eachNode(n => {
-            if (n.type === 'ui-page') {
+            if (n.type === 'ui-page' || n.type === 'ui-link') {
                 pageNodes.push(n)
             } else if (n.type === 'ui-base' && n.id !== node.id) {
                 baseNodes.push(n)
@@ -880,7 +880,7 @@ module.exports = function (RED) {
 
             // map pages by their ID
             if (page && !node.ui.pages.has(page?.id)) {
-                const { _user, type, ...p } = page
+                const { _users, ...p } = page
                 node.ui.pages.set(page.id, p)
             }
 
