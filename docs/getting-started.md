@@ -56,6 +56,17 @@ Layout options in a Dashboard 2.0 user interface are controlled by two main sett
 ![Example of a "Grid" page layout, with a "Collapsing" sidebar navigation.](./assets/images/getting-started-layout.png){data-zoomable}
 _Example of the "Grid" page layout, with a "Collapsing" sidebar navigation._
 
+### Default Page
+
+Each page in Dashboard 2.0 has a unique URL. If a user navigates to an unrecognised path, underneath the `/dashboard/` path, then a default page is used to fall back to. 
+
+Currently, in Dashboard 2.0, the default page is chosen as the page ordered first in the list of pages in the side navigation:
+
+![Screenshot of the pages list in the Dashboard 2.0 side panel](./assets/images/default-page-layout.png "Screenshot of the pages list in the Dashboard 2.0 side panel"){data-zoomable}
+_Screenshot of the pages list in the Dashboard 2.0 side panel_
+
+In this example, the _"Third Party Widgets"_ page is the default page.
+
 ### Layout Options
 
 Currently, we have three different options for a page's layout:
@@ -67,7 +78,7 @@ Currently, we have three different options for a page's layout:
 
 ### Navigation Sidebar
 
-Built into te frameowkr of hte UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behavior can be controlled. Options include:
+Built into the framework of the UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behavior can be controlled. Options include:
 
 - **Collapsing:** When the sidebar is opened the page content will adjust with the width of the sidebar.
 - **Fixed:** The full sidebar will always be visible, and the page content will adjust to the width of the sidebar.
