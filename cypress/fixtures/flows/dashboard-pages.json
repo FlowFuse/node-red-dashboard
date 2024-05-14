@@ -19,7 +19,7 @@
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": -1,
+        "order": 2,
         "className": "",
         "visible": "true",
         "disabled": false
@@ -33,7 +33,7 @@
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": -1,
+        "order": 1,
         "className": "",
         "visible": "true",
         "disabled": false

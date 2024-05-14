@@ -165,12 +165,12 @@ export default {
             })
 
             if (payload.pages && Object.values(payload.pages).length > 0) {
-                console.log(payload.pages)
+                const defaultPage = Object.values(payload.pages).sort((a, b) => a.order - b.order)[0]
                 // add catch all - this ensures we navigate to _something_ when the app loads
                 // default to the first page added (for now)
                 this.$router?.addRoute({
                     path: '/:pathMatch(.*)*',
-                    redirect: payload.dashboards[Object.values(payload.pages)[0].ui].path + Object.values(payload.pages)[0].path
+                    redirect: payload.dashboards[defaultPage.ui].path + defaultPage.path
                 })
             }
 

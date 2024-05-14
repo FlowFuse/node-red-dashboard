@@ -13,8 +13,6 @@ props:
 
 # Config: UI Base `ui-base`
 
-Some details here about the ui-base config node
-
 ## Properties
 
 <PropsTable :hide-dynamic="true"/>

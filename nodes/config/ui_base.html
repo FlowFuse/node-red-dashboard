@@ -501,18 +501,37 @@
         return values
     }
 
+    function getConfigNodesByType (type) {
+        const nodes = []
+        RED.nodes.eachConfig((n) => {
+            if ((type instanceof String) && type === n.type) {
+                nodes.push(n)
+            } else {
+                // we have an array of types
+                if (type.includes(n.type)) {
+                    nodes.push(n)
+                }
+            }
+        })
+        return nodes
+    }
+
     function addDefaultPage (baseId, themeId) {
         const page = RED.nodes.getType('ui-page')
+        // get all pages
+        const entries = getConfigNodesByType(['ui-page', 'ui-link'])
+        const pageNumber = entries.length + 1
         const pageNode = {
             _def: page,
             id: RED.nodes.id(),
             type: 'ui-page',
             ...mapDefaults(page.defaults),
-            path: '/pageN', // TODO: generate a unique path
-            name: 'Page N',
+            path: `/page${pageNumber}`, // TODO: generate a unique path
+            name: `Page ${pageNumber}`,
             ui: baseId,
             theme: themeId,
-            layout: 'grid'
+            layout: 'grid',
+            order: pageNumber
         }
 
         addConfigNode(pageNode)
@@ -1198,8 +1217,14 @@
                     addRowActions(actions, item, groupsOL)
                     addRowStateOptions(actions, item)
                 }
+                // ensure all pages/links have the correct order value
+                const events = []
+                updateItemOrder(pagesOL.editableList('items'), events)
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
             },
             sortItems: function (items) {
+                // runs when an item is explicitly moved in the order
                 // track any changes
                 const events = []
                 updateItemOrder(items, events)
