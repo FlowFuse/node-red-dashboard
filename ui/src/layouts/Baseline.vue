@@ -8,7 +8,7 @@
             Loaded site template '{{ pageTemplate.id }}'
             <component :is="pageTemplate.component" :id="pageTemplate.id" :props="pageTemplate.props" :state="pageTemplate.state" />
         </div>
-        <v-app-bar :elevation="1">
+        <v-app-bar v-if="appBarStyle !== 'hidden'" :style="{'position': navPosition}" :elevation="1">
             <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
@@ -28,6 +28,7 @@
                 :mobile-breakpoint="['none', 'fixed'].includes(navigationStyle) ? '0' : 'md'"
                 :temporary="navigationStyle === 'temporary'"
                 :permanent="navigationStyle === 'icon'"
+                :style="{'position': navPosition}"
             >
                 <v-list nav>
                     <v-list-item
@@ -153,6 +154,9 @@ export default {
             const dId = Object.keys(this.dashboards)[0]
             return this.dashboards[dId]
         },
+        appBarStyle: function () {
+            return this.dashboard.titleBarStyle || 'default'
+        },
         navigationStyle: function () {
             const style = this.dashboard.navigationStyle
             if (![null, 'default', 'fixed', 'icon', 'temporary', 'none'].includes(style)) {
@@ -160,6 +164,9 @@ export default {
                 return 'default'
             }
             return style
+        },
+        navPosition: function () {
+            return this.appBarStyle === 'fixed' ? 'fixed' : 'absolute'
         }
     },
     watch: {
