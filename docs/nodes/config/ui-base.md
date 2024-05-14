@@ -17,9 +17,34 @@ props:
 
 <PropsTable :hide-dynamic="true"/>
 
+## Title Bar Style Options <AddedIn version="1.10.0" />
+
+### Title Bar - Default
+
+The title bar will appear as the first element, and scroll _with_ the content, meaning that on longer pages, the title bar will not be visible when the page is scrolled.
+
+![Example of how the 'Default' option looks](/images/node-examples/ui-base-appbar-default.png "Example of how the 'Default' option looks"){data-zoomable}
+_Example of how the 'Default' option looks_
+
+### Title Bar - Fixed
+
+The title bar will _always_ be visible, even when the page is scrolled. This is useful for when you want to always have access to the title bar, regardless of the page's length.
+
+![Example of how the 'Fixed' option looks](/images/node-examples/ui-base-appbar-fixed.png "Example of how the 'Fixed' option looks"){data-zoomable}
+_Example of how the 'Fixed' option looks_
+
+### Title Bar - Hidden
+
+The title bar is not visible at all. Note that it is still possible to see the navigation menu in this state by choosing the [Fixed](#fixed) option.
+
+![Example of how the 'Hidden' option looks](/images/node-examples/ui-base-appbar-hidden.png "Example of how the 'Hidden' option looks"){data-zoomable}
+_Example of how the 'Hidden' option looks_
+
+
+
 ## Navigation Style Options <AddedIn version="1.2.0" />
 
-### Collapsing (default)
+### Navigation - Collapsing (default)
 
 <SideBySideImages
     caption="Example of how the 'Collapsing' option looks when open (left) and closed (right)."
@@ -29,14 +54,14 @@ props:
 
 This open will shift the entire content of the Dashboard when opened, and not be visisble at all when closed.
 
-### Fixed
+### Navigation - Fixed
 
 ![Example of how the 'Fixed' option looks at all times](/images/node-examples/ui-base-layout-fixed.png "Example of how the 'Fixed' option looks at all times"){data-zoomable}
 _Example of how the 'Fixed' option looks at all times_
 
 Will always remain open. At our mobile breakdpoint (768px), this value is overriden, and an "Appear Over" option is used. Note that at mobile-scale (screen width less than 768px), then the Fixed layout will revert back to the "Default" option.
 
-### Collapse to icons
+### Navigation - Collapse to Icons
 
 Similar to "Collapsing" when opened, but when closed, the icons for each page still show.
 
@@ -46,7 +71,7 @@ Similar to "Collapsing" when opened, but when closed, the icons for each page st
     right="/images/node-examples/ui-base-layout-icon-closed.png"
 />
 
-### Appear over content
+### Navigation - Appear over Content
 
 <SideBySideImages
     caption="Example of how the 'Collapsing' option looks when open (left) and closed (right)."
@@ -56,7 +81,7 @@ Similar to "Collapsing" when opened, but when closed, the icons for each page st
 
 Not visible when closed, and when open, will appear over the Dashboard content, without shifting it.
 
-### Always Hide
+### Navigation - Always Hide
 
 ![Example of how the 'Always Hide' option looks](/images/node-examples/ui-base-layout-hide.png "Example of how the 'Always Hide' option looks"){data-zoomable}
 _Example of how the 'Always Hide' option looks_
