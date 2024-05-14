@@ -19,7 +19,9 @@ describe('Node-RED Dashboard 2.0', () => {
 
         // Check we have the pages listed
         cy.get('[data-nav="dashboard-ui-page-1"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-1"]').should('have.text', 'Page 1')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('have.text', 'Page 2')
 
         // Click page 2
         cy.get('[data-nav="dashboard-ui-page-2"]').click({ force: true }) // for some reason Cypress thinks this element is off the screen - it isn't

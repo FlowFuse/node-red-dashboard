@@ -224,7 +224,7 @@ export default {
             }
         },
         getPageLabel (page) {
-            return page.order + ' ' + page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
+            return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         },
         handleNavigationClick () {
             if (this.navigationStyle === 'fixed') {
