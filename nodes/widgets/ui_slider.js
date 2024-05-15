@@ -1,3 +1,5 @@
+const statestore = require('../store/state.js')
+
 module.exports = function (RED) {
     function SliderNode (config) {
         RED.nodes.createNode(this, config)
@@ -19,6 +21,25 @@ module.exports = function (RED) {
                     node.status({ shape: 'dot', fill: 'grey', text: node.state[0] + ' | ' + node.state[1] })
                 } else if (node._wireCount === 0) {
                     node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
+                }
+                /**
+                 * Dynamic Properties
+                 * */
+                if (msg.label) {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'label', msg.label)
+                }
+                if (msg.thumbLabel) {
+                    statestore.set(group.getBase(), node, msg, 'thumbLabel', msg.thumbLabel)
+                }
+                if (msg.min !== undefined) {
+                    statestore.set(group.getBase(), node, msg, 'min', msg.min)
+                }
+                if (msg.step !== undefined) {
+                    statestore.set(group.getBase(), node, msg, 'step', msg.step)
+                }
+                if (msg.max !== undefined) {
+                    statestore.set(group.getBase(), node, msg, 'max', msg.max)
                 }
                 return msg
             }

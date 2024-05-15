@@ -2,7 +2,7 @@
 <!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
-        v-model="value" :disabled="!state.enabled" :label="props.label" hide-details="auto"
+        v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="props.thumbLabel || false"
         :min="props.min"
         :max="props.max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
@@ -22,17 +22,38 @@ export default {
         state: { type: Object, default: () => ({}) }
     },
     setup (props) {
-        useDataTracker(props.id)
+        useDataTracker(props.id, null, null, this.onDynamicProperties)
     },
     data () {
         return {
-            value: null
+            value: null,
+            dynamic: {
+                label: null,
+                thumbLabel: null,
+                min: null,
+                max: null
+            }
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         storeValue: function () {
             return this.messages[this.id]?.payload
+        },
+        label: function () {
+            return this.dynamic.label || this.props.label
+        },
+        thumbLabel: function () {
+            return this.dynamic.thumbLabel || this.props.thumbLabel
+        },
+        min: function () {
+            return this.dynamic.min !== undefined ? this.dynamic.min : this.props.min
+        },
+        step: function () {
+            return this.dynamic.step !== undefined ? this.dynamic.step : this.props.step
+        },
+        max: function () {
+            return this.dynamic.max !== undefined ? this.dynamic.max : this.props.max
         }
     },
     watch: {
@@ -63,6 +84,23 @@ export default {
             msg.payload = this.value
             this.$store.commit('data/bind', msg)
             this.$socket.emit('widget-change', this.id, this.value)
+        },
+        onDynamicProperties (msg) {
+            if (msg.label) {
+                this.dynamic.label = msg.label
+            }
+            if (msg.thumbLabel) {
+                this.dynamic.thumbLabel = msg.thumbLabel
+            }
+            if (msg.min !== undefined) {
+                this.dynamic.min = msg.min
+            }
+            if (msg.max !== undefined) {
+                this.dynamic.max = msg.max
+            }
+            if (msg.step !== undefined) {
+                this.dynamic.step = msg.step
+            }
         }
     }
 }

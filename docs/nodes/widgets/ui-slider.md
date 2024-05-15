@@ -3,11 +3,32 @@ description: Integrate ui-slider in Node-RED Dashboard 2.0 for dynamic value inp
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the slider with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown to the left of the slider.
-    Thumb Label: If true, will so a label on hte slider's thumb when moved/focussed.
-    Range: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
+    Label:
+        description: The text shown to the left of the slider.
+        dynamic: true
+    Thumb Label:
+        description: If true, will so a label on hte slider's thumb when moved/focussed.
+        dynamic: true
+    Range:
+        description: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
+        dynamic: true
     Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.
 dynamic:
+    Label:
+        payload: msg.class
+        structure: ["String"]
+    Thumb Label:
+        payload: msg.thumbLabel
+        structure: ["Boolean"]
+    Range (min):
+        payload: msg.min
+        structure: ["Number"]
+    Range (step):
+        payload: msg.step
+        structure: ["Number"]
+    Range (max):
+        payload: msg.max
+        structure: ["Number"]
     Class:
         payload: msg.class
         structure: ["String"]
@@ -27,6 +48,10 @@ Adds a slider to your dashboard that will emit values in Node-RED under `msg.pay
 ## Dynamic Properties
 
 <DynamicPropsTable/>
+
+### Setting Value
+
+You can set the value of the slider by passing in the respective value in `msg.payload`.
 
 ## Example - Basic
 
