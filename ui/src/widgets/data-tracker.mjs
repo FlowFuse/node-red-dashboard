@@ -7,7 +7,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     const socket = inject('$socket')
 
     function checkDynamicProperties (msg) {
-        // set standard dynamic proeprties states if passed into msg
+        // set standard dynamic properties states if passed into msg
         if ('enabled' in msg) {
             store.commit('ui/widgetState', {
                 widgetId,
