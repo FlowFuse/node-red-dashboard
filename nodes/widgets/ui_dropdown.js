@@ -16,6 +16,10 @@ module.exports = function (RED) {
                     // dynamically set "options" property
                     statestore.set(group.getBase(), node, msg, 'options', msg.options)
                 }
+                if (msg.label) {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'label', msg.label)
+                }
                 return msg
             }
         }
