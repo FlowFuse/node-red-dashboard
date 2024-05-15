@@ -248,10 +248,22 @@
             },
             navigationStyle: {
                 value: 'default'
+            },
+            titleBarStyle: {
+                value: 'default'
             }
         },
         label: function () {
             return `${this.name} [${this.path}]` || 'UI Config'
+        },
+        oneditprepare: function () {
+            // backward compatability for navigation style
+            if (!this.titleBarStyle) {
+                // set to default
+                this.titleBarStyle = 'default'
+                // update the jquery dropdown
+                $('#node-config-input-titleBarStyle').val('default')
+            }
         },
         onpaletteadd: function () {
             // add the Dashboard 2.0 sidebar
@@ -1677,6 +1689,17 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.navigation"></label>
+    </div>
+    <div class="form-row" style="align-items: center;">
+        <label style="margin-right: 5px; margin-bottom: 0px;" for="node-config-input-titleBarStyle"><span data-i18n="ui-base.label.titleBarStyle"></span></label>
+        <select id="node-config-input-titleBarStyle">
+            <option value="default" data-i18n="ui-base.label.titleBarStyleDefault"></option>
+            <option value="hidden" data-i18n="ui-base.label.titleBarStyleHidden"></option>
+            <option value="fixed" data-i18n="ui-base.label.titleBarStyleFixed"></option>
+        </select>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>
