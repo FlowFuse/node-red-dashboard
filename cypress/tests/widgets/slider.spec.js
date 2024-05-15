@@ -35,4 +35,16 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
         // shouldn't have changed hte value as we're only setting label
         cy.checkOutput('msg.payload', 50)
     })
+
+    it('include "min"', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-min'))
+        // check the min value is updated
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemin', '10')
+    })
+
+    it('include "max"', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-max'))
+        // check the min value is updated
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemax', '50')
+    })
 })
