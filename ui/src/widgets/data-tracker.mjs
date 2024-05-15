@@ -2,9 +2,37 @@ import { inject, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 // by convention, composable function names start with "use"
-export function useDataTracker (widgetId, onInput, onLoad) {
+export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) {
     const store = useStore()
     const socket = inject('$socket')
+
+    function checkDynamicProperties (msg) {
+        // set standard dynamic proeprties states if passed into msg
+        if ('enabled' in msg) {
+            store.commit('ui/widgetState', {
+                widgetId,
+                enabled: msg.enabled
+            })
+        }
+
+        if ('visible' in msg) {
+            store.commit('ui/widgetState', {
+                widgetId,
+                visible: msg.visible
+            })
+        }
+
+        if ('class' in msg) {
+            store.commit('ui/widgetState', {
+                widgetId,
+                class: msg.class
+            })
+        }
+
+        if (onDynamicProperties) {
+            onDynamicProperties(msg)
+        }
+    }
 
     // a composable can also hook into its owner component's
     // lifecycle to setup and teardown side effects.
@@ -24,27 +52,8 @@ export function useDataTracker (widgetId, onInput, onLoad) {
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
-                // set states if passed into msg
-                if ('enabled' in msg) {
-                    store.commit('ui/widgetState', {
-                        widgetId,
-                        enabled: msg.enabled
-                    })
-                }
-
-                if ('visible' in msg) {
-                    store.commit('ui/widgetState', {
-                        widgetId,
-                        visible: msg.visible
-                    })
-                }
-
-                if ('class' in msg) {
-                    store.commit('ui/widgetState', {
-                        widgetId,
-                        class: msg.class
-                    })
-                }
+                // check for dynamic properties
+                checkDynamicProperties(msg)
 
                 if (onInput) {
                     // sometimes we need to have different behaviour

@@ -62,7 +62,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, this.onLoad)
+        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -77,12 +77,7 @@ export default {
             })
             this.select(this.messages[this.id]?.payload)
         },
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
+        onDynamicProperties (msg) {
             // When a msg comes in from Node-RED, we need support 2 operations:
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
@@ -100,9 +95,7 @@ export default {
                 this.select(payload)
             }
             // additionally, we need to support both single and multi selection
-
             // For now, we only support selecting which item(s) are selected, not updating the available options
-
             // if the payload is an array, we assume it is a list of values to select
         },
         onChange () {
