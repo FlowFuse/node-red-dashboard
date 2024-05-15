@@ -21,9 +21,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id, null, null, this.onDynamicProperties)
-    },
     data () {
         return {
             value: null,
@@ -61,8 +58,13 @@ export default {
             if (this.value === val) {
                 return // no change
             }
-            this.value = val
+            if (val !== undefined) {
+                this.value = val
+            }
         }
+    },
+    created () {
+        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload

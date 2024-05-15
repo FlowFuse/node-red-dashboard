@@ -109,7 +109,9 @@
         "x": 360,
         "y": 100,
         "wires": [
-            ["test-helper"]
+            [
+                "test-helper"
+            ]
         ]
     },
     {
@@ -128,6 +130,72 @@
         "y": 100,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-label",
+        "type": "ui-button",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "Set Dynamic Label",
+        "label": "Set Dynamic Label",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-set-properties"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-set-properties",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "label",
+                "pt": "msg",
+                "to": "Dynamic Slider Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
         ]
     }
 ]

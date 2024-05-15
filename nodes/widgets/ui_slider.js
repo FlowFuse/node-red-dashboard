@@ -16,11 +16,13 @@ module.exports = function (RED) {
         const evts = {
             onChange: true,
             beforeSend: function (msg) {
-                if (!node.pt) {
-                    node.state[0] = msg.payload
-                    node.status({ shape: 'dot', fill: 'grey', text: node.state[0] + ' | ' + node.state[1] })
-                } else if (node._wireCount === 0) {
-                    node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
+                if (msg.payload !== undefined) {
+                    if (!node.pt) {
+                        node.state[0] = msg.payload
+                        node.status({ shape: 'dot', fill: 'grey', text: node.state[0] + ' | ' + node.state[1] })
+                    } else if (node._wireCount === 0) {
+                        node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
+                    }
                 }
                 /**
                  * Dynamic Properties
