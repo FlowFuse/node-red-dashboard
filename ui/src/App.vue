@@ -13,6 +13,7 @@
                 <p :class="'status-' + status.type" v-html="status.msg" />
             </div>
         </div>
+        <PWABadge />
     </v-app>
 </template>
 
@@ -20,6 +21,7 @@
 import { mapState } from 'vuex'
 import { markRaw } from 'vue' // eslint-disable-line import/order
 
+import PWABadge from './components/PWABadge.vue'
 import DashboardLoading from './components/loading.vue'
 import DebugView from './debug/Debug.vue' // import the Debug View for a Dashboard
 import layouts from './layouts/index.mjs' // import all layouts
@@ -29,7 +31,8 @@ import widgetComponents from './widgets/index.mjs' // import all Vue Widget Comp
 export default {
     name: 'App',
     components: {
-        DashboardLoading
+        DashboardLoading,
+        PWABadge
     },
     inject: ['$socket'],
     data () {
