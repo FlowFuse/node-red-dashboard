@@ -3,8 +3,8 @@
         v-model="value"
         :disabled="!state.enabled"
         :class="className"
-        :label="props.label"
-        :multiple="props.multiple"
+        :label="label"
+        :multiple="multiple"
         :items="options"
         item-title="label"
         item-value="value"
@@ -31,7 +31,11 @@ export default {
     data () {
         return {
             value: null,
-            items: null
+            items: null,
+            dynamic: {
+                label: null,
+                multiple: null
+            }
         }
     },
     computed: {
@@ -58,6 +62,12 @@ export default {
             set (value) {
                 this.items = value
             }
+        },
+        multiple: function () {
+            return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
+        },
+        label: function () {
+            return this.dynamic.label || this.props.label
         }
     },
     created () {
@@ -94,14 +104,19 @@ export default {
                 // 2. update the selected value(s)
                 this.select(payload)
             }
-            // additionally, we need to support both single and multi selection
-            // For now, we only support selecting which item(s) are selected, not updating the available options
-            // if the payload is an array, we assume it is a list of values to select
+
+            if (msg.label !== undefined) {
+                this.dynamic.label = msg.label
+            }
+
+            if (msg.multiple !== undefined) {
+                this.dynamic.multiple = msg.multiple
+            }
         },
         onChange () {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
-            if (this.props.multiple) {
+            if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
                     return option.value

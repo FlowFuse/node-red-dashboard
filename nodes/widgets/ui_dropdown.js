@@ -20,6 +20,10 @@ module.exports = function (RED) {
                     // dynamically set "label" property
                     statestore.set(group.getBase(), node, msg, 'label', msg.label)
                 }
+                if (msg.multiple !== undefined) {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'multiple', msg.multiple)
+                }
                 return msg
             }
         }

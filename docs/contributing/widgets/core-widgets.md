@@ -155,6 +155,37 @@ Now that we have the server-side state updating, anytime we refresh, the full `u
 
 We then need to ensure that the client is aware of these dynamic properties _as they change_. To do this, we can use the `onDynamicProperties` event available in the [data tracker](#data-tracker).
 
+A good pattern to follow is provide a `computed` variable on the component in question. This computed variable can then check a local, component-scoped, variable that is overridden when dynamic properties are set, if that hasn't been set, fall back to the `props.<property>` value.
+
+```js
+{
+    // ...,
+    data () {
+        return {
+            // ...,
+            dynamic: {
+                label: null
+            }
+        }
+    },
+    computed: {
+        label () {
+            return this.dynamic.label || this.props.label
+        }
+    },
+    // ...,
+    methods (props) {
+        // ...,
+        onDynamicProperty (msg) {
+            if (msg.label) {
+                this.dynamic.label = msg.label
+            }
+        }
+    }
+}
+
+```
+
 ### Updating Documentation
 
 There are two important places to ensure documentation is updated when adding dynamic properties:
