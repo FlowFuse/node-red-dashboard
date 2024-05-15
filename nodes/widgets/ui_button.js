@@ -1,3 +1,4 @@
+const statestore = require('../store/state.js')
 const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
@@ -44,6 +45,20 @@ module.exports = function (RED) {
             }
 
             msg.payload = payload
+
+            // dynamic properties
+            if (msg.label) {
+                // dynamically set "label" property
+                statestore.set(group.getBase(), node, msg, 'label', msg.label)
+            }
+            if (msg.icon) {
+                // dynamically set "label" property
+                statestore.set(group.getBase(), node, msg, 'icon', msg.icon)
+            }
+            if (msg.iconPosition) {
+                // dynamically set "label" property
+                statestore.set(group.getBase(), node, msg, 'iconPosition', msg.iconPosition)
+            }
 
             if (!error) {
                 return msg

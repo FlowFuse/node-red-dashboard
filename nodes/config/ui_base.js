@@ -653,6 +653,11 @@ module.exports = function (RED) {
         async function onLoad (conn, id, msg) {
             // console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
 
+            if (!id) {
+                console.error('No widget id provided for widget-load event')
+                return
+            }
+
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
             // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
             // Node-RED built nodes will be a random UUID
