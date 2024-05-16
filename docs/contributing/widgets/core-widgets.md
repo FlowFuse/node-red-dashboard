@@ -170,11 +170,14 @@ A good pattern to follow is provide a `computed` variable on the component in qu
     },
     computed: {
         label () {
-            return this.dynamic.label || this.props.label
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
     },
+    created () {
+        // we can define a custom onDynamicProperty handler for this widget
+        useDataTracker(this.id, null, null, this.onDynamicProperty)
     // ...,
-    methods (props) {
+    methods () {
         // ...,
         onDynamicProperty (msg) {
             if (msg.label) {

@@ -67,7 +67,7 @@ export default {
             return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
         },
         label: function () {
-            return this.dynamic.label || this.props.label
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
     },
     created () {
