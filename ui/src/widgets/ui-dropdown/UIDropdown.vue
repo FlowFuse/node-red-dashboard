@@ -105,11 +105,11 @@ export default {
                 this.select(payload)
             }
 
-            if (msg.label !== undefined) {
+            if (typeof msg.label !== 'undefined') {
                 this.dynamic.label = msg.label
             }
 
-            if (msg.multiple !== undefined) {
+            if (typeof msg.multiple !== 'undefined') {
                 this.dynamic.multiple = msg.multiple
             }
         },
