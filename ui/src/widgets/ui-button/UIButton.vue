@@ -30,32 +30,34 @@ export default {
     data () {
         return {
             dynamic: {
-                label: ''
+                label: null,
+                icon: null,
+                iconPosition: null
             }
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         prependIcon () {
-            const icon = this.dynamic.icon || this.props.icon
+            const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
-            return this.props.label && icon && this.iconPosition === 'left' ? mdiIcon : undefined
+            return this.getPropertyValue('label') && icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
         appendIcon () {
-            const icon = this.dynamic.icon || this.props.icon
+            const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
-            return this.props.label && icon && this.iconPosition === 'right' ? mdiIcon : undefined
+            return this.getPropertyValue('label') && icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
         icon () {
-            const icon = this.dynamic.icon || this.props.icon
+            const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
-            return this.props.label === '' && icon ? mdiIcon : undefined
+            return this.getPropertyValue('label') === '' && icon ? mdiIcon : undefined
         },
         label () {
-            return this.dynamic.label || this.props.label
+            return this.getPropertyValue('label')
         },
         iconPosition () {
-            return this.dynamic.iconPosition || this.props.iconPosition
+            return this.getPropertyValue('iconPosition')
         }
     },
     created () {
@@ -86,6 +88,9 @@ export default {
             if (msg.iconPosition !== undefined) {
                 this.dynamic.iconPosition = msg.iconPosition
             }
+        },
+        getPropertyValue (property) {
+            return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
         }
     }
 }

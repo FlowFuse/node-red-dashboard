@@ -47,15 +47,15 @@ module.exports = function (RED) {
             msg.payload = payload
 
             // dynamic properties
-            if (msg.label) {
+            if (typeof msg.label !== 'undefined') {
                 // dynamically set "label" property
                 statestore.set(group.getBase(), node, msg, 'label', msg.label)
             }
-            if (msg.icon) {
+            if (typeof msg.icon !== 'undefined') {
                 // dynamically set "label" property
                 statestore.set(group.getBase(), node, msg, 'icon', msg.icon)
             }
-            if (msg.iconPosition) {
+            if (typeof msg.iconPosition !== 'undefined') {
                 // dynamically set "label" property
                 statestore.set(group.getBase(), node, msg, 'iconPosition', msg.iconPosition)
             }
