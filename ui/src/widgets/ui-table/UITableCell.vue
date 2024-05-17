@@ -2,6 +2,9 @@
     <template v-if="type === 'row'">
         {{ row }}
     </template>
+    <template v-else-if="type === 'html'">
+        <pre style="white-space: pre-wrap" v-html="localValue" />
+    </template>
     <template v-else-if="type === 'link'">
         <a :href="localValue">{{ localValue }}</a>
     </template>
@@ -16,7 +19,7 @@
     </template>
     <template v-else-if="type === 'sparkline-trend'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-sparkline v-model="localValue" color="primary" :padding="2" line-width="8" />
+        <v-sparkline v-model="localValue" color="primary" :padding="2" line-width="6" />
     </template>
     <template v-else-if="type === 'sparkline-bar'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->

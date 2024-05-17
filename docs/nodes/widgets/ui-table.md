@@ -77,6 +77,7 @@ If you toggle "off" the "Auto Columns" option, you will have more control to def
 _An example of a ui-table displaying various of the cell types available_
 
 - **Text**: Renders the cell as plain text.
+- **HTML**: Will respect new line breaks (e.g. `\n`) and basic HTML tags.
 - **Link**: Renders the cell as a hyperlink. The `Link` field should contain the URL to link to.
 - **Color**: Renders the cell as a colored box. The `Color` field should contain a valid CSS color.
 - **Tick/Cross**: Renders the cell as a tick or cross. The `Value` field should contain a boolean (`true`/`false`) value.
