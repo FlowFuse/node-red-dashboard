@@ -18,7 +18,7 @@
     .nrdb2-helptext {
         font-size: 0.75rem;
         line-height: 0.825rem;
-        color: #aaa;
+        color: var(--red-ui-tertiary-text-color);
         font-style: italic;
     }
     .w-16 {
@@ -53,7 +53,7 @@
     .red-ui-editableList-border .red-ui-editableList-border {
         border: 0;
     }
-    #node-config-stateless-nodes .red-ui-treeList-label.selected {
+    #node-config-client-constraints-nodes .red-ui-treeList-label.selected {
         background-color: #e3f2fd;
     }
     /* Dashboard 2.0 Sidebar */
@@ -67,6 +67,12 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+    }
+    #dashboard-2-client-constraints a {
+        color: blue;
+    }
+    #dashboard-2-client-constraints a:hover {
+        text-decoration: underline;
     }
     .nrdb2-layout-helptext {
         padding: 0 0 9px;
@@ -108,7 +114,7 @@
     }
     .nrdb2-sb-list-header .nrdb2-sb-info {
         font-size: 0.75rem;
-        opacity: 0.5;
+        color: var(--red-ui-tertiary-text-color);
     }
     .nrdb2-sb-list-header .nrdb2-sb-palette {
         display: flex;
@@ -170,6 +176,52 @@
         height: 18px;
         width: 18px;
         margin-left: 3.42rem;
+    }
+    #nrdb2-sb-client-data-providers {
+        padding-left: 24px;
+    }
+    #nrdb2-sb-client-data-providers label {
+        cursor: default;
+    }
+    #nrdb2-sb-client-data-providers-list {
+        list-style: none;
+        margin: 0;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        padding: 4px;
+        border: 1px solid var(--red-ui-form-input-border-color);
+    }
+    #nrdb2-sb-client-data-providers-list li {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+    #nrdb2-sb-client-data-providers-list li:not(:first-child){
+        border-top: 1px solid #e6e6e6;
+    }
+    #nrdb2-sb-client-data-providers-list li .fa {
+        color: var(--red-ui-tertiary-text-color);
+        font-size: 0.75rem;
+    }
+    #nrdb2-sb-client-data-providers-list li label {
+        margin: 0;
+        white-space: nowrap;
+    }
+    .nrdb2-sb-client-data-provider-package {
+        color: var(--red-ui-tertiary-text-color);
+        font-size: 0.75rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    #node-config-client-constraints-nodes {
+        flex-grow: 1;
+        width: 100%;
+    }
+    #node-config-client-constraints-nodes-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 </style>
 
@@ -1038,6 +1090,10 @@
         }
     }
 
+    /**
+     * Sidebar Functions
+     */
+
     function buildLayoutOrderEditor (parent) {
         if (RED._db2debug) { console.log('dashboard 2: ui_base.html: buildLayoutOrderEditor (parent)', parent) }
 
@@ -1371,6 +1427,156 @@
         })
     }
 
+    /**
+     * Builds the client constraints editor
+     * @param {Object} base - The ui-base node we are representing
+     * @param {Object} parent - The parent element to append the client constraints editor to
+     */
+    function buildClientConstraintsEditor (base, parent) {
+        const html = `<div class="nrdb2-sidebar-tab-content">
+        <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
+            <p>
+                This tab allows you to control whether or not client-specific data is included in messages,
+                and which nodes accept it in order to constrain communication to specific clients.
+                You can read more about it <a href="https://dashboard.flowfuse.com/user/sidebar.html#client-data" target="_blank">here</a>
+            </p>
+        </div>
+        <div class="form-row form-row-flex">
+            <input type="checkbox" id="node-config-input-includeClientData">
+            <label style="width:auto" for="node-config-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Include Client Data</label>
+        </div>
+        <p class="nrdb2-helptext" style="margin-top: -12px;">
+            <i class="fa fa-info-circle"></i> This option includes client data in all messages transmitted
+            by Dashboard 2.0 (e.g. Socket ID and information about any logged in user)
+        </p>
+        <div id="nrdb2-sb-client-data-providers">
+            <label>Client Data Providers:</label>
+            <ul id="nrdb2-sb-client-data-providers-list"></ul>
+        </div>
+        <div id="node-config-client-constraints-nodes-container" class="form-row">
+            <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Accept Client Data</label>
+            <p class="nrdb2-helptext" style="margin-top: -4px;">
+                <i class="fa fa-info-circle"></i> Defines whether the respective node type will use client data
+                (e.g. socketid), and constrain communications to just that client.
+            </p>
+            <div id="node-config-client-constraints-nodes"></div>
+        </div></div>`
+
+        $(html).appendTo(parent)
+
+        if (base.includeClientData === undefined) {
+            // older ui-base nodes may not have this property
+            base.includeClientData = true
+            const events = [{
+                t: 'edit',
+                node: base,
+                changes: {
+                    includeClientData: undefined
+                },
+                dirty: true,
+                changed: true
+            }]
+            recordEvents(events)
+        }
+
+        // set initial state
+        $('#node-config-input-includeClientData')
+            .prop('checked', base.includeClientData)
+
+        // add event handler to our checkbox for including client data
+        $('#node-config-input-includeClientData')
+            .on('change', function (event) {
+                const value = event.target.checked
+                base.includeClientData = value
+                // store hte previous value in history
+                const events = [{
+                    t: 'edit',
+                    node: base,
+                    changes: {
+                        includeClientData: !value
+                    },
+                    dirty: true,
+                    changed: true
+                }]
+                recordEvents(events)
+            })
+
+        // add core as a data provider as it provides socketId
+        const coreLi = $('<li>').appendTo('#nrdb2-sb-client-data-providers-list')
+        $('<i class="fa fa-bar-chart"></i>').appendTo(coreLi)
+        $('<label></label>').text('Socket ID').appendTo(coreLi)
+        $('<span class="nrdb2-sb-client-data-provider-package"></span>').text('@flowfuse/node-red-dashboard').appendTo(coreLi)
+
+        // detail any auth providers we have
+        // check for any third-party tab definitions
+        RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
+            if (plugin.auth) {
+                const li = $('<li>').appendTo('#nrdb2-sb-client-data-providers-list')
+                $('<i class="fa fa-plug"></i>').appendTo(li)
+                $('<label></label>').text(plugin.description).appendTo(li)
+                $('<span class="nrdb2-sb-client-data-provider-package"></span>').text(plugin.module).appendTo(li)
+                $('<li>').text(plugin.description).appendTo('#node-config-client-data-providers-list')
+            }
+        })
+
+        // build list of node types
+        const widgets = RED.nodes.registry.getNodeTypes().filter((nodeType) => {
+            const type = RED.nodes.getType(nodeType)
+            return /^ui-/.test(nodeType) && type.category !== 'config' && type.inputs > 0
+        })
+
+        if (base.acceptsClientConfig === undefined) {
+            // older ui-base nodes may not have this property
+            base.acceptsClientConfig = ['ui-control', 'ui-notification']
+            const events = [{
+                t: 'edit',
+                node: base,
+                changes: {
+                    acceptsClientConfig: undefined
+                },
+                dirty: true,
+                changed: true
+            }]
+            recordEvents(events)
+        }
+
+        $('#node-config-client-constraints-nodes')
+            .treeList({
+                data: widgets.map((w) => {
+                    const isSelected = base.acceptsClientConfig?.includes(w)
+                    return {
+                        label: w,
+                        checkbox: true,
+                        selected: isSelected
+                    }
+                })
+            })
+            .on('treelistselect', function (event, node) {
+                const events = [{
+                    t: 'edit',
+                    node: base,
+                    changes: {
+                        acceptsClientConfig: [...base.acceptsClientConfig]
+                    },
+                    dirty: true,
+                    changed: true
+                }]
+                let changed = false
+                if (!node.selected && base.acceptsClientConfig?.includes(node.label)) {
+                    // remove it from the list
+                    base.acceptsClientConfig = base.acceptsClientConfig.filter((w) => w !== node.label)
+                    changed = true
+                } else if (node.selected && !base.acceptsClientConfig?.includes(node.label)) {
+                    // add it to the list
+                    base.acceptsClientConfig.push(node.label)
+                    changed = true
+                }
+                if (changed) {
+                    recordEvents(events)
+                }
+            })
+    }
+
     function refreshSidebarEditors () {
         try {
             refreshBusy = true
@@ -1379,15 +1585,12 @@
             const themesDiv = $('.nrdb2-themes-editor')
             // empty the list if any items exist
             if (layoutOrderDiv.length) {
-                // TODO: create a lookup of which items are expanded / collapsed
                 layoutOrderDiv.empty()
             }
             if (themesDiv.length) {
-                // TODO: create a lookup of which items are expanded / collapsed
                 themesDiv.empty()
             }
-
-            // now rebuild
+            // now rebuild any sidebars that are dependent upon other nodes
             buildLayoutOrderEditor()
             buildThemesEditor()
 
@@ -1436,6 +1639,7 @@
                         // Tab - Pages
                         const pagesContent = addSidebarTab(c_('label.layout'), 'pages', ulDashboardTabs, sidebar)
                         const themesContent = addSidebarTab(c_('label.theming'), 'themes', ulDashboardTabs, sidebar)
+                        const cConstraintsContent = addSidebarTab(c_('label.constraints'), 'client-constraints', ulDashboardTabs, sidebar)
 
                         // check for any third-party tab definitions
                         RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
@@ -1467,6 +1671,8 @@
                         buildLayoutOrderEditor(pagesContent)
                         // add Themes View
                         buildThemesEditor(themesContent)
+                        // add Themes View
+                        buildClientConstraintsEditor(base, cConstraintsContent)
                     }
                 })
             }

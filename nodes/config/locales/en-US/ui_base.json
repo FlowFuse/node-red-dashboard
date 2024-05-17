@@ -13,6 +13,7 @@
             "unattachedMessage": "The following Groups have do not have a parent page defined.",
             "theming": "Theming",
             "themingMessage": "Here you can can get quick access to your UI Themes, defined on your Dashboard.",
+            "constraints": "Client Data",
             "page": "Page",
             "pages": "Pages",
             "settings": "Settings",
