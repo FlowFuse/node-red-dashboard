@@ -102,6 +102,7 @@ export default ({ mode }) => {
           collapsed: false,
           items: [
             { text: 'Settings', link: '/user/settings' },
+            { text: 'Sidebar', link: '/user/sidebar' },
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' },
             { text: 'Migration Guide', link: '/user/migration' },
             { text: 'UI Template Examples', link: '/user/template-examples' },

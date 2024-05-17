@@ -10,11 +10,24 @@ description: Guide to building custom plugins for Node-RED Dashboard 2.0, enhanc
 
 Node-RED supports the development of custom plugins that add behaviour and functionality to the Node-RED runtime. A really common use case of plugins is [custom Node-RED Themes](https://nodered.org/docs/api/ui/themes/), which modify the overall CSS/appearance of the underlying Node-RED Editor.
 
-Node-RED Dashboard 2.0 also supports plugins. This allows you to define custom behaviour for the Dashboard runtime, independent of particular nodes and widgets. For now, we provide a collection of [API hooks](#index-js) that allow the injection of code at various points in the Dashboard instantiation and runtime.
+Node-RED Dashboard 2.0 also supports plugins. This allows you to define custom behaviour for the Dashboard runtime, independent of particular nodes and widgets. Currently, we provide a collection of [API hooks](#index-js) that allow the injection of code at various points in the Dashboard instantiation and runtime.
 
 To integrate, make sure your Node-RED plugin is registered with `"type": "node-red-dashboard-2"` in the `package.json` file. This will tell Node-RED that this is a Dashboard 2.0 plugin.
 
 _Note: Plugins differ from [Third Party Widgets](../widgets/third-party.md). Third Party Widgets are built as nodes that become available in the Node-RED Editor, and can be dragged onto the Dashboard. Plugins are built to modify the behaviour of the Dashboard runtime itself._
+
+## Authentication Plugins <AddedIn version="1.10.0"/>
+
+One of the most common use cases for Dashboard plugins is to add user data to messages emitted by Dashboard. They utilise an existing authentication framework established on the Node-RED server, and inject user data into the `msg._client` object that is sent to the Node-RED flow.
+
+### Configuration
+
+The Dashboard 2.0 sidebar will list any plugins in the "Client Data" tab that have declared `auth: true` in their `index.html` file. This is required if a plugin is appending/modifying data in the `msg._client` object.
+
+![Screenshot of an example "Client Data" tab](/images/dashboard-sidebar-clientdata.png)
+_Screenshot of an example "Client Data" tab_
+
+In the above screenshot we can see that the core Dashboard code appends the "Socket ID" data, and we are also running with the FlowFuse Authentication plugin which appends any information about a logged in FlowFuse user when using the dashboard.
 
 ## Plugin Structure
 
@@ -44,6 +57,33 @@ Let's take a quick example to give an overview of the structure of a Dashboard p
 }
 ```
 
+### index.html
+
+This defines any client/editor plugins. This allows for definition of Node-RED Editor features such as injecting content into the Dashboard 2.0 sidebar, or whether any runtime plugins are appending authentication/client data to messages.
+
+ ```html
+ <script type="text/javascript">
+    RED.plugins.registerPlugin('node-red-dashboard-2-<plugin-name>', {
+        type: 'node-red-dashboard-2',
+        tabs: [
+            {
+                id: 'my-tab-id',
+                label: 'My Tab',
+                /**
+                 * Runs when tabs are first created
+                 * @param {object} base - ui-base node for which this sidebar represents
+                 * @param {object} parent - DOM element to append content to
+                 */
+                init (base, parent) {
+                    // add some content to the tab
+                }
+            }
+        ],
+        auth: true/false, // Declares to Dashboard 2.0 whether this should list in the "Client Data" tab
+        description: '', // If "auth: true", this is used in the "Client Data" tab of the Dashboard Sidebar
+    })
+</script>
+ ```
 
 ### index.js
 
@@ -167,29 +207,3 @@ module.exports = function(RED) {
  ```
 
  If any of `onInput`, `onAction`, `onChange` or `onLoad` return `null`, then the `msg` will abruptly stop there, and not be sent on any further in the flow.
-
- ### index.html
-
-This defines any client/editor plugins. This allows for definiton of Node-RED Editor features such as injecting content into the Dashboard 2.0 sidebar.
-
- ```html
- <script type="text/javascript">
-    RED.plugins.registerPlugin('node-red-dashboard-2-<plugin-name>', {
-        type: 'node-red-dashboard-2',
-        tabs: [
-            {
-                id: 'my-tab-id',
-                label: 'My Tab',
-                /**
-                 * Runs when tabs are first created
-                 * @param {object} base - ui-base node for which this sidebar represents
-                 * @param {object} parent - DOM element to append content to
-                 */
-                init (base, parent) {
-                    // add some content to the tab
-                }
-            }
-        ]
-    })
-</script>
- ```
