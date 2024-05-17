@@ -1510,7 +1510,6 @@
         // detail any auth providers we have
         // check for any third-party tab definitions
         RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
-            console.log(plugin)
             if (plugin.auth) {
                 const li = $('<li>').appendTo('#nrdb2-sb-client-data-providers-list')
                 $('<i class="fa fa-plug"></i>').appendTo(li)
@@ -1584,7 +1583,6 @@
             if (RED._db2debug) { console.log('dashboard 2: ui_base.html: refreshSidebarEditors ()') }
             const layoutOrderDiv = $('.nrdb2-layout-order-editor')
             const themesDiv = $('.nrdb2-themes-editor')
-            const cConstraintsDiv = $('.nrdb2-client-constraints-editor')
             // empty the list if any items exist
             if (layoutOrderDiv.length) {
                 layoutOrderDiv.empty()
@@ -1592,14 +1590,9 @@
             if (themesDiv.length) {
                 themesDiv.empty()
             }
-            // if (cConstraintsDiv.length) {
-            //     cConstraintsDiv.empty()
-            // }
-
-            // now rebuild
+            // now rebuild any sidebars that are dependent upon other nodes
             buildLayoutOrderEditor()
             buildThemesEditor()
-            // buildClientConstraintsEditor()
 
             // finally, restore previous state of expanded/collapsed items
             // TODO: expand/collapse any items that were expanded before
@@ -1680,8 +1673,6 @@
                         // add Themes View
                         buildThemesEditor(themesContent)
                         // add Themes View
-                        console.log('sidebar on change')
-                        console.log(base, cConstraintsContent)
                         buildClientConstraintsEditor(base, cConstraintsContent)
                     }
                 })
