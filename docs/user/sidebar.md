@@ -10,7 +10,7 @@ _Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
 
 The Dashboard 2.0 sidebar is a menu added to the right-hand side of the Node-RED Editor. It is designed to provide a quick overview of the current state of the Dashboard, and support in the overall configuration of the Dashboard.
 
-## Tabs
+## Sidebar Tabs
 
 ### Layout
 
