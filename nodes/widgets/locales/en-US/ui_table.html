@@ -1,0 +1,47 @@
+<script type="text/html" data-help-name="ui-table">
+    <p>
+        Display and manage complex datasets with ease using the ui-table widget.
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Max Rows <span class="property-type">num</span></dt>
+        <dd>
+            Defines the maximum number of data-rows to render in the table.
+            Excess rows will be available through pagination control.
+        </dd>
+        <dt>Selection <span class="property-type">none | click | checkbox</span></dt>
+        <dd>
+            Defines any interaction available on the table. This will emit events
+            with the respective selections taking place.
+        </dd>
+        <dt>Show Search <span class="property-type">boolean</span></dt>
+        <dd>Will display a search bar above the table, allowing for text-based filtering of the data.</dd>
+        <dt>Auto Columns <span class="property-type">boolean</span></dt>
+        <dd>
+            If true, the table will automatically display all data provided.
+            If false, then you have much more control over the rendering of each column.
+        </dd>
+        <dt>Columns <span class="property-type">array</span></dt>
+        <dd>A list of the columns to render in the table. Only an available option if "Auto Columns" is set to "false"</dd>
+    </dl>
+    <h3>Cell Types</h3>
+    <p>The following details the available cell types that can be used in your tables</p>
+    <dl class="message-properties">
+        <dt>Text <span class="property-type">any</span></dt>
+        <dd>Will render the raw value provided, without any modification or formatting</dd>
+        <dt>Link <span class="property-type">url</span></dt>
+        <dd>Renders the cell as a hyperlink. The "Link" value provided should be a valid URL.</dd>
+        <dt>Color <span class="property-type">color</span></dt>
+        <dd>Renders the cell as a colored box. The "Color" field should contain a valid CSS color.</dd>
+        <dt>Tick/Cross <span class="property-type">boolean</span></dt>
+        <dd>Renders the cell as a tick or cross. The "Value" field should contain a boolean value.</dd>
+        <dt>Progress <span class="property-type">number</span></dt>
+        <dd>Renders the cell as a progress bar. The `Value` field should contain a number between 0 and 100.</dd>
+        <dt>Sparkline - Trend <span class="property-type">array</span></dt>
+        <dd>Renders the cell as a small line chart without axes. The value should be an array of numbers to be plotted.</dd>
+        <dt>Sparkline - Bar <span class="property-type">array</span></dt>
+        <dd>Renders the cell as a small bar chart without axes. The value should be an array of numbers to be plotted.</dd>
+        <dt>Row Number <span class="property-type">number</span></dt>
+        <dd>Requires no "key" to be provided as this will just render the row number (1 -> n).</dd>
+    </dl>
+</script>

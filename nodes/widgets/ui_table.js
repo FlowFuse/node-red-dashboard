@@ -17,7 +17,10 @@ module.exports = function (RED) {
                 // map older data where 'label' was used.
                 return {
                     title: col.title || col.label,
-                    key: col.key
+                    key: col.key,
+                    type: col.type,
+                    width: col.width,
+                    align: col.align
                 }
             })
         }

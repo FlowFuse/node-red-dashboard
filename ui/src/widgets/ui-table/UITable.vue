@@ -18,23 +18,33 @@
         @update:model-value="onMultiSelect"
     >
         <template v-if="itemsPerPage === 0" #bottom />
-        <template #item="{ index, item, internalItem }">
-            <v-data-table-row
-                :index="index" :item="internalItem"
+        <template #item="{ item, index }">
+            <tr
                 :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item}"
                 @click="props.selectionType === 'click' ? onRowClick(item) : {}"
-            />
+            >
+                <td v-for="col in headers" :key="col.key">
+                    <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
+                        <UITableCell :row="index + 1" :value="item[col.key]" :type="col.type" />
+                    </div>
+                </td>
+            </tr>
         </template>
     </v-data-table>
 </template>
 
 <script>
 
+import UITableCell from './UITableCell.vue'
+
 import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITable',
+    components: {
+        UITableCell
+    },
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
@@ -82,7 +92,10 @@ export default {
                 return this.props.columns.map((col) => {
                     return {
                         key: col.key,
-                        title: col.label || col.title
+                        title: col.label || col.title,
+                        type: col.type,
+                        align: col.align,
+                        width: col.width
                     }
                 })
             } else {
@@ -102,6 +115,12 @@ export default {
         },
         itemsPerPage () {
             return this.props.maxrows || 0
+        },
+        columnTypes () {
+            return this.headers.reduce((typeMap, col) => {
+                typeMap[col.key] = col.type
+                return typeMap
+            }, {})
         }
     },
     watch: {
@@ -177,6 +196,12 @@ export default {
 .nrdb-table-nodata td {
     opacity: 0.5;
 }
+
+.nrdb-table-cell-align {
+    display: flex;
+    align-items: center;
+}
+
 .nrdb-table.v-data-table .v-table__wrapper>table>thead>tr>th.v-data-table__th--sortable:hover,
 .nrdb-table.v-data-table .v-table__wrapper>table tbody>tr>th.v-data-table__th--sortable:hover
 {

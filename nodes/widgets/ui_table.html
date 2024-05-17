@@ -1,5 +1,54 @@
+<style>
+    .node-input-column-container-row {
+        flex-grow: 1;
+    }
+    .node-input-column-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
+    .node-input-column-row .node-input-column-handle {
+        color: var(--red-ui-form-text-color, #eee);
+        cursor: move;
+        margin-right: 3px;
+    }
+    .node-input-column-options {
+        flex-grow: 1;
+    }
+    .node-input-column-row-property {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    .node-input-column-row-property label {
+        min-width: 60px;
+        width: auto !important;
+    }
+    .node-input-column-row-property:not(:first-child) {
+        margin-top: 3px;
+    }
+    .node-input-column-row-property input,
+    .node-input-column-row-property select {
+        flex-grow: 1;
+    }
+    .flex-grow {
+        flex-grow: 1;
+    }
+</style>
+
 <script type="text/javascript">
     (function () {
+        const COLUMN_TYPES = [
+            { value: 'text', label: 'Text' },
+            { value: 'link', label: 'Link (https://...)' },
+            { value: 'color', label: 'Color (#RRGGBB)' },
+            { value: 'tickcross', label: 'Tick/Cross (Boolean)' },
+            { value: 'progress', label: 'Progress (1-100)' },
+            { value: 'sparkline-trend', label: 'Sparkline - Trend (Array)' },
+            { value: 'sparkline-bar', label: 'Sparkline - Bar (Array)' },
+            { value: 'row', label: 'Row Number' }
+        ]
         RED.nodes.registerType('ui-table', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -77,14 +126,84 @@
                 // Columns Editor
                 function generateColumn (i, col) {
                     const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
-                    const row = $('<div/>').appendTo(container)
+                    const row = $('<div/>', {
+                        class: 'node-input-column-row'
+                    }).appendTo(container)
                     $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
                     $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
 
-                    $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-column-handle fa fa-bars"></i>').appendTo(row)
+                    // sorting handle
+                    $('<i class="node-input-column-handle fa fa-bars"></i>').appendTo(row)
 
-                    $('<input/>', { class: 'node-input-column-key', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key'), value: col.key }).appendTo(row)
-                    $('<input/>', { class: 'node-input-column-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.label'), value: col.title }).appendTo(row)
+                    const options = $('<div/>', {
+                        class: 'node-input-column-options'
+                    }).appendTo(row)
+
+                    // key
+                    const keyRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
+                    $('<label/>', {
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key')}:`
+                    }).appendTo(keyRow)
+                    $('<input/>', {
+                        class: 'node-input-column-key',
+                        type: 'text',
+                        placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key'),
+                        value: col.key
+                    }).appendTo(keyRow)
+    
+                    // label
+                    const labelRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
+                    $('<label/>', {
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.label')}:`
+                    }).appendTo(labelRow)
+                    $('<input/>', {
+                        class: 'node-input-column-label',
+                        type: 'text',
+                        placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.label'),
+                        value: col.title
+                    }).appendTo(labelRow)
+
+                    // style
+                    const styleRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
+                    // style - width
+                    const widthRow = $('<div />', { class: 'flex-grow' }).appendTo(styleRow)
+                    $('<label/>', {
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.width')}:`
+                    }).appendTo(widthRow)
+                    $('<input/>', {
+                        type: 'text',
+                        class: 'node-input-column-width',
+                        placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.width'),
+                        value: col.width
+                    }).appendTo(widthRow)
+                    // style - align
+                    const alignRow = $('<div />').appendTo(styleRow)
+                    $('<label/>', {
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.align')}:`
+                    }).appendTo(alignRow)
+                    const alignOptions = $('<select>', {
+                        class: 'node-input-column-align'
+                    }).appendTo(alignRow)
+                    alignOptions.append($('<option>').attr('value', 'start').text(RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.alignLeft')))
+                    alignOptions.append($('<option>').attr('value', 'center').text(RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.alignCenter')))
+                    alignOptions.append($('<option>').attr('value', 'end').text(RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.alignRight')))
+                    alignOptions.val(col.align).change()
+
+                    // type
+                    const typeRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
+                    $('<label/>', {
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.type')}:`
+                    }).appendTo(typeRow)
+                    const typeOptions = $('<select>', {
+                        class: 'node-input-column-type'
+                    }).appendTo(typeRow)
+
+                    // add options for each supported column type
+                    $(COLUMN_TYPES).each(function () {
+                        typeOptions.append($('<option>').attr('value', this.value).text(this.label))
+                    })
+
+                    typeOptions.val(col.type).change()
 
                     const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
                     const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
@@ -101,7 +220,11 @@
                 }
 
                 $('#node-input-add-column').click(function () {
-                    generateColumn($('#node-input-column-container').children().length + 1, {})
+                    const defaultColumn = {
+                        type: 'text',
+                        align: 'start'
+                    }
+                    generateColumn($('#node-input-column-container').children().length + 1, defaultColumn)
                     $('#node-input-column-container-div').scrollTop($('#node-input-column-container-div').get(0).scrollHeight)
                 })
 
@@ -124,7 +247,10 @@
                     const column = $(this)
                     const o = {
                         title: column.find('.node-input-column-label').val(),
-                        key: column.find('.node-input-column-key').val()
+                        key: column.find('.node-input-column-key').val(),
+                        type: column.find('.node-input-column-type').find(':selected').val(),
+                        width: column.find('.node-input-column-width').val(),
+                        align: column.find('.node-input-column-align').find(':selected').val()
                     }
                     node.columns.push(o)
                 })
@@ -175,13 +301,13 @@
     </div>
     <div class="form-row" style="display:flex;">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>
-        <div class="form-row node-input-column-container-row" style="margin-bottom: 0px; width:calc(70% + 15px);">
+        <div class="form-row node-input-column-container-row">
             <div>
                 <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
                 <label style="width:auto" for="node-input-autocols" data-i18n="ui-table.label.autoCalculateColumns"></label>
             </div>
             <div id="node-input-columns-container">
-                <div id="node-input-column-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 100%;">
+                <div id="node-input-column-container-div" style="box-sizing:border-box; border-radius:5px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 100%;">
                     <ol id="node-input-column-container" style="list-style-type:none; margin:0;"></ol>
                 </div>
                 <a href="#" class="editor-button editor-button-small" id="node-input-add-column" style="margin-top:4px;"><i class="fa fa-plus"></i> <span data-i18n="ui-table.label.columns"></span></a>

@@ -16,8 +16,18 @@ dynamic:
 ---
 
 <script setup>
+    import { ref } from 'vue'
+
+    import ExampleCellTypes from '../../examples/ui-table-cell-types.json'
+
+    import FlowViewer from '../../components/FlowViewer.vue'
     import AddedIn from '../../components/AddedIn.vue'
+
+    const examples = ref({
+      'cellTypes': ExampleCellTypes
+    })
 </script>
+
 
 # Data Table `ui-table` <AddedIn version="0.4.0" />
 
@@ -47,18 +57,56 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 - **Click**: The full row becomes a clickable entity, and the `ui-table` node will _output the full object_ associated to a row when clicked.
 - **Checkbox**: Each row has a checkbox, and the `ui-table` node will _output an array of objects_ associated to the checked rows when a checkbox is selected.
 
+
+### Configuring Columns
+
+![Screenshot of the configuration options available for column types in Node-RED](/images/node-examples/ui-table-column-config.png "Screenshot of the configuration options available for column types in Node-RED"){data-zoomable}
+_Screenshot of the configuration options available for column types in Node-RED_
+
+If you toggle "off" the "Auto Columns" option, you will have more control to define the columns for your table. For each column, you can define the following:
+
+- **Key**: The key in the object to use for the column data.
+- **Label**: The text to display in the column header.
+- **Width**: The width of the column, can be in `px`, `%`, or any other valid CSS sizing.
+- **Align:** The alignment of the text in the column. Can be `Left`, `Center`, or `Right`. Note that some columns do look odd with "Center" alignment as the header does also contain space for the sorting icon.
+- **Type**: Defines the cell's type and controls how your data will be rendered for this column.
+
+### Cell Types <AddedIn version="1.10.0" />
+
+![An example of a ui-table displaying various of the cell types available](/images/node-examples/ui-table-cell-types.png "An example of a ui-table displaying various of the cell types available"){data-zoomable}
+_An example of a ui-table displaying various of the cell types available_
+
+- **Text**: Renders the cell as plain text.
+- **Link**: Renders the cell as a hyperlink. The `Link` field should contain the URL to link to.
+- **Color**: Renders the cell as a colored box. The `Color` field should contain a valid CSS color.
+- **Tick/Cross**: Renders the cell as a tick or cross. The `Value` field should contain a boolean (`true`/`false`) value.
+- **Progress**: Renders the cell as a progress bar. The `Value` field should contain a number between 0 and 100.
+- **Sparkline - Trend**: Renders the cell as a small line chart without axes. The `Value` field should contain an array of numbers to be plotted.
+- **Sparkline - Bar**: Renders the cell as a small bar chart without axes. The `Value` field should contain an array of numbers to be plotted.
+- **Row Number**: Renders the row number into the cell.
+
+#### Example
+
+<FlowViewer :flow="examples['cellTypes']" height="200px"/>
+
 ## Dynamic Properties
 
 <DynamicPropsTable/>
 
-## Examples
+## Table Configuration
 
 ### Search & Filter
+
+The `ui-table` node can be configured to include a search bar above the table. This will allow users to search and filter across all columns, and automatically search across all columns when you type.
+
+#### Example
 
 ![Example of a Data Table with Search & Filter](/images/node-examples/ui-table-search.png "Example of a Data Table with Search & Filter"){data-zoomable}
 *Example of a Data Table with Search & Filter" enabled.*
 
 ### Interaction
+
+Example that show how a table will appear with different selection types chosen.
 
 #### Default - No Selection Events
 

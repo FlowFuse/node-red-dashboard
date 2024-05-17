@@ -18,7 +18,6 @@ import * as directives from 'vuetify/directives'
 
 // Labs Imports
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
-import { VSparkline } from 'vuetify/labs/VSparkline'
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
 import './stylesheets/common.css'
@@ -53,7 +52,6 @@ const vuetify = createVuetify({
     components: {
         ...components,
         VNumberInput,
-        VSparkline,
         VTreeview
     },
     directives,

@@ -1,0 +1,171 @@
+[
+    {
+        "id": "78b43be39f6db8e1",
+        "type": "ui-table",
+        "z": "9cb9bb3cd8e3faee",
+        "group": "5c66023267e5559e",
+        "name": "",
+        "label": "text",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "maxrows": "0",
+        "autocols": false,
+        "showSearch": false,
+        "selectionType": "none",
+        "columns": [
+            {
+                "title": "My Column",
+                "key": "columnA",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "My Other Column",
+                "key": "columnB",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "URL",
+                "key": "link",
+                "type": "link",
+                "width": "300px",
+                "align": "start"
+            },
+            {
+                "title": "Bar",
+                "key": "progress",
+                "type": "progress",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Row",
+                "key": "",
+                "type": "row",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Trend",
+                "key": "array",
+                "type": "sparkline-trend",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Bar",
+                "key": "array",
+                "type": "sparkline-bar",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Tick/Cross",
+                "key": "boolean",
+                "type": "tickcross",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Spot",
+                "key": "color",
+                "type": "color",
+                "width": "",
+                "align": "center"
+            }
+        ],
+        "x": 490,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6cdf36ffe9daf59c",
+        "type": "inject",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"columnA\":\"Hello\",\"columnB\":\"World\",\"link\":\"https://news.bbc.co.uk\",\"progress\":76,\"color\":\"#FF0000\",\"array\":[6,7,9,2,4],\"boolean\":true},{\"columnA\":\"Hey\",\"columnB\":\"Globe\",\"link\":\"https://flowfuse.com\",\"progress\":56,\"color\":\"#24aa69\",\"array\":[1,3,6,3,5],\"boolean\":false}]",
+        "payloadType": "json",
+        "x": 350,
+        "y": 60,
+        "wires": [
+            [
+                "78b43be39f6db8e1"
+            ]
+        ]
+    },
+    {
+        "id": "5c66023267e5559e",
+        "type": "ui-group",
+        "name": "Table Cell Types",
+        "page": "bbc7b44a426b2b01",
+        "width": "12",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "bbc7b44a426b2b01",
+        "type": "ui-page",
+        "name": "UI Table Example",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/table",
+        "icon": "table",
+        "layout": "grid",
+        "theme": "c2ff5ba1f92a0f0e",
+        "order": 11,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": true,
+        "navigationStyle": "temporary",
+        "titleBarStyle": "fixed"
+    },
+    {
+        "id": "c2ff5ba1f92a0f0e",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]
