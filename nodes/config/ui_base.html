@@ -1630,7 +1630,6 @@
                 RED.nodes.eachConfig(function (n) {
                     if (n.type === 'ui-base') {
                         const base = n
-                        console.log(base)
                         sidebar.append(dashboardLink(base.id, base.name, base.path))
                         const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
 
