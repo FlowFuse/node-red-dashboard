@@ -1,4 +1,7 @@
 <style>
+    #node-input-column-container-div {
+        min-height: 36px;
+    }
     .node-input-column-container-row {
         flex-grow: 1;
     }
@@ -20,17 +23,20 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        gap: 6px;
+        flex-grow: 1;
     }
     .node-input-column-row-property label {
-        min-width: 60px;
+        min-width: 50px;
         width: auto !important;
     }
     .node-input-column-row-property:not(:first-child) {
         margin-top: 3px;
     }
-    .node-input-column-row-property input,
-    .node-input-column-row-property select {
+    #node-input-column-container .node-input-column-row-property input,
+    #node-input-column-container .node-input-column-row-property select {
         flex-grow: 1;
+        width: 50%;
     }
     .flex-grow {
         flex-grow: 1;
@@ -167,7 +173,7 @@
                     // style
                     const styleRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
                     // style - width
-                    const widthRow = $('<div />', { class: 'flex-grow' }).appendTo(styleRow)
+                    const widthRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(styleRow)
                     $('<label/>', {
                         text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.width')}:`
                     }).appendTo(widthRow)
@@ -178,7 +184,7 @@
                         value: col.width
                     }).appendTo(widthRow)
                     // style - align
-                    const alignRow = $('<div />').appendTo(styleRow)
+                    const alignRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(styleRow)
                     $('<label/>', {
                         text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.align')}:`
                     }).appendTo(alignRow)
@@ -300,13 +306,15 @@
             <label  for="node-input-showSearch" data-i18n="ui-table.label.showSearch"></label>
         </div>
     </div>
-    <div class="form-row" style="display:flex;">
+    <div class="form-row" style="display:flex; margin-bottom: 3px;">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>
+        <div>
+            <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+            <label style="width:auto" for="node-input-autocols" data-i18n="ui-table.label.autoCalculateColumns"></label>
+        </div>
+    </div>
+    <div class="form-row">
         <div class="form-row node-input-column-container-row">
-            <div>
-                <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
-                <label style="width:auto" for="node-input-autocols" data-i18n="ui-table.label.autoCalculateColumns"></label>
-            </div>
             <div id="node-input-columns-container">
                 <div id="node-input-column-container-div" style="box-sizing:border-box; border-radius:5px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 100%;">
                     <ol id="node-input-column-container" style="list-style-type:none; margin:0;"></ol>
