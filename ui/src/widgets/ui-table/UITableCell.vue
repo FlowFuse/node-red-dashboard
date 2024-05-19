@@ -3,30 +3,31 @@
         {{ row }}
     </template>
     <template v-else-if="type === 'html'">
-        <pre style="white-space: pre-wrap" v-html="localValue" />
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <pre style="white-space: pre-wrap" v-html="value" />
     </template>
     <template v-else-if="type === 'link'">
-        <a :href="localValue">{{ localValue }}</a>
+        <a :href="value">{{ value }}</a>
     </template>
     <template v-else-if="type === 'color'">
-        <i class="nrdb-ui-table-cell-color-spot" :style="{'background-color': localValue}" />
+        <i class="nrdb-ui-table-cell-color-spot" :style="{'background-color': value}" />
     </template>
     <template v-else-if="type === 'tickcross'">
-        <v-icon class="nrdb-ui-table-cell-bool" :icon="localValue ? 'mdi-check-bold' : 'mdi-close-thick'" />
+        <v-icon class="nrdb-ui-table-cell-bool" :icon="value ? 'mdi-check-bold' : 'mdi-close-thick'" />
     </template>
     <template v-else-if="type === 'progress'">
-        <v-progress-linear v-model="localValue" color="primary" :height="8" />
+        <v-progress-linear v-model="value" color="primary" :height="8" />
     </template>
     <template v-else-if="type === 'sparkline-trend'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-sparkline v-model="localValue" color="primary" :padding="2" line-width="6" />
+        <v-sparkline v-model="value" color="primary" :padding="2" line-width="6" />
     </template>
     <template v-else-if="type === 'sparkline-bar'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-sparkline v-model="localValue" type="bar" color="primary" :padding="2" line-width="16" />
+        <v-sparkline v-model="value" type="bar" color="primary" :padding="2" line-width="16" />
     </template>
     <template v-else>
-        {{ localValue }}
+        {{ value }}
     </template>
 </template>
 
@@ -42,16 +43,26 @@ export default {
             type: String,
             default: 'text'
         },
-        value: {
-            type: [String, Boolean, Number, Object, Array],
+        item: {
+            type: Object,
+            required: true
+        },
+        property: {
+            type: String,
             required: true
         }
     },
     emits: ['update:modelValue'],
     computed: {
-        localValue: {
+        value: {
             get () {
-                return this.value
+                // get nested property from item
+                const keys = this.property.split('.')
+                const value = keys.reduce((val, key) => {
+                    console.log(val, key)
+                    return val?.[key] ?? null
+                }, this.item)
+                return value
             },
             set (value) {
                 this.$emit('update:modelValue', value)
