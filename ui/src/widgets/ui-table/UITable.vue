@@ -18,11 +18,14 @@
         @update:model-value="onMultiSelect"
     >
         <template v-if="itemsPerPage === 0" #bottom />
-        <template #item="{ item, index }">
+        <template #item="{ item, index, internalItem, isSelected, toggleSelect }">
             <tr
                 :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item}"
                 @click="props.selectionType === 'click' ? onRowClick(item) : {}"
             >
+                <td v-if="props.selectionType === 'checkbox'" class="v-data-table__td v-data-table-column--no-padding v-data-table-column--align-start">
+                    <v-checkbox-btn :modelValue="isSelected(internalItem)" @click="toggleSelect(internalItem)" />
+                </td>
                 <td v-for="col in headers" :key="col.key">
                     <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
                         <UITableCell :row="index + 1" :value="item[col.key]" :type="col.type" />
