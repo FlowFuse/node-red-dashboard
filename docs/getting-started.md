@@ -86,6 +86,26 @@ Built into the framework of the UI is a side navigation bar, along with the top,
 - **Appear over Content:** When the sidebar is opened, the page is given an overlay, and the sidebar sits on top.
 - **Always Hide:** The sidebar will never show, and navigation between pages can instead be driven by [`ui-control`](https://dashboard.flowfuse.com/nodes/widgets/ui-control.html).
 
+## Design Patterns
+
+There are two core Design Patterns that are possible when building with Dashboard 2.0:
+
+- **Single Source of Truth:** All users of your Dashboard will see the same Dashboard, and respective data. This is useful for industrial IoT or Home Automation applications.
+- **Client-Based Data:** Data shown in each Dashboard is unique to a given client/session/user connected to the application. This represents a more traditional web application, where each user has their own session and associated data.
+
+It's worth noting that these two patterns can be mixed and matched within a single Dashboard 2.0 application too. Some pages or widgets can be built with a "Single Source of Truth" pattern, while others can be built with a "Client-Based Data" pattern.
+
+### Single Source of Truth
+
+This is the pattern that the original Node-RED Dashboard utilized. In this pattern, all users of the Dashboard will see the same data. Data that populates a widget is generally driven by a piece of hardware or general-purpose API call. If one user interacts with the Dashboard, the consequences of that action will be seen by all users.
+
+// insert example here
+
+### Client-Based Data
+
+In Dashboard 2.0 we can configure a given node type to "Accept Client Data". If toggled on, a `msg` can be given a `msg._client` value in order to specify a particular connection (e.g. username, socket ID) that the data should be sent to, rather than to all clients.
+
+
 ## Contributing
 
 If you would like to run this set of nodes locally, and specifically to help contribute to the development efforts, you can read the [Contributing](./contributing/index.md) documentation.
