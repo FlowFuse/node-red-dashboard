@@ -59,7 +59,6 @@ export default {
                 // get nested property from item
                 const keys = this.property.split('.')
                 const value = keys.reduce((val, key) => {
-                    console.log(val, key)
                     return val?.[key] ?? null
                 }, this.item)
                 return value
