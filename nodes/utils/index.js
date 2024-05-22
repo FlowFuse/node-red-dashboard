@@ -45,7 +45,6 @@ function addConnectionCredentials (RED, msg, conn, config) {
         })
         msg._client = { ...msg._client, ...{ socketId: conn.id } }
     }
-    console.log(msg)
     return msg
 }
 
