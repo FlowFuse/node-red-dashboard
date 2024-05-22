@@ -101,10 +101,10 @@ Built into the framework of the UI is a side navigation bar, along with the top,
 
 There are two core Design Patterns that are possible when building with Dashboard 2.0:
 
-- **Single Source of Truth:** All users of your Dashboard will see the same Dashboard, and respective data. This is useful for industrial IoT or Home Automation applications.
-- **Client-Driven Data:** Data shown in each Dashboard is unique to a given client/session/user connected to the application. This represents a more traditional web application, where each user has their own session and associated data.
+- **Single Source of Truth:** All users of your Dashboard will see the same data. This is useful for industrial IoT or Home Automation applications.
+- **Client-Driven Data:** Data shown in a particular widget is unique to a given client/session/user. This represents a more traditional web application, where each user has their own session and associated data.
 
-It's worth noting that these two patterns can be mixed and matched within a single Dashboard 2.0 application too. Some pages or widgets can be built with a "Single Source of Truth" pattern, while others can be built with a "Client-Driven Data" pattern.
+It's worth noting that these two patterns can be mixed and matched within a single Dashboard 2.0 application, shown [later](#example).
 
 ### Single Source of Truth
 
@@ -113,7 +113,9 @@ _Example workflow to demonstrate the "Single Source of Truth" design pattern._
 
 This is the pattern that the original Node-RED Dashboard utilized. In this pattern, all users of the Dashboard will see the same data. Data that populates a widget is generally driven by a piece of hardware or general-purpose API call.
 
-When a user goes to visit a Dashboard, we'll see that the data was already populated, and will display to every user. Note that if you have interactive elements, e.g. a slider linked to a chart, then one user moving the slider will draw data to the chart of every other user's Dashboards too.
+When a user goes to visit a Dashboard, the widgets will load their respective state, and will display it to every user. 
+
+An example of this is that if you have interactive elements, e.g. a slider linked to a chart, then one user moving the slider will draw data to the chart of every other user's Dashboards too.
 
 ### Client-Driven Data
 
@@ -125,23 +127,15 @@ In Dashboard 2.0 we can configure a given node type to ["Accept Client Data"](/u
 <img data-zoomable style="max-width: 400px; margin: auto;" src="/images/dashboard-sidebar-clientdata.png" alt="Screenshot of an example 'Client Data' tab"/>
 <em>Screenshot of an example "Client Data" tab</em>
 
-If toggled on, a `msg` can include a `msg._client` value to specify a particular connection (e.g. username, socket ID) that the data should be sent to, rather than to all clients.
+If "Include Client Data" is toggled on, then _all_ `msg` objects emitted from _all_ nodes will contain a `msg._client` object, which will at a minimum detail the `socketId` for the connected client. It is possible to add on more data to this object, such as a username, email address, or other unique identifier with Dashboard plugins, e.g. the [FlowFuse User Plugin](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/).
+
+The "Accept Client Data" table allow configuration over which node types will pay attention to any provided `msg._client` information. Any `msg` sent _to_ one of these nodes can include a `msg._client` value to specify a particular connection (e.g. username, socket ID) that the data should be sent to, rather than to all clients.
 
 For users familiar with the original Node-RED Dashboard, you'll recognise this pattern from what you could do with `ui-notification` and `ui-control`, now, in Dashboard 2.0, it's possible for _all_ widgets.
 
 The key here is that data is generally injected into a node as a consequence of a user action, e.g. clicking a button, viewing a page, or submitting a form, and the responding data is sent _only_ back to that user.
 
-An easy example of this design pattern in Dashboard 2.0 is to utilise the [UI Event](./nodes/widgets/ui-event.md) node:
-
-The `ui-event` node emits a `msg` when a user loads a page. Within the `msg` is a full `msg._client` data object available for that client's connection. If this message is then sent onto another node that accept client data, then that full `msg` will _only_ be sent to that connection.
-
-#### Saving Client Data
-
-If you have users submitting form data for example, you may want to save that data on a user-by-user basis. You can utilise the `msg._client` properties to provide you a key with which to save that data. This could be a username, email address, or the unique websocket ID.
-
-_Note:_ SocketID will reset on every page refresh, and is not a reliable way of ensuring you're communicating with the same client/user. Usernames, e-mail addresses and other personal information are available via authentication plugins such as the [FlowFuse User Plugin](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/).
-
-Here we have an example flow which maps submitted data to the socket ID, and then retrieves that data 
+An easy example of this design pattern in Dashboard 2.0 is to utilise the [UI Event](./nodes/widgets/ui-event.md) node. The `ui-event` node emits a `msg` when a user loads a page. Within the `msg` is a full `msg._client` data object available for that client's connection. If this message is then sent onto another node that accept client data, then that full `msg` will _only_ be sent to that specified client.
 
 ### Example
 
@@ -152,9 +146,9 @@ Here we have a flow that will produce some client-defined data, and some shared 
     Your browser does not support the video tag.
 </video>
 
-In the video above we see that in some cases, data is sent to just the client that triggered it (e.g. button clicks), and in others, the data is shared across all client sessions, e.g. the visualisation of slider value on the chart.
+In the video above we see that in some cases, data is sent to just the client that triggered it (e.g. button clicks), and in others, the data is shared across all client sessions (e.g. the visualisation of slider value on the chart).
 
-If you'd like to play with this example, here's the flow:
+If you'd like to play with this example, the flow is as follows:
 
 <FlowViewer :flow="examples['design-patterns']" height="425px" style="margin-bottom: 24px;"/>
 
