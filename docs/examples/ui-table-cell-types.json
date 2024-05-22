@@ -36,7 +36,7 @@
                 "align": "start"
             },
             {
-                "title": "Bar",
+                "title": "Progress",
                 "key": "progress",
                 "type": "progress",
                 "width": "",
