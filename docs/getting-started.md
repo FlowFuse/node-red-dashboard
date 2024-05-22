@@ -54,7 +54,7 @@ Notice too that Dashboard will automatically create a new group, page, theme and
 
 ## Configuring your layout
 
-Dashboard 2.0 adds a correspinding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
+Dashboard 2.0 adds a corresponding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
 
 ![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./assets/images/getting-started-sidebar.png){data-zoomable}
 _Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
@@ -89,7 +89,7 @@ Currently, we have three different options for a page's layout:
 
 ### Navigation Sidebar
 
-Built into the framework of the UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behavior can be controlled. Options include:
+Built into the framework of the UI is a side navigation bar, along with the top, page-wide "app bar". Configuration options exist such that the side navigation behaviour can be controlled. Options include:
 
 - **Collapsing:** When the sidebar is opened the page content will adjust with the width of the sidebar.
 - **Fixed:** The full sidebar will always be visible, and the page content will adjust to the width of the sidebar.
@@ -139,7 +139,7 @@ An easy example of this design pattern in Dashboard 2.0 is to utilise the [UI Ev
 
 ### Example
 
-Here we have a flow that will produce some client-defined data, and some shared data. 
+Here we have a flow that will produce some client-defined data, and some shared data. When importing, be sure to check that in the Dashboard 2.0 sidebar, both `ui-text` and `ui-template` are checked in the "Accepts Client Data" table.
 
 <video controls>
     <source src="./assets/videos/demo-design-patterns.mp4" type="video/mp4">
