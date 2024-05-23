@@ -179,7 +179,7 @@
             },
             {
                 "t": "set",
-                "p": "label",
+                "p": "ui_update.label",
                 "pt": "msg",
                 "to": "Dynamic Slider Label",
                 "tot": "str"
@@ -245,7 +245,7 @@
             },
             {
                 "t": "set",
-                "p": "min",
+                "p": "ui_update.min",
                 "pt": "msg",
                 "to": "10",
                 "tot": "num"
@@ -311,7 +311,7 @@
             },
             {
                 "t": "set",
-                "p": "max",
+                "p": "ui_update.max",
                 "pt": "msg",
                 "to": "50",
                 "tot": "num"

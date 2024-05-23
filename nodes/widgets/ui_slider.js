@@ -27,21 +27,24 @@ module.exports = function (RED) {
                 /**
                  * Dynamic Properties
                  * */
-                if (msg.label) {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'label', msg.label)
-                }
-                if (msg.thumbLabel) {
-                    statestore.set(group.getBase(), node, msg, 'thumbLabel', msg.thumbLabel)
-                }
-                if (msg.min !== undefined) {
-                    statestore.set(group.getBase(), node, msg, 'min', msg.min)
-                }
-                if (msg.step !== undefined) {
-                    statestore.set(group.getBase(), node, msg, 'step', msg.step)
-                }
-                if (msg.max !== undefined) {
-                    statestore.set(group.getBase(), node, msg, 'max', msg.max)
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof (updates.label) !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'label', updates.label)
+                    }
+                    if (updates.thumbLabel) {
+                        statestore.set(group.getBase(), node, msg, 'thumbLabel', updates.thumbLabel)
+                    }
+                    if (typeof (updates.min) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'min', updates.min)
+                    }
+                    if (typeof (updates.step) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'step', updates.step)
+                    }
+                    if (typeof (updates.max) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'max', updates.max)
+                    }
                 }
                 return msg
             }

@@ -15,22 +15,22 @@ props:
     Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.
 dynamic:
     Label:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
     Thumb Label:
-        payload: msg.thumbLabel
+        payload: msg.ui_update.thumbLabel
         structure: ["Boolean"]
     Range (min):
-        payload: msg.min
+        payload: msg.ui_update.min
         structure: ["Number"]
     Range (step):
-        payload: msg.step
+        payload: msg.ui_update.step
         structure: ["Number"]
     Range (max):
-        payload: msg.max
+        payload: msg.ui_update.max
         structure: ["Number"]
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
 ---
 
