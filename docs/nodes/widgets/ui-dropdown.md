@@ -14,16 +14,16 @@ props:
         dynamic: true
 dynamic:
     Label:
-        payload: msg.label
+        payload: msg.ui_update.label
         structure: ["String"]
     Options:
-        payload: msg.options
+        payload: msg.ui_update.options
         structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
     Allow Multiple:
-        payload: msg.multiple
+        payload: msg.ui_update.multiple
         structure: ["Boolean"]
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
 ---
 

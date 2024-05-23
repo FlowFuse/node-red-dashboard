@@ -92,6 +92,13 @@ export default {
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
 
+            const payload = msg.payload
+            if (payload !== undefined) {
+                // 2. update the selected value(s)
+                this.select(payload)
+            }
+
+            // keep options out for backward compatibility
             const options = msg.options
             if (options) {
                 // 1. add/replace the dropdown options
@@ -99,18 +106,19 @@ export default {
                 this.items = options
             }
 
-            const payload = msg.payload
-            if (payload !== undefined) {
-                // 2. update the selected value(s)
-                this.select(payload)
-            }
+            // update the UI with any other changes
+            const updates = msg.ui_updates
 
-            if (typeof msg.label !== 'undefined') {
-                this.dynamic.label = msg.label
-            }
-
-            if (typeof msg.multiple !== 'undefined') {
-                this.dynamic.multiple = msg.multiple
+            if (updates) {
+                if (Array.isArray(updates.options)) {
+                    this.items = updates.options
+                }
+                if (typeof updates.label !== 'undefined') {
+                    this.dynamic.label = updates.label
+                }
+                if (typeof updates.multiple !== 'undefined') {
+                    this.dynamic.multiple = updates.multiple
+                }
             }
         },
         onChange () {

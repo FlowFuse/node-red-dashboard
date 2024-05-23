@@ -94,7 +94,9 @@ The inputs for the `useDataTracker (widgetId, onInput, onLoad, onDynamicProperti
 
 ## Dynamic Properties
 
-Node-RED allows for definition of the underlying configuration for a node. For example, a `ui-button` would have properties such as `label`, `color`, `icon`, etc. It is often desired to have these properties be dynamic, meaning that they can be changed at runtime. Users expect to be able to control these generally by passing in `msg.<property-name>` to the node, which in turn, should update the property.
+Node-RED allows for definition of the underlying configuration for a node. For example, a `ui-button` would have properties such as `label`, `color`, `icon`, etc. It is often desired to have these properties be dynamic, meaning that they can be changed at runtime. 
+
+It is a standard practice within Dashboard 2.0 to support these property updates via a nested `msg.ui_updates` object. As such, users can expect to be able to control these generally by passing in `msg.ui_updates.<property-name>` to the node, which in turn, should update the appropriate property.
 
 ### Design Pattern
 
@@ -102,7 +104,7 @@ This section will outline the architectural design pattern for developing dynami
 
 Server-side, dynamic properties are stored in our `state` store, which is a mapping of the widget ID to the dynamic properties assigned to that widget. This is done so that we can ensure separation of the dynamic properties for a widget from the initial configuration defined, and stored, in Node-RED.
 
-Before the `ui-base` node emits the `ui-config`, we merge the dynamic properties with the initial configuration, with the dynamic properties permitted to override the underlying configuration. As such, when the client receives a `ui-config` message, it will have the most up-to-date configuration for the widget, the merging of both static and dynamic properties.
+Before the `ui-base` node emits the `ui-config` event and payload, we merge the dynamic properties with the initial configuration, with the dynamic properties permitted to override the underlying configuration. As such, when the client receives a `ui-config` message, it will have the most up-to-date configuration for the widget, wth the merging of both static and dynamic properties.
 
 ### Setting Dynamic Properties
 
@@ -180,8 +182,10 @@ A good pattern to follow is provide a `computed` variable on the component in qu
     methods () {
         // ...,
         onDynamicProperty (msg) {
-            if (msg.label) {
-                this.dynamic.label = msg.label
+            // standard practice to accept updates via msg.ui_updates
+            const updates = msg.ui_updates
+            if (updates.label) {
+                this.dynamic.label = updates.label
             }
         }
     }
