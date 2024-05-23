@@ -101,10 +101,11 @@ export default ({ mode }) => {
           text: 'User Guides',
           collapsed: false,
           items: [
+            { text: 'Migration Guide', link: '/user/migration' },
             { text: 'Settings', link: '/user/settings' },
             { text: 'Sidebar', link: '/user/sidebar' },
+            { text: 'Authentication', link: '/user/authentication' },
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' },
-            { text: 'Migration Guide', link: '/user/migration' },
             { text: 'UI Template Examples', link: '/user/template-examples' },
             { text: 'Subflows', link: '/user/subflows' }
           ]
