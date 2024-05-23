@@ -79,14 +79,18 @@ export default {
             return 'mdi-' + icon.replace(/^mdi-/, '')
         },
         onDynamicProperties (msg) {
-            if (msg.label !== undefined) {
-                this.dynamic.label = msg.label
+            const updates = msg.ui_update
+            if (!updates) {
+                return
             }
-            if (msg.icon !== undefined) {
-                this.dynamic.icon = msg.icon
+            if (updates.label !== undefined) {
+                this.dynamic.label = updates.label
             }
-            if (msg.iconPosition !== undefined) {
-                this.dynamic.iconPosition = msg.iconPosition
+            if (updates.icon !== undefined) {
+                this.dynamic.icon = updates.icon
+            }
+            if (updates.iconPosition !== undefined) {
+                this.dynamic.iconPosition = updates.iconPosition
             }
         },
         getPropertyValue (property) {

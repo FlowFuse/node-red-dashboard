@@ -19,16 +19,16 @@ controls:
         description: Allow control over whether or not the button is clickable.
 dynamic:
     Icon:
-        payload: msg.icon
+        payload: msg.ui_update.icon
         structure: ["String"]
     Icon Position:
-        payload: msg.iconPosition
+        payload: msg.ui_update.iconPosition
         structure: ["String"]
     Label:
-        payload: msg.label
+        payload: msg.ui_update.label
         structure: ["String"]
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
 ---
 

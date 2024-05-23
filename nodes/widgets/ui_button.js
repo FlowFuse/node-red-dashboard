@@ -46,18 +46,22 @@ module.exports = function (RED) {
 
             msg.payload = payload
 
-            // dynamic properties
-            if (typeof msg.label !== 'undefined') {
-                // dynamically set "label" property
-                statestore.set(group.getBase(), node, msg, 'label', msg.label)
-            }
-            if (typeof msg.icon !== 'undefined') {
-                // dynamically set "label" property
-                statestore.set(group.getBase(), node, msg, 'icon', msg.icon)
-            }
-            if (typeof msg.iconPosition !== 'undefined') {
-                // dynamically set "label" property
-                statestore.set(group.getBase(), node, msg, 'iconPosition', msg.iconPosition)
+            const updates = msg.ui_update
+
+            if (updates) {
+                // dynamic properties
+                if (typeof updates.label !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'label', updates.label)
+                }
+                if (typeof updates.icon !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
+                }
+                if (typeof updates.iconPosition !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
+                }
             }
 
             if (!error) {

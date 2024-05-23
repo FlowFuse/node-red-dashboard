@@ -259,7 +259,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "label",
+                "p": "ui_update.label",
                 "pt": "msg",
                 "to": "Dynamic Button Label",
                 "tot": "str"
@@ -342,7 +342,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "icon",
+                "p": "ui_update.icon",
                 "pt": "msg",
                 "to": "earth",
                 "tot": "str"
@@ -398,7 +398,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "iconPosition",
+                "p": "ui_update.iconPosition",
                 "pt": "msg",
                 "to": "right",
                 "tot": "str"
