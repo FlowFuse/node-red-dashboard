@@ -920,6 +920,10 @@
                 }
 
                 const widgets = widgetsByGroup[group.id] || []
+
+                // sort widgets by order
+                widgets.sort((a, b) => a.order - b.order)
+
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
                 const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
@@ -1012,9 +1016,14 @@
                     titleRow.attr('title', widget.subflowName || 'Subflow instance')
                 }
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() + ' ' + widget.order || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)
+
+                const events = []
+                updateItemOrder(widgetsOL.editableList('items'), events)
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
             },
             sortItems: function (items) {
                 // track any changes
