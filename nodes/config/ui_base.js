@@ -773,6 +773,11 @@ module.exports = function (RED) {
             return fullPath
         }
 
+        node.registerTheme = function (theme) {
+            const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
+            node.ui.themes.set(t.id, t)
+        }
+
         /**
          * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node
          * @param {*} page
@@ -871,21 +876,21 @@ module.exports = function (RED) {
             if (page && page.type === 'ui-page' && !node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
                 if (theme) {
-                    const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
-                    node.ui.themes.set(page.theme, t)
+                    node.registerTheme(theme)
                 } else {
                     node.warn(`Theme '${page.theme}' specified  in page '${page.id}' does not exist`)
                 }
             }
 
             // map pages by their ID
-            if (page && !node.ui.pages.has(page?.id)) {
+            if (page) {
+                // ensure we have the latest instance of the page's node
                 const { _users, ...p } = page
                 node.ui.pages.set(page.id, p)
             }
 
             // map groups on a page-by-page basis
-            if (group && !node.ui.groups.has(group?.id)) {
+            if (group) {
                 const { _user, type, ...g } = group
                 node.ui.groups.set(group.id, g)
             }
