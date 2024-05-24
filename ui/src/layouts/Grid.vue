@@ -69,10 +69,8 @@ export default {
                     return true
                 })
                 .sort((a, b) => {
-                    console.log(a, b)
                     return a.order - b.order
                 })
-            console.log(groups)
             return groups
         },
         pageWidgets: function () {
