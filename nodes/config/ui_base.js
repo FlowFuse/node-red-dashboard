@@ -868,7 +868,7 @@ module.exports = function (RED) {
             }
 
             // map themes by their ID
-            if (page && !node.ui.themes.has(page.theme)) {
+            if (page && page.type === 'ui-page' && !node.ui.themes.has(page.theme)) {
                 const theme = RED.nodes.getNode(page.theme)
                 if (theme) {
                     const { _wireCount, _inputCallback, _inputCallbacks, _closeCallbacks, wires, type, ...t } = theme
