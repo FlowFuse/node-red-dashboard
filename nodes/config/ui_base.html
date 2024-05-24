@@ -903,6 +903,9 @@
      * @param {DashboardItemLookup} widgetsByGroup - The lookup of widgets by group
      */
     function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
+        // sort groups by order
+        groups.sort((a, b) => a.order - b.order)
+
         // ordered list of groups to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -922,7 +925,7 @@
                 const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
                 const groupicon = 'fa-table'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(group.name + (' ' + group.order) || group.id).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${widgets.length} Widgets`).appendTo(titleRow)
 
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
@@ -936,6 +939,11 @@
                 titleRow.click(titleToggle(group.id, widgetsList, chevron))
 
                 addWidgetToList(group.id, widgetsList, widgets)
+
+                const events = []
+                updateItemOrder(groupsOL.editableList('items'), events)
+                // add our changes to NR history and trigger whether or not we need to redeploy
+                recordEvents(events)
             },
             sortItems: function (items) {
                 // track any changes
