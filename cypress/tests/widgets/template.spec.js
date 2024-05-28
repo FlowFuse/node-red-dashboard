@@ -25,3 +25,28 @@ describe('Node-RED Dashboard 2.0 - Templates', () => {
         cy.checkOutput('msg.payload', 30)
     })
 })
+
+describe.only('Node-RED Dashboard 2.0 - Templates (Single Page CSS)', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-templates')
+    })
+
+    it('loads on the correctly configured page', () => {
+        cy.visit('/dashboard/page1')
+        cy.get('body').should('have.css', 'background-color', 'rgb(0, 0, 0)')
+    })
+
+    it('does not persist in SPA navigation', () => {
+        cy.visit('/dashboard/page1')
+        cy.get('body').should('have.css', 'background-color', 'rgb(0, 0, 0)')
+
+        cy.clickAndWait(cy.get('[data-nav="dashboard-ui-page-2"]'))
+        cy.url().should('include', '/dashboard/page2')
+        cy.get('body').should('not.have.css', 'background-color', 'rgb(0, 0, 0)')
+    })
+
+    it('does not load the CSS on other pages if we navigate directly', () => {
+        cy.visit('/dashboard/page2')
+        cy.get('body').should('not.have.css', 'background-color', 'rgb(0, 0, 0)')
+    })
+})
