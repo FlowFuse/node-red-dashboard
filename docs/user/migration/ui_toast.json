@@ -1,6 +1,6 @@
 {
     "node": "ui_toast",
-    "description": "'UI Tast' has been renamed to 'UI Notification' in Dashboard 2.0, but most of the functionality is identical.'",
+    "description": "'UI Toast' has been renamed to 'UI Notification' in Dashboard 2.0, but most of the functionality is identical.'",
     "properties": [
         {
             "property": "name",
