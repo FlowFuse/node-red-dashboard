@@ -55,9 +55,11 @@
                 chartType: { value: 'line' },
                 category: { value: 'topic' },
                 categoryType: { value: 'msg' },
+                xAxisLabel: { value: '' },
                 xAxisProperty: { value: null },
                 xAxisPropertyType: { value: 'msg' },
                 xAxisType: { value: 'time' },
+                yAxisLabel: { value: '' },
                 yAxisProperty: { value: null },
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
@@ -345,6 +347,10 @@
         <input type="text" id="node-input-xAxisType">
         <input type="hidden" id="node-input-xAxisTypeType">
     </div>
+    <div class="form-row">
+        <label for="node-input-xAxisLabel" data-i18n="ui-chart.label.xLabel"></label></label>
+        <input type="text" id="node-input-xAxisLabel">
+    </div>
     <div class="form-row" id="x-axis-show">
         <label for="node-input-removeOlder" data-i18n="ui-chart.label.xLimit"></label>
         <label for="node-input-removeOlder" style="width:auto" data-i18n="ui-chart.label.last"></label>
@@ -359,6 +365,10 @@
         <label for="node-input-removeOlderPoints" style="width:auto; margin-left:10px; margin-right:10px;" data-i18n="ui-chart.label.or"></label>
         <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
         <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-yAxisLabel" data-i18n="ui-chart.label.yLabel"></label></label>
+        <input type="text" id="node-input-yAxisLabel">
     </div>
     <div class="form-row" id="y-axis-show">
         <label id="y-label-show" for="node-input-ymin" data-i18n="ui-chart.label.yAxis"></label>
