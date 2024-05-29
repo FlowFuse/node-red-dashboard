@@ -337,7 +337,6 @@ export default {
         resizeText () {
             // work out how much space we have within which to render the value/icon
             const width = this.$refs.value?.clientWidth
-            console.log(width)
             if (!width) {
                 this.size = 'default'
             } else if (width < 150) {
