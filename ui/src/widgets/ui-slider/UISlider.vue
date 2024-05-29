@@ -98,13 +98,13 @@ export default {
             if (typeof updates.thumbLabel !== 'undefined') {
                 this.dynamic.thumbLabel = updates.thumbLabel
             }
-            if (updates.min !== undefined) {
+            if (typeof updates.min !== 'undefined') {
                 this.dynamic.min = updates.min
             }
-            if (updates.max !== undefined) {
+            if (typeof updates.max !== 'undefined') {
                 this.dynamic.max = updates.max
             }
-            if (updates.step !== undefined) {
+            if (typeof updates.step !== 'undefined') {
                 this.dynamic.step = updates.step
             }
         }
