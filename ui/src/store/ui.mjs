@@ -47,10 +47,14 @@ const getters = {
     },
     widgetsByPage: (state) => (pageId) => {
         if (state.widgets) {
-            const widgetsOnPage = Object.values(state.widgets).filter((w) => {
-                // return all widgets that belong to the specified group (so long as it is not a non-local scoped ui-template)
-                return !w.props.group && w.props.page && w.props.page === pageId
-            })
+            const widgetsOnPage = Object.values(state.widgets)
+                .filter((w) => {
+                    // return all widgets that belong to the specified group (so long as it is not a non-local scoped ui-template)
+                    return !w.props.group && w.props.page && w.props.page === pageId
+                })
+                .sort((a, b) => {
+                    return a.props.order - b.props.order
+                })
             return widgetsOnPage
         }
     },
