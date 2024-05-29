@@ -83,13 +83,13 @@ export default {
             if (!updates) {
                 return
             }
-            if (updates.label !== undefined) {
+            if (typeof updates.label !== 'undefined') {
                 this.dynamic.label = updates.label
             }
-            if (updates.icon !== undefined) {
+            if (typeof updates.icon !== 'undefined') {
                 this.dynamic.icon = updates.icon
             }
-            if (updates.iconPosition !== undefined) {
+            if (typeof updates.iconPosition !== 'undefined') {
                 this.dynamic.iconPosition = updates.iconPosition
             }
         },
