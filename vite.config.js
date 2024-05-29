@@ -17,20 +17,25 @@ export default defineConfig({
         }
     },
     plugins: [vue(),
-        // VitePWA({ registerType: 'autoUpdate', devOptions: {
-        //     enabled: true} })
         VitePWA({
-            registerType: 'autoUpdate',
+            strategies: 'injectManifest',
+            srcDir: 'src',
+            filename: 'sw.js',
+            registerType: 'prompt',
+            injectRegister: false,
+
             manifest,
-            includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'assets/*.png', 'assets/*.woff2', 'assets/*.woff', 'assets/*.ttf', 'assets/*.eot'],
-            // switch to "true" to enable sw on development
-            devOptions: {
-                enabled: false
-            },
-            workbox: {
+
+            injectManifest: {
                 maximumFileSizeToCacheInBytes: 3000000,
-                globPatterns: ['**/*.{js,css,html}', '**/*.{svg,png,jpg,gif,ttf,eot,woff,woff2}'],
-                cleanupOutdatedCaches: true
+                globPatterns: ['**/*.{js,css,html,svg,png,ico,ttf,eot,woff,woff2}']
+            },
+
+            devOptions: {
+                enabled: false,
+                navigateFallback: 'index.html',
+                suppressWarnings: true,
+                type: 'module'
             }
         })
     ],

@@ -17,7 +17,7 @@
         },
         label: function () {
             const page = RED.nodes.node(this.page)?.name || ''
-            return `${this.name} [${page}]` || 'UI Group'
+            return `[${page}] ${this.name}` || 'UI Group'
         },
         oneditprepare: function () {
             if (this.disp) {

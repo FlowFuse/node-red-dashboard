@@ -68,7 +68,12 @@ export default {
         }
 
         // y-axis limits
-        const yOptions = {}
+        const yOptions = {
+            title: {
+                display: !!this.props.yAxisLabel,
+                text: this.props.yAxisLabel
+            }
+        }
         if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
             yOptions.min = parseFloat(this.props.ymin)
         }
@@ -90,6 +95,10 @@ export default {
                 scales: {
                     x: {
                         type: this.props.xAxisType || 'linear',
+                        title: {
+                            display: !!this.props.xAxisLabel,
+                            text: this.props.xAxisLabel
+                        },
                         time: {
                             displayFormats: {
                                 millisecond: 'HH:mm:ss'

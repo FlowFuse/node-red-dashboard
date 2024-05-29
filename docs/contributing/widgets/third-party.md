@@ -54,21 +54,38 @@ Configuration of the node and widgets are controlled across two files:
 
 To start working with your own third-party widget, locally on your machine:
 
-1. Install Node-RED
+#### Install Node-RED & Dashboard
+
+1. Install Node-RED ([docs](https://nodered.org/docs/getting-started/local))
 2. Install `@flowfuse/node-red-dashboard` into Node-RED via the "Manage Palette" option.
-3. Fork our [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) and clone it locally to your machine.
-4. Navigate to your local Node-RED directory and install the local copy of the Example Node:
+
+#### Install the UI Example Node
+
+1. Fork our [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) and clone it locally to your machine.
+2. Inside the Example Node directory, install the required dependencies:
    ```bash
-   npm install /path/to/your/local/node-red-dashboard-example-node
+   npm install
    ```
-5. Optionally generate a source map (to map the minified code to the original code), to simplify debugging of the frontend code in the browser.  On Linux this can be achieved by:
+3. Optionally generate a source map (to map the minified code to the original code), to simplify debugging of the frontend code in the browser.  On Linux this can be achieved by:
    ```bash
    export NODE_ENV=development
    ```
-6. Inside the Example Node directory, build the Example Node's `.umd.js` file, this will generate it's `/resources` folder, loaded by Node-RED.
+4. Inside the Example Node directory, build the Example Node's `.umd.js` file (what Node-RED uses to run your widget), this will generate it's `/resources` folder, loaded by Node-RED.
    ```bash
    npm run build
    ```
+
+#### Install UI Example into Node-RED
+
+1. Navigate to your local Node-RED directory:
+    ```bash
+    cd ~/.node-red
+    ```
+2. Install the local copy of the Example Node:
+   ```bash
+   npm install /path/to/your/local/node-red-dashboard-example-node-folder
+   ```
+3. Restart Node-RED
 
 _Note: Any local changes you make inside the `/ui` folder of the third party widget, you'll need to re-run `npm run build` in order to update the `umd.js` file, which is what Dashboard loads to render the widget._
 
