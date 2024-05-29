@@ -1,13 +1,5 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline" :style="customThemeDefinitions">
-        <div v-for="siteTemplate in siteTemplates($route.meta.dashboard)" :key="siteTemplate.id" style="display: none">
-            Loaded site template '{{ siteTemplate.id }}'
-            <component :is="siteTemplate.component" :id="siteTemplate.id" :props="siteTemplate.props" :state="siteTemplate.state" />
-        </div>
-        <div v-for="pageTemplate in pageTemplates($route.meta.id)" :key="pageTemplate.id" style="display: none">
-            Loaded site template '{{ pageTemplate.id }}'
-            <component :is="pageTemplate.component" :id="pageTemplate.id" :props="pageTemplate.props" :state="pageTemplate.state" />
-        </div>
         <v-app-bar v-if="appBarStyle !== 'hidden'" :style="{'position': navPosition}" :elevation="1">
             <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />

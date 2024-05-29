@@ -12,6 +12,7 @@
         "type": "ui-base",
         "name": "UI Name",
         "path": "/dashboard",
+        "navigationStyle": "fixed",
         "includeClientData": true,
         "acceptsClientConfig": [
             "ui-notification",
@@ -24,6 +25,20 @@
         "name": "Page 1",
         "ui": "dashboard-ui-base",
         "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-2",
+        "type": "ui-page",
+        "name": "Page 2",
+        "ui": "dashboard-ui-base",
+        "path": "/page2",
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
@@ -233,6 +248,30 @@
             [
                 "test-helper"
             ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-template-page-css",
+        "type": "ui-template",
+        "z": "node-red-tab-templates",
+        "group": "",
+        "page": "dashboard-ui-page-1",
+        "ui": "",
+        "name": "Single Page CSS",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "body { background-color: black; }",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "page:style",
+        "className": "",
+        "x": 60,
+        "y": 240,
+        "wires": [
+            []
         ]
     }
 ]
