@@ -34,6 +34,18 @@ module.exports = function (RED) {
 
         node.colors = { ...rest.colors }
         node.sizes = sizes
+
+        let uiBase = null
+        RED.nodes.eachNode(n => {
+            if (n.type === 'ui-base' && !uiBase) {
+                uiBase = n
+            }
+        })
+        if (uiBase) {
+            config.ui = uiBase.id
+            uiBase = RED.nodes.getNode(config.ui)
+        }
+        uiBase?.registerTheme(node)
     }
     RED.nodes.registerType('ui-theme', UIThemeNode)
 }
