@@ -40,7 +40,7 @@
         {
             "property": "reload on refresh",
             "changes": "modified",
-            "notes": "Default behaviour is that, if there is a known state, it will atomatically be restored."
+            "notes": "Default behaviour is that, if there is a known state, it will automatically be restored."
         },
         {
             "property": "store output",
