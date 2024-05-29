@@ -92,10 +92,10 @@ export default {
             if (!updates) {
                 return
             }
-            if (updates.label) {
+            if (typeof updates.label !== 'undefined') {
                 this.dynamic.label = updates.label
             }
-            if (updates.thumbLabel) {
+            if (typeof updates.thumbLabel !== 'undefined') {
                 this.dynamic.thumbLabel = updates.thumbLabel
             }
             if (updates.min !== undefined) {
