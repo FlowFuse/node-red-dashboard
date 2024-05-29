@@ -26,7 +26,7 @@ describe('Node-RED Dashboard 2.0 - Templates', () => {
     })
 })
 
-describe.only('Node-RED Dashboard 2.0 - Templates (Single Page CSS)', () => {
+describe('Node-RED Dashboard 2.0 - Templates (Single Page CSS)', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-templates')
     })
