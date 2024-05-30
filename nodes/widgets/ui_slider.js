@@ -33,7 +33,7 @@ module.exports = function (RED) {
                         // dynamically set "label" property
                         statestore.set(group.getBase(), node, msg, 'label', updates.label)
                     }
-                    if (updates.thumbLabel) {
+                    if (typeof (updates.thumbLabel) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'thumbLabel', updates.thumbLabel)
                     }
                     if (typeof (updates.min) !== 'undefined') {
