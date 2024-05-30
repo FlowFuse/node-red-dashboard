@@ -29,6 +29,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-artifact@v4
         with:
+          name: github-pages
           path: docs/.vitepress/dist
       - name: Deploy
         id: deployment
