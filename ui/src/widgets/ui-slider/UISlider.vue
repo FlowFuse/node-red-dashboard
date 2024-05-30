@@ -58,7 +58,7 @@ export default {
             if (this.value === val) {
                 return // no change
             }
-            if (val !== undefined) {
+            if (typeof val !== 'undefined') {
                 this.value = val
             }
         }
