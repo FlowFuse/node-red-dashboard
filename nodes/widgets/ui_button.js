@@ -1,3 +1,4 @@
+const statestore = require('../store/state.js')
 const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
@@ -44,6 +45,24 @@ module.exports = function (RED) {
             }
 
             msg.payload = payload
+
+            const updates = msg.ui_update
+
+            if (updates) {
+                // dynamic properties
+                if (typeof updates.label !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'label', updates.label)
+                }
+                if (typeof updates.icon !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
+                }
+                if (typeof updates.iconPosition !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
+                }
+            }
 
             if (!error) {
                 return msg

@@ -1,5 +1,13 @@
 [
     {
+        "id": "node-red-tab-buttons",
+        "type": "tab",
+        "label": "UI Buttons",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "test-helper",
         "type": "function",
         "z": "node-red-tab-buttons",
@@ -211,6 +219,201 @@
         "wires": [
             [
                 "dashboard-ui-button-emulate"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-label",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "Dynamic Property: Label",
+        "label": "Dynamic Property: Label",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 260,
+        "wires": [
+            [
+                "dashboard-ui-change-label"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-change-label",
+        "type": "change",
+        "z": "node-red-tab-buttons",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Button Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 410,
+        "y": 260,
+        "wires": [
+            [
+                "dashboard-ui-button-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "Button Dynamic Properties",
+        "label": "Button Config Label",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "button 1 clicked",
+        "payloadType": "str",
+        "topic": "button-str-topic",
+        "topicType": "str",
+        "x": 640,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-icon",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "Dynamic Property: Icon",
+        "label": "Dynamic Property: Icon",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 300,
+        "wires": [
+            [
+                "dashboard-ui-change-icon"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-change-icon",
+        "type": "change",
+        "z": "node-red-tab-buttons",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.icon",
+                "pt": "msg",
+                "to": "earth",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 410,
+        "y": 300,
+        "wires": [
+            [
+                "dashboard-ui-button-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-icon-pos",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "Dynamic Property: Icon Position",
+        "label": "Dynamic Property: Icon Position",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 340,
+        "wires": [
+            [
+                "dashboard-ui-change-icon-pos"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-change-icon-pos",
+        "type": "change",
+        "z": "node-red-tab-buttons",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.iconPosition",
+                "pt": "msg",
+                "to": "right",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 340,
+        "wires": [
+            [
+                "dashboard-ui-button-dynamic"
             ]
         ]
     },

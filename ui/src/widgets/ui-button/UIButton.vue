@@ -11,7 +11,7 @@
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon"
         :icon="icon" :append-icon="appendIcon" :style="{'min-width': icon ? 'auto' : null}" @click="action"
     >
-        {{ props.label }}
+        {{ label }}
     </v-btn>
 </template>
 
@@ -27,23 +27,41 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id)
+    data () {
+        return {
+            dynamic: {
+                label: null,
+                icon: null,
+                iconPosition: null
+            }
+        }
     },
     computed: {
         ...mapState('data', ['messages']),
         prependIcon () {
-            const icon = this.makeMdiIcon(this.props.icon)
-            return this.props.label && this.props.icon && this.props.iconPosition === 'left' ? icon : undefined
+            const icon = this.getPropertyValue('icon')
+            const mdiIcon = this.makeMdiIcon(icon)
+            return this.getPropertyValue('label') && icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
         appendIcon () {
-            const icon = this.makeMdiIcon(this.props.icon)
-            return this.props.label && this.props.icon && this.props.iconPosition === 'right' ? icon : undefined
+            const icon = this.getPropertyValue('icon')
+            const mdiIcon = this.makeMdiIcon(icon)
+            return this.getPropertyValue('label') && icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
         icon () {
-            const icon = this.makeMdiIcon(this.props.icon)
-            return this.props.label === '' && this.props.icon ? icon : undefined
+            const icon = this.getPropertyValue('icon')
+            const mdiIcon = this.makeMdiIcon(icon)
+            return this.getPropertyValue('label') === '' && icon ? mdiIcon : undefined
+        },
+        label () {
+            return this.getPropertyValue('label')
+        },
+        iconPosition () {
+            return this.getPropertyValue('iconPosition')
         }
+    },
+    created () {
+        useDataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         action ($evt) {
@@ -59,6 +77,24 @@ export default {
         },
         makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
+        },
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            if (typeof updates.label !== 'undefined') {
+                this.dynamic.label = updates.label
+            }
+            if (typeof updates.icon !== 'undefined') {
+                this.dynamic.icon = updates.icon
+            }
+            if (typeof updates.iconPosition !== 'undefined') {
+                this.dynamic.iconPosition = updates.iconPosition
+            }
+        },
+        getPropertyValue (property) {
+            return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
         }
     }
 }

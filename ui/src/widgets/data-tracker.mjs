@@ -3,6 +3,10 @@ import { useStore } from 'vuex'
 
 // by convention, composable function names start with "use"
 export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) {
+    if (!widgetId) {
+        throw new Error('widgetId is required')
+    }
+
     const store = useStore()
     const socket = inject('$socket')
 
@@ -37,7 +41,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     // a composable can also hook into its owner component's
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
-        if (socket) {
+        if (socket && widgetId) {
             socket.on('widget-load:' + widgetId, (msg) => {
                 if (onLoad) {
                     onLoad(msg)

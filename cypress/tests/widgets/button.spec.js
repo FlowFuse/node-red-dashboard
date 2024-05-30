@@ -38,3 +38,23 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
         cy.checkOutput('msg.payload', 'emulate')
     })
 })
+
+describe('Node-RED Dashboard 2.0 - Buttons (Dynamic Properties)', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-buttons')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('includes "label"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic').contains('Button Config Label')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-label'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic').contains('Dynamic Button Label')
+    })
+
+    it('includes "icon"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic').find('i.v-icon').should('not.exist')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-icon'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic').find('i.v-icon').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic').find('i.v-icon').should('have.class', 'mdi-earth')
+    })
+})
