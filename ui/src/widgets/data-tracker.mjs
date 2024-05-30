@@ -26,10 +26,11 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             })
         }
 
-        if ('class' in msg) {
+        if ('class' in msg || ('ui_update' in msg && 'class' in msg.ui_update)) {
+            const cls = msg.class || msg.ui_update?.class
             store.commit('ui/widgetState', {
                 widgetId,
-                class: msg.class
+                class: cls
             })
         }
 

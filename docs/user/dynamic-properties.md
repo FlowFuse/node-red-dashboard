@@ -18,20 +18,19 @@ msg = {
 }
 ```
 
-
 ## Updating Classes
-
-Classes behave slightly differently to other properties, and the injection of `class` is not maintained within the `ui_updates` object. Instead, you can send a `msg` to the widget itself, with the `class` property set.
 
 If we consider an example with a `ui-button`, you can send the following `msg` to the button itself:
 
 ```json
-{
-    "class": "my-class"
+msg = {
+    "ui_update": {
+        "class": "my-class"
+    }
 }
 ```
 
-Please note that for `class` updates, the class is appended the widget's container, so this means that your class' style definitions may need to take that into account. If you want to affect the background-color of a button for example:
+Note that for `class` updates, the class is appended the widget's container, so this means that your class' style definitions may need to take that into account. If you want to affect the background-color of a button for example:
 
 ```css
 .my-class button.v-btn {
@@ -40,3 +39,7 @@ Please note that for `class` updates, the class is appended the widget's contain
 ```
 
 Will do the trick. Notice that we sometimes have to over-define the CSS selector to ensure that the style is applied correctly, overriding any underlying Vuetify/built-in stylesheets.
+
+The CSS itself can be defined in a `ui-template` node with a "CSS (Single Page)" or "CSS (All Pages)" scope.
+
+Note also that `msg.class` injection is still supported for legacy reasons, but it is recommended to use `ui_update.class` where possible.

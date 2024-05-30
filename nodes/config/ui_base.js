@@ -955,8 +955,9 @@ module.exports = function (RED) {
                         if (hasProperty(msg, 'visible')) {
                             statestore.set(n, widgetNode, msg, 'visible', msg.visible)
                         }
-                        if (hasProperty(msg, 'class')) {
-                            statestore.set(n, widgetNode, msg, 'class', msg.class)
+                        if (hasProperty(msg, 'class') || (hasProperty(msg, 'ui_update') && hasProperty(msg.ui_update, 'class'))) {
+                            const cls = msg.class || msg.ui_update?.class
+                            statestore.set(n, widgetNode, msg, 'class', cls)
                         }
 
                         // run any node-specific handler defined in the Widget's component
