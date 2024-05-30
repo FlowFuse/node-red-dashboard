@@ -27,7 +27,7 @@ jobs:
         env:
             VITE_POSTHOG_APIKEY: ${{ vars.POSTHOG_API_KEY }}
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
       - name: Deploy
