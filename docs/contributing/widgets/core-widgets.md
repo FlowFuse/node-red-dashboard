@@ -184,7 +184,7 @@ A good pattern to follow is provide a `computed` variable on the component in qu
         onDynamicProperty (msg) {
             // standard practice to accept updates via msg.ui_updates
             const updates = msg.ui_updates
-            if (typeof updates.label !== 'undefined') {
+            if (typeof updates?.label !== 'undefined') {
                 this.dynamic.label = updates.label
             }
         }
