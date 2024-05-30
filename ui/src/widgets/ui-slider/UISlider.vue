@@ -2,10 +2,10 @@
 <!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
-        v-model="value" :disabled="!state.enabled" :label="props.label" hide-details="auto"
-        :class="className" :thumb-label="props.thumbLabel || false"
-        :min="props.min"
-        :max="props.max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
+        v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
+        :class="className" :thumb-label="thumbLabel"
+        :min="min"
+        :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
@@ -21,18 +21,36 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id)
-    },
     data () {
         return {
-            value: null
+            value: null,
+            dynamic: {
+                label: null,
+                thumbLabel: null,
+                min: null,
+                max: null
+            }
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         storeValue: function () {
             return this.messages[this.id]?.payload
+        },
+        label: function () {
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+        },
+        thumbLabel: function () {
+            return this.dynamic.thumbLabel !== null ? this.dynamic.thumbLabel : this.props.thumbLabel
+        },
+        min: function () {
+            return this.dynamic.min !== null ? this.dynamic.min : this.props.min
+        },
+        step: function () {
+            return this.dynamic.step !== null ? this.dynamic.step : this.props.step
+        },
+        max: function () {
+            return this.dynamic.max !== null ? this.dynamic.max : this.props.max
         }
     },
     watch: {
@@ -40,8 +58,13 @@ export default {
             if (this.value === val) {
                 return // no change
             }
-            this.value = val
+            if (typeof val !== 'undefined') {
+                this.value = val
+            }
         }
+    },
+    created () {
+        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload
@@ -63,6 +86,27 @@ export default {
             msg.payload = this.value
             this.$store.commit('data/bind', msg)
             this.$socket.emit('widget-change', this.id, this.value)
+        },
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            if (typeof updates.label !== 'undefined') {
+                this.dynamic.label = updates.label
+            }
+            if (typeof updates.thumbLabel !== 'undefined') {
+                this.dynamic.thumbLabel = updates.thumbLabel
+            }
+            if (typeof updates.min !== 'undefined') {
+                this.dynamic.min = updates.min
+            }
+            if (typeof updates.max !== 'undefined') {
+                this.dynamic.max = updates.max
+            }
+            if (typeof updates.step !== 'undefined') {
+                this.dynamic.step = updates.step
+            }
         }
     }
 }
