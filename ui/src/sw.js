@@ -6,6 +6,11 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') { self.skipWaiting() }
 })
 
+// https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting
+self.addEventListener('install', function (event) {
+    self.skipWaiting()
+})
+
 // self.__WB_MANIFEST is the default injection point
 precacheAndRoute(self.__WB_MANIFEST)
 
