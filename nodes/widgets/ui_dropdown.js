@@ -12,13 +12,20 @@ module.exports = function (RED) {
         const evts = {
             onChange: true,
             beforeSend: function (msg) {
-                if (msg.options) {
-                    // dynamically set "options" property
-                    statestore.set(group.getBase(), node, msg, 'options', msg.options)
-                }
-                if (msg.label) {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'label', msg.label)
+                if (msg.ui_update) {
+                    const update = msg.ui_update
+                    if (update.options) {
+                        // dynamically set "options" property
+                        statestore.set(group.getBase(), node, msg, 'options', update.options)
+                    }
+                    if (typeof update.label !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'label', update.label)
+                    }
+                    if (typeof update.multiple !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'multiple', update.multiple)
+                    }
                 }
                 return msg
             }

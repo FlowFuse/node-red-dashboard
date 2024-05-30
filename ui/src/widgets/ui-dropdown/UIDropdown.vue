@@ -3,8 +3,8 @@
         v-model="value"
         :disabled="!state.enabled"
         :class="className"
-        :label="props.label"
-        :multiple="props.multiple"
+        :label="label"
+        :multiple="multiple"
         :items="options"
         item-title="label"
         item-value="value"
@@ -31,7 +31,11 @@ export default {
     data () {
         return {
             value: null,
-            items: null
+            items: null,
+            dynamic: {
+                label: null,
+                multiple: null
+            }
         }
     },
     computed: {
@@ -58,6 +62,12 @@ export default {
             set (value) {
                 this.items = value
             }
+        },
+        multiple: function () {
+            return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
+        },
+        label: function () {
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
     },
     created () {
@@ -82,6 +92,13 @@ export default {
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
 
+            const payload = msg.payload
+            if (payload !== undefined) {
+                // 2. update the selected value(s)
+                this.select(payload)
+            }
+
+            // keep options out for backward compatibility
             const options = msg.options
             if (options) {
                 // 1. add/replace the dropdown options
@@ -89,19 +106,25 @@ export default {
                 this.items = options
             }
 
-            const payload = msg.payload
-            if (payload !== undefined) {
-                // 2. update the selected value(s)
-                this.select(payload)
+            // update the UI with any other changes
+            const updates = msg.ui_updates
+
+            if (updates) {
+                if (Array.isArray(updates.options)) {
+                    this.items = updates.options
+                }
+                if (typeof updates.label !== 'undefined') {
+                    this.dynamic.label = updates.label
+                }
+                if (typeof updates.multiple !== 'undefined') {
+                    this.dynamic.multiple = updates.multiple
+                }
             }
-            // additionally, we need to support both single and multi selection
-            // For now, we only support selecting which item(s) are selected, not updating the available options
-            // if the payload is an array, we assume it is a list of values to select
         },
         onChange () {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
-            if (this.props.multiple) {
+            if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
                     return option.value

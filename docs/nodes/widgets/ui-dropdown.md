@@ -3,17 +3,27 @@ description: Incorporate ui-dropdown in Node-RED Dashboard 2.0 for user selectio
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown to the left of the dropdown.
+    Label:
+        description: The text shown to the left of the dropdown.
+        dynamic: true
     Options:
         description: A list of the options available in the dropdown. Each row defines a `label` (shown in the dropdown) and `value` (emitted on selection) property.
         dynamic: true
-    Allow Multiple: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
+    Allow Multiple:
+        description: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
+        dynamic: true
 dynamic:
+    Label:
+        payload: msg.ui_update.label
+        structure: ["String"]
     Options:
-        payload: msg.options
+        payload: msg.ui_update.options
         structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
+    Allow Multiple:
+        payload: msg.ui_update.multiple
+        structure: ["Boolean"]
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
 ---
 
