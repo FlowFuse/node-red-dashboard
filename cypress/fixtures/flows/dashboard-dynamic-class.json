@@ -154,6 +154,66 @@
         ]
     },
     {
+        "id": "184c7c5789357136",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-buttons",
+        "name": "",
+        "label": "Send Class (ui-button) - UI Update",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "fad2a458b82539ba"
+            ]
+        ]
+    },
+    {
+        "id": "fad2a458b82539ba",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.class",
+                "pt": "msg",
+                "to": "test-class-ui-update",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 60,
+        "wires": [
+            [
+                "d506363d3f2c88cd"
+            ]
+        ]
+    },
+    {
         "id": "51dbeee0bbdbe4ee",
         "type": "ui-button",
         "z": "3069e2ce342ccdc8",
