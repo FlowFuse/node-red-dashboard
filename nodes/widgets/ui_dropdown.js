@@ -18,7 +18,7 @@ module.exports = function (RED) {
                         // dynamically set "options" property
                         statestore.set(group.getBase(), node, msg, 'options', update.options)
                     }
-                    if (update.label) {
+                    if (typeof update.label !== 'undefined') {
                         // dynamically set "label" property
                         statestore.set(group.getBase(), node, msg, 'label', update.label)
                     }
