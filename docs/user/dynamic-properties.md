@@ -4,14 +4,24 @@ description: Learn how to use dynamic properties in Node-RED Dashboard 2.0 to cr
 
 # Dynamic Properties
 
-Node-RED offers functionality to set properties of a node at runtime. This can be useful to generate dynamic functionality and behaviour, and in Node-RED Dashboard 2.0, this is possible on any field supported with the _"fx"_ icon.
+Node-RED offers functionality to set properties of a node at runtime. This can be useful to generate dynamic functionality and behaviour, and in Node-RED Dashboard 2.0, this is possible on most fields too.
 
-You can hover over the tooltip/icon to get details on how to set that particular property.
+For each node, you can look in the in-Editor help to see which properties can be set dynamically, or checkout the relevant documentation page for that node in this online documentation. 
 
-![Dynamic Property Option on "Class" for a UI Switch](../assets/images/dynamic-props.png){data-zoomable}
-*Dynamic Property Option on "Class" for the UI Switch node*
+In most cases, the dynamic properties are controlled via a `msg.ui_update` object. This object can contain any of the properties that are available for that node. For example, for a `ui-button` node, you can send a message like this to change the label:
 
-Details of the Dynamic Properties are also found within the in-Editor help for each Dashboard node.
+```json
+msg = {
+    "ui_update": {
+        "label": "New Label"
+    }
+}
+```
+
+
+## Updating Classes
+
+Classes behave slightly differently to other properties, and the injection of `class` is not maintained within the `ui_updates` object. Instead, you can send a `msg` to the widget itself, with the `class` property set.
 
 If we consider an example with a `ui-button`, you can send the following `msg` to the button itself:
 

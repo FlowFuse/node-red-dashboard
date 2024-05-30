@@ -147,3 +147,4 @@ docs/.vitepress/cache/
 /cypress/fixtures/user-dir/flows.json
 /cypress/fixtures/user-dir/.flows.json.backup   
 /cypress/screenshots
+/cypress/downloads
