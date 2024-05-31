@@ -81,10 +81,16 @@ export default {
                 widgetId: this.id,
                 msg
             })
-            this.show = true
-            if (this.props.displayTime > 0) {
-                // begin countdown
-                this.startCountdown(this.props.displayTime * 1000)
+
+            if (this.show) {
+                this.close('input_msg')
+            }
+            else {
+                this.show = true
+                if (this.props.displayTime > 0) {
+                    // begin countdown
+                    this.startCountdown(this.props.displayTime * 1000)
+                }
             }
         },
         startCountdown (time) {
