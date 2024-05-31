@@ -175,7 +175,7 @@ You can try out the above example with this flow:
 
 ## File upload
 
-When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which not available currently. Fortunately, we can achieve this easily using the template node and Vuetify JS components.
+When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the template node and Vuetify JS components.
 
 To do that we will use the `v-file-input` component which provides the interface for uploading files.
 
