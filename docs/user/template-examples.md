@@ -175,9 +175,9 @@ You can try out the above example with this flow:
 
 ## File upload
 
-When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the template node and Vuetify JS components.
+When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the `ui-template` widget and Vuetify JS components.
 
-To do that we will use the `v-file-input` component which provides the interface for uploading files.
+To do that we will use the [`v-file-input`](https://vuetifyjs.com/en/components/file-inputs/) component which provides the interface for uploading files.
 
 ```javascript
 <template>
@@ -255,13 +255,11 @@ To do that we will use the `v-file-input` component which provides the interface
 </script>
 ```
 
-To add a file upload component to your dashboard, insert the above Vue snippet into the ui-template widget. This snippet allows importing the file, and after clicking the upload button, it first tracks the progress of the file reading process and shows how much of the file is read. Once the file is fully loaded, it sends the message object to the subsequent node containing file-related information for further processing. However, it's important to note that this sends the buffer arrays, which we are converting into strings using the change node in the following example.
-
-You can try out the above example with this flow:
+To add a file upload component to your dashboard, insert the above Vue snippet into the ui-template widget. This snippet allows importing the file, and after clicking the upload button, it first tracks the progress of the file reading process and shows how much of the file is read. Once the file is fully loaded, it sends the message object to the subsequent node containing the file and related information for further processing. However, it's important to note that this sends the buffer arrays, which we are converting into strings using the change node in the following example.
 
 <FlowViewer :flow="examples['file-upload']" height="200px"/>
 
-Additionally, please be aware that when using this node with Node-RED default settings, it will only accept files up to 1MB. The dashboard uses `socket.io` for communication, which has a default limit of 1MB. You can increase this limit by changing the following value in the settings.js file. For more information, refer to the [Settings](https://dashboard.flowfuse.com/user/settings.html).
+Additionally, please be aware that when using this example with Node-RED default settings, it will only accept files up to 1MB. The dashboard uses `socket.io` for communication, which has a default limit of 1MB. You can increase this limit by changing the following value in the `settings.js` file. For more information, refer to the [Settings](https://dashboard.flowfuse.com/user/settings.html).
 
 ```javascript
 dashboard: {
