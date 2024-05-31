@@ -1,15 +1,7 @@
 /// <reference lib="webworker" />
+import { clientsClaim } from 'workbox-core'
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') { self.skipWaiting() }
-})
-
-// https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting
-self.addEventListener('install', function (event) {
-    self.skipWaiting()
-})
 
 // self.__WB_MANIFEST is the default injection point
 precacheAndRoute(self.__WB_MANIFEST)
@@ -27,5 +19,9 @@ registerRoute(new NavigationRoute(
     createHandlerBoundToURL('index.html'),
     { allowlist }
 ))
+
+self.skipWaiting()
+// https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
+clientsClaim()
 
 // Add custom service worker code here

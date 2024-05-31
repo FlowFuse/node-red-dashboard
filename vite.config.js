@@ -21,7 +21,7 @@ export default defineConfig({
             strategies: 'injectManifest',
             srcDir: 'src',
             filename: 'sw.js',
-            registerType: 'prompt',
+            registerType: 'autoUpdate',
             injectRegister: false,
 
             manifest,
