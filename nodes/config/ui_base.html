@@ -158,6 +158,13 @@
     .nrdb2-sb-list-header:hover .nrdb2-sb-list-header-button-group {
         opacity: 1;
     }
+    .nrdb2-sb-item-hidden .nrdb2-sb-title {
+        text-decoration: line-through;
+    }
+    .nrdb2-sb-item-disabled .nrdb2-sb-title,
+    .nrdb2-sb-item-disabled .nrdb2-sb-info {
+        opacity: 0.5;
+    }
     /* indent the groups */
     .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
         margin-left: 1.5rem;
@@ -812,6 +819,7 @@
     function addRowStateOptions (parent, dashboardItem) {
         const item = dashboardItem.node
         const nodes = ['ui-page', 'ui-link', 'ui-group']
+        const titleRow = parent.closest('.nrdb2-sb-list-header')
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
         if (nodes.includes(item.type)) {
             const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
@@ -825,6 +833,7 @@
                 if (item.visible === 'true' || item.visible === true || item.visible === undefined) {
                     // toggle to hidden
                     item.visible = false
+                    titleRow.addClass('nrdb2-sb-item-hidden')
                     $(this).prop('title', 'Show')
                     $(this).find('i').addClass('fa-eye-slash').removeClass('fa-eye')
                     events.push({
@@ -839,6 +848,7 @@
                 } else {
                     // toggle to shown
                     item.visible = true
+                    titleRow.removeClass('nrdb2-sb-item-hidden')
                     $(this).prop('title', 'Hide')
                     $(this).find('i').addClass('fa-eye').removeClass('fa-eye-slash')
                     events.push({
@@ -864,6 +874,7 @@
                 if (item.disabled === 'true' || item.disabled === true) {
                     // toggle to hidden
                     item.disabled = false
+                    titleRow.removeClass('nrdb2-sb-item-disabled')
                     $(this).prop('title', 'Disable')
                     $(this).find('i').addClass('fa-unlock').removeClass('fa-lock')
                     events.push({
@@ -878,6 +889,7 @@
                 } else {
                     // toggle to shown
                     item.disabled = true
+                    titleRow.addClass('nrdb2-sb-item-disabled')
                     $(this).prop('title', 'Enable')
                     $(this).find('i').addClass('fa-lock').removeClass('fa-unlock')
                     events.push({
@@ -892,6 +904,15 @@
                 }
                 recordEvents(events)
             })
+        }
+    }
+
+    function setStateClasses (item, row) {
+        if (!item.node.visible === 'true' || item.node.visible === false) {
+            row.addClass('nrdb2-sb-item-hidden')
+        }
+        if (item.node.disabled === 'true' || item.node.disabled === true) {
+            row.addClass('nrdb2-sb-item-disabled')
         }
     }
 
@@ -1258,6 +1279,7 @@
                     // add it to the list of pages/links
                     container.addClass('nrdb2-sb-pages-list-item')
                     const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
+                    setStateClasses(item, titleRow)
 
                     // build title row
                     $('<i class="nrdb2-sb-list-handle nrdb2-sb-page-list-handle fa fa-bars"></i>').appendTo(titleRow)
@@ -1283,6 +1305,8 @@
                     container.addClass('nrdb2-sb-pages-list-item')
 
                     const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-pages-list-header' }).appendTo(container)
+                    setStateClasses(item, titleRow)
+
                     const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container' }).appendTo(container)
 
                     // build title row
