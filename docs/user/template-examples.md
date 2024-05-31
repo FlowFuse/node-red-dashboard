@@ -8,10 +8,12 @@ description: Get inspired with a variety of UI template examples in Node-RED Das
     import FlowViewer from '../components/FlowViewer.vue'
     import ExampleFlowWorldmap from '../examples/template-worldmap.json'
     import ExampleDataTable from '../examples/template-data-table.json'
+    import ExampleFileUpload from '../examples/file-upload.json'
 
     const examples = ref({
       'worldmap': ExampleFlowWorldmap,
-      'custom-data-table': ExampleDataTable
+      'custom-data-table': ExampleDataTable,
+      'file-upload': ExampleFileUpload
     })
 </script>
 
@@ -170,6 +172,102 @@ In summary, the different ways to handle case sensitivity are:
 You can try out the above example with this flow:
 
 <FlowViewer :flow="examples['custom-data-table']" height="200px"/>
+
+## File upload
+
+When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which not available currently. Fortunately, we can achieve this easily using the template node and Vuetify JS components.
+
+To do that we will use the `v-file-input` component which provides the interface for uploading files.
+
+```javascript
+<template>
+    <!-- Card for uploading binary file -->
+    <v-card width="600" height="300" raised color="white">
+        <!-- Card Title -->
+        <v-card-title>Upload binary file to Node-Red</v-card-title>
+        <br>
+        <v-card-text>
+            <!-- File Input -->
+            <v-file-input label="Click here to select a file" show-size v-model="uploadFile">
+            </v-file-input>
+            <!-- Progress Indicator -->
+            <div>Progress: {{ progress }} bytes loaded</div>
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <!-- Upload Button -->
+            <v-btn right @click="startUpload">Upload File</v-btn>
+        </v-card-actions>
+    </v-card>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                uploadFile: null, // Holds the selected file
+                progress: 0 // Progress indicator for file upload
+            }
+        },
+        methods: {
+            // Method triggered when Upload File button is clicked
+            startUpload() {
+                // Check if a file is selected
+                if (!this.uploadFile) {
+                    console.warn('No file selected');
+                    return;
+                }
+
+                // Log the selected file information to console
+                console.log('File selected:');
+                console.log(this.uploadFile);
+
+                // Create a FileReader instance to read the file
+                const reader = new FileReader();
+
+                // When the file is read, send it to Node-RED
+                reader.onload = () => {
+                    // Prepare the payload to send
+                    const payload = {
+                        topic: 'upload', // Topic for Node-RED
+                        payload: this.uploadFile, // File content
+                        file: {
+                            name: this.uploadFile.name, // File name
+                            size: this.uploadFile.size, // File size
+                            type: this.uploadFile.type // File type
+                        }
+                    };
+                    
+                    // Send the payload to Node-RED (assuming 'send' method is defined)
+                    this.send(payload);
+                };
+
+                // Track progress of file reading
+                reader.onprogress = (event) => {
+                    this.progress = event.loaded; // Update progress
+                };
+
+                // Read the file as an ArrayBuffer
+                reader.readAsArrayBuffer(this.uploadFile);
+            }
+        },
+    }
+</script>
+```
+
+To add a file upload component to your dashboard, insert the above Vue snippet into the ui-template widget. This snippet allows importing the file, and after clicking the upload button, it first tracks the progress of the file reading process and shows how much of the file is read. Once the file is fully loaded, it sends the message object to the subsequent node containing file-related information for further processing. However, it's important to note that this sends the buffer arrays, which we are converting into strings using the change node in the following example.
+
+You can try out the above example with this flow:
+
+<FlowViewer :flow="examples['file-upload']" height="200px"/>
+
+Additionally, please be aware that when using this node with Node-RED default settings, it will only accept files up to 1MB. The dashboard uses `socket.io` for communication, which has a default limit of 1MB. You can increase this limit by changing the following value in the settings.js file. For more information, refer to the [Settings](https://dashboard.flowfuse.com/user/settings.html).
+
+```javascript
+dashboard: {
+    maxHttpBufferSize: 1e8 // size in bytes, example: 100 MB
+}
+```
 
 ### World Map
 
