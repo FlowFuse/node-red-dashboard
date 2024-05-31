@@ -14,12 +14,20 @@
         <div v-if="!props.raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else v-html="value" />
-        <template v-if="props.allowDismiss" #actions>
+        <template v-if="props.allowDismiss || props.allowConfirm" #actions>
             <v-btn
+                v-if="props.allowDismiss"
                 variant="text"
-                @click="close('clicked')"
+                @click="close('dismiss_clicked')"
             >
                 {{ props.dismissText || "Close" }}
+            </v-btn>
+            <v-btn
+                v-if="props.allowConfirm"
+                variant="text"
+                @click="close('confirm_clicked')"
+            >
+                {{ props.confirmText || "Confirm" }}
             </v-btn>
         </template>
     </v-snackbar>
@@ -98,7 +106,10 @@ export default {
         },
         close (payload) {
             this.show = false
-            this.$socket.emit('widget-action', this.id, payload)
+
+            let msg = /*this.messages[this.id] ||*/ {}
+            msg.payload = payload
+            this.$socket.emit('widget-action', this.id, msg)
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
