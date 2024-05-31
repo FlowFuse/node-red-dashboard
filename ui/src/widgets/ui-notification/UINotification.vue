@@ -84,8 +84,7 @@ export default {
 
             if (this.show) {
                 this.close('input_msg')
-            }
-            else {
+            } else {
                 this.show = true
                 if (this.props.displayTime > 0) {
                     // begin countdown
@@ -113,7 +112,7 @@ export default {
         close (payload) {
             this.show = false
 
-            let msg = /*this.messages[this.id] ||*/ {}
+            const msg = this.messages[this.id] || {}
             msg.payload = payload
             this.$socket.emit('widget-action', this.id, msg)
 
