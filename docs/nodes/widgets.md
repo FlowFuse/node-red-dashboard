@@ -133,6 +133,8 @@ Here is a list of the third-party widgets we're aware of to make it easier to fi
 - [@sumit_shinde_84/ui-webcam](https://flows.nodered.org/node/@sumit_shinde_84/node-red-dashboard-2-ui-webcam): Enables users to integrate webcam functionality into Node-RED Dashboard 2.0, allowing users to capture images and stream video through different cameras.
 - [@flowfuse/ui-iframe](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-iframe): Embed an external webpage into your Dashboard using an iframe.
 - [@flowfuse/ui-led](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-led): Adds an LED status indicator to your Dashboard.
+- [@colinl/node-red-dashboard-2-ui-gauge-classic](https://flows.nodered.org/node/@colinl/node-red-dashboard-2-ui-gauge-classic): Render a multi-needle gauge on your Dashboard, with a more "Classic" visual style.
+
 
 ### In-Development
 

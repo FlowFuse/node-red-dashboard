@@ -15,6 +15,15 @@ We are always open to Pull Requests and new ideas on widgets that can be added t
 
 When adding a new widget to the core collection, you will need to follow the steps below to ensure that the widget is available in the Node-RED editor and renders correctly in the UI.
 
+## Recommended Reading
+
+On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the Dashboard 2.0 codebase and some of the underlying architectural principles it is built upon.
+
+In particular, the following are recommended:
+
+- [Events Architecture](/contributing/guides/state-management.html)
+- [State Management](/contributing/guides/state-management.html)
+
 ## Checklist
 
 When adding a new widget to Dashboard 2.0, you'll need to ensure that the following steps have been followed for that new widget to be recognised and included in a Dashboard 2.0 build:

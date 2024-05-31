@@ -16,6 +16,15 @@ You can explore our collection of core widgets [here](../../nodes/widgets.md). I
 
 We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Dashboard 1.0.
 
+## Recommended Reading
+
+On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the Dashboard 2.0 codebase and some of the underlying architectural principles it is built upon.
+
+In particular, the following are recommended:
+
+- [Events Architecture](/contributing/guides/state-management.html)
+- [State Management](/contributing/guides/state-management.html)
+
 ## How Widgets are Loaded
 
 Dashboard 2.0 is built on top of [VueJS](https://vuejs.org/), and as such, all widgets needs to be mapped to a Vue component. The process works as follows:
@@ -152,11 +161,13 @@ module.exports = function(RED) {
 
 ## Guides
 
+The below are guides and examples on building third-party widgets. We also have the "Useful Guides" Section in the left navigation which provide more generalized development guides when contributing to Dashboard 2.0.
+
 ### The Basics of VueJS
 
 Aware that a lot of developers that may want to contribute to Dashboard 2.0, may be new to VueJS, so we've detailed a few fundamentals here.
 
-It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across Dashboard 2.0 and in our examples for readibility.
+It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across Dashboard 2.0 and in our examples for readability.
 
 With the Options API, a Vue component has the following structure:
 
@@ -318,8 +329,10 @@ const base = group.getBase()
 Then, whenever you want to store data in the datastore, you can do so with:
 
 ```js
-base.stores.data.save(base, node.id, msg)
+base.stores.data.save(base, node, msg)
 ```
+
+You can read more about the Node-RED data store in our [State Management](../guides/state-management.md) guide.
 
 #### Node-RED State Store
 
