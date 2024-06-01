@@ -32,6 +32,23 @@ UI Template will parse different tags and render them into Dashboard. The availa
 - `<script>` - Any JavaScript code in here will be executed when the widget is loaded. You can also [define a full VueJS component](#building-full-vue-components) here.
 - `<style>` - Any CSS code in here will be injected into the Dashboard.
 
+### Working with Variables
+
+Any variables that you want to render into your `<template />` are done so in one of two ways:
+
+::: v-pre
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. For example: 
+
+```html
+<p :class="msg.payload">Hello World</p>
+````
+
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. For example:
+
+```html
+<p>Hello {{ msg.payload }}</p>
+```
+
 ### Built-in Variables
 
 You have access to a number of built-in variables in your `ui-template` node:
