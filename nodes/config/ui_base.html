@@ -1037,7 +1037,7 @@
                     titleRow.attr('title', widget.subflowName || 'Subflow instance')
                 }
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() + ' ' + widget.order || widget.id).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)
 
