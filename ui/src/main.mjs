@@ -75,7 +75,7 @@ function forcePageReload (err) {
 fetch('_setup')
     .then(async (response) => {
         if (!response.ok && response.status === 401) {
-            forcePageReload('origins do not match')
+            forcePageReload('Unauthenticated')
             return
         }
 
