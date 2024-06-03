@@ -74,19 +74,8 @@ function forcePageReload (err) {
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
-        console.log('_setup', {
-            origin: (new URL(window.location)).origin,
-            responseUrl: response.url,
-            sameOrigin: !response.url.includes( new URL(window.location).origin)
-        })
-        if (
-            response.url &&
-            typeof response.url === 'string' &&
-            !response.url.includes( new URL(window.location).origin)) {
-
-            // todo not sure if we should force redirect or just stop the setup process entirely
-            // forcePageReload('origins do not match')
-
+        if (!response.ok && response.status === 401) {
+            forcePageReload('origins do not match')
             return
         }
 
@@ -190,13 +179,8 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        if (err instanceof TypeError) {
-            if (err.message === 'Failed to fetch') {
-                forcePageReload(err)
-            } else {
-                // handle general Type errors here
-                console.error('An error occurred:', err)
-            }
+        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+            forcePageReload(err)
         } else {
             // handle general errors here
             console.error('An error occurred:', err)
