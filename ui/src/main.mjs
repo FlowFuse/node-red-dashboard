@@ -74,6 +74,11 @@ function forcePageReload (err) {
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
+        console.log('_setup', {
+            origin: (new URL(window.location)).origin,
+            responseUrl: response.url,
+            sameOrigin: !response.url.includes( new URL(window.location).origin)
+        })
         if (
             response.url &&
             typeof response.url === 'string' &&
@@ -82,10 +87,9 @@ fetch('_setup')
             // todo not sure if we should force redirect or just stop the setup process entirely
             // forcePageReload('origins do not match')
 
-            return;
+            return
         }
 
-        console.log('_setup', response, typeof response.url === 'string')
         const url = new URL(response.url)
         const basePath = url.pathname.replace('/_setup', '')
 
