@@ -57,11 +57,7 @@ const vuetify = createVuetify({
     }
 })
 
-/*
- * Configure SocketIO Client to Interact with Node-RED
- */
-
-// if our scoket disconnects, we should inform the user when it reconnects
+const host = new URL(window.location.href)
 
 function forcePageReload (err) {
     console.log('auth error:', err)
@@ -71,16 +67,15 @@ function forcePageReload (err) {
     window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
 }
 
-const host = new URL(window.location.href)
+/*
+ * Configure SocketIO Client to Interact with Node-RED
+ */
+
+// if our scoket disconnects, we should inform the user when it reconnects
 
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
-        console.log({
-            host,
-            response
-        })
-
         switch (true) {
         case !response.ok && response.status === 401:
             forcePageReload('Unauthenticated')
@@ -91,7 +86,6 @@ fetch('_setup')
         case host.origin !== new URL(response.url).origin:
             console.log('Following redirect:', response.url)
             window.location.replace(response.url)
-            // forcePageReload('Redirected to different origin')
             return
         default:
             break
