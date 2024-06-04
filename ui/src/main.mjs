@@ -1,17 +1,9 @@
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
-import { VueHeadMixin, createHead } from '@unhead/vue'
-import * as Vue from 'vue'
-import * as vuex from 'vuex'
-import App from './App.vue'
+import { createHead, VueHeadMixin } from '@unhead/vue'
 import { io } from 'socket.io-client'
-import router from './router.mjs'
-import Alerts from './services/alerts.js'
-
-// Vuetify
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/styles'
+import * as Vue from 'vue'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -21,6 +13,14 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
 import './stylesheets/common.css'
+import * as vuex from 'vuex'
+import App from './App.vue'
+import router from './router.mjs'
+import Alerts from './services/alerts.js'
+
+// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 
 import store from './store/index.mjs'
 
@@ -71,12 +71,25 @@ function forcePageReload (err) {
     window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
 }
 
+const origin = new URL(window.location.href)
+
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
-        if (!response.ok && response.status === 401) {
+        console.log({
+            origin,
+            response
+        })
+
+        switch (true) {
+        case !response.ok && response.status === 401:
             forcePageReload('Unauthenticated')
+            break
+        case !response.ok:
+            console.error('Failed to fetch setup data:', response)
             return
+        default:
+            break
         }
 
         const url = new URL(response.url)
