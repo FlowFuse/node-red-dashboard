@@ -84,7 +84,7 @@ fetch('_setup')
         switch (true) {
         case !response.ok && response.status === 401:
             forcePageReload('Unauthenticated')
-            break
+            return
         case !response.ok:
             console.error('Failed to fetch setup data:', response)
             return
