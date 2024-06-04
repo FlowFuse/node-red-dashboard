@@ -1,9 +1,17 @@
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
-import { createHead, VueHeadMixin } from '@unhead/vue'
-import { io } from 'socket.io-client'
+import { VueHeadMixin, createHead } from '@unhead/vue'
 import * as Vue from 'vue'
+import * as vuex from 'vuex'
+import App from './App.vue'
+import { io } from 'socket.io-client'
+import router from './router.mjs'
+import Alerts from './services/alerts.js'
+
+// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -13,14 +21,6 @@ import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { VTreeview } from 'vuetify/labs/VTreeview'
 
 import './stylesheets/common.css'
-import * as vuex from 'vuex'
-import App from './App.vue'
-import router from './router.mjs'
-import Alerts from './services/alerts.js'
-
-// Vuetify
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/styles'
 
 import store from './store/index.mjs'
 
