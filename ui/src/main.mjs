@@ -67,17 +67,17 @@ function forcePageReload (err) {
     console.log('auth error:', err)
     console.log('redirecting to:', window.location.origin + '/dashboard')
 
-    // Reloading dashboard without using cache by apending a cache-busting string to fully reload page to allow redirecting to auth
+    // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
     window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
 }
 
-const origin = new URL(window.location.href)
+const host = new URL(window.location.href)
 
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
         console.log({
-            origin,
+            host,
             response
         })
 
@@ -87,6 +87,11 @@ fetch('_setup')
             return
         case !response.ok:
             console.error('Failed to fetch setup data:', response)
+            return
+        case host.origin !== new URL(response.url).origin:
+            console.log('Following redirect:', response.url)
+            window.location.replace(response.url)
+            // forcePageReload('Redirected to different origin')
             return
         default:
             break
