@@ -57,6 +57,16 @@ const vuetify = createVuetify({
     }
 })
 
+const host = new URL(window.location.href)
+
+function forcePageReload (err) {
+    console.log('auth error:', err)
+    console.log('redirecting to:', window.location.origin + '/dashboard')
+
+    // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
+    window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
+}
+
 /*
  * Configure SocketIO Client to Interact with Node-RED
  */
@@ -66,6 +76,21 @@ const vuetify = createVuetify({
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
+        switch (true) {
+        case !response.ok && response.status === 401:
+            forcePageReload('Unauthenticated')
+            return
+        case !response.ok:
+            console.error('Failed to fetch setup data:', response)
+            return
+        case host.origin !== new URL(response.url).origin:
+            console.log('Following redirect:', response.url)
+            window.location.replace(response.url)
+            return
+        default:
+            break
+        }
+
         const url = new URL(response.url)
         const basePath = url.pathname.replace('/_setup', '')
 
@@ -166,20 +191,8 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        if (err instanceof TypeError) {
-            if (err.message === 'Failed to fetch') {
-                console.log('auth error:', err)
-                console.log('redirecting to:', window.location.origin + '/dashboard')
-
-                // window.location.replace(window.location.origin + '/dashboard') //Original, seems to have no issues with Edge and Chrome on Windows, doesn't work on Android (Not tested on Linux browser)
-                // window.location.href = window.location.origin + window.location.pathname + window.location.search + (window.location.search ? '&' : '?') + 'reloadTime=' + Date.now().toString() + window.location.hash; // Also works on Edge + Chrome on windows, doesn't work on android
-
-                // Reloading dashboard without using cache by apending a cache-busting string to fully reload page to allow redirecting to auth
-                window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
-            } else {
-                // handle general Type errors here
-                console.error('An error occurred:', err)
-            }
+        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+            forcePageReload(err)
         } else {
             // handle general errors here
             console.error('An error occurred:', err)
