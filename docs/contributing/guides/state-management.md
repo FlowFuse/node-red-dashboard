@@ -106,7 +106,7 @@ When a widget is initialised, it will attempt to retrieve the latest message fro
 datastore.get(node.id)
 ```
 
-This ensures, on refresh of the client, or when new clients connect after data has been geenrated, that the state is presented consistently.
+This ensures, on refresh of the client, or when new clients connect after data has been generated, that the state is presented consistently.
 
 #### `datastore.append`
 
@@ -134,7 +134,7 @@ This ensures that we don't have any stale data in the datastore, and that we don
 
 ### State Store
 
-The `statestore` is a centralised store for all dynamic properties set against widgets in the Editor. Dynamic Properties can be set through sending `msg.<proprrty>` payloads to a given node, e.g. for ` ui-dropdown`, we can send `msg.options` to override the "Options" property at runtime.
+The `statestore` is a centralised store for all dynamic properties set against widgets in the Editor. Dynamic Properties can be set through sending `msg.<property>` payloads to a given node, e.g. for ` ui-dropdown`, we can send `msg.options` to override the "Options" property at runtime.
 
  At the top-level it is key-mapped to the Widget ID's, then each widget has a map, where each key is the property name, mapping to the value.
 
