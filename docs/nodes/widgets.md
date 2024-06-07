@@ -126,7 +126,7 @@ Collection of widgets that do not render content into the Dashboard, but instead
 
 ## Third-Party Widgets
 
-In addition to the core widgets, we have the architecture to support third-party widgets. If you're interested in developing some yourself, you can check out out [Third Party Widgets Contributing Guide](../contributing/widgets/third-party.md).
+In addition to the core widgets, we have the architecture to support third-party widgets. If you're interested in developing some yourself, you can check out our [Third Party Widgets Contributing Guide](../contributing/widgets/third-party.md).
 
 Here is a list of the third-party widgets we're aware of to make it easier to find what you might be after. These widgets are created by us and the community and can be installed via the Node-RED Palette Manager.
 
