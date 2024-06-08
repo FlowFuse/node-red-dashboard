@@ -60,7 +60,7 @@ const vuetify = createVuetify({
 const host = new URL(window.location.href)
 
 function forcePageReload (err) {
-    console.log('auth error:', err)
+    console.log('Reloading page:', err)
     console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
@@ -108,10 +108,10 @@ fetch('_setup')
         store.commit('setup/set', setup)
 
         let disconnected = false
-        let disconnectedAt = null
+        let retryCount = 0      // number of reconnection attempts made
 
         let reconnectTO = null
-        const MAX_TIMER = 300000 // 5 minutes
+        const MAX_RETRIES = 20      // 12 at 5 secs then 8 at 30 seconds
 
         const socket = io({
             ...setup.socketio,
@@ -121,7 +121,7 @@ fetch('_setup')
         // handle final disconnection
         socket.on('disconnect', (reason) => {
             if (!disconnected) {
-                disconnectedAt = new Date()
+                retryCount = 0
                 disconnected = true
             }
             // tell the user we're trying to connect
@@ -150,22 +150,24 @@ fetch('_setup')
         })
 
         socket.on('connect_error', (err) => {
-            console.error('SIO connect error:', err, err.data)
+            console.error('SIO connect error:', err, `err: ${JSON.stringify(err)}`)
         })
 
         // default interval - every 5 seconds
         function reconnect (interval = 5000) {
             if (disconnected) {
                 socket.connect()
-                const now = new Date()
-                if (now - disconnectedAt > 60000) {
+                if (retryCount++ >= 12) {
                     // trying for over 1 minute
                     interval = 30000 // interval at 30 seconds
                 }
-                // if still within our maximum timer
-                if (now - disconnectedAt < MAX_TIMER) {
+                // if still within our maximum retry count
+                if (retryCount <= MAX_RETRIES) {
                     // check for a connection again in <interval> milliseconds
                     reconnectTO = setTimeout(reconnect, interval)
+                } else {
+                    // we have been retrying for 5 minutes so give up and reload the page
+                    forcePageReload('Too many retries')
                 }
             }
         }
