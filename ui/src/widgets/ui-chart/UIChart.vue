@@ -166,7 +166,7 @@ export default {
             }
         },
         getXDisplayFormats (xAxisFormatType) {
-            let xDisplayFormats = {}
+            const xDisplayFormats = {}
             if (xAxisFormatType === 'auto' || !xAxisFormatType || xAxisFormatType === '') {
                 // If automatic format or no format (backwards compatibility for older nodes)
                 xDisplayFormats.millisecond = 'HH:mm:ss'
