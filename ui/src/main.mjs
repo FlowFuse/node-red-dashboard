@@ -111,7 +111,7 @@ fetch('_setup')
         let retryCount = 0      // number of reconnection attempts made
 
         let reconnectTO = null
-        const MAX_RETRIES = 20      // 12 at 5 secs then 8 at 30 seconds
+        const MAX_RETRIES = 22      // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
 
         const socket = io({
             ...setup.socketio,
@@ -153,14 +153,18 @@ fetch('_setup')
             console.error('SIO connect error:', err, `err: ${JSON.stringify(err)}`)
         })
 
-        // default interval - every 5 seconds
-        function reconnect (interval = 5000) {
+        // default interval - every 2.5 seconds
+        function reconnect (interval = 2500) {
             if (disconnected) {
                 socket.connect()
-                if (retryCount++ >= 12) {
+                if (retryCount >= 14) {
                     // trying for over 1 minute
                     interval = 30000 // interval at 30 seconds
+                } else if (retryCount >= 4) {
+                    // trying for over 10 seconds
+                    interval = 5000 // interval at 5 seconds
                 }
+                retryCount++
                 // if still within our maximum retry count
                 if (retryCount <= MAX_RETRIES) {
                     // check for a connection again in <interval> milliseconds
