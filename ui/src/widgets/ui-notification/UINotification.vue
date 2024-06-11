@@ -113,8 +113,10 @@ export default {
             this.show = false
 
             const msg = this.messages[this.id] || {}
-            msg.payload = payload
-            this.$socket.emit('widget-action', this.id, msg)
+            this.$socket.emit('widget-action', this.id, {
+                ...msg,
+                payload
+            })
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
