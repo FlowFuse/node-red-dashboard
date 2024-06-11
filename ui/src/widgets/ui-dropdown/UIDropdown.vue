@@ -126,6 +126,9 @@ export default {
                 if (typeof updates.label !== 'undefined') {
                     this.dynamic.label = updates.label
                 }       
+                if (typeof updates.multiple !== 'undefined') {
+                    this.dynamic.multiple = updates.multiple
+                }                
             }
         },
         onChange () {
