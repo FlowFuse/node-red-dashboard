@@ -10,7 +10,7 @@ The navigational hierarchy of the Dashboard UI is as follows:
 
 - **UI** - `ui-base` - Multiple endpoints can be served within a single Dashboard. Later work will be done to treat these as completely isolated interfaces.
 - **Page** - `ui-page` - All pages within a single UI are listed in the navigation drawer (left menu). Each page is configured to use a given "Layout Manager", and that manager will render 
-- **Group** - `ui-group` - A group is a sollection of widgets that will be positioned together on a page. Each page "layout" defines how these groups are laid out, but internally, within a group, layout is always consistent, using a bootstrap-style Column Layout (default width of 6).
+- **Group** - `ui-group` - A group is a collection of widgets that will be positioned together on a page. Each page "layout" defines how these groups are laid out, but internally, within a group, layout is always consistent, using a bootstrap-style Column Layout (default width of 6).
 - **Widget** - `ui-<widget-name>` - Each widget is defined as a Vue component. You can checkout an example `<widget>.vue` file in our [Adding Widgets](../widgets/core-widgets#example-widget-vue) guide.
 
 
@@ -69,7 +69,7 @@ We have also documented the structure of the [Widget](./events#widget) object (u
             ...mapState('ui', ['widgets']),
         },
         components: {
-            // extend the BaslineLayout component to get
+            // extend the BaselineLayout component to get
             // the header and navigation drawer
             BaselineLayout
         }

@@ -120,7 +120,7 @@ msg.payload = [{
 
 Where the `series` property of this chart could be set to `key:category`.
 
-Charts now store data on a message-by-message bassis for clearer auditing, and so do not store as per [Dashboard 1.0](https://github.com/node-red/node-red-dashboard/blob/master/Charts.md#line-charts-1). This means that the format:
+Charts now store data on a message-by-message basis for clearer auditing, and so do not store as per [Dashboard 1.0](https://github.com/node-red/node-red-dashboard/blob/master/Charts.md#line-charts-1). This means that the format:
 
 ```
 [{
@@ -183,7 +183,7 @@ You can track progress of this development effort here: [Issue #387](https://git
 
 ### `ui_numeric`
 
-Whilst this widget has no explicitely been transferred into Dashboard 2.0, the functionality is still available in the `ui-text-input` widget, where you can select the _"type"_ to be _"number"_.
+Whilst this widget has no explicitly been transferred into Dashboard 2.0, the functionality is still available in the `ui-text-input` widget, where you can select the _"type"_ to be _"number"_.
 
 You can track progress of this development effort here: [Issue #41](https://github.com/FlowFuse/node-red-dashboard/issues/41)
 
@@ -220,7 +220,7 @@ We have tried to make theming in Dashboard 2.0 more low-code friendly, by provid
 ![Example of editing a theme](/images/theme-config.png "Example of editing a theme"){data-zoomable}
 _Example of the properties exposed in the Node-RED Editor when defining a theme_
 
-We have plans to extend this themeing configuration further, such that you can also define grid spacing, fonts, etc.
+We have plans to extend this theming configuration further, such that you can also define grid spacing, fonts, etc.
 
 Any further customisation of the overall layout and theme of the Dashboard will require custom CSS, which can be injected via the `ui_template` node.
 
@@ -236,9 +236,9 @@ Dashboard 2.0 follows a similar architecture to Dashboard 1.0 for managing hiera
 
 We currently have three layouts available in Dashboard 2.0:
 
-- [**Grid**](../layouts/types/grid.md) - Modelled with CSS's `grid` layout, this is the default layout, and uses a fixed 12 column approach, whereby content will scale horiztonally with screen width, making it far more friendly for responsive layouts.
+- [**Grid**](../layouts/types/grid.md) - Modelled with CSS's `grid` layout, this is the default layout, and uses a fixed 12 column approach, whereby content will scale horizontally with screen width, making it far more friendly for responsive layouts.
 - [**Fixed**](../layouts/types/fixed.md) - This uses a CSS Flex Layout and is the most similar we currently have to the only layout in Dashboard 1.0. Improvements are required here to improve the "packing" nature of the layout though.
-- [**Notebook**](../layouts/types/notebook.md) - Mimicking a Jupyter Notebook layout, this provides content with a maxiimum width, scales with mobile devices, and allows for content to be stacked vertically.
+- [**Notebook**](../layouts/types/notebook.md) - Mimicking a Jupyter Notebook layout, this provides content with a maximum width, scales with mobile devices, and allows for content to be stacked vertically.
 
 We also have future plans to support injection of third-party layouts, and even client-side editable layouts (e.g. drag-and-drop layout design).
 

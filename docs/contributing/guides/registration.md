@@ -8,7 +8,7 @@ Every `ui-base`, `ui-page` and `ui-group` has a `.register` function. The core r
 
 This function is used by all of the widgets to inform Dashboard of their existence, and allows the widget to define which group/page/ui it belongs too, along with the relevant properties that widget has and any event handlers (e.g. `onInput` or `onAction`).
 
-The function is called within the node's Node-RED `.js` file, and in th case of a widget registering as part of a group (the most common use case), wuld look something like this:
+The function is called within the node's Node-RED `.js` file, and in th case of a widget registering as part of a group (the most common use case), would look something like this:
 
 ```js
 module.exports = function (RED) {
@@ -54,7 +54,7 @@ This is made available by Node-RED as the input to the constructor, and can gene
 
 We expose a range of different event handlers as part of the `register` function. All of these handlers run server (Node-RED) side.
 
-In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle), in other occassions, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
+In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle), in other occasions, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
 
 A full breakdown of the event lifecycle can be found [here](../../contributing/guides/events.md).
 

@@ -52,14 +52,14 @@ _Example of how the 'Hidden' option looks_
     right="/images/node-examples/ui-base-layout-sidebar-closed.png"
 />
 
-This open will shift the entire content of the Dashboard when opened, and not be visisble at all when closed.
+This open will shift the entire content of the Dashboard when opened, and not be visible at all when closed.
 
 ### Navigation - Fixed
 
 ![Example of how the 'Fixed' option looks at all times](/images/node-examples/ui-base-layout-fixed.png "Example of how the 'Fixed' option looks at all times"){data-zoomable}
 _Example of how the 'Fixed' option looks at all times_
 
-Will always remain open. At our mobile breakdpoint (768px), this value is overriden, and an "Appear Over" option is used. Note that at mobile-scale (screen width less than 768px), then the Fixed layout will revert back to the "Default" option.
+Will always remain open. At our mobile breakpoint (768px), this value is overridden, and an "Appear Over" option is used. Note that at mobile-scale (screen width less than 768px), then the Fixed layout will revert back to the "Default" option.
 
 ### Navigation - Collapse to Icons
 
@@ -86,4 +86,4 @@ Not visible when closed, and when open, will appear over the Dashboard content, 
 ![Example of how the 'Always Hide' option looks](/images/node-examples/ui-base-layout-hide.png "Example of how the 'Always Hide' option looks"){data-zoomable}
 _Example of how the 'Always Hide' option looks_
 
-The sidebar will not be visible under any circumstances. All pages are still accesible via their direct links or a [ui-control](../widgets/ui-control.md) node.
+The sidebar will not be visible under any circumstances. All pages are still accessible via their direct links or a [ui-control](../widgets/ui-control.md) node.

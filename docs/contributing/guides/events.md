@@ -124,7 +124,7 @@ will result in a `msg` object of:
 }
 ```
 
-Similiarly, is instead an object is specified:
+Similarly, is instead an object is specified:
 
 ```js
 send({ myVar: 10, topic: "my-topic" })
@@ -139,7 +139,7 @@ then the `msg` object will be:
 }
 ```
 
-Any `msg` emitted using this fucntion is also stored in the datastore associated with the widget.
+Any `msg` emitted using this function is also stored in the datastore associated with the widget.
 
 ## Event Payloads
 

@@ -9,7 +9,7 @@ colors:
 sizes:
     Page Padding: The spacing that surrounds all of the groups on a page. Applicable for Grid & Fixed layouts and Notebook layouts where the screen width is narrower than 1024px.</br></br>You can define the padding for each side of the page separately by using <a href="https://www.w3schools.com/css/css_padding.asp#:~:text=Padding%20%2D%20Shorthand%20Property" target="_blank">CSS Shorthand notation</a>
     Group Gap: "The gap between each group in a layout. Default: 12px"
-    Group Border Radius: "The border radius of the surrunding of each group on a page. Default: 4px"
+    Group Border Radius: "The border radius of the surrounding of each group on a page. Default: 4px"
     Widget Gap: "The gap between each widget within a group. Default: 12px"
 ---
 
