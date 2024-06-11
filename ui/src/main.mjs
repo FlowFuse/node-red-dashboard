@@ -108,10 +108,10 @@ fetch('_setup')
         store.commit('setup/set', setup)
 
         let disconnected = false
-        let retryCount = 0      // number of reconnection attempts made
+        let retryCount = 0 // number of reconnection attempts made
 
         let reconnectTO = null
-        const MAX_RETRIES = 22      // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
+        const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
 
         const socket = io({
             ...setup.socketio,
