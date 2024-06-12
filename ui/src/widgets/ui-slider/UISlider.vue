@@ -32,7 +32,7 @@ export default {
                 max: null,
                 color: null,
                 colorTrack: null,
-                colorThumb: null                
+                colorThumb: null
             }
         }
     },

@@ -47,13 +47,13 @@ module.exports = function (RED) {
                     }
                     if (typeof (updates.color) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color', updates.color)
-                    }   
+                    }
                     if (typeof (updates.colorTrack) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color-track', updates.colorTrack)
-                    }   
+                    }
                     if (typeof (updates.colorThumb) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color-thumb', updates.colorThumb)
-                    }                                                            
+                    }
                 }
                 return msg
             }
