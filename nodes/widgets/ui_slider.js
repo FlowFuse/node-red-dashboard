@@ -48,11 +48,11 @@ module.exports = function (RED) {
                     if (typeof (updates.color) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color', updates.color)
                     }   
-                    if (typeof (updates.color-track) !== 'undefined') {
-                        statestore.set(group.getBase(), node, msg, 'color-track', updates.color-track)
+                    if (typeof (updates.colorTrack) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'color-track', updates.colorTrack)
                     }   
-                    if (typeof (updates.color-thumb) !== 'undefined') {
-                        statestore.set(group.getBase(), node, msg, 'color-thumb', updates.color-thumb)
+                    if (typeof (updates.colorThumb) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'color-thumb', updates.colorThumb)
                     }                                                            
                 }
                 return msg
