@@ -72,10 +72,10 @@ export default {
         },
         chips: function () {
             return this.dynamic.chips === null ? this.props.chips : this.dynamic.chips
-        },   
+        },
         clearable: function () {
             return this.dynamic.clearable === null ? this.props.clearable : this.dynamic.clearable
-        },               
+        },
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
@@ -125,10 +125,10 @@ export default {
                 }
                 if (typeof updates.label !== 'undefined') {
                     this.dynamic.label = updates.label
-                }       
+                }
                 if (typeof updates.multiple !== 'undefined') {
                     this.dynamic.multiple = updates.multiple
-                }                
+                }
             }
         },
         onChange () {
