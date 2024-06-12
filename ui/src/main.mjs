@@ -151,13 +151,13 @@ fetch('_setup')
 
         socket.on('connect_error', (err) => {
             console.error('SIO connect error:', err, `err: ${JSON.stringify(err)}`)
-            if (err?.code === "parser error") {
+            if (err?.code === 'parser error') {
                 // There has been a 'parser error' during the attempt to connect. This means that socket.io
                 // does not like the response from the server from the attempt to connect.
                 // This happens if there is a proxy server in front of node red that has redirected to
                 // a login page. There may also be other situations under which this error occurs, but whatever the
                 // cause it doesn't seem that we can do much other than force a reload.
-                forcePageReload("parser error")
+                forcePageReload('parser error')
             }
         })
 
