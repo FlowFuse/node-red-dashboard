@@ -5,8 +5,8 @@
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="thumbLabel"
         :min="min"
-        :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
+        :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
