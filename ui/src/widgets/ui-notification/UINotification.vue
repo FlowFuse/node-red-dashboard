@@ -82,8 +82,10 @@ export default {
                 msg
             })
 
-            if (this.show) {
-                this.close('input_msg')
+            if ('clear_notification' in msg) {
+                if (msg.clear_notification && this.show) {
+                    this.close('input_msg')
+                }
             } else {
                 this.show = true
                 if (this.props.displayTime > 0) {
