@@ -6,6 +6,7 @@
         :class="className" :thumb-label="thumbLabel"
         :min="min"
         :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
+        :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
     />
 </template>
 
@@ -28,7 +29,10 @@ export default {
                 label: null,
                 thumbLabel: null,
                 min: null,
-                max: null
+                max: null,
+                color: null,
+                colorTrack: null,
+                colorThumb: null                
             }
         }
     },
@@ -51,6 +55,15 @@ export default {
         },
         max: function () {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
+        },
+        color: function () {
+            return this.dynamic.color !== null ? this.dynamic.color : this.props.color
+        },
+        colorTrack: function () {
+            return this.dynamic.colorTrack !== null ? this.dynamic.colorTrack : this.props.colorTrack
+        },
+        colorThumb: function () {
+            return this.dynamic.colorThumb !== null ? this.dynamic.colorThumb : this.props.colorThumb
         }
     },
     watch: {

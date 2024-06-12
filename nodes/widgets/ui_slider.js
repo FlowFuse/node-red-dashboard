@@ -45,6 +45,15 @@ module.exports = function (RED) {
                     if (typeof (updates.max) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
                     }
+                    if (typeof (updates.color) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'color', updates.color)
+                    }   
+                    if (typeof (updates.color-track) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'color-track', updates.color-track)
+                    }   
+                    if (typeof (updates.color-thumb) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'color-thumb', updates.color-thumb)
+                    }                                                            
                 }
                 return msg
             }
