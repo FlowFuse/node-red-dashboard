@@ -5,6 +5,8 @@
         :class="className"
         :label="label"
         :multiple="multiple"
+        :chips="chips"
+        :clearable="clearable"
         :items="options"
         item-title="label"
         item-value="value"
@@ -34,7 +36,9 @@ export default {
             items: null,
             dynamic: {
                 label: null,
-                multiple: null
+                multiple: null,
+                chips: null,
+                clearable: null
             }
         }
     },
@@ -66,6 +70,12 @@ export default {
         multiple: function () {
             return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
         },
+        chips: function () {
+            return this.dynamic.chips === null ? this.props.chips : this.dynamic.chips
+        },   
+        clearable: function () {
+            return this.dynamic.clearable === null ? this.props.clearable : this.dynamic.clearable
+        },               
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
@@ -115,10 +125,10 @@ export default {
                 }
                 if (typeof updates.label !== 'undefined') {
                     this.dynamic.label = updates.label
-                }
+                }       
                 if (typeof updates.multiple !== 'undefined') {
                     this.dynamic.multiple = updates.multiple
-                }
+                }                
             }
         },
         onChange () {

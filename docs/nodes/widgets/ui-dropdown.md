@@ -12,6 +12,12 @@ props:
     Allow Multiple:
         description: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
         dynamic: true
+    Chips:
+        description: Show selected elements in chips.
+        dynamic: false        
+    Clearable:
+        description: Clear selection with button.
+        dynamic: false        
 dynamic:
     Label:
         payload: msg.ui_update.label
@@ -62,3 +68,6 @@ To make a single selection, pass in the `value` of the option as `msg.payload`, 
 
 ![Example of a dropdown](/images/node-examples/ui-dropdown.png "Example of a dropdown"){data-zoomable}
 *Example of a rendered dropdown in a Dashboard.*
+
+![Example of a multiple selection dropdown](/images/node-examples/ui-dropdown-multi-chips-clearable.png "Example of a multiple selection dropdown"){data-zoomable}
+*Dropdowm with multiple selection, chips and clear button.*
