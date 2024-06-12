@@ -38,6 +38,10 @@ export default {
         'props.xAxisType': function (value) {
             this.chart.options.scales.x.type = value
             this.chart.update()
+        },
+        'props.xAxisFormatType': function (value) {
+            this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
+            this.chart.update()
         }
     },
     created () {
@@ -100,9 +104,7 @@ export default {
                             text: this.props.xAxisLabel
                         },
                         time: {
-                            displayFormats: {
-                                millisecond: 'HH:mm:ss'
-                            }
+                            displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
                         }
                     },
                     y: yOptions
@@ -162,6 +164,36 @@ export default {
                 // update the chart
                 this.add(msg)
             }
+        },
+        getXDisplayFormats (xAxisFormatType) {
+            const xDisplayFormats = {}
+            if (xAxisFormatType === 'auto' || !xAxisFormatType || xAxisFormatType === '') {
+                // If automatic format or no format (backwards compatibility for older nodes)
+                xDisplayFormats.millisecond = 'HH:mm:ss'
+            } else if (xAxisFormatType === 'custom') {
+                // For the custom format, the entered format is stored by the typedInput in its value field
+                xDisplayFormats.millisecond = this.props.xAxisFormat
+                xDisplayFormats.second = this.props.xAxisFormat
+                xDisplayFormats.minute = this.props.xAxisFormat
+                xDisplayFormats.hour = this.props.xAxisFormat
+                xDisplayFormats.day = this.props.xAxisFormat
+                xDisplayFormats.week = this.props.xAxisFormat
+                xDisplayFormats.month = this.props.xAxisFormat
+                xDisplayFormats.quarter = this.props.xAxisFormat
+                xDisplayFormats.year = this.props.xAxisFormat
+            } else {
+                // For all other formats, the format is stored by the typedInput in the type field
+                xDisplayFormats.millisecond = xAxisFormatType
+                xDisplayFormats.second = xAxisFormatType
+                xDisplayFormats.minute = xAxisFormatType
+                xDisplayFormats.hour = xAxisFormatType
+                xDisplayFormats.day = xAxisFormatType
+                xDisplayFormats.week = xAxisFormatType
+                xDisplayFormats.month = xAxisFormatType
+                xDisplayFormats.quarter = xAxisFormatType
+                xDisplayFormats.year = xAxisFormatType
+            }
+            return xDisplayFormats
         },
         clear () {
             this.chart.data.labels = []

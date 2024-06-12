@@ -59,6 +59,8 @@
                 xAxisProperty: { value: null },
                 xAxisPropertyType: { value: 'msg' },
                 xAxisType: { value: 'time' },
+                xAxisFormat: { value: '' },
+                xAxisFormatType: { value: 'auto' },
                 yAxisLabel: { value: '' },
                 yAxisProperty: { value: null },
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
@@ -146,6 +148,31 @@
 
                 // provide options for x-axis type
                 $('#node-input-xAxisType').typedInput()
+
+                // handle event when x axis type is changed
+                $('#node-input-xAxisType').on('change', (evt) => {
+                    const value = $('#node-input-xAxisType').typedInput('value')
+
+                    if (value === 'time') {
+                        $('#x-axis-format').show()
+                    } else {
+                        $('#x-axis-format').hide()
+                    }
+                })
+
+                $('#node-input-xAxisFormat').typedInput({
+                    default: 'auto',
+                    typeField: $('#node-input-xAxisFormatType'),
+                    types: [
+                        {value: 'HH:mm:ss', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false},
+                        {value: 'HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false},
+                        {value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false},
+                        {value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false},
+                        {value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false},
+                        {value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: "fa fa-font"},
+                        {value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false}
+                    ]
+                })
 
                 $('#node-input-category').typedInput({
                     default: 'msg',
@@ -346,6 +373,11 @@
         <label for="node-input-xAxisType" data-i18n="ui-chart.label.xType"></label></label>
         <input type="text" id="node-input-xAxisType">
         <input type="hidden" id="node-input-xAxisTypeType">
+    </div>
+    <div class="form-row" id="x-axis-format">
+        <label for="node-input-xAxisFormat" data-i18n="ui-chart.label.xFormat"></label></label>
+        <input type="text" id="node-input-xAxisFormat">
+        <input type="hidden" id="node-input-xAxisFormatType">
     </div>
     <div class="form-row">
         <label for="node-input-xAxisLabel" data-i18n="ui-chart.label.xLabel"></label></label>

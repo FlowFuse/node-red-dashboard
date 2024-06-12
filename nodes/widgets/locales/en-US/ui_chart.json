@@ -51,7 +51,15 @@
             "pointRadius": "Radius (px)",
             "action": "Action",
             "append": "Append",
-            "replace": "Replace"
+            "replace": "Replace",
+            "xFormat": "Format",
+            "HHmmss": "HH:mm:ss",
+            "HHmm": "HH:mm",
+            "yLd": "y-L-d",
+            "dL": "d/L",
+            "cccHHmm": "ccc HH:mm",
+            "custom": "Custom",
+            "auto": "Automatic" 
         }
     }
 }
