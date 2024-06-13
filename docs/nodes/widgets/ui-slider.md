@@ -12,7 +12,9 @@ props:
     Range:
         description: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
         dynamic: true
-    Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.
+    Color:
+        description: main - color of the slider and thumbs; track - color of the track slider; thumb - color of the thumb
+        dynamic: false
 dynamic:
     Label:
         payload: msg.ui_update.class
@@ -28,7 +30,7 @@ dynamic:
         structure: ["Number"]
     Range (max):
         payload: msg.ui_update.max
-        structure: ["Number"]
+        structure: ["Number"]     
     Class:
         payload: msg.ui_update.class
         structure: ["String"]
