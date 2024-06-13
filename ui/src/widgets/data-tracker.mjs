@@ -81,5 +81,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     })
     onUnmounted(() => {
         socket?.off('msg-input:' + widgetId)
+        socket?.off('widget-load:' + widgetId)
     })
 }
