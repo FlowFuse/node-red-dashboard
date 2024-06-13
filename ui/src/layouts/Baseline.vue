@@ -4,7 +4,12 @@
             <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
-            <v-app-bar-title>{{ pageTitle }}</v-app-bar-title>
+            <v-app-bar-title>
+                <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
+                    {{ pageTitle }}
+                </template>
+                <div id="app-bar-title" />
+            </v-app-bar-title>
             <template #append>
                 <div id="app-bar-actions" />
             </template>

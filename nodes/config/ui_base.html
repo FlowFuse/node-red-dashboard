@@ -305,6 +305,9 @@
             showPathInSidebar: {
                 value: false
             },
+            showPageTitle: {
+                value: true
+            },
             navigationStyle: {
                 value: 'default'
             },
@@ -322,6 +325,14 @@
                 this.titleBarStyle = 'default'
                 // update the jquery dropdown
                 $('#node-config-input-titleBarStyle').val('default')
+            }
+
+            // backward compatibility for including page name
+            if (this.showPageTitle === undefined) {
+                // set to true
+                this.showPageTitle = true
+                // update the jquery checkbox
+                $('#node-config-input-showPageTitle').prop('checked', true)
             }
         },
         onpaletteadd: function () {
@@ -1947,6 +1958,10 @@
             <option value="hidden" data-i18n="ui-base.label.titleBarStyleHidden"></option>
             <option value="fixed" data-i18n="ui-base.label.titleBarStyleFixed"></option>
         </select>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPageTitle">
+        <label style="width:auto" for="node-config-input-showPageTitle"><span data-i18n="ui-base.label.showPageTitle"></span></label>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>

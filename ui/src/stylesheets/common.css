@@ -29,7 +29,14 @@ main {
     padding: var(--nrdb-main-padding);
 }
 
-#app-bar-actions {
+.v-toolbar-title__placeholder {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#app-bar-actions,
+#app-bar-title {
     display: flex;
     gap: 6px;
 }
