@@ -106,7 +106,8 @@ export default ({ mode }) => {
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' },
             { text: 'Migration Guide', link: '/user/migration' },
             { text: 'UI Template Examples', link: '/user/template-examples' },
-            { text: 'Subflows', link: '/user/subflows' }
+            { text: 'Subflows', link: '/user/subflows' },
+            { text: 'Installing on Mobile', link: '/user/pwa' }
           ]
         },
         {
