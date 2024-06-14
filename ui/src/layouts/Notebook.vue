@@ -130,4 +130,22 @@ export default {
 .v-card {
     width: 100%;
 }
+
+@media only screen and (max-width: 1024px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 9;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 6;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 3;
+    }
+}
 </style>
