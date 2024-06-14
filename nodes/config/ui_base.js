@@ -349,8 +349,8 @@ module.exports = function (RED) {
                 // we only send comms on the connection that matches that id
                 checks.push(msg._client?.socketId === conn.id)
             }
-            // if ANY check says this is valid - we send the msg
-            return !checks.length || checks.includes(true)
+            // ensure all checks validate sending this
+            return !checks.length || !checks.includes(false)
         }
 
         /**
