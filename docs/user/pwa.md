@@ -20,3 +20,15 @@ This will then prompt you to either "Install" Dashboard as an application, or "C
 <em>Options presented in Chrome on Android</em>
 
 If you install, the Dashboard will be added to your home screen and can be launched as a standalone application, without the surrounding Browser experience.
+
+## Installing on iOS
+
+To install the Dashboard on an iOS device, open the browser and navigate to your Dashboard. From the browser's options, select _"Add to Home Screen"_:
+
+<img src="../assets/images/pwa-ios-options.jpg" alt="Options presented in Safari on iOS" style="max-width: 300px;margin: auto;">
+<em>Options presented in Safari on iOS</em>
+
+You'll then be prompted to name your application:
+
+<img src="../assets/images/pwa-ios-install.jpg" alt="Options presented in Safari on Android" style="max-width: 300px;margin: auto;">
+<em>Options presented in Safari on iOS</em>
