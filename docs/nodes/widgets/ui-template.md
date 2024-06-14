@@ -230,11 +230,74 @@ We use a `computed` variable which will automatically update whenever the `count
 
 ### Teleports
 
-You can use [Vue's Teleport](https://v3.vuejs.org/guide/teleport.html) feature to render content to a specific location in the DOM. We provide some pre-defined locations that you can use:
+You can use [Vue's Teleport](https://v3.vuejs.org/guide/teleport.html) feature to render content to a specific location in the DOM.
 
-- `#app-bar-actions` - Renders content to the right-hand side of the Dashboard's App Bar.
+The code can be written into a `ui-template` node, and the scope set to "group", "page" or "UI" depending on when you want this `<Teleport>` to be active.
 
-To use a teleport, you can use the following syntax:
+We provide some pre-defined locations that you can use:
+
+#### Page Name (`#app-bar-title`)
+
+Add content to the left-side of the navigation bar of the Dashboard. `<Teleport>` can be used as follows:
+
+```vue
+<template>
+    <Teleport v-if="mounted" to="#app-bar-title">
+        <v-btn>Button 1</v-btn>
+        <v-btn>Button 2</v-btn>
+    </Teleport>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                mounted: false
+            }
+        },
+        mounted() {
+            this.mounted = true
+        }
+    }
+</script>
+```
+
+This would result in:
+
+![Example of Teleporting content to the App Bar Title](/assets/images/appbar-title-teleport-actions.png "Example of Teleporting content to the App Bar Title"){data-zoomable}
+_Example of Teleporting content to the App Bar Title, adding to the existing page name_
+
+We can also turn off the rendering of the page name under the Dashboard's main settings, so, when using the teleport, this would be the only content rendered in the top-left.
+
+Here, we can render an image (injected via `msg.payload`) instead of the page name:
+
+```vue
+<template>
+    <Teleport v-if="mounted" to="#app-bar-title">
+        <img height="32px" :src="msg.payload"></img>
+    </Teleport>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                mounted: false
+            }
+        },
+        mounted() {
+            this.mounted = true
+        }
+    }
+</script>
+```
+
+This would result in:
+
+![Example of Teleporting content to the App Bar Title](/assets/images/appbar-title-teleport-img.png "Example of Teleporting content to the App Bar Title"){data-zoomable}
+_Example of Teleporting content to the App Bar Title, and hiding hte page name_
+
+#### App Bar - Actions (`#app-bar-actions`)
+
+Renders content to the right-hand side of the Dashboard's App Bar. To use this teleport, you can use the following syntax:
 
 ```vue
 <template>
