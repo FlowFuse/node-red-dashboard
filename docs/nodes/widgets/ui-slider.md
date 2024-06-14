@@ -13,7 +13,7 @@ props:
         description: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
         dynamic: true
     Color:
-        description: main - color of the slider and thumbs; track - color of the track slider; thumb - color of the thumb
+        description: main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle.
         dynamic: false
 dynamic:
     Label:
