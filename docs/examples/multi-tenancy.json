@@ -1,0 +1,229 @@
+[
+    {
+        "id": "160e82270b278a06",
+        "type": "ui-slider",
+        "z": "a725245cfaf96f83",
+        "group": "32fcb041e36de17e",
+        "name": "",
+        "label": "Single Client",
+        "tooltip": "",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "thumbLabel": true,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 370,
+        "y": 60,
+        "wires": [
+            [
+                "fa633410a8a67c23"
+            ]
+        ]
+    },
+    {
+        "id": "fa633410a8a67c23",
+        "type": "ui-chart",
+        "z": "a725245cfaf96f83",
+        "group": "32fcb041e36de17e",
+        "name": "",
+        "label": "chart",
+        "order": 6,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "time",
+        "yAxisProperty": "",
+        "ymin": "",
+        "ymax": "",
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 550,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8a9f5a7b055210a9",
+        "type": "change",
+        "z": "a725245cfaf96f83",
+        "name": "Remove _client",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "_client",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 120,
+        "wires": [
+            [
+                "fa633410a8a67c23"
+            ]
+        ]
+    },
+    {
+        "id": "8934d174f3845df7",
+        "type": "ui-slider",
+        "z": "a725245cfaf96f83",
+        "group": "32fcb041e36de17e",
+        "name": "",
+        "label": "Send to All Users",
+        "tooltip": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "thumbLabel": true,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "8a9f5a7b055210a9"
+            ]
+        ]
+    },
+    {
+        "id": "31b0d54757860d1b",
+        "type": "ui-slider",
+        "z": "a725245cfaf96f83",
+        "group": "32fcb041e36de17e",
+        "name": "Send to Same User",
+        "label": "Send to Same User",
+        "tooltip": "",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "thumbLabel": true,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "de0801fb73bdceb3"
+            ]
+        ]
+    },
+    {
+        "id": "de0801fb73bdceb3",
+        "type": "change",
+        "z": "a725245cfaf96f83",
+        "name": "Remove socketId",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "_client.socketId",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 180,
+        "wires": [
+            [
+                "fa633410a8a67c23"
+            ]
+        ]
+    },
+    {
+        "id": "32fcb041e36de17e",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "e857a4a5a6b5320f",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "e857a4a5a6b5320f",
+        "type": "ui-page",
+        "name": "Page Name",
+        "ui": "c851adb9b2a29c9e",
+        "path": "/",
+        "icon": "",
+        "layout": "grid",
+        "theme": "35ee7753b5b3599b",
+        "order": 3,
+        "className": "",
+        "visible": false,
+        "disabled": false
+    },
+    {
+        "id": "c851adb9b2a29c9e",
+        "type": "ui-base",
+        "name": "Multi User Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control",
+            "ui-template",
+            "ui-chart"
+        ]
+    },
+    {
+        "id": "35ee7753b5b3599b",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#16234b",
+            "primary": "#1d44b9",
+            "bgPage": "#ecf2f8",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    }
+]
