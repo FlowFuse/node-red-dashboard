@@ -7,7 +7,6 @@
             :disabled="!state.enabled"
             :label="label" :prepend-icon="icon"
             :accept="accept"
-            :show-size="showFileSize"
             variant="outlined"
             hide-details="auto"
         />
