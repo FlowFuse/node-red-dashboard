@@ -15,6 +15,7 @@ props:
     Color:
         description: main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle.
         dynamic: false
+    Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.        
 dynamic:
     Label:
         payload: msg.ui_update.class
@@ -30,7 +31,7 @@ dynamic:
         structure: ["Number"]
     Range (max):
         payload: msg.ui_update.max
-        structure: ["Number"]     
+        structure: ["Number"]
     Class:
         payload: msg.ui_update.class
         structure: ["String"]
