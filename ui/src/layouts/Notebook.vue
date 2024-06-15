@@ -121,6 +121,7 @@ export default {
     min-height: 100%;
     flex-wrap: wrap;
     padding: var(--page-padding);
+    --layout-columns: 12;
 }
 .nrdb-layout--notebook > div {
     width: 100%;
