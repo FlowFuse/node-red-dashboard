@@ -37,29 +37,43 @@ UI Template will parse different tags and render them into Dashboard. The availa
 Any variables that you want to render into your `<template />` are done so in one of two ways:
 
 ::: v-pre
-- **Attribute Binding** - Use `:` to bind a variable to an attribute. For example: 
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the `""` here is treated as JavaScript, for example: 
 
 ```html
 <p :class="msg.payload">Hello World</p>
 ````
 
-- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. For example:
+or, if we want to modify `msg.payload` before using it:
+
+```html
+<p :class="'class-variant--' + msg.payload">Hello World</p>
+````
+
+```html
+<p :class="`class-variant--${msg.payload}`">Hello World</p>
+````
+
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Similarly to above, anything here is treated as Javascript. For example:
 
 ```html
 <p>Hello {{ msg.payload }}</p>
+```
+
+```html
+<p>Percentage {{ msg.payload * 100 }}%</p>
 ```
 
 ### Built-in Variables
 
 You have access to a number of built-in variables in your `ui-template` node:
 
-- `this.id` - The ID of the `ui-template` node, assigned by Node-RED.
-- `this.$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
-- `this.msg` - The last message received by the `ui-template` node.
+- `id` - The ID of the `ui-template` node, assigned by Node-RED.
+- `msg` - The last message received by the `ui-template` node.
+- `$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
 
-***Important Note:*** It is a good practice to utilise JavaScript's conditional operator (`?`) when accessing nested values inside say `msg.payload`.
+When accessing the `msg` variable inside a `<script />` tag, you need to prepend `this.` to the variable name to tell the component that you're accessing a component-bound variable, and not just a locally-defined variable.
 
-On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the conditional operator (`?`), e.g. `msg.payload?.nested?.value`, will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
 
 ### Built-in Functions
 
