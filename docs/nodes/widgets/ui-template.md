@@ -43,7 +43,7 @@ Any variables that you want to render into your `<template />` are done so in on
 <p :class="msg.payload">Hello World</p>
 ````
 
-or, if we want to modify `msg.payload` before using it:
+or, if you want to use `msg.payload` as part of the value, you can do this:
 
 ```html
 <p :class="'class-variant--' + msg.payload">Hello World</p>
