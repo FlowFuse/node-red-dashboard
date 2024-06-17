@@ -63,7 +63,7 @@ or even use `msg.payload` as a condition:
 <p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World</p>
 ````
 
-- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Similarly to above, anything here is treated as Javascript. For example:
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Anything inside the curly brackets is treated as JavaScript. For example:
 
 ```html
 <p>Hello {{ msg.payload }}</p>
