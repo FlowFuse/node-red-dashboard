@@ -46,11 +46,21 @@ Any variables that you want to render into your `<template />` are done so in on
 or, if you want to use `msg.payload` as part of the value, you can do this:
 
 ```html
-<p :class="'class-variant--' + msg.payload">Hello World</p>
+<!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->`
+<p :class="'text-' + msg.payload">Hello World</p>
+<!-- or with string literals: -->
+<p :class="`text-${msg.payload}`">Hello World</p>
 ````
 
+or even use `msg.payload` as a condition:
+
 ```html
-<p :class="`class-variant--${msg.payload}`">Hello World</p>
+<!-- 
+  Change color based on the value of msg.payload: 
+  * When msg.payload equals "error", set text to the predefined `text-error` color. 
+  * Otherwise, set text to the predefined `text-info` color.
+-->
+<p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World</p>
 ````
 
 - **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Similarly to above, anything here is treated as Javascript. For example:
