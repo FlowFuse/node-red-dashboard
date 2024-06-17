@@ -73,7 +73,7 @@ You have access to a number of built-in variables in your `ui-template` node:
 
 When accessing the `msg` variable inside a `<script />` tag, you need to prefix the variable name with `this.` (e.g. `this.msg.payload`) so that it knows you're accessing the component-bound `msg` variable.
 
-***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the conditional operator (`?`), e.g. `msg.payload?.nested?.value`, will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
 
 ### Built-in Functions
 
