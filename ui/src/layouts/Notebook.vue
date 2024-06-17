@@ -121,6 +121,7 @@ export default {
     min-height: 100%;
     flex-wrap: wrap;
     padding: var(--page-padding);
+    --layout-columns: 12;
 }
 .nrdb-layout--notebook > div {
     width: 100%;
@@ -129,5 +130,23 @@ export default {
 
 .v-card {
     width: 100%;
+}
+
+@media only screen and (max-width: 1024px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 9;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 6;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .nrdb-layout--notebook {
+        --layout-columns: 3;
+    }
 }
 </style>
