@@ -82,18 +82,18 @@ export default {
     mounted () {
         this.value = this.messages[this.id]?.payload
         // Set default colors if none are chosen
-        const themePrimaryColor = "rgb("+ getComputedStyle(document.documentElement).getPropertyValue('--v-theme-primary') + ")"
+        const themePrimaryColor = 'rgb(' + getComputedStyle(document.documentElement).getPropertyValue('--v-theme-primary') + ')'
         console.log(themePrimaryColor)
-        if (this.color.trim() === "") {
-            this.dynamic.color = "#0094ceff"
+        if (this.color.trim() === '') {
+            this.dynamic.color = '#0094ceff'
         }
-        if (this.colorTrack.trim() === "") {
-            this.dynamic.colorTrack = "#0094ceff"
-        }   
+        if (this.colorTrack.trim() === '') {
+            this.dynamic.colorTrack = '#0094ceff'
+        }
         if (this.colorThumb.trim() === "") {
             console.log("hello !")
-            this.dynamic.colorThumb = "#0094ceff"
-        }               
+            this.dynamic.colorThumb = '#0094ceff'
+        }
     },
     methods: {
         onChange () {
