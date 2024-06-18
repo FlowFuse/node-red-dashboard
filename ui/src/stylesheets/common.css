@@ -337,7 +337,10 @@ main {
 /*
 .v-slider-track__background,
 .v-slider-track__fill,
-.v-slider-track__tick,
+.v-slider-track__tick {
+    background-color: rgb(var(--v-theme-primary));
+}
+
 .v-slider-thumb__surface {
     background-color: rgb(var(--v-theme-primary));
 }
