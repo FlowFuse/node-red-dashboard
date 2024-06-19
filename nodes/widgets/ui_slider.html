@@ -32,7 +32,10 @@
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
-                className: { value: '' }
+                className: { value: ''},
+                iconPrepend: {value: ''},
+                iconAppend: {value: ''},
+                iconClick: {value: false}
             },
             inputs: 1,
             outputs: 1,
@@ -145,6 +148,23 @@
                 </div>
             </div>
         </div>
+        <div class="form-row">
+            <label for="node-input-iconPrepend"><i class="fa fa-picture-o"></i> Icons</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
+                <div>
+                    <span for="node-input-iconPrepend">before</span>
+                    <input type="text" id="node-input-iconPrepend" placeholder="mdi-minus" style="width:60px">
+                </div>
+                <div>
+                    <span for="node-input-iconAppend">after</span>
+                    <input type="text" id="node-input-iconAppend" placeholder="mdi-plus" style="width:60px">
+                </div>                
+                <div style="align-self: center;">
+                    <label for="node-input-iconClick" style="width:auto"> click</label>
+                    <input type="checkbox" id="node-input-iconClick" style="display: inline-block; width: auto; vertical-align: top;"/>
+                </div>
+            </div>
+        </div>        
         <div class="form-row">
             <label for="node-input-outs"><i class="fa fa-sign-out"></i> Output</label>
             <select id="node-input-outs" style="width:204px">
