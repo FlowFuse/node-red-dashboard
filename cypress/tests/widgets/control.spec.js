@@ -46,6 +46,15 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
         cy.url().should('include', '/dashboard/controls')
         cy.window().should('not.have.property', 'test')
     })
+
+    it('navigates to an external website with msg.payload.url defined', () => {
+        cy.url().should('include', '/dashboard/controls')
+        cy.get('#nrdb-ui-widget-dashboard-ui-button-nav-external').click()
+        // our windows var should be cleared due to refresh
+        cy.origin('https://nodered.org', () => {
+            cy.url().should('eq', 'https://nodered.org/')
+        })
+    })
 })
 
 describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {

@@ -146,6 +146,10 @@ module.exports = function (RED) {
 
                     wNode.send({ payload: 'input' })
                 }
+
+                if ('url' in msg.payload) {
+                    emit(msg)
+                }
             },
             onSocket: {
                 connection: function (conn) {
