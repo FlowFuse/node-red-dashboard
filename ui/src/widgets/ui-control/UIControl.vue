@@ -200,7 +200,6 @@ export default {
             }
 
             if ('url' in payload) {
-                console.log('url defined')
                 // we are setting the url
                 window.location.href = payload.url
             }
