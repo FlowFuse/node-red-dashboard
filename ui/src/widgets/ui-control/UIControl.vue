@@ -33,7 +33,6 @@ export default {
         const vue = this
         // listen for messages
         this.$socket.on('ui-control:' + this.id, (msg) => {
-            console.log('ui-control', msg)
             const payload = msg.payload
             function set (type, name, prop, value) {
                 const item = vue.findBy(type, 'name', name)[0]
