@@ -44,6 +44,11 @@
         disable: ['&lt;Group Name&gt;']
     }
 }</pre>
+    <h4>External URL</h4>
+    <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
+    <pre>msg.payload = {
+    url: 'https://url.goes.here'
+}</pre>
     <h3>Events List</h3>
     <p>When any browser client connects or loses connection, changes tab, or expands or collapses a group this node will emit a <code>msg</code> containing:</p>
     <ul>
