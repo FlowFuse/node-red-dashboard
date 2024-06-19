@@ -17,6 +17,12 @@ module.exports = function (RED) {
             onAction: true
         }
 
+        // get max file size supported
+        const MAX_FILESIZE_DEFAULT = 1e6
+        const maxFileSize = RED.settings.dashboard?.maxHttpBufferSize || MAX_FILESIZE_DEFAULT
+
+        config.maxFileSize = maxFileSize
+
         // inform the dashboard UI that we are adding this node
         group.register(node, config, evts)
 

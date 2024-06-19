@@ -21,6 +21,20 @@ The File Upload widget allows users to upload files to Node-RED. The widget can 
 
 <PropsTable/>
 
+## Current Limitations
+
+_Currently_, the File Upload widget is limited by a maximum file size defined by the Websocket connection. The default maximum here is 5MB. This can be increased by modifying the `maxHttpBufferSize` property in the `settings.js` file in the Node-RED installation directory:
+
+```
+dashboard: {
+    maxHttpBufferSize: 1e8 // size in bytes, example: 100 MB
+}
+```
+
+Read more about Dashboard configuration in the `settings.js` [here](/user/settings.html#maxhttpbuffersize).
+
+Note that we do have plans to improve this behavior by chunking files into smaller parts, and reassembling them on the server side. This will allow for larger files to be uploaded, and will be implemented in a future release.
+
 ## Example
 
 ![Example of a File Upload](/images/node-examples/ui-file-input-select.png "Example of a File Upload"){data-zoomable}

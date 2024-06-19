@@ -7,8 +7,10 @@
             :disabled="!state.enabled"
             :label="label" :prepend-icon="icon"
             :accept="accept"
+            :multiple="multiple"
             variant="outlined"
             hide-details="auto"
+            :rules="[maxFileSize]"
         />
         <div v-else-if="!uploaded" class="nrdb-ui-file-input--progress">
             <v-progress-linear :model-value="progress" :height="24">
@@ -24,7 +26,7 @@
                 <a class="nrdb-anchor">Upload Another File</a>
             </label>
         </div>
-        <v-btn variant="flat" :disabled="!files || uploading || uploaded" @click="upload(files)">
+        <v-btn variant="flat" :disabled="!files || uploading || uploaded || maxFileSize(files)" @click="upload(files)">
             {{ uploading ? 'Uploading...' : 'Upload' }}
         </v-btn>
     </div>
@@ -74,6 +76,14 @@ export default {
         }
     },
     methods: {
+        formatFileSize (bytes) {
+            if (bytes === 0) return '0 Bytes'
+            const k = 1000
+            const dm = 2
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+            const i = Math.floor(Math.log(bytes) / Math.log(k))
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+        },
         reset: function () {
             this.files = null
             this.uploading = false
@@ -115,6 +125,13 @@ export default {
         },
         send (msg) {
             this.$socket.emit('widget-send', this.id, msg)
+        },
+        maxFileSize (files) {
+            if (files) {
+                const size = files[0]?.size
+                const maxSize = this.props.maxFileSize
+                return !files || !files.length || size < maxSize || `File size should be less than ${this.formatFileSize(maxSize)}!`
+            }
         }
     }
 }
@@ -124,6 +141,9 @@ export default {
 .nrdb-ui-file-input {
     display: flex;
     gap: 12px;
+}
+.nrdb-ui-file-input .v-btn {
+    max-height: var(--widget-row-height);
 }
 .nrdb-ui-file-input--progress {
     width: 100%;
