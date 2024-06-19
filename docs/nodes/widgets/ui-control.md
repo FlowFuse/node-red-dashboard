@@ -86,6 +86,16 @@ You can force a refresh of the current view by sending a blank string payload:
 msg.payload = ""
 ```
 
+#### External URL
+
+If you want to trigger navigation to an external resource or website, you can do so by passing a `url` property into the `msg.payload`, e.g:
+
+```js
+msg.payload = {
+    url: 'https://nodered.org'
+}
+```
+
 ### Show/Hide
 
 You can programmaticaly show/hide groups and pages with the following payload into `ui-control`:

@@ -27,10 +27,15 @@ _Guidelines demonstrating the columns rendered in the "Grid" Layout at different
 - **Breakpoint:** 768px
 - **Columns:** 9
 
+### Medium
+
+- **Breakpoint:** > 576px
+- **Columns:** 6
+
 ### Mobile
 
-- **Breakpoint:** < 768px
-- **Columns:** 6
+- **Breakpoint:** < 576px
+- **Columns:** 3
 
 ## Controlling Width
 

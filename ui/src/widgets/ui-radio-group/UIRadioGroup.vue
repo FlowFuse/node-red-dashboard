@@ -83,6 +83,7 @@ export default {
                 widgetId: this.id,
                 msg
             })
+
             // When a msg comes in from Node-RED, we need support 2 operations:
             // 1. add/replace the radio options (to support dynamic options e.g: radiobuttons populated from a database)
             // 2. update the selected value(s)
@@ -103,13 +104,8 @@ export default {
         onChange () {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
-            if (this.value) {
-                // return a single value
-                msg.payload = this.value
-            } else {
-                // return null
-                msg.payload = null
-            }
+            // return a single value
+            msg.payload = this.value
             this.$store.commit('data/bind', {
                 widgetId: this.id,
                 msg

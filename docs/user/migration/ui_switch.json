@@ -63,6 +63,11 @@
             "notes": null
         },
         {
+            "property": "indicator",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/210' target='_blank'>Issue #210</a>"
+        },
+        {
             "property": "'on' payload",
             "changes": null,
             "notes": null

@@ -37,29 +37,53 @@ UI Template will parse different tags and render them into Dashboard. The availa
 Any variables that you want to render into your `<template />` are done so in one of two ways:
 
 ::: v-pre
-- **Attribute Binding** - Use `:` to bind a variable to an attribute. For example: 
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the `""` here is treated as JavaScript, for example: 
 
 ```html
 <p :class="msg.payload">Hello World</p>
 ````
 
-- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. For example:
+or, if you want to use `msg.payload` as part of the value, you can do this:
+
+```html
+<!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->`
+<p :class="'text-' + msg.payload">Hello World</p>
+<!-- or with string literals: -->
+<p :class="`text-${msg.payload}`">Hello World</p>
+````
+
+or even use `msg.payload` as a condition:
+
+```html
+<!-- 
+  Change color based on the value of msg.payload: 
+  * When msg.payload equals "error", set text to the predefined `text-error` color. 
+  * Otherwise, set text to the predefined `text-info` color.
+-->
+<p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World</p>
+````
+
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Anything inside the curly brackets is treated as JavaScript. For example:
 
 ```html
 <p>Hello {{ msg.payload }}</p>
+```
+
+```html
+<p>Percentage {{ msg.payload * 100 }}%</p>
 ```
 
 ### Built-in Variables
 
 You have access to a number of built-in variables in your `ui-template` node:
 
-- `this.id` - The ID of the `ui-template` node, assigned by Node-RED.
-- `this.$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
-- `this.msg` - The last message received by the `ui-template` node.
+- `id` - The ID of the `ui-template` node, assigned by Node-RED.
+- `msg` - The last message received by the `ui-template` node.
+- `$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
 
-***Important Note:*** It is a good practice to utilise JavaScript's conditional operator (`?`) when accessing nested values inside say `msg.payload`.
+When accessing the `msg` variable inside a `<script />` tag, you need to prefix the variable name with `this.` (e.g. `this.msg.payload`) so that it knows you're accessing the component-bound `msg` variable.
 
-On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
 
 ### Built-in Functions
 
@@ -230,11 +254,74 @@ We use a `computed` variable which will automatically update whenever the `count
 
 ### Teleports
 
-You can use [Vue's Teleport](https://v3.vuejs.org/guide/teleport.html) feature to render content to a specific location in the DOM. We provide some pre-defined locations that you can use:
+You can use [Vue's Teleport](https://v3.vuejs.org/guide/teleport.html) feature to render content to a specific location in the DOM.
 
-- `#app-bar-actions` - Renders content to the right-hand side of the Dashboard's App Bar.
+The code can be written into a `ui-template` node, and the scope set to "group", "page" or "UI" depending on when you want this `<Teleport>` to be active.
 
-To use a teleport, you can use the following syntax:
+We provide some pre-defined locations that you can use:
+
+#### Page Name (`#app-bar-title`)
+
+Add content to the left-side of the navigation bar of the Dashboard. `<Teleport>` can be used as follows:
+
+```vue
+<template>
+    <Teleport v-if="mounted" to="#app-bar-title">
+        <v-btn>Button 1</v-btn>
+        <v-btn>Button 2</v-btn>
+    </Teleport>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                mounted: false
+            }
+        },
+        mounted() {
+            this.mounted = true
+        }
+    }
+</script>
+```
+
+This would result in:
+
+![Example of Teleporting content to the App Bar Title](/assets/images/appbar-title-teleport-actions.png "Example of Teleporting content to the App Bar Title"){data-zoomable}
+_Example of Teleporting content to the App Bar Title, adding to the existing page name_
+
+We can also turn off the rendering of the page name under the Dashboard's main settings, so, when using the teleport, this would be the only content rendered in the top-left.
+
+Here, we can render an image (injected via `msg.payload`) instead of the page name:
+
+```vue
+<template>
+    <Teleport v-if="mounted" to="#app-bar-title">
+        <img height="32px" :src="msg.payload"></img>
+    </Teleport>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                mounted: false
+            }
+        },
+        mounted() {
+            this.mounted = true
+        }
+    }
+</script>
+```
+
+This would result in:
+
+![Example of Teleporting content to the App Bar Title](/assets/images/appbar-title-teleport-img.png "Example of Teleporting content to the App Bar Title"){data-zoomable}
+_Example of Teleporting content to the App Bar Title, and hiding hte page name_
+
+#### App Bar - Actions (`#app-bar-actions`)
+
+Renders content to the right-hand side of the Dashboard's App Bar. To use this teleport, you can use the following syntax:
 
 ```vue
 <template>
