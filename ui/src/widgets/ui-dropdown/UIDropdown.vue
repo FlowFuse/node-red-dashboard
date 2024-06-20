@@ -102,18 +102,18 @@ export default {
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
 
-            const payload = msg.payload
-            if (payload !== undefined) {
-                // 2. update the selected value(s)
-                this.select(payload)
-            }
-
             // keep options out for backward compatibility
             const options = msg.options
             if (options) {
                 // 1. add/replace the dropdown options
                 // TODO: Error handling if options is not an array
                 this.items = options
+            }
+
+            const payload = msg.payload
+            if (payload !== undefined) {
+                // 2. update the selected value(s)
+                this.select(payload)
             }
 
             // update the UI with any other changes
@@ -153,6 +153,7 @@ export default {
             this.$socket.emit('widget-change', this.id, msg.payload)
         },
         select (value) {
+debugger
             if (value !== undefined) {
                 // first, if we have a single value, we need to convert it to an array
                 if (!Array.isArray(value)) {
