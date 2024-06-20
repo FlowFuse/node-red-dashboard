@@ -136,6 +136,7 @@ export default ({ mode }) => {
                 { text: 'ui-chart', link: '/nodes/widgets/ui-chart' },
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-event', link: '/nodes/widgets/ui-event' },
+                { text: 'ui-file-input', link: '/nodes/widgets/ui-file-input' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
                 { text: 'ui-gauge', link: '/nodes/widgets/ui-gauge' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },

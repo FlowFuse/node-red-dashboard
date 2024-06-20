@@ -13,7 +13,7 @@
     /* main */
     --nrdb-main-padding: 12px;
     /* widget sizing */
-    --widget-row-height: 42px;
+    --widget-row-height: 48px;
 }
 
 body {
@@ -58,6 +58,18 @@ main {
 
 .nrdb-loading {
     fill: #bbb;
+}
+
+/**
+* Anchor
+*/
+
+.nrdb-anchor {
+    cursor: pointer;
+    color: rgb(var(--v-theme-primary));
+}
+.nrdb-anchor:hover {
+    color: rgb(var(--v-theme-primary-darken-1));
 }
 
 /**
