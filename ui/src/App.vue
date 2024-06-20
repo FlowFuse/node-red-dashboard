@@ -197,7 +197,8 @@ export default {
                     const resource = `${widget.src.package}/${widget.src.src}`
                     widget.component = markRaw(importExternalComponent(resource, widget.src.name, widget.src.component))
                 } else {
-                    // Old Third Party Widgets
+                    // Old Third Party Widgets - of which there shouldn't be any in the wild
+                    console.warn('No Vue component found for ', widget.type, ' - falling back to ui-template')
                     widget.component = markRaw(widgetComponents['ui-template'])
                 }
             })
