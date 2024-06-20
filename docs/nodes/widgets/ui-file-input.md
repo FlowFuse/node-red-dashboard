@@ -13,7 +13,11 @@ props:
         description: Allow end-users to upload multiple files at once. Each file will be sent as a unique message.
 ---
 
-# File Upload
+<script setup>
+    import AddedIn from '../../components/AddedIn.vue';
+</script>
+
+# File Upload <AddedIn version="1.12.0" />
 
 The File Upload widget allows users to upload files to Node-RED. The widget can be configured to accept specific file types and allow for multiple files.
 
