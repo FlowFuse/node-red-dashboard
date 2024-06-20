@@ -175,6 +175,8 @@ You can try out the above example with this flow:
 
 ### File Upload
 
+_Update: Whilst this example will continue to work, and can be used for more customized use cases with file uploads, as of `v1.12.0`, we do also now offer a native [File Input](../nodes/widgets/ui-file-input.md) widget._
+
 When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the `ui-template` widget and Vuetify JS components.
 
 To do that we will use the [`v-file-input`](https://vuetifyjs.com/en/components/file-inputs/) component which provides the interface for uploading files.
