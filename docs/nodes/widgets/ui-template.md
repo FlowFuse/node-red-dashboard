@@ -37,29 +37,53 @@ UI Template will parse different tags and render them into Dashboard. The availa
 Any variables that you want to render into your `<template />` are done so in one of two ways:
 
 ::: v-pre
-- **Attribute Binding** - Use `:` to bind a variable to an attribute. For example: 
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the `""` here is treated as JavaScript, for example: 
 
 ```html
 <p :class="msg.payload">Hello World</p>
 ````
 
-- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. For example:
+or, if you want to use `msg.payload` as part of the value, you can do this:
+
+```html
+<!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->`
+<p :class="'text-' + msg.payload">Hello World</p>
+<!-- or with string literals: -->
+<p :class="`text-${msg.payload}`">Hello World</p>
+````
+
+or even use `msg.payload` as a condition:
+
+```html
+<!-- 
+  Change color based on the value of msg.payload: 
+  * When msg.payload equals "error", set text to the predefined `text-error` color. 
+  * Otherwise, set text to the predefined `text-info` color.
+-->
+<p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World</p>
+````
+
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Anything inside the curly brackets is treated as JavaScript. For example:
 
 ```html
 <p>Hello {{ msg.payload }}</p>
+```
+
+```html
+<p>Percentage {{ msg.payload * 100 }}%</p>
 ```
 
 ### Built-in Variables
 
 You have access to a number of built-in variables in your `ui-template` node:
 
-- `this.id` - The ID of the `ui-template` node, assigned by Node-RED.
-- `this.$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
-- `this.msg` - The last message received by the `ui-template` node.
+- `id` - The ID of the `ui-template` node, assigned by Node-RED.
+- `msg` - The last message received by the `ui-template` node.
+- `$socket` - The socket.io connection that is used to communicate with the Node-RED backend.
 
-***Important Note:*** It is a good practice to utilise JavaScript's conditional operator (`?`) when accessing nested values inside say `msg.payload`.
+When accessing the `msg` variable inside a `<script />` tag, you need to prefix the variable name with `this.` (e.g. `this.msg.payload`) so that it knows you're accessing the component-bound `msg` variable.
 
-On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested value will throw an error. Using the operator, `msg.payload?.nested?.value` will not throw an error if `msg.payload` is `null` or `undefined`, whereas `msg.payload.nested.value` will.
+***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
 
 ### Built-in Functions
 

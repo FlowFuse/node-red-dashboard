@@ -175,6 +175,8 @@ You can try out the above example with this flow:
 
 ### File Upload
 
+_Update: Whilst this example will continue to work, and can be used for more customized use cases with file uploads, as of `v1.12.0`, we do also now offer a native [File Input](../nodes/widgets/ui-file-input.md) widget._
+
 When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the `ui-template` widget and Vuetify JS components.
 
 To do that we will use the [`v-file-input`](https://vuetifyjs.com/en/components/file-inputs/) component which provides the interface for uploading files.
@@ -316,7 +318,6 @@ body {
 }
 ```
 
-
 ### Background Image
 
 If you'd like to have a custom texture or background image such as:
@@ -361,4 +362,35 @@ By default, the side navigation drawer that lists all of the pages in your Dashb
     background-color: white;
     color: black;
 }
+```
+
+### Icon Styling
+
+it is possible to change various features of the icons in the Dashboard, such as their size, color, and animations using the collection of utility classes provided by the underlying Material Design Icons library (detailed [here](https://pictogrammers.github.io/@mdi/font/7.4.47/#:~:text=mdi%2Dzigbee-,Extras,-The%20helper%20CSS)).
+
+#### Size
+
+```
+mdi-18px mdi-24px mdi-36px mdi-48px
+```
+
+#### Color
+```
+mdi-light mdi-light mdi-inactive mdi-dark mdi-dark mdi-inactive
+```
+
+#### Rotate
+```
+mdi-rotate-45 mdi-rotate-90 mdi-rotate-135 mdi-rotate-180 mdi-rotate-225  mdi-rotate-270 mdi-rotate-315
+```
+#### Flip
+```
+mdi-flip-h mdi-flip-v
+```
+
+Note that `mdi-flip-*` and `mdi-rotate-*` can't be used at the same time.
+
+#### Spin
+```
+mdi-spin
 ```

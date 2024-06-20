@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.11.1",
+    "version": "1.12.0",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -69,7 +69,7 @@
         "@vite-pwa/assets-generator": "^0.2.4",
         "@vitejs/plugin-vue": "^5.0.4",
         "chart.js": "^4.4.0",
-        "cypress": "^13.6.2",
+        "cypress": "^13.12.0",
         "dompurify": "^3.0.5",
         "eslint": "^8.53.0",
         "eslint-config-standard": "^17.1.0",
@@ -122,6 +122,7 @@
             "ui-theme": "nodes/config/ui_theme.js",
             "ui-form": "nodes/widgets/ui_form.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js",
+            "ui-file-input": "nodes/widgets/ui_file_input.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-button-group": "nodes/widgets/ui_button_group.js",
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",

@@ -4,6 +4,7 @@ import UIChart from './ui-chart/UIChart.vue'
 import UIControl from './ui-control/UIControl.vue'
 import UIDropdown from './ui-dropdown/UIDropdown.vue'
 import UIEvent from './ui-event/UIEvent.vue'
+import UIFileInput from './ui-file-input/UIFileInput.vue'
 import UIForm from './ui-form/UIForm.vue'
 import UIGauge from './ui-gauge/UIGauge.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
@@ -24,6 +25,7 @@ export {
     UIControl,
     UIDropdown,
     UIEvent,
+    UIFileInput,
     UIForm,
     UIGauge,
     UIMarkdown,
@@ -48,6 +50,7 @@ export default {
     'ui-control': UIControl,
     'ui-dropdown': UIDropdown,
     'ui-event': UIEvent,
+    'ui-file-input': UIFileInput,
     'ui-form': UIForm,
     'ui-gauge': UIGauge,
     'ui-markdown': UIMarkdown,

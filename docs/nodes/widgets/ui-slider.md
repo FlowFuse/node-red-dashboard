@@ -12,7 +12,10 @@ props:
     Range:
         description: min - the minimum valu the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
         dynamic: true
-    Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.
+    Color:
+        description: main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle. It could be the name of a color (red, green, blue, ...) or a Hex color code (#b5b5b5).
+        dynamic: false
+    Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.        
 dynamic:
     Label:
         payload: msg.ui_update.class

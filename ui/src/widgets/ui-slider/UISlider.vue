@@ -7,6 +7,7 @@
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
         @click:prepend="clickPrepend" @click:append="clickAppend"
         :min="min"
+        :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
     />
 </template>
@@ -33,7 +34,10 @@ export default {
                 max: null,
                 iconAppend: null,
                 iconPrepend: null,
-                iconClick: null
+                iconClick: null,
+                color: null,
+                colorTrack: null,
+                colorThumb: null
             }
         }
     },
@@ -57,6 +61,7 @@ export default {
         max: function () {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
         },
+<<<<<<< HEAD
         iconPrepend: function () {
             return this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
         },
@@ -66,6 +71,17 @@ export default {
         iconClick: function () {
             return this.dynamic.iconClick !== null ? this.dynamic.iconClick : this.props.iconClick
         }        
+=======
+        color: function () {
+            return this.dynamic.color !== null ? this.dynamic.color : this.props.color
+        },
+        colorTrack: function () {
+            return this.dynamic.colorTrack !== null ? this.dynamic.colorTrack : this.props.colorTrack
+        },
+        colorThumb: function () {
+            return this.dynamic.colorThumb !== null ? this.dynamic.colorThumb : this.props.colorThumb
+        }
+>>>>>>> 6247eca257e66279a389c2ec4e1ffcaae66a2dec
     },
     watch: {
         storeValue: function (val, oldVal) {
