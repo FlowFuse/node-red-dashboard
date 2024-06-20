@@ -21,12 +21,12 @@
         </div>
         <div v-else class="nrdb-ui-file-input--uploaded">
             <v-icon icon="mdi-check-circle" color="success" />
-            <label class="v-label">File Uploaded!</label>
+            <label class="v-label">File<template v-if="multiple">s</template> Uploaded!</label>
             <label class="v-label" @click="reset()">
                 <a class="nrdb-anchor">Upload Another File</a>
             </label>
         </div>
-        <v-btn variant="flat" :disabled="!files?.length || uploading || uploaded || maxFileSize(files)" @click="upload(files)">
+        <v-btn variant="flat" :disabled="!canUpload" @click="upload(files)">
             {{ uploading ? 'Uploading...' : 'Upload' }}
         </v-btn>
     </div>
@@ -72,7 +72,22 @@ export default {
             return this.props.showFileSize
         },
         multiple: function () {
-            return this.props.multiple
+            return this.props.allowMultiple
+        },
+        canUpload: function () {
+            // no file selected yet
+            if (!this.files || (Array.isArray(this.files) && !this.files.length)) return false
+
+            let tooLarge = false
+            if (Array.isArray(this.files)) {
+                tooLarge = this.files.some(file => file.size > this.props.maxFileSize)
+            } else {
+                tooLarge = this.files.size > this.props.maxFileSize
+            }
+
+            if (tooLarge) return false
+
+            return !this.uploading && !this.uploaded
         }
     },
     methods: {
@@ -90,37 +105,38 @@ export default {
             this.uploaded = false
             this.progress = 0
         },
-        upload: function (file) {
-            if (file && !this.multiple) {
-                // Create a FileReader instance to read the file
-                const reader = new FileReader()
+        uploadFile (file) {
+            // Create a FileReader instance to read the file
+            const reader = new FileReader()
 
-                // When the file is read, send it to Node-RED
-                reader.onload = () => {
-                    // Prepare the payload to send
-                    const msg = {
-                        payload: file, // File content
-                        file: {
-                            name: file.name, // File name
-                            size: file.size, // File size
-                            type: file.type // File type
-                        }
+            // When the file is read, send it to Node-RED
+            reader.onload = () => {
+                // Prepare the payload to send
+                const msg = {
+                    payload: file, // File content
+                    file: {
+                        name: file.name, // File name
+                        size: file.size, // File size
+                        type: file.type // File type
                     }
-
-                    this.uploading = false
-                    this.uploaded = true
-
-                    this.send(msg)
                 }
 
-                // Track progress of file reading
-                reader.onprogress = (event) => {
-                    this.progress = event.loaded // Update progress
-                }
-                this.uploading = true
+                this.uploading = false
+                this.uploaded = true
 
-                // readAsText alternative?
-                reader.readAsArrayBuffer(file)
+                this.send(msg)
+            }
+
+            this.uploading = true
+
+            // readAsText alternative?
+            reader.readAsArrayBuffer(file)
+        },
+        upload: function (files) {
+            if (Array.isArray(files)) {
+                files.forEach(file => this.uploadFile(file))
+            } else {
+                this.uploadFile(files)
             }
         },
         send (msg) {

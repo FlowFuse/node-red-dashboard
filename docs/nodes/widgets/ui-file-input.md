@@ -10,7 +10,7 @@ props:
     Accept:
         description: String representation of the "allow" file type selectors. See full list of options <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers" target="_blank">here</a>.  
     Multiple:
-        description: Allow end-users to upload multiple files at once.
+        description: Allow end-users to upload multiple files at once. Each file will be sent as a unique message.
 ---
 
 # File Upload
@@ -20,6 +20,20 @@ The File Upload widget allows users to upload files to Node-RED. The widget can 
 ## Properties
 
 <PropsTable/>
+
+## Output
+
+```js
+{
+    payload: <Buffer>,
+    file: {
+        name: <String>,
+        type: <String>,
+        size: <Number>
+    },
+    topic: <String>,
+}
+```
 
 ## Current Limitations
 

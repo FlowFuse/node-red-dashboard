@@ -11,6 +11,8 @@
         <dt>Accept <span class="property-type">string</span></dt>
         <dd>String representation of the "allow" file type selectors. See full list of options <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers" target="_blank">here</a>.</dd>
         <dt>Multiple <span class="property-type">boolean</span></dt>
-        <dd>Allow end-users to upload multiple files at once.</dd>        
+        <dd>Allow end-users to upload multiple files at once. Each file will be sent as a unique message.</dd>        
     </dl>
+    <h3>Output</h3>
+    <p><code>msg.payload</code> will contain a file buffer, and <code>msg.file</code> will provide meta data about the file itself.</p>
   </script>
