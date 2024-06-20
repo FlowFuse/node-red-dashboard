@@ -26,7 +26,7 @@
                 <a class="nrdb-anchor">Upload Another File</a>
             </label>
         </div>
-        <v-btn variant="flat" :disabled="!files || uploading || uploaded || maxFileSize(files)" @click="upload(files)">
+        <v-btn variant="flat" :disabled="!files?.length || uploading || uploaded || maxFileSize(files)" @click="upload(files)">
             {{ uploading ? 'Uploading...' : 'Upload' }}
         </v-btn>
     </div>
