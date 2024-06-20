@@ -364,7 +364,7 @@ By default, the side navigation drawer that lists all of the pages in your Dashb
 
 ### Icon Styling
 
-it is possible to change various features of the icons in the Dashboard, such as their size, color, and animations using the collection of utility classes provided by the underlying Material Design Icons library (detailed [here](https://github.com/FlowFuse/node-red-dashboard/pull/994)).
+it is possible to change various features of the icons in the Dashboard, such as their size, color, and animations using the collection of utility classes provided by the underlying Material Design Icons library (detailed [here](https://pictogrammers.github.io/@mdi/font/7.4.47/#:~:text=mdi%2Dzigbee-,Extras,-The%20helper%20CSS)).
 
 #### Size
 
