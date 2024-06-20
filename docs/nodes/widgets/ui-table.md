@@ -4,7 +4,7 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
-    Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control.
+    Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control. Set to "0" for no pagination.
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
     Show Search: Defines whether or not to show a search bar above the table. Will permit searching and filtering across all columns.
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
@@ -127,6 +127,8 @@ Example that show how a table will appear with different selection types chosen.
 
 ![Example of a Paginated Table](/images/node-examples/ui-table-pagination.png "Example of a Paginated Table"){data-zoomable}
 *Example of a paginated table which has 10 rows of data, but with "Max Rows" set to 5.*
+
+If you want to hide the pagination ("Items per page") options, then you can set "Max Rows" to 0.
 
 ## Custom Styling & Content
 
