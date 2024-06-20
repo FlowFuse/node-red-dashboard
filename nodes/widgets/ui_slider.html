@@ -32,6 +32,9 @@
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
+                color: {value: ''},
+                colorTrack: {value: ''},
+                colorThumb: {value: ''},
                 className: { value: '' }
             },
             inputs: 1,
@@ -145,6 +148,23 @@
                 </div>
             </div>
         </div>
+        <div class="form-row">
+            <label for="node-input-color"><i class="fa fa-adjust"></i> Color</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
+                <div>
+                    <span for="node-input-color">slider</span>
+                    <input type="text" id="node-input-color" placeholder="red" style="width:60px">
+                </div>
+                <div>
+                    <span for="not-input-colorTrack">track</span>
+                    <input type="text" id="node-input-colorTrack" placeholder="green" style="width:60px">
+                </div>
+                <div>
+                    <span for="not-input-colorThumb">thumb</span>
+                    <input type="text" id="node-input-colorThumb" placeholder="#a5a5a5" style="width:60px">
+                </div>
+            </div>
+        </div>        
         <div class="form-row">
             <label for="node-input-outs"><i class="fa fa-sign-out"></i> Output</label>
             <select id="node-input-outs" style="width:204px">

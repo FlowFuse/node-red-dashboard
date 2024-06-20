@@ -5,6 +5,7 @@
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="thumbLabel"
         :min="min"
+        :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
     />
 </template>
@@ -28,7 +29,10 @@ export default {
                 label: null,
                 thumbLabel: null,
                 min: null,
-                max: null
+                max: null,
+                color: null,
+                colorTrack: null,
+                colorThumb: null
             }
         }
     },
@@ -51,6 +55,15 @@ export default {
         },
         max: function () {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
+        },
+        color: function () {
+            return this.dynamic.color !== null ? this.dynamic.color : this.props.color
+        },
+        colorTrack: function () {
+            return this.dynamic.colorTrack !== null ? this.dynamic.colorTrack : this.props.colorTrack
+        },
+        colorThumb: function () {
+            return this.dynamic.colorThumb !== null ? this.dynamic.colorThumb : this.props.colorThumb
         }
     },
     watch: {
