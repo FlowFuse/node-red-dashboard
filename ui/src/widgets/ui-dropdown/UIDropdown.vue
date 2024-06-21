@@ -12,7 +12,7 @@
         item-value="value"
         variant="outlined"
         hide-details="auto"
-        :error-messages="props.options?.length ? '' : 'No options available'"
+        :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
     />
 </template>
