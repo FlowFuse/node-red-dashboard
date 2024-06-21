@@ -131,4 +131,10 @@ export default {
 .v-card {
     width: 100%;
 }
+
+@media only screen and (max-width: 576px) {
+    .nrdb-layout--flex {
+        --layout-columns: 3;
+    }
+}
 </style>
