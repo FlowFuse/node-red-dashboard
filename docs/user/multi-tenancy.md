@@ -55,7 +55,7 @@ When "Include Client Data" is enabled, every `msg._client` will detail the `sock
 
 Here we demonstrate three different clients opening the same Dashboard.
 
-The Dashboard consists of three sliers and a chart, and is running on FlowFuse, with the "FlowFuse User Addon" plugin enabled.
+The Dashboard consists of three sliders and a chart, and is running on FlowFuse, with the "FlowFuse User Addon" plugin enabled.
 
 Two of the clients are logged in as the same user, and the third, "Another User".
 
