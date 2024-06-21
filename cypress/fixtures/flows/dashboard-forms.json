@@ -2,7 +2,7 @@
     {
         "id": "node-red-tab-forms",
         "type": "tab",
-        "label": "UI Buttons",
+        "label": "UI Forms",
         "disabled": false,
         "info": "",
         "env": []
@@ -47,7 +47,7 @@
     {
         "id": "test-helper",
         "type": "function",
-        "z": "node-red-tab-button-groups",
+        "z": "node-red-tab-forms",
         "name": "Store Latest Msg",
         "func": "global.set('msg', msg)\nreturn msg;",
         "outputs": 1,
@@ -126,5 +126,144 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "dashboard-ui-form-dynamic",
+        "type": "ui-form",
+        "z": "node-red-tab-forms",
+        "name": "Dynamic Form",
+        "group": "bab1dddbce88e07a",
+        "label": "Dynamic Form",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Name",
+                "key": "name0",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": false,
+        "topic": "new-topic",
+        "topicType": "str",
+        "splitLayout": "",
+        "className": "",
+        "x": 520,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-set-dynamic-options",
+        "type": "ui-button",
+        "z": "node-red-tab-forms",
+        "group": "bab1dddbce88e07a",
+        "name": "",
+        "label": "Override Form Options",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 160,
+        "wires": [
+            [
+                "6d940deccaa355f6"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-set-defaults",
+        "type": "ui-button",
+        "z": "node-red-tab-forms",
+        "group": "bab1dddbce88e07a",
+        "name": "",
+        "label": "Set Defaults",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"name0\": \"Overridden Default Name\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-form-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "6d940deccaa355f6",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "Set Options",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.options",
+                "pt": "msg",
+                "to": "[{\"type\":\"text\",\"label\":\"Name\",\"key\":\"name\",\"required\":true},{\"type\":\"multiline\",\"label\":\"Name\",\"key\":\"multiline\",\"required\":true,\"rows\":4},{\"type\":\"password\",\"label\":\"Password\",\"key\":\"password\",\"required\":true},{\"type\":\"email\",\"label\":\"E-Mail Address\",\"key\":\"email\",\"required\":true},{\"type\":\"number\",\"label\":\"Age\",\"key\":\"age\",\"required\":true},{\"type\":\"checkbox\",\"label\":\"Subscribe to Newsletter\",\"key\":\"newsletter\"},{\"type\":\"switch\",\"label\":\"Enable Notifications\",\"key\":\"notifications\"},{\"type\":\"date\",\"label\":\"Date of Birth\",\"key\":\"dob\",\"required\":true},{\"type\":\"time\",\"label\":\"Time of Birth\",\"key\":\"tob\",\"required\":true}]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-form-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "bab1dddbce88e07a",
+        "type": "ui-group",
+        "name": "Dynamic Property Tests",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
     }
 ]
