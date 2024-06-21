@@ -14,6 +14,10 @@ module.exports = function (RED) {
             beforeSend: function (msg) {
                 if (msg.ui_update) {
                     const update = msg.ui_update
+                    if (typeof update.label !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'label', update.label)
+                    }
                     if (typeof update.options !== 'undefined') {
                         // todo: sanity check options is valid format?
 
