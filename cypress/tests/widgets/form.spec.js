@@ -34,7 +34,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 })
 
-describe.only('Node-RED Dashboard 2.0 - Forms', () => {
+describe('Node-RED Dashboard 2.0 - Forms', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-forms')
         cy.visit('/dashboard/page1')

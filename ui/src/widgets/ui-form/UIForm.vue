@@ -92,7 +92,6 @@ export default {
         },
         onInput (msg) {
             if (msg.payload) {
-                console.log('form input', msg.payload, this.input)
                 const payload = msg.payload
                 for (const key in payload) {
                     this.input[key] = payload[key]
