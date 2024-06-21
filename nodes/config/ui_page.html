@@ -60,12 +60,12 @@
             })
 
             // backwards compatibility - because NR can't do boolean values on dropdowns
-            if (this.visible === undefined || this.visible === true || this.visible === 'true') {
-                this.visible = true
-                $('#node-config-input-visible').val('true')
-            } else if (this.visible === false || this.visible === 'false') {
+            if (this.visible === false || this.visible === 'false') {
                 this.visible = false
                 $('#node-config-input-visible').val('false')
+            } else {
+                this.visible = true
+                $('#node-config-input-visible').val('true')
             }
 
             // backwards compatibility
