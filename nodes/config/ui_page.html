@@ -69,12 +69,12 @@
             }
 
             // backwards compatibility
-            if (this.disabled === undefined || this.visible === 'false' || this.disabled === false) {
-                this.disabled = false
-                $('#node-config-input-disabled').val('false')
-            } else if (this.disabled === 'true' || this.disabled === true) {
+            if (this.disabled === 'true' || this.disabled === true) {
                 this.disabled = true
                 $('#node-config-input-disabled').val('true')
+            } else {
+                this.disabled = false
+                $('#node-config-input-disabled').val('false')
             }
         },
         oneditsave: function () {
