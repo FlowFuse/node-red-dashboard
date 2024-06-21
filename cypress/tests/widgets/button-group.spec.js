@@ -33,3 +33,20 @@ describe('Node-RED Dashboard 2.0 - Button Groups', () => {
             .should('have.css', 'background-color', 'rgb(217, 255, 209)')
     })
 })
+
+describe('Node-RED Dashboard 2.0 - Button Groups', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-button-groups')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('supports "options" and "label" as a dynamic property', () => {
+        // Emitting strings
+        cy.get('#nrdb-ui-widget-ui-button-group-dynamic').contains('Static 1')
+        cy.get('#nrdb-ui-widget-ui-button-group-dynamic').contains('Static 2')
+        cy.clickAndWait(cy.get('button').contains('Dynamic Options & Label'))
+        cy.get('#nrdb-ui-widget-ui-button-group-dynamic').contains('Dynamic Label')
+        cy.get('#nrdb-ui-widget-ui-button-group-dynamic').contains('Dynamic 1')
+        cy.get('#nrdb-ui-widget-ui-button-group-dynamic').contains('Dynamic 2')
+    })
+})
