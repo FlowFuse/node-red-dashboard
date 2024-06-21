@@ -117,7 +117,7 @@ export default {
             }
 
             // update the UI with any other changes
-            const updates = msg.ui_updates
+            const updates = msg.ui_update
 
             if (updates) {
                 if (Array.isArray(updates.options)) {

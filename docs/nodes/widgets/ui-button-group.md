@@ -3,10 +3,14 @@ description: Create grouped button interfaces in Node-RED Dashboard 2.0 for effi
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown within the button.
+    Label:  
+        description: The text shown within the button.
+        dynamic: true
     Appearance: Specify whether the shape of the widget should be rectangular or have rounded corners.
     Use theme colors: Specify whether the theme colors should be used. If not active, custom colors can be specified for each option separately.
-    Options: Specify which options need to be displayed. Each option can specify a label, icon, value and color.
+    Options:
+        description: Specify which options need to be displayed. Each option can specify a label, icon, value and color.
+        dynamic: true
     Topic: The text that needs to be send in the msg.topic field.
     Passthrough: Specify whether input messages should be passed through as output messages.
 controls:
@@ -14,9 +18,12 @@ controls:
         example: true | false
         description: Allow control over whether or not the button is clickable.
 dynamic:
-    Class:
-        payload: msg.class
+    Label:
+        payload: msg.ui_update.label
         structure: ["String"]
+    Options:
+        payload: msg.ui_update.options
+        structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>", "Array<{value: String, icon: String}>"]
 ---
 
 <script setup>
@@ -32,6 +39,10 @@ The selected option can be set by sending a `msg.payload` with the value of the 
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Examples
 

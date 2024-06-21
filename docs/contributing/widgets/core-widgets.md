@@ -105,7 +105,7 @@ The inputs for the `useDataTracker (widgetId, onInput, onLoad, onDynamicProperti
 
 Node-RED allows for definition of the underlying configuration for a node. For example, a `ui-button` would have properties such as `label`, `color`, `icon`, etc. It is often desired to have these properties be dynamic, meaning that they can be changed at runtime. 
 
-It is a standard practice within Dashboard 2.0 to support these property updates via a nested `msg.ui_updates` object. As such, users can expect to be able to control these generally by passing in `msg.ui_updates.<property-name>` to the node, which in turn, should update the appropriate property.
+It is a standard practice within Dashboard 2.0 to support these property updates via a nested `msg.ui_update` object. As such, users can expect to be able to control these generally by passing in `msg.ui_update.<property-name>` to the node, which in turn, should update the appropriate property.
 
 ### Design Pattern
 
@@ -148,9 +148,12 @@ For example, in `ui-dropdown`:
 const evts = {
     onChange: true,
     beforeSend: function (msg) {
-        if (msg.options) {
-            // dynamically set "options" property
-            statestore.set(group.getBase(), node, msg, 'options', msg.options)
+        if (msg.ui_update) {
+            const update = msg.ui_update
+            if (typeof update.options !== 'undefined') {
+                // dynamically set "options" property
+                statestore.set(group.getBase(), node, msg, 'options', update.options)
+            }
         }
         return msg
     }
@@ -191,8 +194,8 @@ A good pattern to follow is provide a `computed` variable on the component in qu
     methods () {
         // ...,
         onDynamicProperty (msg) {
-            // standard practice to accept updates via msg.ui_updates
-            const updates = msg.ui_updates
+            // standard practice to accept updates via msg.ui_update
+            const updates = msg.ui_update
             if (typeof updates?.label !== 'undefined') {
                 this.dynamic.label = updates.label
             }
