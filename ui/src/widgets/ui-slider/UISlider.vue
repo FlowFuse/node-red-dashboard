@@ -61,7 +61,6 @@ export default {
         max: function () {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
         },
-<<<<<<< HEAD
         iconPrepend: function () {
             return this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
         },
@@ -70,8 +69,7 @@ export default {
         },
         iconClick: function () {
             return this.dynamic.iconClick !== null ? this.dynamic.iconClick : this.props.iconClick
-        }        
-=======
+        },        
         color: function () {
             return this.dynamic.color !== null ? this.dynamic.color : this.props.color
         },
@@ -81,7 +79,6 @@ export default {
         colorThumb: function () {
             return this.dynamic.colorThumb !== null ? this.dynamic.colorThumb : this.props.colorThumb
         }
->>>>>>> 6247eca257e66279a389c2ec4e1ffcaae66a2dec
     },
     watch: {
         storeValue: function (val, oldVal) {
