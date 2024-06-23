@@ -6,7 +6,7 @@
         :class="className" :thumb-label="thumbLabel"
         :min="min" :direction="direction"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1" :show-ticks="showTicks" @update:model-value="onChange"
+        :max="max" :step="step || 1" :show-ticks="showTicks" @update:model-value="onChange"
         @end="onBlur"
     />
 </template>
