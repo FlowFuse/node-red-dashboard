@@ -29,12 +29,13 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 thumbLabel: { value: true },
+                showTicks: { value: 'always' },
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
-                color: {value: ''},
-                colorTrack: {value: ''},
-                colorThumb: {value: ''},
+                color: { value: '' },
+                colorTrack: { value: '' },
+                colorThumb: { value: '' },
                 className: { value: '' }
             },
             inputs: 1,
@@ -70,6 +71,19 @@
                 })
                 // if (!$("#node-input-outs").val()) { $("#node-input-outs").val("all") }
 
+                // handle older iteration of thumbLabel
+                // otherwise, the value will match up to a valid selection
+                if (this.thumbLabel === false) {
+                    $('#node-input-thumbLabel').val('false')
+                } else if (this.thumbLabel === true) {
+                    $('#node-input-thumbLabel').val('true')
+                }
+
+                // handle no value for showTicks (from sliders created before this was a value)
+                if (!this.showTicks) {
+                    $('#node-input-showTicks').val('false')
+                }
+
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
                 $('.ui-node-popover-title').tooltip({
                     show: {
@@ -77,8 +91,17 @@
                         delay: 150
                     }
                 })
+            },
+            oneditsave: function () {
+                // make sure our boolean options are actually booleans
+                const thumbLabel = $('#node-input-thumbLabel').find(':selected').val()
+                if (thumbLabel === 'false') {
+                    this.thumbLabel = false
+                } else if (thumbLabel === 'true') {
+                    this.thumbLabel = true
+                }
             }
-        })
+    })
     })()
 </script>
 
@@ -123,9 +146,20 @@
             <input type="text" id="node-input-label">
         </div>
         <div class="form-row">
-            <label><i class="fa fa-i-cursor"></i> Thumb</label>
-            <input type="checkbox" id="node-input-thumbLabel" style="display: inline-block; width: auto; vertical-align: top; margin: 0 3px 0 0;"/>
-            <label for="node-input-thumbLabel" style="width: 70%;"> Show Thumb Label</label>
+            <label for="node-input-thumbLabel"><i class="fa fa-i-cursor"></i> Thumb</label>
+            <select id="node-input-thumbLabel">
+                <option value="false">Never</option>
+                <option value="true">On Drag</option>
+                <option value="always">Always</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <label for="node-input-showTicks"><i class="fa fa-i-cursor"></i> Ticks</label>
+            <select id="node-input-showTicks">
+                <option value="false">Never</option>
+                <option value="true">On Drag</option>
+                <option value="always">Always</option>
+            </select>
         </div>
         <!--<div class="form-row">
             <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>

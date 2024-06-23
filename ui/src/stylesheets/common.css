@@ -13,7 +13,7 @@
     /* main */
     --nrdb-main-padding: 12px;
     /* widget sizing */
-    --widget-row-height: 48px;
+    --widget-row-height: 42px;
 }
 
 body {
@@ -58,18 +58,6 @@ main {
 
 .nrdb-loading {
     fill: #bbb;
-}
-
-/**
-* Anchor
-*/
-
-.nrdb-anchor {
-    cursor: pointer;
-    color: rgb(var(--v-theme-primary));
-}
-.nrdb-anchor:hover {
-    color: rgb(var(--v-theme-primary-darken-1));
 }
 
 /**
@@ -353,15 +341,52 @@ main {
     background: rgb(var(--v-theme-background));
     color: rgb(var(--v-theme-on-background));
 }
+
+
+/**
+*  Slider Overrides
+*/
 .v-slider-track__background,
-.v-slider-track__fill,
-.v-slider-track__tick {
+.v-slider-track__fill {
     background-color: rgb(var(--v-theme-primary));
 }
 
 .v-slider-thumb__surface {
    color: rgb(var(--v-theme-primary));
 }
+
+.v-slider-track__tick {
+    background-color: rgb(var(--v-theme-primary));
+}
+
+.v-slider-track__tick--filled {
+    background-color: rgb(var(--v-theme-on-primary));
+}
+
+.v-slider.v-input--horizontal .v-slider-track__tick {
+    width: var(v-slider-track__tick);
+    height: calc(var(--v-slider-track-size) + 4px);
+}
+
+.v-slider.v-input--vertical .v-slider-track__tick {
+    height: var(v-slider-track__tick);
+    width: calc(var(--v-slider-track-size) + 4px);
+}
+
+/* re-calculate the margin for the thumb */
+.v-slider.v-input--horizontal .v-slider-track__tick {
+    margin-inline-start: 0;
+    margin-top: 0px;
+}
+
+.v-slider.v-input--vertical .v-slider-track__tick {
+    margin-inline-start: 0;
+    margin-left: 0px;
+}
+.v-slider.v-input--vertical>.v-input__control {
+    min-height: initial;
+}
+
 /* switch thumb */
 
 .v-switch__track {
