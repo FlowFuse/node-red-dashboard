@@ -6,6 +6,7 @@
         Each value change will generate a message with the value set as <b>payload</b>.
     </p>
     <p>The slider can be reversed by setting the min value larger than the max value. e.g. min 100, max 0.</p>
+    <p>Sliders will automatically render vertically if the <b>height</b> is set to be larger than the <b>width</b>.</p>
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update.</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">
@@ -13,8 +14,12 @@
         <dd>Add a CSS class, or more, to the Button at runtime.</dd>
     </dl>
     <dl class="message-properties">
-        <dt class="optional">thumbLabel <span class="property-type">boolean</span></dt>
+        <dt class="optional">thumbLabel <span class="property-type">true | false | 'always'</span></dt>
         <dd>Controls whether or not a thumb label shows on the control for the slider.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">showTicks <span class="property-type">true | false | 'always'</span></dt>
+        <dd>Controls whether or not to renders ticks on the slider and the interval of "step".</dd>
     </dl>
     <dl class="message-properties">
         <dt class="optional">min <span class="property-type">number</span></dt>
