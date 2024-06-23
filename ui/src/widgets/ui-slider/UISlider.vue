@@ -5,10 +5,11 @@
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="thumbLabel"
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
-        @click:prepend="clickPrepend" @click:append="clickAppend"
         :min="min"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1" @update:model-value="onChange" @end="onBlur"
+        :max="max" :step="props.step || 1" 
+        @click:prepend="clickPrepend" @click:append="clickAppend"
+        @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
@@ -69,7 +70,7 @@ export default {
         },
         iconClick: function () {
             return this.dynamic.iconClick !== null ? this.dynamic.iconClick : this.props.iconClick
-        },        
+        },
         color: function () {
             return this.dynamic.color !== null ? this.dynamic.color : this.props.color
         },
@@ -136,13 +137,13 @@ export default {
             }
             if (typeof updates.iconAppend !== 'undefined') {
                 this.dynamic.iconAppend = updates.iconAppend
-            } 
+            }
             if (typeof updates.iconPrepend !== 'undefined') {
                 this.dynamic.iconPrepend = updates.iconPrepend
-            }                         
+            }
             if (typeof updates.iconClick !== 'undefined') {
                 this.dynamic.iconClick = updates.iconClick
-            }            
+            }
         },
         clickAppend () {
             if (!this.iconClick) return
@@ -161,8 +162,8 @@ export default {
             this.value = (this.value || 0) - (parseInt(this.props.step) || 1)
             // Prevent to overflow min value
             this.value = Math.max(this.value, this.min)
-            this.send()        
-        }          
+            this.send()
+        }
     }
 }
 </script>
