@@ -7,7 +7,7 @@
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
         :min="min"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1" 
+        :max="max" :step="props.step || 1"
         @click:prepend="clickPrepend" @click:append="clickAppend"
         @update:model-value="onChange" @end="onBlur"
     />
