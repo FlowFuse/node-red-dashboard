@@ -1,6 +1,13 @@
 ---
 layout: home
-
+head:
+  - ['script', { src: '//js-eu1.hsforms.net/forms/embed/v2.js' }]
+  - ['script', {}, "function checkHbspt() { if (typeof window.hbspt === 'undefined') { setTimeout(checkHbspt, 50); return; } else { hbspt.forms.create({
+    target: '#ebook-form',
+    region: 'eu1',
+    portalId: '26586079',
+    formId: '372e557c-9f90-48e8-81da-d7e462f8ef55'
+  }); } ;}; checkHbspt()"]
 hero:
   name: Dashboard 2.0
   text: Build your own UI using Node-RED
@@ -36,7 +43,6 @@ hero:
     }
 </script>
 
-
 <HomeExtension>
 
 <div class="cta-palette">
@@ -45,7 +51,14 @@ hero:
   <code v-else>copied!</code>
 </div>
 
-## Recommended Reading
+## Download our E-Book
+
+<div class="ebook-advert">
+    <img style="max-height: 300px;" src="./assets/images/ebook-dashboard-render.png" />
+    <div id="ebook-form"></div>
+</div>
+
+## More Recommended Reading
 
 <RecommendedReading />
 
@@ -78,6 +91,20 @@ hero:
     cursor: pointer;
     color: black;
   }
+}
+
+.ebook-advert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
+.ebook-advert #ebook-form {
+  flex-grow: 1;
+  min-width: 300px;
+  max-width: 100%;
 }
 
 </style>
