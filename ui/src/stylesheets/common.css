@@ -347,13 +347,20 @@ main {
 *  Slider Overrides
 */
 .v-slider-track__background,
-.v-slider-track__fill  {
+.v-slider-track__fill {
     background-color: rgb(var(--v-theme-primary));
 }
 
-.v-slider-thumb__surface,
-.v-slider-track__tick {
+.v-slider-thumb__surface {
    color: rgb(var(--v-theme-primary));
+}
+
+.v-slider-track__tick {
+    background-color: rgb(var(--v-theme-primary));
+}
+
+.v-slider-track__tick--filled {
+    background-color: rgb(var(--v-theme-on-primary));
 }
 
 .v-slider.v-input--horizontal .v-slider-track__tick {
