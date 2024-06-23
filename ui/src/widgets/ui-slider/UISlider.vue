@@ -146,18 +146,20 @@ export default {
         },
         clickAppend () {
             if (!this.iconClick) return
+
             // Add step to slider
-            this.value = (this.value || 0) + (this.props.step || 1)
+            this.value = (this.value || 0) + (parseInt(this.props.step) || 1)
+            console.log(this.value)
             // Prevent to overflow max value
             this.value = Math.min(this.value, this.max)
             this.send()
         },
         clickPrepend () {
             if (!this.iconClick) return
-            console.log(this)
+
             // Add step to slider
-            this.value = (this.value || 0) - (this.props.step || 1)
-            // Prevent to overflow max value
+            this.value = (this.value || 0) - (parseInt(this.props.step) || 1)
+            // Prevent to overflow min value
             this.value = Math.max(this.value, this.min)
             this.send()        
         }          

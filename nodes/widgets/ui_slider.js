@@ -53,6 +53,7 @@ module.exports = function (RED) {
                     }
                     if (typeof (updates.iconClick) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'iconClick', updates.iconClick)
+                    }
                     if (typeof (updates.color) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color', updates.color)
                     }
