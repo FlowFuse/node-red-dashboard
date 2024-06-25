@@ -28,6 +28,7 @@ export default {
             value: null,
             dynamic: {
                 label: null,
+                step: null,
                 thumbLabel: null,
                 showTicks: null,
                 min: null,
