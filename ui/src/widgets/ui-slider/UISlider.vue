@@ -31,6 +31,7 @@ export default {
             dynamic: {
                 label: null,
                 thumbLabel: null,
+                showTicks: null,
                 min: null,
                 max: null,
                 iconAppend: null,
@@ -47,11 +48,17 @@ export default {
         storeValue: function () {
             return this.messages[this.id]?.payload
         },
+        direction: function () {
+            return this.props.height > this.props.width ? 'vertical' : 'horizontal'
+        },
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         },
         thumbLabel: function () {
             return this.dynamic.thumbLabel !== null ? this.dynamic.thumbLabel : this.props.thumbLabel
+        },
+        showTicks: function () {
+            return this.dynamic.showTicks !== null ? this.dynamic.showTicks : this.props.showTicks
         },
         min: function () {
             return this.dynamic.min !== null ? this.dynamic.min : this.props.min
@@ -125,6 +132,9 @@ export default {
             }
             if (typeof updates.thumbLabel !== 'undefined') {
                 this.dynamic.thumbLabel = updates.thumbLabel
+            }
+            if (typeof updates.showTicks !== 'undefined') {
+                this.dynamic.showTicks = updates.showTicks
             }
             if (typeof updates.min !== 'undefined') {
                 this.dynamic.min = updates.min

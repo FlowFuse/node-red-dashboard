@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.12.0",
+    "version": "1.12.1",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"

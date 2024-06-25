@@ -12,7 +12,7 @@
         item-value="value"
         variant="outlined"
         hide-details="auto"
-        :error-messages="props.options?.length ? '' : 'No options available'"
+        :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
     />
 </template>
@@ -102,12 +102,6 @@ export default {
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
 
-            const payload = msg.payload
-            if (payload !== undefined) {
-                // 2. update the selected value(s)
-                this.select(payload)
-            }
-
             // keep options out for backward compatibility
             const options = msg.options
             if (options) {
@@ -116,8 +110,14 @@ export default {
                 this.items = options
             }
 
+            const payload = msg.payload
+            if (payload !== undefined) {
+                // 2. update the selected value(s)
+                this.select(payload)
+            }
+
             // update the UI with any other changes
-            const updates = msg.ui_updates
+            const updates = msg.ui_update
 
             if (updates) {
                 if (Array.isArray(updates.options)) {

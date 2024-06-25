@@ -11,11 +11,27 @@ module.exports = function (RED) {
         this.pt = config.passthru
         this.state = [' ', ' ']
 
+        const thumbLabel = config.thumbLabel
+        if (thumbLabel === 'false') {
+            config.thumbLabel = false
+        } else if (thumbLabel === 'true') {
+            config.thumbLabel = true
+        }
+
+        const showTicks = config.showTicks
+        if (showTicks === 'false') {
+            config.showTicks = false
+        } else if (showTicks === 'true') {
+            config.showTicks = true
+        }
+
         node.status({})
 
         const evts = {
             onChange: true,
             beforeSend: function (msg) {
+                // backward compatibility for older selection type
+
                 if (typeof msg.payload !== 'undefined') {
                     if (!node.pt) {
                         node.state[0] = msg.payload
@@ -35,6 +51,9 @@ module.exports = function (RED) {
                     }
                     if (typeof (updates.thumbLabel) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'thumbLabel', updates.thumbLabel)
+                    }
+                    if (typeof (updates.showTicks) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'showTicks', updates.showTicks)
                     }
                     if (typeof (updates.min) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'min', updates.min)

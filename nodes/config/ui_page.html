@@ -59,13 +59,20 @@
                 typeField: '#node-input-layoutType'
             })
 
-            // backwards compatibility
-            if (this.visible === undefined || this.visible === 'true') {
+            // backwards compatibility - because NR can't do boolean values on dropdowns
+            if (this.visible === false || this.visible === 'false') {
+                this.visible = false
+                $('#node-config-input-visible').val('false')
+            } else {
                 this.visible = true
                 $('#node-config-input-visible').val('true')
             }
+
             // backwards compatibility
-            if (this.disabled === undefined || this.visible === 'false') {
+            if (this.disabled === 'true' || this.disabled === true) {
+                this.disabled = true
+                $('#node-config-input-disabled').val('true')
+            } else {
                 this.disabled = false
                 $('#node-config-input-disabled').val('false')
             }

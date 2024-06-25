@@ -56,24 +56,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 80,
+        "x": 570,
+        "y": 60,
         "wires": [
             []
         ]
-    },
-    {
-        "id": "dashboard-ui-group",
-        "type": "ui-group",
-        "name": "Group 1",
-        "page": "dashboard-ui-page-1",
-        "width": "6",
-        "height": "1",
-        "order": -1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
     },
     {
         "id": "dashboard-ui-button-group-1",
@@ -120,7 +107,7 @@
         ],
         "topic": "first-row",
         "topicType": "str",
-        "x": 260,
+        "x": 300,
         "y": 60,
         "wires": [
             [
@@ -166,7 +153,7 @@
         ],
         "topic": "second-row",
         "topicType": "str",
-        "x": 270,
+        "x": 310,
         "y": 100,
         "wires": [
             [
@@ -212,7 +199,7 @@
         ],
         "topic": "mss",
         "topicType": "str",
-        "x": 270,
+        "x": 310,
         "y": 140,
         "wires": [
             [
@@ -258,7 +245,7 @@
         ],
         "topic": "mss",
         "topicType": "str",
-        "x": 280,
+        "x": 300,
         "y": 180,
         "wires": [
             [
@@ -276,7 +263,6 @@
         "order": 0,
         "width": 0,
         "height": 0,
-        "passthru": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
@@ -304,7 +290,6 @@
         "order": 0,
         "width": 0,
         "height": 0,
-        "passthru": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
@@ -321,5 +306,165 @@
                 "0412af05efbf2907"
             ]
         ]
+    },
+    {
+        "id": "ui-button-group-dynamic",
+        "type": "ui-button-group",
+        "z": "node-red-tab-button-groups",
+        "name": "Dynamic",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": 6,
+        "height": 1,
+        "label": "Custom Colors",
+        "rounded": false,
+        "useThemeColors": false,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Static 1",
+                "icon": "",
+                "value": "option_1",
+                "valueType": "str",
+                "color": "#d6efff"
+            },
+            {
+                "label": "Static 2",
+                "icon": "",
+                "value": "option_2",
+                "valueType": "str",
+                "color": "#d9ffd1"
+            }
+        ],
+        "topic": "mss",
+        "topicType": "str",
+        "x": 560,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "efde6ff08443ebd2",
+        "type": "ui-button",
+        "z": "node-red-tab-button-groups",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Dynamic Options & Label",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "5a446a4127fd3c9c"
+            ]
+        ]
+    },
+    {
+        "id": "5a446a4127fd3c9c",
+        "type": "change",
+        "z": "node-red-tab-button-groups",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Label",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.options",
+                "pt": "msg",
+                "to": "[{\"value\": 1, \"label\": \"Dynamic 1\"}, {\"value\": 2, \"label\": \"Dynamic 2\"}]",
+                "tot": "json"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 220,
+        "wires": [
+            [
+                "ui-button-group-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
     }
 ]

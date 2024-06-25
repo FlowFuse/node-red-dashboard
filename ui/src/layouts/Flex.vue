@@ -113,6 +113,8 @@ export default {
 .nrdb-layout--flex {
     --layout-card-width: 320px;
     --layout-gap: 12px;
+    /* set large number, as the group width will always rule here */
+    --layout-columns: 100;
 }
 .nrdb-layout--flex {
     display: flex;
@@ -128,5 +130,11 @@ export default {
 
 .v-card {
     width: 100%;
+}
+
+@media only screen and (max-width: 576px) {
+    .nrdb-layout--flex {
+        --layout-columns: 3;
+    }
 }
 </style>
