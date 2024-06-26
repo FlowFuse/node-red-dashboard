@@ -59,7 +59,10 @@
             "dL": "d/L",
             "cccHHmm": "ccc HH:mm",
             "custom": "Custom",
-            "auto": "Automatic" 
+            "auto": "Automatic",
+            "textColor": "Text Color",
+            "gridColor": "Grid Line Color",
+            "setDefault": "Use ChartJs Default Colors" 
         }
     }
 }

@@ -2,6 +2,7 @@
     #ui-chart-colors input[type="color"] {
         font-weight: bold;
     }
+
     #ui-chart-colors input[type="color"]::-webkit-color-swatch,
     #ui-chart-colors input[type="color"]::-moz-color-swatch {
         border: none;
@@ -14,18 +15,22 @@
         gap: 16px;
         flex-wrap: wrap;
     }
+
     .node-chart-properties .red-ui-typedInput-container {
         flex-grow: 1;
     }
+
     .node-chart-property {
         display: flex;
         gap: 8px;
         align-items: center;
         flex-grow: 1;
     }
+
     .node-chart-property label {
         margin: 0;
     }
+
     .node-chart-property#node-container-category {
         width: 100%;
     }
@@ -33,7 +38,7 @@
 
 <script type="text/javascript">
     (function () {
-        function hexToRgb (hex) {
+        function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
             return result
                 ? {
@@ -73,6 +78,10 @@
                 removeOlderUnit: { value: '3600', required: true },
                 removeOlderPoints: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 colors: { value: ['#1F77B4', '#AEC7E8', '#FF7F0E', '#2CA02C', '#98DF8A', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'] },
+                textColor: { value: ['#666666'] },
+                textColorDefault: { value: true },
+                gridColor: { value: ['#e5e5e5'] },
+                gridColorDefault: { value: true },
                 width: {
                     value: 6,
                     validate: function (v) {
@@ -164,13 +173,13 @@
                     default: 'auto',
                     typeField: $('#node-input-xAxisFormatType'),
                     types: [
-                        {value: 'HH:mm:ss', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false},
-                        {value: 'HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false},
-                        {value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false},
-                        {value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false},
-                        {value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false},
-                        {value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: "fa fa-font"},
-                        {value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false}
+                        { value: 'HH:mm:ss', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false },
+                        { value: 'HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false },
+                        { value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
+                        { value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
+                        { value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
+                        { value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: "fa fa-font" },
+                        { value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false }
                     ]
                 })
 
@@ -286,6 +295,25 @@
                         setColor('#node-input-color' + (c + 1), defaultColors[c])
                     }
                 }
+
+                if (this.textColor) {
+                    setColor('#node-chart-text-color', this.textColor[0])
+                } else {
+                    setColor('#node-chart-text-color', '#666666')
+                }
+
+                if (this.gridColor) {
+                    setColor('#node-chart-grid-color', this.gridColor[0])
+                } else {
+                    setColor('#node-chart-grid-color', '#e5e5e5')
+                }
+
+                if (this.textColorDefault) {
+                    document.getElementById('node-chart-text-color').disabled = true
+                }
+                if (this.gridColorDefault) {
+                    document.getElementById('node-chart-grid-color').disabled = true
+                }
             },
             oneditsave: function () {
                 const colors = []
@@ -296,6 +324,20 @@
                     }
                 }
                 this.colors = colors
+
+                const textColor = []
+                const color = $('#node-chart-text-color').val()
+                if (color) {
+                    textColor.push(color)
+                }
+                this.textColor = textColor
+
+                const gridColor = []
+                const gcolor = $('#node-chart-grid-color').val()
+                if (gcolor) {
+                    gridColor.push(gcolor)
+                }
+                this.gridColor = gridColor
             }
         })
     })()
@@ -441,6 +483,26 @@
             <input type="color" id="node-input-color7" class="series-color" style="width:100px;"/>
             <input type="color" id="node-input-color8" class="series-color" style="width:100px;"/>
             <input type="color" id="node-input-color9" class="series-color" style="width:100px;"/>
+        </div>
+    </div>
+    <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
+        <div>
+            <label for="node-chart-text-color" data-i18n="ui-chart.label.textColor"></label>
+            <input type="color" id="node-chart-text-color" class="series-color" style="width:100px;"/>
+        </div>
+        <div>
+            <label style="width:auto" for="node-input-textColorDefault"> <span data-i18n="ui-chart.label.setDefault"></span></label>
+            <input type="checkbox" checked id="node-input-textColorDefault" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;" onclick="document.getElementById('node-chart-text-color').disabled=(this.checked)?true:false">
+        </div>
+    </div>
+    <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
+        <div>
+            <label for="node-chart-grid-color" data-i18n="ui-chart.label.gridColor"></label>
+            <input type="color" id="node-chart-grid-color" class="series-color" style="width:100px;"/>
+        </div>
+        <div>
+            <label style="width:auto" for="node-input-gridColorDefault"> <span data-i18n="ui-chart.label.setDefault"></span></label>
+            <input type="checkbox" checked id="node-input-gridColorDefault" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;" onclick="document.getElementById('node-chart-grid-color').disabled=(this.checked)?true:false">
         </div>
     </div>
 </script>
