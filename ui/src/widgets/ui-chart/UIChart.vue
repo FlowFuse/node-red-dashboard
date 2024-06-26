@@ -18,7 +18,7 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
-    data() {
+    data () {
         return {
             chart: null
         }
@@ -44,11 +44,11 @@ export default {
             this.chart.update()
         }
     },
-    created() {
+    created () {
         // can't do this in setup as we have custom onInput function
         useDataTracker(this.id, this.onMsgInput, this.onLoad)
     },
-    mounted() {
+    mounted () {
         // get a reference to the canvas element
         const el = this.$refs.chart
 
@@ -170,7 +170,7 @@ export default {
     },
     methods: {
         // given an object, return the value of the category property (which can be nested)
-        getLabel(value, category) {
+        getLabel (value, category) {
             if (this.props.categoryType !== 'property') {
                 return category
             }
@@ -185,7 +185,7 @@ export default {
             }
             return value
         },
-        onLoad(history) {
+        onLoad (history) {
             if (history) {
                 // we have received a history of data points
                 // we need to add them to the chart
@@ -195,7 +195,7 @@ export default {
                 this.onMsgInput(history)
             }
         },
-        onMsgInput(msg) {
+        onMsgInput (msg) {
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received
                 this.clear()
@@ -208,7 +208,7 @@ export default {
                 this.add(msg)
             }
         },
-        getXDisplayFormats(xAxisFormatType) {
+        getXDisplayFormats (xAxisFormatType) {
             const xDisplayFormats = {}
             if (xAxisFormatType === 'auto' || !xAxisFormatType || xAxisFormatType === '') {
                 // If automatic format or no format (backwards compatibility for older nodes)
@@ -238,12 +238,12 @@ export default {
             }
             return xDisplayFormats
         },
-        clear() {
+        clear () {
             this.chart.data.labels = []
             this.chart.data.datasets = []
             this.chart.update()
         },
-        add(msg) {
+        add (msg) {
             const payload = msg.payload
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
@@ -276,7 +276,7 @@ export default {
             }
             this.chart.update()
         },
-        addPoints(payload, datapoint, label) {
+        addPoints (payload, datapoint, label) {
             const d = {
                 ...datapoint,
                 ...payload
@@ -295,7 +295,7 @@ export default {
                 this.addPoint(payload, datapoint, label)
             }
         },
-        addPoint(payload, datapoint, label) {
+        addPoint (payload, datapoint, label) {
             const d = {
                 ...datapoint,
                 ...payload
@@ -322,7 +322,7 @@ export default {
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
          * @param {*} datapoint
          */
-        addToLine(datapoint, label) {
+        addToLine (datapoint, label) {
             // consider msg.topic (label) as the label for the series
             const dataLabels = [...new Set(this.chart.data.datasets?.map((set) => {
                 return set.label
@@ -350,7 +350,7 @@ export default {
          * @param {*} payload
          * @param {*} label
          */
-        addToBar(payload, label) {
+        addToBar (payload, label) {
             label = label || ''
             // construct our datapoint
             if (typeof payload === 'number') {
@@ -397,7 +397,7 @@ export default {
                 console.log('Unsupported payload type for Bar Chart:', typeof payload)
             }
         },
-        limitDataSize() {
+        limitDataSize () {
             let cutoff = null
             let points = null
             if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
