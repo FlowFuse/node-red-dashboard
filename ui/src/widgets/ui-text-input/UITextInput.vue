@@ -76,7 +76,7 @@ export default {
             }
         },
         onBlur: function () {
-            if (this.props.sendOnBlur && this.value) {
+            if (this.props.sendOnBlur) {
                 // check if this value has already been sent, as not going to want it sent twice
                 this.send()
             }
