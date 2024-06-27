@@ -1,10 +1,12 @@
 <template>
-    <v-combobox
-        v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
+    <v-combobox v-if="isvSelect !== true" v-model="value" :disabled="!state.enabled" :class="className" :label="label"
+        :multiple="multiple" :chips="chips" :clearable="clearable" :items="options" item-title="label"
+        item-value="value" variant="outlined" hide-details="auto"
+        :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange" />
+    <v-select v-else v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
         :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
         hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
-        @update:model-value="onChange"
-    />
+        @update:model-value="onChange" />
 </template>
 
 <script>
@@ -20,7 +22,7 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data () {
+    data() {
         return {
             value: null,
             items: null,
@@ -35,7 +37,7 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         options: {
-            get () {
+            get() {
                 const items = this.items || this.props.options
                 return items.map((item) => {
                     if (typeof item !== 'object') {
@@ -53,7 +55,7 @@ export default {
                     }
                 })
             },
-            set (value) {
+            set(value) {
                 this.items = value
             }
         },
@@ -68,9 +70,12 @@ export default {
         },
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+        },
+        isvSelect: function () {
+            return this.props.typeIsVselect || false
         }
     },
-    created () {
+    created() {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
         useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
 
@@ -79,7 +84,7 @@ export default {
     },
     methods: {
         // given the last received msg into this node, load the state
-        onLoad (msg) {
+        onLoad(msg) {
             // update vuex store to reflect server-state
             this.$store.commit('data/bind', {
                 widgetId: this.id,
@@ -87,7 +92,7 @@ export default {
             })
             this.select(this.messages[this.id]?.payload)
         },
-        onDynamicProperties (msg) {
+        onDynamicProperties(msg) {
             // When a msg comes in from Node-RED, we need support 2 operations:
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
@@ -120,17 +125,24 @@ export default {
                 }
             }
         },
-        onChange () {
+        onChange() {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
             if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
+                    if (this.props.typeIsVselect) {
+                        return option
+                    }
                     return option.value
                 })
             } else if (this.value) {
                 // return a single value
-                msg.payload = this.value.value
+                if (this.props.typeIsVselect) {
+                    msg.payload = this.value
+                } else {
+                    msg.payload = this.value.value
+                }
             } else {
                 // return null
                 msg.payload = null
@@ -141,7 +153,7 @@ export default {
             })
             this.$socket.emit('widget-change', this.id, msg.payload)
         },
-        select (value) {
+        select(value) {
             if (value !== undefined) {
                 // first, if we have a single value, we need to convert it to an array
                 if (!Array.isArray(value)) {
