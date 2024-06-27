@@ -308,10 +308,10 @@
                     setColor('#node-chart-grid-color', '#e5e5e5')
                 }
 
-                if (this.textColorDefault) {
+                if (this.textColorDefault || this.textColorDefault === undefined) {
                     document.getElementById('node-chart-text-color').disabled = true
                 }
-                if (this.gridColorDefault) {
+                if (this.gridColorDefault || this.gridColorDefault === undefined) {
                     document.getElementById('node-chart-grid-color').disabled = true
                 }
             },
@@ -491,7 +491,7 @@
             <input type="color" id="node-chart-text-color" class="series-color" style="width:100px;"/>
         </div>
         <div>
-            <label style="width:auto" for="node-input-textColorDefault"> <span data-i18n="ui-chart.label.setDefault"></span></label>
+            <label style="width:auto" for="node-input-textColorDefault"> <span data-i18n="ui-chart.label.setTextColorDefault"></span></label>
             <input type="checkbox" checked id="node-input-textColorDefault" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;" onclick="document.getElementById('node-chart-text-color').disabled=(this.checked)?true:false">
         </div>
     </div>
@@ -501,7 +501,7 @@
             <input type="color" id="node-chart-grid-color" class="series-color" style="width:100px;"/>
         </div>
         <div>
-            <label style="width:auto" for="node-input-gridColorDefault"> <span data-i18n="ui-chart.label.setDefault"></span></label>
+            <label style="width:auto" for="node-input-gridColorDefault"> <span data-i18n="ui-chart.label.setGridColorDefault"></span></label>
             <input type="checkbox" checked id="node-input-gridColorDefault" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;" onclick="document.getElementById('node-chart-grid-color').disabled=(this.checked)?true:false">
         </div>
     </div>

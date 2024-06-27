@@ -62,7 +62,8 @@
             "auto": "Automatic",
             "textColor": "Text Color",
             "gridColor": "Grid Line Color",
-            "setDefault": "Use ChartJs Default Colors" 
+            "setTextColorDefault": "Use ChartJs Default Text Colors",
+            "setGridColorDefault": "Use ChartJs Default Grid Colors" 
         }
     }
 }
