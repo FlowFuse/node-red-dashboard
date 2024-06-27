@@ -1,6 +1,6 @@
 <script type="text/javascript">
     (function () {
-        function hasProperty (obj, prop) {
+        function hasProperty(obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
         RED.nodes.registerType('ui-text-input', {
@@ -38,7 +38,10 @@
                 sendOnEnter: { value: true },
                 className: { value: '' },
                 clearable: { value: false },
-                sendOnClear: { value: true }
+                sendOnClear: { value: false },
+                icon: { value: '' },
+                iconPosition: { value: 'left' },
+                iconInnerPosition: { value: 'inside' }
             },
             inputs: 1,
             outputs: 1,
@@ -95,6 +98,14 @@
                 if (this.sendOnClear === undefined) {
                     $('#node-input-sendOnClear').prop('checked', false)
                 }
+
+                if (!this.iconPosition) {
+                    $('#node-input-iconPosition').val('left')
+                }
+
+                if (!this.iconInnerPosition) {
+                    $('#node-input-iconInnerPosition').val('inside')
+                }
             },
             label: function () {
                 return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
@@ -118,6 +129,20 @@
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row form-row-flex">
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> Icon</label>
+        <div style="display: flex; align-items: center; flex-grow: 1; padding-right: calc(30% - 104px); gap: 12px;">
+            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" placeholder="(optional) e.g. 'gesture-tap'">
+            <select id="node-input-iconPosition" style="width: 75px;">
+                <option value="left"> Left</option>
+                <option value="right"> Rigth</option>
+            </select>
+            <select id="node-input-iconInnerPosition" style="width: 75px;">
+                <option value="inside"> In</option>
+                <option value="outside"> Out</option>
+            </select>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>

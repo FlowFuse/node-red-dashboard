@@ -1,13 +1,15 @@
 <template>
     <v-text-field
-        v-if="type !== 'textarea'" v-model="value"
-        :disabled="!state.enabled" class="nrdb-ui-text-field"
-        :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
+        v-if="type !== 'textarea'" v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
+        :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
+        :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
+        @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
     />
     <v-textarea
-        v-else
-        v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
-        :label="label" :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send" @click:clear="onClear"
+        v-else v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field" :label="label"
+        :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
+        :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
+        @click:clear="onClear"
     />
 </template>
 
@@ -42,6 +44,38 @@ export default {
         },
         clearable: function () {
             return this.props.clearable
+        },
+        prependIcon () {
+            const icon = this.props?.icon
+            if (!icon) {
+                return undefined
+            }
+            const mdiIcon = this.makeMdiIcon(icon)
+            return icon && this.props.iconPosition === 'left' && this.props.iconInnerPosition === 'outside' ? mdiIcon : undefined
+        },
+        appendIcon () {
+            const icon = this.props?.icon
+            if (!icon) {
+                return undefined
+            }
+            const mdiIcon = this.makeMdiIcon(icon)
+            return icon && this.props.iconPosition === 'right' && this.props.iconInnerPosition === 'outside' ? mdiIcon : undefined
+        },
+        prependInnerIcon () {
+            const icon = this.props?.icon
+            if (!icon) {
+                return undefined
+            }
+            const mdiIcon = this.makeMdiIcon(icon)
+            return icon && this.props.iconPosition === 'left' && this.props.iconInnerPosition === 'inside' ? mdiIcon : undefined
+        },
+        appendInnerIcon () {
+            const icon = this.props?.icon
+            if (!icon) {
+                return undefined
+            }
+            const mdiIcon = this.makeMdiIcon(icon)
+            return icon && this.props.iconPosition === 'right' && this.props.iconInnerPosition === 'inside' ? mdiIcon : undefined
         },
         value: {
             get () {
@@ -95,10 +129,12 @@ export default {
                 // don't compare previous value, if user has cleared the field they want it submitted
                 this.send()
             }
+        },
+        makeMdiIcon (icon) {
+            return 'mdi-' + icon.replace(/^mdi-/, '')
         }
     }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
