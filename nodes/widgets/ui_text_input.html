@@ -36,7 +36,9 @@
                 sendOnDelay: { value: false },
                 sendOnBlur: { value: true },
                 sendOnEnter: { value: true },
-                className: { value: '' }
+                className: { value: '' },
+                clearable: { value: false },
+                sendOnClear: { value: true }
             },
             inputs: 1,
             outputs: 1,
@@ -86,6 +88,13 @@
                         $('#node-input-container-sendOnEnter').show()
                     }
                 })
+
+                if (this.clearable === undefined) {
+                    $('#node-input-clearable').prop('checked', false)
+                }
+                if (this.sendOnClear === undefined) {
+                    $('#node-input-sendOnClear').prop('checked', false)
+                }
             },
             label: function () {
                 return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
@@ -148,6 +157,10 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
     <div class="form-row">
+        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear selection with button </label>
+        <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+    </div>    
+    <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
     </div>
     <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
@@ -165,6 +178,10 @@
     <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
         <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
+    </div>
+    <div id="node-input-container-sendOnClear" class="form-row" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-sendOnClear" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnClear"> Clear</label>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>

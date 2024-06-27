@@ -2,12 +2,12 @@
     <v-text-field
         v-if="type !== 'textarea'" v-model="value"
         :disabled="!state.enabled" class="nrdb-ui-text-field"
-        :label="label" :type="type" :rules="validation" variant="outlined" hide-details="auto" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur"
+        :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
     />
     <v-textarea
         v-else
         v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
-        :label="label" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
+        :label="label" :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send" @click:clear="onClear"
     />
 </template>
 
@@ -39,6 +39,9 @@ export default {
         },
         type: function () {
             return this.props.mode || 'text'
+        },
+        clearable: function () {
+            return this.props.clearable
         },
         value: {
             get () {
@@ -77,13 +80,19 @@ export default {
         },
         onBlur: function () {
             if (this.props.sendOnBlur) {
-                // check if this value has already been sent, as not going to want it sent twice
+                // don't compare previous value, if user has clicked away they want it submitted
                 this.send()
             }
         },
         onEnter: function () {
             if (this.props.sendOnEnter) {
                 // don't compare previous value, if user has pressed <enter> they want it submitted
+                this.send()
+            }
+        },
+        onClear: function () {
+            if (this.props.sendOnClear) {
+                // don't compare previous value, if user has cleared the field they want it submitted
                 this.send()
             }
         }
