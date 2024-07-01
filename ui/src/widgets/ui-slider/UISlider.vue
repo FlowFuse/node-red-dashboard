@@ -5,6 +5,7 @@
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="thumbLabel"
         :min="min" :direction="direction"
+        :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="step || 1" :show-ticks="showTicks" @update:model-value="onChange"
         @end="onBlur"

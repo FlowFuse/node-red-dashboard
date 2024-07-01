@@ -357,31 +357,58 @@ main {
 
 .v-slider-track__tick {
     background-color: rgb(var(--v-theme-primary));
+    border-radius: var(--nrdb-silder-tick-border-radius, var(--v-slider-tick-size));
 }
 
 .v-slider-track__tick--filled {
     background-color: rgb(var(--v-theme-on-primary));
 }
+.nrdb-ui-slider .v-slider.v-input--horizontal{
+    grid-template-rows: auto 0;
+}
+.nrdb-ui-slider  .v-slider-track__ticks {
+    height: calc(var(--v-slider-tick-size));
+}
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick{
+    margin-block:unset;
+    transform: translate(calc(var(--v-slider-tick-size) / -2), 0) scaleY(var(--nrdb-slider-tick-scaleY)) scaleX(var(--nrdb-slider-tick-scaleX));
+} 
 
-.v-slider.v-input--horizontal .v-slider-track__tick {
-    width: var(v-slider-track__tick);
-    height: calc(var(--v-slider-track-size) + 4px);
+
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--first {
+    margin-inline-start: calc(var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--last {
+    margin-inline-start: calc(100% - var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__ticks {
+    height: 100%;
+    width: calc(var(--v-slider-tick-size));
 }
 
-.v-slider.v-input--vertical .v-slider-track__tick {
-    height: var(v-slider-track__tick);
-    width: calc(var(--v-slider-track-size) + 4px);
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick{
+    margin-inline: unset;
+    transform: translate(0,calc(var(--v-slider-tick-size) / 2)) scaleY(var(--nrdb-slider-tick-scaleY)) scaleX(var(--nrdb-slider-tick-scaleX));
+} 
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick--last {
+    bottom: calc(100% - var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick--first {
+    bottom: calc(0% + var(--v-slider-tick-size) / 2);
 }
 
-/* re-calculate the margin for the thumb */
-.v-slider.v-input--horizontal .v-slider-track__tick {
-    margin-inline-start: 0;
-    margin-top: 0px;
-}
+.nrdb-ui-slider .v-slider-track {
+    --v-slider-tick-size: var(--v-slider-track-size); 
 
-.v-slider.v-input--vertical .v-slider-track__tick {
-    margin-inline-start: 0;
-    margin-left: 0px;
+}
+.v-slider-track__tick--filled {
+    background-color: var(--nrdb-slider-tick-color,rgb(var(--v-theme-on-primary)));
+}
+.nrdb-ui-slider {
+    
+    --nrdb-slider-tick-scaleX: 1;
+    --nrdb-slider-tick-scaleY: 1;
+    
 }
 .v-slider.v-input--vertical>.v-input__control {
     min-height: initial;
