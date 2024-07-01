@@ -1,7 +1,8 @@
 <template>
     <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
         <label class="nrdb-ui-text-label">{{ props.label }}</label>
-        <span class="nrdb-ui-text-value">{{ value !== null ? value : 'No Message Received' }}</span>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span class="nrdb-ui-text-value" v-html="value" />
     </div>
 </template>
 
@@ -22,7 +23,8 @@ export default {
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value: function () {
-            return this.messages[this.id]?.payload
+            console.log(this.messages[this.id]?.payload || 'No Message Received')
+            return this.messages[this.id]?.payload || 'No Message Received'
         }
     }
 }
