@@ -16,7 +16,15 @@ dynamic:
 ---
 
 <script setup>
+    import { ref } from 'vue'
+    import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleHTMLInjection from '../../examples/ui-text-html-injection.json'
+
+    const examples = ref({
+      'html-injection': ExampleHTMLInjection
+    })
 </script>
+
 
 # Text `ui-text`
  
@@ -30,6 +38,8 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 The `ui-text` widget supports the injection (via `msg.payload`) of static HTML content. This allows you to render formatted text, links, images, and more. 
 
+### Static HTML
+
 For example, injecting:
 
 ```html
@@ -39,9 +49,17 @@ For example, injecting:
 as a `msg.payload` would render:
 
 ![HTML Injection in Text](/images/node-examples/ui-text-html-injection.png "HTML Injection in Text"){data-zoomable}
-::: v-pre
-Note, we cannot support the injection of `{{ }}` expressions in the `msg.payload` currently.
-:::
+
+### Rendering `msg.` Content
+
+If you want to render the content of a `msg.` and still wrap this with HTML, you can use Node-RED's standard `template` to define the HTML structure:
+
+<FlowViewer :flow="examples['html-injection']" height="200px"/>
+
+With the content of the `template` node set to:
+
+![HTML Injection in Text](/images/node-examples/ui-text-html-example.png "HTML Injection in Text"){data-zoomable}
+_Example of a "template" node to structure HTML injection into a Text Node_
 
 ## Dynamic Properties
 
