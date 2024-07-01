@@ -26,6 +26,23 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 <PropsTable/>
 
+## Rendering HTML
+
+The `ui-text` widget supports the injection (via `msg.payload`) of static HTML content. This allows you to render formatted text, links, images, and more. 
+
+For example, injecting:
+
+```html
+<a href="https://flowfuse.com" target="_blank">FlowFuse</a>
+```
+
+as a `msg.payload` would render:
+
+![HTML Injection in Text](/images/node-examples/ui-text-html-injection.png "HTML Injection in Text"){data-zoomable}
+::: v-pre
+Note, we cannot support the injection of `{{ }}` expressions in the `msg.payload` currently.
+:::
+
 ## Dynamic Properties
 
 <DynamicPropsTable/>
