@@ -2,7 +2,7 @@
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon"
         :append-icon="appendIcon" :class="{'nrdb-ui-button--icon': iconOnly}"
-        :style="{'min-width': icon ? 'auto' : null}" @click="action"
+        :style="{'min-width': icon ?? 'auto'}" @click="action"
     >
         {{ label }}
     </v-btn>
