@@ -36,7 +36,7 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 ## Rendering HTML
 
-The `ui-text` widget supports the injection (via `msg.payload`) of static HTML content. This allows you to render formatted text, links, images, and more. 
+The `ui-text` widget supports HTML content (via `msg.payload`). This allows you to render formatted text, links, images, and more. 
 
 ### Static HTML
 
