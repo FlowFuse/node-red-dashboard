@@ -1,8 +1,7 @@
 <template>
     <v-btn
-        block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon"
-        :append-icon="appendIcon" :class="{'nrdb-ui-button--icon': iconOnly}"
-        :style="{'min-width': icon ?? 'auto'}" @click="action"
+        block variant="flat" :disabled="!isEnabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
+        :class="{ 'nrdb-ui-button--icon': iconOnly }" :style="{ 'min-width': icon ?? 'auto' }" @click="action"
     >
         {{ label }}
     </v-btn>
@@ -20,7 +19,7 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data() {
+    data () {
         return {
             dynamic: {
                 label: null,
@@ -32,48 +31,48 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        prependIcon() {
+        prependIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
-        appendIcon() {
+        appendIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
-        label() {
+        label () {
             return this.getPropertyValue('label')
         },
-        iconPosition() {
+        iconPosition () {
             return this.getPropertyValue('iconPosition')
         },
         iconOnly () {
             return this.getPropertyValue('icon') && !this.getPropertyValue('label')
+        },
+        isEnabled () {
+            return this.getPropertyValue('enabled')
         }
     },
-    created() {
-        console.log('Button Created')
+    created () {
         useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     methods: {
-        action($evt) {
+        action ($evt) {
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
-            console.log(this.props)
             const msg = this.messages[this.id] || {}
             msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
         },
-        makeMdiIcon(icon) {
+        makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
         },
-        onDynamicProperties(msg) {
-            console.log('Button OnDynamic')
+        onDynamicProperties (msg) {
             const updates = msg.ui_update
             if (!updates) {
                 return
@@ -91,11 +90,10 @@ export default {
                 this.dynamic.enabled = updates.enabled
             }
         },
-        onLoad(msg) {
-            console.log('Button OnLoad')
-            console.log(msg)
+        onLoad (msg) {
+            this.onDynamicProperties(msg)
         },
-        getPropertyValue(property) {
+        getPropertyValue (property) {
             return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
         }
     }
@@ -106,6 +104,7 @@ export default {
 .nrdb-ui-button--icon .v-btn__append {
     margin-left: 0;
 }
+
 .nrdb-ui-button--icon .v-btn__prepend {
     margin-right: 0;
 }
@@ -113,6 +112,7 @@ export default {
 .nrdb-ui-button .v-btn .v-icon {
     --v-icon-size-multiplier: 1;
 }
+
 .nrdb-ui-button .nrdb-ui-button--icon .v-icon {
     --v-icon-size-multiplier: 1.1;
 }

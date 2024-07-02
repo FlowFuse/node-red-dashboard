@@ -56,7 +56,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
                         })
                     }
                 }
-                checkDynamicProperties(msg)
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {

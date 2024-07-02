@@ -18,8 +18,6 @@ module.exports = function (RED) {
             let payloadType = config.payloadType
             let payload = config.payload
 
-            console.log('Button Before Send Enter')
-
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
                     const parts = RED.util.normalisePropertyExpression(payload)
@@ -69,15 +67,7 @@ module.exports = function (RED) {
                     // dynamically set "label" property
                     statestore.set(group.getBase(), node, msg, 'enabled', updates.enabled)
                 }
-                if (typeof updates.visible !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'visible', updates.visible)
-                }
             }
-            console.log(statestore.getAll(node.id))
-            msg.ui_update = statestore.getAll(node.id)
-
-            console.log('Button Before Send Exit -> ' + error)
 
             if (!error) {
                 datastore.save(group.getBase(), node, msg)

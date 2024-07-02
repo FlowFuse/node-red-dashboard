@@ -678,6 +678,9 @@ module.exports = function (RED) {
                     return
                 }
 
+                // Add ui_update parameter to message to be sent on widget load
+                msg.ui_update = statestore.getAll(id)
+
                 conn.emit('widget-load:' + id, msg)
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
