@@ -51,10 +51,10 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
-            return this.dynamic.label || this.props.label
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         },
         options: function () {
-            return this.dynamic.options || this.props.options
+            return this.dynamic.options !== null ? this.dynamic.options : this.props.options
         }
     },
     created () {
