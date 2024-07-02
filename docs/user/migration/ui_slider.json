@@ -1,6 +1,5 @@
 {
     "node": "ui_slider",
-    "description": "Slider stuff",
     "properties": [
         {
             "property": "name",

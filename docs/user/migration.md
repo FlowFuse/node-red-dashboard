@@ -11,6 +11,7 @@ description: Easily migrate from Dashboard 1.0 to 2.0 with this comprehensive gu
     import uiDropdown from './migration/ui_dropdown.json'
     import uiForm from './migration/ui_form.json'
     import uiGauge from './migration/ui_gauge.json'
+    import uiLink from './migration/ui_link.json'
     import uiSlider from './migration/ui_slider.json'
     import uiSwitch from './migration/ui_switch.json'
     import uiTemplate from './migration/ui_template.json'
@@ -25,6 +26,7 @@ description: Easily migrate from Dashboard 1.0 to 2.0 with this comprehensive gu
         'ui_dropdown': uiDropdown,
         'ui_form': uiForm,
         'ui_gauge': uiGauge,
+        'ui_link': uiLink,
         'ui_slider': uiSlider,
         'ui_switch': uiSwitch,
         'ui_template': uiTemplate,
@@ -178,8 +180,6 @@ There has also been a [request](https://github.com/FlowFuse/node-red-dashboard/i
 ### `ui_link`
 
 <MigrationWidgetProfile :profile="widgets['ui_link']" />
-
-You can track progress of this development effort here: [Issue #387](https://github.com/FlowFuse/node-red-dashboard/issues/387)
 
 ### `ui_numeric`
 

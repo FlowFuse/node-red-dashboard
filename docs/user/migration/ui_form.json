@@ -1,6 +1,5 @@
 {
     "node": "ui_form",
-    "description": "Form stuff",
     "properties": [
         {
             "property": "name",
@@ -62,13 +61,13 @@
     "msgs": [
         {
             "property": "msg.properties",
-            "changes": -1,
-            "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/287'>Issue #287</a>"
+            "changes": "changed",
+            "notes": "Now <code>msg.ui_update.options</code>."
         },
         {
             "property": "msg.payload",
-            "changes": -1,
-            "notes": "<a target='_blank' href='https://github.com/FlowFuse/node-red-dashboard/issues/363'>Issue #363</a>"
+            "changes": null,
+            "notes": null
         }
     ]
 }
