@@ -1,3 +1,4 @@
+const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
 const { appendTopic } = require('../utils/index.js')
 
@@ -16,6 +17,8 @@ module.exports = function (RED) {
             // retrieve the payload we're sending from this button
             let payloadType = config.payloadType
             let payload = config.payload
+
+            console.log('Button Before Send Enter')
 
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
@@ -62,9 +65,22 @@ module.exports = function (RED) {
                     // dynamically set "label" property
                     statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
                 }
+                if (typeof updates.enabled !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'enabled', updates.enabled)
+                }
+                if (typeof updates.visible !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'visible', updates.visible)
+                }
             }
+            console.log(statestore.getAll(node.id))
+            msg.ui_update = statestore.getAll(node.id)
+
+            console.log('Button Before Send Exit -> ' + error)
 
             if (!error) {
+                datastore.save(group.getBase(), node, msg)
                 return msg
             } else {
                 node.error(error)

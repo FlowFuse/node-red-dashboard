@@ -20,56 +20,60 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data () {
+    data() {
         return {
             dynamic: {
                 label: null,
                 icon: null,
-                iconPosition: null
+                iconPosition: null,
+                enabled: true
             }
         }
     },
     computed: {
         ...mapState('data', ['messages']),
-        prependIcon () {
+        prependIcon() {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
-        appendIcon () {
+        appendIcon() {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
-        label () {
+        label() {
             return this.getPropertyValue('label')
         },
-        iconPosition () {
+        iconPosition() {
             return this.getPropertyValue('iconPosition')
         },
         iconOnly () {
             return this.getPropertyValue('icon') && !this.getPropertyValue('label')
         }
     },
-    created () {
-        useDataTracker(this.id, null, null, this.onDynamicProperties)
+    created() {
+        console.log('Button Created')
+        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     methods: {
-        action ($evt) {
+        action($evt) {
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
+            console.log(this.props)
             const msg = this.messages[this.id] || {}
             msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
         },
-        makeMdiIcon (icon) {
+        makeMdiIcon(icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
         },
-        onDynamicProperties (msg) {
+        onDynamicProperties(msg) {
+            console.log('Button OnDynamic')
             const updates = msg.ui_update
             if (!updates) {
                 return
@@ -83,8 +87,15 @@ export default {
             if (typeof updates.iconPosition !== 'undefined') {
                 this.dynamic.iconPosition = updates.iconPosition
             }
+            if (typeof updates.enabled !== 'undefined') {
+                this.dynamic.enabled = updates.enabled
+            }
         },
-        getPropertyValue (property) {
+        onLoad(msg) {
+            console.log('Button OnLoad')
+            console.log(msg)
+        },
+        getPropertyValue(property) {
             return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
         }
     }

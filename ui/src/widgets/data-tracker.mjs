@@ -12,17 +12,19 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
 
     function checkDynamicProperties (msg) {
         // set standard dynamic properties states if passed into msg
-        if ('enabled' in msg) {
+        if ('enabled' in msg || ('ui_update' in msg && 'enabled' in msg.ui_update)) {
+            const enb = msg.enabled || msg.ui_update?.enabled
             store.commit('ui/widgetState', {
                 widgetId,
-                enabled: msg.enabled
+                enabled: enb
             })
         }
 
-        if ('visible' in msg) {
+        if ('visible' in msg || ('ui_update' in msg && 'visible' in msg.ui_update)) {
+            const vsl = msg.visible || msg.ui_update?.visible
             store.commit('ui/widgetState', {
                 widgetId,
-                visible: msg.visible
+                visible: vsl
             })
         }
 
@@ -54,6 +56,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
                         })
                     }
                 }
+                checkDynamicProperties(msg)
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
@@ -81,5 +84,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     })
     onUnmounted(() => {
         socket?.off('msg-input:' + widgetId)
+        socket?.off('widget-load:' + widgetId)
     })
 }
