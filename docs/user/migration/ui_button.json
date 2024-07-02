@@ -1,6 +1,5 @@
 {
     "node": "ui_button",
-    "description": "Button",
     "properties": [
         {
             "property": "name",
@@ -24,8 +23,8 @@
         },
         {
             "property": "icon",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/322' target='_blank'>Issue #322</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "tooltip",
@@ -54,8 +53,8 @@
         },
         {
             "property": "emulate click",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/209' target='_blank'>Issue #209</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "class",
@@ -66,23 +65,23 @@
     "msgs": [
         {
             "property": "label",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/376' target='_blank'>Issue #376</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "icon",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/376' target='_blank'>Issue #376</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "enabled/disabled",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/352' target='_blank'>Issue #352</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "visible/hidden",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/377' target='_blank'>Issue #377</a>"
+            "changes": null,
+            "notes": null
         }
     ]
 }
