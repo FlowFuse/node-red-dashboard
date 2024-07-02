@@ -48,7 +48,7 @@ For example, injecting:
 
 as a `msg.payload` would render:
 
-![HTML Injection in Text](/images/node-examples/ui-text-html-injection.png "HTML Injection in Text"){data-zoomable}
+![HTML content in Text](/images/node-examples/ui-text-html-injection.png "HTML Injection in Text"){data-zoomable}
 
 ### Rendering `msg.` Content
 
