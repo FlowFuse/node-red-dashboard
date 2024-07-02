@@ -356,12 +356,12 @@ main {
 }
 
 .v-slider-track__tick {
-    background-color: rgb(var(--v-theme-primary));
+    background-color: var(--nrdb-slider-tick-color,var(--nrdb-slider-track-color,rgb(var(--v-theme-primary))));
     border-radius: var(--nrdb-silder-tick-border-radius, var(--v-slider-tick-size));
 }
 
 .v-slider-track__tick--filled {
-    background-color: rgb(var(--v-theme-on-primary));
+    background-color: var(--nrdb-slider-tick-color,var(--nrdb-slider-track-color,rgb(var(--v-theme-on-primary))));
 }
 .nrdb-ui-slider .v-slider.v-input--horizontal{
     grid-template-rows: auto 0;
@@ -372,8 +372,7 @@ main {
 .nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick{
     margin-block:unset;
     transform: translate(calc(var(--v-slider-tick-size) / -2), 0) scaleY(var(--nrdb-slider-tick-scaleY)) scaleX(var(--nrdb-slider-tick-scaleX));
-} 
-
+}
 
 .nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--first {
     margin-inline-start: calc(var(--v-slider-tick-size) / 2);
@@ -398,12 +397,9 @@ main {
 }
 
 .nrdb-ui-slider .v-slider-track {
-    --v-slider-tick-size: var(--v-slider-track-size); 
+    --v-slider-tick-size: var(--v-slider-track-size);
+}
 
-}
-.v-slider-track__tick--filled {
-    background-color: var(--nrdb-slider-tick-color,rgb(var(--v-theme-on-primary)));
-}
 .nrdb-ui-slider {
     
     --nrdb-slider-tick-scaleX: 1;

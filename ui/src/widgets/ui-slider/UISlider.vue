@@ -3,7 +3,7 @@
 <template>
     <v-slider
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
-        :class="className" :thumb-label="thumbLabel"
+        :class="className" :style="`--nrdb-slider-track-color:${colorTrack};`" :thumb-label="thumbLabel"
         :min="min" :direction="direction"
         :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
