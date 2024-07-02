@@ -1,0 +1,245 @@
+[
+    {
+        "id": "2a5b8c65d0124178",
+        "type": "change",
+        "z": "a725245cfaf96f83",
+        "name": "Save in Context Store",
+        "rules": [
+            {
+                "t": "set",
+                "p": "store[msg._client.user.username].form",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 840,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e625d30422431b7b",
+        "type": "ui-form",
+        "z": "a725245cfaf96f83",
+        "name": "",
+        "group": "bc398456d7b041c3",
+        "label": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Name",
+                "key": "name",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Number",
+                "key": "number",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Checkbox",
+                "key": "checkbox",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name": "",
+            "number": "",
+            "checkbox": false
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 670,
+        "y": 80,
+        "wires": [
+            [
+                "2a5b8c65d0124178",
+                "e0c2a72fc41be2a5"
+            ]
+        ]
+    },
+    {
+        "id": "e0c2a72fc41be2a5",
+        "type": "debug",
+        "z": "a725245cfaf96f83",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "49a03f5529715998",
+        "type": "ui-event",
+        "z": "a725245cfaf96f83",
+        "ui": "c851adb9b2a29c9e",
+        "name": "",
+        "x": 120,
+        "y": 80,
+        "wires": [
+            [
+                "05fe23a960a7f71b"
+            ]
+        ]
+    },
+    {
+        "id": "83899f5427b6a747",
+        "type": "change",
+        "z": "a725245cfaf96f83",
+        "name": "Load from Context",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "store[msg._client.user.username].form",
+                "tot": "global",
+                "dc": true
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 60,
+        "wires": [
+            [
+                "e625d30422431b7b"
+            ]
+        ]
+    },
+    {
+        "id": "05fe23a960a7f71b",
+        "type": "switch",
+        "z": "a725245cfaf96f83",
+        "name": "user has data?",
+        "property": "store[msg._client.user.username]",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 280,
+        "y": 80,
+        "wires": [
+            [
+                "83899f5427b6a747"
+            ],
+            [
+                "2cc2b44cb2781227"
+            ]
+        ]
+    },
+    {
+        "id": "2cc2b44cb2781227",
+        "type": "debug",
+        "z": "a725245cfaf96f83",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "bc398456d7b041c3",
+        "type": "ui-group",
+        "name": "My Group",
+        "page": "37212e27257c91c1",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "c851adb9b2a29c9e",
+        "type": "ui-base",
+        "name": "Multi User Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control",
+            "ui-template",
+            "ui-chart"
+        ]
+    },
+    {
+        "id": "37212e27257c91c1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "c851adb9b2a29c9e",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "703fe2be46ffae05",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "703fe2be46ffae05",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "64px"
+        }
+    }
+]
