@@ -128,6 +128,10 @@ main {
 .nrdb-ui-widget {
     min-height: var(--widget-row-height);
 }
+/* to make input type widgets repect row heights */
+.nrdb-app .v-input--density-default {
+    --v-input-control-height: var(--widget-row-height);
+}
 
 /**
 * Widget: Button
@@ -346,6 +350,13 @@ main {
 /**
 *  Slider Overrides
 */
+
+/* to aligne slider perfectly to horizontal center. 
+NB! supresses the gridarea for messages, but those are not in use*/
+.nrdb-ui-slider .v-input--horizontal {
+    grid-template-rows: auto 0;
+}
+
 .v-slider-track__background,
 .v-slider-track__fill {
     background-color: rgb(var(--v-theme-primary));
@@ -387,6 +398,7 @@ main {
     min-height: initial;
 }
 
+
 /* switch thumb */
 
 .v-switch__track {
@@ -401,6 +413,15 @@ main {
 }
 .active .v-switch__thumb {
     opacity: 1.0;
+}
+
+/* switch with custom icons - fix the oval shape of press features*/
+.nrdb-switch button{
+    aspect-ratio: 1;
+}
+.nrdb-switch .v-btn.v-btn--density-default{
+    height: unset;
+    width: var(--v-btn-height);
 }
 
 /* Vuetify Overrides */
