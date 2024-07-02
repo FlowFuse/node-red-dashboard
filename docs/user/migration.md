@@ -61,7 +61,9 @@ Dashboard 2.0 will work alongside Dashboard 1.0, so you can start building your 
 
 ### Migration Script
 
-It is worth noting that we do have [plans](https://github.com/FlowFuse/node-red-dashboard/issues/261) to write some migrations scripts, that will take in a `flow.json` containing Dashboard 1.0 nodes, and output a `flow.json` containing Dashboard 2.0 nodes. However, this is not yet available, and will unlikely conduct a perfect 100% migration. Any thoughts, opinions and feedback on this idea are very welcome on the [GitHub issue](https://github.com/FlowFuse/node-red-dashboard/issues/261).
+We have a [Migration Service](https://flowfuse.com/product/dashboard/#migration-service) available to help you get started on moving your existing Dashboard 1.0 to Dashboard 2.0.
+
+Whilst it will not migrate _everything_, it will give you a significant head start, and automate the majority of it for you. Anything that cannot be automatically migrated, are left in the flow, but disabled, so that they're flagged as requiring manual intervention.
 
 ## Dashboard 1.0 Nodes
 
