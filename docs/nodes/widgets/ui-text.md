@@ -59,7 +59,7 @@ If you want to render the content of a `msg.` and still wrap this with HTML, you
 With the content of the `template` node set to:
 
 ![HTML content in Text](/images/node-examples/ui-text-html-example.png "HTML Injection in Text"){data-zoomable}
-_Example of a "template" node to structure HTML injection into a Text Node_
+_Example of a "template" node to structure HTML content in a Text Node_
 
 ## Dynamic Properties
 
