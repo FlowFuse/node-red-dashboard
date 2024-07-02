@@ -77,6 +77,25 @@ You can set the value of the slider by passing in the respective value in `msg.p
 ![Example of a slider with ticks set to 'Always'](/images/node-examples/ui-slider-ticks.png "Example of a slider with ticks set to 'Always'"){data-zoomable}
 *Example of a slider with ticks set to 'Always'*
 
+### Customize ticks
+
+By default the tick is a round dot having the size same as the thickness of the track. This can be changed by overriding the CSS for slider. Different classes will be needed for vertical and horizontal slider.
+
+```css
+.my-slider-horizontal.nrdb-ui-slider{
+    --nrdb-slider-tick-scaleX: 0.25;
+    --nrdb-slider-tick-scaleY: 4;
+    --nrdb-slider-tick-color:rgba(var(--v-theme-primary),0.7);
+    --nrdb-silder-tick-border-radius:0;
+}
+.my-slider-vertical.nrdb-ui-slider{
+     --nrdb-slider-tick-scaleX: 4;
+    --nrdb-slider-tick-scaleY: 0.25; 
+    --nrdb-slider-tick-color:rgba(var(--v-theme-primary),0.7);
+    --nrdb-silder-tick-border-radius:0;
+}
+```
+
 ## Example - Vertical Sliders
 
 Sliders will automatically switch to a vertical orientation when the height is greater than the width.
