@@ -4,10 +4,12 @@
     <v-slider
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
         :class="className" :thumb-label="thumbLabel"
-        :min="min" :direction="direction"
+        :append-icon="iconAppend" :prepend-icon="iconPrepend"
+        :min="min"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="step || 1" :show-ticks="showTicks" @update:model-value="onChange"
-        @end="onBlur"
+        :max="max" :step="props.step || 1"
+        @click:prepend="clickPrepend" @click:append="clickAppend"
+        @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
@@ -33,6 +35,9 @@ export default {
                 showTicks: null,
                 min: null,
                 max: null,
+                iconAppend: null,
+                iconPrepend: null,
+                iconClick: null,
                 color: null,
                 colorTrack: null,
                 colorThumb: null
@@ -64,6 +69,15 @@ export default {
         },
         max: function () {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
+        },
+        iconPrepend: function () {
+            return this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
+        },
+        iconAppend: function () {
+            return this.dynamic.iconAppend !== null ? this.dynamic.iconAppend : this.props.iconAppend
+        },
+        iconClick: function () {
+            return this.dynamic.iconClick !== null ? this.dynamic.iconClick : this.props.iconClick
         },
         color: function () {
             return this.dynamic.color !== null ? this.dynamic.color : this.props.color
@@ -132,6 +146,34 @@ export default {
             if (typeof updates.step !== 'undefined') {
                 this.dynamic.step = updates.step
             }
+            if (typeof updates.iconAppend !== 'undefined') {
+                this.dynamic.iconAppend = updates.iconAppend
+            }
+            if (typeof updates.iconPrepend !== 'undefined') {
+                this.dynamic.iconPrepend = updates.iconPrepend
+            }
+            if (typeof updates.iconClick !== 'undefined') {
+                this.dynamic.iconClick = updates.iconClick
+            }
+        },
+        clickAppend () {
+            if (!this.iconClick) return
+
+            // Add step to slider
+            this.value = (this.value || 0) + (parseInt(this.props.step) || 1)
+            console.log(this.value)
+            // Prevent to overflow max value
+            this.value = Math.min(this.value, this.max)
+            this.send()
+        },
+        clickPrepend () {
+            if (!this.iconClick) return
+
+            // Add step to slider
+            this.value = (this.value || 0) - (parseInt(this.props.step) || 1)
+            // Prevent to overflow min value
+            this.value = Math.max(this.value, this.min)
+            this.send()
         }
     }
 }
