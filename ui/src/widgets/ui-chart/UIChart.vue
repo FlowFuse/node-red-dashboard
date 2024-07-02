@@ -71,12 +71,41 @@ export default {
             parsing.yAxisKey = this.props.yAxisProperty
         }
 
+        let textColor = Chart.defaults.color
+        let gridColor = Chart.defaults.borderColor
+
+        if (this.props?.textColor) {
+            if (this.props.textColorDefault !== undefined) {
+                if (this.props.textColorDefault === false) {
+                    textColor = this.props.textColor[0]
+                }
+            }
+        }
+        if (this.props?.gridColor) {
+            if (this.props.gridColorDefault !== undefined) {
+                if (this.props.gridColorDefault === false) {
+                    gridColor = this.props.gridColor[0]
+                }
+            }
+        }
+
         // y-axis limits
         const yOptions = {
             title: {
                 display: !!this.props.yAxisLabel,
-                text: this.props.yAxisLabel
+                text: this.props.yAxisLabel,
+                color: textColor
+            },
+            ticks: {
+                color: textColor
+            },
+            grid: {
+                color: gridColor
+            },
+            border: {
+                color: gridColor
             }
+
         }
         if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
             yOptions.min = parseFloat(this.props.ymin)
@@ -101,10 +130,20 @@ export default {
                         type: this.props.xAxisType || 'linear',
                         title: {
                             display: !!this.props.xAxisLabel,
-                            text: this.props.xAxisLabel
+                            text: this.props.xAxisLabel,
+                            color: textColor
                         },
                         time: {
                             displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
+                        },
+                        ticks: {
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor
+                        },
+                        border: {
+                            color: gridColor
                         }
                     },
                     y: yOptions
@@ -112,10 +151,14 @@ export default {
                 plugins: {
                     title: {
                         display: true,
-                        text: this.props.label
+                        text: this.props.label,
+                        color: textColor
                     },
                     legend: {
-                        display: this.props.showLegend
+                        display: this.props.showLegend,
+                        labels: {
+                            color: textColor
+                        }
                     }
                 },
                 parsing
@@ -395,5 +438,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
