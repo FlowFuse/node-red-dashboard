@@ -1,14 +1,20 @@
 <template>
-    <v-text-field
-        v-if="type !== 'textarea'" v-model="value"
-        :disabled="!state.enabled" class="nrdb-ui-text-field" :title="tooltip"
-        :label="label" :type="type" :rules="validation" variant="outlined" hide-details="auto" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur"
-    />
-    <v-textarea
-        v-else
-        v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field" :title="tooltip"
-        :label="label" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
-    />
+    <v-tooltip :text="tooltip">
+        <template v-slot:activator="{ props }">
+            <v-text-field
+                v-if="type !== 'textarea'" v-model="value"
+                v-bind="props"
+                :disabled="!state.enabled" class="nrdb-ui-text-field" :title="tooltip"
+                :label="label" :type="type" :rules="validation" variant="outlined" hide-details="auto" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur"
+            />
+            <v-textarea
+                v-else
+                v-bind="props"
+                v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field" :title="tooltip"
+                :label="label" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
+            />
+        </template>
+    </v-tooltip>
 </template>
 
 <script>
