@@ -355,23 +355,28 @@ main {
    color: rgb(var(--v-theme-primary));
 }
 
-.v-slider-track__tick {
-    background-color: var(--nrdb-slider-tick-color,var(--nrdb-slider-track-color,rgb(var(--v-theme-primary))));
-    border-radius: var(--nrdb-silder-tick-border-radius, var(--v-slider-tick-size));
+.v-slider-track__tick,.v-slider-track__tick--filled { 
+    background-color:var(--tick-color,var(--nrdb-slider-track-color,rgba(var(--v-theme-primary),0.4)));
+    border-radius: var(--nrdb-silder-tick-border-radius, 0);
+}
+@supports (color: hsl(from red h s l / 40%)) {
+    .v-slider-track__tick,.v-slider-track__tick--filled{
+        background-color:var(--tick-color, hsl(from var(--nrdb-slider-track-color,rgb(var(--v-theme-primary))) h s l / 40%));        
+    }
 }
 
-.v-slider-track__tick--filled {
-    background-color: var(--nrdb-slider-tick-color,var(--nrdb-slider-track-color,rgb(var(--v-theme-on-primary))));
-}
 .nrdb-ui-slider .v-slider.v-input--horizontal{
     grid-template-rows: auto 0;
 }
 .nrdb-ui-slider  .v-slider-track__ticks {
     height: calc(var(--v-slider-tick-size));
+    z-index: -1;
 }
 .nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick{
     margin-block:unset;
-    transform: translate(calc(var(--v-slider-tick-size) / -2), 0) scaleY(var(--nrdb-slider-tick-scaleY)) scaleX(var(--nrdb-slider-tick-scaleX));
+    transform: translate(calc(var(--v-slider-tick-size) / -2), 0)
+        scaleY(var(--tick-scaleY, var(--nrdb-slider-tick-scaleY))) 
+        scaleX(var(--tick-scaleX, var(--nrdb-slider-tick-scaleX)));
 }
 
 .nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--first {
@@ -387,7 +392,9 @@ main {
 
 .nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick{
     margin-inline: unset;
-    transform: translate(0,calc(var(--v-slider-tick-size) / 2)) scaleY(var(--nrdb-slider-tick-scaleY)) scaleX(var(--nrdb-slider-tick-scaleX));
+    transform: translate(0,calc(var(--v-slider-tick-size) / 2))
+        scaleY(var(--tick-scaleY, var(--nrdb-slider-tick-scaleY))) 
+        scaleX(var(--tick-scaleX, var(--nrdb-slider-tick-scaleX)));
 } 
 .nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick--last {
     bottom: calc(100% - var(--v-slider-tick-size) / 2);
@@ -400,12 +407,6 @@ main {
     --v-slider-tick-size: var(--v-slider-track-size);
 }
 
-.nrdb-ui-slider {
-    
-    --nrdb-slider-tick-scaleX: 1;
-    --nrdb-slider-tick-scaleY: 1;
-    
-}
 .v-slider.v-input--vertical>.v-input__control {
     min-height: initial;
 }

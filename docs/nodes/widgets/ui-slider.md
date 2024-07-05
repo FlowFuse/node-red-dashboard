@@ -79,22 +79,39 @@ You can set the value of the slider by passing in the respective value in `msg.p
 
 ### Customize ticks
 
-By default the tick is a round dot having the size same as the thickness of the track. This can be changed by overriding the CSS for slider. Different classes will be needed for vertical and horizontal slider.
+Ticks can customized by overriding the CSS for slider.
+
+The appearance of ticks can be changed by using the following CSS variables
+
+- <code>--tick-scaleX</code> to resize ticks horizontally
+- <code>--tick-scaleY</code> to resize ticks vertically
+- <code>--tick-color</code> to change ticks color
+
+Note that you may need to create different classes for vertical and horizontal slider.
+
 
 ```css
 .my-slider-horizontal.nrdb-ui-slider{
-    --nrdb-slider-tick-scaleX: 0.25;
-    --nrdb-slider-tick-scaleY: 4;
-    --nrdb-slider-tick-color:rgba(var(--v-theme-primary),0.7);
-    --nrdb-silder-tick-border-radius:0;
+    --tick-scaleX: 0.25;
+    --tick-scaleY: 4;
+    --tick-color: rgba(var(--v-theme-primary),0.7);
 }
 .my-slider-vertical.nrdb-ui-slider{
-     --nrdb-slider-tick-scaleX: 4;
-    --nrdb-slider-tick-scaleY: 0.25; 
-    --nrdb-slider-tick-color:rgba(var(--v-theme-primary),0.7);
-    --nrdb-silder-tick-border-radius:0;
+    --tick-scaleX: 4;
+    --tick-scaleY: 0.25; 
+    --tick-color: orange;
 }
 ```
+
+Different styles can be applied to the ticks of the filled part of the slider.
+
+```css
+.my-slider-horizontal.nrdb-ui-slider .v-slider-track__tick--filled{
+    --tick-color:violet;
+}
+```
+
+
 
 ## Example - Vertical Sliders
 
