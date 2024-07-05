@@ -48,10 +48,10 @@ export default {
         direction: function () {
             return this.props.height > this.props.width ? 'vertical' : 'horizontal'
         },
-        tickScaleX: function() {
+        tickScaleX: function () {
             return this.props.height > this.props.width ? 3 : 0.5
         },
-        tickScaleY: function() {
+        tickScaleY: function () {
             return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
