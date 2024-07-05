@@ -2,8 +2,9 @@
 description: Incorporate ui-text-input in Node-RED Dashboard 2.0 for customizable, user-driven data entry and feedback.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
-    Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown within the button.
+    Size: Controls the width of the text input field with respect to the parent group. Maximum value is the width of the group.
+    Label: The text shown within the text input field.
+    Tooltip: The text shown when hovering over the text input field.
     Mode: The type of HTML input to display. Options - text | password | email | number | tel | color | date | time | week | month | datetime-local
     Passthrough: If this node receives a msg in Node-RED, should it be passed through to the output as if a new value was inserted to the input?
     Send On "Delay": If true, then a msg will be emitted will be sent after the delay specified in "Delay (ms)".
@@ -33,5 +34,5 @@ Adds a single text input row to your dashboard, with a configurable "type" (text
 
 ## Example
 
-![Example of a Button](/images/node-examples/ui-text-input.png "Example of a Button"){data-zoomable}
-*Example of a rendered button in a Dashboard.*
+![Example of a Button](/images/node-examples/ui-text-input.png "Example of a text input field"){data-zoomable}
+*Example of a rendered text input field in a Dashboard.*
