@@ -1,5 +1,5 @@
 <template>
-    <v-tooltip :text="tooltip" location="bottom">
+    <v-tooltip :text="tooltip" :disabled="tooltip.length === 0" location="bottom">
         <template v-slot:activator="{ props }">
             <v-text-field
                 v-if="type !== 'textarea'" v-model="value"
