@@ -19,7 +19,7 @@ props:
         description: main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle. It could be the name of a color (red, green, blue, ...) or a Hex color code (#b5b5b5).
         dynamic: false
     Icons:
-        description: Add [mdi icons](https://pictogrammers.com/library/mdi/) before and after the slider. For example, mdi-minus. Click option make icons clickable to change the value by step.
+        description: Add <a href="https://pictogrammers.com/library/mdi/">mdi icon</a> before and after the slider. For example, "mdi-minus". Click option make icons clickable to change the value by step.
         dynamic: true    
     Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.        
 dynamic:

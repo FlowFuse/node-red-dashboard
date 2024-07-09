@@ -33,13 +33,12 @@
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
-                className: { value: ''},
-                iconPrepend: {value: ''},
-                iconAppend: {value: ''},
-                iconClick: {value: false},
-                color: {value: ''},
-                colorTrack: {value: ''},
-                colorThumb: {value: ''}
+                className: { value: '' },
+                iconPrepend: { value: '' },
+                iconAppend: { value: '' },
+                color: { value: '' },
+                colorTrack: { value: '' },
+                colorThumb: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -104,7 +103,7 @@
                     this.thumbLabel = true
                 }
             }
-    })
+        })
     })()
 </script>
 
@@ -195,10 +194,6 @@
                 <div>
                     <span for="node-input-iconAppend">after</span>
                     <input type="text" id="node-input-iconAppend" placeholder="mdi-plus" style="width:60px">
-                </div>                
-                <div style="align-self: center;">
-                    <label for="node-input-iconClick" style="width:auto"> click</label>
-                    <input type="checkbox" id="node-input-iconClick" style="display: inline-block; width: auto; vertical-align: top;"/>
                 </div>
             </div>
         </div>

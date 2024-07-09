@@ -7,8 +7,7 @@
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
         :min="min"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1"
-        @click:prepend="clickPrepend" @click:append="clickAppend"
+        :max="max" :step="props.step || 1" :show-ticks="showTicks"
         @update:model-value="onChange" @end="onBlur"
     />
 </template>
@@ -36,7 +35,6 @@ export default {
                 max: null,
                 iconAppend: null,
                 iconPrepend: null,
-                iconClick: null,
                 color: null,
                 colorTrack: null,
                 colorThumb: null
@@ -70,13 +68,20 @@ export default {
             return this.dynamic.max !== null ? this.dynamic.max : this.props.max
         },
         iconPrepend: function () {
-            return this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
+            const icon = this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
+            if (icon) {
+                const mdiIcon = this.makeMdiIcon(icon)
+                return mdiIcon
+            }
+            return null
         },
         iconAppend: function () {
-            return this.dynamic.iconAppend !== null ? this.dynamic.iconAppend : this.props.iconAppend
-        },
-        iconClick: function () {
-            return this.dynamic.iconClick !== null ? this.dynamic.iconClick : this.props.iconClick
+            const icon = this.dynamic.iconAppend !== null ? this.dynamic.iconAppend : this.props.iconAppend
+            if (icon) {
+                const mdiIcon = this.makeMdiIcon(icon)
+                return mdiIcon
+            }
+            return null
         },
         color: function () {
             return this.dynamic.color !== null ? this.dynamic.color : this.props.color
@@ -122,6 +127,9 @@ export default {
             this.$store.commit('data/bind', msg)
             this.$socket.emit('widget-change', this.id, this.value)
         },
+        makeMdiIcon (icon) {
+            return 'mdi-' + icon.replace(/^mdi-/, '')
+        },
         onDynamicProperties (msg) {
             const updates = msg.ui_update
             if (!updates) {
@@ -151,28 +159,6 @@ export default {
             if (typeof updates.iconPrepend !== 'undefined') {
                 this.dynamic.iconPrepend = updates.iconPrepend
             }
-            if (typeof updates.iconClick !== 'undefined') {
-                this.dynamic.iconClick = updates.iconClick
-            }
-        },
-        clickAppend () {
-            if (!this.iconClick) return
-
-            // Add step to slider
-            this.value = (this.value || 0) + (parseInt(this.props.step) || 1)
-            console.log(this.value)
-            // Prevent to overflow max value
-            this.value = Math.min(this.value, this.max)
-            this.send()
-        },
-        clickPrepend () {
-            if (!this.iconClick) return
-
-            // Add step to slider
-            this.value = (this.value || 0) - (parseInt(this.props.step) || 1)
-            // Prevent to overflow min value
-            this.value = Math.max(this.value, this.min)
-            this.send()
         }
     }
 }
