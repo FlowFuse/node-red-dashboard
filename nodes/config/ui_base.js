@@ -736,7 +736,8 @@ module.exports = function (RED) {
         }
 
         node.stores = {
-            data: datastore
+            data: datastore,
+            state: statestore
         }
 
         /**
