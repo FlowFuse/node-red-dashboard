@@ -33,3 +33,7 @@ img + em {
 .vp-doc h3 {
     margin-bottom: 16px;
 }
+
+.underline {
+    text-decoration: underline;
+}

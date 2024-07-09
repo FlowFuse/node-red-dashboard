@@ -14,9 +14,54 @@
     <p>Optionally the <b>Topic</b> field can be used to set the <code>msg.topic</code> property.</p>
     <p>The Cancel button can be hidden by setting it's value to be blank "".</p>
     <h3>Dynamic Properties (Inputs)</h3>
-    <p>Any of the following can be appended to a <code>msg.</code> in order to override or set properties on this node at runtime.</p>
+    <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>The label shown to describe the form.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dd>Re-define the form's elements by passing an array of objects that define the elements you want to see in your form. </dd>
+    </dl>
     <dl class="message-properties">
         <dt class="optional">class <span class="property-type">string</span></dt>
         <dd>Add a CSS class, or more, to the form at runtime.</dd>
     </dl>
+    <h4>Defining Form Elements (Options)</h4>
+    <p>
+        If you want to override the configuration for your `ui-form`, and provide
+        details of your elements after your Node-RED flow has been deployed, you
+        can do so by passing a `msg.ui_update.options` value. This value should
+        be an array of objects, where each object represents a form element. Each
+        object should have the following properties:
+    </p>
+    <h5>Element: Text</h5>
+    <pre><code>{
+    "type": "text",
+    "label": "Name",
+    "key": "name",
+    "required": true
+}</code></pre>
+    <h5>Element: Multiline</h5>
+    <pre><code>{
+    "type": "multiline",
+    "label": "Name",
+    "key": "name",
+    "required": true,
+    "rows": 4
+}</code></pre>
+    <h5>Element: Password</h5>
+    <pre><code>{
+    "type": "password",
+    "label": "Password",
+    "key": "password",
+    "required": true
+}</code></pre>
+    <h5>Element: Email</h5>
+    <pre><code>{
+    "type": "email",
+    "label": "E-Mail Address",
+    "key": "email",
+    "required": true
+}</code></pre>
 </script>

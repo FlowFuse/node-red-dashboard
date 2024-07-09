@@ -2,6 +2,9 @@ import DefaultTheme from 'vitepress/theme'
 import { onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vitepress';
 import mediumZoom from 'medium-zoom';
+
+import Layout from './Layout.vue'
+
 // override options: https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
 import './dashboard.css'
 import './overlay.css'
@@ -12,7 +15,7 @@ import DynamicPropsTable from '../../components/DynamicPropsTable.vue'
 import ControlsTable from '../../components/ControlsTable.vue'
 
 export default {
-    extends: DefaultTheme,
+    Layout,
     setup() {
         const route = useRoute();
         const initZoom = () => {
