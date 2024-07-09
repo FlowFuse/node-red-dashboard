@@ -23,7 +23,7 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'label', update.label)
                     }
                     if (typeof update.multiple !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "multiple" property
                         statestore.set(group.getBase(), node, msg, 'multiple', update.multiple)
                     }
                 }

@@ -55,11 +55,11 @@ module.exports = function (RED) {
                     statestore.set(group.getBase(), node, msg, 'label', updates.label)
                 }
                 if (typeof updates.icon !== 'undefined') {
-                    // dynamically set "label" property
+                    // dynamically set "icon" property
                     statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
                 }
                 if (typeof updates.iconPosition !== 'undefined') {
-                    // dynamically set "label" property
+                    // dynamically set "iconPosition" property
                     statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
                 }
             }

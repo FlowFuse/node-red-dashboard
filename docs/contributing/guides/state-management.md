@@ -67,7 +67,7 @@ Our server-side stores maintain the "single source of truth". When any Dashboard
 In our server-side architecture, we use two standalone stores:
 
 - `datastore`: A map of each widget to the latest `msg` received by a respective node in the Editor.
-- `statestore`: A store for all dynamic properties set on widgets (e.g. visibility or setting a property at runtime). Often, these values are overrides of the base configuration found in the `datastore`.
+- `statestore`: A store for all dynamic properties set on widgets (e.g. visibility or setting a property at runtime). Often, these values are overrides of the base configuration defined in Node-RED.
 
 Each time a function server-side wants to write into these stores, a check is done to ensure that any provided messages are permitted to be stored. An example of where this would get blocked is if `msg._client.socketid` is specified and the relevant node type is setup to listen to socket constraints (by default, this is `ui-control` and `ui-notification`). In this case, we do not want to store that data in our centralised store since it's not relevant to _all_ users of the Dashboard.
 
