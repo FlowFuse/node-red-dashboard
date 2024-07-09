@@ -3,9 +3,11 @@
 <template>
     <v-slider
         v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
-        :class="className" :thumb-label="thumbLabel"
+        :class="className" :style="`--nrdb-slider-track-color:${colorTrack};--nrdb-slider-tick-scaleY:${tickScaleY};--nrdb-slider-tick-scaleX:${tickScaleX};`"
+        :thumb-label="thumbLabel"
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
-        :min="min"
+        :min="min" :direction="direction"
+        :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="props.step || 1"
         @click:prepend="clickPrepend" @click:append="clickAppend"
@@ -30,6 +32,7 @@ export default {
             value: null,
             dynamic: {
                 label: null,
+                step: null,
                 thumbLabel: null,
                 showTicks: null,
                 min: null,
@@ -50,6 +53,12 @@ export default {
         },
         direction: function () {
             return this.props.height > this.props.width ? 'vertical' : 'horizontal'
+        },
+        tickScaleX: function () {
+            return this.props.height > this.props.width ? 3 : 0.5
+        },
+        tickScaleY: function () {
+            return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
