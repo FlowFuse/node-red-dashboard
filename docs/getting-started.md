@@ -15,6 +15,12 @@ description: Kickstart your Node-RED Dashboard 2.0 journey with this getting sta
 
 # Getting Started
 
+## About
+
+Welcome to the documentation for the Node-RED Dashboard 2.0, the successor to the original, and very popular, Node-RED Dashboard.
+
+This project was formed by FlowFuse, as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has been [officially deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). You can read our full statement about _why_ we're building Dashboard 2.0 [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/?_gl=1*cckr5u*_gcl_au*MTAzMTA0MzY1Ni4xNzE2MzY2NTAz).
+
 ## Installation
 
 [FlowFuse](https://flowfuse.com)'s Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:

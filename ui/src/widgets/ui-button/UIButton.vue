@@ -1,15 +1,8 @@
 <template>
-    <div v-if="icon" class="nrdb-btn-icon">
-        <v-btn
-            ref="icon-button"
-            variant="flat" :disabled="!state.enabled" :icon="icon"
-            style="min-width': auto" @click="action"
-        />
-    </div>
     <v-btn
-        v-else
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon"
-        :icon="icon" :append-icon="appendIcon" :style="{'min-width': icon ? 'auto' : null}" @click="action"
+        :append-icon="appendIcon" :class="{'nrdb-ui-button--icon': iconOnly}"
+        :style="{'min-width': icon ?? 'auto'}" @click="action"
     >
         {{ label }}
     </v-btn>
@@ -41,23 +34,21 @@ export default {
         prependIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
-            return this.getPropertyValue('label') && icon && this.iconPosition === 'left' ? mdiIcon : undefined
+            return icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
         appendIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
-            return this.getPropertyValue('label') && icon && this.iconPosition === 'right' ? mdiIcon : undefined
-        },
-        icon () {
-            const icon = this.getPropertyValue('icon')
-            const mdiIcon = this.makeMdiIcon(icon)
-            return this.getPropertyValue('label') === '' && icon ? mdiIcon : undefined
+            return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
         label () {
             return this.getPropertyValue('label')
         },
         iconPosition () {
             return this.getPropertyValue('iconPosition')
+        },
+        iconOnly () {
+            return this.getPropertyValue('icon') && !this.getPropertyValue('label')
         }
     },
     created () {
@@ -101,15 +92,17 @@ export default {
 </script>
 
 <style>
-.nrdb-btn-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.nrdb-ui-button--icon .v-btn__append {
+    margin-left: 0;
 }
-.nrdb-btn-icon .v-btn.v-btn--density-default {
-    height: calc(var(--v-btn-height) + 12px);
+.nrdb-ui-button--icon .v-btn__prepend {
+    margin-right: 0;
 }
+
 .nrdb-ui-button .v-btn .v-icon {
     --v-icon-size-multiplier: 1;
+}
+.nrdb-ui-button .nrdb-ui-button--icon .v-icon {
+    --v-icon-size-multiplier: 1.1;
 }
 </style>

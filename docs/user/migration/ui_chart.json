@@ -1,6 +1,5 @@
 {
     "node": "ui_chart",
-    "description": "Chart stuff",
     "properties": [
         {
             "property": "name",
@@ -49,8 +48,8 @@
         },
         {
             "property": "x-axis label",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/382' target='_blank'>Issue #382</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "y-axis min/max",

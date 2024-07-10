@@ -8,7 +8,7 @@
                 class="nrdb-ui-group"
                 :disabled="g.disabled === true ? 'disabled' : null"
                 :class="getGroupClass(g)"
-                :style="`grid-column-end: span ${ g.width }`"
+                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
             >
                 <v-card variant="outlined" class="bg-group-background">
                     <template v-if="g.showTitle" #title>
@@ -50,7 +50,6 @@ export default {
     },
     data () {
         return {
-            columns: 12,
             rowHeight: 48
         }
     },

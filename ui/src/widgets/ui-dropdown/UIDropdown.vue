@@ -1,18 +1,8 @@
 <template>
     <v-combobox
-        v-model="value"
-        :disabled="!state.enabled"
-        :class="className"
-        :label="label"
-        :multiple="multiple"
-        :chips="chips"
-        :clearable="clearable"
-        :items="options"
-        item-title="label"
-        item-value="value"
-        variant="outlined"
-        hide-details="auto"
-        :error-messages="options?.length ? '' : 'No options available'"
+        v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
+        :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
+        hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
     />
 </template>
@@ -103,11 +93,13 @@ export default {
             // 2. update the selected value(s)
 
             // keep options out for backward compatibility
-            const options = msg.options
+            // Check for booth possible methods to setup the options
+            const options = msg.options || msg.ui_update?.options
             if (options) {
                 // 1. add/replace the dropdown options
-                // TODO: Error handling if options is not an array
-                this.items = options
+                if (Array.isArray(options)) {
+                    this.items = options
+                }
             }
 
             const payload = msg.payload
@@ -120,9 +112,6 @@ export default {
             const updates = msg.ui_update
 
             if (updates) {
-                if (Array.isArray(updates.options)) {
-                    this.items = updates.options
-                }
                 if (typeof updates.label !== 'undefined') {
                     this.dynamic.label = updates.label
                 }
@@ -186,5 +175,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

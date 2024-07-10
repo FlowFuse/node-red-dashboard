@@ -128,6 +128,10 @@ main {
 .nrdb-ui-widget {
     min-height: var(--widget-row-height);
 }
+/* to make input type widgets repect row heights */
+.nrdb-app .v-input--density-default {
+    --v-input-control-height: var(--widget-row-height);
+}
 
 /**
 * Widget: Button
@@ -346,6 +350,13 @@ main {
 /**
 *  Slider Overrides
 */
+
+/* to aligne slider perfectly to horizontal center. 
+NB! supresses the gridarea for messages, but those are not in use*/
+.nrdb-ui-slider .v-input--horizontal {
+    grid-template-rows: auto 0;
+}
+
 .v-slider-track__background,
 .v-slider-track__fill {
     background-color: rgb(var(--v-theme-primary));
@@ -355,37 +366,62 @@ main {
    color: rgb(var(--v-theme-primary));
 }
 
-.v-slider-track__tick {
-    background-color: rgb(var(--v-theme-primary));
+.v-slider-track__tick,.v-slider-track__tick--filled { 
+    background-color:var(--tick-color,var(--nrdb-slider-track-color,rgba(var(--v-theme-primary),0.4)));
+    border-radius: var(--nrdb-silder-tick-border-radius, 0);
+}
+@supports (color: hsl(from red h s l / 40%)) {
+    .v-slider-track__tick,.v-slider-track__tick--filled{
+        background-color:var(--tick-color, hsl(from var(--nrdb-slider-track-color,rgb(var(--v-theme-primary))) h s l / 40%));        
+    }
 }
 
-.v-slider-track__tick--filled {
-    background-color: rgb(var(--v-theme-on-primary));
+.nrdb-ui-slider .v-slider.v-input--horizontal{
+    grid-template-rows: auto 0;
+}
+.nrdb-ui-slider  .v-slider-track__ticks {
+    height: calc(var(--v-slider-tick-size));
+    z-index: -1;
+}
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick{
+    margin-block:unset;
+    transform: translate(calc(var(--v-slider-tick-size) / -2), 0)
+        scaleY(var(--tick-scaleY, var(--nrdb-slider-tick-scaleY))) 
+        scaleX(var(--tick-scaleX, var(--nrdb-slider-tick-scaleX)));
 }
 
-.v-slider.v-input--horizontal .v-slider-track__tick {
-    width: var(v-slider-track__tick);
-    height: calc(var(--v-slider-track-size) + 4px);
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--first {
+    margin-inline-start: calc(var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--horizontal .v-slider-track__tick--last {
+    margin-inline-start: calc(100% - var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__ticks {
+    height: 100%;
+    width: calc(var(--v-slider-tick-size));
 }
 
-.v-slider.v-input--vertical .v-slider-track__tick {
-    height: var(v-slider-track__tick);
-    width: calc(var(--v-slider-track-size) + 4px);
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick{
+    margin-inline: unset;
+    transform: translate(0,calc(var(--v-slider-tick-size) / 2))
+        scaleY(var(--tick-scaleY, var(--nrdb-slider-tick-scaleY))) 
+        scaleX(var(--tick-scaleX, var(--nrdb-slider-tick-scaleX)));
+} 
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick--last {
+    bottom: calc(100% - var(--v-slider-tick-size) / 2);
+}
+.nrdb-ui-slider .v-slider.v-input--vertical .v-slider-track__tick--first {
+    bottom: calc(0% + var(--v-slider-tick-size) / 2);
 }
 
-/* re-calculate the margin for the thumb */
-.v-slider.v-input--horizontal .v-slider-track__tick {
-    margin-inline-start: 0;
-    margin-top: 0px;
+.nrdb-ui-slider .v-slider-track {
+    --v-slider-tick-size: var(--v-slider-track-size);
 }
 
-.v-slider.v-input--vertical .v-slider-track__tick {
-    margin-inline-start: 0;
-    margin-left: 0px;
-}
 .v-slider.v-input--vertical>.v-input__control {
     min-height: initial;
 }
+
 
 /* switch thumb */
 
@@ -401,6 +437,15 @@ main {
 }
 .active .v-switch__thumb {
     opacity: 1.0;
+}
+
+/* switch with custom icons - fix the oval shape of press features*/
+.nrdb-switch button{
+    aspect-ratio: 1;
+}
+.nrdb-switch .v-btn.v-btn--density-default{
+    height: unset;
+    width: var(--v-btn-height);
 }
 
 /* Vuetify Overrides */
