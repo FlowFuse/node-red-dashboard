@@ -90,7 +90,7 @@ When accessing the `msg` variable inside a `<script />` tag, you need to prefix 
 We also offer some helper functions for the Node-RED integration too:
 
 - `this.send` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
-- `this.$socket.on('msg-input' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
+- `this.$socket.on('msg-input:' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
 
 ### Example (Raw JavaScript)
 

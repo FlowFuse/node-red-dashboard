@@ -1,0 +1,181 @@
+[
+    {
+        "id": "06431e1221a0d2e8",
+        "type": "ui-template",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "page": "",
+        "ui": "",
+        "name": "Custom Polar Chart",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <canvas ref=\"chart\" />\n</template>\n\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n\n<script>\n    export default {\n        mounted() {\n            // register a listener for incoming data\n            this.$socket.on('msg-input:' + this.id, this.onInput)\n\n            // code here when the component is first loaded\n            let interval = setInterval(() => {\n                if (window.Chart) {\n                    // Babylon.js is loaded, so we can now use it\n                    clearInterval(interval);\n                    this.draw()\n                }\n            }, 100);\n        },\n        methods: {\n            draw () {\n                const ctx = this.$refs.chart\n                const data = {\n                    labels: [],\n                    datasets: [{\n                        label: 'Colors',\n                        data: [],\n                        backgroundColor: []\n                    }]\n                }\n                \n                // Render the chart\n                const chart = new Chart(ctx, {\n                    type: 'polarArea',\n                    data: data,\n                    options: {\n                        responsive: true,\n                        scales: {\n                            r: {\n                                pointLabels: {\n                                    display: true,\n                                    centerPointLabels: true,\n                                    font: {\n                                        size: 18\n                                    }\n                                }\n                            }\n                            },\n                            plugins: {\n                            legend: {\n                                position: 'top',\n                            },\n                            title: {\n                                display: true,\n                                text: 'Chart.js Polar Area Chart With Centered Point Labels'\n                            }\n                        }\n                    },\n                });\n                this.chart = chart\n            },\n            onInput (msg) {\n                // in this example, our topics will be colors\n                const color = msg.topic\n\n                // have we seen this color before?\n                const index = this.chart.data.labels.indexOf(color)\n                \n                if (index === -1) {\n                    console.log('new color', color)\n                    // add new dataset for this topic\n                    this.chart.data.labels.push(color)\n                    this.chart.data.datasets[0].data.push(msg.payload)\n                    this.chart.data.datasets[0].backgroundColor.push(color)\n                } else {\n                    // we've already got data for this color, update the value\n                    this.chart.data.datasets[0].data[index] = msg.payload\n                }\n\n                // ensure the chart re-renders\n                this.chart.update()      \n            }\n        }\n    }\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 280,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6a5c7ecd2dd174db",
+        "type": "ui-slider",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "name": "Red",
+        "label": "Red",
+        "tooltip": "",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "outs": "all",
+        "topic": "red",
+        "topicType": "str",
+        "thumbLabel": "true",
+        "showTicks": "false",
+        "min": 0,
+        "max": "255",
+        "step": "5",
+        "color": "red",
+        "colorTrack": "red",
+        "colorThumb": "red",
+        "className": "",
+        "x": 90,
+        "y": 60,
+        "wires": [
+            [
+                "06431e1221a0d2e8"
+            ]
+        ]
+    },
+    {
+        "id": "70cbfaa92b06ee6f",
+        "type": "ui-slider",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "name": "Green",
+        "label": "Green",
+        "tooltip": "",
+        "order": 3,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "outs": "all",
+        "topic": "green",
+        "topicType": "str",
+        "thumbLabel": "true",
+        "showTicks": "false",
+        "min": 0,
+        "max": "255",
+        "step": "5",
+        "color": "green",
+        "colorTrack": "green",
+        "colorThumb": "green",
+        "className": "",
+        "x": 90,
+        "y": 100,
+        "wires": [
+            [
+                "06431e1221a0d2e8"
+            ]
+        ]
+    },
+    {
+        "id": "d95df24465a70884",
+        "type": "ui-slider",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "name": "Blue",
+        "label": "Slider 1",
+        "tooltip": "",
+        "order": 4,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "outs": "all",
+        "topic": "blue",
+        "topicType": "str",
+        "thumbLabel": "true",
+        "showTicks": "false",
+        "min": 0,
+        "max": "255",
+        "step": "5",
+        "color": "blue",
+        "colorTrack": "blue",
+        "colorThumb": "blue",
+        "className": "",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "06431e1221a0d2e8"
+            ]
+        ]
+    },
+    {
+        "id": "1c6f457dfe15977b",
+        "type": "ui-group",
+        "name": "Custom Bar Chart",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 27,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

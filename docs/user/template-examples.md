@@ -25,6 +25,10 @@ To help get you started on these, we've collected a few useful examples that you
 
 ## Widgets
 
+### Custom Charts
+
+You can find a collection of example of how to use Chart.js within the `ui-template` node in the [Building Custom Charts](../nodes/widgets/ui-chart.md#building-custom-charts) section of the UI Chart documentation.
+
 ### Custom Data Tables
 
 Whilst we do offer the [`ui-table`](../nodes/widgets/ui-table.md) widget out of the box, it's fairly basic in it's functionality, and doesn't allow for much customization of cells and styling. 

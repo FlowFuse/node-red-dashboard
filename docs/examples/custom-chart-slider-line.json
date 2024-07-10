@@ -1,0 +1,117 @@
+[
+    {
+        "id": "ea7c02fa77fe6efc",
+        "type": "ui-template",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "page": "",
+        "ui": "",
+        "name": "Custom Line Chart",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <canvas ref=\"chart\" />\n</template>\n\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n\n<script>\n    export default {\n        mounted() {\n            this.$socket.on('msg-input:' + this.id, this.onInput)\n\n            // code here when the component is first loaded\n            let interval = setInterval(() => {\n                if (window.Chart) {\n                    // Babylon.js is loaded, so we can now use it\n                    clearInterval(interval);\n                    this.draw()\n                }\n            }, 100);\n        },\n        methods: {\n            draw () {\n                const ctx = this.$refs.chart\n                const datasets = []\n                \n                // Render the chart\n                const chart = new Chart(ctx, {\n                    type: 'line',\n                    data: {\n                        datasets: [{\n                            label: \"My Label\",\n                            data: []\n                        }]\n                    },\n                    options: {\n                        animation: false,\n                        responsive: true,\n                        scales: {\n                            x: {\n                                type: 'time'\n                            }\n                        },\n                        parsing: {\n                            xAxisKey: 'time',\n                            yAxisKey: 'value'\n                        },\n                        plugins: {\n                            legend: {\n                                position: 'top',\n                            },\n                            title: {\n                                display: true,\n                                text: 'Chart.js Line Chart'\n                            }\n                        }   \n                    },\n                });\n                // make this available to all elements of the component\n                this.chart = chart\n            },\n            onInput (msg) {\n                this.chart.data.datasets[0].data.push({\n                    time: (new Date()).getTime(),\n                    value: msg.payload\n                }) \n                this.chart.update()      \n            }\n        }\n    }\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 310,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "caff24894c090d95",
+        "type": "ui-slider",
+        "z": "28aca5b1020ec1a4",
+        "group": "1c6f457dfe15977b",
+        "name": "Slider 1",
+        "label": "Slider 1",
+        "tooltip": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "slider-1",
+        "topicType": "str",
+        "thumbLabel": "true",
+        "showTicks": "always",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "color": "",
+        "colorTrack": "",
+        "colorThumb": "",
+        "className": "",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "ea7c02fa77fe6efc"
+            ]
+        ]
+    },
+    {
+        "id": "1c6f457dfe15977b",
+        "type": "ui-group",
+        "name": "Custom Bar Chart",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 27,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]
