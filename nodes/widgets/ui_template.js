@@ -18,6 +18,12 @@ module.exports = function (RED) {
         } else if (config.templateScope === 'widget:ui') {
             config.page = ''
             config.group = ''
+        } else if (config.templateScope === 'page:style') {
+            config.ui = ''
+            config.group = ''
+        } else if (config.templateScope === 'site:style') {
+            config.page = ''
+            config.group = ''
         }
 
         // ensure we have a value for passthru (default to true)
