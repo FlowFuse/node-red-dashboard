@@ -64,6 +64,12 @@ module.exports = function (RED) {
                     if (typeof (updates.max) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
                     }
+                    if (typeof (updates.iconPrepend) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'iconPrepend', updates.iconPrepend)
+                    }
+                    if (typeof (updates.iconAppend) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'iconAppend', updates.iconAppend)
+                    }
                     if (typeof (updates.color) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'color', updates.color)
                     }

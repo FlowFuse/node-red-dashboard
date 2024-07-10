@@ -33,10 +33,12 @@
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
+                className: { value: '' },
+                iconPrepend: { value: '' },
+                iconAppend: { value: '' },
                 color: { value: '' },
                 colorTrack: { value: '' },
-                colorThumb: { value: '' },
-                className: { value: '' }
+                colorThumb: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -101,7 +103,7 @@
                     this.thumbLabel = true
                 }
             }
-    })
+        })
     })()
 </script>
 
@@ -179,6 +181,19 @@
                 <div>
                     <span for="not-input-max">max</span>
                     <input type="text" id="node-input-max" style="width:60px">
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <label for="node-input-iconPrepend"><i class="fa fa-picture-o"></i> Icons</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
+                <div>
+                    <span for="node-input-iconPrepend">before</span>
+                    <input type="text" id="node-input-iconPrepend" placeholder="mdi-minus" style="width:60px">
+                </div>
+                <div>
+                    <span for="node-input-iconAppend">after</span>
+                    <input type="text" id="node-input-iconAppend" placeholder="mdi-plus" style="width:60px">
                 </div>
             </div>
         </div>
