@@ -1,5 +1,6 @@
 <template>
-    <v-tooltip :text="tooltip" :disabled="tooltip.length === 0" location="bottom">
+    <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
+        <!-- eslint-disable-next-line vue/no-template-shadow -->
         <template v-slot:activator="{ props }">
             <v-text-field
                 v-if="type !== 'textarea'" v-model="value"
