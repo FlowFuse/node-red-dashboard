@@ -1,6 +1,6 @@
 <script type="text/javascript">
     (function () {
-        function hasProperty(obj, prop) {
+        function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
         RED.nodes.registerType('ui-text-input', {
@@ -136,7 +136,7 @@
             <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" placeholder="(optional) e.g. 'gesture-tap'">
             <select id="node-input-iconPosition" style="width: 75px;">
                 <option value="left"> Left</option>
-                <option value="right"> Rigth</option>
+                <option value="right"> Right</option>
             </select>
             <select id="node-input-iconInnerPosition" style="width: 75px;">
                 <option value="inside"> In</option>
