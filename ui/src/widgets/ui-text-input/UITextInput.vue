@@ -1,16 +1,25 @@
 <template>
-    <v-text-field
-        v-if="type !== 'textarea'" v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
-        :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
-        :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
-        @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
-    />
-    <v-textarea
-        v-else v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field" :label="label"
-        :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
-        :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
-        @click:clear="onClear"
-    />
+    <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
+        <!-- eslint-disable-next-line vue/no-template-shadow -->
+        <template v-slot:activator="{ props }">
+            <v-text-field
+                v-if="type !== 'textarea'" v-model="value"
+                v-bind="props"
+                :disabled="!state.enabled" class="nrdb-ui-text-field"
+                :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
+                :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
+                @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
+            />
+            <v-textarea
+                v-else
+                v-bind="props"
+                v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
+                :label="label" :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
+                :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
+                @click:clear="onClear"
+            />
+        </template>
+    </v-tooltip>
 </template>
 
 <script>
@@ -41,6 +50,9 @@ export default {
         },
         type: function () {
             return this.props.mode || 'text'
+        },
+        tooltip: function () {
+            return this.props.tooltip
         },
         clearable: function () {
             return this.props.clearable

@@ -26,6 +26,7 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 mode: { value: 'text', required: true },
+                tooltip: { value: ''},
                 delay: {
                     value: 300,
                     validate: function (v) {
@@ -147,6 +148,10 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
         <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tooltip"><i class="fa fa-info"></i> Tooltip</label>
+        <input type="text" id="node-input-tooltip">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>

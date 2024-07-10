@@ -2,11 +2,12 @@
 description: Incorporate ui-text-input in Node-RED Dashboard 2.0 for customizable, user-driven data entry and feedback.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
-    Size: Controls the width of the Text Input with respect to the parent group. Maximum value is the width of the group.
+    Size: Controls the width of the text input field with respect to the parent group. Maximum value is the width of the group.
     Icon: Renders a Material Design icon within the Text Input. There is no need to include the "mdi-" prefix.
     Icon Position: If "Icon" is defined, this property controls which side of the "Label" the icon will render on.
     Icon Inner Position: If "Icon" is defined, this property controls if icon is render inside or outside the text input box
-    Label: The text shown as title of the component.
+    Label: The text shown within the text input field.
+    Tooltip: The text shown when hovering over the text input field.
     Mode: The type of HTML input to display. Options - text | password | email | number | tel | color | date | time | week | month | datetime-local
     Passthrough: If this node receives a msg in Node-RED, should it be passed through to the output as if a new value was inserted to the input?
     Send On "Delay": If true, then a msg will be emitted will be sent after the delay specified in "Delay (ms)".
