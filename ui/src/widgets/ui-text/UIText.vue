@@ -28,7 +28,6 @@ export default {
                 return m.payload
             }
             return ''
-            // return this.messages[this.id]?.payload || 'No Message Received'
         }
     }
 }
