@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${Math.min(props.width, Math.ceil(props.height / 2))}`">
+    <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
         <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
         <svg ref="gauge" width="0" height="0">
             <g id="sections" />
@@ -57,7 +57,8 @@ export default {
                 backdrop: null,
                 sections: null,
                 gauge: null
-            }
+            },
+            size: 'default'
         }
     },
     computed: {
@@ -73,6 +74,9 @@ export default {
             return segments.sort((a, b) => {
                 return (a, b) => a.from - b.from
             })
+        },
+        iconOnly () {
+            return this.props.icon && !this.props.units
         }
     },
     watch: {
@@ -286,6 +290,7 @@ export default {
                 })
 
             this.$nextTick(() => {
+                this.resizeText()
                 this.positionMinMaxLabels()
             })
         },
@@ -328,6 +333,21 @@ export default {
 
             const maxX = bbox.x + bbox.width - thickness - paddingX
             max.style.transform = `translate(${maxX}px, ${y}px)`
+        },
+        resizeText () {
+            // work out how much space we have within which to render the value/icon
+            const width = this.$refs.value?.clientWidth
+            if (!width) {
+                this.size = 'default'
+            } else if (width < 150) {
+                this.size = 'xs'
+            } else if (width < 225) {
+                this.size = 'sm'
+            } else if (width < 300) {
+                this.size = 'md'
+            } else {
+                this.size = 'lg'
+            }
         },
         updateSegmentArc () {
             const segments = this.segments
@@ -399,7 +419,7 @@ export default {
     flex-direction: column;
     text-align: center;
     flex-wrap: wrap;
-    padding-top: 6px;
+    padding-top: 12px;
 }
 
 .nrdb-ui-gauge-value span {
@@ -444,27 +464,46 @@ export default {
 
 /* payload value font */
 .nrdb-ui-gauge-value span {
-    font-size: 2.5rem;
-    line-height: 2.75rem;
+    font-size: 2rem;
+    line-height: 2.25rem;
 }
 /* units font */
 .nrdb-ui-gauge-value label {
     font-size: 0.75rem;
     line-height: 0.825rem;
+    gap: 4px;
+}
+.nrdb-ui-gauge-icon-only i {
+    font-size: 1.75em;
 }
 
 /* Size Overrides */
-.nrdb-ui-gauge-size-1 .nrdb-ui-gauge-value span {
+
+/* xs */
+.nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value span {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+}
+
+/* sm */
+.nrdb-ui-gauge-size-sm .nrdb-ui-gauge-value span {
+    font-size: 2rem;
+    line-height: 2.25rem;
+}
+
+/* md */
+.nrdb-ui-gauge-size-md .nrdb-ui-gauge-value span {
+    font-size: 2.5rem;
+    line-height: 3rem;
+}
+.nrdb-ui-gauge-size-md .nrdb-ui-gauge-value label {
     font-size: 1rem;
     line-height: 1.25rem;
 }
 
-.nrdb-ui-gauge-size-2 .nrdb-ui-gauge-value span {
-    font-size: 1.5rem;
-    line-height: 1.75rem;
-}
-.nrdb-ui-gauge-size-3 .nrdb-ui-gauge-value span {
-    font-size: 2rem;
-    line-height: 2.25rem;
+/* lg */
+.nrdb-ui-gauge-size-lg .nrdb-ui-gauge-value span {
+    font-size: 3rem;
+    line-height: 3.25rem;
 }
 </style>

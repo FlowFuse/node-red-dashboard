@@ -8,10 +8,12 @@ description: Get inspired with a variety of UI template examples in Node-RED Das
     import FlowViewer from '../components/FlowViewer.vue'
     import ExampleFlowWorldmap from '../examples/template-worldmap.json'
     import ExampleDataTable from '../examples/template-data-table.json'
+    import ExampleFileUpload from '../examples/file-upload.json'
 
     const examples = ref({
       'worldmap': ExampleFlowWorldmap,
-      'custom-data-table': ExampleDataTable
+      'custom-data-table': ExampleDataTable,
+      'file-upload': ExampleFileUpload
     })
 </script>
 
@@ -22,6 +24,10 @@ The UI Template node allows you to create custom widgets for your dashboard, as 
 To help get you started on these, we've collected a few useful examples that you can use or modify to suit your own needs.
 
 ## Widgets
+
+### Custom Charts
+
+You can find a collection of example of how to use Chart.js within the `ui-template` node in the [Building Custom Charts](../nodes/widgets/ui-chart.md#building-custom-charts) section of the UI Chart documentation.
 
 ### Custom Data Tables
 
@@ -171,6 +177,102 @@ You can try out the above example with this flow:
 
 <FlowViewer :flow="examples['custom-data-table']" height="200px"/>
 
+### File Upload
+
+_Update: Whilst this example will continue to work, and can be used for more customized use cases with file uploads, as of `v1.12.0`, we do also now offer a native [File Input](../nodes/widgets/ui-file-input.md) widget._
+
+When building applications with Node-RED, there's often a need to process files for analysis. In such cases, we require a file upload widget which is not currently available. Fortunately, we can achieve this easily using the `ui-template` widget and Vuetify JS components.
+
+To do that we will use the [`v-file-input`](https://vuetifyjs.com/en/components/file-inputs/) component which provides the interface for uploading files.
+
+```javascript
+<template>
+    <!-- Card for uploading binary file -->
+    <v-card raised color="white">
+        <!-- Card Title -->
+        <v-card-title>Upload binary file to Node-Red</v-card-title>
+        <br>
+        <v-card-text>
+            <!-- File Input -->
+            <v-file-input label="Click here to select a file" show-size v-model="uploadFile">
+            </v-file-input>
+            <!-- Progress Indicator -->
+            <div>Progress: {{ progress }} bytes loaded</div>
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <!-- Upload Button -->
+            <v-btn right @click="startUpload">Upload File</v-btn>
+        </v-card-actions>
+    </v-card>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                uploadFile: null, // Holds the selected file
+                progress: 0 // Progress indicator for file upload
+            }
+        },
+        methods: {
+            // Method triggered when Upload File button is clicked
+            startUpload() {
+                // Check if a file is selected
+                if (!this.uploadFile) {
+                    console.warn('No file selected');
+                    return;
+                }
+
+                // Log the selected file information to console
+                console.log('File selected:');
+                console.log(this.uploadFile);
+
+                // Create a FileReader instance to read the file
+                const reader = new FileReader();
+
+                // When the file is read, send it to Node-RED
+                reader.onload = () => {
+                    // Prepare the payload to send
+                    const payload = {
+                        topic: 'upload', // Topic for Node-RED
+                        payload: this.uploadFile, // File content
+                        file: {
+                            name: this.uploadFile.name, // File name
+                            size: this.uploadFile.size, // File size
+                            type: this.uploadFile.type // File type
+                        }
+                    };
+                    
+                    // Send the payload to Node-RED (assuming 'send' method is defined)
+                    this.send(payload);
+                };
+
+                // Track progress of file reading
+                reader.onprogress = (event) => {
+                    this.progress = event.loaded; // Update progress
+                };
+
+                // Read the file as an ArrayBuffer
+                reader.readAsArrayBuffer(this.uploadFile);
+            }
+        },
+    }
+</script>
+```
+
+To add a file upload component to your dashboard, insert the above Vue snippet into the ui-template widget. This snippet allows importing the file, and after clicking the upload button, it first tracks the progress of the file reading process and shows how much of the file is read. Once the file is fully loaded, it sends the message object to the subsequent node containing the file and related information for further processing. However, it's important to note that this sends the buffer arrays, which we are converting into strings using the change node in the following example.
+
+<FlowViewer :flow="examples['file-upload']" height="200px"/>
+
+Additionally, please be aware that when using this example with Node-RED default settings, it will only accept files up to 1MB. The dashboard uses `socket.io` for communication, which has a default limit of 1MB. You can increase this limit by changing the following value in the `settings.js` file. For more information, refer to the [Settings](https://dashboard.flowfuse.com/user/settings.html).
+
+```javascript
+dashboard: {
+    maxHttpBufferSize: 1e8 // size in bytes, example: 100 MB
+}
+```
+
 ### World Map
 
 Node-RED has a very popular [worldmap node](https://flows.nodered.org/node/node-red-contrib-web-worldmap) which allows for intricate plotting of data on a globe. The node creates a new endpoint onto your web server at `/worldmap` (or whichever path you override the default with).
@@ -220,7 +322,6 @@ body {
 }
 ```
 
-
 ### Background Image
 
 If you'd like to have a custom texture or background image such as:
@@ -265,4 +366,35 @@ By default, the side navigation drawer that lists all of the pages in your Dashb
     background-color: white;
     color: black;
 }
+```
+
+### Icon Styling
+
+It is possible to change various features of the icons in the Dashboard, such as their size, color, and animations using the collection of utility classes provided by the underlying Material Design Icons library (detailed [here](https://pictogrammers.github.io/@mdi/font/7.4.47/#:~:text=mdi%2Dzigbee-,Extras,-The%20helper%20CSS)).
+
+#### Size
+
+```
+mdi-18px mdi-24px mdi-36px mdi-48px
+```
+
+#### Color
+```
+mdi-light mdi-light mdi-inactive mdi-dark mdi-dark mdi-inactive
+```
+
+#### Rotate
+```
+mdi-rotate-45 mdi-rotate-90 mdi-rotate-135 mdi-rotate-180 mdi-rotate-225  mdi-rotate-270 mdi-rotate-315
+```
+#### Flip
+```
+mdi-flip-h mdi-flip-v
+```
+
+Note that `mdi-flip-*` and `mdi-rotate-*` can't be used at the same time.
+
+#### Spin
+```
+mdi-spin
 ```

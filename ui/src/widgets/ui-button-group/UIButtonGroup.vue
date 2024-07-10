@@ -1,11 +1,11 @@
 <template>
     <div class="nrdb-ui-button-group-wrapper">
-        <label v-if="props.label" class="v-label">
-            {{ props.label }}
+        <label v-if="label" class="v-label">
+            {{ label }}
         </label>
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" @update:model-value="onChange(selection)">
-            <v-btn v-for="option in props.options" :key="option.value" :value="option.value">
-                <template v-if="option.icon && option.label !== ''" #prepend>
+            <v-btn v-for="option in options" :key="option.value" :value="option.value">
+                <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
                 </template>
                 <v-icon v-if="option.icon && !option.label" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" size="x-large" />
@@ -30,7 +30,11 @@ export default {
     },
     data () {
         return {
-            selection: null
+            selection: null,
+            dynamic: {
+                label: null,
+                options: null
+            }
         }
     },
     computed: {
@@ -44,11 +48,27 @@ export default {
         },
         variant: function () {
             return this.look === 'default' ? null : this.look
+        },
+        label: function () {
+            return this.dynamic.label || this.props.label
+        },
+        options: function () {
+            const options = this.dynamic.options || this.props.options
+            if (options) {
+                return options.map(option => {
+                    if (typeof option === 'string') {
+                        return { label: option, value: option }
+                    } else {
+                        return option
+                    }
+                })
+            }
+            return options
         }
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, this.onLoad)
+        useDataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -72,6 +92,15 @@ export default {
             // make sure we've got the relevant option selected on load of the page
             this.selection = msg.payload
         },
+        onDynamicProperty (msg) {
+            const updates = msg.ui_update
+            if (typeof updates?.label !== 'undefined') {
+                this.dynamic.label = updates.label
+            }
+            if (typeof updates?.options !== 'undefined') {
+                this.dynamic.options = updates.options
+            }
+        },
         onChange (value) {
             if (value !== null && typeof value !== 'undefined') {
                 // Tell Node-RED a new value has been selected
@@ -79,7 +108,7 @@ export default {
             }
         },
         findOptionByValue: function (val) {
-            const opt = this.props.options?.find(option => {
+            const opt = this.options?.find(option => {
                 if (typeof (val) === 'object') {
                     return (JSON.stringify(val) === JSON.stringify(option.value))
                 } else {

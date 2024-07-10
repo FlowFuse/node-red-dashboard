@@ -47,7 +47,7 @@ _Screenshot of the theme options available to control sizings of the layout, her
 - **Group Gap:** The spacing between each group, depicted above as the <span style="color: lightseagreen;">green</span> space.
 - **Widget Gap:** The spacing between each widget, within a group, depicted above as the <span style="color: deeppink;">pink</span> space.
 
-An additional option available on a group-by-group basis is whether or not to show the Group's name, above depeicted by the <span style="color: goldenrod;">yellow</span> space. If this is hidden, the Group Padding (<span style="color: blue;">blue</span>), will render on all four sides of the group.
+An additional option available on a group-by-group basis is whether or not to show the Group's name, above depicted by the <span style="color: goldenrod;">yellow</span> space. If this is hidden, the Group Padding (<span style="color: blue;">blue</span>), will render on all four sides of the group.
 
 ### Not Configurable (Currently)
 

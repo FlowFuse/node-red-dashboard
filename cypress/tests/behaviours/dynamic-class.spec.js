@@ -4,7 +4,7 @@ describe('Node-RED Dashboard 2.0 - Allow for dynamic class assignments through m
         cy.visit('/dashboard/page1')
     })
 
-    it('UI Buttons', () => {
+    it('UI Buttons (msg.class)', () => {
         // Emitting strings
         cy.get('button').contains('Send Class (ui-button)').click()
 
@@ -16,6 +16,20 @@ describe('Node-RED Dashboard 2.0 - Allow for dynamic class assignments through m
 
         // ensure class is still there and data has persisted
         cy.get('#nrdb-ui-widget-d506363d3f2c88cd').should('have.class', 'test-class')
+    })
+
+    it('UI Buttons (msg.ui_update.class)', () => {
+        // Emitting strings
+        cy.clickAndWait(cy.get('button').contains('Send Class (ui-button) - UI Update'))
+
+        // check in our Dashboard that the class has been applied
+        cy.get('#nrdb-ui-widget-d506363d3f2c88cd').should('have.class', 'test-class-ui-update')
+
+        // refresh the page
+        cy.reloadDashboard()
+
+        // ensure class is still there and data has persisted
+        cy.get('#nrdb-ui-widget-d506363d3f2c88cd').should('have.class', 'test-class-ui-update')
     })
 
     it('UI Switch', () => {

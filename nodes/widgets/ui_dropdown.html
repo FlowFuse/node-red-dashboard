@@ -26,6 +26,8 @@
                 height: { value: 0 },
                 passthru: { value: false },
                 multiple: { value: false },
+                chips: { value: false },
+                clearable: { value: false },
                 options: {
                     value: [{ value: '', label: '' }],
                     validate: function (v) {
@@ -48,6 +50,12 @@
                 if (this.multiple === undefined) {
                     $('#node-input-multiple').prop('checked', false)
                 }
+                if (this.chips === undefined) {
+                    $('#node-input-chips').prop('checked', false)
+                }    
+                if (this.clearable === undefined) {
+                    $('#node-input-clearable').prop('checked', false)
+                }                              
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -213,6 +221,14 @@
         <label style="width:auto" for="node-input-multiple"><i class="fa fa-th-list"></i> Allow multiple selections from list: </label>
         <input type="checkbox" checked id="node-input-multiple" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-chips"><i class="fa fa-circle-o"></i> Show selected elements in chips </label>
+        <input type="checkbox" checked id="node-input-chips" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+    </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear selection with button </label>
+        <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+    </div>    
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">

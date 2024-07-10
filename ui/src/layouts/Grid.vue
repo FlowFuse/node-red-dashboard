@@ -8,7 +8,7 @@
                 class="nrdb-ui-group"
                 :disabled="g.disabled === true ? 'disabled' : null"
                 :class="getGroupClass(g)"
-                :style="`grid-column-end: span ${ g.width }`"
+                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
             >
                 <v-card variant="outlined" class="bg-group-background">
                     <template v-if="g.showTitle" #title>
@@ -50,7 +50,6 @@ export default {
     },
     data () {
         return {
-            columns: 12,
             rowHeight: 48
         }
     },
@@ -120,8 +119,9 @@ export default {
     --widget-row-height: 48px;
 }
 .nrdb-layout--grid {
+    --layout-columns: 12;
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(var(--layout-columns), 1fr);
     flex-wrap: wrap;
     padding: var(--page-padding);
     gap: var(--group-gap);
@@ -138,13 +138,19 @@ export default {
 
 @media only screen and (max-width: 1024px) {
     .nrdb-layout--grid {
-        grid-template-columns: repeat(9, 1fr);
+        --layout-columns: 9;
     }
 }
 
 @media only screen and (max-width: 768px) {
     .nrdb-layout--grid {
-        grid-template-columns: repeat(6, 1fr);
+        --layout-columns: 6;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .nrdb-layout--grid {
+        --layout-columns: 3;
     }
 }
 

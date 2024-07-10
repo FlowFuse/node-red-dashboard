@@ -53,6 +53,7 @@ msg = {
     },
     _client: {
         socketId: '1234',
+        socketIp: '127.0.0.1',
     }
 }
 ```

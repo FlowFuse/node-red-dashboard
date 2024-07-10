@@ -12,7 +12,7 @@ The repository contains two primary folders:
 
 ### /nodes
 
-The `/nodes` directory contains the collection of Node-RED nodes that are available within the Node-RED editor. These nodes are responsible for handling the configuration of the Dashboard, which widgets are shown, and for sending and receiving events to and from the Dashboard, based on their configurtion within the Node-RED editor.
+The `/nodes` directory contains the collection of Node-RED nodes that are available within the Node-RED editor. These nodes are responsible for handling the configuration of the Dashboard, which widgets are shown, and for sending and receiving events to and from the Dashboard, based on their configuration within the Node-RED editor.
 
 ### /ui
 

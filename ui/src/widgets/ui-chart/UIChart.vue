@@ -38,6 +38,10 @@ export default {
         'props.xAxisType': function (value) {
             this.chart.options.scales.x.type = value
             this.chart.update()
+        },
+        'props.xAxisFormatType': function (value) {
+            this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
+            this.chart.update()
         }
     },
     created () {
@@ -67,12 +71,41 @@ export default {
             parsing.yAxisKey = this.props.yAxisProperty
         }
 
+        let textColor = Chart.defaults.color
+        let gridColor = Chart.defaults.borderColor
+
+        if (this.props?.textColor) {
+            if (this.props.textColorDefault !== undefined) {
+                if (this.props.textColorDefault === false) {
+                    textColor = this.props.textColor[0]
+                }
+            }
+        }
+        if (this.props?.gridColor) {
+            if (this.props.gridColorDefault !== undefined) {
+                if (this.props.gridColorDefault === false) {
+                    gridColor = this.props.gridColor[0]
+                }
+            }
+        }
+
         // y-axis limits
         const yOptions = {
             title: {
                 display: !!this.props.yAxisLabel,
-                text: this.props.yAxisLabel
+                text: this.props.yAxisLabel,
+                color: textColor
+            },
+            ticks: {
+                color: textColor
+            },
+            grid: {
+                color: gridColor
+            },
+            border: {
+                color: gridColor
             }
+
         }
         if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
             yOptions.min = parseFloat(this.props.ymin)
@@ -97,12 +130,20 @@ export default {
                         type: this.props.xAxisType || 'linear',
                         title: {
                             display: !!this.props.xAxisLabel,
-                            text: this.props.xAxisLabel
+                            text: this.props.xAxisLabel,
+                            color: textColor
                         },
                         time: {
-                            displayFormats: {
-                                millisecond: 'HH:mm:ss'
-                            }
+                            displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
+                        },
+                        ticks: {
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor
+                        },
+                        border: {
+                            color: gridColor
                         }
                     },
                     y: yOptions
@@ -110,10 +151,14 @@ export default {
                 plugins: {
                     title: {
                         display: true,
-                        text: this.props.label
+                        text: this.props.label,
+                        color: textColor
                     },
                     legend: {
-                        display: this.props.showLegend
+                        display: this.props.showLegend,
+                        labels: {
+                            color: textColor
+                        }
                     }
                 },
                 parsing
@@ -162,6 +207,36 @@ export default {
                 // update the chart
                 this.add(msg)
             }
+        },
+        getXDisplayFormats (xAxisFormatType) {
+            const xDisplayFormats = {}
+            if (xAxisFormatType === 'auto' || !xAxisFormatType || xAxisFormatType === '') {
+                // If automatic format or no format (backwards compatibility for older nodes)
+                xDisplayFormats.millisecond = 'HH:mm:ss'
+            } else if (xAxisFormatType === 'custom') {
+                // For the custom format, the entered format is stored by the typedInput in its value field
+                xDisplayFormats.millisecond = this.props.xAxisFormat
+                xDisplayFormats.second = this.props.xAxisFormat
+                xDisplayFormats.minute = this.props.xAxisFormat
+                xDisplayFormats.hour = this.props.xAxisFormat
+                xDisplayFormats.day = this.props.xAxisFormat
+                xDisplayFormats.week = this.props.xAxisFormat
+                xDisplayFormats.month = this.props.xAxisFormat
+                xDisplayFormats.quarter = this.props.xAxisFormat
+                xDisplayFormats.year = this.props.xAxisFormat
+            } else {
+                // For all other formats, the format is stored by the typedInput in the type field
+                xDisplayFormats.millisecond = xAxisFormatType
+                xDisplayFormats.second = xAxisFormatType
+                xDisplayFormats.minute = xAxisFormatType
+                xDisplayFormats.hour = xAxisFormatType
+                xDisplayFormats.day = xAxisFormatType
+                xDisplayFormats.week = xAxisFormatType
+                xDisplayFormats.month = xAxisFormatType
+                xDisplayFormats.quarter = xAxisFormatType
+                xDisplayFormats.year = xAxisFormatType
+            }
+            return xDisplayFormats
         },
         clear () {
             this.chart.data.labels = []
@@ -363,5 +438,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

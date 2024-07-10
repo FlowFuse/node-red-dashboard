@@ -1,16 +1,8 @@
 <template>
     <v-combobox
-        v-model="value"
-        :disabled="!state.enabled"
-        :class="className"
-        :label="props.label"
-        :multiple="props.multiple"
-        :items="options"
-        item-title="label"
-        item-value="value"
-        variant="outlined"
-        hide-details="auto"
-        :error-messages="props.options?.length ? '' : 'No options available'"
+        v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
+        :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
+        hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
     />
 </template>
@@ -31,7 +23,13 @@ export default {
     data () {
         return {
             value: null,
-            items: null
+            items: null,
+            dynamic: {
+                label: null,
+                multiple: null,
+                chips: null,
+                clearable: null
+            }
         }
     },
     computed: {
@@ -58,6 +56,18 @@ export default {
             set (value) {
                 this.items = value
             }
+        },
+        multiple: function () {
+            return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
+        },
+        chips: function () {
+            return this.dynamic.chips === null ? this.props.chips : this.dynamic.chips
+        },
+        clearable: function () {
+            return this.dynamic.clearable === null ? this.props.clearable : this.dynamic.clearable
+        },
+        label: function () {
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         }
     },
     created () {
@@ -82,11 +92,14 @@ export default {
             // 1. add/replace the dropdown options (to support dynamic options e.g: nested dropdowns populated from a database)
             // 2. update the selected value(s)
 
-            const options = msg.options
+            // keep options out for backward compatibility
+            // Check for booth possible methods to setup the options
+            const options = msg.options || msg.ui_update?.options
             if (options) {
                 // 1. add/replace the dropdown options
-                // TODO: Error handling if options is not an array
-                this.items = options
+                if (Array.isArray(options)) {
+                    this.items = options
+                }
             }
 
             const payload = msg.payload
@@ -94,14 +107,23 @@ export default {
                 // 2. update the selected value(s)
                 this.select(payload)
             }
-            // additionally, we need to support both single and multi selection
-            // For now, we only support selecting which item(s) are selected, not updating the available options
-            // if the payload is an array, we assume it is a list of values to select
+
+            // update the UI with any other changes
+            const updates = msg.ui_update
+
+            if (updates) {
+                if (typeof updates.label !== 'undefined') {
+                    this.dynamic.label = updates.label
+                }
+                if (typeof updates.multiple !== 'undefined') {
+                    this.dynamic.multiple = updates.multiple
+                }
+            }
         },
         onChange () {
             // ensure our data binding with vuex store is updated
             const msg = this.messages[this.id] || {}
-            if (this.props.multiple) {
+            if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
                     return option.value
@@ -153,5 +175,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

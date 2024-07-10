@@ -1,8 +1,8 @@
 <template>
-    <label v-if="props.label" class="nrdb-ui-form-label">{{ props.label }}</label>
+    <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
     <v-form ref="form" v-model="isValid" validate-on="blur" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
-            <div v-for="row in props.options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
+            <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
                 <v-switch v-else-if="row.type === 'switch'" v-model="input[row.key]" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
                 <v-textarea
@@ -38,17 +38,28 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id)
-    },
     data () {
         return {
             input: {},
-            isValid: null
+            isValid: null,
+            dynamic: {
+                label: null,
+                options: null
+            }
         }
     },
     computed: {
-        ...mapState('data', ['messages'])
+        ...mapState('data', ['messages']),
+        label: function () {
+            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+        },
+        options: function () {
+            return this.dynamic.options !== null ? this.dynamic.options : this.props.options
+        }
+    },
+    created () {
+        // can't do this in setup as we are using custom onInput function that needs access to 'this'
+        useDataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     mounted () {
         this.reset()
@@ -77,6 +88,23 @@ export default {
             } else {
                 // no rules
                 return []
+            }
+        },
+        onInput (msg) {
+            if (msg.payload) {
+                const payload = msg.payload
+                for (const key in payload) {
+                    this.input[key] = payload[key]
+                }
+            }
+        },
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (typeof updates?.label !== 'undefined') {
+                this.dynamic.label = updates.label
+            }
+            if (typeof updates?.options !== 'undefined') {
+                this.dynamic.options = updates.options
             }
         }
     }

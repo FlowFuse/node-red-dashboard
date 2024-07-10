@@ -43,7 +43,13 @@ function addConnectionCredentials (RED, msg, conn, config) {
                 msg = plugin.hooks.onAddConnectionCredentials(conn, msg)
             }
         })
-        msg._client = { ...msg._client, ...{ socketId: conn.id } }
+        msg._client = {
+            ...msg._client,
+            ...{
+                socketId: conn.id,
+                socketIp: conn.handshake?.address
+            }
+        }
     }
     return msg
 }

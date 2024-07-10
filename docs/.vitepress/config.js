@@ -106,7 +106,9 @@ export default ({ mode }) => {
             { text: 'Dynamic Properties', link: '/user/dynamic-properties' },
             { text: 'Migration Guide', link: '/user/migration' },
             { text: 'UI Template Examples', link: '/user/template-examples' },
-            { text: 'Subflows', link: '/user/subflows' }
+            { text: 'Multi-Tenancy', link: '/user/multi-tenancy' },
+            { text: 'Subflows', link: '/user/subflows' },
+            { text: 'Installing on Mobile', link: '/user/pwa' }
           ]
         },
         {
@@ -134,6 +136,7 @@ export default ({ mode }) => {
                 { text: 'ui-chart', link: '/nodes/widgets/ui-chart' },
                 { text: 'ui-dropdown', link: '/nodes/widgets/ui-dropdown' },
                 { text: 'ui-event', link: '/nodes/widgets/ui-event' },
+                { text: 'ui-file-input', link: '/nodes/widgets/ui-file-input' },
                 { text: 'ui-form', link: '/nodes/widgets/ui-form' },
                 { text: 'ui-gauge', link: '/nodes/widgets/ui-gauge' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },

@@ -349,8 +349,8 @@ module.exports = function (RED) {
                 // we only send comms on the connection that matches that id
                 checks.push(msg._client?.socketId === conn.id)
             }
-            // if ANY check says this is valid - we send the msg
-            return !checks.length || checks.includes(true)
+            // ensure all checks validate sending this
+            return !checks.length || !checks.includes(false)
         }
 
         /**
@@ -653,6 +653,11 @@ module.exports = function (RED) {
         async function onLoad (conn, id, msg) {
             // console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
 
+            if (!id) {
+                console.error('No widget id provided for widget-load event')
+                return
+            }
+
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
             // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
             // Node-RED built nodes will be a random UUID
@@ -731,7 +736,8 @@ module.exports = function (RED) {
         }
 
         node.stores = {
-            data: datastore
+            data: datastore,
+            state: statestore
         }
 
         /**
@@ -950,8 +956,9 @@ module.exports = function (RED) {
                         if (hasProperty(msg, 'visible')) {
                             statestore.set(n, widgetNode, msg, 'visible', msg.visible)
                         }
-                        if (hasProperty(msg, 'class')) {
-                            statestore.set(n, widgetNode, msg, 'class', msg.class)
+                        if (hasProperty(msg, 'class') || (hasProperty(msg, 'ui_update') && hasProperty(msg.ui_update, 'class'))) {
+                            const cls = msg.class || msg.ui_update?.class
+                            statestore.set(n, widgetNode, msg, 'class', cls)
                         }
 
                         // run any node-specific handler defined in the Widget's component

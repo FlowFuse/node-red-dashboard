@@ -40,12 +40,12 @@
         {
             "property": "reload on refresh",
             "changes": "modified",
-            "notes": "Default behaviour is that, if there is a known state, it will atomatically be restored."
+            "notes": "Default behaviour is that, if there is a known state, it will automatically be restored."
         },
         {
             "property": "store output",
             "changes": "modified",
-            "notes": "If using the new in-buil;d 'send' function from within a template, this will store the output of the send function in the nodes state."
+            "notes": "If using the new built-in 'send' function from within a template, this will store the output of the send function in the nodes state."
         }
     ]
 }

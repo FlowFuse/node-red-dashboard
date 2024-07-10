@@ -1,11 +1,11 @@
 <script type="text/javascript">
     (async function () {
         // convert to i18 text
-        function c_ (x) {
+        function c_(x) {
             return RED._('@flowfuse/node-red-dashboard/ui-template:ui-template.' + x)
         }
         // TODO: move this to util.js for reuse & unit testing
-        function hasProperty (obj, prop) {
+        function hasProperty(obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
 
@@ -76,22 +76,53 @@
                 group: {
                     type: 'ui-group',
                     validate: function () {
-                        const valid = (this.templateScope === 'local' && !!this.group) || (this.templateScope !== 'local')
-                        return valid
+                        const tempScope = ($('#node-input-templateScope').val() !== undefined) ? $('#node-input-templateScope').val() : this.templateScope
+                        const groupVal = ($('#node-input-group').val() !== undefined) ? $('#node-input-group').val() : this.group
+
+                        if (tempScope !== 'local') {
+                            return true
+                        }
+
+                        if (tempScope === 'local') {
+                            if (!!groupVal && groupVal !== '_ADD_') {
+                                return true
+                            }
+                        }
+                        return false
                     }
                 }, // for when template is scoped to 'local' (default)
                 page: {
                     type: 'ui-page',
                     validate: function () {
-                        const valid = (this.templateScope === 'widget:page' && !!this.page) || (this.templateScope !== 'widget:page')
-                        return valid
+                        const tempScope = ($('#node-input-templateScope').val() !== undefined) ? $('#node-input-templateScope').val() : this.templateScope
+                        const pageVal = ($('#node-input-page').val() !== undefined) ? $('#node-input-page').val() : this.page
+
+                        if (tempScope !== 'widget:page' && tempScope !== 'page:style') {
+                            return true
+                        }
+                        if (tempScope === 'widget:page' || tempScope === 'page:style') {
+                            if (!!pageVal && pageVal !== '_ADD_') {
+                                return true
+                            }
+                        }
+                        return false
                     }
                 }, // for when template is scoped to 'page'
                 ui: {
                     type: 'ui-base',
                     validate: function () {
-                        const valid = (this.templateScope === 'widget:ui' && !!this.ui) || (this.templateScope !== 'widget:ui')
-                        return valid
+                        const tempScope = ($('#node-input-templateScope').val() !== undefined) ? $('#node-input-templateScope').val() : this.templateScope
+                        const uiVal = ($('#node-input-ui').val() !== undefined) ? $('#node-input-ui').val() : this.ui
+
+                        if (tempScope !== 'widget:ui' && tempScope !== 'site:style') {
+                            return true
+                        }
+                        if (tempScope === 'widget:ui' || tempScope === 'site:style') {
+                            if (!!uiVal && uiVal !== '_ADD_') {
+                                return true
+                            }
+                        }
+                        return false
                     }
                 }, // for when template is scoped to 'site'
                 name: { value: '' },
@@ -146,7 +177,7 @@
                 }
                 const that = this
                 const $templateScope = $('#node-input-templateScope')
-    
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -183,35 +214,36 @@
 
                 $templateScope.on('change', function () {
                     $('#template-row-group, #template-row-page, #template-row-ui, #template-row-class').hide()
+
                     switch ($templateScope.val()) {
-                    case 'site:style':
-                        $('#template-row-ui').show()
-                        that.editor.getSession().setMode('ace/mode/css')
-                        break
-                    case 'page:style':
-                        $('#template-row-page').show()
-                        that.editor.getSession().setMode('ace/mode/css')
-                        break
-                    case 'site:script':
-                        $('#template-row-ui').show()
-                        that.editor.getSession().setMode('ace/mode/javascript')
-                        break
-                    case 'page:script':
-                        $('#template-row-page').show()
-                        that.editor.getSession().setMode('ace/mode/javascript')
-                        break
-                    case 'widget:ui':
-                        $('#template-row-ui').show()
-                        that.editor.getSession().setMode('ace/mode/html')
-                        break
-                    case 'widget:page':
-                        $('#template-row-page').show()
-                        that.editor.getSession().setMode('ace/mode/html')
-                        break
-                    default:
-                        $('#template-row-group, #template-row-class').show()
-                        that.editor.getSession().setMode('ace/mode/html')
-                        break
+                        case 'site:style':
+                            $('#template-row-ui').show()
+                            that.editor.getSession().setMode('ace/mode/css')
+                            break
+                        case 'page:style':
+                            $('#template-row-page').show()
+                            that.editor.getSession().setMode('ace/mode/css')
+                            break
+                        case 'site:script':
+                            $('#template-row-ui').show()
+                            that.editor.getSession().setMode('ace/mode/javascript')
+                            break
+                        case 'page:script':
+                            $('#template-row-page').show()
+                            that.editor.getSession().setMode('ace/mode/javascript')
+                            break
+                        case 'widget:ui':
+                            $('#template-row-ui').show()
+                            that.editor.getSession().setMode('ace/mode/html')
+                            break
+                        case 'widget:page':
+                            $('#template-row-page').show()
+                            that.editor.getSession().setMode('ace/mode/html')
+                            break
+                        default:
+                            $('#template-row-group, #template-row-class').show()
+                            that.editor.getSession().setMode('ace/mode/html')
+                            break
                     }
                     resize.call(that)
                 })
@@ -300,7 +332,7 @@
             oneditresize: resize.bind(this)
         })
 
-        function resize (size) {
+        function resize(size) {
             const rows = $('#dialog-form>div:not(.node-text-editor-row)')
             let fixRowsHeight = 0
             for (let i = 0; i < rows.size(); i++) {

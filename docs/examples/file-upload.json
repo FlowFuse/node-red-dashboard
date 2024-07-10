@@ -1,0 +1,122 @@
+[
+    {
+        "id": "ac0d56d388a4daa4",
+        "type": "ui-template",
+        "z": "977143edb097b685",
+        "group": "44010f4b04014d29",
+        "page": "",
+        "ui": "",
+        "name": "Binary File Upload",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n    <!-- Card for uploading binary file -->\n    <v-card raised color=\"white\">\n        <!-- Card Title -->\n        <v-card-title>Upload binary file to Node-Red</v-card-title>\n        <br>\n        <v-card-text>\n            <!-- File Input -->\n            <v-file-input label=\"Click here to select a file\" show-size v-model=\"uploadFile\">\n            </v-file-input>\n            <!-- Progress Indicator -->\n            <div>Progress: {{ progress }} bytes loaded</div>\n        </v-card-text>\n        <v-card-actions>\n            <v-spacer></v-spacer>\n            <!-- Upload Button -->\n            <v-btn right @click=\"startUpload\">Upload File</v-btn>\n        </v-card-actions>\n    </v-card>\n</template>\n\n<script>\n    export default {\n        data() {\n            return {\n                uploadFile: null, // Holds the selected file\n                progress: 0 // Progress indicator for file upload\n            }\n        },\n        methods: {\n            // Method triggered when Upload File button is clicked\n            startUpload() {\n                // Check if a file is selected\n                if (!this.uploadFile) {\n                    console.warn('No file selected');\n                    return;\n                }\n\n                // Log the selected file information to console\n                console.log('File selected:');\n                console.log(this.uploadFile);\n\n                // Create a FileReader instance to read the file\n                const reader = new FileReader();\n\n                // When the file is read, send it to Node-RED\n                reader.onload = () => {\n                    // Prepare the payload to send\n                    const payload = {\n                        topic: 'upload', // Topic for Node-RED\n                        payload: this.uploadFile, // File content\n                        file: {\n                            name: this.uploadFile.name, // File name\n                            size: this.uploadFile.size, // File size\n                            type: this.uploadFile.type // File type\n                        }\n                    };\n                    \n                    // Send the payload to Node-RED (assuming 'send' method is defined)\n                    this.send(payload);\n                };\n\n                // Track progress of file reading\n                reader.onprogress = (event) => {\n                    this.progress = event.loaded; // Update progress\n                };\n\n                // Read the file as an ArrayBuffer\n                reader.readAsArrayBuffer(this.uploadFile);\n            }\n        },\n    }\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "7c2cc0e98edc2535"
+            ]
+        ]
+    },
+    {
+        "id": "df9661cfece5ac80",
+        "type": "debug",
+        "z": "977143edb097b685",
+        "name": "debug 365",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "7c2cc0e98edc2535",
+        "type": "function",
+        "z": "977143edb097b685",
+        "name": "buffer2string",
+        "func": "msg.payload = msg.payload.toString()\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 280,
+        "wires": [
+            [
+                "df9661cfece5ac80"
+            ]
+        ]
+    },
+    {
+        "id": "44010f4b04014d29",
+        "type": "ui-group",
+        "name": "Binary Upload",
+        "page": "dd8d2662278f4f72",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dd8d2662278f4f72",
+        "type": "ui-page",
+        "name": "Data Entry New",
+        "ui": "cb79bc4520925e32",
+        "path": "/entry",
+        "icon": "note-multiple",
+        "layout": "grid",
+        "theme": "0d92c765bfad87e6",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "cb79bc4520925e32",
+        "type": "ui-base",
+        "name": "My UI",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false
+    },
+    {
+        "id": "0d92c765bfad87e6",
+        "type": "ui-theme",
+        "name": "Basic Blue Theme",
+        "colors": {
+            "surface": "#4d58ff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

@@ -85,3 +85,12 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 ![Examples of some Tile Gauges](/images/node-examples/ui-gauge-tiles.png "Examples of some Tile Gauges"){data-zoomable}
 *Examples of some Tile Gauges*
 
+## Overriding CSS
+
+The gauge can be styled further by adding custom CSS to the `ui_template` node. Some useful classes that are available for styling include:
+
+- `.nrdb-ui-gauge-value span` - The value in the middle of the gauge
+- `.nrdb-ui-gauge-value label` - The unit label
+- `.nrdb-ui-gauge-value i` - The icon
+- `.nrdb-ui-gauge-icon-only i` - Available when a gauge has an icon but no "unit" label
+- `.nrdb-ui-gauge #limits` - The containing `<g>` element that wraps min/max `<text>` elements

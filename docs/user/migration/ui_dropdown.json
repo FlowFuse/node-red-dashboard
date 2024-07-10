@@ -1,6 +1,5 @@
 {
     "node": "ui_dropdown",
-    "description": "Dropdown",
     "properties": [
         {
             "property": "name",
@@ -29,8 +28,8 @@
         },
         {
             "property": "placeholder",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/386' target='_blank'>Issue #386</a>"
+            "changes": "merged",
+            "notes": "Combined with 'label' property in new design"
         },
         {
             "property": "options",

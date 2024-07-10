@@ -1,3 +1,5 @@
+const statestore = require('../store/state.js')
+
 module.exports = function (RED) {
     function ButtonGroupNode (config) {
         // create node in Node-RED
@@ -8,7 +10,22 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const evts = {
-            onChange: true
+            onChange: true,
+            beforeSend: function (msg) {
+                if (msg.ui_update) {
+                    const update = msg.ui_update
+                    console.log(update)
+                    if (typeof update.options !== 'undefined') {
+                        // dynamically set "options" property
+                        statestore.set(group.getBase(), node, msg, 'options', update.options)
+                    }
+                    if (typeof update.label !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'label', update.label)
+                    }
+                }
+                return msg
+            }
         }
 
         // loop over the options and ensure we've got the correct types for each option

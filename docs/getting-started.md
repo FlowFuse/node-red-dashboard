@@ -15,6 +15,12 @@ description: Kickstart your Node-RED Dashboard 2.0 journey with this getting sta
 
 # Getting Started
 
+## About
+
+Welcome to the documentation for the Node-RED Dashboard 2.0, the successor to the original, and very popular, Node-RED Dashboard.
+
+This project was formed by FlowFuse, as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has been [officially deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). You can read our full statement about _why_ we're building Dashboard 2.0 [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/?_gl=1*cckr5u*_gcl_au*MTAzMTA0MzY1Ni4xNzE2MzY2NTAz).
+
 ## Installation
 
 [FlowFuse](https://flowfuse.com)'s Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
@@ -102,7 +108,7 @@ Built into the framework of the UI is a side navigation bar, along with the top,
 There are two core Design Patterns that are possible when building with Dashboard 2.0:
 
 - **Single Source of Truth:** All users of your Dashboard will see the same data. This is useful for industrial IoT or Home Automation applications.
-- **Client-Driven Data:** Data shown in a particular widget is unique to a given client/session/user. This represents a more traditional web application, where each user has their own session and associated data.
+- **Multi Tenancy:** Data shown in a particular widget is unique to a given client/session/user. This represents a more traditional web application, where each user has their own session and associated data.
 
 It's worth noting that these two patterns can be mixed and matched within a single Dashboard 2.0 application, shown [later](#example).
 
@@ -117,10 +123,10 @@ When a user goes to visit a Dashboard, the widgets will load their respective st
 
 An example of this is that if you have interactive elements, e.g. a slider linked to a chart, then one user moving the slider will draw data to the chart of every other user's Dashboards too.
 
-### Client-Driven Data
+### Multi Tenancy
 
-![Client-Driven Data](./assets/images/design-pattern-client.png){data-zoomable}
-_Example workflow to demonstrate the "Client-Driven Data" design pattern._
+![Multi Tenancy](./assets/images/design-pattern-client.png){data-zoomable}
+_Example workflow to demonstrate the "Multi Tenancy" design pattern._
 
 In Dashboard 2.0 we can configure a given node type to ["Accept Client Data"](/user/sidebar.html#client-data) from the sidebar:
 

@@ -109,7 +109,9 @@
         "x": 360,
         "y": 100,
         "wires": [
-            ["test-helper"]
+            [
+                "test-helper"
+            ]
         ]
     },
     {
@@ -128,6 +130,204 @@
         "y": 100,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-label",
+        "type": "ui-button",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "Set Dynamic Label",
+        "label": "Set Dynamic Label",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-set-properties"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-set-properties",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Slider Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-min",
+        "type": "ui-button",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "Set Min",
+        "label": "Set Min",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-set-property-min"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-set-property-min",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.min",
+                "pt": "msg",
+                "to": "10",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-max",
+        "type": "ui-button",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "Set Max",
+        "label": "Set Max",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-set-property-max"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-set-property-max",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.max",
+                "pt": "msg",
+                "to": "50",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
         ]
     }
 ]

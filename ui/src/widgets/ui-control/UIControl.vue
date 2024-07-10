@@ -198,6 +198,11 @@ export default {
                     })
                 }
             }
+
+            if ('url' in payload) {
+                // we are setting the url
+                window.location.href = payload.url
+            }
         })
     },
     unmounted () {

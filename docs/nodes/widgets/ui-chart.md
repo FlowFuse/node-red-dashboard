@@ -13,11 +13,19 @@ props:
     Point Shape: Define the shape of the point shown in Scatter & Line charts.
     Point Radius: Define the radius (in pixels) of each point rendered onto a Scatter or Line chart.
     X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
+    X-Axis Format: <code>HH:mm:ss</code> | <code>HH:mm</code> | <code>YYYY-MM-DD</code> | <code>DD/MM</code> | <code>dd HH:mm</code> | <code>Custom</code> | <code>Auto</code>
+        Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
+        See <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">here</a> for an overview of all available Luxon tokens.
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
         <b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</br>
         <b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.
+    Text Color: Option to override Chart.Js default color for text.
+        At moment overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
+        It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Text Colors</code>
+    Grid Line Color: Option to override Chart.Js default color for <code>Grid Lines</code> and <code>Axis Border</code>.</br>
+        It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Grid Colors</code>
 dynamic:
     Class:
         payload: msg.class
@@ -26,7 +34,18 @@ dynamic:
 
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
+    
+    import { ref } from 'vue'
+    import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
+    import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
+
+    const examples = ref({
+      'custom-chart-line': ExampleCustomChartLine,
+      'custom-chart-polar': ExampleCustomChartPolar
+    })
 </script>
+
 
 # Chart `ui-chart`
 
@@ -427,3 +446,255 @@ const msg = {
 ```
 
 This would render two bars, one labelled `value` with a value of `34`, and one labelled `nested.value` with a value of `12`.
+
+## Building Custom Charts
+
+ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
+
+Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
+
+### Example: Static Data
+
+![Example of a static 2D bar chart](/images/node-examples/ui-template-chartjs-example-1.png "Example of a static 2D bar chart"){data-zoomable}
+
+Here here is the template code that will render this bar chart:
+
+```html
+<template>
+    <canvas ref="chart" />
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    export default {
+        mounted() {
+            // code here when the component is first loaded
+            let interval = setInterval(() => {
+                if (window.Chart) {
+                    // Babylon.js is loaded, so we can now use it
+                    clearInterval(interval);
+                    this.draw()
+                }
+            }, 100);
+        },
+        methods: {
+            draw () {
+                const ctx = this.$refs.chart
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+</script>
+```
+
+### Example: Plotting Incoming Data
+
+It's unlikely, as per the first example, we just want to render static data - this is Node-RED after all. So as a quick example, we can also wire this example to a `ui-slider` for a quick demo, here's a flow that can get you started:
+
+<FlowViewer :flow="examples['custom-chart-line']" height="200px"/>
+
+and what it'll look like when rendered to the Dashboard:
+
+![Example of a line chart plotting incoming data](/images/node-examples/ui-template-chartjs-example-2.png "Example of a line chart plotting incoming data"){data-zoomable}
+
+Taking a deep-dive into the contents of the `ui-template` for this chart, we can see:
+
+```html
+<template>
+    <canvas ref="chart" />
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    export default {
+        mounted() {
+            // register a listener for incoming data
+            this.$socket.on('msg-input:' + this.id, this.onInput)
+
+            // check with ChartJS has loaded
+            let interval = setInterval(() => {
+                if (window.Chart) {
+                    // clear the check for ChartJS
+                    clearInterval(interval);
+                    // draw our initial chart
+                    this.draw()
+                }
+            }, 100);
+        },
+        methods: {
+            draw () {
+                // get reference to the <canvas /> element
+                const ctx = this.$refs.chart
+                
+                // Render the chart
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: "My Label",  // label for the single line we'll render
+                            data: []            // start with no data
+                        }]
+                    },
+                    options: {
+                        animation: false, // don't run the animation for incoming data
+                        responsive: true, // ensure we auto-resize the content
+                        scales: {
+                            x: {
+                                type: 'time' // in this example, we're rendering timestamps
+                            }
+                        },
+                        parsing: {
+                            xAxisKey: 'time', // the property to render on the x-axis
+                            yAxisKey: 'value' // the property to render on the y-axis
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            }
+                        }   
+                    },
+                });
+                // make this available to all elements of the component
+                this.chart = chart
+            },
+            onInput (msg) {
+                // add a new data point ot our existing dataset
+                this.chart.data.datasets[0].data.push({
+                    time: (new Date()).getTime(),
+                    value: msg.payload
+                }) 
+                // ensure the chart re-renders
+                this.chart.update()      
+            }
+        }
+    }
+</script>
+```
+
+### Example: Categorising Data
+
+Let's take a more complex example, where we can render a chart type that we don't _currently_ support in core Dashboard, a Polar Area Chart.
+
+![Example of a bar chart categorising incoming data](/images/node-examples/ui-template-chartjs-example-3.png "Example of a bar chart categorising incoming data"){data-zoomable}
+
+
+This example is adapted from [this example](https://www.chartjs.org/docs/latest/samples/other-charts/polar-area-center-labels.html#polar-area-centered-point-labels) from the ChartJS documentation
+
+In this example, we wire multiple `ui-sliders`, each defining a `msg.topic` of a different color, into our custom chart:
+
+<FlowViewer :flow="examples['custom-chart-polar']" height="250px"/>
+
+A deep-dive into the contents of the `ui-template` shows:
+
+```html
+<template>
+    <canvas ref="chart" />
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    export default {
+        mounted() {
+            // register a listener for incoming data
+            this.$socket.on('msg-input:' + this.id, this.onInput)
+
+            // code here when the component is first loaded
+            let interval = setInterval(() => {
+                if (window.Chart) {
+                    // Babylon.js is loaded, so we can now use it
+                    clearInterval(interval);
+                    this.draw()
+                }
+            }, 100);
+        },
+        methods: {
+            draw () {
+                const ctx = this.$refs.chart
+                const data = {
+                    labels: [],
+                    datasets: [{
+                        label: 'Colors',
+                        data: [],
+                        backgroundColor: []
+                    }]
+                }
+                
+                // Render the chart
+                const chart = new Chart(ctx, {
+                    type: 'polarArea',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            r: {
+                                pointLabels: {
+                                    display: true,
+                                    centerPointLabels: true,
+                                    font: {
+                                        size: 18
+                                    }
+                                }
+                            }
+                            },
+                            plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Chart.js Polar Area Chart With Centered Point Labels'
+                            }
+                        }
+                    },
+                });
+                this.chart = chart
+            },
+            onInput (msg) {
+                // in this example, our topics will be colors
+                const color = msg.topic
+
+                // have we seen this color before?
+                const index = this.chart.data.labels.indexOf(color)
+                
+                if (index === -1) {
+                    console.log('new color', color)
+                    // add new dataset for this topic
+                    this.chart.data.labels.push(color)
+                    this.chart.data.datasets[0].data.push(msg.payload)
+                    this.chart.data.datasets[0].backgroundColor.push(color)
+                } else {
+                    // we've already got data for this color, update the value
+                    this.chart.data.datasets[0].data[index] = msg.payload
+                }
+
+                // ensure the chart re-renders
+                this.chart.update()      
+            }
+        }
+    }
+</script>
+```

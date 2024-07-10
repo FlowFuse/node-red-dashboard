@@ -1,0 +1,18 @@
+<script type="text/html" data-help-name="ui-file-input">
+    <p>
+        The file input node will provide a file select widget, allowing users to upload files to Node-RED.
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Label <span class="property-type">string</span></dt>
+        <dd>The text shown to the user, explaining what the user should upload.</dd>
+        <dt>Icon <span class="property-type">string</span></dt>
+        <dd>Defaults to "paperclip". The icon shown to the left of the input field. See the full list of icons <a href="https://pictogrammers.com/library/mdi/" target="_blank">here</a>.</dd>
+        <dt>Accept <span class="property-type">string</span></dt>
+        <dd>String representation of the "allow" file type selectors. See full list of options <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers" target="_blank">here</a>.</dd>
+        <dt>Multiple <span class="property-type">boolean</span></dt>
+        <dd>Allow end-users to upload multiple files at once. Each file will be sent as a unique message.</dd>        
+    </dl>
+    <h3>Output</h3>
+    <p><code>msg.payload</code> will contain a file buffer, and <code>msg.file</code> will provide meta data about the file itself.</p>
+  </script>

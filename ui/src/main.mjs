@@ -57,6 +57,16 @@ const vuetify = createVuetify({
     }
 })
 
+const host = new URL(window.location.href)
+
+function forcePageReload (err) {
+    console.log('Reloading page:', err)
+    console.log('redirecting to:', window.location.origin + '/dashboard')
+
+    // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
+    window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
+}
+
 /*
  * Configure SocketIO Client to Interact with Node-RED
  */
@@ -66,6 +76,21 @@ const vuetify = createVuetify({
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
     .then(async (response) => {
+        switch (true) {
+        case !response.ok && response.status === 401:
+            forcePageReload('Unauthenticated')
+            return
+        case !response.ok:
+            console.error('Failed to fetch setup data:', response)
+            return
+        case host.origin !== new URL(response.url).origin:
+            console.log('Following redirect:', response.url)
+            window.location.replace(response.url)
+            return
+        default:
+            break
+        }
+
         const url = new URL(response.url)
         const basePath = url.pathname.replace('/_setup', '')
 
@@ -83,10 +108,10 @@ fetch('_setup')
         store.commit('setup/set', setup)
 
         let disconnected = false
-        let disconnectedAt = null
+        let retryCount = 0 // number of reconnection attempts made
 
         let reconnectTO = null
-        const MAX_TIMER = 300000 // 5 minutes
+        const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
 
         const socket = io({
             ...setup.socketio,
@@ -96,7 +121,7 @@ fetch('_setup')
         // handle final disconnection
         socket.on('disconnect', (reason) => {
             if (!disconnected) {
-                disconnectedAt = new Date()
+                retryCount = 0
                 disconnected = true
             }
             // tell the user we're trying to connect
@@ -125,22 +150,36 @@ fetch('_setup')
         })
 
         socket.on('connect_error', (err) => {
-            console.error('SIO connect error:', err, err.data)
+            console.error('SIO connect error:', err, `err: ${JSON.stringify(err)}`)
+            if (err?.code === 'parser error') {
+                // There has been a 'parser error' during the attempt to connect. This means that socket.io
+                // does not like the response from the server from the attempt to connect.
+                // This happens if there is a proxy server in front of node red that has redirected to
+                // a login page. There may also be other situations under which this error occurs, but whatever the
+                // cause it doesn't seem that we can do much other than force a reload.
+                forcePageReload('parser error')
+            }
         })
 
-        // default interval - every 5 seconds
-        function reconnect (interval = 5000) {
+        // default interval - every 2.5 seconds
+        function reconnect (interval = 2500) {
             if (disconnected) {
                 socket.connect()
-                const now = new Date()
-                if (now - disconnectedAt > 60000) {
+                if (retryCount >= 14) {
                     // trying for over 1 minute
                     interval = 30000 // interval at 30 seconds
+                } else if (retryCount >= 4) {
+                    // trying for over 10 seconds
+                    interval = 5000 // interval at 5 seconds
                 }
-                // if still within our maximum timer
-                if (now - disconnectedAt < MAX_TIMER) {
+                retryCount++
+                // if still within our maximum retry count
+                if (retryCount <= MAX_RETRIES) {
                     // check for a connection again in <interval> milliseconds
                     reconnectTO = setTimeout(reconnect, interval)
+                } else {
+                    // we have been retrying for 5 minutes so give up and reload the page
+                    forcePageReload('Too many retries')
                 }
             }
         }
@@ -166,20 +205,8 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        if (err instanceof TypeError) {
-            if (err.message === 'Failed to fetch') {
-                console.log('auth error:', err)
-                console.log('redirecting to:', window.location.origin + '/dashboard')
-
-                // window.location.replace(window.location.origin + '/dashboard') //Original, seems to have no issues with Edge and Chrome on Windows, doesn't work on Android (Not tested on Linux browser)
-                // window.location.href = window.location.origin + window.location.pathname + window.location.search + (window.location.search ? '&' : '?') + 'reloadTime=' + Date.now().toString() + window.location.hash; // Also works on Edge + Chrome on windows, doesn't work on android
-
-                // Reloading dashboard without using cache by apending a cache-busting string to fully reload page to allow redirecting to auth
-                window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
-            } else {
-                // handle general Type errors here
-                console.error('An error occurred:', err)
-            }
+        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+            forcePageReload(err)
         } else {
             // handle general errors here
             console.error('An error occurred:', err)

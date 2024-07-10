@@ -32,6 +32,7 @@ describe('ui-text-input node', function () {
             group: 'config-ui-group',
             name: '',
             label: 'type: text',
+            tooltip: 'some tooltip',
             order: 0,
             width: 0,
             height: 0,
@@ -81,6 +82,9 @@ describe('ui-text-input node', function () {
         base.should.have.property('ui')
         base.ui.should.have.property('widgets')
         base.ui.widgets.has('node-ui-text-input').should.be.true()
+
+        const widget = base.ui.widgets.get('node-ui-text-input')
+        widget.props.should.have.property('tooltip', 'some tooltip')
     })
 
     it('should set topic on any messages emitted from this node', async function () {
