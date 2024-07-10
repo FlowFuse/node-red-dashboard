@@ -39,7 +39,8 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 className: { value: '' },
-                typeIsVselect: { value: false }
+                // This field controls if the used component is going to be a `v-combox` or a `v-select`, `v-combox` allows typing and filtering possible values
+                typeIsComboBox: { value: true }
             },
             inputs: 1,
             outputs: 1,
@@ -57,8 +58,8 @@
                 if (this.clearable === undefined) {
                     $('#node-input-clearable').prop('checked', false)
                 }  
-                if (this.typeIsVselect === undefined) {
-                    $('#node-input-typeIsVselect').prop('checked', false)
+                if (this.typeIsComboBox === undefined) {
+                    $('#node-input-typeIsComboBox').prop('checked', true)
                 }                            
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -234,15 +235,8 @@
         <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>   
     <div class="form-row">
-        <label style="width:auto" for="node-input-typeIsVselect"><i class="fa fa-pencil-square"></i> Use <code>v-select</code> instead of <code>v-combobox</code> </label>
-        <input type="checkbox" checked id="node-input-typeIsVselect" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
-       <a
-        data-html="true"
-        title="Option 'v-combobox' component supports write (typing) new values and 'v-select' does not. Booth allow typing to filter possible result match."
-        class="red-ui-button ui-node-popover-title"
-        style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
-        <i style="font-family: ui-serif;">fx</i>
-        </a>
+        <label style="width:auto" for="node-input-typeIsComboBox"><i class="fa fa-pencil-square"></i> Allow Search </label>
+        <input type="checkbox" checked id="node-input-typeIsComboBox" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
     </div>  
     <div class="form-row">

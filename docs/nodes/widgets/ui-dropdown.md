@@ -18,8 +18,8 @@ props:
     Clearable:
         description: Clear selection with button.
         dynamic: false
-    Use v-select:
-        description: Use <code>v-select</code> component. Specifies that the list is displayed by clicking the down arrow and that the text portion is not editable. This means that the user cannot enter a new value. Only values already in the list can be selected. Allows typing to filter possible results.         
+    Allow Search:
+        description: Allows user to type a new value, filtering the list of possible values to choose.         
 dynamic:
     Label:
         payload: msg.ui_update.label

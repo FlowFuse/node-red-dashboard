@@ -1,8 +1,8 @@
 <template>
     <v-combobox
-        v-if="isvSelect !== true" v-model="value" :disabled="!state.enabled" :class="className" :label="label"
+        v-if="typeIsComboBox === true" v-model="value" :disabled="!state.enabled" :class="className" :label="label"
         :multiple="multiple" :chips="chips" :clearable="clearable" :items="options" item-title="label"
-        item-value="value" variant="outlined" hide-details="auto"
+        item-value="value" variant="outlined" hide-details="auto" auto-select-first
         :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
     />
     <v-select
@@ -75,8 +75,8 @@ export default {
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
         },
-        isvSelect: function () {
-            return this.props.typeIsVselect || false
+        typeIsComboBox: function () {
+            return this.props.typeIsComboBox ?? true
         }
     },
     created () {
@@ -135,14 +135,14 @@ export default {
             if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
-                    if (this.props.typeIsVselect) {
+                    if (this.props.typeIsComboBox === false) {
                         return option
                     }
                     return option.value
                 })
             } else if (this.value) {
                 // return a single value
-                if (this.props.typeIsVselect) {
+                if (this.props.typeIsComboBox === false) {
                     msg.payload = this.value
                 } else {
                     msg.payload = this.value.value
