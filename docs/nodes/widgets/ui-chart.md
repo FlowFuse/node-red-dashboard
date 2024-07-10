@@ -451,7 +451,7 @@ This would render two bars, one labelled `value` with a value of `34`, and one l
 
 ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
 
-Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](http://localhost:5173/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
+Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
 
 ### Example: Static Data
 
