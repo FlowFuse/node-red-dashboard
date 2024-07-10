@@ -37,7 +37,12 @@
                 sendOnDelay: { value: false },
                 sendOnBlur: { value: true },
                 sendOnEnter: { value: true },
-                className: { value: '' }
+                className: { value: '' },
+                clearable: { value: false },
+                sendOnClear: { value: false },
+                icon: { value: '' },
+                iconPosition: { value: 'left' },
+                iconInnerPosition: { value: 'inside' }
             },
             inputs: 1,
             outputs: 1,
@@ -87,6 +92,21 @@
                         $('#node-input-container-sendOnEnter').show()
                     }
                 })
+
+                if (this.clearable === undefined) {
+                    $('#node-input-clearable').prop('checked', false)
+                }
+                if (this.sendOnClear === undefined) {
+                    $('#node-input-sendOnClear').prop('checked', false)
+                }
+
+                if (!this.iconPosition) {
+                    $('#node-input-iconPosition').val('left')
+                }
+
+                if (!this.iconInnerPosition) {
+                    $('#node-input-iconInnerPosition').val('inside')
+                }
             },
             label: function () {
                 return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
@@ -110,6 +130,20 @@
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row form-row-flex">
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> Icon</label>
+        <div style="display: flex; align-items: center; flex-grow: 1; padding-right: calc(30% - 104px); gap: 12px;">
+            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" placeholder="(optional) e.g. 'gesture-tap'">
+            <select id="node-input-iconPosition" style="width: 75px;">
+                <option value="left"> Left</option>
+                <option value="right"> Right</option>
+            </select>
+            <select id="node-input-iconInnerPosition" style="width: 75px;">
+                <option value="inside"> In</option>
+                <option value="outside"> Out</option>
+            </select>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
@@ -153,6 +187,10 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
     <div class="form-row">
+        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear text input with button </label>
+        <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+    </div>    
+    <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
     </div>
     <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
@@ -170,6 +208,10 @@
     <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
         <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
+    </div>
+    <div id="node-input-container-sendOnClear" class="form-row" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-sendOnClear" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnClear"> Clear Button</label>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>

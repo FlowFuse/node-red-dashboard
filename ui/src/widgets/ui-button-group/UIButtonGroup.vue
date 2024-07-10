@@ -5,7 +5,7 @@
         </label>
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
-                <template v-if="option.icon && option.label !== ''" #prepend>
+                <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
                 </template>
                 <v-icon v-if="option.icon && !option.label" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" size="x-large" />
