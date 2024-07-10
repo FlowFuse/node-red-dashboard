@@ -23,8 +23,12 @@ export default {
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value: function () {
-            console.log(this.messages[this.id]?.payload || 'No Message Received')
-            return this.messages[this.id]?.payload || 'No Message Received'
+            const m = this.messages[this.id] || {}
+            if (Object.prototype.hasOwnProperty.call(m, 'payload')) {
+                return m.payload
+            }
+            return ''
+            // return this.messages[this.id]?.payload || 'No Message Received'
         }
     }
 }
