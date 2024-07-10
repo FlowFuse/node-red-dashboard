@@ -7,7 +7,7 @@ props:
         description: The text shown to the left of the dropdown.
         dynamic: true
     Options:
-        description: A list of the options available in the dropdown. Each row defines a `label` (shown in the dropdown) and `value` (emitted on selection) property.
+        description: A list of the options available in the dropdown. Each row defines a 'label' (shown in the dropdown) and `value` (emitted on selection) property.
         dynamic: true
     Allow Multiple:
         description: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
@@ -17,7 +17,9 @@ props:
         dynamic: false        
     Clearable:
         description: Clear selection with button.
-        dynamic: false        
+        dynamic: false
+    Use v-select:
+        description: Use <code>v-select</code> component. Specifies that the list is displayed by clicking the down arrow and that the text portion is not editable. This means that the user cannot enter a new value. Only values already in the list can be selected. Allows typing to filter possible results.         
 dynamic:
     Label:
         payload: msg.ui_update.label
