@@ -85,11 +85,23 @@ When accessing the `msg` variable inside a `<script />` tag, you need to prefix 
 
 ***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
 
+#### Accessing Node-RED Global/Flow Context
+
+We are unable to send the full `flow`/`global` context stores from Node-RED to the Dashboard UI, as such, the best practice here is to use a "Change" node prior to the `ui-template` node to assign a `msg.<property>` to the relevant value from the `flow.` or `global.` store:
+
+![Example of using a Change node to assign a value to `msg.payload`](/images/node-examples/change-flow-to-msg.png "Example of using a Change node to assign a value to `msg.payload`"){data-zoomable}
+_Example of using a Change node to assign a value to `msg.payload`._
+
 ### Built-in Functions
 
 We also offer some helper functions for the Node-RED integration too:
 
+#### Sending Data
+
 - `this.send` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
+
+#### Receiving Data
+
 - `this.$socket.on('msg-input:' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
 
 ### Example (Raw JavaScript)
