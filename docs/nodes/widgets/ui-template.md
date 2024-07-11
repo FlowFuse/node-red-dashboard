@@ -98,11 +98,39 @@ We also offer some helper functions for the Node-RED integration too:
 
 #### Sending Data
 
-- `this.send` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
+- `this.send(msg)` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
 
 #### Receiving Data
 
-- `this.$socket.on('msg-input:' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
+There are two ways of responding to messages received by your `ui-template` node:
+
+Option 1: 
+
+In VueJS, we can `watch` a variable for any changes, and react accordingly.
+
+As mentioned in the [Built-in Variables](#built-in-variables) section above, we have access to the `msg` variable in our `ui-template` node. We can watch this variable for any changes, and react accordingly:
+
+```js
+watch: {
+    msg: function () {
+        // do stuff with this.msg
+        // runs onLoad and onInput
+    }
+}
+```
+
+It's worth noting though, that whilst this will update when new messages are received, it _also_ updates when a widget first loads, and the latest `msg` is loaded to the widget.
+
+Option 2:
+
+We can alternatively add a custom socket listener to the `msg-input:<id>` event. This is useful if you want to listen to messages _only_ when they are received, and not when the widget first loads.
+
+```js
+// runs only onInput
+this.$socket.on('msg-input:' + this.id, (msg) = { ... })
+```
+
+This can be added into the widget's `mounted () { }` handler
 
 ### Example (Raw JavaScript)
 
