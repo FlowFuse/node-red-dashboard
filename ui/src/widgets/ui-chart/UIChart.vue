@@ -163,7 +163,6 @@ export default {
                 parsing
             }
         }
-        console.log(config)
         const chart = new Chart(el, config)
 
         // don't want chart to be reactive, so we can use shallowRef
@@ -240,7 +239,6 @@ export default {
             return xDisplayFormats
         },
         clear () {
-            console.log('clearing chart')
             this.chart.data.labels = []
             this.chart.data.datasets = []
             this.chart.update()
@@ -320,7 +318,6 @@ export default {
          * @param {*} datapoint
          */
         addToChart (datapoint, label) {
-            console.log('add to', label, datapoint)
             const xLabels = this.chart.data.labels // the x-axis categories
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
@@ -330,8 +327,6 @@ export default {
             }
 
             const sIndex = sLabels?.indexOf(label)
-
-            console.log(sLabels, 'sIndex', sIndex)
 
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
@@ -356,65 +351,7 @@ export default {
                     this.chart.data.datasets[sIndex].data.push(datapoint)
                 }
             }
-
-            console.log('chart data:', this.chart.data)
         },
-        /**
-         * Function to handle adding a data point to Bar Charts
-         * @param {*} payload
-         * @param {*} label
-         */
-        // addToBar (payload, label) {
-        //     label = label || ''
-        //     console.log(label, payload)
-        //     console.log(this.chart.data.labels)
-        //     // construct our datapoint
-        //     if (typeof payload === 'number') {
-        //         // is this series already a label in the chart?
-        //         if (this.chart.data.labels.includes(label)) {
-        //             // yes, so we need to find the index of this label
-        //             const index = this.chart.data.labels.indexOf(label)
-        //             // and update the data at this index
-        //             this.chart.data.datasets[0].data[index] = payload
-        //         } else {
-        //             // no, so we need to add new label and data point
-        //             if (!this.chart.data.datasets.length) {
-        //                 this.chart.data.datasets.push({
-        //                     data: [],
-        //                     backgroundColor: this.props.colors,
-        //                     borderColor: this.props.colors
-        //                 })
-        //             }
-        //             this.chart.data.datasets[0].data.push(payload)
-        //             this.chart.data.labels.push(label)
-        //         }
-        //     } else if (typeof payload === 'object') {
-        //         // have we seen this series of data before?
-        //         if (!this.chart.data.labels.includes(label)) {
-        //             // do we have any datasets already?
-        //             if (!this.chart.data.datasets.length) {
-        //                 this.chart.data.datasets.push({
-        //                     data: [],
-        //                     backgroundColor: this.props.colors,
-        //                     borderColor: this.props.colors
-        //                 })
-        //             }
-        //             this.chart.data.labels.push(label)
-        //         }
-        //         const index = this.chart.data.labels.indexOf(label)
-        //         // ChartJS supports objects for Bar Charts, as long as we have xAxisKey and yAxisKey set
-        //         // and update the data at this index
-        //         if (this.props.categoryType === 'json' && this.props.category.length > 0) {
-        //             // we would have computed these values server-side for multiple series defined
-        //             this.chart.data.datasets[0].data[index] = payload.y
-        //         } else {
-        //             this.chart.data.datasets[0].data[index] = payload
-        //         }
-        //     } else {
-        //         // only support numbers for now
-        //         console.log('Unsupported payload type for Bar Chart:', typeof payload)
-        //     }
-        // },
         limitDataSize () {
             let cutoff = null
             let points = null

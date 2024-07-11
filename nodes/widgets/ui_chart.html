@@ -51,9 +51,8 @@
                 : null
         }
 
-        function getSeriesTypes (node) {
-            console.log(node.xAxisType)
-            if (node.xAxisType === 'category') {
+        function getSeriesTypes (xAxisType) {
+            if (xAxisType === 'category') {
                 return ['msg', 'str', propertyType]
             } else {
                 return ['msg', 'str', 'json', propertyType]
@@ -171,7 +170,6 @@
                 // handle event when x axis type is changed
                 $('#node-input-xAxisType').on('change', (evt) => {
                     const value = $('#node-input-xAxisType').typedInput('value')
-                    this.xAxisType = value
 
                     if (value === 'time') {
                         $('#x-axis-format').show()
@@ -180,7 +178,7 @@
                     }
 
                     // update the series types allowed
-                    $('#node-input-category').typedInput('types', getSeriesTypes(this))
+                    $('#node-input-category').typedInput('types', getSeriesTypes(value))
                 })
 
                 $('#node-input-xAxisFormat').typedInput({
@@ -200,7 +198,7 @@
                 $('#node-input-category').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-categoryType'),
-                    types: getSeriesTypes(this)
+                    types: getSeriesTypes($('#node-input-xAxisType').typedInput('value'))
                 })
                 $('#node-input-xAxisProperty').typedInput({
                     default: propertyType.value,
@@ -289,7 +287,6 @@
                 })
 
                 // Stack/Group-By Options - convert from bool to string values for <select>
-                console.log('stack series:', this.stackSeries, typeof this.stackSeries)
                 if (this.stackSeries === true) {
                     $('#chart-input-stackSeries').val('true')
                 } else {
@@ -342,9 +339,7 @@
             },
             oneditsave: function () {
                 // Stack By - convert from string values to bool
-                console.log('stack series:', $('#chart-input-stackSeries').val())
                 this.stackSeries = $('#chart-input-stackSeries').val() === 'true'
-                console.log('stack series:', this.stackSeries, typeof this.stackSeries)
 
                 // Colors
                 const colors = []
