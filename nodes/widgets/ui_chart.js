@@ -33,60 +33,47 @@ module.exports = function (RED) {
                     series = getProperty(p, config.category)
                 }
 
-                if (config.chartType === 'line' || config.chartType === 'scatter') {
-                    // possible that we haven't received any x-data in the payload,
-                    // so let's make sure we append something
-
-                    // single point or array of data?
-                    if (Array.isArray(p)) {
-                        // array of data
-                        msg._datapoint = p.map((point) => {
-                            // series available on a msg by msg basis - ensure we check for each msg
-                            if (config.categoryType === 'property') {
-                                series = getProperty(point, config.category)
-                            }
-                            return addToLine(point, series)
-                        })
-                    } else {
-                        // single point
-                        if (config.categoryType === 'json') {
-                            // we can produce multiple datapoints from a single object/value here
-                            const points = []
-                            series.forEach((s) => {
-                                if (s in p) {
-                                    const datapoint = addToLine(p, s)
-                                    points.push(datapoint)
-                                }
-                            })
-                            msg._datapoint = points
-                        } else {
-                            msg._datapoint = addToLine(p, series)
+                // single point or array of data?
+                if (Array.isArray(p)) {
+                    // array of data
+                    msg._datapoint = p.map((point) => {
+                        // series available on a msg by msg basis - ensure we check for each msg
+                        if (config.categoryType === 'property') {
+                            series = getProperty(point, config.category)
                         }
-                    }
-                } else if (config.chartType === 'bar') {
-                    // single point or array of data?
-                    if (Array.isArray(p)) {
-                        // array of data
-                        msg._datapoint = p.map((point) => {
-                            if (config.categoryType === 'property') {
-                                series = getProperty(point, config.category)
+                        return addToChart(point, series)
+                    })
+                } else {
+                    // single point
+                    if (config.categoryType === 'json') {
+                        // we can produce multiple datapoints from a single object/value here
+                        const points = []
+                        series.forEach((s) => {
+                            if (s in p) {
+                                const datapoint = addToChart(p, s)
+                                points.push(datapoint)
                             }
-                            return addToBar(point, series)
                         })
+                        msg._datapoint = points
                     } else {
-                        // single point
-                        msg._datapoint = addToBar(p, series)
+                        msg._datapoint = addToChart(p, series)
                     }
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToLine (payload, series) {
+                function addToChart (payload, series) {
                     const datapoint = {}
+                    // we group/categorize data by "series"
                     datapoint.category = series
+
+                    // get our x value, if set
+                    const x = RED.util.evaluateNodeProperty(config.xAxisProperty, config.xAxisPropertyType, node, msg)
+                    console.log('x', x, typeof (x), config.xAxisProperty, typeof (config.xAxisProperty))
+
                     // construct our datapoint
                     if (typeof payload === 'number') {
-                        // just a number, assume we're plotting a time series
-                        datapoint.x = (new Date()).getTime()
+                        // do we have an x-property defined - if not, we're assuming time series
+                        datapoint.x = config.xAxisProperty !== '' ? x : (new Date()).getTime()
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
                         // may have been given an x/y object already
@@ -105,27 +92,6 @@ module.exports = function (RED) {
                             }
                         }
                         datapoint.x = x
-                        datapoint.y = y
-                    }
-                    return datapoint
-                }
-
-                // the only server-side computed var we need is the category for a Bar Chart
-                function addToBar (payload, series) {
-                    const datapoint = {}
-                    datapoint.category = series
-                    if (typeof payload === 'number') {
-                        datapoint.y = payload
-                    }
-                    if (Array.isArray(series)) {
-                        let y = null
-                        if (series.length > 1) {
-                            y = series.map((s) => {
-                                return getProperty(payload, s)
-                            })
-                        } else {
-                            y = getProperty(payload, series[0])
-                        }
                         datapoint.y = y
                     }
                     return datapoint

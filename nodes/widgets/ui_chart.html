@@ -62,7 +62,7 @@
                 categoryType: { value: 'msg' },
                 xAxisLabel: { value: '' },
                 xAxisProperty: { value: null },
-                xAxisPropertyType: { value: 'msg' },
+                xAxisPropertyType: { value: 'property' },
                 xAxisType: { value: 'time' },
                 xAxisFormat: { value: '' },
                 xAxisFormatType: { value: 'auto' },
@@ -71,6 +71,7 @@
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 action: { value: 'append' },
+                stackSeries: { value: false },
                 pointShape: { value: 'circle' },
                 pointRadius: { value: 4 },
                 showLegend: { value: true },
@@ -191,7 +192,7 @@
                 $('#node-input-xAxisProperty').typedInput({
                     default: propertyType.value,
                     typeField: $('#node-input-xAxisPropertyType'),
-                    types: [propertyType]
+                    types: ['msg', 'str', propertyType]
                 })
                 $('#node-input-yAxisProperty').typedInput({
                     default: propertyType.value,
@@ -236,8 +237,9 @@
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'time')
-                        // show x-axis property setting
-                        $('#node-container-xAxisProperty').show()
+                        // no concept of stacking in line/scatter charts
+                        $('#config-stackSeries').hide()
+
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
@@ -248,11 +250,13 @@
                             value: 'linear',
                             options: [
                                 { value: 'category', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
+                            // { value: 'time', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
+                            // { value: 'linear', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') }
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'category')
-                        // show x-axis property setting
-                        $('#node-container-xAxisProperty').hide()
+                        // sho the ability to control if content is stacked or not
+                        $('#config-stackSeries').show()
                         // hide x-axis limit options & points sizing
                         $('#x-axis-show').hide()
                         $('#point-radius-show').hide()
@@ -270,6 +274,14 @@
                         $('#node-container-yAxisProperty').show()
                     }
                 })
+
+                // Stack/Group-By Options - convert from bool to string values for <select>
+                console.log('stack series:', this.stackSeries, typeof this.stackSeries)
+                if (this.stackSeries === true) {
+                    $('#chart-input-stackSeries').val('true')
+                } else {
+                    $('#chart-input-stackSeries').val('false')
+                }
 
                 // Series Color Pickers
                 const setColor = function (id, value) {
@@ -316,6 +328,12 @@
                 }
             },
             oneditsave: function () {
+                // Stack By - convert from string values to bool
+                console.log('stack series:', $('#chart-input-stackSeries').val())
+                this.stackSeries = $('#chart-input-stackSeries').val() === 'true'
+                console.log('stack series:', this.stackSeries, typeof this.stackSeries)
+
+                // Colors
                 const colors = []
                 for (let i = 0; i < 9; i++) {
                     const color = $('#node-input-color' + (i + 1)).val()
@@ -392,6 +410,14 @@
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
     </div>
+    <div class="form-row" id="config-stackSeries">
+        <!-- do not use node-input here to prevent NR automatic binding -->
+        <label for="chart-input-stackSeries"><i class="fa fa-bookmark"></i> <span data-i18n="ui-chart.label.stackSeries"></span></label>
+        <select id="chart-input-stackSeries">
+            <option value="true" data-i18n="ui-chart.label.stackSeriesTrue"></option>
+            <option value="false" data-i18n="ui-chart.label.stackSeriesFalse"></option>
+        </select>
+    </div>
     <div class="form-row">
         <label for="node-input-action" data-i18n="ui-chart.label.action"></label></label>
         <select id="node-input-action">
@@ -462,6 +488,7 @@
             <div id="node-container-xAxisProperty" class="node-chart-property">
                 <label style="width: auto" for="node-input-xAxisProperty">X:</label>
                 <input style="flex-grow: 1" type="text" id="node-input-xAxisProperty" data-i18n="[placeholder]ui-chart.label.propertyPlaceholder">
+                <input type="hidden" id="node-input-xAxisPropertyType">
             </div>
             <div id="node-container-yAxisProperty" class="node-chart-property">
                 <label style="width: auto" for="node-input-yAxisProperty">Y:</label>

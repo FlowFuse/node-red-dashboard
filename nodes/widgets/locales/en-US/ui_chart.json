@@ -45,7 +45,7 @@
             "properties": "Properties",
             "series": "Series:",
             "key": "key:",
-            "propertyPlaceholder": "msg.payload[key] or msg.payload[n][key]",
+            "propertyPlaceholder": "property",
             "pointStyle": "Point Style",
             "pointShape": "Shape",
             "pointRadius": "Radius (px)",
@@ -63,7 +63,10 @@
             "textColor": "Text Color",
             "gridColor": "Grid Line Color",
             "setTextColorDefault": "Use ChartJs Default Text Colors",
-            "setGridColorDefault": "Use ChartJs Default Grid Colors" 
+            "setGridColorDefault": "Use ChartJs Default Grid Colors" ,
+            "stackSeries": "Group By",
+            "stackSeriesTrue": "Stacks",
+            "stackSeriesFalse": "Side-by-Side"
         }
     }
 }
