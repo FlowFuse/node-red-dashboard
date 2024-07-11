@@ -133,22 +133,7 @@ module.exports = function (RED) {
 
                     const maxPoints = parseInt(config.removeOlderPoints)
 
-                    if (config.xAxisType === 'category') {
-                        const _msg = datastore.get(node.id)
-
-                        // filters the ._msg array so that we keep just the latest msg with each category/series
-                        const seen = {}
-                        _msg.forEach((m, index) => {
-                            const series = m._datapoint.category
-                            // loop through and record the latest index seen for each topic/label
-                            seen[series] = index
-                        })
-                        const indices = Object.values(seen)
-                        datastore.save(base, node, _msg.filter((msg, index) => {
-                            // return only the msgs with the latest index for each topic/label
-                            return indices.includes(index)
-                        }))
-                    } else if (maxPoints && config.removeOlderPoints) {
+                    if (maxPoints && config.removeOlderPoints) {
                         // account for multiple lines?
                         // client-side does this for _each_ line
                         // remove older points
