@@ -53,32 +53,22 @@ export default {
         const el = this.$refs.chart
 
         // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
-        // based on chart type and options provided from Node-RED
         const parsing = {}
         if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
             parsing.xAxisKey = this.props.xAxisProperty
         }
-        // if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-        // } else if (this.props.categoryType !== 'json' && this.props.chartType === 'bar') {
-        //     if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
-        //         parsing.xAxisKey = this.props.xAxisProperty
-        //     } else {
-        //         parsing.xAxisKey = 'x'
-        //     }
-        // }
-
-        // do we need the "stacked" proprrty?
-        let stacked = false
-        if (this.props.stackSeries === true && this.props.chartType === 'bar') {
-            stacked = true
-        }
-
-        console.log('parsing', parsing)
 
         if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
             parsing.yAxisKey = this.props.yAxisProperty
         }
 
+        // do we need the "stacked" property?
+        let stacked = false
+        if (this.props.stackSeries === true && this.props.chartType === 'bar') {
+            stacked = true
+        }
+
+        // color options for text and grid
         let textColor = Chart.defaults.color
         let gridColor = Chart.defaults.borderColor
 
@@ -293,7 +283,7 @@ export default {
                 ...datapoint,
                 ...payload
             }
-            console.log(payload, datapoint)
+
             if (Array.isArray(label) && label.length > 0) {
                 // we have an array of series, meaning we plot multiple data points per data object
                 for (let i = 0; i < label.length; i++) {
@@ -335,7 +325,7 @@ export default {
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
             // make sure we have the relevant (x-axis) labels added to the chart too
-            if (!xLabels.includes(datapoint.x)) {
+            if (!xLabels.includes(datapoint.x) && this.props.xAxisType === 'category') {
                 xLabels.push(datapoint.x)
             }
 

@@ -38,6 +38,8 @@
 
 <script type="text/javascript">
     (function () {
+        const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
+
         function hexToRgb (hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
             return result
@@ -47,6 +49,15 @@
                     b: parseInt(result[3], 16)
                 }
                 : null
+        }
+
+        function getSeriesTypes (node) {
+            console.log(node.xAxisType)
+            if (node.xAxisType === 'category') {
+                return ['msg', 'str', propertyType]
+            } else {
+                return ['msg', 'str', 'json', propertyType]
+            }
         }
 
         RED.nodes.registerType('ui-chart', {
@@ -109,8 +120,6 @@
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
-                const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
-
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -162,12 +171,16 @@
                 // handle event when x axis type is changed
                 $('#node-input-xAxisType').on('change', (evt) => {
                     const value = $('#node-input-xAxisType').typedInput('value')
+                    this.xAxisType = value
 
                     if (value === 'time') {
                         $('#x-axis-format').show()
                     } else {
                         $('#x-axis-format').hide()
                     }
+
+                    // update the series types allowed
+                    $('#node-input-category').typedInput('types', getSeriesTypes(this))
                 })
 
                 $('#node-input-xAxisFormat').typedInput({
@@ -187,7 +200,7 @@
                 $('#node-input-category').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-categoryType'),
-                    types: ['msg', 'str', 'json', propertyType]
+                    types: getSeriesTypes(this)
                 })
                 $('#node-input-xAxisProperty').typedInput({
                     default: propertyType.value,
