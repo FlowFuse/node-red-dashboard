@@ -87,7 +87,7 @@ When accessing the `msg` variable inside a `<script />` tag, you need to prefix 
 
 #### Accessing Node-RED Global/Flow Context
 
-We are unable to send the full `flow`/`global` context stores from Node-RED to the Dashboard UI, as such, the best practice here is to use a "Change" node prior to the `ui-template` node to assign a `msg.<property>` to the relevant value from the `flow.` or `global.` store:
+The `flow`/`global` context stores are not available in the Dashboard UI, as such, the best practice here is to use a "Change" node prior to the `ui-template` node to assign a `msg.<property>` to the relevant value from the `flow.` or `global.` store:
 
 ![Example of using a Change node to assign a value to `msg.payload`](/images/node-examples/change-flow-to-msg.png "Example of using a Change node to assign a value to `msg.payload`"){data-zoomable}
 _Example of using a Change node to assign a value to `msg.payload`._
