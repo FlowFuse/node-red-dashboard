@@ -38,7 +38,7 @@
 
 <script type="text/javascript">
     (function () {
-        function hexToRgb(hex) {
+        function hexToRgb (hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
             return result
                 ? {
@@ -178,7 +178,7 @@
                         { value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
                         { value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
                         { value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
-                        { value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: "fa fa-font" },
+                        { value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: 'fa fa-font' },
                         { value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false }
                     ]
                 })
