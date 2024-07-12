@@ -37,10 +37,22 @@ dynamic:
     
     import { ref } from 'vue'
     import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleChartLineTimestamp from '../../examples/chart-line-timestamp.json'
+    import ExampleChartLineMultiple from '../../examples/chart-line-multiple.json'
+    import ExampleChartBarSWCharacters from '../../examples/chart-bar-sw-characters.json'
+    import ExampleChartBarFinance from '../../examples/chart-bar-finance-grouped.json'
+    import ExampleChartBarElection from '../../examples/chart-bar-election-grouped.json'
+    import ExampleChartScatter from '../../examples/chart-scatter-grouped.json'
     import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
     import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
 
     const examples = ref({
+      'chart-line-timestamp': ExampleChartLineTimestamp,
+      'chart-line-multiple': ExampleChartLineMultiple,
+      'chart-bar-sw-characters': ExampleChartBarSWCharacters,
+      'chart-bar-finance': ExampleChartBarFinance,
+      'chart-bar-election': ExampleChartBarElection,
+      'chart-scatter-grouped': ExampleChartScatter,
       'custom-chart-line': ExampleCustomChartLine,
       'custom-chart-polar': ExampleCustomChartPolar
     })
@@ -62,6 +74,190 @@ Provides configuration options to create the following chart types:
 ## Dynamic Properties
 
 <DynamicPropsTable/>
+
+## Building Charts
+
+In Node-RED Dashboard 2.0, the `ui-chart` offers a simple way to render data in a variety of chart types. The chart is configurable to tailor to your data. 
+
+To map your data to the chart, the most important properties to configure are:
+
+![Example keymapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example keymapping config for UI Chart"){data-zoomable}
+_Example keymapping config for UI Chart_
+
+- **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
+- **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
+- **Y**: Define where to read the value to plot on the y-axis. If left blank, the y-value will be read from `msg.payload` directly, and assume it to be a number.
+
+The next most important properties to configure are the "Chart Type" and "X-Axis Type".
+
+- **Chart Type**: Choose between a Line, Scatter, or Bar chart.
+- **X-Axis Type**: Choose between a "Timescale" (for time-based data), "Linear" (for numerical data), or "Categorical" (for non-numeric data). You'll notice that some x-axis types are only available for certain chart types.
+
+### Line Charts
+
+#### Timeseries Data
+
+<FlowViewer :flow="examples['chart-line-timestamp']" height="250px"/>
+
+In this example we wire a [Slider](./ui-slider.md) to our Chart to plot it's output over time:
+
+![Example of a Line Chart](/images/node-examples/ui-chart-line.png "Example of a Line Chart"){data-zoomable}
+*Example of a rendered line chart with a "time" x-axis.*
+
+A very common use case of Node-RED is to process timeseries data, such as sensor readings. In this case, you would set the following:
+
+| Property | Value |
+| - | - |
+| **Chart Type** | `Line` |
+| **X-Axis Type** | `Timescale` |
+
+The value for the `x` property would then be one of two things:
+
+- If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the current date/time.
+- If your data is an object, you can provide the key of the timestamp in your data, e.g. `{"myTime": 1234567890}` would set the "X" property to the type `key` and the value `myTime`.
+
+Then, the last piece of the puzzle would be to set the `y` property would be one of two options:
+
+- If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
+- If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1234567890, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
+
+
+#### Multiple Lines
+
+<FlowViewer :flow="examples['chart-line-multiple']" height="250px"/>
+
+![Example Line Chart with multiple lines](/images/node-examples/ui-chart-line-multiple-lines.png "Example Line Chart with multiple lines"){data-zoomable}
+_Example Line Chart with multiple lines_
+
+You can group data together into multiple lines using the `Series` property. A common use case here is to use `msg.topic`, where each message sent to the chart will be assigned to a different line based on the `msg.topic` value. Alternatively, you can set this to `key` and provide a key in your data to group by.
+
+If you want a single piece of data to plot multiple lines, you can set the `Series` property to `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point.
+
+### Scatter Charts
+
+![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
+*Example of a rendered scatter plot with a "time" x-axis.*
+
+We can also use "Series" to group points. Let's take an example with the following data set:
+
+```json
+[
+    { "series": "A", "x": 5, "y": 84 },
+    { "series": "A", "x": 9, "y": 10 },
+    { "series": "A", "x": 11, "y": 70 },
+    { "series": "B", "x": 12, "y": 28 },
+    { "series": "B", "x": 15, "y": 35 },
+    { "series": "B", "x": 26, "y": 42 },
+    { "series": "C", "x": 20, "y": 12 },
+    { "series": "C", "x": 24, "y": 54 },
+    { "series": "C", "x": 27, "y": 60 },
+    { "series": "C", "x": 30, "y": 66 }]
+```
+
+In our flow, we'd have:
+
+<FlowViewer :flow="examples['chart-scatter-grouped']" height="250px" />
+
+With the following configuration:
+
+![Example of a Scatter Plot with data grouped into "Series"](/images/node-examples/ui-chart-scatter-config.png "Example of a Scatter Plot with data grouped into 'Series'"){data-zoomable}
+
+
+Which results in:
+
+![Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered scatter plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
+*Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series".*
+
+### Bar Charts
+
+Currently, we only support "Category" x-axis types for Bar Charts. This means that the x-axis values will be a string, and the y-axis will be a numerical value.
+
+Let's take an example of loading data for the Star Wars API:
+
+<FlowViewer :flow="examples['chart-bar-sw-characters']" height="250px" />
+
+![Example of a bar chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw.png "Example of a bar chart showing character 'height' data"){data-zoomable}
+_Example of a bar chart showing character "height" data_
+
+If we take a look at the configuration for this chart:
+
+![Example of a bar chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw-config.png "Example of a bar chart showing character 'height' data"){data-zoomable}
+
+We could easily modify the "Y" property to plot a different value, without needing to modify our data.
+
+#### Grouped Bars - Financial Data Example
+
+<FlowViewer :flow="examples['chart-bar-finance']" height="250px" />
+
+Here we have an example of some financial data:
+
+```json
+[
+    { "year": 2021, "Q1": 115, "Q2": 207, "Q3": 198, "Q4": 163 },
+    { "year": 2022, "Q1": 170, "Q2": 200, "Q3": 230, "Q4": 210 },
+    { "year": 2023, "Q1": 86, "Q2": 140, "Q3": 180, "Q4": 138 }
+]
+```
+
+Bar charts will automatically group data by common x-axis values, but maintain separate bars for each _series_. When you select a "Bar" chart, then you can choose the "Group By" option to be "Side-by-Side" or "Stacks".
+
+Default behavior for a Bar Chart is to group content "Side-by-Side".
+
+In our chart config we can define:
+
+![Configuration for of a bar chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance-config.png "Configuration for of a bar chart showing financial data, grouped by year"){data-zoomable}
+_Configuration for of a bar chart showing financial data, grouped by year_
+
+
+where we have defined "Series" as a type `JSON` because we want to render multiple bars for each data point, in this case, one for each quarter:
+
+![Example of a bar chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance.png "Example of a bar chart showing financial data, grouped by year"){data-zoomable}
+_Example of a bar chart showing financial data, grouped by year_
+
+If we switch over the "Group By" option to be "Stacks", we'd see:
+
+![Example of a bar chart showing the same data, but stacked](/images/node-examples/ui-chart-bar-grouped-finance-stacks.png "Example of a bar chart showing the same data, but stacked"){data-zoomable}
+_Example of a bar chart showing the same data, but stacked_
+
+#### Grouped Bars - Election Data Example
+
+<FlowViewer :flow="examples['chart-bar-election']" height="250px" />
+
+Here we have a piece of data for each candidate, for each year, which details the number of "Votes" that candidate won.
+
+```json
+[
+    { "candidate": "Dave", "year": 2019, "votes": 100 },
+    { "candidate": "Sarah", "year": 2019, "votes": 90 },
+    { "candidate": "Chris", "year": 2019, "votes": 160 },
+    { "candidate": "Lucy", "year": 2019, "votes": 125 },
+    { "candidate": "Dave", "year": 2024, "votes": 20 },
+    { "candidate": "Sarah", "year": 2024, "votes": 170 },
+    { "candidate": "Chris", "year": 2024, "votes": 150 },
+    { "candidate": "Lucy", "year": 2024, "votes": 60 }
+]
+```
+
+We have a couple of different ways we could group this data, firstly, we have a series for each "Year" and the x-value defined as the "candidate":
+
+![Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election-config-A.png "Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
+_Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year_
+
+Resulting in:
+
+![Example of a bar chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election.png "Example of a bar chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
+_Example of a bar chart showing election data, grouped by candidate, and a series for each year_
+
+
+Alteratively, we could have a series per candidate, and then the x-value defined as the "year":
+
+![Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-config-B.png "Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
+_Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate_
+
+
+Resulting in:
+
+![Example of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
 
 ## Controls
 
@@ -89,99 +285,12 @@ Would append this data point to the chart, leaving existing data, even if the un
 
 Alternatively, you can remove all data from a chart at any time by sending a `msg.payload` of `[]` to the node. Most commonly, this is done by wiring a `ui-button` to the `ui-chart` node and configuring the button to send a JSON payload with a value of `[]`.
 
-## Working with Data
-
-`ui-chart` allows you to define which "keys" from your data you would like to render on the chart.
-
-![Example keymapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example keymapping config for UI Chart"){data-zoomable}
-_Example keymapping config for UI Chart_
-
-In this example, each received datapoint would plot to a fixed "Temperature" series, and UI Chart would read the `.time` value to plot on the x-axis, and the `.temp` value to plot on the y-axis.
-### Series
-
-The `Series` property allows you to define how you want to control which line/bar (series) data belongs to when streamed into this widget.
-The default is `msg.topic`, where separate topics will render to a new line/bar in their respective plots.
-
-If you want to label a single line on your chart, you can set this to a static `string` value, e.g. `Temperature`,
-which saves you have to assign `msg.topic` to every data point.
-
-#### Multiple Lines
-
-If you would like to plot multiple lines on the same chart, you can do so by defining the `Series` property, which defaults to `msg.topic`.
-
-With this defined, you can assign different data to different datasets that will be plotted:
-
-```js
-msg = {
-    "topic": "line-1",
-    "payload": 1
-}
-```
-
-```js
-msg = {
-    "topic": "line-2",
-    "payload": 2
-}
-```
-
-This use case is great if you have multiple sensors feeding data into the same chart. You can assign `msg.topic` accordignly for each sensor.
-
-This behaviour is mimicked here with three sliders, each with a different `msg.topic`:
-
-![Example Line Chart rendering data from different "sensors" using msg.topic](/images/node-examples/ui-chart-msgtopic.png "Example Line Chart rendering data from different \"sensors\" using msg.topic"){data-zoomable}
-_Example Line Chart rendering data from different "sensors" using msg.topic_
-
-
-Alternatively, you can set the `series` property to type `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point. For example:
-
-```js
-msg.payload = [
-    {
-        "x_value": 12,
-        "value": 17,
-        "nested": {
-            "value": 24
-        }
-    },
-    {
-        "x_value": 17,
-        "value": 36,
-        "nested": {
-            "value": 10
-        }
-    },
-    {
-        "x_value": 23,
-        "value": 19,
-        "nested": {
-            "value": 75
-        }
-    },
-    {
-        "x_value": 34,
-        "value": 12,
-        "nested": {
-            "value": 23
-        }
-    }
-]
-```
-with a chart config of:
-
-![Example config of a Line Chart to render multiple lines of data from a single data point](/images/node-examples/ui-chart-multiline-config.png "Example config of a Line Chart to render multiple lines of data from a single data point"){data-zoomable}
-
-Would result in:
-
-![Example of a Line Chart rendering multiple data points per injecting payload](/images/node-examples/ui-chart-multiline.png "Example of a Line Chart rendering multiple data points per injecting payload"){data-zoomable}
-
 ### Nested Data
 
 It is a common use case that you would have data structured as JSON, and want to plot some of it e.g:
 
 ```js
 msg = {
-    "topic": "Sensor A" 
     "payload": {
         "id": "Dataset 1",
         "value": 3,
@@ -192,16 +301,7 @@ msg = {
 }
 ```
 
-Here, we can utilise the "Properties" `series`, `x` and `y` to define which values we want to plot on the chart.
-
-Some combinations to consider:
-
-| series | x | y | description |
-| - | - | - | - |
-| `str:line1` | `value` | `nested.value` | This would plot `(3, 1)`, on a line labelled "line1". |
-| `property:id` | `value` | `nested.value` | This would plot `(3, 1)`, on a line labelled "Dataset 1". |
-| `property:id` |  | `value` | *Line Chart*: This would plot `(Date.now(), 3)`, labelled "Dataset 1".<br /><br />*Bar Chart:* this would plot a single bar, labelled "Dataset 1", with a height of `3`. |
-| `msg.topic` |  | `nested.value` | On a bar chart, this would plot a single bar, labelled "Sensor A", with a height of `1`. |
+Here, we can utilize the "Properties" `series`, `x` and `y` to define which values we want to plot on the chart. To access the relevant data point here you can use the `key:` type and use dot-notation, e.g: `nested.value`.
 
 ### Live Data
 
@@ -218,234 +318,7 @@ msg = {
 }
 ```
 
-Where you could set the `y` property to `property:value`, as well as if you're providing raw numerical data, e.g.
-
-```js
-msg = {
-    "topic": "Sensor A" 
-    "payload": 3
-}
-```
-
-Where the `y` property is ignored, as it detects that is stored as a raw number.
-
-## Chart Types
-
-### Line Chart
-
-![Example of a Line Chart](/images/node-examples/ui-chart-line.png "Example of a Line Chart"){data-zoomable}
-*Example of a rendered line chart with a "time" x-axis.*
-
-#### Payloads
-
-Line Charts accept a variety of payload formats. The following are all valid:
-
-- `msg.payload = <value>`
-    - In this case, the value received by the chart will be used as a `y` value, and the `x` value will be automatically added as the current date/time.
-- `msg.payload = { y: <value> }`
-    - In this case, the `y` value will be used as defined, and the `x` value will be calculated as the current date/time.
-- `msg.payload = { x: <value>, y: <value> }`
-    - In this case, the `x` and `y` values will be used as the `x` and `y` values of the data point.
-- `msg.payload = [{ x: <value>, y: <value> }, { x: <value>, y: <value> }]`
-    - In this case, multiple points will be plotted into a single line.
-- `msg.payload = [{ x: <value>, y: <value>, line: <value> }, { x: <value>, y: <value>, line: <value> }]`
-    - In this case, multiple points will be plotted, and if the `series` property is set to `property:line` then the `line` property will be used to determine which line each data point should be plotted on.
-
-#### Multiple Lines
-
-If you would like to plot multiple lines on the same chart, you can do so by including a `msg.topic` alongside the relevant `msg.payload`, e.g:
-
-```js
-msg = {
-    "topic": "line-1",
-    "payload": 1
-}
-```
-
-```js
-msg = {
-    "topic": "line-2",
-    "payload": 2
-}
-```
-
-Whilst `msg.topic` is the default value for the `series` property on a `ui-chart`, this can be changed. You could also set it to `key:<series>` to differentiate each point to a separate line, in that case your data would like like:
-
-```js
-msg.payload = {
-    "value": 2,
-    "series": "my-series"
-}
-```
-
-
-#### Multiple Data Points (Injecting an Array of Data)
-
-If you would like to pass in multiple data points at the same time into a chart, you can do so by passing an `Array` in `msg.payload`.
-
-```js
-msg = {
-    "topic": "line-1",
-    "payload": [{
-        "x": 30,
-        "y": 43
-    }, {
-        "x": 40,
-        "y": 56
-    }, {
-        "x": 50,
-        "y": 74
-    }]
-}
-```
-
-Note how we can still define the `msg.topic` value (or whatever we have defined for `series`) such that these data points all appear on the same line.
-
-If we wanted each point in a different series, we could set `series` to `key:series`, so that each data point is condsidered individually:
-
-```js
-msg = {
-    "payload": [{
-        "series": "Line 1",
-        "x": 30,
-        "y": 43
-    }, {
-        "series": "Line 2",
-        "x": 40,
-        "y": 56
-    }, {
-        "series": "Line 1",
-        "x": 50,
-        "y": 74
-    }]
-}
-```
-
-### Scatter Plot
-
-![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
-*Example of a rendered scatter plot with a "time" x-axis.*
-
-#### Payloads
-
-Scatter Plots accept a variety of payload formats. The following are all valid:
-
-- `msg.payload = <value>`
-    - In this case, the value received by the chart will be used as a `y` value, and the `x` value will be automatically added as the current date/time.
-- `msg.payload = { y: <value> }`
-    - In this case, the `y` value will be used as defined, and the `x` value will be calculated as the current date/time.
-- `msg.payload = { x: <value>, y: <value> }`
-    - In this case, the `x` and `y` values will be used as the `x` and `y` values of the data point.
-- `msg.payload = [{ x: <value>, y: <value> }, { x: <value>, y: <value> }]`
-    - In this case, multiple points will be plotted into a single series.
-- `msg.payload = [{ x: <value>, y: <value>, series: <value> }, { x: <value>, y: <value>, series: <value> }]`
-    - In this case, multiple points will be plotted, and if the `series` property is set to `property:series` then the `series` property will be used to determine which data series each data point should be plotted on.
-
-### Bar Graph
-
-![Example of a Bar Graph](/images/node-examples/ui-chart-bar.png "Example of a Bar Graph"){data-zoomable}
-*Example of a rendered bar graph.*
-
-Bar charts can only be configured with a "Categorical" x-axis type, the series that each data point will group into is then defined by the "Series" property, with the "y" property defining the value of each bar.
-
-#### Configuration
-
-- **X Axis Type**: `Categorical`
-- **Series**: Define how to separate your data into individual bars
-    - `msg.<variable>`: Each message sent to the chart will assign to the category depending on `msg.<variable>`. In Dashboard 1.0 this was the default behaviour, where `msg.topic` would control the series of the data, and this is still supported in Dashboard 2.0.
-    - `string`: Each message received will always bind to the same bar, this restricts the chart to only being able to show a single column/category of data.
-    - `key:<key>`: Each message, or object within an array payload, will be assigned the category based on it's value `<key>`. If you have raw numerical data, and not an object, leave this blank.
-    - `JSON:`: This combines the "Series" and "y" options, where you can provide an Array of strings, pointing to the property/value that you want to render. The category label is then defined by the property itself.
-- **Y**: Describe how to retrieve the value you want to plot on the y-axis. Leave blank if you're sending raw numerical data, otherwise, provide the key (which can be nested) of the value that should be plotted onto the x-axis, e.g. `{"nested": {"value": 34}}` would plot `34` on the y-axis if you set this to `nested.value`.
-
-
-#### Examples
-
-The payload will heavily depend on the "Series" value used, as such, we provide examples of each as follows:
-
-##### Series: `msg.<property>`
-
-Each message send to the chart will assign to the category depending on `msg.<property>`. In Dashboard 1.0 this was the default behaviour, where `msg.topic` would control the series of the data, and this is still supported in Dashboard 2.0.
-
-```js
-const msg = {
-    "topic": "bar-1",
-    "payload": 1
-}
-```
-
-would set the value of the `bar-1` series to `1`.
-
-##### Series: `string`
-
-Each message received will always bind to the same bar, this restricts the chart to only being able to show a single column/category of data.
-
-```js
-const msg = {
-    "payload": 12
-}
-```
-
-would set the value of the single series to `12`.
-
-##### Series: `key:<key>`
-
-Each message received will bind to the category defined by the value of `<key>` in the message payload. So, if we set the "Series" value to be `key:category`, then the following message:
-
-```js
-const msg = {
-    "payload": {
-        "category": "bar-1",
-        "value": 34
-    }
-}
-```
-
-Would set the value of the `bar-1` series to `34`.
-
-Additionally, with this option it's then easy to control multiple bars from a single `msg`:
-
-```js
-const msg = {
-    "payload": [
-        {
-            "category": "bar-1",
-            "value": 34
-        },
-        {
-            "category": "bar-2",
-            "value": 12
-        },
-        {
-            "category": "bar-3",
-            "value": 23
-        },
-        {
-            "category": "bar-1",
-            "value": 17
-        }
-    ]
-}
-```
-
-##### Series: `JSON:`
-
-This combines the "Series" and "y" options, where you can provide an Array of strings, pointing to the property/value that you want to render. The category label is then defined by the property itself.
-
-So in an example where we set "Series" to `["value", "nested.value"]`
-
-```js
-const msg = {
-    "payload": {
-        "value": 34,
-        "nested": {
-            "value": 12
-        }
-    }
-}
-```
-
-This would render two bars, one labelled `value` with a value of `34`, and one labelled `nested.value` with a value of `12`.
+Where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
 
 ## Building Custom Charts
 
