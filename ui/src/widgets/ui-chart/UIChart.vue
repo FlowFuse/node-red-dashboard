@@ -54,12 +54,17 @@ export default {
 
         // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
         const parsing = {}
-        if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
-            parsing.xAxisKey = this.props.xAxisProperty
-        }
+        if (this.props.xAxisType !== 'radial') {
+            if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
+                parsing.xAxisKey = this.props.xAxisProperty
+            }
 
-        if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
-            parsing.yAxisKey = this.props.yAxisProperty
+            if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
+                parsing.yAxisKey = this.props.yAxisProperty
+            }
+        } else {
+            // radial axes - treat "y" as the radial axis
+            parsing.key = this.props.yAxisProperty || 'y'
         }
 
         // do we need the "stacked" property?
@@ -112,6 +117,32 @@ export default {
             yOptions.max = parseFloat(this.props.ymax)
         }
 
+        const scales = {}
+        if (this.props.xAxisType !== 'radial') {
+            scales.x = {
+                type: this.props.xAxisType || 'linear',
+                title: {
+                    display: !!this.props.xAxisLabel,
+                    text: this.props.xAxisLabel,
+                    color: textColor
+                },
+                time: {
+                    displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
+                },
+                ticks: {
+                    color: textColor
+                },
+                grid: {
+                    color: gridColor
+                },
+                border: {
+                    color: gridColor
+                },
+                stacked
+            }
+            scales.y = yOptions
+        }
+
         // create our ChartJS object
         const config = {
             type: this.props.chartType,
@@ -123,30 +154,7 @@ export default {
                 animation: false,
                 maintainAspectRatio: false,
                 borderJoinStyle: 'round',
-                scales: {
-                    x: {
-                        type: this.props.xAxisType || 'linear',
-                        title: {
-                            display: !!this.props.xAxisLabel,
-                            text: this.props.xAxisLabel,
-                            color: textColor
-                        },
-                        time: {
-                            displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
-                        },
-                        ticks: {
-                            color: textColor
-                        },
-                        grid: {
-                            color: gridColor
-                        },
-                        border: {
-                            color: gridColor
-                        },
-                        stacked
-                    },
-                    y: yOptions
-                },
+                scales,
                 plugins: {
                     title: {
                         display: true,
@@ -161,6 +169,34 @@ export default {
                     }
                 },
                 parsing
+            }
+        }
+        console.log(config)
+        // const pieConfig = {
+        //     type: 'pie',
+        //     data: {
+        //         labels: [
+        //             'Red',
+        //             'Blue',
+        //             'Yellow'
+        //         ],
+        //         datasets: [{
+        //             label: 'My First Dataset',
+        //             data: [300, 50, 100],
+        //             backgroundColor: [
+        //                 'rgb(255, 99, 132)',
+        //                 'rgb(54, 162, 235)',
+        //                 'rgb(255, 205, 86)'
+        //             ],
+        //             hoverOffset: 4
+        //         }]
+        //     }
+        // }
+        const pieConfig = {
+            type: 'pie',
+            data: {
+                labels: [],
+                datasets: []
             }
         }
         const chart = new Chart(el, config)
@@ -186,7 +222,8 @@ export default {
             return value
         },
         onLoad (history) {
-            if (history) {
+            console.log('onLoad', history)
+            if (history && history.length > 0) {
                 // we have received a history of data points
                 // we need to add them to the chart
                 // clear the chart first, onload is considered to provide all data into a chart
@@ -196,6 +233,7 @@ export default {
             }
         },
         onMsgInput (msg) {
+            console.log('onMsgInput', msg)
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received
                 this.clear()
@@ -322,24 +360,34 @@ export default {
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
             // make sure we have the relevant (x-axis) labels added to the chart too
-            if (!xLabels.includes(datapoint.x) && this.props.xAxisType === 'category') {
+            if (!xLabels.includes(datapoint.x) && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                 xLabels.push(datapoint.x)
             }
 
             const sIndex = sLabels?.indexOf(label)
 
+            let colorBy = 'series'
+            if (this.props.xAxisType === 'radial') {
+                colorBy = 'x'
+            }
+
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
-                this.chart.data.datasets.push({
-                    borderColor: this.props.colors[sLabels.length],
-                    backgroundColor: this.props.colors[sLabels.length],
+                const d = {
+                    backgroundColor: colorBy === 'x' ? this.props.colors : this.props.colors[sLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
                     data: [datapoint]
-                })
+                }
+
+                if (colorBy !== 'x') {
+                    d.borderColor = this.props.colors[sLabels.length]
+                }
+
+                this.chart.data.datasets.push(d)
             } else {
                 // we're adding a new datapoint to an existing series
                 // have we seen this x-value before?

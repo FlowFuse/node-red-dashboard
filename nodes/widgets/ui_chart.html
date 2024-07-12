@@ -154,7 +154,9 @@
                         options: [
                             { value: 'line', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.line') },
                             { value: 'bar', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.bar') },
-                            { value: 'scatter', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.scatter') }
+                            { value: 'scatter', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.scatter') },
+                            { value: 'pie', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.pie') },
+                            { value: 'doughnut', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.doughnut') }
                         ]
                     }],
                     typeField: '#node-input-chartTypeType'
@@ -175,6 +177,18 @@
                         $('#x-axis-format').show()
                     } else {
                         $('#x-axis-format').hide()
+                    }
+
+                    if (value === 'radial') {
+                        // hide irrelevant fields
+                        $('#node-container-xAxisLabel').hide()
+                        $('#node-container-yAxisLabel').hide()
+                        $('#y-axis-show').hide()
+                    } else {
+                        // make sure they're shown
+                        $('#node-container-xAxisLabel').show()
+                        $('#node-container-yAxisLabel').show()
+                        $('#y-axis-show').show()
                     }
 
                     // update the series types allowed
@@ -254,15 +268,26 @@
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
-                    } else {
+                    } else if (value === 'pie' || value === 'doughnut') {
+                        $('#node-input-xAxisType').typedInput('types', [{
+                            options: [
+                                { value: 'radial', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.radial') }
+                            ]
+                        }])
+                        $('#node-input-xAxisType').typedInput('type', 'radial')
+
+                        // no stacking options in pie/doughnut charts
+                        $('#config-stackSeries').hide()
+                        // hide x-axis limit options & points sizing
+                        $('#x-axis-show').hide()
+                        $('#point-radius-show').hide()
+                    } else if (value === 'bar') {
                         // for bar
                         // types - categorical
                         $('#node-input-xAxisType').typedInput('types', [{
-                            value: 'linear',
+                            value: 'category',
                             options: [
                                 { value: 'category', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
-                            // { value: 'time', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
-                            // { value: 'linear', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') }
                             ]
                         }])
                         $('#node-input-xAxisType').typedInput('type', 'category')
@@ -455,7 +480,7 @@
         <input type="text" id="node-input-xAxisFormat">
         <input type="hidden" id="node-input-xAxisFormatType">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-container-xAxisLabel">
         <label for="node-input-xAxisLabel" data-i18n="ui-chart.label.xLabel"></label></label>
         <input type="text" id="node-input-xAxisLabel">
     </div>
@@ -474,7 +499,7 @@
         <input type="text" id="node-input-removeOlderPoints" style="width:60px;" placeholder="1000">
         <span style="margin-left:5px;" data-i18n="ui-chart.label.points"></span>
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-container-yAxisLabel">
         <label for="node-input-yAxisLabel" data-i18n="ui-chart.label.yLabel"></label></label>
         <input type="text" id="node-input-yAxisLabel">
     </div>
