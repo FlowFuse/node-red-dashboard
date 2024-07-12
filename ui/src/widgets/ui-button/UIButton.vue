@@ -1,7 +1,9 @@
 <template>
-    <v-btn block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
+    <v-btn
+        block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': icon ?? 'auto' }"
-        @click="action">
+        @click="action"
+    >
         <template #append>
             <v-icon :color="iconColor" />
         </template>
@@ -24,7 +26,7 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data() {
+    data () {
         return {
             dynamic: {
                 label: null,
@@ -38,32 +40,32 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        prependIcon() {
+        prependIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
-        appendIcon() {
+        appendIcon () {
             const icon = this.getPropertyValue('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
-        label() {
+        label () {
             return this.getPropertyValue('label')
         },
-        iconPosition() {
+        iconPosition () {
             return this.getPropertyValue('iconPosition')
         },
-        iconOnly() {
+        iconOnly () {
             return this.getPropertyValue('icon') && !this.getPropertyValue('label')
         },
-        buttonColor() {
+        buttonColor () {
             return this.getPropertyValue('buttonColor')
         },
-        iconColor() {
+        iconColor () {
             return this.getPropertyValue('iconColor')
         },
-        textColor() {
+        textColor () {
             const textColor = this.getPropertyValue('textColor')
             if (typeof textColor === 'string') {
                 return 'text-' + textColor
@@ -71,11 +73,11 @@ export default {
             return undefined
         }
     },
-    created() {
+    created () {
         useDataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
-        action($evt) {
+        action ($evt) {
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
@@ -86,10 +88,10 @@ export default {
             msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
         },
-        makeMdiIcon(icon) {
+        makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
         },
-        onDynamicProperties(msg) {
+        onDynamicProperties (msg) {
             const updates = msg.ui_update
             if (!updates) {
                 return
@@ -113,7 +115,7 @@ export default {
                 this.dynamic.iconColor = updates.iconColor
             }
         },
-        getPropertyValue(property) {
+        getPropertyValue (property) {
             return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
         }
     }
