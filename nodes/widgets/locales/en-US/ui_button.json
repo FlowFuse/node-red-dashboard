@@ -22,7 +22,13 @@
             "whenClicked": "When clicked, send:",
             "payload": "Payload",
             "topic": "Topic",
-            "emulateClick": "If msg arrives on input, emulate a button click:"
+            "emulateClick": "If msg arrives on input, emulate a button click:",
+            "buttonColor": "Button Color",
+            "optionalbuttonColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'",
+            "textColor": "Text Color",
+            "optionaltextColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'",
+            "iconColor": "Icon Color",
+            "optionaliconColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'"
         }
     }
 }

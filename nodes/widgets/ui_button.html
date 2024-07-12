@@ -33,7 +33,10 @@
                 payload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }) },
                 payloadType: { value: 'str' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-                topicType: { value: 'msg' }
+                topicType: { value: 'msg' },
+                buttonColor: { value: '' },
+                textColor: { value: '' },
+                iconColor: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -126,6 +129,18 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-button.label.label"></label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-button.label.optionalLabel">
+    </div>
+    <div class="form-row">
+        <label for="node-input-buttonColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.buttonColor"></label>
+        <input type="text" id="node-input-buttonColor" data-i18n="[placeholder]ui-button.label.optionalbuttonColor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-textColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.textColor"></label>
+        <input type="text" id="node-input-textColor" data-i18n="[placeholder]ui-button.label.optionaltextColor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-iconColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.iconColor"></label>
+        <input type="text" id="node-input-iconColor" data-i18n="[placeholder]ui-button.label.optionaliconColor">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-button.label.className"></label>
