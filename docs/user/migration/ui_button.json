@@ -34,7 +34,7 @@
         {
             "property": "color",
             "changes": "improved",
-            "notes": "Separeted property for text color and icon color"
+            "notes": "Separated property for text color and icon color"
         },
         {
             "property": "background",
