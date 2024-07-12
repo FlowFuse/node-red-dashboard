@@ -33,13 +33,13 @@
         },
         {
             "property": "color",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/375' target='_blank'>Issue #375</a>"
+            "changes": "improved",
+            "notes": "Separeted property for text color and icon color"
         },
         {
             "property": "background",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/375' target='_blank'>Issue #375</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "payload",

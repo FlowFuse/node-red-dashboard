@@ -12,6 +12,15 @@ props:
     Label:
         description: The text shown within the button. If not provided, then the button will only render the icon.
         dynamic: true
+    Button Color:
+        description: Button Color. If not provided, default theme color will be used.
+        dynamic: true
+    Text Color:
+        description: Text (Label) color. If not provided calculated automatically based on Button color to be Black or White.
+        dynamic: true
+    Icon Color:
+        description: Icon color. If not provided, will have the same color as text / label.
+        dynamic: true
     Emulate Button Click: If enabled, any received message will trigger a button click, emitting the relevant payload and topic.
 controls:
     enabled:
@@ -26,6 +35,15 @@ dynamic:
         structure: ["String"]
     Label:
         payload: msg.ui_update.label
+        structure: ["String"]
+    Button Color:
+        payload: msg.ui_update.buttonColor
+        structure: ["String"]
+    Text Color:
+        payload: msg.ui_update.textColor
+        structure: ["String"]
+    Icon Color:
+        payload: msg.ui_update.iconColor
         structure: ["String"]
     Class:
         payload: msg.ui_update.class
