@@ -171,34 +171,6 @@ export default {
                 parsing
             }
         }
-        console.log(config)
-        // const pieConfig = {
-        //     type: 'pie',
-        //     data: {
-        //         labels: [
-        //             'Red',
-        //             'Blue',
-        //             'Yellow'
-        //         ],
-        //         datasets: [{
-        //             label: 'My First Dataset',
-        //             data: [300, 50, 100],
-        //             backgroundColor: [
-        //                 'rgb(255, 99, 132)',
-        //                 'rgb(54, 162, 235)',
-        //                 'rgb(255, 205, 86)'
-        //             ],
-        //             hoverOffset: 4
-        //         }]
-        //     }
-        // }
-        const pieConfig = {
-            type: 'pie',
-            data: {
-                labels: [],
-                datasets: []
-            }
-        }
         const chart = new Chart(el, config)
 
         // don't want chart to be reactive, so we can use shallowRef
@@ -222,7 +194,6 @@ export default {
             return value
         },
         onLoad (history) {
-            console.log('onLoad', history)
             if (history && history.length > 0) {
                 // we have received a history of data points
                 // we need to add them to the chart
@@ -233,7 +204,6 @@ export default {
             }
         },
         onMsgInput (msg) {
-            console.log('onMsgInput', msg)
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received
                 this.clear()
