@@ -8,7 +8,7 @@
         <template #prepend>
             <v-icon :color="iconColor" />
         </template>
-        <span :class="textClass"> {{ label }} </span>
+        <span :class="textColor"> {{ label }} </span>
     </v-btn>
 </template>
 
@@ -63,7 +63,7 @@ export default {
         iconColor() {
             return this.getPropertyValue('iconColor')
         },
-        textClass() {
+        textColor() {
             const textColor = this.getPropertyValue('textColor')
             if (typeof textColor === 'string') {
                 return 'text-' + textColor
