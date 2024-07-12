@@ -26,7 +26,7 @@
             "buttonColor": "Button Color",
             "optionalbuttonColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'",
             "textColor": "Text Color",
-            "optionaltextColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'",
+            "optionaltextColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'",
             "iconColor": "Icon Color",
             "optionaliconColor": "(Optional) e.g. 'green'/'#a5a5a5'/'rgb(165,165,165)'/'green-darken-2'"
         }

@@ -4,6 +4,16 @@
         Clicking the button generates a message with <code>msg.payload</code>
         set to the <b>Payload</b> field, and <code>msg.topic</code> to the <b>Topic</b> field.
     </p>
+    <h3>HTML Content</h3>
+    <p>
+        The text field can also be used to set HTML content in the user interface.
+        This can be done by setting the <code>msg.ui_update.label</code> to a string of HTML.
+        This can be useful for displaying images, links, or other HTML elements.
+    </p>
+    <p>
+        You can also use Node-RED's built-in "template" node to generate the HTML you want to display if
+        you want to render <code>msg</code>, <code>flow</code> or <code>global</code> content.
+    </p>
     <h3>Properties</h3>
     <dl class="message-properties">
         <dt>Icon <span class="property-type">string</span></dt>
@@ -13,12 +23,11 @@
         <dt>Button Color<span class="property-type">string</span></dt>
         <dd>Background color for the button, valid values as <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>green-darken-2</b>, check <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> for help, send empty string to use default theme color</dd>
         <dt>Text Color<span class="property-type">string</span></dt>
-        <dd>Color the text on the Button, valid values as <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>green-darken-2</b>, check <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> for help, send empty string to use default theme color.
-        <br>Possible to also add parameter to specify text font height and style <a href="https://vuetifyjs.com/en/styles/text-and-typography/#text-and-typography">Vuetify Text Helper Class</a>, this extra property must be separated by a <b>space</b> from color, or if no color to be defined the string text must start with a <b>space</b>. </dd>
+        <dd>Color the text on the Button, valid values as <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>, send empty string to use default theme color.
         <dt>ICon Color<span class="property-type">string</span></dt>
         <dd>Color for the Icon on the Button (if Icon configured), valid values as <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>green-darken-2</b>, check <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> for help, send empty string to use default theme color</dd>
         <dt>Label <span class="property-type">string</span></dt>
-        <dd>The text shown within the button. If not provided, then the button will only render the icon</dd>
+        <dd>The text shown within the button. If not provided, then the button will only render the icon. It supports HTML content</dd>
         <dt>Emulate Button Click <span class="property-type">bool</span></dt>
         <dd>If enabled, any received message will trigger a button click, emitting the relevant payload and topic</dd>
     </dl>
