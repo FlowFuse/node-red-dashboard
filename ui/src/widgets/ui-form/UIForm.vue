@@ -1,6 +1,6 @@
 <template>
     <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
-    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="blur" @submit.prevent="onSubmit">
+    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
