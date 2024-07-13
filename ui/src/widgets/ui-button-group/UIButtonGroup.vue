@@ -80,9 +80,12 @@ export default {
                 widgetId: this.id,
                 msg
             })
+
             // make sure our v-model is updated to reflect the value from Node-RED
             if (msg.payload !== undefined) {
-                this.selection = msg.payload
+                if (this.findOptionByValue(msg.payload) !== null) {
+                    this.selection = msg.payload
+                }
             }
         },
         onLoad (msg) {
@@ -93,7 +96,9 @@ export default {
             })
             // make sure we've got the relevant option selected on load of the page
             if (msg.payload !== undefined) {
-                this.selection = msg.payload
+                if (this.findOptionByValue(msg.payload) !== null) {
+                    this.selection = msg.payload
+                }
             }
         },
         onDynamicProperty (msg) {
