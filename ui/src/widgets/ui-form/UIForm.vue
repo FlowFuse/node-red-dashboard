@@ -70,12 +70,22 @@ export default {
     },
     methods: {
         onSubmit: function () {
-            // Prevent sending null for switch and combobox, and if other fields not present, send empty string
+            // Prevent sending null for switch and combobox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
             const option = this.options
             option.forEach(opt => {
                 if (opt.type === 'checkbox' || opt.type === 'switch') {
                     if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
                         this.input[opt.key] = false
+                    }
+                } else if (opt.type === 'number') {
+                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                        this.input[opt.key] = null
+                    } else {
+                        if (isNaN(this.input[opt.key])) {
+                            this.input[opt.key] = null
+                        } else {
+                            this.input[opt.key] = Number(this.input[opt.key])
+                        }
                     }
                 } else {
                     if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
