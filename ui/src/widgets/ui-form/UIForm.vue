@@ -70,6 +70,20 @@ export default {
     },
     methods: {
         onSubmit: function () {
+            // Prevent sending null for switch and combobox, and if other fields not present, send empty string
+            const option = this.options
+            option.forEach(opt => {
+                if (opt.type === 'checkbox' || opt.type === 'switch') {
+                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                        this.input[opt.key] = false
+                    }
+                } else {
+                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                        this.input[opt.key] = ''
+                    }
+                }
+            })
+
             this.$socket.emit('widget-action', this.id, {
                 payload: this.input
             })
