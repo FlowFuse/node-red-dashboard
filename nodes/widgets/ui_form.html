@@ -51,7 +51,8 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 splitLayout: { value: '' },
-                className: { value: '' }
+                className: { value: '' },
+                passthru: { value: false }
             },
             inputs: 1,
             outputs: 1,
@@ -60,6 +61,9 @@
             label: function () { return this.name || this.label || 'form' },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                // Set passthru to `false` to prevent message pass through in Form widget
+                this.passthru = false
+
                 if ($('#node-input-submit').val() === null) { $('#node-input-submit').val('submit') }
                 if ($('#node-input-cancel').val() === null) { $('#node-input-cancel').val('cancel') }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
