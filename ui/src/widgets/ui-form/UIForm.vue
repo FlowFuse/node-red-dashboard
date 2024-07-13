@@ -83,6 +83,9 @@ export default {
         reset () {
             this.$refs.form.reset()
         },
+        validate () {
+            this.$refs.form.validate()
+        },
         rules (row) {
             if (row.required) {
                 // is required
@@ -100,6 +103,8 @@ export default {
                 for (const key in payload) {
                     this.input[key] = payload[key]
                 }
+                // May not be the best way, but if we call this directly will give error on the first `input`, it seems that vue has not yet updated
+                setTimeout(() => { this.validate() }, 0)
             }
         },
         onDynamicProperties (msg) {
