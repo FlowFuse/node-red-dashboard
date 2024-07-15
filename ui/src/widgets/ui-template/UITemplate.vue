@@ -164,6 +164,8 @@ export default {
                 ...component?.methods
             },
             created () {
+                useDataTracker(props.id)
+
                 if (component?.beforeCreate) {
                     // run any generic JS code user has defined outisde of a VueJS component
                     // eslint-disable-next-line no-eval
