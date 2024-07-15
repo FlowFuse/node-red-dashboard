@@ -1,10 +1,9 @@
 <script>
 import { mapState } from 'vuex'
 
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 export default {
     name: 'DBUIEvent',
-    inject: ['$socket'],
+    inject: ['$socket', '$dt'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
@@ -38,7 +37,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        useDataTracker(this.id, null, this.onLoad)
+        this.$dt(this.id, null, this.onLoad)
         this.page = this.pages[this.$route.meta.id]
         this.pageview()
     },

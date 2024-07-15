@@ -52,7 +52,7 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
     export default {
         name: 'DBUIWidget',
         // we need to inject $socket so that we can send events to Node-RED
-        inject: ['$socket'],
+        inject: ['$socket', '$dt'],
         props: {
             id: String,    // the id of the widget, as defined by Node-RED
             props: Object, // the properties for this widget defined in the Node-RED editor

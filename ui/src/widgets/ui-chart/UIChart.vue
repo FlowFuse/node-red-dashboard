@@ -6,14 +6,12 @@
 import { Chart } from 'chart.js/auto' // eslint-disable-line n/file-extension-in-import
 import 'chartjs-adapter-luxon'
 
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
-
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
 export default {
     name: 'DBUIChart',
-    inject: ['$socket'],
+    inject: ['$socket', '$dt'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
@@ -46,7 +44,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        useDataTracker(this.id, this.onMsgInput, this.onLoad)
+        this.$dt(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
         // get a reference to the canvas element

@@ -186,7 +186,7 @@ export default {
     components: {
         'debug-data': DebugData
     },
-    inject: ['$socket'],
+    inject: ['$socket', '$dt'],
     data () {
         return {
             view: {

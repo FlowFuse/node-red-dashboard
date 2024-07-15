@@ -18,11 +18,9 @@
 <script>
 import { mapState } from 'vuex'
 
-import { useDataTracker } from '../data-tracker.mjs'
-
 export default {
     name: 'DBUIButtonGroup',
-    inject: ['$socket'],
+    inject: ['$socket', '$dt'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -68,7 +66,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
+        this.$dt(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)

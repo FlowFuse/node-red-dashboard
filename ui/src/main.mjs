@@ -41,6 +41,7 @@ const theme = {
         error: '#ff5252'
     }
 }
+import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
 
 const vuetify = createVuetify({
     components: {
@@ -200,6 +201,7 @@ fetch('_setup')
 
         // make the socket service available app-wide via this.$socket
         app.provide('$socket', socket)
+        app.provide('$dt', useDataTracker)
 
         // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
         app.mount('#app')
