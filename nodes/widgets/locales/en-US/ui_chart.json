@@ -67,6 +67,10 @@
             "stackSeries": "Group By",
             "stackSeriesTrue": "Stacks",
             "stackSeriesFalse": "Side-by-Side"
+        },
+        "notifications": {
+            "clearSuccess": "Chart data cleared successfully",
+            "clearFailure": "Unable to clear chart data"
         }
     }
 }

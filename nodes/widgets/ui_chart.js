@@ -11,6 +11,13 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
 
+        node.clearHistory = function () {
+            const empty = []
+            datastore.save(base, node, empty)
+            // emit socket to front end to mimic an incoming message
+            base.emit('msg-input:' + node.id, { payload: empty }, node)
+        }
+
         function getProperty (value, property) {
             const props = property.split('.')
             props.forEach((prop) => {
@@ -185,4 +192,19 @@ module.exports = function (RED) {
     }
 
     RED.nodes.registerType('ui-chart', ChartNode)
+
+    // Add HTTP Admin endpoint to permit reset of chart history
+    RED.httpAdmin.post('/dashboard/chart/:id/clear', RED.auth.needsPermission('ui-chart.write'), function (req, res) {
+        const node = RED.nodes.getNode(req.params.id)
+        if (node) {
+            if (node.type === 'ui-chart') {
+                node.clearHistory()
+                res.sendStatus(200)
+            } else {
+                res.sendStatus(400, 'Requested node is not of type "ui-chart"')
+            }
+        } else {
+            res.sendStatus(404)
+        }
+    })
 }
