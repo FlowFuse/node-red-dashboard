@@ -8,7 +8,7 @@ import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITemplate',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
@@ -76,7 +76,7 @@ export default {
             }
         }
 
-        useDataTracker(props.id)
+        this.$useDataTracker(props.id)
 
         // here we inject the UI Template Vue Template code into our own, in order to extend base functionality
         return () => h({
@@ -166,7 +166,7 @@ export default {
                 ...component?.methods
             },
             created () {
-                this.$dt(props.id)
+                this.$dataTracker(props.id)
 
                 if (component?.beforeCreate) {
                     // run any generic JS code user has defined outisde of a VueJS component

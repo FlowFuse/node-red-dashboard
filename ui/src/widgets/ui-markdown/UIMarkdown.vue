@@ -73,7 +73,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dt(this.id, this.onMsgInput, this.onMsgLoad)
+        this.$dataTracker(this.id, this.onMsgInput, this.onMsgLoad)
         // make sure we render something on first creation
         this.update()
     },

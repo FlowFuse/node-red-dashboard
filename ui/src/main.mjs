@@ -23,6 +23,7 @@ import { VTreeview } from 'vuetify/labs/VTreeview'
 import './stylesheets/common.css'
 
 import store from './store/index.mjs'
+import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
 
 // set a base theme on which we will add our custom NR-defined theme
 const theme = {
@@ -41,7 +42,6 @@ const theme = {
         error: '#ff5252'
     }
 }
-import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
 
 const vuetify = createVuetify({
     components: {
@@ -201,7 +201,7 @@ fetch('_setup')
 
         // make the socket service available app-wide via this.$socket
         app.provide('$socket', socket)
-        app.provide('$dt', useDataTracker)
+        app.provide('$dataTracker', useDataTracker)
 
         // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
         app.mount('#app')

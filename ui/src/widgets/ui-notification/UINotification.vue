@@ -63,7 +63,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dt(this.id, this.onMsgInput)
+        this.$dataTracker(this.id, this.onMsgInput)
     },
     methods: {
         onMsgInput (msg) {

@@ -112,7 +112,7 @@ export default {
         }
     },
     created () {
-        this.$dt(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload

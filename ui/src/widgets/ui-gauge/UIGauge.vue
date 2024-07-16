@@ -22,7 +22,7 @@ export default {
         state: { type: Object, default: () => ({}) }
     },
     setup (props) {
-        this.$dt(props.id)
+        this.$dataTracker(props.id)
     },
     computed: {
         ...mapState('data', ['messages']),

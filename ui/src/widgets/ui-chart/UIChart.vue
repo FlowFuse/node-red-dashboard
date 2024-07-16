@@ -44,7 +44,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dt(this.id, this.onMsgInput, this.onLoad)
+        this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
         // get a reference to the canvas element

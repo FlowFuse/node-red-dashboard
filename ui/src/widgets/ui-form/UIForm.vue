@@ -57,7 +57,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dt(this.id, this.onInput, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     mounted () {
         this.reset()

@@ -51,7 +51,7 @@ export default {
         }
     },
     created () {
-        this.$dt(this.id, null, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         action ($evt) {
