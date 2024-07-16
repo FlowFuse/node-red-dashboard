@@ -15,7 +15,7 @@ export default {
         'ui-gauge-dial': UIGaugeDial,
         'ui-gauge-tile': UIGaugeTile
     },
-    inject: ['$socket', '$dt'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },

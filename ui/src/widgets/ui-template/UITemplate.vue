@@ -81,7 +81,7 @@ export default {
         // here we inject the UI Template Vue Template code into our own, in order to extend base functionality
         return () => h({
             props: ['id', 'props'],
-            inject: ['$socket', '$dt'],
+            inject: ['$socket', '$dataTracker'],
             errorCaptured: (err, vm, info) => {
                 console.error('errorCaptured', err, vm, info)
                 return false

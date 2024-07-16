@@ -49,7 +49,7 @@ marked.use({ extensions: [customRenderer] })
 
 export default {
     name: 'DBUIMarkdown',
-    inject: ['$socket', '$dt'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }

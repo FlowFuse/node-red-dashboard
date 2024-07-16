@@ -19,7 +19,7 @@ import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUISlider',
-    inject: ['$socket', '$dt'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
