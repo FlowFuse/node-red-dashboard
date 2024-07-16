@@ -67,8 +67,11 @@ module.exports = function (RED) {
                     datapoint.category = series
 
                     // get our x value, if set
+                    if (config.xAxisPropertyType === 'msg' && config.xAxisProperty === '') {
+                        // handle a missing declaration of x-axis property, and backup to time series
+                        config.xAxisPropertyType = 'property'
+                    }
                     const x = RED.util.evaluateNodeProperty(config.xAxisProperty, config.xAxisPropertyType, node, msg)
-                    console.log('x', x, typeof (x), config.xAxisProperty, typeof (config.xAxisProperty))
 
                     // construct our datapoint
                     if (typeof payload === 'number') {
