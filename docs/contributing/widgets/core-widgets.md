@@ -101,6 +101,8 @@ The inputs for the `useDataTracker (widgetId, onInput, onLoad, onDynamicProperti
 - `onLoad` - a function that will be called when the widget is loaded, and triggered by the `widget-load` event
 - `onDynamicProperties` - a function called as part of the `on(msg-input)` event, and is triggered _before_ the default `onInput` function. This is a good entry point to check against any properties that have been included in the `msg` in order to set a dynamic property.
 
+The `useDataTracker` composable is globally available across existing widgets and can be accessed using `this.$dataTracker(...)`.
+
 ## Dynamic Properties
 
 Node-RED allows for definition of the underlying configuration for a node. For example, a `ui-button` would have properties such as `label`, `color`, `icon`, etc. It is often desired to have these properties be dynamic, meaning that they can be changed at runtime. 

@@ -315,6 +315,8 @@ We use the concept of data stores on both the client and server side of Dashboar
 
 Data stores are a mapping of the widget/node's ID to the latest data received into that widget. This is most commonly used to restore state when the Dashboard is refreshed.
 
+Any dataStore state changes can be intercepted using the `dataTracker` composable which is globally available in all existing widgets. More on the `dataTracker` composable [here](../widgets/core-widgets.md#data-tracker).
+
 #### Node-RED Data Store
 
 Node-RED's data store is made accessible for third-party widgets via the associated `ui-base`.
