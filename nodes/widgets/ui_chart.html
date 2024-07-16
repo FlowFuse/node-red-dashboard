@@ -286,6 +286,13 @@
                     }
                 })
 
+                // ensure the xAxis PropertyType isn't an invalid value
+                if (this.xAxisPropertyType === 'msg' && this.xAxisProperty === '') {
+                    // auto-fix it for the user
+                    this.xAxisPropertyType = propertyType.value
+                    $('#node-input-xAxisProperty').typedInput('type', propertyType.value)
+                }
+
                 // Stack/Group-By Options - convert from bool to string values for <select>
                 if (this.stackSeries === true) {
                     $('#chart-input-stackSeries').val('true')
