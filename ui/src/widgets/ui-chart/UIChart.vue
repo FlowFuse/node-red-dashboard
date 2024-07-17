@@ -340,6 +340,11 @@ export default {
                 // if we have no series, then can color each bar/x a different value
                 const colorByIndex = this.props.categoryType === 'none' && this.props.chartType === 'bar'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
+                // ensure we have a datapoint for the relevant series
+                const data = Array(sLabels.length + 1).fill({})
+                // define the data point for this series
+                data[sLabels.length] = datapoint
+                // add the new dataset to the chart
                 this.chart.data.datasets.push({
                     borderColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
@@ -347,17 +352,24 @@ export default {
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
-                    data: [datapoint]
+                    data
                 })
             } else {
                 // we're adding a new datapoint to an existing series
                 // have we seen this x-value before?
                 const xIndex = xLabels.indexOf(datapoint.x)
-                if (xIndex >= 0) {
+                if (xIndex >= 0 && this.props.xAxisType === 'category') {
                     // yes, so we need to update the data at this index
                     this.chart.data.datasets[sIndex].data[xIndex] = datapoint
                 } else {
                     this.chart.data.datasets[sIndex].data.push(datapoint)
+                }
+                // ensure we have no "empty" entries in our arrays
+                for (let i = 0; i < this.chart.data.datasets[sIndex].data.length; i++) {
+                    if (this.chart.data.datasets[sIndex].data[i] === undefined) {
+                        // assign a value so that ChartJS doesn't fall over
+                        this.chart.data.datasets[sIndex].data[i] = {}
+                    }
                 }
             }
         },
