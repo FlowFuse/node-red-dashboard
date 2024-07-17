@@ -126,8 +126,10 @@ Option 2:
 We can alternatively add a custom socket listener to the `msg-input:<id>` event. This is useful if you want to listen to messages _only_ when they are received, and not when the widget first loads.
 
 ```js
-// runs only onInput
-this.$socket.on('msg-input:' + this.id, (msg) = { ... })
+this.$socket.on('msg-input:' + this.id, (msg) => {
+    // do stuff with msg
+    // runs only when messages are received
+})
 ```
 
 This can be added into the widget's `mounted () { }` handler
