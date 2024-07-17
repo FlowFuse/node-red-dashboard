@@ -41,6 +41,7 @@
         const l8n = function (property) {
             return RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.' + property)
         }
+        const noneType = { value: 'none', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none'), hasValue: false }
         const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
 
         function hexToRgb (hex) {
@@ -56,9 +57,9 @@
 
         function getSeriesTypes (xAxisType) {
             if (xAxisType === 'category') {
-                return ['msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', propertyType]
             } else {
-                return ['msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', propertyType]
             }
         }
 

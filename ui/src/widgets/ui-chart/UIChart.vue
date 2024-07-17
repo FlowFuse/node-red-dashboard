@@ -112,6 +112,13 @@ export default {
             yOptions.max = parseFloat(this.props.ymax)
         }
 
+        // Do we show the legend?
+        let showLegend = this.props.showLegend
+        if (this.props.categoryType === 'none') {
+            // no category, so no legend
+            showLegend = false
+        }
+
         // create our ChartJS object
         const config = {
             type: this.props.chartType,
@@ -154,7 +161,7 @@ export default {
                         color: textColor
                     },
                     legend: {
-                        display: this.props.showLegend,
+                        display: showLegend,
                         labels: {
                             color: textColor
                         }
@@ -330,10 +337,12 @@ export default {
 
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
+                // if we have no series, then can color each bar/x a different value
+                const colorByIndex = this.props.categoryType === 'none' && this.props.chartType === 'bar'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
                 this.chart.data.datasets.push({
-                    borderColor: this.props.colors[sLabels.length],
-                    backgroundColor: this.props.colors[sLabels.length],
+                    borderColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
+                    backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
