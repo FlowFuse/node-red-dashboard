@@ -359,7 +359,7 @@ We can use these classes to style the groups in our Dashboard, for example, to m
 ![Example of how to override the \"navigation drawer\" styling in Dashboard 2.0](/images/template-examples/style-side-nav.png "Example of how to override the \"navigation drawer\" styling in Dashboard 2.0"){data-zoomable}
 _Example of how to override the \"navigation drawer\" styling in Dashboard 2.0_
 
-By default, the side navigation drawer that lists all of the pages in your Dashboard is styled in accordance with the "Navigation" colour in your Theme. This means that its `background-color` will match the header of the Dashboard too. If you'd like to override this, you can do so by using the `.v-navigation-drawer` class:
+By default, the side navigation drawer that lists all of the pages in your Dashboard is styled in accordance with the "Header" colour in your Theme. This means that its `background-color` will match the header of the Dashboard too. If you'd like to override this, you can do so by using the `.v-navigation-drawer` class:
 
 ```css
 .v-navigation-drawer {
