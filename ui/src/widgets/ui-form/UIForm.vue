@@ -74,11 +74,11 @@ export default {
             const option = this.options
             option.forEach(opt => {
                 if (opt.type === 'checkbox' || opt.type === 'switch') {
-                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = false
                     }
                 } else if (opt.type === 'number') {
-                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = null
                     } else {
                         if (isNaN(this.input[opt.key])) {
@@ -88,7 +88,7 @@ export default {
                         }
                     }
                 } else {
-                    if (this.input[opt.key] === undefined || this.input[opt.key] === null) {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = ''
                     }
                 }
