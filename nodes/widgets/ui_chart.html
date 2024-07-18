@@ -130,10 +130,9 @@
                     .attr('id', 'node-dialog-clear-history')
                     .text('Clear Chart History')
                     .on('click', () => {
-                        console.log('clear history')
                         // call the HTTP Admin Endpoint
                         $.ajax({
-                            url: `/dashboard/chart/${node.id}/clear`,
+                            url: `dashboard/chart/${node.id}/clear`,
                             type: 'POST',
                             success: (data) => {
                                 RED.notify(l8n('notifications.clearSuccess'), { type: 'success' })
