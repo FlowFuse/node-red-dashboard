@@ -81,8 +81,8 @@ In Node-RED Dashboard 2.0, the `ui-chart` offers a simple way to render data in 
 
 To map your data to the chart, the most important properties to configure are:
 
-![Example keymapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example keymapping config for UI Chart"){data-zoomable}
-_Example keymapping config for UI Chart_
+![Example key mapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example key mapping config for UI Chart"){data-zoomable}
+_Example key mapping config for UI Chart_
 
 - **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
 - **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
