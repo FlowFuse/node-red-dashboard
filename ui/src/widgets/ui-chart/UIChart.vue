@@ -366,7 +366,7 @@ export default {
                 }
                 // ensure we have no "empty" entries in our arrays
                 for (let i = 0; i < this.chart.data.datasets[sIndex].data.length; i++) {
-                    if (this.chart.data.datasets[sIndex].data[i] === undefined) {
+                    if (typeof this.chart.data.datasets[sIndex].data[i] === 'undefined') {
                         // assign a value so that ChartJS doesn't fall over
                         this.chart.data.datasets[sIndex].data[i] = {}
                     }
