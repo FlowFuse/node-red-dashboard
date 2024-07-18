@@ -249,7 +249,7 @@ Resulting in:
 _Example of a bar chart showing election data, grouped by candidate, and a series for each year_
 
 
-Alteratively, we could have a series per candidate, and then the x-value defined as the "year":
+Alternatively, we could have a series per candidate, and then the x-value defined as the "year":
 
 ![Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-config-B.png "Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
 _Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate_
