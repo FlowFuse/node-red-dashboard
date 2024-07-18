@@ -304,7 +304,7 @@ We provide some pre-defined locations that you can use:
 
 #### Page Name (`#app-bar-title`)
 
-Add content to the left-side of the navigation bar of the Dashboard. `<Teleport>` can be used as follows:
+Add content to the left-side of the header of the Dashboard. `<Teleport>` can be used as follows:
 
 ```vue
 <template>
