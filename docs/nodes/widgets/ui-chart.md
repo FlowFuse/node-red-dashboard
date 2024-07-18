@@ -81,8 +81,8 @@ In Node-RED Dashboard 2.0, the `ui-chart` offers a simple way to render data in 
 
 To map your data to the chart, the most important properties to configure are:
 
-![Example keymapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example keymapping config for UI Chart"){data-zoomable}
-_Example keymapping config for UI Chart_
+![Example key mapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example key mapping config for UI Chart"){data-zoomable}
+_Example key mapping config for UI Chart_
 
 - **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
 - **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
@@ -249,7 +249,7 @@ Resulting in:
 _Example of a bar chart showing election data, grouped by candidate, and a series for each year_
 
 
-Alteratively, we could have a series per candidate, and then the x-value defined as the "year":
+Alternatively, we could have a series per candidate, and then the x-value defined as the "year":
 
 ![Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-config-B.png "Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
 _Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate_
