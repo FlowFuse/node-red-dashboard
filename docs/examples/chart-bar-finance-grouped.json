@@ -1,0 +1,169 @@
+[
+    {
+        "id": "48f2d5b3e40cb944",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "b429518aee48a6fb",
+        "name": "Chart: Finance",
+        "label": "Finance Data",
+        "order": 1,
+        "chartType": "bar",
+        "category": "[\"Q1\", \"Q2\", \"Q3\", \"Q4\"]",
+        "categoryType": "json",
+        "xAxisLabel": "Year",
+        "xAxisProperty": "year",
+        "xAxisPropertyType": "property",
+        "xAxisType": "category",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "Profit",
+        "yAxisProperty": "radius",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 300,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3ccddcc77ed44e81",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Finance Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"year\":2021,\"Q1\":115,\"Q2\":207,\"Q3\":198,\"Q4\":163},{\"year\":2022,\"Q1\":170,\"Q2\":200,\"Q3\":230,\"Q4\":210},{\"year\":2023,\"Q1\":86,\"Q2\":140,\"Q3\":180,\"Q4\":138}]",
+        "payloadType": "json",
+        "x": 110,
+        "y": 60,
+        "wires": [
+            [
+                "48f2d5b3e40cb944"
+            ]
+        ]
+    },
+    {
+        "id": "8df4587f825276eb",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Clear Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 120,
+        "y": 100,
+        "wires": [
+            [
+                "48f2d5b3e40cb944"
+            ]
+        ]
+    },
+    {
+        "id": "b429518aee48a6fb",
+        "type": "ui-group",
+        "name": "Chart Examples",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 27,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

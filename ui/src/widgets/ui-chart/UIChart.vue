@@ -53,24 +53,22 @@ export default {
         const el = this.$refs.chart
 
         // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
-        // based on chart type and options provided from Node-RED
         const parsing = {}
-        if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-            if (this.props.xAxisProperty) {
-                parsing.xAxisKey = this.props.xAxisProperty
-            }
-        } else if (this.props.categoryType !== 'json' && this.props.chartType === 'bar') {
-            if (this.props.category && this.props.categoryType !== 'msg') {
-                parsing.xAxisKey = this.props.category
-            } else {
-                parsing.xAxisKey = 'category'
-            }
+        if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
+            parsing.xAxisKey = this.props.xAxisProperty
         }
 
         if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
             parsing.yAxisKey = this.props.yAxisProperty
         }
 
+        // do we need the "stacked" property?
+        let stacked = false
+        if (this.props.stackSeries === true && this.props.chartType === 'bar') {
+            stacked = true
+        }
+
+        // color options for text and grid
         let textColor = Chart.defaults.color
         let gridColor = Chart.defaults.borderColor
 
@@ -104,8 +102,8 @@ export default {
             },
             border: {
                 color: gridColor
-            }
-
+            },
+            stacked
         }
         if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
             yOptions.min = parseFloat(this.props.ymin)
@@ -114,8 +112,15 @@ export default {
             yOptions.max = parseFloat(this.props.ymax)
         }
 
+        // Do we show the legend?
+        let showLegend = this.props.showLegend
+        if (this.props.categoryType === 'none') {
+            // no category, so no legend
+            showLegend = false
+        }
+
         // create our ChartJS object
-        const chart = new Chart(el, {
+        const config = {
             type: this.props.chartType,
             data: {
                 labels: [],
@@ -144,7 +149,8 @@ export default {
                         },
                         border: {
                             color: gridColor
-                        }
+                        },
+                        stacked
                     },
                     y: yOptions
                 },
@@ -155,7 +161,7 @@ export default {
                         color: textColor
                     },
                     legend: {
-                        display: this.props.showLegend,
+                        display: showLegend,
                         labels: {
                             color: textColor
                         }
@@ -163,7 +169,8 @@ export default {
                 },
                 parsing
             }
-        })
+        }
+        const chart = new Chart(el, config)
 
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
@@ -281,6 +288,7 @@ export default {
                 ...datapoint,
                 ...payload
             }
+
             if (Array.isArray(label) && label.length > 0) {
                 // we have an array of series, meaning we plot multiple data points per data object
                 for (let i = 0; i < label.length; i++) {
@@ -300,13 +308,7 @@ export default {
                 ...datapoint,
                 ...payload
             }
-            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
-                this.addToLine(d, label)
-            } else if (this.props.chartType === 'bar') {
-                this.addToBar(d, label)
-            }
-
-            // TODO: Handle storage of restricted data size, need to manage in store, so pass props through?
+            this.addToChart(d, label)
 
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
@@ -322,79 +324,53 @@ export default {
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
          * @param {*} datapoint
          */
-        addToLine (datapoint, label) {
-            // consider msg.topic (label) as the label for the series
-            const dataLabels = [...new Set(this.chart.data.datasets?.map((set) => {
-                return set.label
-            }))]
-            const index = dataLabels?.indexOf(label)
+        addToChart (datapoint, label) {
+            const xLabels = this.chart.data.labels // the x-axis categories
+            const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
+
+            // make sure we have the relevant (x-axis) labels added to the chart too
+            if (!xLabels.includes(datapoint.x) && this.props.xAxisType === 'category') {
+                xLabels.push(datapoint.x)
+            }
+
+            const sIndex = sLabels?.indexOf(label)
+
             // the chart is empty, we're adding a new series
-            if (index === -1) {
+            if (sIndex === -1) {
+                // if we have no series, then can color each bar/x a different value
+                const colorByIndex = this.props.categoryType === 'none' && this.props.chartType === 'bar'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
+                // ensure we have a datapoint for the relevant series
+                const data = Array(sLabels.length + 1).fill({})
+                // define the data point for this series
+                data[sLabels.length] = datapoint
+                // add the new dataset to the chart
                 this.chart.data.datasets.push({
-                    borderColor: this.props.colors[dataLabels.length],
-                    backgroundColor: this.props.colors[dataLabels.length],
+                    borderColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
+                    backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
-                    data: [datapoint]
+                    data
                 })
             } else {
                 // we're adding a new datapoint to an existing series
-                this.chart.data.datasets[index].data.push(datapoint)
-            }
-        },
-        /**
-         * Function to handle adding a data point to Bar Charts
-         * @param {*} payload
-         * @param {*} label
-         */
-        addToBar (payload, label) {
-            label = label || ''
-            // construct our datapoint
-            if (typeof payload === 'number') {
-                // is this series already a label in the chart?
-                if (this.chart.data.labels.includes(label)) {
-                    // yes, so we need to find the index of this label
-                    const index = this.chart.data.labels.indexOf(label)
-                    // and update the data at this index
-                    this.chart.data.datasets[0].data[index] = payload
+                // have we seen this x-value before?
+                const xIndex = xLabels.indexOf(datapoint.x)
+                if (xIndex >= 0 && this.props.xAxisType === 'category') {
+                    // yes, so we need to update the data at this index
+                    this.chart.data.datasets[sIndex].data[xIndex] = datapoint
                 } else {
-                    // no, so we need to add new label and data point
-                    if (!this.chart.data.datasets.length) {
-                        this.chart.data.datasets.push({
-                            data: [],
-                            backgroundColor: this.props.colors,
-                            borderColor: this.props.colors
-                        })
+                    this.chart.data.datasets[sIndex].data.push(datapoint)
+                }
+                // ensure we have no "empty" entries in our arrays
+                for (let i = 0; i < this.chart.data.datasets[sIndex].data.length; i++) {
+                    if (typeof this.chart.data.datasets[sIndex].data[i] === 'undefined') {
+                        // assign a value so that ChartJS doesn't fall over
+                        this.chart.data.datasets[sIndex].data[i] = {}
                     }
-                    this.chart.data.datasets[0].data.push(payload)
-                    this.chart.data.labels.push(label)
                 }
-            } else if (typeof payload === 'object') {
-                if (!this.chart.data.labels.includes(label)) {
-                    if (!this.chart.data.datasets.length) {
-                        this.chart.data.datasets.push({
-                            data: [],
-                            backgroundColor: this.props.colors,
-                            borderColor: this.props.colors
-                        })
-                    }
-                    this.chart.data.labels.push(label)
-                }
-                const index = this.chart.data.labels.indexOf(label)
-                // ChartJS supports objects for Bar Charts, as long as we have xAxisKey and yAxisKey set
-                // and update the data at this index
-                if (this.props.categoryType === 'json' && this.props.category.length > 0) {
-                    // we would have computed these values server-side for multiple series defined
-                    this.chart.data.datasets[0].data[index] = payload.y
-                } else {
-                    this.chart.data.datasets[0].data[index] = payload
-                }
-            } else {
-                // only support numbers for now
-                console.log('Unsupported payload type for Bar Chart:', typeof payload)
             }
         },
         limitDataSize () {
