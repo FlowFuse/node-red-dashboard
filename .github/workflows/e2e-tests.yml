@@ -9,6 +9,15 @@ on:
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
+    services:
+      node-red:
+        image: nodered/node-red:latest
+        options:
+          --entrypoint "/bin/sh" -c "echo 123 && /usr/src/node-red/entrypoint.sh"
+        volumes:
+          - ./cypress/fixtures/user-dir/:/data
+        ports:
+          - 1881:1880
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +34,6 @@ jobs:
           install: false
           config-file: cypress.config.js
           build: npm run build
-          start: npm run cy:server
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
