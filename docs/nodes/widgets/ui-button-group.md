@@ -18,6 +18,9 @@ controls:
         example: true | false
         description: Allow control over whether or not the button is clickable.
 dynamic:
+    Disabled State:
+        payload: msg.enabled
+        structure: ["Boolean"]
     Label:
         payload: msg.ui_update.label
         structure: ["String"]
