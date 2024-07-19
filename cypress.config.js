@@ -1,5 +1,3 @@
-// const childProcess = require('child_process')
-
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
