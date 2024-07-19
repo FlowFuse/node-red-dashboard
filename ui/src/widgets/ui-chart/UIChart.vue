@@ -1,5 +1,8 @@
 <template>
-    <canvas ref="chart" :class="className" />
+    <div>
+        <canvas ref="chart" :class="className" />
+        <div v-if="radialChart && !hasData" class="nrdb-ui-chart-placeholder">No Data Received</div>
+    </div>
 </template>
 
 <script>
@@ -20,11 +23,16 @@ export default {
     },
     data () {
         return {
-            chart: null
+            chart: null,
+            hasData: false
         }
     },
     computed: {
-        ...mapState('data', ['messages'])
+        ...mapState('data', ['messages']),
+        radialChart () {
+            // radial charts have no placeholder in ChartJS - we need to add one
+            return this.props.xAxisType === 'radial'
+        }
     },
     watch: {
         'props.label': function (value) {
@@ -256,6 +264,7 @@ export default {
             this.chart.data.labels = []
             this.chart.data.datasets = []
             this.chart.update()
+            this.hasData = false
         },
         add (msg) {
             const payload = msg.payload
@@ -332,6 +341,9 @@ export default {
          * @param {*} datapoint
          */
         addToChart (datapoint, label) {
+            // record we've added data
+            this.hasData = true
+
             const xLabels = this.chart.data.labels // the x-axis categories
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
@@ -427,4 +439,20 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.nrdb-ui-chart-placeholder {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    color: rgba(var(--v-theme-on-group-background), var(--v-disabled-opacity));
+    --pie-slice-1: rgba(var(--v-theme-on-group-background), 0.05);
+    --pie-slice-2: rgba(var(--v-theme-on-group-background), 0.1);
+    background: radial-gradient(circle closest-side, rgb(var(--v-theme-group-background)) 50%, transparent 0),
+        radial-gradient(circle closest-side, transparent 66%, rgb(var(--v-theme-group-background)) 0),
+        conic-gradient(var(--pie-slice-1) 0, var(--pie-slice-1) 38%, var(--pie-slice-2) 0, var(--pie-slice-2) 61%);
+}
+</style>
