@@ -126,8 +126,10 @@ Option 2:
 We can alternatively add a custom socket listener to the `msg-input:<id>` event. This is useful if you want to listen to messages _only_ when they are received, and not when the widget first loads.
 
 ```js
-// runs only onInput
-this.$socket.on('msg-input:' + this.id, (msg) = { ... })
+this.$socket.on('msg-input:' + this.id, (msg) => {
+    // do stuff with msg
+    // runs only when messages are received
+})
 ```
 
 This can be added into the widget's `mounted () { }` handler
@@ -302,7 +304,7 @@ We provide some pre-defined locations that you can use:
 
 #### Page Name (`#app-bar-title`)
 
-Add content to the left-side of the navigation bar of the Dashboard. `<Teleport>` can be used as follows:
+Add content to the left-side of the header of the Dashboard. `<Teleport>` can be used as follows:
 
 ```vue
 <template>

@@ -133,8 +133,12 @@ Here is a list of the third-party widgets we're aware of to make it easier to fi
 - [@sumit_shinde_84/ui-webcam](https://flows.nodered.org/node/@sumit_shinde_84/node-red-dashboard-2-ui-webcam): Enables users to integrate webcam functionality into Node-RED Dashboard 2.0, allowing users to capture images and stream video through different cameras.
 - [@flowfuse/ui-iframe](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-iframe): Embed an external webpage into your Dashboard using an iframe.
 - [@flowfuse/ui-led](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-led): Adds an LED status indicator to your Dashboard.
-- [@colinl/node-red-dashboard-2-ui-gauge-classic](https://flows.nodered.org/node/@colinl/node-red-dashboard-2-ui-gauge-classic): Render a multi-needle gauge on your Dashboard, with a more "Classic" visual style.
-
+- [@flowfuse/ui-flowviewer](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-flowviewer): Visualises valid Node-RED `flow.json` into a static flow viewer.
+- [@flowfuse/user-addon](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon): Adds user data to all Dashboard events under `msg._client.user` if Node-RED is running on FlowFuse, with "FlowFuse User Authentication" enabled.
+- [@colinl/ui-gauge-classic](https://flows.nodered.org/node/@colinl/node-red-dashboard-2-ui-gauge-classic): Render a multi-needle gauge on your Dashboard, with a more "Classic" visual style.
+- [@fullmetal-fred/cloudflare-auth](https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth): Adds user data to all Dashboard events under `msg._client.user` if Node-RED is configured with Cloudflare authentication.
+- [@omrid01/table-tabulator](https://flows.nodered.org/node/@omrid01/node-red-dashboard-2-table-tabulator): Provides a rich table widget for Dashboard that extends the popular [Tabulator](http://tabulator.info/) JavaScript library.
+- [@revolutionpi/hmi](https://flows.nodered.org/node/@revolutionpi/node-red-dashboard-2-hmi): A customisable round button designed after industrial HMI Push-buttons.
 
 ### In-Development
 

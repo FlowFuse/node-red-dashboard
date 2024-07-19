@@ -1,0 +1,202 @@
+[
+    {
+        "id": "eed78059233cb876",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "b429518aee48a6fb",
+        "name": "Array Line Chart",
+        "label": "chart",
+        "order": 1,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "Property A",
+        "xAxisProperty": "propertyA",
+        "xAxisPropertyType": "property",
+        "xAxisType": "linear",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "Property B",
+        "yAxisProperty": "propertyB",
+        "ymin": "0",
+        "ymax": "10",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 340,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b21df8b397cb3233",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Clear Chart",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 150,
+        "y": 60,
+        "wires": [
+            [
+                "eed78059233cb876"
+            ]
+        ]
+    },
+    {
+        "id": "3493e8d72fbfa5a9",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Sample Data A",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Sample Data A",
+        "payload": "[{\"propertyA\":10,\"propertyB\":2},{\"propertyA\":15,\"propertyB\":3},{\"propertyA\":25,\"propertyB\":5},{\"propertyA\":30,\"propertyB\":6},{\"propertyA\":40,\"propertyB\":8}]",
+        "payloadType": "json",
+        "x": 140,
+        "y": 100,
+        "wires": [
+            [
+                "eed78059233cb876"
+            ]
+        ]
+    },
+    {
+        "id": "3d24d72914056683",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Sample Data B",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Sample Data B",
+        "payload": "[{\"propertyA\":7,\"propertyB\":6},{\"propertyA\":15,\"propertyB\":2},{\"propertyA\":24,\"propertyB\":9},{\"propertyA\":32,\"propertyB\":4},{\"propertyA\":47,\"propertyB\":9}]",
+        "payloadType": "json",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "eed78059233cb876"
+            ]
+        ]
+    },
+    {
+        "id": "b429518aee48a6fb",
+        "type": "ui-group",
+        "name": "Chart Examples",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 27,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

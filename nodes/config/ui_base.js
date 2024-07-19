@@ -315,6 +315,9 @@ module.exports = function (RED) {
             })
         }
 
+        // surface this so that other nodes can emit messages directly
+        node.emit = emit
+
         /**
          * Checks, given a received msg, and the associated SocketIO connection
          * whether the msg has been configured to only be sent to particular connections
