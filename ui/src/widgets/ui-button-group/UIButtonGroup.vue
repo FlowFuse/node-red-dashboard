@@ -141,7 +141,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-ui-button-group-wrapper {
     display: flex;
     flex-direction: row;
@@ -171,5 +171,13 @@ export default {
 
 .nrdb-ui-button-group-wrapper .icon-only .v-btn__prepend {
     margin-inline: 0;
+}
+
+.nrdb-ui-button-group-wrapper .v-btn.v-btn--disabled .v-btn__overlay {
+    opacity: 0.1;
+}
+
+.nrdb-ui-button-group-wrapper .v-btn-group .v-btn--disabled .v-btn__content {
+    color: rgb(var(--v-theme-on-group-background), var(--v-disabled-opacity));
 }
 </style>
