@@ -20,7 +20,7 @@ Subflows remove the need to write any code, publish to npm, or maintain a separa
 
 Subflows are not particular to Node-RED Dashboard 2.0, but are a core feature of Node-RED, and can be used on any set of nodes in your workspace.
 
-## Subflows in Dashboard 2.0 <ComingSoon /> <NodeREDVersion version="4.0.0" />
+## Subflows in Dashboard 2.0 <NodeREDVersion version="4.0.0" />
 
 ### Simple Example
 
@@ -112,5 +112,3 @@ You can control:
 
 ![Screenshot of a customised subflow copy+pasted multiple times in a Node-RED workspace](../assets/images/subflow-appearance-example.png){data-zoomable}
 *Screenshot of a customised subflow copy+pasted multiple times in a Node-RED workspace*
-
-### 
