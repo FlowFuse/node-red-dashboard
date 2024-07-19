@@ -7,7 +7,7 @@ props:
         description: The text shown to the left of the dropdown.
         dynamic: true
     Options:
-        description: A list of the options available in the dropdown. Each row defines a `label` (shown in the dropdown) and `value` (emitted on selection) property.
+        description: A list of the options available in the dropdown. Each row defines a 'label' (shown in the dropdown) and `value` (emitted on selection) property.
         dynamic: true
     Allow Multiple:
         description: Whether or not a user can select multiple options, if so, checkboxes are shown, and value is emitted in an array.
@@ -17,7 +17,9 @@ props:
         dynamic: false        
     Clearable:
         description: Clear selection with button.
-        dynamic: false        
+        dynamic: false
+    Allow Search:
+        description: Allows user to type a new value, filtering the list of possible values to choose.         
 dynamic:
     Label:
         payload: msg.ui_update.label
