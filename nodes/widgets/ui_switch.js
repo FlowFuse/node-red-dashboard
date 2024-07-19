@@ -4,7 +4,6 @@ const { appendTopic } = require('../utils/index.js')
 module.exports = function (RED) {
     function SwitchNode (config) {
         // create node in Node-RED
-        config.passthru = false
         RED.nodes.createNode(this, config)
 
         const node = this
