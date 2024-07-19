@@ -6,6 +6,8 @@ module.exports = defineConfig({
         specPattern: 'cypress/tests/**/*.spec.{js,jsx,ts,tsx}',
         setupNodeEvents (on, config) {
             // implement node event listeners here
-        }
+        },
+        defaultCommandTimeout: 10000,
+        retries: { runMode: 3, openMode: 1 }
     }
 })
