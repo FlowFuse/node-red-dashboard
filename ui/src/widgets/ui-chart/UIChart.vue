@@ -142,6 +142,12 @@ export default {
             }
             scales.y = yOptions
         }
+        // Do we show the legend?
+        let showLegend = this.props.showLegend
+        if (this.props.categoryType === 'none') {
+            // no category, so no legend
+            showLegend = false
+        }
 
         // create our ChartJS object
         const config = {
@@ -162,7 +168,7 @@ export default {
                         color: textColor
                     },
                     legend: {
-                        display: this.props.showLegend,
+                        display: showLegend,
                         labels: {
                             color: textColor
                         }
@@ -336,24 +342,27 @@ export default {
 
             const sIndex = sLabels?.indexOf(label)
 
-            let colorBy = 'series'
-            if (this.props.xAxisType === 'radial') {
-                colorBy = 'x'
-            }
-
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
+                // if we have no series, then can color each bar/x a different value, or if it's a radial chart
+                const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
+
+                // ensure we have a datapoint for the relevant series
+                const data = Array(sLabels.length + 1).fill({})
+                // define the data point for this series
+                data[sLabels.length] = datapoint
+                // add the new dataset to the chart
                 const d = {
-                    backgroundColor: colorBy === 'x' ? this.props.colors : this.props.colors[sLabels.length],
+                    backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
-                    data: [datapoint]
+                    data
                 }
 
-                if (colorBy !== 'x') {
+                if (!colorByIndex) {
                     d.borderColor = this.props.colors[sLabels.length]
                 }
 
@@ -362,11 +371,18 @@ export default {
                 // we're adding a new datapoint to an existing series
                 // have we seen this x-value before?
                 const xIndex = xLabels.indexOf(datapoint.x)
-                if (xIndex >= 0) {
+                if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                     // yes, so we need to update the data at this index
                     this.chart.data.datasets[sIndex].data[xIndex] = datapoint
                 } else {
                     this.chart.data.datasets[sIndex].data.push(datapoint)
+                }
+                // ensure we have no "empty" entries in our arrays
+                for (let i = 0; i < this.chart.data.datasets[sIndex].data.length; i++) {
+                    if (typeof this.chart.data.datasets[sIndex].data[i] === 'undefined') {
+                        // assign a value so that ChartJS doesn't fall over
+                        this.chart.data.datasets[sIndex].data[i] = {}
+                    }
                 }
             }
         },

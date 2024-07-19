@@ -38,6 +38,10 @@
 
 <script type="text/javascript">
     (function () {
+        const l8n = function (property) {
+            return RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.' + property)
+        }
+        const noneType = { value: 'none', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none'), hasValue: false }
         const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
 
         function hexToRgb (hex) {
@@ -53,9 +57,9 @@
 
         function getSeriesTypes (xAxisType) {
             if (xAxisType === 'category') {
-                return ['msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', propertyType]
             } else {
-                return ['msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', propertyType]
             }
         }
 
@@ -119,6 +123,28 @@
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                const node = this
+                // add "Clear History" button
+                const clearHistoryBtn = $('<button>')
+                    .attr('class', 'ui-button ui-corner-all ui-widget leftButton')
+                    .attr('id', 'node-dialog-clear-history')
+                    .text('Clear Chart History')
+                    .on('click', () => {
+                        // call the HTTP Admin Endpoint
+                        $.ajax({
+                            url: `dashboard/chart/${node.id}/clear`,
+                            type: 'POST',
+                            success: (data) => {
+                                RED.notify(l8n('notifications.clearSuccess'), { type: 'success' })
+                            },
+                            error: (xhr, status, error) => {
+                                RED.notify(node._('common.notification.error', { message: 'Unable to clear chart history' }), 'error')
+                            }
+                        })
+                    })
+
+                $('.red-ui-tray-toolbar').append(clearHistoryBtn)
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -310,6 +336,13 @@
                         $('#node-container-yAxisProperty').show()
                     }
                 })
+
+                // ensure the xAxis PropertyType isn't an invalid value
+                if (this.xAxisPropertyType === 'msg' && this.xAxisProperty === '') {
+                    // auto-fix it for the user
+                    this.xAxisPropertyType = propertyType.value
+                    $('#node-input-xAxisProperty').typedInput('type', propertyType.value)
+                }
 
                 // Stack/Group-By Options - convert from bool to string values for <select>
                 if (this.stackSeries === true) {
