@@ -74,10 +74,10 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'color', updates.color)
                     }
                     if (typeof (updates.colorTrack) !== 'undefined') {
-                        statestore.set(group.getBase(), node, msg, 'color-track', updates.colorTrack)
+                        statestore.set(group.getBase(), node, msg, 'colorTrack', updates.colorTrack)
                     }
                     if (typeof (updates.colorThumb) !== 'undefined') {
-                        statestore.set(group.getBase(), node, msg, 'color-thumb', updates.colorThumb)
+                        statestore.set(group.getBase(), node, msg, 'colorThumb', updates.colorThumb)
                     }
                 }
                 return msg

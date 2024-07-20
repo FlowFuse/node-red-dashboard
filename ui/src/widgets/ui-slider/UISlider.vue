@@ -168,6 +168,15 @@ export default {
             if (typeof updates.iconPrepend !== 'undefined') {
                 this.dynamic.iconPrepend = updates.iconPrepend
             }
+            if (typeof updates.color !== 'undefined') {
+                this.dynamic.color = updates.color
+            }
+            if (typeof updates.colorTrack !== 'undefined') {
+                this.dynamic.colorTrack = updates.colorTrack
+            }
+            if (typeof updates.colorThumb !== 'undefined') {
+                this.dynamic.colorThumb = updates.colorThumb
+            }
         }
     }
 }
