@@ -9,7 +9,7 @@
         :min="min" :direction="direction"
         :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1" :show-ticks="showTicks"
+        :max="max" :step="step || 1" :show-ticks="showTicks"
         @update:model-value="onChange" @end="onBlur"
     />
 </template>
@@ -167,6 +167,15 @@ export default {
             }
             if (typeof updates.iconPrepend !== 'undefined') {
                 this.dynamic.iconPrepend = updates.iconPrepend
+            }
+            if (typeof updates.color !== 'undefined') {
+                this.dynamic.color = updates.color
+            }
+            if (typeof updates.colorTrack !== 'undefined') {
+                this.dynamic.colorTrack = updates.colorTrack
+            }
+            if (typeof updates.colorThumb !== 'undefined') {
+                this.dynamic.colorThumb = updates.colorThumb
             }
         }
     }
