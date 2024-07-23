@@ -1,16 +1,16 @@
 <template>
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
-        :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': icon ?? 'auto' }"
+        :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
         @click="action"
     >
-        <template #append>
+        <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
         </template>
-        <template #prepend>
+        <template v-if="appendIcon" #append>
             <v-icon :color="iconColor" />
         </template>
-        <span :style="{'color': textColor}" v-html="label" />
+        <span v-if="label" :style="{'color': textColor}" v-html="label" />
     </v-btn>
 </template>
 
@@ -121,10 +121,12 @@ export default {
 <style>
 .nrdb-ui-button--icon .v-btn__append {
     margin-left: 0;
+    margin-inline: initial;
 }
 
 .nrdb-ui-button--icon .v-btn__prepend {
     margin-right: 0;
+    margin-inline: initial;
 }
 
 .nrdb-ui-button .v-btn .v-icon {
