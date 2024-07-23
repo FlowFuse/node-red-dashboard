@@ -51,7 +51,8 @@
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 splitLayout: { value: '' },
-                className: { value: '' }
+                className: { value: '' },
+                passthru: { value: false }
             },
             inputs: 1,
             outputs: 1,

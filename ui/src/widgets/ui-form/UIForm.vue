@@ -1,6 +1,6 @@
 <template>
     <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
-    <v-form ref="form" v-model="isValid" validate-on="blur" @submit.prevent="onSubmit">
+    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
@@ -20,8 +20,8 @@
             </div>
         </div>
         <div class="nrdb-ui-form-actions">
-            <v-btn data-action="form-submit" type="submit" variant="flat" size="large" :disabled="!isValid">{{ props.submit || 'submit' }}</v-btn>
-            <v-btn v-if="props.cancel" data-action="form-clear" variant="outlined" size="large" @click="clear">{{ props.cancel }}</v-btn>
+            <v-btn data-action="form-submit" type="submit" variant="flat" size="large" :disabled="submitEnabled">{{ props.submit || 'submit' }}</v-btn>
+            <v-btn v-if="props.cancel" data-action="form-clear" variant="outlined" :disabled="!state.enabled" size="large" @click="clear">{{ props.cancel }}</v-btn>
         </div>
     </v-form>
 </template>
@@ -36,7 +36,8 @@ export default {
     inject: ['$socket'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
@@ -55,6 +56,9 @@ export default {
         },
         options: function () {
             return this.dynamic.options !== null ? this.dynamic.options : this.props.options
+        },
+        submitEnabled: function () {
+            return !(this.isValid && !!this.state.enabled)
         }
     },
     created () {
@@ -66,6 +70,30 @@ export default {
     },
     methods: {
         onSubmit: function () {
+            // Prevent sending null for switch and combobox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
+            const option = this.options
+            option.forEach(opt => {
+                if (opt.type === 'checkbox' || opt.type === 'switch') {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = false
+                    }
+                } else if (opt.type === 'number') {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = null
+                    } else {
+                        if (isNaN(this.input[opt.key])) {
+                            this.input[opt.key] = null
+                        } else {
+                            this.input[opt.key] = Number(this.input[opt.key])
+                        }
+                    }
+                } else {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = ''
+                    }
+                }
+            })
+
             this.$socket.emit('widget-action', this.id, {
                 payload: this.input
             })
@@ -78,6 +106,9 @@ export default {
         },
         reset () {
             this.$refs.form.reset()
+        },
+        validate () {
+            this.$refs.form.validate()
         },
         rules (row) {
             if (row.required) {
@@ -96,6 +127,7 @@ export default {
                 for (const key in payload) {
                     this.input[key] = payload[key]
                 }
+                this.$nextTick(() => { this.validate() })
             }
         },
         onDynamicProperties (msg) {
