@@ -3,7 +3,7 @@
         <label v-if="label" class="v-label">
             {{ label }}
         </label>
-        <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" @update:model-value="onChange(selection)">
+        <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
                 <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
@@ -80,8 +80,17 @@ export default {
                 widgetId: this.id,
                 msg
             })
+
             // make sure our v-model is updated to reflect the value from Node-RED
-            this.selection = msg.payload
+            if (msg.payload !== undefined) {
+                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                    this.selection = null
+                } else {
+                    if (this.findOptionByValue(msg.payload) !== null) {
+                        this.selection = msg.payload
+                    }
+                }
+            }
         },
         onLoad (msg) {
             // update vuex store to reflect server-state
@@ -90,7 +99,15 @@ export default {
                 msg
             })
             // make sure we've got the relevant option selected on load of the page
-            this.selection = msg.payload
+            if (msg.payload !== undefined) {
+                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                    this.selection = null
+                } else {
+                    if (this.findOptionByValue(msg.payload) !== null) {
+                        this.selection = msg.payload
+                    }
+                }
+            }
         },
         onDynamicProperty (msg) {
             const updates = msg.ui_update
@@ -124,7 +141,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-ui-button-group-wrapper {
     display: flex;
     flex-direction: row;
@@ -154,5 +171,13 @@ export default {
 
 .nrdb-ui-button-group-wrapper .icon-only .v-btn__prepend {
     margin-inline: 0;
+}
+
+.nrdb-ui-button-group-wrapper .v-btn.v-btn--disabled .v-btn__overlay {
+    opacity: 0.1;
+}
+
+.nrdb-ui-button-group-wrapper .v-btn-group .v-btn--disabled .v-btn__content {
+    color: rgb(var(--v-theme-on-group-background), var(--v-disabled-opacity));
 }
 </style>
