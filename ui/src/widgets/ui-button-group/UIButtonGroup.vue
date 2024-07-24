@@ -28,11 +28,7 @@ export default {
     },
     data () {
         return {
-            selection: null,
-            dynamic: {
-                label: null,
-                options: null
-            }
+            selection: null
         }
     },
     computed: {
@@ -48,10 +44,10 @@ export default {
             return this.look === 'default' ? null : this.look
         },
         label: function () {
-            return this.dynamic.label || this.props.label
+            return this.getProperty('label')
         },
         options: function () {
-            const options = this.dynamic.options || this.props.options
+            const options = this.getProperty('options')
             if (options) {
                 return options.map(option => {
                     if (typeof option === 'string') {
@@ -112,10 +108,10 @@ export default {
         onDynamicProperty (msg) {
             const updates = msg.ui_update
             if (typeof updates?.label !== 'undefined') {
-                this.dynamic.label = updates.label
+                this.setDynamicProperties({ label: updates.label })
             }
             if (typeof updates?.options !== 'undefined') {
-                this.dynamic.options = updates.options
+                this.setDynamicProperties({ options: updates.options })
             }
         },
         onChange (value) {
