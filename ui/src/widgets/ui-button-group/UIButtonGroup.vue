@@ -91,18 +91,20 @@ export default {
             }
         },
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure we've got the relevant option selected on load of the page
-            if (msg.payload !== undefined) {
-                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                    this.selection = null
-                } else {
-                    if (this.findOptionByValue(msg.payload) !== null) {
-                        this.selection = msg.payload
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                // make sure we've got the relevant option selected on load of the page
+                if (msg.payload !== undefined) {
+                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                        this.selection = null
+                    } else {
+                        if (this.findOptionByValue(msg.payload) !== null) {
+                            this.selection = msg.payload
+                        }
                     }
                 }
             }

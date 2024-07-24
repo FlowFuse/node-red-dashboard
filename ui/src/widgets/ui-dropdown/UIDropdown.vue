@@ -87,12 +87,14 @@ export default {
     methods: {
         // given the last received msg into this node, load the state
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            this.select(this.messages[this.id]?.payload)
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                this.select(this.messages[this.id]?.payload)
+            }
         },
         onDynamicProperties (msg) {
             // When a msg comes in from Node-RED, we need support 2 operations:

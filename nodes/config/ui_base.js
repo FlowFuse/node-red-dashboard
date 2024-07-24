@@ -677,7 +677,7 @@ module.exports = function (RED) {
                     }
                 })
 
-                if (!msg) {
+                if (!msg && !state) {
                     // a plugin has made msg blank - meaning that we do anything else
                     return
                 }
