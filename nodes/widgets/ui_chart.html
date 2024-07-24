@@ -197,8 +197,7 @@
 
                 // handle event when x axis type is changed
                 $('#node-input-xAxisType').on('change', (evt) => {
-                    const value = $('#node-input-xAxisType').typedInput('value')
-
+                    const value = $('#node-input-xAxisType').val()
                     if (value === 'time') {
                         $('#x-axis-format').show()
                     } else {
@@ -238,7 +237,7 @@
                 $('#node-input-category').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-categoryType'),
-                    types: getSeriesTypes($('#node-input-xAxisType').typedInput('value'))
+                    types: getSeriesTypes($('#node-input-xAxisType').val())
                 })
                 $('#node-input-xAxisProperty').typedInput({
                     default: propertyType.value,
@@ -273,6 +272,36 @@
                     }]
                 })
 
+                const updateXAxisTypeOptions = function (options, defaultValue) {
+                    const $el = $('#node-input-xAxisType')
+                    const currentValue = $el.val() || node.xAxisType
+                    const allOptions = [
+                        { value: 'time', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
+                        { value: 'linear', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') },
+                        { value: 'radial', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.radial') },
+                        { value: 'category', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
+                    ]
+                    const theseOptions = allOptions.filter((option) => options.indexOf(option.value) !== -1)
+                    $el.css('pointer-events', 'none') // temporarily inhibit events
+                    $el.empty()
+                    theseOptions.forEach((option) => {
+                        $el.append($('<option>', option))
+                    })
+
+                    // set the value to the current value if it's still valid otherwise set to default/first option
+                    if (theseOptions.find((option) => option.value === currentValue)) {
+                        $el.val(currentValue)
+                    } else if (defaultValue && theseOptions.find((option) => option.value === defaultValue)) {
+                        $el.val(defaultValue)
+                    } else if (theseOptions.length > 0) {
+                        $el.val(theseOptions[0].value)
+                    } else {
+                        $el.val('')
+                    }
+                    $el.css('pointer-events', '') // remove the inhibition
+                    $el.trigger('change') // trigger the change event to update the UI
+                }
+
                 // handle event when chart's type is changed
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $('#node-input-chartType').typedInput('value')
@@ -280,28 +309,16 @@
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
-                        $('#node-input-xAxisType').typedInput('types', [{
-                            value: 'linear',
-                            options: [
-                                { value: 'time', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
-                                { value: 'linear', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') }
-                            ]
-                        }])
-                        $('#node-input-xAxisType').typedInput('type', 'time')
+                        updateXAxisTypeOptions(['time', 'linear'], 'linear')
                         // no concept of stacking in line/scatter charts
                         $('#config-stackSeries').hide()
-
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
                     } else if (value === 'pie' || value === 'doughnut') {
-                        $('#node-input-xAxisType').typedInput('types', [{
-                            options: [
-                                { value: 'radial', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.radial') }
-                            ]
-                        }])
-                        $('#node-input-xAxisType').typedInput('type', 'radial')
-
+                        // for pie/doughnut
+                        // types - radial
+                        updateXAxisTypeOptions(['radial'], 'radial')
                         // no stacking options in pie/doughnut charts
                         $('#config-stackSeries').hide()
                         // hide x-axis limit options & points sizing
@@ -310,14 +327,8 @@
                     } else if (value === 'bar') {
                         // for bar
                         // types - categorical
-                        $('#node-input-xAxisType').typedInput('types', [{
-                            value: 'category',
-                            options: [
-                                { value: 'category', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
-                            ]
-                        }])
-                        $('#node-input-xAxisType').typedInput('type', 'category')
-                        // sho the ability to control if content is stacked or not
+                        updateXAxisTypeOptions(['category'], 'category')
+                        // show the ability to control if content is stacked or not
                         $('#config-stackSeries').show()
                         // hide x-axis limit options & points sizing
                         $('#x-axis-show').hide()
@@ -505,8 +516,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-xAxisType" data-i18n="ui-chart.label.xType"></label></label>
-        <input type="text" id="node-input-xAxisType">
-        <input type="hidden" id="node-input-xAxisTypeType">
+        <select id="node-input-xAxisType"> </select>
     </div>
     <div class="form-row" id="x-axis-format">
         <label for="node-input-xAxisFormat" data-i18n="ui-chart.label.xFormat"></label></label>
