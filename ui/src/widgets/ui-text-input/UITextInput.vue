@@ -124,14 +124,16 @@ export default {
             }
         },
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure we've got the relevant option selected on load of the page
-            if (msg.payload !== undefined) {
-                this.textValue = msg.payload
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                // make sure we've got the relevant option selected on load of the page
+                if (msg.payload !== undefined) {
+                    this.textValue = msg.payload
+                }
             }
         },
         send: function () {

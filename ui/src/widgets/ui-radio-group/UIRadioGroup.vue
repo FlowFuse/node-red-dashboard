@@ -68,12 +68,14 @@ export default {
     methods: {
         // given the last received msg into this node, load the state
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            this.select(this.messages[this.id]?.payload)
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                this.select(this.messages[this.id]?.payload)
+            }
         },
         onInput (msg) {
             // update our vuex store with the value retrieved from Node-RED
