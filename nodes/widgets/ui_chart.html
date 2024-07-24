@@ -250,28 +250,6 @@
                     types: [propertyType]
                 })
 
-                $('#node-input-pointShape').typedInput({
-                    type: 'pointShape',
-                    default: 'circle',
-                    typeField: $('#node-input-pointShapeType'),
-                    types: [{
-                        value: 'circle',
-                        options: [
-                            { value: 'circle', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.circle') },
-                            { value: 'cross', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cross') },
-                            { value: 'crossRot', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.crossRotated') },
-                            { value: 'dash', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dash') },
-                            { value: 'line', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.line2') },
-                            { value: 'rect', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.rectangle') },
-                            { value: 'rectRounded', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.roundedRectangle') },
-                            { value: 'rectRot', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.rotatedRectangle') },
-                            { value: 'star', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.star') },
-                            { value: 'triangle', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.triangle') },
-                            { value: 'false', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none') }
-                        ]
-                    }]
-                })
-
                 const updateXAxisTypeOptions = function (options, defaultValue) {
                     const $el = $('#node-input-xAxisType')
                     const currentValue = $el.val() || node.xAxisType
@@ -505,9 +483,20 @@
     <div class="form-row form-row-flex" id="point-radius-show">
         <label for="node-input-pointRadius" data-i18n="ui-chart.label.pointStyle"></label>
         <div style="margin-right: 6px;">
-            <label for="node-input-pointShape" style="width: auto;" data-i18n="ui-chart.label.pointShape"></label>
-            <input type="text" id="node-input-pointShape">
-            <input type="hidden" id="node-input-pointShapeType">
+            <label for="node-input-pointShape" style="width: auto; display: none;" data-i18n="ui-chart.label.pointShape"></label>
+            <select id="node-input-pointShape">
+                <option value="circle" data-i18n="ui-chart.label.circle"></option>
+                <option value="cross" data-i18n="ui-chart.label.cross"></option>
+                <option value="crossRot" data-i18n="ui-chart.label.crossRotated"></option>
+                <option value="dash" data-i18n="ui-chart.label.dash"></option>
+                <option value="line" data-i18n="ui-chart.label.line2"></option>
+                <option value="rect" data-i18n="ui-chart.label.rectangle"></option>
+                <option value="rectRounded" data-i18n="ui-chart.label.roundedRectangle"></option>
+                <option value="rectRot" data-i18n="ui-chart.label.rotatedRectangle"></option>
+                <option value="star" data-i18n="ui-chart.label.star"></option>
+                <option value="triangle" data-i18n="ui-chart.label.triangle"></option>
+                <option value="false" data-i18n="ui-chart.label.none"></option>
+            </select>
         </div>
         <div>
             <label for="node-input-pointRadius" style="width: auto;" data-i18n="ui-chart.label.pointRadius"></label>
