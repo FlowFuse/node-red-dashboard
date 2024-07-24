@@ -172,22 +172,6 @@
                     }
                 })
 
-                // set value options for chart's type
-                $('#node-input-chartType').typedInput({
-                    type: 'chartType',
-                    types: [{
-                        value: 'line',
-                        options: [
-                            { value: 'line', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.line') },
-                            { value: 'bar', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.bar') },
-                            { value: 'scatter', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.scatter') },
-                            { value: 'pie', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.pie') },
-                            { value: 'doughnut', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.doughnut') }
-                        ]
-                    }],
-                    typeField: '#node-input-chartTypeType'
-                })
-
                 // Allowable "X-Axis Type" choices for chart type
                 // line     : time, linear
                 // bar      : categorical (or just hide)
@@ -282,7 +266,7 @@
 
                 // handle event when chart's type is changed
                 $('#node-input-chartType').on('change', (evt) => {
-                    const value = $('#node-input-chartType').typedInput('value')
+                    const value = $(evt.target).val()
 
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
@@ -316,7 +300,7 @@
 
                 // handle event when chart's type is changed
                 $('#node-input-category').change((evt) => {
-                    const categoryType = $('#node-input-categoryType').val()
+                    const categoryType = $(evt.target).val()
 
                     if (categoryType === 'json') {
                         // hide y-axis property setting as category will now control that
@@ -457,8 +441,13 @@
     <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
         <div>
             <label for="node-input-chartType"><i class="fa fa-bookmark"></i> <span data-i18n="ui-chart.label.type"></span></label>
-            <input type="text" id="node-input-chartType">
-            <input type="hidden" id="node-input-chartTypeType">
+            <select id="node-input-chartType">
+                <option value="line" data-i18n="ui-chart.label.line"></option>
+                <option value="bar" data-i18n="ui-chart.label.bar"></option>
+                <option value="scatter" data-i18n="ui-chart.label.scatter"></option>
+                <option value="pie" data-i18n="ui-chart.label.pie"></option>
+                <option value="doughnut" data-i18n="ui-chart.label.doughnut"></option>
+            </select>
         </div>
         <div>
             <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> <span data-i18n="ui-chart.label.showLegend"></span></label>
