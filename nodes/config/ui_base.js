@@ -670,9 +670,10 @@ module.exports = function (RED) {
             }
             async function handler () {
                 let msg = datastore.get(id)
+                const state = statestore.getAll(id)
                 RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                     if (plugin.hooks?.onLoad) {
-                        msg = plugin.hooks.onLoad(conn, id, msg)
+                        msg = plugin.hooks.onLoad(conn, id, msg, state)
                     }
                 })
 
@@ -681,7 +682,7 @@ module.exports = function (RED) {
                     return
                 }
 
-                conn.emit('widget-load:' + id, msg)
+                conn.emit('widget-load:' + id, msg, state)
             }
             // wrap execution in a try/catch to ensure we don't crash Node-RED
             try {

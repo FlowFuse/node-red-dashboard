@@ -40,23 +40,19 @@ export default {
     data () {
         return {
             input: {},
-            isValid: null,
-            dynamic: {
-                label: null,
-                options: null
-            }
+            isValid: null
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
-            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+            return this.getProperty('label')
         },
         options: function () {
-            return this.dynamic.options !== null ? this.dynamic.options : this.props.options
+            return this.getProperty('options') || []
         },
         submitEnabled: function () {
-            return !(this.isValid && !!this.state.enabled)
+            return !(this.isValid && !!this.getProperty('enabled'))
         }
     },
     created () {
@@ -131,10 +127,14 @@ export default {
         onDynamicProperties (msg) {
             const updates = msg.ui_update
             if (typeof updates?.label !== 'undefined') {
-                this.dynamic.label = updates.label
+                this.setDynamicProperties({
+                    label: updates.label
+                })
             }
             if (typeof updates?.options !== 'undefined') {
-                this.dynamic.options = updates.options
+                this.setDynamicProperties({
+                    options: updates.options
+                })
             }
         }
     }
