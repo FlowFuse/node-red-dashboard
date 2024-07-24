@@ -188,12 +188,12 @@
                     typeField: '#node-input-chartTypeType'
                 })
 
-                // line    = time, linear, log
-                // scatter = time, linear, log
-                // bar     = categorical (or just hide)
-
-                // provide options for x-axis type
-                $('#node-input-xAxisType').typedInput()
+                // Allowable "X-Axis Type" choices for chart type
+                // line     : time, linear
+                // bar      : categorical (or just hide)
+                // scatter  : time, linear
+                // pie      : radial
+                // doughnut : radial
 
                 // handle event when x axis type is changed
                 $('#node-input-xAxisType').on('change', (evt) => {
