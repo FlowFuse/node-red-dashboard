@@ -1,7 +1,7 @@
 <template>
     <div>
         <canvas ref="chart" :class="className" />
-        <div v-if="radialChart && !hasData" class="nrdb-ui-chart-placeholder">No Data Received</div>
+        <div v-if="radialChart && !hasData" class="nrdb-ui-chart-placeholder">No Data</div>
     </div>
 </template>
 
