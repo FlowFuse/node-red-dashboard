@@ -27,20 +27,7 @@ export default {
     },
     data () {
         return {
-            value: null,
-            dynamic: {
-                label: null,
-                step: null,
-                thumbLabel: null,
-                showTicks: null,
-                min: null,
-                max: null,
-                iconAppend: null,
-                iconPrepend: null,
-                color: null,
-                colorTrack: null,
-                colorThumb: null
-            }
+            value: null
         }
     },
     computed: {
@@ -58,25 +45,25 @@ export default {
             return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
-            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+            return this.getProperty('label')
         },
         thumbLabel: function () {
-            return this.dynamic.thumbLabel !== null ? this.dynamic.thumbLabel : this.props.thumbLabel
+            return this.getProperty('thumbLabel')
         },
         showTicks: function () {
-            return this.dynamic.showTicks !== null ? this.dynamic.showTicks : this.props.showTicks
+            return this.getProperty('showTicks')
         },
         min: function () {
-            return this.dynamic.min !== null ? this.dynamic.min : this.props.min
+            return this.getProperty('min')
         },
         step: function () {
-            return this.dynamic.step !== null ? this.dynamic.step : this.props.step
+            return this.getProperty('step')
         },
         max: function () {
-            return this.dynamic.max !== null ? this.dynamic.max : this.props.max
+            return this.getProperty('max')
         },
         iconPrepend: function () {
-            const icon = this.dynamic.iconPrepend !== null ? this.dynamic.iconPrepend : this.props.iconPrepend
+            const icon = this.getProperty('iconPrepend')
             if (icon) {
                 const mdiIcon = this.makeMdiIcon(icon)
                 return mdiIcon
@@ -84,7 +71,7 @@ export default {
             return null
         },
         iconAppend: function () {
-            const icon = this.dynamic.iconAppend !== null ? this.dynamic.iconAppend : this.props.iconAppend
+            const icon = this.getProperty('iconAppend')
             if (icon) {
                 const mdiIcon = this.makeMdiIcon(icon)
                 return mdiIcon
@@ -92,13 +79,13 @@ export default {
             return null
         },
         color: function () {
-            return this.dynamic.color !== null ? this.dynamic.color : this.props.color
+            return this.getProperty('color')
         },
         colorTrack: function () {
-            return this.dynamic.colorTrack !== null ? this.dynamic.colorTrack : this.props.colorTrack
+            return this.getProperty('colorTrack')
         },
         colorThumb: function () {
-            return this.dynamic.colorThumb !== null ? this.dynamic.colorThumb : this.props.colorThumb
+            return this.getProperty('colorThumb')
         }
     },
     watch: {
@@ -144,37 +131,37 @@ export default {
                 return
             }
             if (typeof updates.label !== 'undefined') {
-                this.dynamic.label = updates.label
+                this.setDynamicProperties({ label: updates.label })
             }
             if (typeof updates.thumbLabel !== 'undefined') {
-                this.dynamic.thumbLabel = updates.thumbLabel
+                this.setDynamicProperties({ thumbLabel: updates.thumbLabel })
             }
             if (typeof updates.showTicks !== 'undefined') {
-                this.dynamic.showTicks = updates.showTicks
+                this.setDynamicProperties({ showTicks: updates.showTicks })
             }
             if (typeof updates.min !== 'undefined') {
-                this.dynamic.min = updates.min
+                this.setDynamicProperties({ min: updates.min })
             }
             if (typeof updates.max !== 'undefined') {
-                this.dynamic.max = updates.max
+                this.setDynamicProperties({ max: updates.max })
             }
             if (typeof updates.step !== 'undefined') {
-                this.dynamic.step = updates.step
+                this.setDynamicProperties({ step: updates.step })
             }
             if (typeof updates.iconAppend !== 'undefined') {
-                this.dynamic.iconAppend = updates.iconAppend
+                this.setDynamicProperties({ iconAppend: updates.iconAppend })
             }
             if (typeof updates.iconPrepend !== 'undefined') {
-                this.dynamic.iconPrepend = updates.iconPrepend
+                this.setDynamicProperties({ iconPrepend: updates.iconPrepend })
             }
             if (typeof updates.color !== 'undefined') {
-                this.dynamic.color = updates.color
+                this.setDynamicProperties({ color: updates.color })
             }
             if (typeof updates.colorTrack !== 'undefined') {
-                this.dynamic.colorTrack = updates.colorTrack
+                this.setDynamicProperties({ colorTrack: updates.colorTrack })
             }
             if (typeof updates.colorThumb !== 'undefined') {
-                this.dynamic.colorThumb = updates.colorThumb
+                this.setDynamicProperties({ colorThumb: updates.colorThumb })
             }
         }
     }
