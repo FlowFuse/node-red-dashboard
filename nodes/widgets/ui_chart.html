@@ -438,9 +438,10 @@
             </a>
         </div>
     </div>
+    <h4>Chart Configuration</h4>
     <div class="form-row" style="display: flex; align-items: center; gap: 36px;">
         <div>
-            <label for="node-input-chartType"><i class="fa fa-bookmark"></i> <span data-i18n="ui-chart.label.type"></span></label>
+            <label for="node-input-chartType"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-chart.label.type"></span></label>
             <select id="node-input-chartType">
                 <option value="line" data-i18n="ui-chart.label.line"></option>
                 <option value="bar" data-i18n="ui-chart.label.bar"></option>
@@ -471,27 +472,30 @@
     </div>
     <div class="form-row form-row-flex" id="point-radius-show">
         <label for="node-input-pointRadius" data-i18n="ui-chart.label.pointStyle"></label>
-        <div style="margin-right: 6px;">
-            <label for="node-input-pointShape" style="width: auto; display: none;" data-i18n="ui-chart.label.pointShape"></label>
-            <select id="node-input-pointShape">
-                <option value="circle" data-i18n="ui-chart.label.circle"></option>
-                <option value="cross" data-i18n="ui-chart.label.cross"></option>
-                <option value="crossRot" data-i18n="ui-chart.label.crossRotated"></option>
-                <option value="dash" data-i18n="ui-chart.label.dash"></option>
-                <option value="line" data-i18n="ui-chart.label.line2"></option>
-                <option value="rect" data-i18n="ui-chart.label.rectangle"></option>
-                <option value="rectRounded" data-i18n="ui-chart.label.roundedRectangle"></option>
-                <option value="rectRot" data-i18n="ui-chart.label.rotatedRectangle"></option>
-                <option value="star" data-i18n="ui-chart.label.star"></option>
-                <option value="triangle" data-i18n="ui-chart.label.triangle"></option>
-                <option value="false" data-i18n="ui-chart.label.none"></option>
-            </select>
-        </div>
-        <div>
-            <label for="node-input-pointRadius" style="width: auto;" data-i18n="ui-chart.label.pointRadius"></label>
-            <input type="number" id="node-input-pointRadius">
+        <div style="display: flex; align-items: center; gap: 36px;">
+            <div>
+                <label for="node-input-pointShape" style="width: auto; display: none;" data-i18n="ui-chart.label.pointShape"></label>
+                <select id="node-input-pointShape">
+                    <option value="circle" data-i18n="ui-chart.label.circle"></option>
+                    <option value="cross" data-i18n="ui-chart.label.cross"></option>
+                    <option value="crossRot" data-i18n="ui-chart.label.crossRotated"></option>
+                    <option value="dash" data-i18n="ui-chart.label.dash"></option>
+                    <option value="line" data-i18n="ui-chart.label.line2"></option>
+                    <option value="rect" data-i18n="ui-chart.label.rectangle"></option>
+                    <option value="rectRounded" data-i18n="ui-chart.label.roundedRectangle"></option>
+                    <option value="rectRot" data-i18n="ui-chart.label.rotatedRectangle"></option>
+                    <option value="star" data-i18n="ui-chart.label.star"></option>
+                    <option value="triangle" data-i18n="ui-chart.label.triangle"></option>
+                    <option value="false" data-i18n="ui-chart.label.none"></option>
+                </select>
+            </div>
+            <div>
+                <label for="node-input-pointRadius" style="width: auto;" data-i18n="ui-chart.label.pointRadius"></label>
+                <input type="number" id="node-input-pointRadius">
+            </div>
         </div>
     </div>
+    <h4>Axis Configuration</h4>
     <div class="form-row">
         <label for="node-input-xAxisType" data-i18n="ui-chart.label.xType"></label></label>
         <select id="node-input-xAxisType"> </select>
@@ -550,6 +554,7 @@
             </div>
         </div>
     </div>
+    <h4>Styling/Colors</h4>
     <div class="form-row" id="ui-chart-colors">
         <label for="node-input-color1" data-i18n="ui-chart.label.seriesColors"></label>
         <input type="color" id="node-input-color1" class="series-color" style="width:100px;"/>
