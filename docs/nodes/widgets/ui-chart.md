@@ -42,6 +42,7 @@ dynamic:
     import ExampleChartBarSWCharacters from '../../examples/chart-bar-sw-characters.json'
     import ExampleChartBarFinance from '../../examples/chart-bar-finance-grouped.json'
     import ExampleChartBarElection from '../../examples/chart-bar-election-grouped.json'
+    import ExampleChartPieDoughnut from '../../examples/chart-pie-doughnut.json'
     import ExampleChartScatter from '../../examples/chart-scatter-grouped.json'
     import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
     import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
@@ -52,6 +53,7 @@ dynamic:
       'chart-bar-sw-characters': ExampleChartBarSWCharacters,
       'chart-bar-finance': ExampleChartBarFinance,
       'chart-bar-election': ExampleChartBarElection,
+      'chart-pie-doughnut': ExampleChartPieDoughnut,
       'chart-scatter-grouped': ExampleChartScatter,
       'custom-chart-line': ExampleCustomChartLine,
       'custom-chart-polar': ExampleCustomChartPolar
@@ -64,8 +66,9 @@ dynamic:
 Provides configuration options to create the following chart types:
 
 - [Line Chart](#line-chart)
-- [Scatter Plot](#scatter-plot)
-- [Bar Chart](#bar-graph)
+- [Scatter Plot](#scatter-charts)
+- [Bar Chart](#bar-charts)
+- [Pie/Doughnut Charts](#pie-doughnut-charts)
 
 ## Properties
 
@@ -258,6 +261,36 @@ _Configuration for of a bar chart showing election data, grouped by year, and a 
 Resulting in:
 
 ![Example of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
+
+### Pie/Doughnut Charts
+
+These chart types use "Radial" axes. The "Series" property is used to define the layer that the particular data is rendered in, multiple series results in nested pie/doughnut charts.
+
+The "X" value defines the key within a single Series", and the "Y" property should point to the numerical value that dictates the size of a given segment.
+
+Let's take a look at a couple of examples:
+
+<FlowViewer :flow="examples['chart-pie-doughnut']" height="300px" />
+
+With a sample data set such as:
+
+```json
+[
+    { "year": 2021, "quarter": "Q1", "earnings": 115 },
+    { "year": 2021, "quarter": "Q2", "earnings": 120 },
+    { "year": 2021, "quarter": "Q3", "earnings": 100 },
+    { "year": 2021, "quarter": "Q4", "earnings": 180 }
+]
+```
+
+We can configure our chart to render a Pie or Doughnut chart like so:
+
+![Configuration for of a Pie and Doughnut Chart](/images/node-examples/ui-chart-pie-doughnut-config.png "Configuration for of a Pie and Doughnut Chart"){data-zoomable}
+
+Results in the following, where for the "Doughnut" chart has two "Series" worth of data.
+
+![Example of Pie and Doughnut Charts](/images/node-examples/ui-chart-pie-doughnut.png "Example of Pie and Doughnut Charts"){data-zoomable}
+_Example of Pie and Doughnut Charts_
 
 ## Controls
 
