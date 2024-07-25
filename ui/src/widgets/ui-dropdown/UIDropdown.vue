@@ -27,20 +27,14 @@ export default {
     data () {
         return {
             value: null,
-            items: null,
-            dynamic: {
-                label: null,
-                multiple: null,
-                chips: null,
-                clearable: null
-            }
+            items: null
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         options: {
             get () {
-                const items = this.items || this.props.options
+                const items = this.items || this.getProperty('options')
                 return items.map((item) => {
                     if (typeof item !== 'object') {
                         return {
@@ -62,16 +56,16 @@ export default {
             }
         },
         multiple: function () {
-            return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
+            return this.getProperty('multiple')
         },
         chips: function () {
-            return this.dynamic.chips === null ? this.props.chips : this.dynamic.chips
+            return this.getProperty('chips')
         },
         clearable: function () {
-            return this.dynamic.clearable === null ? this.props.clearable : this.dynamic.clearable
+            return this.getProperty('clearable')
         },
         label: function () {
-            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+            return this.getProperty('label')
         },
         typeIsComboBox: function () {
             return this.props.typeIsComboBox ?? true
@@ -122,10 +116,16 @@ export default {
 
             if (updates) {
                 if (typeof updates.label !== 'undefined') {
-                    this.dynamic.label = updates.label
+                    this.setDynamicProperties({ label: updates.label })
                 }
                 if (typeof updates.multiple !== 'undefined') {
-                    this.dynamic.multiple = updates.multiple
+                    this.setDynamicProperties({ multiple: updates.multiple })
+                }
+                if (typeof updates.chips !== 'undefined') {
+                    this.setDynamicProperties({ chips: updates.chips })
+                }
+                if (typeof updates.clearable !== 'undefined') {
+                    this.setDynamicProperties({ clearable: updates.clearable })
                 }
             }
         },

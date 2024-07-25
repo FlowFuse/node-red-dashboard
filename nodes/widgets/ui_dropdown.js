@@ -27,6 +27,10 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'multiple', update.multiple)
                     }
                 }
+                if (msg.options) {
+                    // backward compatibility support
+                    statestore.set(group.getBase(), node, msg, 'options', msg.options)
+                }
                 return msg
             }
         }
