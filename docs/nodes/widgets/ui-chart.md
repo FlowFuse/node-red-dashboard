@@ -34,6 +34,7 @@ dynamic:
 
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue"
     
     import { ref } from 'vue'
     import FlowViewer from '../../components/FlowViewer.vue'
@@ -60,8 +61,11 @@ dynamic:
     })
 </script>
 
+<TryDemo href="charts-example">
 
 # Chart `ui-chart`
+
+</TryDemo>
 
 Provides configuration options to create the following chart types:
 
@@ -95,6 +99,7 @@ The next most important properties to configure are the "Chart Type" and "X-Axis
 
 - **Chart Type**: Choose between a Line, Scatter, or Bar chart.
 - **X-Axis Type**: Choose between a "Timescale" (for time-based data), "Linear" (for numerical data), or "Categorical" (for non-numeric data). You'll notice that some x-axis types are only available for certain chart types.
+
 
 ### Line Charts
 
@@ -136,6 +141,7 @@ You can group data together into multiple lines using the `Series` property. A c
 
 If you want a single piece of data to plot multiple lines, you can set the `Series` property to `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point.
 
+
 ### Scatter Charts
 
 ![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
@@ -171,6 +177,7 @@ Which results in:
 ![Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered scatter plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
 *Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series".*
 
+
 ### Bar Charts
 
 Currently, we only support "Category" x-axis types for Bar Charts. This means that the x-axis values will be a string, and the y-axis will be a numerical value.
@@ -187,6 +194,7 @@ If we take a look at the configuration for this chart:
 ![Example of a bar chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw-config.png "Example of a bar chart showing character 'height' data"){data-zoomable}
 
 We could easily modify the "Y" property to plot a different value, without needing to modify our data.
+
 
 #### Grouped Bars - Financial Data Example
 
@@ -221,6 +229,7 @@ If we switch over the "Group By" option to be "Stacks", we'd see:
 
 ![Example of a bar chart showing the same data, but stacked](/images/node-examples/ui-chart-bar-grouped-finance-stacks.png "Example of a bar chart showing the same data, but stacked"){data-zoomable}
 _Example of a bar chart showing the same data, but stacked_
+
 
 #### Grouped Bars - Election Data Example
 
@@ -261,6 +270,7 @@ _Configuration for of a bar chart showing election data, grouped by year, and a 
 Resulting in:
 
 ![Example of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
+
 
 ### Pie/Doughnut Charts
 
@@ -352,6 +362,7 @@ msg = {
 ```
 
 Where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
+
 
 ## Building Custom Charts
 
@@ -499,6 +510,7 @@ Taking a deep-dive into the contents of the `ui-template` for this chart, we can
     }
 </script>
 ```
+
 
 ### Example: Categorising Data
 
