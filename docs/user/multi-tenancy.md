@@ -52,7 +52,7 @@ The [Cloudflare Access](https://flows.nodered.org/node/@fullmetal-fred/node-red-
 
 #### Authelia Auth
 
-This [Authelia Auth]() plugin adds user data if your Node-RED instance is secured with the open-source authentication server, [Authelia](https://www.authelia.com/).
+This [Authelia Auth](https://github.com/aikitori/node-red-dashboard-2-authelia-auth) plugin adds user data if your Node-RED instance is secured with the open-source authentication server, [Authelia](https://www.authelia.com/).
 
 ## Configuring Client Data
 
