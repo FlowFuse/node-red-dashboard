@@ -101,11 +101,7 @@ The next most important properties to configure are the "Chart Type" and "X-Axis
 - **X-Axis Type**: Choose between a "Timescale" (for time-based data), "Linear" (for numerical data), or "Categorical" (for non-numeric data). You'll notice that some x-axis types are only available for certain chart types.
 
 
-<TryDemo href="charts-example#line-chart-example" title="Line Chart Demo">
-
 ### Line Charts
-
-</TryDemo>
 
 #### Timeseries Data
 
@@ -134,11 +130,7 @@ Then, the last piece of the puzzle would be to set the `y` property would be one
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1234567890, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
 
 
-<TryDemo href="charts-example#multiple-line-chart" title="Multiple Line Chart Demo">
-
 #### Multiple Lines
-
-</TryDemo>
 
 <FlowViewer :flow="examples['chart-line-multiple']" height="250px"/>
 
@@ -149,11 +141,8 @@ You can group data together into multiple lines using the `Series` property. A c
 
 If you want a single piece of data to plot multiple lines, you can set the `Series` property to `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point.
 
-<TryDemo href="charts-example#scatter-plot-chart-example" title="Scatter Plot Chart Demo">
 
 ### Scatter Charts
-
-</TryDemo>
 
 ![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
 *Example of a rendered scatter plot with a "time" x-axis.*
@@ -188,11 +177,8 @@ Which results in:
 ![Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered scatter plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
 *Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series".*
 
-<TryDemo href="charts-example#bar-chart-example" title="Bar Chart Demo">
 
 ### Bar Charts
-
-</TryDemo>
 
 Currently, we only support "Category" x-axis types for Bar Charts. This means that the x-axis values will be a string, and the y-axis will be a numerical value.
 
@@ -209,11 +195,8 @@ If we take a look at the configuration for this chart:
 
 We could easily modify the "Y" property to plot a different value, without needing to modify our data.
 
-<TryDemo href="charts-example#finance-data-visualised-using-grouped-bar-chart" title="Grouped Bar Chart Demo">
 
 #### Grouped Bars - Financial Data Example
-
-</TryDemo>
 
 <FlowViewer :flow="examples['chart-bar-finance']" height="250px" />
 
@@ -247,11 +230,8 @@ If we switch over the "Group By" option to be "Stacks", we'd see:
 ![Example of a bar chart showing the same data, but stacked](/images/node-examples/ui-chart-bar-grouped-finance-stacks.png "Example of a bar chart showing the same data, but stacked"){data-zoomable}
 _Example of a bar chart showing the same data, but stacked_
 
-<TryDemo href="charts-example#election-stats-visualised-using-grouped-bar-chart" title="Grouped Bar Chart Demo">
 
 #### Grouped Bars - Election Data Example
-
-</TryDemo>
 
 <FlowViewer :flow="examples['chart-bar-election']" height="250px" />
 
@@ -291,11 +271,8 @@ Resulting in:
 
 ![Example of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
 
-<TryDemo href="charts-example#piedoughnut-charts" title="Pie/Doughnut Chart Demo">
 
 ### Pie/Doughnut Charts
-
-</TryDemo>
 
 These chart types use "Radial" axes. The "Series" property is used to define the layer that the particular data is rendered in, multiple series results in nested pie/doughnut charts.
 
@@ -387,11 +364,7 @@ msg = {
 Where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
 
 
-<TryDemo href="charts-example#custom-charts" title="Custom Chart Demo">
-
 ## Building Custom Charts
-
-</TryDemo>
 
 ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
 
@@ -538,11 +511,8 @@ Taking a deep-dive into the contents of the `ui-template` for this chart, we can
 </script>
 ```
 
-<TryDemo href="charts-example#custom-polar-chart" title="Categorising Data Demo">
 
 ### Example: Categorising Data
-
-</TryDemo>
 
 Let's take a more complex example, where we can render a chart type that we don't _currently_ support in core Dashboard, a Polar Area Chart.
 
