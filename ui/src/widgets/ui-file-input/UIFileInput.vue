@@ -43,9 +43,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     data () {
         return {
             files: null,
@@ -87,6 +84,9 @@ export default {
 
             return !this.uploading && !this.uploaded
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     },
     methods: {
         formatFileSize (bytes) {

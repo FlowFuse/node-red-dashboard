@@ -21,9 +21,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     computed: {
         ...mapState('data', ['messages']),
         value: function () {
@@ -32,6 +29,9 @@ export default {
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     }
 }
 </script>

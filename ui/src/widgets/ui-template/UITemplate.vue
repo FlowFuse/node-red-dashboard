@@ -76,12 +76,10 @@ export default {
             }
         }
 
-        this.$dataTracker(props.id)
-
         // here we inject the UI Template Vue Template code into our own, in order to extend base functionality
         return () => h({
             props: ['id', 'props'],
-            inject: ['$socket'],
+            inject: ['$socket', '$dataTracker'],
             errorCaptured: (err, vm, info) => {
                 console.error('errorCaptured', err, vm, info)
                 return false
@@ -189,6 +187,9 @@ export default {
             id: props.id,
             props: props.props
         })
+    },
+    created () {
+        this.$dataTracker(this.id)
     },
     errorCaptured: (err, vm, info) => {
         console.error('errorCaptured', err, vm, info)

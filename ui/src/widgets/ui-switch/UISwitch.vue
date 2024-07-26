@@ -17,9 +17,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     data () {
         return {
             selection: null
@@ -71,7 +68,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.useDataTracker(this.id, this.onInput, this.onLoad, null)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)

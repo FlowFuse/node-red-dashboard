@@ -16,9 +16,6 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value: function () {
@@ -28,6 +25,9 @@ export default {
             }
             return ''
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     }
 }
 </script>

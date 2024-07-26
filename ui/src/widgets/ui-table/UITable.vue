@@ -52,9 +52,6 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     data () {
         return {
             selected: null,
@@ -141,6 +138,9 @@ export default {
                 this.calculatePaginatedRows()
             }
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     },
     mounted () {
         this.calculatePaginatedRows()
