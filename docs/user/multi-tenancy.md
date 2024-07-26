@@ -38,9 +38,21 @@ Out of the box, Dashboard will append two piece of information to the `_client` 
 
 Plugins, such as the [FlowFuse User Addon](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/), are available to append additional information to the `_client` object. 
 
-These Authentication plugins can be installed via the Node-RED Palette Manager, and often require Node-RED to be setup with a given Authentication provider, separately from Dashboard. For example, for the FlowFuse User Addon, it is a requirement for Node-RED to be running on FlowFuse with the ["FlowFuse User Authentication"](https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication) option enabled.
+These Authentication plugins can be installed via the Node-RED Palette Manager, and often require Node-RED to be setup with a given Authentication provider, separately from Dashboard.
 
 The plugins will append additional information to the `_client` object, such as the `user` object, which details the user's name, email address, and any other information that the Authentication provider has available.
+
+#### FlowFuse User Addon
+
+The [FlowFuse User Addon](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon), has a requirement for Node-RED to be running on [FlowFuse](https://flowfuse.com/) with the ["FlowFuse User Authentication"](https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication) option enabled.
+
+#### Cloudflare Access
+
+The [Cloudflare Access](https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth) plugin requires Node-RED to be setup with [Cloudflare Access](https://www.cloudflare.com/en-gb/zero-trust/products/access/), with a Cloudflare tunnel configured for your node-RED instance, and the relevant access policy setup.
+
+#### Authelia Auth
+
+This [Authelia Auth]() plugin adds user data if your Node-RED instance is secured with the open-source authentication server, [Authelia](https://www.authelia.com/).
 
 ## Configuring Client Data
 
