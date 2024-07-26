@@ -71,7 +71,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, this.onLoad, null)
+        this.useDataTracker(this.id, this.onInput, this.onLoad, null)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
