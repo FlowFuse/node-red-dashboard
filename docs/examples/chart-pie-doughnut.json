@@ -1,0 +1,276 @@
+[
+    {
+        "id": "bc346c7d325fe6b5",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "e0d7a0182b3c8eb7",
+        "name": "Doughnut Chart",
+        "label": "Doughnut Chart",
+        "order": 5,
+        "chartType": "doughnut",
+        "category": "year",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "quarter",
+        "xAxisPropertyType": "property",
+        "xAxisType": "radial",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "earnings",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "3",
+        "height": "6",
+        "className": "",
+        "x": 320,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c8e227dc6c78b5f2",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Finance Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"year\":2021,\"quarter\":\"Q1\",\"earnings\":115},{\"year\":2021,\"quarter\":\"Q2\",\"earnings\":120},{\"year\":2021,\"quarter\":\"Q3\",\"earnings\":100},{\"year\":2021,\"quarter\":\"Q4\",\"earnings\":180},{\"year\":2022,\"quarter\":\"Q1\",\"earnings\":142},{\"year\":2022,\"quarter\":\"Q2\",\"earnings\":106},{\"year\":2022,\"quarter\":\"Q3\",\"earnings\":164},{\"year\":2022,\"quarter\":\"Q4\",\"earnings\":172}]",
+        "payloadType": "json",
+        "x": 110,
+        "y": 280,
+        "wires": [
+            [
+                "bc346c7d325fe6b5"
+            ]
+        ]
+    },
+    {
+        "id": "2413205ce1f39442",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "bc346c7d325fe6b5"
+            ]
+        ]
+    },
+    {
+        "id": "b87fe3201b219a05",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "e0d7a0182b3c8eb7",
+        "name": "Pie Chart",
+        "label": "Pie Chart",
+        "order": 4,
+        "chartType": "pie",
+        "category": "year",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "quarter",
+        "xAxisPropertyType": "property",
+        "xAxisType": "radial",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "earnings",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "3",
+        "height": "6",
+        "className": "",
+        "x": 300,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d10804e8db462840",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Finance Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"year\":2021,\"quarter\":\"Q1\",\"earnings\":115},{\"year\":2021,\"quarter\":\"Q2\",\"earnings\":120},{\"year\":2021,\"quarter\":\"Q3\",\"earnings\":100},{\"year\":2021,\"quarter\":\"Q4\",\"earnings\":180}]",
+        "payloadType": "json",
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "b87fe3201b219a05"
+            ]
+        ]
+    },
+    {
+        "id": "49dbac215fa8b40f",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 130,
+        "y": 420,
+        "wires": [
+            [
+                "b87fe3201b219a05"
+            ]
+        ]
+    },
+    {
+        "id": "e0d7a0182b3c8eb7",
+        "type": "ui-group",
+        "name": "PIe Charts",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 27,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

@@ -2,6 +2,7 @@ const statestore = require('../store/state.js')
 
 module.exports = function (RED) {
     function FormNode (config) {
+        config.passthru = false
         RED.nodes.createNode(this, config)
 
         const node = this

@@ -33,12 +33,10 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        this.$dataTracker(props.id)
-    },
     data () {
         return {
-            delayTimer: null
+            delayTimer: null,
+            textValue: null
         }
     },
     computed: {
@@ -89,13 +87,14 @@ export default {
         },
         value: {
             get () {
-                return this.messages[this.id]?.payload
+                return this.textValue
             },
             set (val) {
                 if (this.value === val) {
                     return // no change
                 }
                 const msg = this.messages[this.id] || {}
+                this.textValue = val
                 msg.payload = val
                 this.messages[this.id] = msg
             }
@@ -108,7 +107,33 @@ export default {
             }
         }
     },
+    created () {
+        // can't do this in setup as we are using custom onInput function that needs access to 'this'
+        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
+    },
     methods: {
+        onInput (msg) {
+            // update our vuex store with the value retrieved from Node-RED
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // make sure our v-model is updated to reflect the value from Node-RED
+            if (msg.payload !== undefined) {
+                this.textValue = msg.payload
+            }
+        },
+        onLoad (msg) {
+            // update vuex store to reflect server-state
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // make sure we've got the relevant option selected on load of the page
+            if (msg.payload !== undefined) {
+                this.textValue = msg.payload
+            }
+        },
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
         },

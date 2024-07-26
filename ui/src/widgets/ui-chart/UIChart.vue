@@ -1,5 +1,8 @@
 <template>
-    <canvas ref="chart" :class="className" />
+    <div>
+        <canvas ref="chart" :class="className" />
+        <div v-if="radialChart && !hasData" class="nrdb-ui-chart-placeholder">No Data</div>
+    </div>
 </template>
 
 <script>
@@ -18,11 +21,16 @@ export default {
     },
     data () {
         return {
-            chart: null
+            chart: null,
+            hasData: false
         }
     },
     computed: {
-        ...mapState('data', ['messages'])
+        ...mapState('data', ['messages']),
+        radialChart () {
+            // radial charts have no placeholder in ChartJS - we need to add one
+            return this.props.xAxisType === 'radial'
+        }
     },
     watch: {
         'props.label': function (value) {
@@ -52,12 +60,17 @@ export default {
 
         // generate parsing options (https://www.chartjs.org/docs/latest/general/data-structures.html#object-using-custom-properties)
         const parsing = {}
-        if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
-            parsing.xAxisKey = this.props.xAxisProperty
-        }
+        if (this.props.xAxisType !== 'radial') {
+            if (this.props.xAxisProperty && this.props.xAxisPropertyType === 'property') {
+                parsing.xAxisKey = this.props.xAxisProperty
+            }
 
-        if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
-            parsing.yAxisKey = this.props.yAxisProperty
+            if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
+                parsing.yAxisKey = this.props.yAxisProperty
+            }
+        } else {
+            // radial axes - treat "y" as the radial axis
+            parsing.key = this.props.yAxisProperty || 'y'
         }
 
         // do we need the "stacked" property?
@@ -110,6 +123,31 @@ export default {
             yOptions.max = parseFloat(this.props.ymax)
         }
 
+        const scales = {}
+        if (this.props.xAxisType !== 'radial') {
+            scales.x = {
+                type: this.props.xAxisType || 'linear',
+                title: {
+                    display: !!this.props.xAxisLabel,
+                    text: this.props.xAxisLabel,
+                    color: textColor
+                },
+                time: {
+                    displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
+                },
+                ticks: {
+                    color: textColor
+                },
+                grid: {
+                    color: gridColor
+                },
+                border: {
+                    color: gridColor
+                },
+                stacked
+            }
+            scales.y = yOptions
+        }
         // Do we show the legend?
         let showLegend = this.props.showLegend
         if (this.props.categoryType === 'none') {
@@ -128,30 +166,7 @@ export default {
                 animation: false,
                 maintainAspectRatio: false,
                 borderJoinStyle: 'round',
-                scales: {
-                    x: {
-                        type: this.props.xAxisType || 'linear',
-                        title: {
-                            display: !!this.props.xAxisLabel,
-                            text: this.props.xAxisLabel,
-                            color: textColor
-                        },
-                        time: {
-                            displayFormats: this.getXDisplayFormats(this.props.xAxisFormatType)
-                        },
-                        ticks: {
-                            color: textColor
-                        },
-                        grid: {
-                            color: gridColor
-                        },
-                        border: {
-                            color: gridColor
-                        },
-                        stacked
-                    },
-                    y: yOptions
-                },
+                scales,
                 plugins: {
                     title: {
                         display: true,
@@ -191,7 +206,7 @@ export default {
             return value
         },
         onLoad (history) {
-            if (history) {
+            if (history && history.length > 0) {
                 // we have received a history of data points
                 // we need to add them to the chart
                 // clear the chart first, onload is considered to provide all data into a chart
@@ -247,6 +262,7 @@ export default {
             this.chart.data.labels = []
             this.chart.data.datasets = []
             this.chart.update()
+            this.hasData = false
         },
         add (msg) {
             const payload = msg.payload
@@ -323,11 +339,14 @@ export default {
          * @param {*} datapoint
          */
         addToChart (datapoint, label) {
+            // record we've added data
+            this.hasData = true
+
             const xLabels = this.chart.data.labels // the x-axis categories
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
             // make sure we have the relevant (x-axis) labels added to the chart too
-            if (!xLabels.includes(datapoint.x) && this.props.xAxisType === 'category') {
+            if (!xLabels.includes(datapoint.x) && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                 xLabels.push(datapoint.x)
             }
 
@@ -335,28 +354,34 @@ export default {
 
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
-                // if we have no series, then can color each bar/x a different value
-                const colorByIndex = this.props.categoryType === 'none' && this.props.chartType === 'bar'
+                // if we have no series, then can color each bar/x a different value, or if it's a radial chart
+                const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
+
                 // ensure we have a datapoint for the relevant series
                 const data = Array(sLabels.length + 1).fill({})
                 // define the data point for this series
                 data[sLabels.length] = datapoint
                 // add the new dataset to the chart
-                this.chart.data.datasets.push({
-                    borderColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
+                const d = {
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
                     label,
                     data
-                })
+                }
+
+                if (!colorByIndex) {
+                    d.borderColor = this.props.colors[sLabels.length]
+                }
+
+                this.chart.data.datasets.push(d)
             } else {
                 // we're adding a new datapoint to an existing series
                 // have we seen this x-value before?
                 const xIndex = xLabels.indexOf(datapoint.x)
-                if (xIndex >= 0 && this.props.xAxisType === 'category') {
+                if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                     // yes, so we need to update the data at this index
                     this.chart.data.datasets[sIndex].data[xIndex] = datapoint
                 } else {
@@ -412,4 +437,20 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.nrdb-ui-chart-placeholder {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    color: rgba(var(--v-theme-on-group-background), var(--v-disabled-opacity));
+    --pie-slice-1: rgba(var(--v-theme-on-group-background), 0.05);
+    --pie-slice-2: rgba(var(--v-theme-on-group-background), 0.1);
+    background: radial-gradient(circle closest-side, rgb(var(--v-theme-group-background)) 50%, transparent 0),
+        radial-gradient(circle closest-side, transparent 66%, rgb(var(--v-theme-group-background)) 0),
+        conic-gradient(var(--pie-slice-1) 0, var(--pie-slice-1) 38%, var(--pie-slice-2) 0, var(--pie-slice-2) 61%);
+}
+</style>

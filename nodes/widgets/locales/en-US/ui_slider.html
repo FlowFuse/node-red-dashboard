@@ -15,20 +15,20 @@
         <dd>Defined when the thumb of the slider will show. Defaults to 'On Drag'.</dd>
         <dt>Show Ticks <span class="property-type">'never' | 'on drag' | 'always'</span></dt>
         <dd>Defined when the ticks will be visible on the track. Defaults to 'Always'.</dd>
-        <dt>Range</dt>
+        <dt>Range <span class="property-type">number</span></dt>
         <dd>
             min - the minimum value the slider can be changed to; max - the maximum value the
             slider can be changed to; step - the increment/decrement value when the slider is moved.
         </dd>
-        <dt>Colors</dt>
+        <dt>Colors <span class="property-type">string</dt>
         <dd>
             main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle.
             It could be the name of a color (red, green, blue, ...) or a Hex color code (#b5b5b5).
         </dd>
-        <dt>Icons</dt>
+        <dt>Icons <span class="property-type">string</dt>
         <dd>
             Add <a href="https://pictogrammers.com/library/mdi/">mdi icon</a> before and after the slider.
-            For example, "mdi-minus". Click option make icons clickable to change the value by step.
+            For example, "minus". There is no need to include the "mdi-" prefix, just the name of the icon.
         </dd>
     </dl>
     <h3>Dynamic Properties (Inputs)</h3>
@@ -56,6 +56,26 @@
     <dl class="message-properties">
         <dt class="optional">max <span class="property-type">number</span></dt>
         <dd>The maximum value available on the slider.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">iconPrepend <span class="property-type">string</span></dt>
+        <dd>Add icon to the left side of slider.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">iconAppend <span class="property-type">string</span></dt>
+        <dd>Add icon to the right side of slider.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">color <span class="property-type">string</span></dt>
+        <dd>Define slider color, see <a href="https://vuetifyjs.com/en/components/sliders/#colors">vuetify documentation</a> </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">colorTrack <span class="property-type">string</span></dt>
+        <dd>Define slider track color, see <a href="https://vuetifyjs.com/en/components/sliders/#colors">vuetify documentation</a> </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">colorThumb <span class="property-type">string</span></dt>
+        <dd>Define thumb color, see <a href="https://vuetifyjs.com/en/components/sliders/#colors">vuetify documentation</a> </dd>
     </dl>
     <dl class="message-properties">
         <dt class="optional">class <span class="property-type">string</span></dt>
