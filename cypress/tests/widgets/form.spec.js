@@ -30,7 +30,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get('[data-form="form-row-name"]').find('input[type="text"]').type('John Smith', { force: true })
         cy.focused().blur()
 
-        cy.get('[data-action="form-submit"]').should('not.be.disabled')
+        cy.get('#nrdb-ui-group-dashboard-ui-group').within(() => {
+            cy.get('[data-action="form-submit"]').should('not.be.disabled')
+        })
     })
 })
 

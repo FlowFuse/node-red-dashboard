@@ -27,13 +27,11 @@
 </template>
 
 <script>
-
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIForm',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -63,7 +61,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     mounted () {
         this.reset()

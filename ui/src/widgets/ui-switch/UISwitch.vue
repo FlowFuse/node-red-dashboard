@@ -7,12 +7,11 @@
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUISwitch',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -69,7 +68,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, this.onInput, this.onLoad, null)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)

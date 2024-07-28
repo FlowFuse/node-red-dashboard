@@ -12,8 +12,6 @@ import { marked } from 'marked'
 import mermaid from 'mermaid'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
-import { useDataTracker } from '../data-tracker.mjs'
-
 import { escapeHTML } from './../../util.mjs'
 
 // set up mermaid
@@ -51,7 +49,7 @@ marked.use({ extensions: [customRenderer] })
 
 export default {
     name: 'DBUIMarkdown',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
@@ -75,7 +73,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        useDataTracker(this.id, this.onMsgInput, this.onMsgLoad)
+        this.$dataTracker(this.id, this.onMsgInput, this.onMsgLoad)
         // make sure we render something on first creation
         this.update()
     },

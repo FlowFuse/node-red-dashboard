@@ -40,7 +40,6 @@
 
 import UITableCell from './UITableCell.vue'
 
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
@@ -48,13 +47,10 @@ export default {
     components: {
         UITableCell
     },
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
-    },
-    setup (props) {
-        useDataTracker(props.id)
     },
     data () {
         return {
@@ -142,6 +138,9 @@ export default {
                 this.calculatePaginatedRows()
             }
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     },
     mounted () {
         this.calculatePaginatedRows()

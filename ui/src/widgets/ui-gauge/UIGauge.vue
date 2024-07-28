@@ -4,7 +4,6 @@
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 import UIGaugeDial from './types/UIGaugeDial.vue'
@@ -16,14 +15,11 @@ export default {
         'ui-gauge-dial': UIGaugeDial,
         'ui-gauge-tile': UIGaugeTile
     },
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
-    },
-    setup (props) {
-        useDataTracker(props.id)
     },
     computed: {
         ...mapState('data', ['messages']),
@@ -33,6 +29,9 @@ export default {
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     }
 }
 </script>

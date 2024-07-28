@@ -186,7 +186,7 @@ export default {
     components: {
         'debug-data': DebugData
     },
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     data () {
         return {
             view: {

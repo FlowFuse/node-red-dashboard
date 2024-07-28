@@ -15,12 +15,11 @@
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUISlider',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -113,7 +112,7 @@ export default {
         }
     },
     created () {
-        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload
