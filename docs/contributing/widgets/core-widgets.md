@@ -63,10 +63,9 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
             // received on input from Node-RED
             ...mapState('data', ['messages']), // provides access to `this.messages` where `this.messages[this.id]` is the stored msg for this widget
         },
-        setup (props) {
-            // Use our data-tracker, which setups up the basic event handling for us
-            // including `on('msg-input')` and `on('widget-load')`
-            useDataTracker(props.id)
+        created () {
+            // setup the widget with default onInput, onLoad and onDynamicProperties handlers
+            this.$dataTracker(this.id)
         },
         methods: {
             onAction () {
