@@ -10,6 +10,7 @@
         <template v-if="appendIcon" #append>
             <v-icon :color="iconColor" />
         </template>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-if="label" :style="{'color': textColor}" v-html="label" />
     </v-btn>
 </template>
