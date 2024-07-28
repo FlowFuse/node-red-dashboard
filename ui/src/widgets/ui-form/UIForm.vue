@@ -71,6 +71,16 @@ export default {
     methods: {
         onSubmit: function () {
             const option = this.options
+            // Clear unused keys from `input`, to prevent sending old keys on next submit
+            const allowed = option.map(opt => opt.key)
+            this.input = Object.keys(this.input)
+                .filter(key => allowed.includes(key))
+                .reduce((obj, key) => {
+                    return {
+                        ...obj,
+                        [key]: this.input[key]
+                    }
+                }, {})
             // Prevent sending null for switch and combobox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
             option.forEach(opt => {
                 if (opt.type === 'checkbox' || opt.type === 'switch') {
@@ -137,16 +147,6 @@ export default {
             }
             if (typeof updates?.options !== 'undefined') {
                 this.dynamic.options = updates.options
-                // Clear unused keys from `input`, to prevent sending old keys on next submit
-                const allowed = this.options.map(opt => opt.key)
-                this.input = Object.keys(this.input)
-                    .filter(key => allowed.includes(key))
-                    .reduce((obj, key) => {
-                        return {
-                            ...obj,
-                            [key]: this.input[key]
-                        }
-                    }, {})
             }
         }
     }
