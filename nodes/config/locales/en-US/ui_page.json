@@ -9,6 +9,7 @@
             "layout": "Layout",
             "grid": "Grid",
             "fixed": "Fixed",
+            "tabs": "Tabs",
             "notebook": "Notebook",
             "class": "Class",
             "classNamePlaceholder": "Optional CSS class name(s) for page",
