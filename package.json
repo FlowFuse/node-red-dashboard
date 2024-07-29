@@ -102,7 +102,7 @@
         "vite-plugin-pwa": "^0.20.0",
         "vitepress": "^1.0.2",
         "vue-router": "^4.2.4",
-        "vuetify": "^3.6.9",
+        "vuetify": "^3.6.13",
         "vuex": "^4.1.0",
         "workbox-core": "^7.1.0",
         "workbox-precaching": "^7.1.0",
