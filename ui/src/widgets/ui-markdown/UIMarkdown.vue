@@ -74,6 +74,8 @@ export default {
     created () {
         // can't do this in setup as we have custom onInput function
         this.$dataTracker(this.id, this.onMsgInput, this.onMsgLoad)
+    },
+    mounted () {
         // make sure we render something on first creation
         this.update()
     },
