@@ -97,7 +97,7 @@ export default {
                 msg
             })
             // make sure we've got the relevant option selected on load of the page
-            if (msg.payload !== undefined) {
+            if (msg?.payload !== undefined) {
                 if (Array.isArray(msg.payload) && msg.payload.length === 0) {
                     this.selection = null
                 } else {
