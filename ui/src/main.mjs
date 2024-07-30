@@ -206,6 +206,19 @@ fetch('_setup')
                         config
                     })
                 },
+                updateDynamicProperty (property, value) {
+                    if (!property && typeof property !== 'string') {
+                        throw new Error('updateDynamicProperty requires a valid, string "property" argument')
+                    }
+                    if (typeof value !== 'undefined') {
+                        const config = {}
+                        config[property] = value
+                        this.$store.commit('ui/widgetState', {
+                            widgetId: this.id,
+                            config
+                        })
+                    }
+                },
                 // retrieves a property from the store for a given widget
                 getProperty (property) {
                     const config = this.props ? this.props[property] : null // last known value for the config of this widget property
