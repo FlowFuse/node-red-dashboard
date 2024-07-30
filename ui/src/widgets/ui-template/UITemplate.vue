@@ -164,7 +164,7 @@ export default {
                 ...component?.methods
             },
             created () {
-                useDataTracker(props.id)
+                this.$dataTracker(props.id)
 
                 if (component?.beforeCreate) {
                     // run any generic JS code user has defined outisde of a VueJS component
@@ -189,9 +189,6 @@ export default {
             id: props.id,
             props: props.props
         })
-    },
-    created () {
-        this.$dataTracker(this.id)
     },
     errorCaptured: (err, vm, info) => {
         console.error('errorCaptured', err, vm, info)
