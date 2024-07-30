@@ -115,18 +115,10 @@ export default {
             const updates = msg.ui_update
 
             if (updates) {
-                if (typeof updates.label !== 'undefined') {
-                    this.setDynamicProperties({ label: updates.label })
-                }
-                if (typeof updates.multiple !== 'undefined') {
-                    this.setDynamicProperties({ multiple: updates.multiple })
-                }
-                if (typeof updates.chips !== 'undefined') {
-                    this.setDynamicProperties({ chips: updates.chips })
-                }
-                if (typeof updates.clearable !== 'undefined') {
-                    this.setDynamicProperties({ clearable: updates.clearable })
-                }
+                this.updateDynamicProperty('label', updates.label)
+                this.updateDynamicProperty('multiple', updates.multiple)
+                this.updateDynamicProperty('chips', updates.chips)
+                this.updateDynamicProperty('clearable', updates.clearable)
             }
         },
         onChange () {

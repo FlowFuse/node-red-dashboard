@@ -107,12 +107,8 @@ export default {
         },
         onDynamicProperty (msg) {
             const updates = msg.ui_update
-            if (typeof updates?.label !== 'undefined') {
-                this.setDynamicProperties({ label: updates.label })
-            }
-            if (typeof updates?.options !== 'undefined') {
-                this.setDynamicProperties({ options: updates.options })
-            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('options', updates.options)
         },
         onChange (value) {
             if (value !== null && typeof value !== 'undefined') {

@@ -130,39 +130,17 @@ export default {
             if (!updates) {
                 return
             }
-            if (typeof updates.label !== 'undefined') {
-                this.setDynamicProperties({ label: updates.label })
-            }
-            if (typeof updates.thumbLabel !== 'undefined') {
-                this.setDynamicProperties({ thumbLabel: updates.thumbLabel })
-            }
-            if (typeof updates.showTicks !== 'undefined') {
-                this.setDynamicProperties({ showTicks: updates.showTicks })
-            }
-            if (typeof updates.min !== 'undefined') {
-                this.setDynamicProperties({ min: updates.min })
-            }
-            if (typeof updates.max !== 'undefined') {
-                this.setDynamicProperties({ max: updates.max })
-            }
-            if (typeof updates.step !== 'undefined') {
-                this.setDynamicProperties({ step: updates.step })
-            }
-            if (typeof updates.iconAppend !== 'undefined') {
-                this.setDynamicProperties({ iconAppend: updates.iconAppend })
-            }
-            if (typeof updates.iconPrepend !== 'undefined') {
-                this.setDynamicProperties({ iconPrepend: updates.iconPrepend })
-            }
-            if (typeof updates.color !== 'undefined') {
-                this.setDynamicProperties({ color: updates.color })
-            }
-            if (typeof updates.colorTrack !== 'undefined') {
-                this.setDynamicProperties({ colorTrack: updates.colorTrack })
-            }
-            if (typeof updates.colorThumb !== 'undefined') {
-                this.setDynamicProperties({ colorThumb: updates.colorThumb })
-            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('thumbLabel', updates.thumbLabel)
+            this.updateDynamicProperty('showTicks', updates.showTicks)
+            this.updateDynamicProperty('min', updates.min)
+            this.updateDynamicProperty('max', updates.max)
+            this.updateDynamicProperty('step', updates.step)
+            this.updateDynamicProperty('iconAppend', updates.iconAppend)
+            this.updateDynamicProperty('iconPrepend', updates.iconPrepend)
+            this.updateDynamicProperty('color', updates.color)
+            this.updateDynamicProperty('colorTrack', updates.colorTrack)
+            this.updateDynamicProperty('colorThumb', updates.colorThumb)
         }
     }
 }

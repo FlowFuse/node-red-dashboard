@@ -80,24 +80,12 @@ export default {
             if (!updates) {
                 return
             }
-            if (typeof updates.label !== 'undefined') {
-                this.setDynamicProperties({ label: updates.label })
-            }
-            if (typeof updates.icon !== 'undefined') {
-                this.setDynamicProperties({ icon: updates.icon })
-            }
-            if (typeof updates.iconPosition !== 'undefined') {
-                this.setDynamicProperties({ iconPosition: updates.iconPosition })
-            }
-            if (typeof updates.buttonColor !== 'undefined') {
-                this.setDynamicProperties({ buttonColor: updates.buttonColor })
-            }
-            if (typeof updates.textColor !== 'undefined') {
-                this.setDynamicProperties({ textColor: updates.textColor })
-            }
-            if (typeof updates.iconColor !== 'undefined') {
-                this.setDynamicProperties({ iconColor: updates.iconColor })
-            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('iconPosition', updates.iconPosition)
+            this.updateDynamicProperty('buttonColor', updates.buttonColor)
+            this.updateDynamicProperty('textColor', updates.textColor)
+            this.updateDynamicProperty('iconColor', updates.iconColor)
         }
     }
 }
