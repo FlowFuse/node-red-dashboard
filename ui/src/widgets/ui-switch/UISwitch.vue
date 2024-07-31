@@ -110,11 +110,13 @@ export default {
             }
         },
         toggle () {
-            if (this.props.decouple) {
-                this.loading = true
-            } else {
-                this.status = !this.status
-                this.$socket.emit('widget-change', this.id, this.status)
+            if (this.state.enabled) {
+                if (this.props.decouple) {
+                    this.loading = true
+                } else {
+                    this.status = !this.status
+                    this.$socket.emit('widget-change', this.id, this.status)
+                }
             }
         }
     }
