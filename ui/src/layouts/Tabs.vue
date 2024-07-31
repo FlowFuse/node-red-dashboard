@@ -32,26 +32,6 @@
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
-            <!-- <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
-            <div
-                v-for="g in orderedGroups"
-                :id="'nrdb-ui-group-' + g.id"
-                :key="g.id"
-                class="nrdb-ui-group"
-                :disabled="g.disabled === true ? 'disabled' : null"
-                :class="getGroupClass(g)"
-                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
-            >
-                <v-card variant="outlined" class="bg-group-background">
-                    <template v-if="g.showTitle" #title>
-                        {{ g.name }}
-                    </template>
-                    <template #text>
-                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" :row-height="rowHeight" />
-                    </template>
-                </v-card>
-            </div>
-        </div> -->
         </div>
     </BaselineLayout>
 </template>
