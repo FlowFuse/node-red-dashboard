@@ -14,6 +14,7 @@ We currently offer three different layout options:
 - [Grid](./types/grid.md)
 - [Fixed](./types/fixed.md)
 - [Notebook](./types/notebook.md)
+- [Tabs](./types/tabs.md)
 
 ## Sizing Groups & Widgets
 
