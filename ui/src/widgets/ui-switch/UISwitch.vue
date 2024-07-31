@@ -109,11 +109,6 @@ export default {
                 this.selection = msg.payload
             }
         },
-        onChange (val) {
-            // only runs when clicked/changed in UI.
-            // inverted as the store doesn't quite update quick enough, but this is reliable method
-            this.$socket.emit('widget-change', this.id, val)
-        },
         toggle () {
             if (this.props.decouple) {
                 this.loading = true
