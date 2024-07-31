@@ -70,9 +70,9 @@ export default {
     },
     methods: {
         onSubmit: function () {
-            const option = this.options
+            const options = this.options
             // Clear unused keys from `input`, to prevent sending old keys on next submit
-            const allowed = option.map(opt => opt.key)
+            const allowed = options.map(opt => opt.key)
             this.input = Object.keys(this.input)
                 .filter(key => allowed.includes(key))
                 .reduce((obj, key) => {
@@ -82,7 +82,7 @@ export default {
                     }
                 }, {})
             // Prevent sending null for switch and combobox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
-            option.forEach(opt => {
+            options.forEach(opt => {
                 if (opt.type === 'checkbox' || opt.type === 'switch') {
                     if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = false
