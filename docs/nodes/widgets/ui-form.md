@@ -35,7 +35,7 @@ dynamic:
     import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
-<TryDemo href="file-input">
+<TryDemo href="form">
 
 # Form `ui-form`
 
