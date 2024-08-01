@@ -24,7 +24,7 @@
         {
             "property": "type",
             "changes": -2,
-            "notes": "Line and Bar (V) are already migrated. There is still work to be done to support <a href='https://github.com/FlowFuse/node-red-dashboard/issues/378' target='_blank'>Bar (H)</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/379' target='_blank'>Pie</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/380' target='_blank'>Polar</a> and <a href='https://github.com/FlowFuse/node-red-dashboard/issues/381' target='_blank'>Radar</a> charts. Scatter plots have also been added."    
+            "notes": "Line, Bar (V), Pie and Donut are already migrated. There is still work to be done to support <a href='https://github.com/FlowFuse/node-red-dashboard/issues/378' target='_blank'>Bar (H)</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/380' target='_blank'>Polar</a> and <a href='https://github.com/FlowFuse/node-red-dashboard/issues/381' target='_blank'>Radar</a> charts. Scatter plots have also been added."    
         },
         {
             "property": "legend",
