@@ -11,6 +11,13 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
 
+        node.clearHistory = function () {
+            const empty = []
+            datastore.save(base, node, empty)
+            // emit socket to front end to mimic an incoming message
+            base.emit('msg-input:' + node.id, { payload: empty }, node)
+        }
+
         function getProperty (value, property) {
             const props = property.split('.')
             props.forEach((prop) => {
@@ -33,60 +40,50 @@ module.exports = function (RED) {
                     series = getProperty(p, config.category)
                 }
 
-                if (config.chartType === 'line' || config.chartType === 'scatter') {
-                    // possible that we haven't received any x-data in the payload,
-                    // so let's make sure we append something
-
-                    // single point or array of data?
-                    if (Array.isArray(p)) {
-                        // array of data
-                        msg._datapoint = p.map((point) => {
-                            // series available on a msg by msg basis - ensure we check for each msg
-                            if (config.categoryType === 'property') {
-                                series = getProperty(point, config.category)
-                            }
-                            return addToLine(point, series)
-                        })
-                    } else {
-                        // single point
-                        if (config.categoryType === 'json') {
-                            // we can produce multiple datapoints from a single object/value here
-                            const points = []
-                            series.forEach((s) => {
-                                if (s in p) {
-                                    const datapoint = addToLine(p, s)
-                                    points.push(datapoint)
-                                }
-                            })
-                            msg._datapoint = points
-                        } else {
-                            msg._datapoint = addToLine(p, series)
+                // single point or array of data?
+                if (Array.isArray(p)) {
+                    // array of data
+                    msg._datapoint = p.map((point) => {
+                        // series available on a msg by msg basis - ensure we check for each msg
+                        if (config.categoryType === 'property') {
+                            series = getProperty(point, config.category)
                         }
-                    }
-                } else if (config.chartType === 'bar') {
-                    // single point or array of data?
-                    if (Array.isArray(p)) {
-                        // array of data
-                        msg._datapoint = p.map((point) => {
-                            if (config.categoryType === 'property') {
-                                series = getProperty(point, config.category)
+                        return addToChart(point, series)
+                    })
+                } else {
+                    // single point
+                    if (config.categoryType === 'json') {
+                        // we can produce multiple datapoints from a single object/value here
+                        const points = []
+                        series.forEach((s) => {
+                            if (s in p) {
+                                const datapoint = addToChart(p, s)
+                                points.push(datapoint)
                             }
-                            return addToBar(point, series)
                         })
+                        msg._datapoint = points
                     } else {
-                        // single point
-                        msg._datapoint = addToBar(p, series)
+                        msg._datapoint = addToChart(p, series)
                     }
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToLine (payload, series) {
+                function addToChart (payload, series) {
                     const datapoint = {}
+                    // we group/categorize data by "series"
                     datapoint.category = series
+
+                    // get our x value, if set
+                    if (config.xAxisPropertyType === 'msg' && config.xAxisProperty === '') {
+                        // handle a missing declaration of x-axis property, and backup to time series
+                        config.xAxisPropertyType = 'property'
+                    }
+                    const x = RED.util.evaluateNodeProperty(config.xAxisProperty, config.xAxisPropertyType, node, msg)
+
                     // construct our datapoint
                     if (typeof payload === 'number') {
-                        // just a number, assume we're plotting a time series
-                        datapoint.x = (new Date()).getTime()
+                        // do we have an x-property defined - if not, we're assuming time series
+                        datapoint.x = config.xAxisProperty !== '' ? x : (new Date()).getTime()
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
                         // may have been given an x/y object already
@@ -105,27 +102,6 @@ module.exports = function (RED) {
                             }
                         }
                         datapoint.x = x
-                        datapoint.y = y
-                    }
-                    return datapoint
-                }
-
-                // the only server-side computed var we need is the category for a Bar Chart
-                function addToBar (payload, series) {
-                    const datapoint = {}
-                    datapoint.category = series
-                    if (typeof payload === 'number') {
-                        datapoint.y = payload
-                    }
-                    if (Array.isArray(series)) {
-                        let y = null
-                        if (series.length > 1) {
-                            y = series.map((s) => {
-                                return getProperty(payload, s)
-                            })
-                        } else {
-                            y = getProperty(payload, series[0])
-                        }
                         datapoint.y = y
                     }
                     return datapoint
@@ -167,22 +143,7 @@ module.exports = function (RED) {
 
                     const maxPoints = parseInt(config.removeOlderPoints)
 
-                    if (config.xAxisType === 'category') {
-                        const _msg = datastore.get(node.id)
-
-                        // filters the ._msg array so that we keep just the latest msg with each category/series
-                        const seen = {}
-                        _msg.forEach((m, index) => {
-                            const series = m._datapoint.category
-                            // loop through and record the latest index seen for each topic/label
-                            seen[series] = index
-                        })
-                        const indices = Object.values(seen)
-                        datastore.save(base, node, _msg.filter((msg, index) => {
-                            // return only the msgs with the latest index for each topic/label
-                            return indices.includes(index)
-                        }))
-                    } else if (maxPoints && config.removeOlderPoints) {
+                    if (maxPoints && config.removeOlderPoints) {
                         // account for multiple lines?
                         // client-side does this for _each_ line
                         // remove older points
@@ -231,4 +192,19 @@ module.exports = function (RED) {
     }
 
     RED.nodes.registerType('ui-chart', ChartNode)
+
+    // Add HTTP Admin endpoint to permit reset of chart history
+    RED.httpAdmin.post('/dashboard/chart/:id/clear', RED.auth.needsPermission('ui-chart.write'), function (req, res) {
+        const node = RED.nodes.getNode(req.params.id)
+        if (node) {
+            if (node.type === 'ui-chart') {
+                node.clearHistory()
+                res.sendStatus(200)
+            } else {
+                res.sendStatus(400, 'Requested node is not of type "ui-chart"')
+            }
+        } else {
+            res.sendStatus(404)
+        }
+    })
 }

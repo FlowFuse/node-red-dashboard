@@ -14,7 +14,6 @@ module.exports = function (RED) {
             beforeSend: function (msg) {
                 if (msg.ui_update) {
                     const update = msg.ui_update
-                    console.log(update)
                     if (typeof update.options !== 'undefined') {
                         // dynamically set "options" property
                         statestore.set(group.getBase(), node, msg, 'options', update.options)

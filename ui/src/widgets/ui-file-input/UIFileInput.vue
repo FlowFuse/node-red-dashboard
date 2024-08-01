@@ -33,20 +33,15 @@
 </template>
 
 <script>
-
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIFileInput',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
-    },
-    setup (props) {
-        useDataTracker(props.id)
     },
     data () {
         return {
@@ -89,6 +84,9 @@ export default {
 
             return !this.uploading && !this.uploaded
         }
+    },
+    created () {
+        this.$dataTracker(this.id)
     },
     methods: {
         formatFileSize (bytes) {

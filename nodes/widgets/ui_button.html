@@ -33,7 +33,10 @@
                 payload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }) },
                 payloadType: { value: 'str' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-                topicType: { value: 'msg' }
+                topicType: { value: 'msg' },
+                buttonColor: { value: '' },
+                textColor: { value: '' },
+                iconColor: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -98,6 +101,10 @@
 
 <script type="text/html" data-template-name="ui-button">
     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-row">
         <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-button.label.group"></label>
         <input type="text" id="node-input-group">
     </div>
@@ -143,14 +150,6 @@
     <!--<div class="form-row">
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-button.label.tooltip"></label>
         <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-button.label.optionalTooltip">
-    </div>
-    <div class="form-row">
-        <label for="node-input-color"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.color"></label>
-        <input type="text" id="node-input-color" data-i18n="[placeholder]ui-button.label.optionalColor">
-    </div>
-    <div class="form-row">
-        <label for="node-input-bgcolor"><i class="fa fa-tint"></i>  <span data-i18n="ui-button.label.background"></label>
-        <input type="text" id="node-input-bgcolor" data-i18n="[placeholder]ui-button.label.optionalBackgroundColor">
     </div>-->
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.whenClicked"></label>
@@ -170,7 +169,18 @@
         <input type="checkbox" id="node-input-emulateClick" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+        <h4>Custom Styling</h4>
+    </div>
+    <div class="form-row">
+        <label for="node-input-buttonColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.buttonColor"></label>
+        <input type="text" id="node-input-buttonColor" data-i18n="[placeholder]ui-button.label.optionalButtonColor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-textColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.textColor"></label>
+        <input type="text" id="node-input-textColor" data-i18n="[placeholder]ui-button.label.optionalTextColor">
+    </div>
+    <div class="form-row">
+        <label for="node-input-iconColor"><i class="fa fa-tint"></i> <span data-i18n="ui-button.label.iconColor"></label>
+        <input type="text" id="node-input-iconColor" data-i18n="[placeholder]ui-button.label.optionalIconColor">
     </div>
 </script>

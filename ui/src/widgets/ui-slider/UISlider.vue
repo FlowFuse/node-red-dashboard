@@ -9,18 +9,17 @@
         :min="min" :direction="direction"
         :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="props.step || 1" :show-ticks="showTicks"
+        :max="max" :step="step || 1" :show-ticks="showTicks"
         @update:model-value="onChange" @end="onBlur"
     />
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUISlider',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -113,7 +112,7 @@ export default {
         }
     },
     created () {
-        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload
@@ -167,6 +166,15 @@ export default {
             }
             if (typeof updates.iconPrepend !== 'undefined') {
                 this.dynamic.iconPrepend = updates.iconPrepend
+            }
+            if (typeof updates.color !== 'undefined') {
+                this.dynamic.color = updates.color
+            }
+            if (typeof updates.colorTrack !== 'undefined') {
+                this.dynamic.colorTrack = updates.colorTrack
+            }
+            if (typeof updates.colorThumb !== 'undefined') {
+                this.dynamic.colorThumb = updates.colorThumb
             }
         }
     }

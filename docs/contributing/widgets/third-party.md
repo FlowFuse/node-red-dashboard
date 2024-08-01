@@ -279,6 +279,23 @@ export default {
 }
 ```
 
+It is recommended to use our in built [Data Tracker](../widgets/core-widgets.md#data-tracker) to setup the standard input/load events for your widget. This can be done by calling the following in your widget's `.vue` file:
+
+```js
+export default {
+    inject: ['$dataTracker'],
+    // rest of your vue component here
+    created () {
+        this.$dataTracker(this.id)
+        // we can override the default events if we want to with
+        // this.$dataTracker(this.id, myOnInputFunction, myOnLoadFunction, myOnDynamicPropertiesFunction)
+    }
+}
+```
+
+More details on customisation of the Data Tracker can be found [here](../widgets/core-widgets.md#custom-behaviours). 
+
+
 #### Sending Node-RED Messages
 
 You can send a `msg` on to any connected nodes in Node-RED by calling one of the following events via SocketIO:
@@ -314,6 +331,7 @@ group.register(node, config, evts)
 We use the concept of data stores on both the client and server side of Dashboard 2.0. These are used to centralise storage of the latest state and data associated to a widget.
 
 Data stores are a mapping of the widget/node's ID to the latest data received into that widget. This is most commonly used to restore state when the Dashboard is refreshed.
+
 
 #### Node-RED Data Store
 

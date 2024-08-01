@@ -34,7 +34,7 @@ import * as d3 from 'd3' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIGaugeDial',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },

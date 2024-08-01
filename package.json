@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.12.4",
+    "version": "1.14.0",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -92,6 +92,7 @@
         "node-red": "^3.1.9",
         "node-red-node-test-helper": "^0.3.3",
         "npm-run-all": "^4.1.5",
+        "sass": "^1.77.8",
         "should": "^13.2.3",
         "should-sinon": "^0.0.6",
         "sinon": "^15.2.0",
@@ -101,7 +102,7 @@
         "vite-plugin-pwa": "^0.20.0",
         "vitepress": "^1.0.2",
         "vue-router": "^4.2.4",
-        "vuetify": "^3.6.0",
+        "vuetify": "^3.6.13",
         "vuex": "^4.1.0",
         "workbox-core": "^7.1.0",
         "workbox-precaching": "^7.1.0",

@@ -1,20 +1,26 @@
 <template>
     <v-btn
-        block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon"
-        :append-icon="appendIcon" :class="{'nrdb-ui-button--icon': iconOnly}"
-        :style="{'min-width': icon ?? 'auto'}" @click="action"
+        block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
+        :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
+        @click="action"
     >
-        {{ label }}
+        <template v-if="prependIcon" #prepend>
+            <v-icon :color="iconColor" />
+        </template>
+        <template v-if="appendIcon" #append>
+            <v-icon :color="iconColor" />
+        </template>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span v-if="label" :style="{'color': textColor}" v-html="label" />
     </v-btn>
 </template>
 
 <script>
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIButton',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -25,6 +31,9 @@ export default {
             dynamic: {
                 label: null,
                 icon: null,
+                buttonColor: null,
+                textColor: null,
+                iconColor: null,
                 iconPosition: null
             }
         }
@@ -49,10 +58,19 @@ export default {
         },
         iconOnly () {
             return this.getPropertyValue('icon') && !this.getPropertyValue('label')
+        },
+        buttonColor () {
+            return this.getPropertyValue('buttonColor')
+        },
+        iconColor () {
+            return this.getPropertyValue('iconColor')
+        },
+        textColor () {
+            return this.getPropertyValue('textColor')
         }
     },
     created () {
-        useDataTracker(this.id, null, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         action ($evt) {
@@ -83,6 +101,15 @@ export default {
             if (typeof updates.iconPosition !== 'undefined') {
                 this.dynamic.iconPosition = updates.iconPosition
             }
+            if (typeof updates.buttonColor !== 'undefined') {
+                this.dynamic.buttonColor = updates.buttonColor
+            }
+            if (typeof updates.textColor !== 'undefined') {
+                this.dynamic.textColor = updates.textColor
+            }
+            if (typeof updates.iconColor !== 'undefined') {
+                this.dynamic.iconColor = updates.iconColor
+            }
         },
         getPropertyValue (property) {
             return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
@@ -94,14 +121,18 @@ export default {
 <style>
 .nrdb-ui-button--icon .v-btn__append {
     margin-left: 0;
+    margin-inline: initial;
 }
+
 .nrdb-ui-button--icon .v-btn__prepend {
     margin-right: 0;
+    margin-inline: initial;
 }
 
 .nrdb-ui-button .v-btn .v-icon {
     --v-icon-size-multiplier: 1;
 }
+
 .nrdb-ui-button .nrdb-ui-button--icon .v-icon {
     --v-icon-size-multiplier: 1.1;
 }

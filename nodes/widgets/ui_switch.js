@@ -32,6 +32,10 @@ module.exports = function (RED) {
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
                 msg.payload = value ? on : off
 
+                if (config.topic || config.topicType) {
+                    msg = await appendTopic(RED, config, node, msg)
+                }
+
                 datastore.save(group.getBase(), node, msg)
 
                 // simulate Node-RED node receiving an input

@@ -18,9 +18,11 @@ dynamic:
 <script setup>
     import { ref } from 'vue'
     import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleSuffix from '../../examples/ui-text-suffix.json'
     import ExampleHTMLInjection from '../../examples/ui-text-html-injection.json'
 
     const examples = ref({
+      'suffix': ExampleSuffix,
       'html-injection': ExampleHTMLInjection
     })
 </script>
@@ -33,6 +35,21 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 ## Properties
 
 <PropsTable/>
+
+## Adding Prefixes & Suffixes
+
+In Dashboard 1.0 an option existed called `valueFormat` which allowed you to add a prefix or suffix to a `ui-text` widget witin the node's configuration. Whilst valuable, this had a lot of security vulnerabilities, so with Dashboard 2.0 we made the decision to remove it..
+
+Instead, we take a different approach, and use Node-RED's built-in "template" node:
+
+<FlowViewer :flow="examples['suffix']" height="200px" />
+
+Which renders:
+
+![Adding a suffix to a UI Text element](/images/node-examples/ui-text-prefix.gif "Adding a suffix to a UI Text element"){data-zoomable}
+_Example of a rendered suffix on a UI Text element_
+
+We do this because this approach can be used far beyond just the `ui-text` widget, and can be used to inject HTML content into any widget through [dynamic properties](../../user/dynamic-properties.md).
 
 ## Rendering HTML
 

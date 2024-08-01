@@ -1,7 +1,7 @@
 <template>
     <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
         <!-- eslint-disable-next-line vue/no-template-shadow -->
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
             <v-text-field
                 v-if="type !== 'textarea'" v-model="value"
                 v-bind="props"
@@ -23,24 +23,20 @@
 </template>
 
 <script>
-
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
-    name: 'DBUIText',
-    inject: ['$socket'],
+    name: 'DBUITextInput',
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    setup (props) {
-        useDataTracker(props.id)
-    },
     data () {
         return {
-            delayTimer: null
+            delayTimer: null,
+            textValue: null
         }
     },
     computed: {
@@ -91,13 +87,14 @@ export default {
         },
         value: {
             get () {
-                return this.messages[this.id]?.payload
+                return this.textValue
             },
             set (val) {
                 if (this.value === val) {
                     return // no change
                 }
                 const msg = this.messages[this.id] || {}
+                this.textValue = val
                 msg.payload = val
                 this.messages[this.id] = msg
             }
@@ -110,7 +107,33 @@ export default {
             }
         }
     },
+    created () {
+        // can't do this in setup as we are using custom onInput function that needs access to 'this'
+        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
+    },
     methods: {
+        onInput (msg) {
+            // update our vuex store with the value retrieved from Node-RED
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // make sure our v-model is updated to reflect the value from Node-RED
+            if (msg.payload !== undefined) {
+                this.textValue = msg.payload
+            }
+        },
+        onLoad (msg) {
+            // update vuex store to reflect server-state
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
+                msg
+            })
+            // make sure we've got the relevant option selected on load of the page
+            if (msg?.payload !== undefined) {
+                this.textValue = msg.payload
+            }
+        },
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
         },

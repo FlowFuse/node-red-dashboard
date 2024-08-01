@@ -38,7 +38,9 @@
                 payload: { value: '' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
-                className: { value: '' }
+                className: { value: '' },
+                // This field controls if the used component is going to be a `v-combox` or a `v-select`, `v-combox` allows typing and filtering possible values
+                typeIsComboBox: { value: true }
             },
             inputs: 1,
             outputs: 1,
@@ -55,7 +57,10 @@
                 }    
                 if (this.clearable === undefined) {
                     $('#node-input-clearable').prop('checked', false)
-                }                              
+                }  
+                if (this.typeIsComboBox === undefined) {
+                    $('#node-input-typeIsComboBox').prop('checked', true)
+                }                            
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -228,7 +233,12 @@
     <div class="form-row">
         <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear selection with button </label>
         <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
-    </div>    
+    </div>   
+    <div class="form-row">
+        <label style="width:auto" for="node-input-typeIsComboBox"><i class="fa fa-pencil-square"></i> Allow Search </label>
+        <input type="checkbox" checked id="node-input-typeIsComboBox" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+        </div>
+    </div>  
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">

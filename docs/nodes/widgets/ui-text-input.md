@@ -16,6 +16,10 @@ props:
     Send On "Focus Leave": Sends a msg when the text input loses focus. Will always send, even if the value has not changed.
     Send On "Press Enter": Sends a msg when the user presses the enter key. Will always send, even if the value has not changed.
     Send On "Clear Button": Send a msg when the user clear the text input using the clear button, the "Clear Selection" button must be enabled.
+controls:
+    enabled:
+        example: true | false
+        description: Allow control over whether or not the text-input is enabled
 dynamic:
     Class:
         payload: msg.class
@@ -36,6 +40,10 @@ Adds a single text input row to your dashboard, with a configurable "type" (text
 ## Dynamic Properties
 
 <DynamicPropsTable/>
+
+## Controls
+
+<ControlsTable/>
 
 ## Example
 

@@ -4,12 +4,11 @@ import { h } from 'vue'
 
 import VueParser from '../../util/vue.acorn.js'
 
-import { useDataTracker } from '../data-tracker.mjs' // eslint-disable-line import/order
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITemplate',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) }
@@ -77,12 +76,10 @@ export default {
             }
         }
 
-        useDataTracker(props.id)
-
         // here we inject the UI Template Vue Template code into our own, in order to extend base functionality
         return () => h({
             props: ['id', 'props'],
-            inject: ['$socket'],
+            inject: ['$socket', '$dataTracker'],
             errorCaptured: (err, vm, info) => {
                 console.error('errorCaptured', err, vm, info)
                 return false
@@ -167,6 +164,8 @@ export default {
                 ...component?.methods
             },
             created () {
+                this.$dataTracker(props.id)
+
                 if (component?.beforeCreate) {
                     // run any generic JS code user has defined outisde of a VueJS component
                     // eslint-disable-next-line no-eval

@@ -52,7 +52,7 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
     export default {
         name: 'DBUIWidget',
         // we need to inject $socket so that we can send events to Node-RED
-        inject: ['$socket'],
+        inject: ['$socket', '$dataTracker'],
         props: {
             id: String,    // the id of the widget, as defined by Node-RED
             props: Object, // the properties for this widget defined in the Node-RED editor
@@ -63,10 +63,9 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
             // received on input from Node-RED
             ...mapState('data', ['messages']), // provides access to `this.messages` where `this.messages[this.id]` is the stored msg for this widget
         },
-        setup (props) {
-            // Use our data-tracker, which setups up the basic event handling for us
-            // including `on('msg-input')` and `on('widget-load')`
-            useDataTracker(props.id)
+        created () {
+            // setup the widget with default onInput, onLoad and onDynamicProperties handlers
+            this.$dataTracker(this.id)
         },
         methods: {
             onAction () {
@@ -87,19 +86,38 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
 
 ## Data Tracker
 
-The data tracker is a set of utility functions that help setup the standard event handlers for a core widget. It will setup the following events:
+The data tracker is a globally available utility service that helps setup the standard event handlers for widgets.
 
-- `on('widget-load')` - to handle any initial data that is sent to the widget when it is loaded
-- `on('msg-input')` - to handle any incoming data from Node-RED
+### Usage
 
-It also provides flexibility to define custom event handlers for the widget if there is bespoke functionality required for a given node, for example in a `ui-chart` node, we have a collection of custom logic that handles the merging of data points and the rendering of the chart when a message is received.
+The data tracker is globally available across existing widgets and can be accessed using `this.$dataTracker(...)`.
 
-The inputs for the `useDataTracker (widgetId, onInput, onLoad, onDynamicProperties)` function are used as follows:
+The most simple usage of the tracker would be:
+
+```js
+...
+created () {
+    this.$dataTracker(this.id)
+},
+...
+```
+
+This will setup the following events:
+
+- `on('widget-load')` - Ensures we save any received `msg` objects when a widget is first loaded into the Dashboard.
+- `on('msg-input')` - Default behavior checks for any dynamic properties (e.g. visibility, disabled state) and also stores the incoming `msg` in the Vuex store
+
+### Custom Behaviours
+
+It also provides flexibility to define custom event handlers for a given widget, for example in a `ui-chart` node, we have a logic that handles the merging of data points and the rendering of the chart when a message is received.
+
+The inputs for the `this.$dataTracker(widgetId, onInput, onLoad, onDynamicProperties)` function are used as follows:
 
 - `widgetId` - the unique ID of the widget
 - `onInput` - a function that will be called when a message is received from Node-RED through the `on(msg-input)` socket handler
 - `onLoad` - a function that will be called when the widget is loaded, and triggered by the `widget-load` event
-- `onDynamicProperties` - a function called as part of the `on(msg-input)` event, and is triggered _before_ the default `onInput` function. This is a good entry point to check against any properties that have been included in the `msg` in order to set a dynamic property.
+- `onDynamicProperties` - a function called as part of the `on(msg-input)` event, and is triggered _before_ the default `onInput` function. This is a good entry point to check against any properties that have been included in the `msg` in order to set a dynamic property (i.e. content sent into `msg.ui_update...`).
+
 
 ## Dynamic Properties
 

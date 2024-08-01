@@ -4,6 +4,8 @@
             "line": "Line",
             "bar": "Bar",
             "scatter": "Scatter",
+            "pie": "Pie",
+            "doughnut": "Doughnut",
             "circle": "Circle",
             "cross": "Cross",
             "crossRotated": "Cross Rotated",
@@ -18,6 +20,7 @@
             "timescale": "Timescale",
             "linear": "Linear",
             "categorical": "Categorical",
+            "radial": "Radial",
             "group": "Group",
             "size": "Size",
             "label": "Label",
@@ -45,7 +48,7 @@
             "properties": "Properties",
             "series": "Series:",
             "key": "key:",
-            "propertyPlaceholder": "msg.payload[key] or msg.payload[n][key]",
+            "propertyPlaceholder": "property",
             "pointStyle": "Point Style",
             "pointShape": "Shape",
             "pointRadius": "Radius (px)",
@@ -63,7 +66,14 @@
             "textColor": "Text Color",
             "gridColor": "Grid Line Color",
             "setTextColorDefault": "Use ChartJs Default Text Colors",
-            "setGridColorDefault": "Use ChartJs Default Grid Colors" 
+            "setGridColorDefault": "Use ChartJs Default Grid Colors" ,
+            "stackSeries": "Group By",
+            "stackSeriesTrue": "Stacks",
+            "stackSeriesFalse": "Side-by-Side"
+        },
+        "notifications": {
+            "clearSuccess": "Chart data cleared successfully",
+            "clearFailure": "Unable to clear chart data"
         }
     }
 }

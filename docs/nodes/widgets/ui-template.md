@@ -85,12 +85,54 @@ When accessing the `msg` variable inside a `<script />` tag, you need to prefix 
 
 ***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
 
+#### Accessing Node-RED Global/Flow Context
+
+The `flow`/`global` context stores are not available in the Dashboard UI, as such, the best practice here is to use a "Change" node prior to the `ui-template` node to assign a `msg.<property>` to the relevant value from the `flow.` or `global.` store:
+
+![Example of using a Change node to assign a value to `msg.payload`](/images/node-examples/change-flow-to-msg.png "Example of using a Change node to assign a value to `msg.payload`"){data-zoomable}
+_Example of using a Change node to assign a value to `msg.payload`._
+
 ### Built-in Functions
 
 We also offer some helper functions for the Node-RED integration too:
 
-- `this.send` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
-- `this.$socket.on('msg-input:' + this.id, (msg) = { ... })` - will listen to any messages received by your `ui-template `node and react accordingly.
+#### Sending Data
+
+- `this.send(msg)` - Send a message to the Node-RED flow. If a non-Object value is sent, then Dashboard will automatically wrap that into a `msg.payload` object.
+
+#### Receiving Data
+
+There are two ways of responding to messages received by your `ui-template` node:
+
+Option 1: 
+
+In VueJS, we can `watch` a variable for any changes, and react accordingly.
+
+As mentioned in the [Built-in Variables](#built-in-variables) section above, we have access to the `msg` variable in our `ui-template` node. We can watch this variable for any changes, and react accordingly:
+
+```js
+watch: {
+    msg: function () {
+        // do stuff with this.msg
+        // runs onLoad and onInput
+    }
+}
+```
+
+It's worth noting though, that whilst this will update when new messages are received, it _also_ updates when a widget first loads, and the latest `msg` is loaded to the widget.
+
+Option 2:
+
+We can alternatively add a custom socket listener to the `msg-input:<id>` event. This is useful if you want to listen to messages _only_ when they are received, and not when the widget first loads.
+
+```js
+this.$socket.on('msg-input:' + this.id, (msg) => {
+    // do stuff with msg
+    // runs only when messages are received
+})
+```
+
+This can be added into the widget's `mounted () { }` handler
 
 ### Example (Raw JavaScript)
 
@@ -262,7 +304,7 @@ We provide some pre-defined locations that you can use:
 
 #### Page Name (`#app-bar-title`)
 
-Add content to the left-side of the navigation bar of the Dashboard. `<Teleport>` can be used as follows:
+Add content to the left-side of the header of the Dashboard. `<Teleport>` can be used as follows:
 
 ```vue
 <template>

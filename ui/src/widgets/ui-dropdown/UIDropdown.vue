@@ -1,6 +1,12 @@
 <template>
     <v-combobox
-        v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
+        v-if="typeIsComboBox === true" v-model="value" :disabled="!state.enabled" :class="className" :label="label"
+        :multiple="multiple" :chips="chips" :clearable="clearable" :items="options" item-title="label"
+        item-value="value" variant="outlined" hide-details="auto" auto-select-first
+        :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
+    />
+    <v-select
+        v-else v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
         :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
         hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
@@ -10,11 +16,9 @@
 <script>
 import { mapState } from 'vuex'
 
-import { useDataTracker } from '../data-tracker.mjs'
-
 export default {
     name: 'DBUIDropdown',
-    inject: ['$socket'],
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -68,11 +72,14 @@ export default {
         },
         label: function () {
             return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+        },
+        typeIsComboBox: function () {
+            return this.props.typeIsComboBox ?? true
         }
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        useDataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -126,11 +133,18 @@ export default {
             if (this.multiple) {
                 // return an array
                 msg.payload = this.value.map((option) => {
+                    if (this.props.typeIsComboBox === false) {
+                        return option
+                    }
                     return option.value
                 })
             } else if (this.value) {
                 // return a single value
-                msg.payload = this.value.value
+                if (this.props.typeIsComboBox === false) {
+                    msg.payload = this.value
+                } else {
+                    msg.payload = this.value.value
+                }
             } else {
                 // return null
                 msg.payload = null
