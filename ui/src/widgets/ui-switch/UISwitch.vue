@@ -113,6 +113,8 @@ export default {
             if (this.state.enabled) {
                 if (this.props.decouple) {
                     this.loading = true
+                    // send the inverse, but don't update the status until we get a response
+                    this.$socket.emit('widget-change', this.id, !this.status)
                 } else {
                     this.status = !this.status
                     this.$socket.emit('widget-change', this.id, this.status)
