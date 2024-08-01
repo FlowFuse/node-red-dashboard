@@ -62,9 +62,14 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+<TryDemo href="slider">
+
 # Slider `ui-slider`
+
+</TryDemo>
 
 Adds a slider to your dashboard that will emit values in Node-RED under `msg.payload` anytime it's value is changed.
 
