@@ -10,10 +10,16 @@ dynamic:
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue'
+    import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+
+<TryDemo href="markdown-viewer">
+
 # Markdown Viewer `ui-markdown`
+
+</TryDemo>
 
 Allows for markdown to be defined within Node-RED editor and rendered into the UI. Can be used for rendering labels, headers or even full blog articles.
 
