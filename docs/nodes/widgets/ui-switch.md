@@ -21,9 +21,15 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+
+<TryDemo href="switch">
+
 # Toggle Switch `ui-switch`
+
+</TryDemo>
 
 Adds a toggle switch to the user interface.
 
