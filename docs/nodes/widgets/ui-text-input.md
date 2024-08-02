@@ -27,9 +27,15 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue"
 </script>
 
+
+<TryDemo href="text-input">
+
 # Text Input `ui-text-input`
+
+</TryDemo>
 
 Adds a single text input row to your dashboard, with a configurable "type" (text, password, etc).
 
