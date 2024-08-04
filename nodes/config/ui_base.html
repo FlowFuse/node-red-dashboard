@@ -1038,7 +1038,7 @@
             addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                let widgetIcon = 'fa fa-image'
+                let widgetIcon = 'fa ' + (widget.node._def.icon || 'fa-question').replace('font-awesome/', '')
                 if (widget.isSubflowInstance) {
                     // In this MVP, subflow instances are constrained to stay within own group.
                     container.parent().addClass('red-ui-editableList-item-constrained')
