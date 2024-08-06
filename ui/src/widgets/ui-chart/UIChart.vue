@@ -351,6 +351,8 @@ export default {
             }
 
             const sIndex = sLabels?.indexOf(label)
+            // are we adding a new datapoint to an existing x-value
+            const xIndex = xLabels.indexOf(datapoint.x)
 
             // the chart is empty, we're adding a new series
             if (sIndex === -1) {
@@ -360,8 +362,11 @@ export default {
 
                 // ensure we have a datapoint for the relevant series
                 const data = Array(sLabels.length + 1).fill({})
-                // define the data point for this series
-                data[sLabels.length] = datapoint
+                if (xIndex === -1) {
+                    data[xLabels.length] = datapoint
+                } else {
+                    data[xIndex] = datapoint
+                }
                 // add the new dataset to the chart
                 const d = {
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
@@ -378,9 +383,7 @@ export default {
 
                 this.chart.data.datasets.push(d)
             } else {
-                // we're adding a new datapoint to an existing series
                 // have we seen this x-value before?
-                const xIndex = xLabels.indexOf(datapoint.x)
                 if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                     // yes, so we need to update the data at this index
                     this.chart.data.datasets[sIndex].data[xIndex] = datapoint
