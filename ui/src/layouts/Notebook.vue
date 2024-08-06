@@ -14,7 +14,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" :row-height="rowHeight" />
+                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
                     </template>
                 </v-card>
             </div>
@@ -46,8 +46,9 @@ export default {
         WidgetGroup
     },
     data () {
+        const rowHeight = getComputedStyle(document.body).getPropertyValue('--widget-row-height')
         return {
-            rowHeight: 45
+            rowHeight
         }
     },
     computed: {

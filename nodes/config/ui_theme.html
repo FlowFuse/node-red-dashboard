@@ -19,6 +19,7 @@
             // sizes
             sizes: {
                 value: {
+                    density: 'default',
                     pagePadding: '12px',
                     groupGap: '12px',
                     groupBorderRadius: '4px',
@@ -47,6 +48,9 @@
                 this.sizes = {}
             }
             // set default values
+            if (!hasProperty(this.sizes, 'density')) {
+                this.sizes.density = 'default'
+            }
             if (!hasProperty(this.sizes, 'pagePadding')) {
                 this.sizes.pagePadding = '12px'
             }
@@ -164,6 +168,14 @@
         </div>
     </div>
     <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.sizings"></h3>
+    <div class="form-row">
+        <label for="node-config-input-density" data-i18n="ui-theme.label.density"></label>
+        <select type="text" id="node-config-input-density">
+            <option value="default" data-i18n="ui-theme.label.default"></option>
+            <option value="comfortable" data-i18n="ui-theme.label.comfortable"></option>
+            <option value="compact" data-i18n="ui-theme.label.compact"></option>
+        </select>
+    </div>
     <div class="form-row">
         <label for="node-config-input-pagePadding" data-i18n="ui-theme.label.pagePadding"></label>
         <input type="text" id="node-config-input-pagePadding">
