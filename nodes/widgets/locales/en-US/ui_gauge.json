@@ -9,6 +9,7 @@
             "gaugeTile": "Tile",
             "gaugeHalf": "Half Gauge",
             "gauge34": "3/4 Gauge",
+            "gaugeBattery": "Battery Level",
             "needle": "Needle",
             "rounded": "Rounded",
             "limits": "Limits",
