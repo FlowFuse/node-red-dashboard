@@ -31,7 +31,7 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
 1. In `/nodes/`:
     - Add `<widget>.html`
     - Add `<widget>.js`
-    - Add the in the `node-red/nodes` section in `package.json`
+    - Add the reference to the `node-red/nodes` section in `package.json`
 2. In `/ui/`:
     - Add `widgets/<widget>/<widget>.vue`
     - Add widget to the `index.js` file in `/ui/widgets`
