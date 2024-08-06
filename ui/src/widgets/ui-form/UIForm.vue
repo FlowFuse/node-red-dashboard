@@ -126,8 +126,10 @@ export default {
         },
         onDynamicProperties (msg) {
             const updates = msg.ui_update
-            this.updateDynamicProperty('label', updates.label)
-            this.updateDynamicProperty('options', updates.options)
+            if (updates) {
+                this.updateDynamicProperty('label', updates.label)
+                this.updateDynamicProperty('options', updates.options)
+            }
         }
     }
 }
