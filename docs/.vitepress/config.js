@@ -162,7 +162,8 @@ export default ({ mode }) => {
               items: [
                 { text: 'Grid', link: '/layouts/types/grid' },
                 { text: 'Fixed', link: '/layouts/types/fixed' },
-                { text: 'Notebook', link: '/layouts/types/notebook' }
+                { text: 'Notebook', link: '/layouts/types/notebook' },
+                { text: 'Tabs', link: '/layouts/types/tabs' }
               ]
             }
           ]

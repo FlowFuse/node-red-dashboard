@@ -26,7 +26,7 @@
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
-    name: 'DBUIText',
+    name: 'DBUITextInput',
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },

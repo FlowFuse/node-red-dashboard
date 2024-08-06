@@ -4,12 +4,14 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
-    On Payload: The type & value to output in <code>msg.payload</code> when the switch is turned on.
-    Off Payload: The type & value to output in <code>msg.payload</code> when the switch is turned off.
     On Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "on" state. No need to include the <code>mdi</code> prefix.
     Off Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "off" state. No need to include the <code>mdi</code> prefix.
     On Color: If provided with a icons, this colour is used for the icon when in "on" state
     Off Color: If provided with a icons, this colour is used for the icon when in "off" state
+    Passthrough: If enabled, the widget will pass through the input message to the output.
+    Indicator: Only available when "Passthrough" is set to <code>false</code>. Defines whether the switch shows the status of the output, or any provided input via <code>msg.payload</code>.
+    On Payload: The type & value to output in <code>msg.payload</code> when the switch is turned on.
+    Off Payload: The type & value to output in <code>msg.payload</code> when the switch is turned off.
 controls:
     enabled:
         example: true | false
@@ -21,9 +23,15 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+
+<TryDemo href="switch">
+
 # Toggle Switch `ui-switch`
+
+</TryDemo>
 
 Adds a toggle switch to the user interface.
 

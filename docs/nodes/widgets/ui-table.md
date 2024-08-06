@@ -22,6 +22,7 @@ dynamic:
 
     import FlowViewer from '../../components/FlowViewer.vue'
     import AddedIn from '../../components/AddedIn.vue'
+    import TryDemo from "./../../components/TryDemo.vue";
 
     const examples = ref({
       'cellTypes': ExampleCellTypes
@@ -29,7 +30,11 @@ dynamic:
 </script>
 
 
+<TryDemo href="table">
+
 # Data Table `ui-table` <AddedIn version="0.4.0" />
+
+</TryDemo>
 
 Renders a set of data in a tabular format. Expects an input (`msg.payload`) in the format of:
 

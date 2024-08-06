@@ -37,7 +37,7 @@ export default {
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dataTracker(this.id, null, this.onLoad)
+        this.$dataTracker(this.id)
         this.page = this.pages[this.$route.meta.id]
         this.pageview()
     },

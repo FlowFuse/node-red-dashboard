@@ -21,9 +21,14 @@ props:
 
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+<TryDemo href="gauge">
+
 # Gauge `ui-gauge` <AddedIn version="1.1.0"/>
+
+</TryDemo>
 
 Adds a Gauge Chart to your Dashboard. This can be configured with custom types (half, 3/4), styles (rounded, needle) and segmentation with examples detailed [below](#examples).
 

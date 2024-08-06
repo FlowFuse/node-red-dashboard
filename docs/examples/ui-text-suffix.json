@@ -1,0 +1,134 @@
+[
+    {
+        "id": "03a4fb2ae4f1a0d6",
+        "type": "template",
+        "z": "9cc36e3c2b38760e",
+        "name": "Add Suffix",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "{{ payload }}°C",
+        "output": "str",
+        "x": 290,
+        "y": 80,
+        "wires": [
+            [
+                "96b97d1a5c6db5ba"
+            ]
+        ]
+    },
+    {
+        "id": "96b97d1a5c6db5ba",
+        "type": "ui-text",
+        "z": "9cc36e3c2b38760e",
+        "group": "ecd8ebed2d3bfedb",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "name": "",
+        "label": "Render Text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": true,
+        "font": "Helvetica, sans-serif",
+        "fontSize": "16",
+        "color": "#616161",
+        "className": "",
+        "x": 490,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "48bf87d13b3e1c07",
+        "type": "ui-slider",
+        "z": "9cc36e3c2b38760e",
+        "group": "ecd8ebed2d3bfedb",
+        "name": "",
+        "label": "slider",
+        "tooltip": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "thumbLabel": "true",
+        "showTicks": "always",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "iconPrepend": "",
+        "iconAppend": "",
+        "color": "",
+        "colorTrack": "",
+        "colorThumb": "",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "03a4fb2ae4f1a0d6"
+            ]
+        ]
+    },
+    {
+        "id": "ecd8ebed2d3bfedb",
+        "type": "ui-group",
+        "name": "Text Input",
+        "page": "a9b32250ebfa989b",
+        "width": "6",
+        "height": "",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "a9b32250ebfa989b",
+        "type": "ui-page",
+        "name": "Template Examples",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/templates",
+        "icon": "view-dashboard",
+        "layout": "flex",
+        "theme": "129e99574def90a3",
+        "order": 19,
+        "className": ""
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "default",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "129e99574def90a3",
+        "type": "ui-theme",
+        "name": "Custom Theme",
+        "colors": {
+            "surface": "#000000",
+            "primary": "#ff4000",
+            "bgPage": "#f0f0f0",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9d9"
+        },
+        "sizes": {
+            "pagePadding": "24px",
+            "groupGap": "12px",
+            "groupBorderRadius": "9px",
+            "widgetGap": "6px"
+        }
+    }
+]

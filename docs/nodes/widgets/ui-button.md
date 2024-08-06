@@ -51,9 +51,15 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue"
 </script>
 
+
+<TryDemo href="button-example">
+
 # Button `ui-button`
+
+</TryDemo>
 
 Adds a clickable button to your dashboard.
 
