@@ -123,10 +123,12 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    container-type: size;
 }
 .nrdb-ui-gauge-battery label {
     font-weight: bold;
-    font-size: 2.5rem;
+    resize: both;
+    font-size: min(2.5rem, 30cqmin);
     position: relative;
     z-index: 2;
     width: 100%;
