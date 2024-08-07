@@ -59,6 +59,11 @@ export default {
             })
         }
     },
+    mounted () {
+        this.$nextTick(() => {
+            this.updateMask()
+        })
+    },
     methods: {
         getTextColor: UIGaugeMethods.getTextColor,
         updateMask () {
