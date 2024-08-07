@@ -141,6 +141,7 @@ export default ({ mode }) => {
                 { text: 'ui-gauge', link: '/nodes/widgets/ui-gauge' },
                 { text: 'ui-markdown', link: '/nodes/widgets/ui-markdown' },
                 { text: 'ui-notification', link: '/nodes/widgets/ui-notification' },
+                { text: 'ui-number-input', link: '/nodes/widgets/ui-number-input' },
                 { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
                 { text: 'ui-slider', link: '/nodes/widgets/ui-slider' },
                 { text: 'ui-switch', link: '/nodes/widgets/ui-switch' },
