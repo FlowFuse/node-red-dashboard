@@ -1038,7 +1038,14 @@
             addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                let widgetIcon = 'fa fa-image'
+
+                debugger
+                // 
+                let widgetIcon = widget.node._def.icon || 'fa fa-question'
+                if (widget.node._def.icon.startsWith('font-awesome/')) {
+                    widgetIcon = 'fa ' + widget.node._def.icon.replace('font-awesome/', '')
+                }
+
                 if (widget.isSubflowInstance) {
                     // In this MVP, subflow instances are constrained to stay within own group.
                     container.parent().addClass('red-ui-editableList-item-constrained')
@@ -1047,7 +1054,14 @@
                     // apply a tooltip to further clarify this is a subflow
                     titleRow.attr('title', widget.subflowName || 'Subflow instance')
                 }
-                $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
+
+                if (widgetIcon == 'nrdb2-sb-subflow-icon' || widgetIcon.startsWith('fa fa-')) {
+                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
+                }
+                else {
+                    const href = 'icons/' + widget.node._def.set.module + '/' + widgetIcon
+                    $('<image>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon', href: href }).appendTo(titleRow)
+                }
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)

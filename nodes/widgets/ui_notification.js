@@ -8,7 +8,19 @@ module.exports = function (RED) {
         const ui = RED.nodes.getNode(config.ui)
 
         const evts = {
-            onAction: true
+            onAction: true,
+            beforeSend: function (msg) {
+                if (msg.ui_update) {
+                    const update = msg.ui_update
+                    if (typeof update.title !== 'undefined') {
+                        // dynamically set "title" property
+                        statestore.set(group.getBase(), node, msg, 'title', update.title)
+                    }
+                    // Note that update.close will NOT be stored in the data store, 
+                    // since it does not need to be remembered
+                }
+                return msg
+            }
         }
 
         // inform the dashboard UI that we are adding this node

@@ -5,29 +5,29 @@
         vertical
         multi-line
         :timeout="-1"
-        :location="props.position"
+        :location="position"
         :style="{'--nrdb-ui-notification-color': color}"
     >
-        <div v-if="props.showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" :color="messages[id]?.color || (props.colorDefault ? 'primary' : color)" style="display: block; width: 100%" />
+        <div v-if="showCountdown" class="nrdb-ui-notification-countdown">
+            <v-progress-linear v-model="countdown" :color="progressColor" style="display: block; width: 100%" />
         </div>
-        <div v-if="!props.raw">{{ value }}</div>
+        <div v-if="!raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else v-html="value" />
-        <template v-if="props.allowDismiss || props.allowConfirm" #actions>
+        <template v-if="allowDismiss || allowConfirm" #actions>
             <v-btn
-                v-if="props.allowDismiss"
+                v-if="allowDismiss"
                 variant="text"
                 @click="close('dismiss_clicked')"
             >
-                {{ props.dismissText || "Close" }}
+                {{ dismissText }}
             </v-btn>
             <v-btn
-                v-if="props.allowConfirm"
+                v-if="allowConfirm"
                 variant="text"
                 @click="close('confirm_clicked')"
             >
-                {{ props.confirmText || "Confirm" }}
+                {{ confirmText }}
             </v-btn>
         </template>
     </v-snackbar>
