@@ -1,17 +1,20 @@
 <template>
-    <div class="nrdb-ui-gauge-battery" :class="`nrdb-ui-gauge-battery--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
-        <div class="nrdb-ui-gauge-battery--center">
-            <div ref="fill" class="nrdb-ui-gauge-battery--fill" />
-            <svg width="0" height="0">
-                <defs>
-                    <clipPath id="clip">
-                        <rect x="0" :y="`${svgOffset}`" :width="`${clipWidth}`" :height="`${clipHeight}`" />
-                    </clipPath>
-                </defs>
-            </svg>
-            <div ref="labels" class="nrdb-ui-gauge-battery-labels">
-                <label class="nrdb-ui-gauge-battery--fglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
-                <label class="nrdb-ui-gauge-battery--bglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
+    <div class="nrdb-ui-gauge-battery--container">
+        <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <div class="nrdb-ui-gauge-battery" :class="`nrdb-ui-gauge-battery--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
+            <div class="nrdb-ui-gauge-battery--center">
+                <div ref="fill" class="nrdb-ui-gauge-battery--fill" />
+                <svg width="0" height="0">
+                    <defs>
+                        <clipPath :id="clipId">
+                            <rect x="0" :y="`${svgOffset}`" :width="`${clipWidth}`" :height="`${clipHeight}`" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div ref="labels" class="nrdb-ui-gauge-battery-labels">
+                    <label class="nrdb-ui-gauge-battery--fglabel" :style="{'line-height': labelLineHeight, 'clip-path': `url(#${clipId})`}">{{ pc }}%</label>
+                    <label class="nrdb-ui-gauge-battery--bglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
+                </div>
             </div>
         </div>
     </div>
@@ -43,7 +46,7 @@ export default {
         },
         pc: function () {
             if (typeof this.value !== 'undefined') {
-                return Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100)
+                return Math.max(0, Math.min(Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100), 100))
             } else {
                 return 0
             }
@@ -52,6 +55,9 @@ export default {
             const w = parseInt(this.props.width)
             const h = parseInt(this.props.height)
             return w >= h ? 'horizontal' : 'vertical'
+        },
+        clipId: function () {
+            return `clip-${this.id}`
         }
     },
     watch: {
@@ -87,15 +93,22 @@ export default {
 </script>
 
 <style scoped>
+.nrdb-ui-gauge-battery--container {
+    display: flex;
+    flex-direction: column;
+}
 .nrdb-ui-gauge-battery {
     --battery-margin: 12px;
     --battery-radius: 12px;
+    --battery-border: 8px;
 
     border-radius: var(--battery-radius);
-    border-width: 8px;
+    border-width: var(--battery-border);
     padding: 6px;
     border-color: var(--gauge-fill);
     border-style: solid;
+    flex-grow: 1;
+    position: relative;
 }
 .nrdb-ui-gauge-battery--horizontal {
     margin-right: var(--battery-margin);
@@ -172,16 +185,16 @@ export default {
     width: var(--battery-margin);
     height: 40%;
     top: 30%;
-    right: 0;
-    border-top-right-radius: calc(var(--battery-radius) * 0.66);
-    border-bottom-right-radius: calc(var(--battery-radius) * 0.66);
+    right: calc(-1 * var(--battery-margin) - var(--battery-border));
+    border-top-right-radius: calc(var(--battery-radius) * 0.5);
+    border-bottom-right-radius: calc(var(--battery-radius) * 0.5);
 }
 .nrdb-ui-gauge-battery--vertical:after {
     width: 40%;
     height: var(--battery-margin);
-    top: 0%;
+    top: calc(-1 * var(--battery-margin) - var(--battery-border));
     right: 30%;
-    border-top-left-radius: calc(var(--battery-radius) * 0.66);
-    border-top-right-radius: calc(var(--battery-radius) * 0.66);
+    border-top-left-radius: calc(var(--battery-radius) * 0.5);
+    border-top-right-radius: calc(var(--battery-radius) * 0.5);
 }
 </style>
