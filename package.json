@@ -135,6 +135,7 @@
             "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-gauge": "nodes/widgets/ui_gauge.js",
             "ui-notification": "nodes/widgets/ui_notification.js",
+            "ui-number-input": "nodes/widgets/ui_number_input.js",
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
