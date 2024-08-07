@@ -3,7 +3,7 @@ description: Display real-time metrics with ui-gauge in Node-RED Dashboard 2.0 f
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
-    Type: Defines the shape of the gauge, "Tile", "Half Gauge" or "3/4 Gauge"
+    Type: Defines the shape of the gauge, "Tile", "Battery", "Half Gauge" or "3/4 Gauge"
     Style: Defines the style of arc rendered, "Needle" or "Rounded"
     Range (min): The smallest value that can be shown on the gauge
     Range (max): The largest value that can be shown on the gauge
@@ -89,6 +89,16 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 
 ![Examples of some Tile Gauges](/images/node-examples/ui-gauge-tiles.png "Examples of some Tile Gauges"){data-zoomable}
 *Examples of some Tile Gauges*
+
+### Battery <AddedIn version="1.15.0" />
+
+| Type |
+| --- |
+| Battery |
+
+![Examples of some horizontal Battery Gauges](/images/node-examples/ui-gauge-battery.png "Examples of some Battery Gauges"){data-zoomable}
+*Examples of some horizontal Battery Gauges*
+
 
 ## Overriding CSS
 
