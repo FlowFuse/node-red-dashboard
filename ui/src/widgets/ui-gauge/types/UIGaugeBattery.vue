@@ -1,8 +1,18 @@
 <template>
     <div class="nrdb-ui-gauge-battery" :class="`nrdb-ui-gauge-battery--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
         <div class="nrdb-ui-gauge-battery--center">
-            <div class="nrdb-ui-gauge-battery--fill" />
-            <label>{{ pc }}%</label>
+            <div ref="fill" class="nrdb-ui-gauge-battery--fill" />
+            <svg width="0" height="0">
+                <defs>
+                    <clipPath id="clip">
+                        <rect x="0" :y="`${svgOffset}`" :width="`${clipWidth}`" :height="`${clipHeight}`" />
+                    </clipPath>
+                </defs>
+            </svg>
+            <div ref="labels" class="nrdb-ui-gauge-battery-labels">
+                <label class="nrdb-ui-gauge-battery--fglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
+                <label class="nrdb-ui-gauge-battery--bglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
+            </div>
         </div>
     </div>
 </template>
@@ -19,12 +29,21 @@ export default {
         state: { type: Object, default: () => ({}) },
         value: { type: Number, required: true }
     },
+    data () {
+        return {
+            clipWidth: 0,
+            clipHeight: 0,
+            labelLineHeight: 0,
+            svgOffset: 0
+        }
+    },
     computed: {
         color: function () {
             return UIGaugeMethods.valueToColor(this.props.segments, this.value)
         },
         pc: function () {
-            return this.value
+            const pc = Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100)
+            return pc
         },
         orientation: function () {
             const w = parseInt(this.props.width)
@@ -32,8 +51,29 @@ export default {
             return w >= h ? 'horizontal' : 'vertical'
         }
     },
+    watch: {
+        value: function () {
+            this.$nextTick(() => {
+                // react to the fill element being updated
+                this.updateMask()
+            })
+        }
+    },
     methods: {
-        getTextColor: UIGaugeMethods.getTextColor
+        getTextColor: UIGaugeMethods.getTextColor,
+        updateMask () {
+            const h = this.$refs.fill?.clientHeight || 0
+            this.clipWidth = `${this.$refs.fill?.clientWidth || 0}px`
+            this.clipHeight = `${h}px`
+            // read from the DOM if it's ready, otherwise reverse-engineer
+            this.labelLineHeight = this.$refs.labels ? `${this.$refs.labels.clientHeight}px` : `${100 * h / this.pc}px`
+            // work out if we need to offset our SVG mask
+            if (this.orientation === 'vertical' && h >= 0 && this.pc !== 0) {
+                this.svgOffset = (h / (this.pc / 100)) - h
+            } else {
+                this.svgOffset = 0
+            }
+        }
     }
 }
 </script>
@@ -55,11 +95,34 @@ export default {
 .nrdb-ui-gauge-battery--vertical {
     margin-top: var(--battery-margin);
 }
+.nrdb-ui-gauge-battery-labels {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .nrdb-ui-gauge-battery label {
     font-weight: bold;
     font-size: 2.5rem;
     position: relative;
     z-index: 2;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    white-space: nowrap;
+}
+.nrdb-ui-gauge-battery label.nrdb-ui-gauge-battery--fglabel {
+    clip-path: url(#clip);
+
+}
+.nrdb-ui-gauge-battery label.nrdb-ui-gauge-battery--bglabel {
+    color: rgb(var(--v-theme-on-group-background));
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
 }
 .nrdb-ui-gauge-battery--center {
     display: flex;
@@ -70,14 +133,22 @@ export default {
 }
 .nrdb-ui-gauge-battery--fill {
     background-color: var(--gauge-fill);
+}
+.nrdb-ui-gauge-battery svg {
+    top: 0;
+}
+.nrdb-ui-gauge-battery svg,
+.nrdb-ui-gauge-battery--fill {
     position: absolute;
     left: 0;
 }
+.nrdb-ui-gauge-battery--horizontal svg,
 .nrdb-ui-gauge-battery--horizontal .nrdb-ui-gauge-battery--fill {
     top: 0;
     height: 100%;
     width: var(--gauge-fill-pc);
 }
+.nrdb-ui-gauge-battery--vertical svg,
 .nrdb-ui-gauge-battery--vertical .nrdb-ui-gauge-battery--fill {
     bottom: 0;
     height: var(--gauge-fill-pc);
