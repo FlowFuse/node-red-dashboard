@@ -42,8 +42,11 @@ export default {
             return UIGaugeMethods.valueToColor(this.props.segments, this.value)
         },
         pc: function () {
-            const pc = Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100)
-            return pc
+            if (typeof this.value !== 'undefined') {
+                return Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100)
+            } else {
+                return 0
+            }
         },
         orientation: function () {
             const w = parseInt(this.props.width)
