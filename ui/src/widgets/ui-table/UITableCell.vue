@@ -26,6 +26,9 @@
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-sparkline v-model="value" type="bar" color="primary" :padding="2" line-width="16" />
     </template>
+    <template v-else-if="type === 'button'">
+        <v-btn v-model="value" color="primary" :height="8" @click="onButtonClick($event, item)"/>
+    </template>
     <template v-else>
         {{ value }}
     </template>
@@ -35,6 +38,10 @@
 export default {
     name: 'UITableCell',
     props: {
+        table_id: {
+            type: String,
+            required: true
+        },
         row: {
             type: Number,
             required: true
@@ -66,6 +73,22 @@ export default {
             set (value) {
                 this.$emit('update:modelValue', value)
             }
+        }
+    },
+    methods: {
+        onButtonClick (event, row) {
+            // Prevent the event from bubbling up, otherwise onRowClicked is also clicked
+            event.stopPropagation()
+
+            const cell = event.target.closest('td')
+            const columnKey = cell ? cell.getAttribute('data-column-key') : null
+
+            const msg = {
+                payload: row,
+                column: columnKey,
+                topic: 'button_clicked'
+            }
+            this.$emit('widget-action', this.table_id, msg)
         }
     }
 }

@@ -26,9 +26,9 @@
                 <td v-if="props.selectionType === 'checkbox'" class="v-data-table__td v-data-table-column--no-padding v-data-table-column--align-start">
                     <v-checkbox-btn :modelValue="isSelected(internalItem)" @click="toggleSelect(internalItem)" />
                 </td>
-                <td v-for="col in headers" :key="col.key">
+                <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
                     <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
-                        <UITableCell :row="index + 1" :item="item" :property="col.key" :type="col.type" />
+                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" />
                     </div>
                 </td>
             </tr>
@@ -163,13 +163,15 @@ export default {
             this.selected = this.selected === row ? null : row
 
             const msg = {
-                payload: row
+                payload: row,
+                topic: 'row_selected'
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
         onMultiSelect (selected) {
             const msg = {
-                payload: selected
+                payload: selected,
+                topic: 'rows_selected'
             }
             this.$socket.emit('widget-action', this.id, msg)
         }
