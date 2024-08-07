@@ -28,11 +28,7 @@ export default {
     },
     data () {
         return {
-            selection: null,
-            dynamic: {
-                label: null,
-                options: null
-            }
+            selection: null
         }
     },
     computed: {
@@ -48,10 +44,10 @@ export default {
             return this.look === 'default' ? null : this.look
         },
         label: function () {
-            return this.dynamic.label || this.props.label
+            return this.getProperty('label')
         },
         options: function () {
-            const options = this.dynamic.options || this.props.options
+            const options = this.getProperty('options')
             if (options) {
                 return options.map(option => {
                     if (typeof option === 'string') {
@@ -91,29 +87,29 @@ export default {
             }
         },
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure we've got the relevant option selected on load of the page
-            if (msg?.payload !== undefined) {
-                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                    this.selection = null
-                } else {
-                    if (this.findOptionByValue(msg.payload) !== null) {
-                        this.selection = msg.payload
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                // make sure we've got the relevant option selected on load of the page
+                if (msg.payload !== undefined) {
+                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                        this.selection = null
+                    } else {
+                        if (this.findOptionByValue(msg.payload) !== null) {
+                            this.selection = msg.payload
+                        }
                     }
                 }
             }
         },
         onDynamicProperty (msg) {
             const updates = msg.ui_update
-            if (typeof updates?.label !== 'undefined') {
-                this.dynamic.label = updates.label
-            }
-            if (typeof updates?.options !== 'undefined') {
-                this.dynamic.options = updates.options
+            if (updates) {
+                this.updateDynamicProperty('label', updates.label)
+                this.updateDynamicProperty('options', updates.options)
             }
         },
         onChange (value) {
