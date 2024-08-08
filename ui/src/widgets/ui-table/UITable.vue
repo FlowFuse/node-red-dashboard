@@ -28,7 +28,7 @@
                 </td>
                 <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
                     <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
-                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" />
+                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick"/>
                     </div>
                 </td>
             </tr>
@@ -164,14 +164,23 @@ export default {
 
             const msg = {
                 payload: row,
-                topic: 'row_selected'
+                topic: 'row_click'
+            }
+            this.$socket.emit('widget-action', this.id, msg)
+        },
+        onCellClick (row, columnKey, topic) {
+            // Note that this method currently is only triggered (and relevant) for cell type 'button'
+            const msg = {
+                payload: row,
+                column: columnKey,
+                topic: topic
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
         onMultiSelect (selected) {
             const msg = {
                 payload: selected,
-                topic: 'rows_selected'
+                topic: 'rows_click'
             }
             this.$socket.emit('widget-action', this.id, msg)
         }

@@ -27,7 +27,7 @@
         <v-sparkline v-model="value" type="bar" color="primary" :padding="2" line-width="16" />
     </template>
     <template v-else-if="type === 'button'">
-        <v-btn v-model="value" color="primary" :height="8" @click="onButtonClick($event, item)"/>
+        <v-btn color="primary" :height="8" @click="onButtonClick($event, item)">{{value}}</v-btn>
     </template>
     <template v-else>
         {{ value }}
@@ -77,18 +77,15 @@ export default {
     },
     methods: {
         onButtonClick (event, row) {
-            // Prevent the event from bubbling up, otherwise onRowClicked is also clicked
+debugger
+            // Prevent the event from bubbling up, otherwise the onRowClicked event would also be triggered
             event.stopPropagation()
 
             const cell = event.target.closest('td')
             const columnKey = cell ? cell.getAttribute('data-column-key') : null
 
-            const msg = {
-                payload: row,
-                column: columnKey,
-                topic: 'button_clicked'
-            }
-            this.$emit('widget-action', this.table_id, msg)
+            // Pass the event to the parent table
+            this.$emit('action-click', row, columnKey, 'button_click')
         }
     }
 }
