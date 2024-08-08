@@ -117,9 +117,9 @@ function parseSFC (js) {
         // - this is fine, but we need to wrap it in a Vue Component to render in Dashboard
         // assuming this runs straight away, let's document this in a "beforeCreate" lifecycle hook
         const component = {}
-        component.beforeCreate = ''
+        component.js = ''
         tree.body.forEach((block) => {
-            component.beforeCreate += processProperty('', block)
+            component.js += processProperty('', block)
         })
         return component
     } else {
