@@ -228,7 +228,7 @@ export default {
                 sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
                 sizes['--widget-gap'] = this.theme.sizes.widgetGap
 
-                this.$vuetify.defaults.global.density = this.density
+                this.$vuetify.defaults?.global.density = this.density
             }
         },
         getPageLabel (page) {
