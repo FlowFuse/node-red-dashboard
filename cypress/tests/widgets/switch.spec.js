@@ -90,7 +90,7 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
     })
 })
 
-describe.only('Node-RED Dashboard 2.0 - Switches in "Show Input" mode', () => {
+describe('Node-RED Dashboard 2.0 - Switches in "Show Input" mode', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
         cy.visit('/dashboard/page1')
