@@ -28,7 +28,7 @@
                 </td>
                 <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
                     <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
-                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick"/>
+                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick" />
                     </div>
                 </td>
             </tr>
@@ -168,12 +168,12 @@ export default {
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
-        onCellClick (row, columnKey, topic) {
+        onCellClick (row, columnKey, eventName) {
             // Note that this method currently is only triggered (and relevant) for cell type 'button'
             const msg = {
                 payload: row,
                 column: columnKey,
-                topic: topic
+                topic: eventName
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
