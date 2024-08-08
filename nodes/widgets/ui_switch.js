@@ -21,6 +21,10 @@ module.exports = function (RED) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)
 
+                if (!config.passthru && config.decouple) {
+                    return
+                }
+
                 node.status({
                     fill: value ? 'green' : 'red',
                     shape: 'ring',
