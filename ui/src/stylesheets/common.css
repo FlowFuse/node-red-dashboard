@@ -12,8 +12,16 @@
     --nrdb-header-text-color: white;
     /* main */
     --nrdb-main-padding: 12px;
-    /* widget sizing */
-    --widget-row-height: 42px;
+    /* widget sizing - default */
+    --widget-row-height: 48px;
+}
+
+.nrdb-view-density--compact {
+    --widget-row-height: 32px;
+}
+
+.nrdb-view-density--comfortable {
+    --widget-row-height: 38px;
 }
 
 body {
@@ -166,10 +174,10 @@ main {
     min-height: 0;
 }
 .nrdb-ui-form-actions {
-    margin-top: 1rem; 
+    margin-top: 0.5rem; 
 }
 .nrdb-ui-form-actions button {
-    margin-right: 1rem; 
+    margin-right: 0.5rem; 
 }
 .nrdb-ui-form-row .v-text-field .v-input__details {
     padding-inline-start: 0;
@@ -454,4 +462,20 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .v-navigation-drawer {
     background: rgb(var(--v-theme-navigation-background));
     color: rgba(var(--v-theme-on-navigation-background), var(--v-high-emphasis-opacity));
+}
+
+/* Text Field Overrides */
+/* Ensures we have consistent height across all widgets */
+.v-input .v-field__input {
+    min-height: var(--widget-row-height);
+    padding-top: initial;
+    padding-bottom: initial;
+}
+
+/* Button Overrides */
+/* Vuetify compact buttons are _very_ small, so we need to override the height */
+.v-btn.v-btn--density-default,
+.v-btn.v-btn--density-compact, 
+.v-btn.v-btn--density-comfortable {
+    height: var(--widget-row-height);
 }

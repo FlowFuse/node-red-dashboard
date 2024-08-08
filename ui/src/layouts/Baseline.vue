@@ -1,5 +1,5 @@
 <template>
-    <v-app class="nrdb-app nrdb-app--baseline" :style="customThemeDefinitions">
+    <v-app class="nrdb-app nrdb-app--baseline" :class="`nrdb-view-density--${density}`" :style="customThemeDefinitions">
         <v-app-bar v-if="appBarStyle !== 'hidden'" :style="{'position': navPosition}" :elevation="1">
             <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
@@ -121,7 +121,6 @@ export default {
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'themes', 'pageData', 'widgets']),
         ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
-
         theme: function () {
             const page = this.pages[this.$route.meta.id]
             if (page) {
@@ -164,6 +163,9 @@ export default {
         },
         navPosition: function () {
             return this.appBarStyle === 'fixed' ? 'fixed' : 'absolute'
+        },
+        density: function () {
+            return this.theme?.sizes.density || 'default'
         }
     },
     watch: {
@@ -225,6 +227,8 @@ export default {
                 sizes['--group-gap'] = this.theme.sizes.groupGap
                 sizes['--group-border-radius'] = this.theme.sizes.groupBorderRadius
                 sizes['--widget-gap'] = this.theme.sizes.widgetGap
+
+                this.$vuetify.defaults.global.density = this.density
             }
         },
         getPageLabel (page) {
