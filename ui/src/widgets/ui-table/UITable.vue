@@ -28,7 +28,7 @@
                 </td>
                 <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
                     <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
-                        <UITableCell :table_id="id" :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick" />
+                        <UITableCell :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick" />
                     </div>
                 </td>
             </tr>
