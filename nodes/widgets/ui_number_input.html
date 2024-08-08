@@ -29,19 +29,9 @@
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
                 tooltip: { value: '' },
-                delay: {
-                    value: 300,
-                    validate: function (v) {
-                        return $('#node-input-sendOnDelay').is(':checked') ? RED.validators.number()(v) : true
-                    }
-                },
                 passthru: { value: true },
-                sendOnDelay: { value: false },
-                sendOnBlur: { value: true },
-                sendOnEnter: { value: true },
                 className: { value: '' },
                 clearable: { value: false },
-                sendOnClear: { value: false },
                 icon: { value: '' },
                 iconPosition: { value: 'left' },
                 iconInnerPosition: { value: 'inside' }
@@ -87,9 +77,6 @@
 
                 if (this.clearable === undefined) {
                     $('#node-input-clearable').prop('checked', false)
-                }
-                if (this.sendOnClear === undefined) {
-                    $('#node-input-sendOnClear').prop('checked', false)
                 }
 
                 if (!this.iconPosition) {
@@ -186,26 +173,6 @@
     </div>    
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
-    </div>
-    <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
-        <input type="checkbox" checked id="node-input-sendOnDelay" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnDelay"> Delay</label>
-        <div id="node-input-delay-box">
-            <input type="text" style="width:58px" id="node-input-delay">
-            <label for="node-input-delay">(ms)</label>
-        </div>
-    </div>
-    <div class="form-row" style="padding-left: 25px;">
-        <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnBlur"> Focus Leave</label>
-    </div>
-    <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
-        <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
-    </div>
-    <div id="node-input-container-sendOnClear" class="form-row" style="padding-left: 25px;">
-        <input type="checkbox" checked id="node-input-sendOnClear" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnClear"> Clear Button</label>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
