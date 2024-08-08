@@ -27,7 +27,7 @@
         <v-sparkline v-model="value" type="bar" color="primary" :padding="2" line-width="16" />
     </template>
     <template v-else-if="type === 'button'">
-        <v-btn color="primary" :height="8" @click="onButtonClick($event, item)">{{value}}</v-btn>
+        <v-btn color="primary" :height="8" @click="onButtonClick($event, item)">{{ value }}</v-btn>
     </template>
     <template v-else>
         {{ value }}
@@ -38,10 +38,6 @@
 export default {
     name: 'UITableCell',
     props: {
-        table_id: {
-            type: String,
-            required: true
-        },
         row: {
             type: Number,
             required: true
@@ -59,7 +55,7 @@ export default {
             required: true
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'action-click'],
     computed: {
         value: {
             get () {
@@ -77,7 +73,6 @@ export default {
     },
     methods: {
         onButtonClick (event, row) {
-debugger
             // Prevent the event from bubbling up, otherwise the onRowClicked event would also be triggered
             event.stopPropagation()
 
