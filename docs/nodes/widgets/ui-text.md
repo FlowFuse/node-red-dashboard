@@ -10,6 +10,21 @@ props:
     Text Size: If "style" is enabled, this will define the size of the text.
     Text Color: If "style" is enabled, this will define the color of the text.
 dynamic:
+    Label:
+        payload: msg.ui_update.label
+        structure: ["String"]
+    Layout:
+        payload: msg.ui_update.layout
+        structure: ["String<'row-left', 'row-center', 'row-right', 'row-spread', 'col-center'>"]
+    Font:
+        payload: msg.ui_update.font
+        structure: ["String"]
+    Font Size:
+        payload: msg.ui_update.fontSize
+        structure: ["String"]
+    Color:
+        payload: msg.ui_update.color
+        structure: ["String"]
     Class:
         payload: msg.class
         structure: ["String"]

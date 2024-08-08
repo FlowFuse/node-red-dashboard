@@ -19,6 +19,417 @@
         ]
     },
     {
+        "id": "dashboard-ui-button",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
+        "name": "",
+        "label": "Inject Text",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "injected text",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "x": 90,
+        "y": 80,
+        "wires": [
+            [
+                "dashboard-ui-text-left"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-text-left",
+        "type": "ui-text",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Text Left",
+        "label": "Label",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 260,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-text-center",
+        "type": "ui-text",
+        "z": "node-red-tab-text",
+        "group": "dashboard-test-text",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Text Center",
+        "label": "Label",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "style": true,
+        "font": "Courier,monospace",
+        "fontSize": "20",
+        "color": "#ff0000",
+        "className": "",
+        "x": 410,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "button-dynamic-label",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: Label",
+        "label": "Dynamic: Label",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "4f6d5859664febc6"
+            ]
+        ]
+    },
+    {
+        "id": "4f6d5859664febc6",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 120,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-text-dynamic",
+        "type": "ui-text",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Dynamic Text",
+        "label": "Static Label",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "style": true,
+        "font": "Courier,monospace",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 560,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "button-dynamic-layout",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: Layout",
+        "label": "Dynamic: Layout",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "491f94f116d68320"
+            ]
+        ]
+    },
+    {
+        "id": "491f94f116d68320",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "col-center",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "fd61814fae69f03a",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.font",
+                "pt": "msg",
+                "to": "Helvetica",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "button-dynamic-font",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: Font",
+        "label": "Dynamic: Font",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "fd61814fae69f03a"
+            ]
+        ]
+    },
+    {
+        "id": "b9b646d4c3863c66",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.fontSize",
+                "pt": "msg",
+                "to": "28px",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 340,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "button-dynamic-fontSize",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: Font Size",
+        "label": "Dynamic: Font Size",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 110,
+        "y": 240,
+        "wires": [
+            [
+                "b9b646d4c3863c66"
+            ]
+        ]
+    },
+    {
+        "id": "button-dynamic-color",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: Color",
+        "label": "Dynamic: Color",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "93e69c1e1ad41db5"
+            ]
+        ]
+    },
+    {
+        "id": "93e69c1e1ad41db5",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.color",
+                "pt": "msg",
+                "to": "red",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-test-text",
+        "type": "ui-group",
+        "name": "UI Text Tests",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "869909cd180dde02",
+        "type": "ui-group",
+        "name": "Dynamic Text Element",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
         "id": "dashboard-ui-page-1",
         "type": "ui-page",
         "name": "Page 1",
@@ -27,7 +438,7 @@
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": -1,
+        "order": 1,
         "className": "",
         "visible": "true",
         "disabled": false
@@ -43,86 +454,5 @@
             "groupBg": "#ffffff",
             "groupOutline": "#cccccc"
         }
-    },
-    {
-        "id": "dashboard-test-text",
-        "type": "ui-group",
-        "name": "UI Text Tests",
-        "page": "dashboard-ui-page-1",
-        "width": "6",
-        "height": "1",
-        "order": -1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "dashboard-ui-button",
-        "type": "ui-button",
-        "z": "node-red-tab-text",
-        "group": "dashboard-test-text",
-        "name": "",
-        "label": "Inject Text",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "passthru": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "payload": "injected text",
-        "payloadType": "str",
-        "topic": "button-topic",
-        "topicType": "str",
-        "x": 100,
-        "y": 80,
-        "wires": [
-            ["dashboard-ui-text-left"]
-        ]
-    },
-    {
-        "id": "dashboard-ui-text-left",
-        "type": "ui-text",
-        "z": "node-red-tab-text",
-        "group": "dashboard-test-text",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Label",
-        "format": "{{msg.payload}}",
-        "layout": "row-left",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "className": "",
-        "x": 250,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "dashboard-ui-text-center",
-        "type": "ui-text",
-        "z": "node-red-tab-text",
-        "group": "dashboard-test-text",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Label",
-        "format": "{{msg.payload}}",
-        "layout": "row-center",
-        "style": true,
-        "font": "Courier,monospace",
-        "fontSize": "20",
-        "color": "#ff0000",
-        "className": "",
-        "x": 250,
-        "y": 100,
-        "wires": []
     }
 ]

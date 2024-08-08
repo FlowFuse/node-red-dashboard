@@ -26,3 +26,42 @@ describe('Node-RED Dashboard 2.0 - Text', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-text-center').children().eq(0).should('have.css', 'font-family', 'Courier, monospace')
     })
 })
+
+describe.only('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-text')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('includes "label"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Static Label')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-label'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label')
+    })
+
+    it('includes "layout"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').children('.nrdb-ui-text--row-left').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').children('.nrdb-ui-text--col-center').should('not.exist')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-layout'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').children('.nrdb-ui-text--row-left').should('not.exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').children('.nrdb-ui-text--col-center').should('exist')
+    })
+
+    it('includes "font"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'font-family', 'Helvetica')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-font'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'font-family', 'Helvetica')
+    })
+
+    it('includes "fontSize"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'font-size', '28px')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-fontSize'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'font-size', '28px')
+    })
+
+    it('includes "color"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'color', 'rgb(255, 0, 0)')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-color'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
+})
