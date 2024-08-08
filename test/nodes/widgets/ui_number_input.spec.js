@@ -31,7 +31,7 @@ describe('ui-number-input node', function () {
             z: 'tab-id',
             group: 'config-ui-group',
             name: '',
-            label: 'type: number',
+            label: 'number',
             tooltip: 'some tooltip',
             order: 0,
             width: 0,
@@ -39,7 +39,6 @@ describe('ui-number-input node', function () {
             min: 0,
             max: 10,
             step: 1,
-            mode: 'text',
             passthru: true,
             x: 920,
             y: 220,
@@ -57,7 +56,7 @@ describe('ui-number-input node', function () {
             z: 'tab-id',
             name: '',
             scope: [
-                'node-ui-text-input'
+                'node-ui-number-input'
             ],
             uncaught: false,
             x: 0,
@@ -72,7 +71,7 @@ describe('ui-number-input node', function () {
     it('should be loaded', async function () {
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
-        const n = helper.getNode('node-ui-text-input')
+        const n = helper.getNode('node-ui-number-input')
         should(n).be.an.Object()
     })
 
@@ -84,9 +83,9 @@ describe('ui-number-input node', function () {
         should(base).be.an.Object()
         base.should.have.property('ui')
         base.ui.should.have.property('widgets')
-        base.ui.widgets.has('node-ui-text-input').should.be.true()
+        base.ui.widgets.has('node-ui-number-input').should.be.true()
 
-        const widget = base.ui.widgets.get('node-ui-text-input')
+        const widget = base.ui.widgets.get('node-ui-number-input')
         widget.props.should.have.property('tooltip', 'some tooltip')
     })
 
@@ -94,7 +93,7 @@ describe('ui-number-input node', function () {
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
 
-        const sNode = helper.getNode('node-ui-text-input')
+        const sNode = helper.getNode('node-ui-number-input')
         const hNode = helper.getNode('helper-node')
         hNode.on('input', (msg) => {
             // check the message passed to the next node contains the correct topic
@@ -115,7 +114,7 @@ describe('ui-number-input node', function () {
         verifyFlowLoaded(helper, flow2)
 
         await new Promise((resolve, reject) => {
-            const tNode = helper.getNode('node-ui-text-input')
+            const tNode = helper.getNode('node-ui-number-input')
 
             const helperAfterSlider = helper.getNode('helper-node')
             const helperAfterComplete = helper.getNode('helper-node-complete')
