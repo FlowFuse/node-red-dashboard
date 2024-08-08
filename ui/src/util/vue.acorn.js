@@ -115,7 +115,7 @@ function parseSFC (js) {
     } if (tree.type === 'Program' && tree.body.length > 0) {
         // we have raw JavaScript.
         // - this is fine, but we need to wrap it in a Vue Component to render in Dashboard
-        // assusming this runs straight away, let's add it to the beforeCreate of the component
+        // assuming this runs straight away, let's document this in a "beforeCreate" lifecycle hook
         const component = {}
         component.beforeCreate = ''
         tree.body.forEach((block) => {

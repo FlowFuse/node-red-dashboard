@@ -165,14 +165,13 @@ export default {
             },
             created () {
                 this.$dataTracker(props.id)
-
+            },
+            mounted () {
                 if (component?.beforeCreate) {
-                    // run any generic JS code user has defined outisde of a VueJS component
+                    // run any generic JS code user has defined outside of a VueJS component
                     // eslint-disable-next-line no-eval
                     eval(component.beforeCreate)
                 }
-            },
-            mounted () {
                 if (component?.mounted) {
                     component.mounted.call(this)
                 }
