@@ -89,3 +89,40 @@ describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
         cy.checkOutput('msg.payload', 'off')
     })
 })
+
+describe.only('Node-RED Dashboard 2.0 - Switches in "Show Input" mode', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-switches')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('can be set to the on state via incoming payload and does not pass on the value', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-show-input-on'))
+
+        // Emitting strings
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('.v-input.v-input--horizontal').should('have.class', 'v-switch')
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('.v-input.v-input--horizontal').should('have.class', 'active')
+
+        cy.checkOutput('msg', undefined)
+    })
+
+    it('is put into loading state when clicked, and resets to pre-click state on a page refresh', () => {
+        // set to off
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-show-input-on'))
+
+        // click the switch directly
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('input').click()
+
+        // put into loading state
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('.v-input.v-input--horizontal').should('have.class', 'v-switch--loading')
+
+        // should now be off
+        cy.checkOutput('msg.payload', 'off')
+
+        cy.reload()
+
+        // on refresh, status is reset to pre-click state
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('.v-input.v-input--horizontal').should('have.class', 'active')
+    })
+})

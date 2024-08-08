@@ -21,16 +21,6 @@ module.exports = function (RED) {
                 // ensure we have latest instance of the widget's node
                 const wNode = RED.nodes.getNode(node.id)
 
-                if (!config.passthru && config.decouple) {
-                    return
-                }
-
-                node.status({
-                    fill: value ? 'green' : 'red',
-                    shape: 'ring',
-                    text: value ? states[1] : states[0]
-                })
-
                 // retrieve the assigned on/off value
                 const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
                 const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
@@ -40,10 +30,19 @@ module.exports = function (RED) {
                     msg = await appendTopic(RED, config, node, msg)
                 }
 
-                datastore.save(group.getBase(), node, msg)
+                if (!config.passthru && config.decouple) {
+                    wNode.send(msg)
+                } else {
+                    node.status({
+                        fill: value ? 'green' : 'red',
+                        shape: 'ring',
+                        text: value ? states[1] : states[0]
+                    })
+                    datastore.save(group.getBase(), node, msg)
 
-                // simulate Node-RED node receiving an input
-                wNode.send(msg)
+                    // simulate Node-RED node receiving an input
+                    wNode.send(msg)
+                }
             },
             onInput: async function (msg, send) {
                 let error = null
