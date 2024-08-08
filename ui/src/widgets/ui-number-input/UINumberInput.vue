@@ -3,12 +3,11 @@
         <!-- eslint-disable-next-line vue/no-template-shadow -->
         <template #activator="{ props }">
             <v-number-input
-                v-model="value" :reverse="false" controlVariant="default" :hideInput="false"
-                :inset="false" v-bind="props" :disabled="!state.enabled" class="nrdb-ui-number-field" :label="label"
+                v-model="value" :reverse="false" controlVariant="default" :hideInput="false" :inset="false"
+                v-bind="props" :disabled="!state.enabled" class="nrdb-ui-number-field" :label="label"
                 :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
-                :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange" @keyup.enter="onEnter"
-                @blur="onBlur" @click:clear="onClear"
+                :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange" @click:clear="onClear"
             />
         </template>
     </v-tooltip>
@@ -38,13 +37,13 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        label: function () {
+        label () {
             return this.props.label
         },
-        tooltip: function () {
+        tooltip () {
             return this.props.tooltip
         },
-        clearable: function () {
+        clearable () {
             return this.props.clearable
         },
         prependIcon () {
@@ -93,7 +92,7 @@ export default {
                 this.messages[this.id] = msg
             }
         },
-        validation: function () {
+        validation () {
             if (this.type === 'email') {
                 return [v => !v || /^[^\s@]+@[^\s@]+$/.test(v) || 'E-mail must be valid']
             } else {
@@ -128,36 +127,14 @@ export default {
                 this.textValue = msg.payload
             }
         },
-        send: function () {
+        send () {
             this.$socket.emit('widget-change', this.id, this.value)
         },
-        onChange: function () {
-            if (this.props.sendOnDelay) {
-                // is send on delay enabled, if so, set a timeout to send the message
-                if (this.delayTimer) {
-                    // reset the timer to count from the latest change
-                    clearTimeout(this.delayTimer)
-                }
-                this.delayTimer = setTimeout(this.send, this.props.delay)
-            }
+        onChange () {
+            this.send()
         },
-        onBlur: function () {
-            if (this.props.sendOnBlur) {
-                // don't compare previous value, if user has clicked away they want it submitted
-                this.send()
-            }
-        },
-        onEnter: function () {
-            if (this.props.sendOnEnter) {
-                // don't compare previous value, if user has pressed <enter> they want it submitted
-                this.send()
-            }
-        },
-        onClear: function () {
-            if (this.props.sendOnClear) {
-                // don't compare previous value, if user has cleared the field they want it submitted
-                this.send()
-            }
+        onClear () {
+            this.send()
         },
         makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
@@ -171,6 +148,7 @@ export default {
     .v-field--prepended {
         padding-inline-start: 12px;
     }
+
     button {
         color: var(--red-ui-form-input-border-color);
     }
