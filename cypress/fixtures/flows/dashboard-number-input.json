@@ -51,10 +51,10 @@
         "id": "2e213fbb714fa84a",
         "type": "ui-button",
         "z": "28027232f30399b8",
-        "group": "1d6b148cbc6d62ba",
+        "group": "c8d81f5153170599",
         "name": "Dynamic Property: Icon",
         "label": "Dynamic Property: Icon",
-        "order": 2,
+        "order": 1,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -110,10 +110,10 @@
         "id": "2b2c184d1e54cbf2",
         "type": "ui-button",
         "z": "28027232f30399b8",
-        "group": "1d6b148cbc6d62ba",
+        "group": "913da0a9471bb867",
         "name": "Dynamic Property: Icon Position",
         "label": "Dynamic Property: Icon Position",
-        "order": 3,
+        "order": 1,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -131,7 +131,7 @@
         "textColor": "",
         "iconColor": "",
         "x": 210,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "2687c766dae561d2"
@@ -158,10 +158,10 @@
         "to": "",
         "reg": false,
         "x": 590,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
-                "3616bf2d05dc6b68"
+                "c7a86c799d34c234"
             ]
         ]
     },
@@ -169,10 +169,10 @@
         "id": "3616bf2d05dc6b68",
         "type": "ui-number-input",
         "z": "28027232f30399b8",
-        "group": "1d6b148cbc6d62ba",
+        "group": "c8d81f5153170599",
         "name": "",
-        "label": "number",
-        "order": 4,
+        "label": "number: Dynamic Property: Icon",
+        "order": 2,
         "width": 0,
         "height": 0,
         "topic": "topic",
@@ -187,36 +187,8 @@
         "icon": "",
         "iconPosition": "left",
         "iconInnerPosition": "inside",
-        "x": 920,
-        "y": 240,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "36fa206b791fbb9c",
-        "type": "ui-number-input",
-        "z": "28027232f30399b8",
-        "group": "c8d81f5153170599",
-        "name": "",
-        "label": "number",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "passthru": true,
-        "className": "number-input-2",
-        "clearable": false,
-        "icon": "numeric",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 920,
-        "y": 300,
+        "x": 990,
+        "y": 200,
         "wires": [
             []
         ]
@@ -241,10 +213,10 @@
         "to": "",
         "reg": false,
         "x": 570,
-        "y": 300,
+        "y": 320,
         "wires": [
             [
-                "36fa206b791fbb9c"
+                "df1f392297c5e2b1"
             ]
         ]
     },
@@ -252,7 +224,7 @@
         "id": "c0770c33555a3768",
         "type": "ui-button",
         "z": "28027232f30399b8",
-        "group": "c8d81f5153170599",
+        "group": "f7bc7ca4128eda1d",
         "name": "Dynamic Property: Icon Inner Position",
         "label": "Dynamic Property: Icon Inner Position",
         "order": 1,
@@ -273,11 +245,67 @@
         "textColor": "",
         "iconColor": "",
         "x": 190,
-        "y": 300,
+        "y": 320,
         "wires": [
             [
                 "2a9b0a22432ef4e9"
             ]
+        ]
+    },
+    {
+        "id": "c7a86c799d34c234",
+        "type": "ui-number-input",
+        "z": "28027232f30399b8",
+        "group": "913da0a9471bb867",
+        "name": "",
+        "label": "number: Dynamic Property: Icon Position",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "passthru": true,
+        "className": "number-input-2",
+        "clearable": false,
+        "icon": "numeric",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 1020,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "df1f392297c5e2b1",
+        "type": "ui-number-input",
+        "z": "28027232f30399b8",
+        "group": "f7bc7ca4128eda1d",
+        "name": "",
+        "label": "number: Dynamic Property: Icon Inner Position",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "passthru": true,
+        "className": "number-input-2",
+        "clearable": false,
+        "icon": "numeric",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 1040,
+        "y": 320,
+        "wires": [
+            []
         ]
     },
     {
@@ -307,11 +335,37 @@
         "disabled": "false"
     },
     {
+        "id": "913da0a9471bb867",
+        "type": "ui-group",
+        "name": "Page1 Group3",
+        "page": "ac2a3b3768a9b00e",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "f7bc7ca4128eda1d",
+        "type": "ui-group",
+        "name": "Page1 Group4",
+        "page": "ac2a3b3768a9b00e",
+        "width": "6",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
         "id": "ac2a3b3768a9b00e",
         "type": "ui-page",
-        "name": "Page2",
+        "name": "Page1",
         "ui": "a171c8195c1b8e57",
-        "path": "/page2",
+        "path": "/page1",
         "icon": "numeric-1",
         "layout": "grid",
         "theme": "9d8bfd7e0d216779",
