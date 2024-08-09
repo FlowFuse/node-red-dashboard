@@ -172,7 +172,7 @@
         "group": "1d6b148cbc6d62ba",
         "name": "",
         "label": "number",
-        "order": 5,
+        "order": 4,
         "width": 0,
         "height": 0,
         "topic": "topic",
@@ -194,39 +194,35 @@
         ]
     },
     {
-        "id": "9b0fb0cf20d4efe3",
-        "type": "ui-button",
+        "id": "36fa206b791fbb9c",
+        "type": "ui-number-input",
         "z": "28027232f30399b8",
-        "group": "1d6b148cbc6d62ba",
-        "name": "Dynamic Property: Icon Inner Position",
-        "label": "Dynamic Property: Icon Inner Position",
-        "order": 4,
+        "group": "c8d81f5153170599",
+        "name": "",
+        "label": "number",
+        "order": 2,
         "width": 0,
         "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "set-icon-to-outside",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "x": 190,
-        "y": 280,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "passthru": true,
+        "className": "number-input-2",
+        "clearable": false,
+        "icon": "numeric",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 920,
+        "y": 300,
         "wires": [
-            [
-                "9f7dad0c983e3932"
-            ]
+            []
         ]
     },
     {
-        "id": "9f7dad0c983e3932",
+        "id": "2a9b0a22432ef4e9",
         "type": "change",
         "z": "28027232f30399b8",
         "name": "",
@@ -245,10 +241,42 @@
         "to": "",
         "reg": false,
         "x": 570,
-        "y": 280,
+        "y": 300,
         "wires": [
             [
-                "3616bf2d05dc6b68"
+                "36fa206b791fbb9c"
+            ]
+        ]
+    },
+    {
+        "id": "c0770c33555a3768",
+        "type": "ui-button",
+        "z": "28027232f30399b8",
+        "group": "c8d81f5153170599",
+        "name": "Dynamic Property: Icon Inner Position",
+        "label": "Dynamic Property: Icon Inner Position",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "set-icon-to-outside",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 190,
+        "y": 300,
+        "wires": [
+            [
+                "2a9b0a22432ef4e9"
             ]
         ]
     },
@@ -260,6 +288,19 @@
         "width": "6",
         "height": "1",
         "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c8d81f5153170599",
+        "type": "ui-group",
+        "name": "Page1 Group2",
+        "page": "ac2a3b3768a9b00e",
+        "width": "6",
+        "height": "1",
+        "order": 2,
         "showTitle": true,
         "className": "",
         "visible": "true",
