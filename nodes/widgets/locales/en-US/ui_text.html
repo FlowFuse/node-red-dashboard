@@ -26,7 +26,23 @@
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">
-        <dt class="optional">class <span class="property-type">string</span></dt>
-        <dd>Add a CSS class, or more, to the text at runtime.</dd>
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Override the label displayed alongside the text's value</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">layout <span class="property-type">string</span></dt>
+        <dd>Chose from "row-left", "row-center", "row-right", "row-spread", "col-center"</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">font <span class="property-type">string</span></dt>
+        <dd>The name of the font you wish to display the node's label and value with</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">fontSize <span class="property-type">string</span></dt>
+        <dd>A valid CSS font size, e.g. "16pt", "32px", "2rem"</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">color <span class="property-type">string</span></dt>
+        <dd>A valid CSS color string, e.g. "#ff0000", "red"</dd>
     </dl>
 </script>
