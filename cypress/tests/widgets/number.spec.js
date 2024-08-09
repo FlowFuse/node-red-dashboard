@@ -37,7 +37,7 @@ describe('Node-RED Dashboard 2.0 - Number Input Widget', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Buttons (Dynamic Properties)', () => {
+describe('Node-RED Dashboard 2.0 - Number Input (Dynamic Properties)', () => {
     const buttonSetIcon = '.set-icon-button button[type="button"]'
     const buttonSetIconPosition = '.set-icon-position button[type="button"]'
     const buttonSetIconOutside = '.set-icon-to-outside button[type="button"]'
