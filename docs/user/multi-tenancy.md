@@ -45,7 +45,7 @@ The plugins will append additional information to the `_client` object, such as 
 
 #### FlowFuse User Addon
 
-<AuthProvider img="../assets/images/flowfuse-logo-square.png">
+<AuthProvider img="/images/addon-logos/flowfuse-logo-square.png">
   The <a class="https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon">FlowFuse User Plugin</a>, has a requirement for Node-RED to be running on <a href="https://flowfuse.com/">FlowFuse</a> with the <a href="https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication">FlowFuse User Authentication</a> option enabled.
 
   FlowFuse automatically handles all of the authentication provider setup, and so there is no need for you to configure this yourself.
@@ -53,19 +53,19 @@ The plugins will append additional information to the `_client` object, such as 
 
 #### Cloudflare Access
 
-<AuthProvider img="../assets/images/auth-plugin-cloudflare.jpg">
+<AuthProvider img="/images/addon-logos/auth-plugin-cloudflare.jpg">
   The <a href="https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth" target="_blank">Cloudflare Access Plugin</a> requires Node-RED to be setup with <a href="https://www.cloudflare.com/en-gb/zero-trust/products/access/" target="_blank">Cloudflare Access</a>, with a Cloudflare tunnel configured for your node-RED instance, and the relevant access policy setup.
 </AuthProvider>
 
 #### Authelia Auth
 
-<AuthProvider img="../assets/images/auth-plugin-authelia.png">
+<AuthProvider img="/images/addon-logos/auth-plugin-authelia.png">
   The <a href="https://flows.nodered.org/node/@aikitori/node-red-dashboard-2-authelia-auth" target="_blank">Authelia Auth Plugin</a> plugin adds user data if your Node-RED instance is secured with the open-source authentication server, <a href="https://www.authelia.com/" target="_blank">Authelia</a>.
 </AuthProvider>
 
 #### Authentik Auth
 
-<AuthProvider img="../assets/images/auth-plugin-authentik.png">
+<AuthProvider img="/images/addon-logos/auth-plugin-authentik.png">
   This <a href="https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-authentik-auth" target="_blank">Authentik Plugin</a> plugin adds user data if your Node-RED instance is secured with the open-source authentication server, <a href="https://goauthentik.io/" target="_blank">Authentik</a>.
 
   This plugin assumes that you have a running Authentik instance and that you have configured it to use a forward auth Proxy Provider as an authentication provider for Node-RED.
