@@ -1,0 +1,105 @@
+[
+    {
+        "id": "5b751bff9a6c7439",
+        "type": "ui-number-input",
+        "z": "28027232f30399b8",
+        "group": "1d6b148cbc6d62ba",
+        "name": "dashboard-ui-number-input",
+        "label": "number",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "Tooltip Text",
+        "passthru": true,
+        "className": "",
+        "clearable": true,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 460,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1d6b148cbc6d62ba",
+        "type": "ui-group",
+        "name": "Page1 Group1",
+        "page": "ac2a3b3768a9b00e",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ac2a3b3768a9b00e",
+        "type": "ui-page",
+        "name": "Page1",
+        "ui": "a171c8195c1b8e57",
+        "path": "/page1",
+        "icon": "numeric-1",
+        "layout": "grid",
+        "theme": "9d8bfd7e0d216779",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "a171c8195c1b8e57",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-gauge",
+            "ui-chart",
+            "ui-form",
+            "ui-text-input",
+            "ui-file-input",
+            "ui-button",
+            "ui-button-group",
+            "ui-dropdown",
+            "ui-radio-group",
+            "ui-slider",
+            "ui-switch",
+            "ui-text",
+            "ui-table",
+            "ui-markdown",
+            "ui-notification",
+            "ui-template"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": true,
+        "navigationStyle": "icon",
+        "titleBarStyle": "fixed"
+    },
+    {
+        "id": "9d8bfd7e0d216779",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#15617e",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]
