@@ -5,7 +5,7 @@
         "z": "28027232f30399b8",
         "group": "1d6b148cbc6d62ba",
         "name": "dashboard-ui-number-input",
-        "label": "number",
+        "label": "number global store",
         "order": 1,
         "width": 0,
         "height": 0,
@@ -16,15 +16,240 @@
         "step": 1,
         "tooltip": "Tooltip Text",
         "passthru": true,
-        "className": "",
+        "className": "number-input-1",
         "clearable": true,
         "icon": "",
         "iconPosition": "left",
         "iconInnerPosition": "inside",
-        "x": 460,
-        "y": 120,
+        "x": 600,
+        "y": 140,
+        "wires": [
+            [
+                "26ea1c6aefa94d41"
+            ]
+        ]
+    },
+    {
+        "id": "26ea1c6aefa94d41",
+        "type": "function",
+        "z": "28027232f30399b8",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 140,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "2e213fbb714fa84a",
+        "type": "ui-button",
+        "z": "28027232f30399b8",
+        "group": "1d6b148cbc6d62ba",
+        "name": "Dynamic Property: Icon",
+        "label": "Dynamic Property: Icon",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "set-icon-button",
+        "icon": "home",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 230,
+        "y": 200,
+        "wires": [
+            [
+                "0c4a565404e7d2c4"
+            ]
+        ]
+    },
+    {
+        "id": "0c4a565404e7d2c4",
+        "type": "change",
+        "z": "28027232f30399b8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.icon",
+                "pt": "msg",
+                "to": "numeric",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 200,
+        "wires": [
+            [
+                "3616bf2d05dc6b68"
+            ]
+        ]
+    },
+    {
+        "id": "2b2c184d1e54cbf2",
+        "type": "ui-button",
+        "z": "28027232f30399b8",
+        "group": "1d6b148cbc6d62ba",
+        "name": "Dynamic Property: Icon Position",
+        "label": "Dynamic Property: Icon Position",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "set-icon-position",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 210,
+        "y": 240,
+        "wires": [
+            [
+                "2687c766dae561d2"
+            ]
+        ]
+    },
+    {
+        "id": "2687c766dae561d2",
+        "type": "change",
+        "z": "28027232f30399b8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.iconPosition",
+                "pt": "msg",
+                "to": "right",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 240,
+        "wires": [
+            [
+                "3616bf2d05dc6b68"
+            ]
+        ]
+    },
+    {
+        "id": "3616bf2d05dc6b68",
+        "type": "ui-number-input",
+        "z": "28027232f30399b8",
+        "group": "1d6b148cbc6d62ba",
+        "name": "",
+        "label": "number",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "passthru": true,
+        "className": "number-input-2",
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 920,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9b0fb0cf20d4efe3",
+        "type": "ui-button",
+        "z": "28027232f30399b8",
+        "group": "1d6b148cbc6d62ba",
+        "name": "Dynamic Property: Icon Inner Position",
+        "label": "Dynamic Property: Icon Inner Position",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "set-icon-to-outside",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 190,
+        "y": 280,
+        "wires": [
+            [
+                "9f7dad0c983e3932"
+            ]
+        ]
+    },
+    {
+        "id": "9f7dad0c983e3932",
+        "type": "change",
+        "z": "28027232f30399b8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.iconInnerPosition",
+                "pt": "msg",
+                "to": "outside",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 280,
+        "wires": [
+            [
+                "3616bf2d05dc6b68"
+            ]
         ]
     },
     {
@@ -43,9 +268,9 @@
     {
         "id": "ac2a3b3768a9b00e",
         "type": "ui-page",
-        "name": "Page1",
+        "name": "Page2",
         "ui": "a171c8195c1b8e57",
-        "path": "/page1",
+        "path": "/page2",
         "icon": "numeric-1",
         "layout": "grid",
         "theme": "9d8bfd7e0d216779",
