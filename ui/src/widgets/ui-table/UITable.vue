@@ -164,7 +164,7 @@ export default {
 
             const msg = {
                 payload: row,
-                topic: 'row_click'
+                action: 'row_click'
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
@@ -173,14 +173,14 @@ export default {
             const msg = {
                 payload: row,
                 column: columnKey,
-                topic: eventName
+                action: eventName
             }
             this.$socket.emit('widget-action', this.id, msg)
         },
         onMultiSelect (selected) {
             const msg = {
                 payload: selected,
-                topic: 'rows_click'
+                action: 'multi_select'
             }
             this.$socket.emit('widget-action', this.id, msg)
         }
