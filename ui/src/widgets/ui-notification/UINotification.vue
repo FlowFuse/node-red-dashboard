@@ -14,12 +14,20 @@
         <div v-if="!props.raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else v-html="value" />
-        <template v-if="props.allowDismiss" #actions>
+        <template v-if="props.allowDismiss || props.allowConfirm" #actions>
             <v-btn
+                v-if="props.allowDismiss"
                 variant="text"
-                @click="close('clicked')"
+                @click="close('dismiss_clicked')"
             >
                 {{ props.dismissText || "Close" }}
+            </v-btn>
+            <v-btn
+                v-if="props.allowConfirm"
+                variant="text"
+                @click="close('confirm_clicked')"
+            >
+                {{ props.confirmText || "Confirm" }}
             </v-btn>
         </template>
     </v-snackbar>
@@ -71,10 +79,17 @@ export default {
                 widgetId: this.id,
                 msg
             })
-            this.show = true
-            if (this.props.displayTime > 0) {
-                // begin countdown
-                this.startCountdown(this.props.displayTime * 1000)
+
+            if ('clear_notification' in msg) {
+                if (msg.clear_notification && this.show) {
+                    this.close('input_msg')
+                }
+            } else {
+                this.show = true
+                if (this.props.displayTime > 0) {
+                    // begin countdown
+                    this.startCountdown(this.props.displayTime * 1000)
+                }
             }
         },
         startCountdown (time) {
@@ -96,7 +111,12 @@ export default {
         },
         close (payload) {
             this.show = false
-            this.$socket.emit('widget-action', this.id, payload)
+
+            const msg = this.messages[this.id] || {}
+            this.$socket.emit('widget-action', this.id, {
+                ...msg,
+                payload
+            })
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
