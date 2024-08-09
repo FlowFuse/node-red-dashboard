@@ -55,6 +55,11 @@ const vuetify = createVuetify({
         themes: {
             nrdb: theme
         }
+    },
+    defaults: {
+        global: {
+            density: 'default'
+        }
     }
 })
 
