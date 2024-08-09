@@ -44,7 +44,7 @@ const getters = {
     },
     // given a widget id, return the latest msg received
     msg (id) {
-        return data[id]
+        return config.RED.util.cloneMessage(data[id])
     }
 }
 

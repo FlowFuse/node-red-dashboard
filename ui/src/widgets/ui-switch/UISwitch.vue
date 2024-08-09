@@ -1,8 +1,16 @@
 <template>
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}">
         <label v-if="props.label" class="v-label">{{ props.label }}</label>
-        <v-switch v-if="!icon" v-model="status" :disabled="!state.enabled" :class="{'active': status}" hide-details="auto" color="primary" @update:model-value="onChange" />
-        <v-btn v-else variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
+        <v-switch
+            v-if="!icon" v-model="status"
+            :disabled="!state.enabled" :class="{'active': status}"
+            hide-details="auto" color="primary"
+            :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
+            readonly
+            @click="toggle"
+        />
+        <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
+        <v-progress-circular v-else indeterminate color="primary" />
     </div>
 </template>
 
@@ -19,7 +27,8 @@ export default {
     },
     data () {
         return {
-            selection: null
+            selection: null,
+            loading: false
         }
     },
     computed: {
@@ -63,6 +72,9 @@ export default {
                 msg.payload = val
                 this.selection = val
                 this.messages[this.id] = msg
+                if (this.decouple) {
+                    this.loading = true
+                }
             }
         }
     },
@@ -83,33 +95,39 @@ export default {
             // make sure our v-model is updated to reflect the value from Node-RED
             if (msg.payload !== undefined) {
                 this.selection = msg.payload
+                this.loading = false
             }
         },
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure we've got the relevant option selected on load of the page
-            if (msg.payload !== undefined) {
-                this.selection = msg.payload
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                // make sure we've got the relevant option selected on load of the page
+                if (msg.payload !== undefined) {
+                    this.selection = msg.payload
+                }
             }
         },
-        onChange (val) {
-            // only runs when clicked/changed in UI.
-            // inverted as the store doesn't quite update quick enough, but this is reliable method
-            this.$socket.emit('widget-change', this.id, val)
-        },
         toggle () {
-            this.status = !this.status
-            this.$socket.emit('widget-change', this.id, this.status)
+            if (this.state.enabled) {
+                if (this.props.decouple) {
+                    this.loading = true
+                    // send the inverse, but don't update the status until we get a response
+                    this.$socket.emit('widget-change', this.id, !this.status)
+                } else {
+                    this.status = !this.status
+                    this.$socket.emit('widget-change', this.id, this.status)
+                }
+            }
         }
     }
 }
 </script>
 
-<style scoped>
+<style>
 .nrdb-switch {
     display: flex;
     align-items: center;
@@ -126,5 +144,9 @@ export default {
 }
 .nrdb-switch.nrdb-nolabel .v-selection-control {
     justify-content: center;
+}
+.nrdb-switch > .v-progress-circular > svg {
+    width: 24px;
+    height: 24px;
 }
 </style>

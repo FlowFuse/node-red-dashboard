@@ -1,5 +1,6 @@
 <script setup>
     import { ref } from 'vue'
+    import AuthProvider from '../components/AuthProvider.vue'
     import FlowViewer from '../components/FlowViewer.vue'
     import ExampleSlider from '../examples/multi-tenancy.json'
     import ExampleForm from '../examples/multi-tenancy-form.json'
@@ -34,7 +35,7 @@ Out of the box, Dashboard will append two piece of information to the `_client` 
 - `socketId`: The unique ID of the socket connection that the client is using to interact with the Dashboard.
 - `socketIp`: The IP address of the client interacting with the Dashboard.
 
-### Plugin Data Providers
+### Authentication Providers
 
 Plugins, such as the [FlowFuse User Addon](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/), are available to append additional information to the `_client` object. 
 
@@ -44,15 +45,33 @@ The plugins will append additional information to the `_client` object, such as 
 
 #### FlowFuse User Addon
 
-The [FlowFuse User Addon](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon), has a requirement for Node-RED to be running on [FlowFuse](https://flowfuse.com/) with the ["FlowFuse User Authentication"](https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication) option enabled.
+<AuthProvider img="../assets/images/flowfuse-logo-square.png">
+  The <a class="https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon">FlowFuse User Plugin</a>, has a requirement for Node-RED to be running on <a href="https://flowfuse.com/">FlowFuse</a> with the <a href="https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication">FlowFuse User Authentication</a> option enabled.
+
+  FlowFuse automatically handles all of the authentication provider setup, and so there is no need for you to configure this yourself.
+</AuthProvider>
 
 #### Cloudflare Access
 
-The [Cloudflare Access](https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth) plugin requires Node-RED to be setup with [Cloudflare Access](https://www.cloudflare.com/en-gb/zero-trust/products/access/), with a Cloudflare tunnel configured for your node-RED instance, and the relevant access policy setup.
+<AuthProvider img="../assets/images/auth-plugin-cloudflare.jpg">
+  The <a href="https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth" target="_blank">Cloudflare Access Plugin</a> requires Node-RED to be setup with <a href="https://www.cloudflare.com/en-gb/zero-trust/products/access/" target="_blank">Cloudflare Access</a>, with a Cloudflare tunnel configured for your node-RED instance, and the relevant access policy setup.
+</AuthProvider>
 
 #### Authelia Auth
 
-This [Authelia Auth](https://github.com/aikitori/node-red-dashboard-2-authelia-auth) plugin adds user data if your Node-RED instance is secured with the open-source authentication server, [Authelia](https://www.authelia.com/).
+<AuthProvider img="../assets/images/auth-plugin-authelia.png">
+  The <a href="https://flows.nodered.org/node/@aikitori/node-red-dashboard-2-authelia-auth" target="_blank">Authelia Auth Plugin</a> plugin adds user data if your Node-RED instance is secured with the open-source authentication server, <a href="https://www.authelia.com/" target="_blank">Authelia</a>.
+</AuthProvider>
+
+#### Authentik Auth
+
+<AuthProvider img="../assets/images/auth-plugin-authentik.png">
+  This <a href="https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-authentik-auth" target="_blank">Authentik Plugin</a> plugin adds user data if your Node-RED instance is secured with the open-source authentication server, <a href="https://goauthentik.io/" target="_blank">Authentik</a>.
+
+  This plugin assumes that you have a running Authentik instance and that you have configured it to use a forward auth Proxy Provider as an authentication provider for Node-RED.
+
+  The proxy provider will set the appropriate headers necessary for Dashboard 2.0 to receive the user info from Authentik.
+</AuthProvider>
 
 ## Configuring Client Data
 

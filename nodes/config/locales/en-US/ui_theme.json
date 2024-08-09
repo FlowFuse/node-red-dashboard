@@ -14,7 +14,11 @@
             "pagePadding": "Page Padding",
             "groupGap": "Group Gap",
             "groupBorderRadius": "Group Border Radius",
-            "widgetGap": "Widget Gap"
+            "widgetGap": "Widget Gap",
+            "default": "Default (48px)",
+            "comfortable": "Comfortable (38px)",
+            "compact": "Compact (32px)",
+            "density": "Row Height"
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
-    <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + props.layout" :style="props.style">
-        <label class="nrdb-ui-text-label">{{ props.label }}</label>
+    <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + layout" :style="style">
+        <label class="nrdb-ui-text-label">{{ label }}</label>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span class="nrdb-ui-text-value" v-html="value" />
     </div>
@@ -14,7 +14,8 @@ export default {
     inject: ['$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     computed: {
         ...mapState('data', ['messages', 'properties']),
@@ -24,10 +25,36 @@ export default {
                 return m.payload
             }
             return ''
+        },
+        label () {
+            return this.getProperty('label')
+        },
+        layout () {
+            return this.getProperty('layout')
+        },
+        style () {
+            return {
+                'font-family': this.getProperty('font'),
+                'font-size': this.getProperty('fontSize'),
+                color: this.getProperty('color')
+            }
         }
     },
     created () {
-        this.$dataTracker(this.id)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
+    },
+    methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('layout', updates.layout)
+            this.updateDynamicProperty('font', updates.font)
+            this.updateDynamicProperty('fontSize', updates.fontSize)
+            this.updateDynamicProperty('color', updates.color)
+        }
     }
 }
 </script>

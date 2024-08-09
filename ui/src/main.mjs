@@ -55,6 +55,11 @@ const vuetify = createVuetify({
         themes: {
             nrdb: theme
         }
+    },
+    defaults: {
+        global: {
+            density: 'default'
+        }
     }
 })
 
@@ -198,6 +203,36 @@ fetch('_setup')
         const head = createHead()
         app.use(head)
         app.mixin(VueHeadMixin)
+        app.mixin({
+            methods: {
+                setDynamicProperties (config) {
+                    this.$store.commit('ui/widgetState', {
+                        widgetId: this.id,
+                        config
+                    })
+                },
+                updateDynamicProperty (property, value) {
+                    if (!property && typeof property !== 'string') {
+                        throw new Error('updateDynamicProperty requires a valid, string "property" argument')
+                    }
+                    if (typeof value !== 'undefined') {
+                        const config = {}
+                        config[property] = value
+                        this.$store.commit('ui/widgetState', {
+                            widgetId: this.id,
+                            config
+                        })
+                    }
+                },
+                // retrieves a property from the store for a given widget
+                getProperty (property) {
+                    const config = this.props ? this.props[property] : null // last known value for the config of this widget property
+                    const state = this.state[property] // chec if there have been any dynamic updates to this property
+                    // return the dynamic property if it exists, otherwise return the last known configuration
+                    return this.state && property in this.state && state !== null ? state : config
+                }
+            }
+        })
 
         // make the socket service available app-wide via this.$socket
         app.provide('$socket', socket)

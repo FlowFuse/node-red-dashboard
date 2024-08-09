@@ -16,17 +16,35 @@
     </p>
     <p>
         The switch state can be updated by an incoming <code>msg.payload</code>. The values must either be <code>true</code>/<code>false</code>
-        or match the specified type (number, string, etc) in the node's configuration.</p>
-    <!-- <p>
-        The label can also be set by a message property by setting
-    the field to the name of the property, for example <code>{{msg.topic}}</code>.</p>
-    <p>If a <b>Topic</b> is specified, it will be added to the output as <code>msg.topic</code>.</p> -->
-    <!-- <p>Setting <code>msg.enabled</code> to <code>false</code> will disable the switch widget.</p> -->
-    <!-- <p>
-        If a <b>Class</b> is specified, it will be added to the parent card. This way you can style the card
-        and the elements inside it with custom CSS. The Class can be set at runtime by setting a
-        <code>msg.className</code> string property.
-    </p> -->
+        or match the specified type (number, string, etc) in the node's configuration.
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Icon Position<span class="property-type">left | right</span></dt>
+        <dd>If "Icon" is defined, this property controls which side of the "Label" the icon will render on</dd>
+        <dt>Label <span class="property-type">string</span></dt>
+        <dd>The text shown within the button. If not provided, then the button will only render the icon. It supports HTML content</dd>
+        <dt>Icon <span class="property-type">default | custom</span></dt>
+        <dd>Either use the "default" switch appearance, or define your own custom icons.</dd>
+        <dt>On Icon <span class="property-type">string</span></dt>
+        <dd>If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "on" state. No need to include the mdi prefix.</dd>
+        <dt>Off Icon <span class="property-type">string</span></dt>
+        <dd>If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "off" state. No need to include the mdi prefix.</dd>
+        <dt>On Color <span class="property-type">string</span></dt>
+        <dd>If provided with icons, this color is used for the icon when in "on" state</dd>
+        <dt>Off Color <span class="property-type">string</span></dt>
+        <dd>If provided with icons, this color is used for the icon when in "off" state</dd>
+        <dt>Passthrough <span class="property-type">boolean</span></dt>
+        <dd>When a message is received into this node, should it be passed through to any connected output.</dd>
+        <dt>Indicator <span class="property-type">boolean</span></dt>
+        <dd>Only available when "Passthrough" is set to <code>false</code>. Defines whether the switch shows the status of the output, or instead, the input provided through <code>msg.payload</code>.</dd>
+        <dt>Off Payload <span class="property-type">any</span></dt>
+        <dd>The type & value to output in msg.payload when the switch is turned off.</dd>
+        <dt>On Payload <span class="property-type">any</span></dt>
+        <dd>The type & value to output in msg.payload when the switch is turned on.</dd>
+        <dt>Off Payload <span class="property-type">any</span></dt>
+        <dd>The type & value to output in msg.payload when the switch is turned off.</dd>
+    </dl>
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">

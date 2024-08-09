@@ -22,6 +22,7 @@ dynamic:
 
     import FlowViewer from '../../components/FlowViewer.vue'
     import AddedIn from '../../components/AddedIn.vue'
+    import TryDemo from "./../../components/TryDemo.vue";
 
     const examples = ref({
       'cellTypes': ExampleCellTypes
@@ -29,7 +30,11 @@ dynamic:
 </script>
 
 
+<TryDemo href="table">
+
 # Data Table `ui-table` <AddedIn version="0.4.0" />
+
+</TryDemo>
 
 Renders a set of data in a tabular format. Expects an input (`msg.payload`) in the format of:
 
@@ -58,6 +63,17 @@ The table will be rendered with colums `colA`, `colB` and `colC`, unless "Column
 - **Checkbox**: Each row has a checkbox, and the `ui-table` node will _output an array of objects_ associated to the checked rows when a checkbox is selected.
 
 
+The respective events will output the following:
+
+```json
+{
+    "payload": <full row object>,
+    "action": "row_click" | "multiselect"
+}
+```
+
+You can also add a [Button](#interaction-buttons) cell type and have events emitted that way too.
+
 ### Configuring Columns
 
 ![Screenshot of the configuration options available for column types in Node-RED](/images/node-examples/ui-table-column-config.png "Screenshot of the configuration options available for column types in Node-RED"){data-zoomable}
@@ -84,7 +100,22 @@ _An example of a ui-table displaying various of the cell types available_
 - **Progress**: Renders the cell as a progress bar. The `Value` field should contain a number between 0 and 100.
 - **Sparkline - Trend**: Renders the cell as a small line chart without axes. The `Value` field should contain an array of numbers to be plotted.
 - **Sparkline - Bar**: Renders the cell as a small bar chart without axes. The `Value` field should contain an array of numbers to be plotted.
+- **Button**: Renders a clickable button in the cell. The label of the button will be the `row[key]` value.
 - **Row Number**: Renders the row number into the cell.
+
+#### Interaction: Buttons
+
+The `Button` cell type will render a clickable button in the cell. The label of the button will be the corresponding value in your row for the provided `key`. When the button is clicked, the `ui-table` node will output:
+
+```
+{
+    "payload": <full row object>
+    "column": <column key>
+    "action": "button_click"
+}
+```
+
+Given the `action` and `column` keys, you can determine which button was clicked and use the `payload` to determine which row it was associated with.
 
 #### Example
 

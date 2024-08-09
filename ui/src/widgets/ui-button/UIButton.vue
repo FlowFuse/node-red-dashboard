@@ -26,47 +26,35 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data () {
-        return {
-            dynamic: {
-                label: null,
-                icon: null,
-                buttonColor: null,
-                textColor: null,
-                iconColor: null,
-                iconPosition: null
-            }
-        }
-    },
     computed: {
         ...mapState('data', ['messages']),
         prependIcon () {
-            const icon = this.getPropertyValue('icon')
+            const icon = this.getProperty('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'left' ? mdiIcon : undefined
         },
         appendIcon () {
-            const icon = this.getPropertyValue('icon')
+            const icon = this.getProperty('icon')
             const mdiIcon = this.makeMdiIcon(icon)
             return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
         label () {
-            return this.getPropertyValue('label')
+            return this.getProperty('label')
         },
         iconPosition () {
-            return this.getPropertyValue('iconPosition')
+            return this.getProperty('iconPosition')
         },
         iconOnly () {
-            return this.getPropertyValue('icon') && !this.getPropertyValue('label')
+            return this.getProperty('icon') && !this.getProperty('label')
         },
         buttonColor () {
-            return this.getPropertyValue('buttonColor')
+            return this.getProperty('buttonColor')
         },
         iconColor () {
-            return this.getPropertyValue('iconColor')
+            return this.getProperty('iconColor')
         },
         textColor () {
-            return this.getPropertyValue('textColor')
+            return this.getProperty('textColor')
         }
     },
     created () {
@@ -92,27 +80,12 @@ export default {
             if (!updates) {
                 return
             }
-            if (typeof updates.label !== 'undefined') {
-                this.dynamic.label = updates.label
-            }
-            if (typeof updates.icon !== 'undefined') {
-                this.dynamic.icon = updates.icon
-            }
-            if (typeof updates.iconPosition !== 'undefined') {
-                this.dynamic.iconPosition = updates.iconPosition
-            }
-            if (typeof updates.buttonColor !== 'undefined') {
-                this.dynamic.buttonColor = updates.buttonColor
-            }
-            if (typeof updates.textColor !== 'undefined') {
-                this.dynamic.textColor = updates.textColor
-            }
-            if (typeof updates.iconColor !== 'undefined') {
-                this.dynamic.iconColor = updates.iconColor
-            }
-        },
-        getPropertyValue (property) {
-            return this.dynamic[property] !== null ? this.dynamic[property] : this.props[property]
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('iconPosition', updates.iconPosition)
+            this.updateDynamicProperty('buttonColor', updates.buttonColor)
+            this.updateDynamicProperty('textColor', updates.textColor)
+            this.updateDynamicProperty('iconColor', updates.iconColor)
         }
     }
 }

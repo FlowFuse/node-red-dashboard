@@ -31,7 +31,7 @@ When adding a new widget to Dashboard 2.0, you'll need to ensure that the follow
 1. In `/nodes/`:
     - Add `<widget>.html`
     - Add `<widget>.js`
-    - Add the in the `node-red/nodes` section in `package.json`
+    - Add the reference to the `node-red/nodes` section in `package.json`
 2. In `/ui/`:
     - Add `widgets/<widget>/<widget>.vue`
     - Add widget to the `index.js` file in `/ui/widgets`
@@ -187,22 +187,20 @@ Now that we have the server-side state updating, anytime we refresh, the full `u
 
 We then need to ensure that the client is aware of these dynamic properties _as they change_. To do this, we can use the `onDynamicProperties` event available in the [data tracker](#data-tracker).
 
-A good pattern to follow is provide a `computed` variable on the component in question. This computed variable can then check a local, component-scoped, variable that is overridden when dynamic properties are set, if that hasn't been set, fall back to the `props.<property>` value.
+A good pattern to follow is provide a `computed` variable on the component in question. We then provide three helpful, global, functions:
+
+- `setDynamicProperties(config)`: Will assign the provided properties (in `config`) to the widget, in the client-side store. This will automatically update the widget's state, and any references using this property.
+- `updateDynamicProperty(property, value)`: Will update the relevant `property` with the provided `value` in the client-side store. Will also ensure the property is not of type `undefined`. This will automatically update the widget's state, and any references using this property.
+- `getProperty(property)`: Automatically gets the correct value for the requested property. Will first look in the dynamic properties, and if not found, will default to the static configuration defined in the [`ui-config` event](../guides/events.md#ui-config).
+
+The computed variables can wrap the `this.getProperty` function, which will always be up-to-date with the centralized vuex store.
 
 ```js
 {
-    // ...,
-    data () {
-        return {
-            // ...,
-            dynamic: {
-                label: null
-            }
-        }
-    },
+    // ...
     computed: {
         label () {
-            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+            return this.getProperty('label')
         }
     },
     created () {
@@ -214,9 +212,8 @@ A good pattern to follow is provide a `computed` variable on the component in qu
         onDynamicProperty (msg) {
             // standard practice to accept updates via msg.ui_update
             const updates = msg.ui_update
-            if (typeof updates?.label !== 'undefined') {
-                this.dynamic.label = updates.label
-            }
+            // use globally available API to update the dynamic property
+            this.updateDynamicProperty('label', updates.label)
         }
     }
 }

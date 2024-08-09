@@ -104,6 +104,52 @@
         "wires": []
     },
     {
+        "id": "dashboard-ui-gauge-battery",
+        "type": "ui-gauge",
+        "z": "node-red-tab-gauges",
+        "name": "Tile",
+        "group": "dashboard-ui-group",
+        "order": 0,
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-battery",
+        "gstyle": "needle",
+        "title": "Battery",
+        "units": "",
+        "icon": "home",
+        "prefix": "",
+        "suffix": "%",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#23d123"
+            },
+            {
+                "from": "30",
+                "color": "#ffc800"
+            },
+            {
+                "from": "60",
+                "color": "#ff0000"
+            },
+            {
+                "from": "80",
+                "color": "#630808"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "0",
+        "sizeGap": "0",
+        "sizeKeyThickness": "32",
+        "styleRounded": false,
+        "styleGlow": true,
+        "className": "",
+        "x": 100,
+        "y": 100,
+        "wires": []
+    },
+    {
         "id": "dashboard-ui-gauge-dial-half",
         "type": "ui-gauge",
         "z": "node-red-tab-gauges",

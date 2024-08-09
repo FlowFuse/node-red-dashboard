@@ -9,9 +9,15 @@ props:
 
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+
+<TryDemo href="template">
+
 # Template `ui-template` <AddedIn version="0.10.0"/>
+
+</TryDemo>
  
 Provide custom JS and HTML (including any [Vuetify components](https://vuetifyjs.com/en/components/all/)) to render in the Dashboard.
 
