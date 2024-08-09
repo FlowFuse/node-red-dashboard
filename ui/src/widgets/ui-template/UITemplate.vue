@@ -61,10 +61,10 @@ export default {
                     })
                 } else {
                     const parsed = VueParser.parse(script.innerHTML)
-                    if (parsed.beforeCreate) {
+                    if (parsed.js) {
                         component = {
                             ...component,
-                            beforeCreate: parsed.beforeCreate
+                            js: parsed.js
                         }
                     } else {
                         component = {
@@ -165,14 +165,13 @@ export default {
             },
             created () {
                 this.$dataTracker(props.id)
-
-                if (component?.beforeCreate) {
-                    // run any generic JS code user has defined outisde of a VueJS component
-                    // eslint-disable-next-line no-eval
-                    eval(component.beforeCreate)
-                }
             },
             mounted () {
+                if (component?.js) {
+                    // run any generic JS code user has defined outside of a VueJS component
+                    // eslint-disable-next-line no-eval
+                    eval(component.js)
+                }
                 if (component?.mounted) {
                     component.mounted.call(this)
                 }
