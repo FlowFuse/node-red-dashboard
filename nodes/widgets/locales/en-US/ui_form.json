@@ -23,7 +23,6 @@
             "switch": "Switch",
             "date": "Date",
             "time": "Time",
-            "element": "element",
             "buttons": "Buttons",
             "submit": "submit",
             "submitButtonText": "submit button text",

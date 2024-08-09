@@ -88,126 +88,138 @@
                     //  option.find(".node-input-option-key").width(newWidth);
                 }
 
-                function generateOption (i, option) {
-                    const container = $('<li/>', { style: 'margin:0; padding:8px 0px 0px; border-bottom:1px solid var(--red-ui-form-input-border-color, #ccc);' })
-                    const row = $('<div/>').appendTo(container)
-                    $('<div/>', { style: 'padding-top:5px; padding-left:175px;' }).appendTo(container)
-                    $('<div/>', { style: 'padding-top:5px; padding-left:120px;' }).appendTo(container)
+                const supportedTypes = [
+                    { val: 'text', text: c_('label.text') },
+                    { val: 'multiline', text: c_('label.multiline') },
+                    { val: 'number', text: c_('label.number') },
+                    { val: 'email', text: c_('label.email') },
+                    { val: 'password', text: c_('label.password') },
+                    { val: 'checkbox', text: c_('label.checkbox') },
+                    { val: 'switch', text: c_('label.switch') },
+                    { val: 'date', text: c_('label.date') },
+                    { val: 'time', text: c_('label.time') }
+                ]
 
-                    $('<i style="cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
+                // which input types don't need a 'require' option
+                const noReqd = ['checkbox', 'switch']
 
-                    // label field
-                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName'), value: option.label }).appendTo(row)
+                let formOptionsList = $('#node-input-option-container').css('min-height','150px')
+                                                                       .css('min-width','450px')
+                                                                       .editableList({
+                    header: $('<div>').css('margin-left','28px')
+                                      .css('margin-right','28px')
+                                      .css('padding-right','0px')
+                                      .append($.parseHTML("<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.label') + "</div>" +
+                                                          "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid' data-i18n='node-red:common.label.name'></div>" +
+                                                          "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.type') + "</div>" +
+                                                          "<div style='width:16%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.required') + "</div>" +
+                                                          "<div style='width:10%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.rows') + "</div>")),
+                    addItem: function(container, i, option) {
+                        let row = $('<div/>').appendTo(container)
 
-                    // key field
-                    let keyClass = 'node-input-option-key'
-                    if (!option.key) { keyClass = 'node-input-option-key input-error' }
-                    const keyField = $('<input/>', { class: keyClass, type: 'text', style: 'margin-left:7px; width:20%;', placeholder: c_('label.egName2'), value: option.key }).appendTo(row)
-                    keyField.keyup(function () {
-                        if ($(this).val() && $(this).hasClass('input-error')) {
-                            $(this).removeClass('input-error')
-                        } else {
-                            if (!$(this).val()) {
-                                $(this).addClass('input-error')
+                        // Label field
+                        let labelField = $('<input/>').addClass('node-input-option-label')
+                                                      .attr('type','text')
+                                                      .attr('placeholder',c_('label.egName'))
+                                                      .css('width','20%')
+                                                      .css('margin-left','5px')
+                                                      .css('margin-right','5px')
+                                                      .val(option.label)
+                                                      .appendTo(row)
+
+                        // Key field
+                        let keyClass = 'node-input-option-key'
+                        if (!option.key) { keyClass = 'node-input-option-key input-error' }
+                        let keyField = $('<input/>').addClass(keyClass)
+                                                    .attr('type','text')
+                                                    .attr('placeholder',c_('label.egName2'))
+                                                    .css('width','20%')
+                                                    .css('margin-left','5px')
+                                                    .css('margin-right','5px')
+                                                    .val(option.key)
+                                                    .appendTo(row)
+                        keyField.keyup(function () {
+                            if ($(this).val() && $(this).hasClass('input-error')) {
+                                $(this).removeClass('input-error')
+                            } else {
+                                if (!$(this).val()) {
+                                    $(this).addClass('input-error')
+                                }
                             }
-                        }
-                    })
-
-                    // type field
-                    const typeField = $('<select/>', { class: 'node-input-option-type', type: 'text', style: 'margin-left:7px; width:16%' }).appendTo(row)// .typedInput({default:'str',types:['str', 'num']});
-
-                    const arr = [
-                        { val: 'text', text: c_('label.text') },
-                        { val: 'multiline', text: c_('label.multiline') },
-                        { val: 'number', text: c_('label.number') },
-                        { val: 'email', text: c_('label.email') },
-                        { val: 'password', text: c_('label.password') },
-                        { val: 'checkbox', text: c_('label.checkbox') },
-                        { val: 'switch', text: c_('label.switch') },
-                        { val: 'date', text: c_('label.date') },
-                        { val: 'time', text: c_('label.time') }
-                    ]
-
-                    // var sel = $('<select>').appendTo('body');
-                    $(arr).each(function () {
-                        let isSelected = false
-                        if (option.type === this.val) {
-                            isSelected = true
-                        }
-                        typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
-                    })
-
-                    // which input types don't need a 'require' option
-                    const noReqd = ['checkbox', 'switch']
-
-                    // required
-                    const requiredContainer = $('<div/>', { style: 'display:inline-block; height:34px; width:13%; vertical-align: middle' }).appendTo(row)
-                    const requiredInnerContainer = $('<div/>', { style: 'left:35%; position:relative; width:30px' }).appendTo(requiredContainer)
-                    const reqVis = noReqd.includes(option.type) ? 'hidden' : 'visible'
-                    const reqRow = $('<label />', { class: 'switch', style: 'top:10px; width:30px;' }).css('visibility', reqVis).appendTo(requiredInnerContainer)
-                    const reqd = $('<input/>', { class: 'node-input-option-required', type: 'checkbox', checked: option.required, style: 'vertical-align:top;' }).appendTo(reqRow)// labelForRequried);//.typedInput({default:'str',types:['str', 'num']});
-                    $('<div />', { class: 'slider round' }).appendTo(reqRow)
-
-                    // ui rows
-                    const rowsVis = option.rows ? 'visible' : 'hidden'
-                    const rowsField = $('<input/>', { class: 'node-input-option-rows', type: 'number', style: 'width:10%;', placeholder: 'Rows', value: option.rows }).css('visibility', rowsVis).appendTo(row)
-
-                    const finalspan = $('<div/>', { style: 'display:inline-block; width:5%;' }).appendTo(row)
-                    const deleteButton = $('<a/>', { href: '#', class: 'editor-button', style: 'font-size:1.3em; left:45%; position:relative;' }).appendTo(finalspan)
-                    $('<i/>', { class: 'fa fa-trash-o' }).appendTo(deleteButton)
-
-                    typeField.change(function (e) {
-                        // decide whether we need to show the "rows" option
-                        if (e.target.value !== 'multiline') {
-                            rowsField.val(undefined)
-                            option.rows = null
-                            rowsField.css('visibility', 'hidden')
-                        } else {
-                            rowsField.css('visibility', 'visible')
-                            if (!rowsField[0].value) rowsField[0].value = 3
-                        }
-
-                        // device whether we need to show the "required" option
-                        if (noReqd.includes(e.target.value)) {
-                            reqd.val(false)
-                            option.required = false
-                            reqRow.css('visibility', 'hidden')
-                        } else {
-                            reqRow.css('visibility', 'visible')
-                        }
-                    })
-
-                    deleteButton.click(function () {
-                        container.find('.node-input-option-key').removeAttr('required')
-                        container.css({ background: 'var(--red-ui-secondary-background-inactive, #fee)' })
-                        container.fadeOut(300, function () {
-                            $(this).remove()
                         })
-                    })
 
-                    $('#node-input-option-container').append(container)
-                }
+                        // Type field
+                        let typeField = $('<select/>').addClass('node-input-option-type')
+                                                      .attr('type','text')
+                                                      .css('width','20%')
+                                                      .css('margin-left','5px')
+                                                      .css('margin-right','5px')
+                                                      .appendTo(row)
+                        $(supportedTypes).each(function () {
+                            let isSelected = false
+                            if (option.type === this.val) {
+                                isSelected = true
+                            }
+                            typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
+                        })
 
-                $('#node-input-add-option').click(function () {
-                    generateOption($('#node-input-option-container').children().length + 1, {})
-                    $('#node-input-option-container-div').scrollTop($('#node-input-option-container-div').get(0).scrollHeight)
+                        // Required field
+                        const reqVis = noReqd.includes(option.type) ? 'hidden' : 'visible'
+                        let requiredField = $('<input/>').addClass('node-input-option-required')
+                                                         .attr('type','checkbox')
+                                                         .css('width','16%')
+                                                         .css('margin-left','5px')
+                                                         .css('margin-right','5px')
+                                                         .css('visibility', reqVis)
+                                                         .prop('checked',option.required)
+                                                         .appendTo(row)
+
+                        // Rows field
+                        const rowsVis = option.rows ? 'visible' : 'hidden'
+                        let rowsField = $('<input/>').addClass('node-input-option-rows')
+                                                     .attr('type','number')
+                                                     .attr('placeholder','Rows') // TODO localize
+                                                     .css('width','10%')
+                                                     .css('margin-left','5px')
+                                                     .css('margin-right','5px')
+                                                     .css('visibility', rowsVis)
+                                                     .val(option.rows)
+                                                     .appendTo(row)
+
+                        typeField.change(function (e) {
+                            // decide whether we need to show the "rows" option
+                            if (e.target.value !== 'multiline') {
+                                rowsField.val(undefined)
+                                option.rows = null
+                                rowsField.css('visibility', 'hidden')
+                            } else {
+                                rowsField.css('visibility', 'visible')
+                                if (!rowsField[0].value) rowsField[0].value = 3
+                            }
+
+                            // device whether we need to show the "required" option
+                            if (noReqd.includes(e.target.value)) {
+                                requiredField.val(false)
+                                option.required = false
+                                requiredField.css('visibility', 'hidden')
+                            } else {
+                                requiredField.css('visibility', 'visible')
+                            }
+                        })
+                    },
+                    removable: true,
+                    sortable: true
                 })
 
                 for (let i = 0; i < this.options.length; i++) {
                     const option = this.options[i]
-                    generateOption(i + 1, option)
+                    formOptionsList.editableList('addItem', option)
                 }
 
                 $('#node-input-topic').typedInput({
                     default: 'str',
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
-                })
-
-                $('#node-input-option-container').sortable({
-                    axis: 'y',
-                    handle: '.node-input-option-handle',
-                    cursor: 'move'
                 })
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
@@ -219,7 +231,7 @@
                 })
             },
             oneditsave: function () {
-                const options = $('#node-input-option-container').children()
+                const options = $('#node-input-option-container').editableList('items')
                 const node = this
                 node.options = []
                 node.formValue = {}
@@ -343,32 +355,17 @@
             </a>
         </div>
     </div>
-    <div class="form-row node-input-option-container-row" style="margin-bottom:0px; width:100%; min-width:520px">
+    <div class="form-row node-input-option-container-row" style="width:100%; min-width:520px">
         <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.formElements"></label>
-        <div style="display:inline-block; width:78%; border:1px solid var(--red-ui-form-input-border-color, #ccc); border-radius:5px; box-sizing:border-box;">
-          <div class="red-ui-tray-header" style="width:100%; display: inline-block; padding-top:10px; padding-bottom:10px; border-top:0px solid; border-radius:5px 5px 0 0; border-bottom:1px solid var(--red-ui-form-input-border-color, #ccc);">
-              <div style="width:94%; display:inline-block; margin-left:27px">
-                <div style="width:20%; text-align:center; float:left;" data-i18n="ui-form.label.label"></span></div>
-                <div style="width:20%; text-align:center; float:left; margin-left:9px" data-i18n="node-red:common.label.name"></div>
-                <div style="margin-left:7px; width:16%; text-align:center; float:left; margin-left:9px" data-i18n="ui-form.label.type"></div>
-                <div style="width:16%; text-align:center; float:left;" data-i18n="ui-form.label.required"></div>
-                <div style="width:10%; text-align:center; float:left;" data-i18n="ui-form.label.rows"></div>
-                <div style="width:12%; text-align:center; float:left;" data-i18n="ui-form.label.remove"></div>
-              </div>
-          </div>
-          <div id="node-input-option-container-div" style=" height: 257px; padding: 5px; overflow-y:scroll;">
+        <div style="display:inline-block; width:70%;">
             <ol id="node-input-option-container" style=" list-style-type:none; margin: 0;"></ol>
-          </div>
         </div>
     </div>
     <div class="form-row">
-        <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top: 4px; margin-left: 103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-form.label.element"></span></a>
-    </div>
-    <div class="form-row">
         <label for="node-input-submit"><i class="fa fa-square"></i> <span data-i18n="ui-form.label.buttons"></label>
-        <i class="fa fa-thumbs-o-up"></i> <input type="text" id="node-input-submit" data-i18n="[placeholder]ui-form.label.submitButtonText" style="width:35%;">
+        <i class="fa fa-thumbs-o-up"></i> <input type="text" id="node-input-submit" data-i18n="[placeholder]ui-form.label.submitButtonText" style="width:32%;">
         <span style="margin-left:16px"><i class="fa fa-thumbs-o-down"></i></span>
-        <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:35%;">
+        <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:32%;">
     </div>
     <div class="form-row">
         <label></label>
