@@ -55,7 +55,7 @@ module.exports = function (RED) {
                             // dynamically set "showCountdown" property
                             statestore.set(ui, node, msg, 'showCountdown', updates.showCountdown)
                         }
-                        // Note that update.close will NOT be stored in the data store, 
+                        // Note that update.close will NOT be stored in the data store,
                         // since it does not need to be remembered
                     }
                 }
