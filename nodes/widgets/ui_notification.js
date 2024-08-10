@@ -39,13 +39,13 @@ module.exports = function (RED) {
                             // dynamically set "dismissText" property
                             statestore.set(ui, node, msg, 'dismissText', updates.dismissText)
                         }
+                        if (typeof updates.displayTime !== 'undefined') {
+                            // dynamically set "displayTime" property
+                            statestore.set(ui, node, msg, 'displayTime', updates.displayTime)
+                        }
                         if (typeof updates.position !== 'undefined' && allowedPositions.includes(updates.position)) {
                             // dynamically set "position" property
                             statestore.set(ui, node, msg, 'position', updates.position)
-                        }
-                        if (typeof updates.progressColor !== 'undefined') {
-                            // dynamically set "progressColor" property
-                            statestore.set(ui, node, msg, 'progressColor', updates.progressColor)
                         }
                         if (typeof updates.raw !== 'undefined') {
                             // dynamically set "raw" property

@@ -3,6 +3,10 @@
         Displays text/HTML in a small window, that will appear on the screen
         a defined duration of time(out) at a defined location.
     </p>
+    <p>
+        Each received <code>msg.payload</code> will update the value shown
+        inside the notification dialog.
+    </p>
     <h3>Properties</h3>
     <dl class="message-properties">
         <dt>Position <span class="property-type">list</span></dt>
@@ -43,6 +47,10 @@
         <dd>The text that will displayed on the dismiss button.</dd>
     </dl>
     <dl class="message-properties">
+        <dt class="optional">displayTime<span class="property-type">number</span></dt>
+        <dd>Number of seconds before the notification will automatically close.  Note: this needs to be overridden before the notification becomes visible!</dd>
+    </dl>
+    <dl class="message-properties">
         <dt class="optional">position<span class="property-type">string</span></dt>
         <dd>
             The position on the screen whethere the notification will appear.
@@ -56,10 +64,6 @@
                 <li><code>center center</code></li>
             </ul>
         </dd>
-    </dl>
-    <dl class="message-properties">
-        <dt class="optional">progressColor<span class="property-type">string</span></dt>
-        <dd>The color that should be used for the progress bar.</dd>
     </dl>
     <dl class="message-properties">
         <dt class="optional">raw<span class="property-type">boolean</span></dt>

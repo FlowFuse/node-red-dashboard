@@ -9,7 +9,7 @@
         :style="{'--nrdb-ui-notification-color': color}"
     >
         <div v-if="showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" :color="progressColor" style="display: block; width: 100%" />
+            <v-progress-linear v-model="countdown" :color="color" style="display: block; width: 100%" />
         </div>
         <div v-if="!raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -44,7 +44,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-// TODO verwijderen???
     data () {
         return {
             show: false,
@@ -58,8 +57,8 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-// TODO wat is de value??
         value: function () {
+            // Get the value (i.e. the notification text content) from the last input msg
             return this.messages[this.id]?.payload
         },
         allowConfirm () {
@@ -81,11 +80,11 @@ export default {
         dismissText () {
             return this.getProperty('dismissText')
         },
+        displayTime () {
+            return this.getProperty('displayTime')
+        },
         position () {
             return this.getProperty('position')
-        },
-        progressColor () {
-            return this.getProperty('progressColor')
         },
         raw () {
             return this.getProperty('raw')
@@ -100,7 +99,6 @@ export default {
     },
     methods: {
         onDynamicProperties (msg) {
-debugger
             const updates = msg.ui_update
             if (!updates) {
                 return
@@ -110,13 +108,12 @@ debugger
             this.updateDynamicProperty('color', updates.color)
             this.updateDynamicProperty('confirmText', updates.confirmText)
             this.updateDynamicProperty('dismissText', updates.dismissText)
+            this.updateDynamicProperty('displayTime', updates.displayTime)
             this.updateDynamicProperty('position', updates.position)
-            this.updateDynamicProperty('progressColor', updates.progressColor)
             this.updateDynamicProperty('raw', updates.raw)
             this.updateDynamicProperty('showCountdown', updates.showCountdown)
         },
         onMsgInput (msg) {
-debugger
             // Make sure the last msg (that has a payload, containing the notification content) is being stored
             if (msg.payload) {
                 this.$store.commit('data/bind', {
@@ -125,15 +122,22 @@ debugger
                 })
             }
 
-            if ('clear_notification' in msg) {
-                if (msg.clear_notification && this.show) {
-                    this.close('input_msg')
-                }
-            } else {
-                this.show = true
-                if (this.props.displayTime > 0) {
-                    // begin countdown
-                    this.startCountdown(this.props.displayTime * 1000)
+            if ('show' in msg) {
+                if (msg.show) {
+                    // If msg.show is true, then the notification will be showed (if currently hidden)
+                    if (!this.show) {
+                        this.show = true
+
+                        // If a display time has been specified, close the notification automatically after that time
+                        if (this.displayTime > 0) {
+                            this.startCountdown(this.displayTime * 1000)
+                        }
+                    }
+                } else {
+                    // If msg.show is false, then the notification will be hidden (if currently showed)
+                    if (this.show) {
+                        this.close('input_msg')
+                    }
                 }
             }
         },
@@ -151,7 +155,7 @@ debugger
                 // how many seconds have elapsed
                 const elapsed = (tok - this.tik) / 1000
                 // 100 = full bar, 0 = empty bar
-                this.countdown = 100 - (elapsed / parseFloat(this.props.displayTime)) * 100
+                this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
             }, 100)
         },
         close (payload) {

@@ -31,6 +31,9 @@ dynamic:
     Dismissal button text:
         payload: msg.ui_update.dismissText
         structure: ["String"]
+    Display time(out):
+        payload: msg.ui_update.displayTime
+        structure: ["Number"]
     Position:
         payload: msg.ui_update.position
         structure: ["top right", "top center", "top left", "bottom right", "bottom center", "bottom left", "center center"]
