@@ -27,20 +27,14 @@ export default {
     data () {
         return {
             value: null,
-            items: null,
-            dynamic: {
-                label: null,
-                multiple: null,
-                chips: null,
-                clearable: null
-            }
+            items: null
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         options: {
             get () {
-                const items = this.items || this.props.options
+                const items = this.items || this.getProperty('options')
                 return items.map((item) => {
                     if (typeof item !== 'object') {
                         return {
@@ -62,16 +56,16 @@ export default {
             }
         },
         multiple: function () {
-            return this.dynamic.multiple === null ? this.props.multiple : this.dynamic.multiple
+            return this.getProperty('multiple')
         },
         chips: function () {
-            return this.dynamic.chips === null ? this.props.chips : this.dynamic.chips
+            return this.getProperty('chips')
         },
         clearable: function () {
-            return this.dynamic.clearable === null ? this.props.clearable : this.dynamic.clearable
+            return this.getProperty('clearable')
         },
         label: function () {
-            return this.dynamic.label !== null ? this.dynamic.label : this.props.label
+            return this.getProperty('label')
         },
         typeIsComboBox: function () {
             return this.props.typeIsComboBox ?? true
@@ -87,12 +81,14 @@ export default {
     methods: {
         // given the last received msg into this node, load the state
         onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            this.select(this.messages[this.id]?.payload)
+            if (msg) {
+                // update vuex store to reflect server-state
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+                this.select(this.messages[this.id]?.payload)
+            }
         },
         onDynamicProperties (msg) {
             // When a msg comes in from Node-RED, we need support 2 operations:
@@ -119,12 +115,10 @@ export default {
             const updates = msg.ui_update
 
             if (updates) {
-                if (typeof updates.label !== 'undefined') {
-                    this.dynamic.label = updates.label
-                }
-                if (typeof updates.multiple !== 'undefined') {
-                    this.dynamic.multiple = updates.multiple
-                }
+                this.updateDynamicProperty('label', updates.label)
+                this.updateDynamicProperty('multiple', updates.multiple)
+                this.updateDynamicProperty('chips', updates.chips)
+                this.updateDynamicProperty('clearable', updates.clearable)
             }
         },
         onChange () {

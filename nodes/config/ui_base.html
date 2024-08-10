@@ -172,6 +172,10 @@
     /* indent the widgets */
     .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
         margin-left: 3.5rem;
+        display: inline-block;
+        height: 14px;
+        width: 14px;
+        text-align: center;
     }
     /* apply subflow icon */
     .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon.nrdb2-sb-subflow-icon {
@@ -1039,8 +1043,6 @@
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
 
-                debugger
-                // 
                 let widgetIcon = widget.node._def.icon || 'fa fa-question'
                 if (widget.node._def.icon.startsWith('font-awesome/')) {
                     widgetIcon = 'fa ' + widget.node._def.icon.replace('font-awesome/', '')
@@ -1056,12 +1058,14 @@
                 }
 
                 if (widgetIcon == 'nrdb2-sb-subflow-icon' || widgetIcon.startsWith('fa fa-')) {
+                    // Some ui nodes require a FontAwesome icon
                     $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
-                }
-                else {
+                } else {
+                    // Some ui nodes require a custom icon (png, svg, ...)
                     const href = 'icons/' + widget.node._def.set.module + '/' + widgetIcon
-                    $('<image>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon', href: href }).appendTo(titleRow)
+                    $('<image>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon', href, width: 14, height: 14 }).appendTo(titleRow)
                 }
+
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
                 addRowActions(actions, widget)

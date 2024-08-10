@@ -25,6 +25,7 @@
                 },
                 height: { value: 0 },
                 passthru: { value: false },
+                decouple: { value: false },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
                 style: { value: '' },
@@ -100,12 +101,19 @@
 
                 $('#node-input-passthru').on('change', function () {
                     if (this.checked) {
+                        $('#node-field-decouple').val('false')
                         $('.form-row-decouple').hide()
-                        $('#node-input-decouple').val('false')
                     } else {
                         $('.form-row-decouple').show()
                     }
                 })
+
+                if (typeof this.decouple === 'undefined') {
+                    // backward compatibility
+                    this.decouple = false
+                }
+                // set decouple option correctly
+                $('#node-field-decouple').val(this.decouple.toString()).change()
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
                 $('.ui-node-popover-title').tooltip({
@@ -121,6 +129,13 @@
                     $('#node-input-officon').val('')
                     $('#node-input-oncolor').val('')
                     $('#node-input-offcolor').val('')
+                }
+
+                const decouple = $('#node-field-decouple').val()
+                if (decouple === 'true') {
+                    this.decouple = true
+                } else {
+                    this.decouple = false
                 }
             }
         })
@@ -191,6 +206,14 @@
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row form-row-decouple">
+        <!-- do not us node-input-<property> so we can enforce boolean types -->
+        <label for="node-field-decouple"><i class="fa fa-toggle-on"></i> Indicator</label>
+        <select id="node-field-decouple" style="display: inline-block; vertical-align: middle; width:70%;">
+            <option value="false">Switch icon shows state of the output</option>
+            <option value="true">Switch icon shows state of the input</option>
+        </select>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-onvalue"><i class="fa fa-envelope-o"></i> When clicked, send:</label>

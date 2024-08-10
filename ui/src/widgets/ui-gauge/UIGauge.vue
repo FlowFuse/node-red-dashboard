@@ -1,17 +1,20 @@
 <template>
     <ui-gauge-tile v-if="props.gtype === 'gauge-tile'" :id="id" :props="props" :value="value" />
+    <ui-gauge-battery v-else-if="props.gtype === 'gauge-battery'" :id="id" :props="props" :value="value" />
     <ui-gauge-dial v-else :id="id" :props="props" :value="value" />
 </template>
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+import UIGaugeBattery from './types/UIGaugeBattery.vue'
 import UIGaugeDial from './types/UIGaugeDial.vue'
 import UIGaugeTile from './types/UIGaugeTile.vue'
 
 export default {
     name: 'DBUIGauge',
     components: {
+        'ui-gauge-battery': UIGaugeBattery,
         'ui-gauge-dial': UIGaugeDial,
         'ui-gauge-tile': UIGaugeTile
     },

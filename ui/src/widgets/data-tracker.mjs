@@ -15,14 +15,18 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
         if ('enabled' in msg) {
             store.commit('ui/widgetState', {
                 widgetId,
-                enabled: msg.enabled
+                config: {
+                    enabled: msg.enabled
+                }
             })
         }
 
         if ('visible' in msg) {
             store.commit('ui/widgetState', {
                 widgetId,
-                visible: msg.visible
+                config: {
+                    visible: msg.visible
+                }
             })
         }
 
@@ -30,7 +34,9 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             const cls = msg.class || msg.ui_update?.class
             store.commit('ui/widgetState', {
                 widgetId,
-                class: cls
+                config: {
+                    class: cls
+                }
             })
         }
 
@@ -43,7 +49,15 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     // lifecycle to setup and teardown side effects.
     onMounted(() => {
         if (socket && widgetId) {
-            socket.on('widget-load:' + widgetId, (msg) => {
+            socket.on('widget-load:' + widgetId, (msg, state) => {
+                // automatic handle state/dynamic  updates for ALL widgets
+                if (state) {
+                    store.commit('ui/widgetState', {
+                        widgetId,
+                        config: state
+                    })
+                }
+                // then see if there is custom onLoad functionality to deal with the latest data payloads
                 if (onLoad) {
                     onLoad(msg)
                 } else {
@@ -57,7 +71,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
-                // check for dynamic properties
+                // check for common dynamic properties cross all widget types
                 checkDynamicProperties(msg)
 
                 if (onInput) {

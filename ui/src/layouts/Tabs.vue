@@ -26,7 +26,7 @@
                     >
                         <v-card variant="outlined" class="bg-group-background">
                             <template #text>
-                                <widget-group :group="t" :widgets="widgetsByGroup(t.id)" :row-height="rowHeight" />
+                                <widget-group :group="t" :widgets="widgetsByGroup(t.id)" />
                             </template>
                         </v-card>
                     </div>
@@ -52,7 +52,6 @@ export default {
     },
     data () {
         return {
-            rowHeight: 48,
             tab: 0
         }
     },

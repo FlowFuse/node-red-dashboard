@@ -1,23 +1,63 @@
+const statestore = require('../store/state.js')
+
 module.exports = function (RED) {
     function NotificationNode (config) {
         const node = this
 
         RED.nodes.createNode(this, config)
 
-        // which ui are we rendering this widget
+        // Which ui are we rendering this widget.
+        // In contradiction to other ui nodes (which belong to a group), the notification node belongs to a ui instead.
         const ui = RED.nodes.getNode(config.ui)
 
         const evts = {
             onAction: true,
             beforeSend: function (msg) {
                 if (msg.ui_update) {
-                    const update = msg.ui_update
-                    if (typeof update.title !== 'undefined') {
-                        // dynamically set "title" property
-                        statestore.set(group.getBase(), node, msg, 'title', update.title)
+                    const updates = msg.ui_update
+
+                    const allowedPositions = ['top right', 'top center', 'top left', 'bottom right', 'bottom center', 'bottom left', 'center center']
+
+                    if (updates) {
+                        if (typeof updates.allowConfirm !== 'undefined') {
+                            // dynamically set "allowConfirm" property
+                            statestore.set(ui, node, msg, 'allowConfirm', updates.allowConfirm)
+                        }
+                        if (typeof updates.allowDismiss !== 'undefined') {
+                            // dynamically set "allowDismiss" property
+                            statestore.set(ui, node, msg, 'allowDismiss', updates.allowDismiss)
+                        }
+                        if (typeof updates.color !== 'undefined') {
+                            // dynamically set "color" property
+                            statestore.set(ui, node, msg, 'color', updates.color)
+                        }
+                        if (typeof updates.confirmText !== 'undefined') {
+                            // dynamically set "confirmText" property
+                            statestore.set(ui, node, msg, 'confirmText', updates.confirmText)
+                        }
+                        if (typeof updates.dismissText !== 'undefined') {
+                            // dynamically set "dismissText" property
+                            statestore.set(ui, node, msg, 'dismissText', updates.dismissText)
+                        }
+                        if (typeof updates.position !== 'undefined' && allowedPositions.includes(updates.position)) {
+                            // dynamically set "position" property
+                            statestore.set(ui, node, msg, 'position', updates.position)
+                        }
+                        if (typeof updates.progressColor !== 'undefined') {
+                            // dynamically set "progressColor" property
+                            statestore.set(ui, node, msg, 'progressColor', updates.progressColor)
+                        }
+                        if (typeof updates.raw !== 'undefined') {
+                            // dynamically set "raw" property
+                            statestore.set(ui, node, msg, 'raw', updates.raw)
+                        }
+                        if (typeof updates.showCountdown !== 'undefined') {
+                            // dynamically set "showCountdown" property
+                            statestore.set(ui, node, msg, 'showCountdown', updates.showCountdown)
+                        }
+                        // Note that update.close will NOT be stored in the data store, 
+                        // since it does not need to be remembered
                     }
-                    // Note that update.close will NOT be stored in the data store, 
-                    // since it does not need to be remembered
                 }
                 return msg
             }

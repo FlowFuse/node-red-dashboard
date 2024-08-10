@@ -16,9 +16,15 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+
+<TryDemo href="radio-group">
+
 # Radio Group `ui-radio-group`
+
+</TryDemo>
 
 Adds a Radio Group to your dashboard that will emit values in Node-RED under `msg.payload` anytime a value is selected.
 

@@ -12,13 +12,47 @@ props:
     Button Label: If "Allow Manual Confirmation" is enabled, this is the label for the button.
     Accept Raw: Whether you're passing in raw HTML that should be processed client-side.
     Class: Appends CSS classes to the widget
+dynamic:
+    Disabled State:
+        payload: msg.enabled
+        structure: ["Boolean"]
+    Allow confirmation:
+        payload: msg.ui_update.allowConfirm
+        structure: ["Boolean"]
+    Allow dismissal:
+        payload: msg.ui_update.allowDismiss
+        structure: ["Boolean"]
+    Color:
+        payload: msg.ui_update.color
+        structure: ["String"]
+    Confirmation button text:
+        payload: msg.ui_update.confirmText
+        structure: ["String"]
+    Dismissal button text:
+        payload: msg.ui_update.dismissText
+        structure: ["String"]
+    Position:
+        payload: msg.ui_update.position
+        structure: ["top right", "top center", "top left", "bottom right", "bottom center", "bottom left", "center center"]
+    Progress bar color:
+        payload: msg.ui_update.progressColor
+        structure: ["String"]
+    Accept raw html:
+        payload: msg.ui_update.raw
+        structure: ["Boolean"]
+    Show countdown bar:
+        payload: msg.ui_update.showCountdown
+        structure: ["Boolean"]
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue'
+    import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
 # Notification `ui-notification` <AddedIn version="0.5.0" />
+
+<TryDemo href="notification" />
 
 Known in Dashboard 1.0 as a "Toast", this widget displays text/HTML in a small window that will appear on the screen for a defined duration of time (`timeout`) and at a defined location on the screen (`position`).
 
@@ -27,6 +61,10 @@ If you want to have the notification show indefinitely, you can set `timeout` to
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
 
 ## Example
 

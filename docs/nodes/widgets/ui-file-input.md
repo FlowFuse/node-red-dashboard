@@ -15,9 +15,14 @@ props:
 
 <script setup>
     import AddedIn from '../../components/AddedIn.vue';
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+<TryDemo href="file-input">
+
 # File Upload <AddedIn version="1.12.0" />
+
+</TryDemo>
 
 The File Upload widget allows users to upload files to Node-RED. The widget can be configured to accept specific file types and allow for multiple files.
 

@@ -32,9 +32,14 @@ dynamic:
 ---
 
 <script setup>
+    import TryDemo from "./../../components/TryDemo.vue";
 </script>
 
+<TryDemo href="form">
+
 # Form `ui-form`
+
+</TryDemo>
 
 Adds a form to user interface which helps to collect multiple value from the user on submit button click as an object in `msg.payload`.
 

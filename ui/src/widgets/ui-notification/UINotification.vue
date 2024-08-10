@@ -41,8 +41,10 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
+// TODO verwijderen???
     data () {
         return {
             show: false,
@@ -56,29 +58,72 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
+// TODO wat is de value??
         value: function () {
             return this.messages[this.id]?.payload
         },
-        color: function () {
-            if (this.messages[this.id]?.color) {
-                return this.messages[this.id]?.color
-            } else if (this.props.colorDefault) {
+        allowConfirm () {
+            return this.getProperty('allowConfirm')
+        },
+        allowDismiss () {
+            return this.getProperty('allowDismiss')
+        },
+        color () {
+            if (this.props.colorDefault) {
                 return 'rgb(var(--v-theme-group-background))'
             } else {
-                return this.props.color
+                return this.getProperty('color')
             }
+        },
+        confirmText () {
+            return this.getProperty('confirmText')
+        },
+        dismissText () {
+            return this.getProperty('dismissText')
+        },
+        position () {
+            return this.getProperty('position')
+        },
+        progressColor () {
+            return this.getProperty('progressColor')
+        },
+        raw () {
+            return this.getProperty('raw')
+        },
+        showCountdown () {
+            return this.getProperty('showCountdown')
         }
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dataTracker(this.id, this.onMsgInput)
+        this.$dataTracker(this.id, this.onMsgInput, null, this.onDynamicProperties)
     },
     methods: {
+        onDynamicProperties (msg) {
+debugger
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('allowConfirm', updates.allowConfirm)
+            this.updateDynamicProperty('allowDismiss', updates.allowDismiss)
+            this.updateDynamicProperty('color', updates.color)
+            this.updateDynamicProperty('confirmText', updates.confirmText)
+            this.updateDynamicProperty('dismissText', updates.dismissText)
+            this.updateDynamicProperty('position', updates.position)
+            this.updateDynamicProperty('progressColor', updates.progressColor)
+            this.updateDynamicProperty('raw', updates.raw)
+            this.updateDynamicProperty('showCountdown', updates.showCountdown)
+        },
         onMsgInput (msg) {
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
+debugger
+            // Make sure the last msg (that has a payload, containing the notification content) is being stored
+            if (msg.payload) {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
 
             if ('clear_notification' in msg) {
                 if (msg.clear_notification && this.show) {

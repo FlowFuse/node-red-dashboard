@@ -10,6 +10,21 @@ props:
     Text Size: If "style" is enabled, this will define the size of the text.
     Text Color: If "style" is enabled, this will define the color of the text.
 dynamic:
+    Label:
+        payload: msg.ui_update.label
+        structure: ["String"]
+    Layout:
+        payload: msg.ui_update.layout
+        structure: ["String<'row-left', 'row-center', 'row-right', 'row-spread', 'col-center'>"]
+    Font:
+        payload: msg.ui_update.font
+        structure: ["String"]
+    Font Size:
+        payload: msg.ui_update.fontSize
+        structure: ["String"]
+    Color:
+        payload: msg.ui_update.color
+        structure: ["String"]
     Class:
         payload: msg.class
         structure: ["String"]
@@ -20,6 +35,7 @@ dynamic:
     import FlowViewer from '../../components/FlowViewer.vue'
     import ExampleSuffix from '../../examples/ui-text-suffix.json'
     import ExampleHTMLInjection from '../../examples/ui-text-html-injection.json'
+    import TryDemo from "./../../components/TryDemo.vue"
 
     const examples = ref({
       'suffix': ExampleSuffix,
@@ -28,7 +44,11 @@ dynamic:
 </script>
 
 
+<TryDemo href="text">
+
 # Text `ui-text`
+
+</TryDemo>
  
 Displays a non-editable text field on the user interface. Each received `msg.payload` will update the value shown alongside the (optional) label.
 

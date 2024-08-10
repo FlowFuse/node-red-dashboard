@@ -15,7 +15,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" :row-height="rowHeight" />
+                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
                     </template>
                 </v-card>
             </div>
@@ -116,7 +116,6 @@ export default {
 .nrdb-layout--grid {
     --layout-card-width: 320px;
     --layout-gap: 12px;
-    --widget-row-height: 48px;
 }
 .nrdb-layout--grid {
     --layout-columns: 12;
