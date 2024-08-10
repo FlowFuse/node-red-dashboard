@@ -25,7 +25,7 @@
 import UIGaugeMethods from '../ui-gauge.js'
 
 export default {
-    name: 'DBUIGaugeTile',
+    name: 'DBUIGaugeBattery',
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },

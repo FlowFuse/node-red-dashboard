@@ -10,6 +10,7 @@
             "gaugeHalf": "Half Gauge",
             "gauge34": "3/4 Gauge",
             "gaugeBattery": "Battery Level",
+            "gaugeWaterTank": "Water Tank",
             "needle": "Needle",
             "rounded": "Rounded",
             "limits": "Limits",
