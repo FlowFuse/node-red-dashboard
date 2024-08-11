@@ -49,10 +49,7 @@ export default {
     },
     data () {
         return {
-            clipWidth: 0,
-            clipHeight: 0,
             labelLineHeight: 0,
-            svgOffset: 0,
             svgBottom: 0,
             amplitude: 15,
             svgScaleRatio: 1
@@ -105,17 +102,13 @@ export default {
         updateMask () {
             const h = this.$refs.fill?.clientHeight || 0
             const w = this.$refs.fill?.clientWidth || 0
-            this.clipWidth = `${w}px`
-            this.clipHeight = `${h}px`
             // read from the DOM if it's ready, otherwise reverse-engineer
             this.labelLineHeight = this.$refs.labels ? `${this.$refs.labels.clientHeight}px` : `${100 * h / this.pc}px`
             // work out if we need to offset our SVG mask
             if (this.orientation === 'vertical' && h >= 0 && this.pc !== 0) {
-                this.svgOffset = (h / (this.pc / 100)) - h
                 this.svgBottom = h
                 this.svgScaleRatio = w !== 0 ? 1000 / w : 1
             } else {
-                this.svgOffset = 0
                 this.svgBottom = 0
                 this.svgScaleRatio = 1
             }
