@@ -150,6 +150,52 @@
         "wires": []
     },
     {
+        "id": "dashboard-ui-gauge-water-tank",
+        "type": "ui-gauge",
+        "z": "node-red-tab-gauges",
+        "name": "Water Tank",
+        "group": "dashboard-ui-group",
+        "order": 1,
+        "width": "3",
+        "height": "5",
+        "gtype": "gauge-water-tank",
+        "gstyle": "needle",
+        "title": "",
+        "units": "",
+        "icon": "home",
+        "prefix": "",
+        "suffix": "%",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#a8f5ff"
+            },
+            {
+                "from": "15",
+                "color": "#55dbec"
+            },
+            {
+                "from": "35",
+                "color": "#53b4fd"
+            },
+            {
+                "from": "50",
+                "color": "#2397d1"
+            }
+        ],
+        "min": "0",
+        "max": "100",
+        "sizeThickness": "032",
+        "sizeGap": "6",
+        "sizeKeyThickness": "32",
+        "styleRounded": false,
+        "styleGlow": true,
+        "className": "",
+        "x": 550,
+        "y": 320,
+        "wires": []
+    },
+    {
         "id": "dashboard-ui-gauge-dial-half",
         "type": "ui-gauge",
         "z": "node-red-tab-gauges",
