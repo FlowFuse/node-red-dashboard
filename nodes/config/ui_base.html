@@ -177,16 +177,17 @@
         width: 14px;
         text-align: center;
     }
-    /* apply subflow icon */
-    .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon.nrdb2-sb-subflow-icon {
+    /* common styles for images */
+    .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon.nrdb2-sb-widget-icon-img {
         background-color: currentColor;
         display: inline-block;
-        mask-image: url(red/images/subflow_tab.svg);
         mask-size: contain;
         mask-position: center;
+        mask-repeat: no-repeat;
         height: 18px;
         width: 18px;
-        margin-left: 3.42rem;
+        margin-right: -0.15rem;
+        margin-left: 3.35rem;
     }
     #nrdb2-sb-client-data-providers {
         padding-left: 24px;
@@ -1042,28 +1043,24 @@
             addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-
-                let widgetIcon = widget.node._def.icon || 'fa fa-question'
-                if (widget.node._def.icon.startsWith('font-awesome/')) {
-                    widgetIcon = 'fa ' + widget.node._def.icon.replace('font-awesome/', '')
+                
+                // Set the icon
+                const ico = $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon' }).appendTo(titleRow)
+                let widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
+                if (widgetIcon.startsWith('font-awesome/')) {
+                    widgetIcon = widgetIcon.replace(/^font-awesome\//, 'fa ')
                 }
-
                 if (widget.isSubflowInstance) {
                     // In this MVP, subflow instances are constrained to stay within own group.
+                    // This is achieved using the class `red-ui-editableList-item-constrained`
                     container.parent().addClass('red-ui-editableList-item-constrained')
-                    // change the icon to use the built-in subflow icon
-                    widgetIcon = 'nrdb2-sb-subflow-icon'
-                    // apply a tooltip to further clarify this is a subflow
-                    titleRow.attr('title', widget.subflowName || 'Subflow instance')
+                    titleRow.attr('title', `${(widget.subflowName || '').trim()} (subflow instance)`.trim())
                 }
-
-                if (widgetIcon == 'nrdb2-sb-subflow-icon' || widgetIcon.startsWith('fa fa-')) {
-                    // Some ui nodes require a FontAwesome icon
-                    $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon ' + widgetIcon }).appendTo(titleRow)
-                } else {
-                    // Some ui nodes require a custom icon (png, svg, ...)
-                    const href = 'icons/' + widget.node._def.set.module + '/' + widgetIcon
-                    $('<image>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon', href, width: 14, height: 14 }).appendTo(titleRow)
+                if (/.*\.(png|gif|jpg|jpeg|svg)$/.test(widgetIcon)) {
+                    ico.css('mask-image', `url("${widgetIcon}")`)
+                    ico.addClass('nrdb2-sb-widget-icon-img')
+                } else if (widgetIcon.startsWith('fa fa-')) {
+                    ico.addClass(widgetIcon)
                 }
 
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
