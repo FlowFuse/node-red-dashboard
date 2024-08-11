@@ -1,67 +1,34 @@
 <template>
     <div class="nrdb-ui-gauge-water--container">
         <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
-        <div class="nrdb-ui-gauge-water" :class="`nrdb-ui-gauge-water--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
+        <div
+            class="nrdb-ui-gauge-water" :class="`nrdb-ui-gauge-water--${orientation}`"
+            :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}"
+        >
             <div class="nrdb-ui-gauge-water--center">
                 <div ref="fill" class="nrdb-ui-gauge-water--fill" />
-                <svg class="WaveBG" viewBox="0 0 12960 1120">
-                    <g style="transform: translateY(25%)">
-                        <path d="M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z">
-                            <animate
-                                dur="3s"
-                                delay="1s"
-                                repeatCount="indefinite"
-                                attributeName="d"
-                                values="
-                                    M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z;
-                                    M9720,0C8100,0,8100,319,6480,319S4860,0,3240,0,1620,320,0,320v800H12960V320C11340,320,11340,0,9720,0Z;
-                                    M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z
-                                "
-                            />
-                        </path>
-                    </g>
+                <svg class="WaveBG" :style="`bottom: 0;height: ${svgBottom}`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
+                    <path :d="waves[0]">
+                        <animate
+                            dur="5s"
+                            repeatCount="indefinite"
+                            attributeName="d"
+                            :values="`${waves[0]}; ${waves[1]}; ${waves[0]};`"
+                        />
+                    </path>
                 </svg>
-                <svg class="Wave" viewBox="0 0 12960 1120">
-                    <g style="transform: translateY(25%)scaleY(2)">
-                        <path d="M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z">
-                            <animate
-                                dur="5s"
-                                repeatCount="indefinite"
-                                attributeName="d"
-                                values="
-                                    M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z;
-                                    M9720,0C8100,0,8100,319,6480,319S4860,0,3240,0,1620,320,0,320v800H12960V320C11340,320,11340,0,9720,0Z;
-                                    M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z
-                                "
-                            />
-                        </path>
-                    </g>
-                </svg>
-                <svg class="mask" width="0" height="0">
-                    <defs>
-                        <clipPath :id="clipId">
-                            <g style="transform: translateY(25%)">
-                                <path d="M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z">
-                                    <animate
-                                        dur="3s"
-                                        delay="1s"
-                                        repeatCount="indefinite"
-                                        attributeName="d"
-                                        values="
-                                            M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z;
-                                            M9720,0C8100,0,8100,319,6480,319S4860,0,3240,0,1620,320,0,320v800H12960V320C11340,320,11340,0,9720,0Z;
-                                            M9720,320C8100,320,8100,0,6480,0S4860,320,3240,320,1620,0,0,0V1120H12960V0C11340,0,11340,320,9720,320Z
-                                        "
-                                    />
-                                </path>
-                            </g>
-                            <rect x="0" :y="`${svgOffset}`" :width="`${clipWidth}`" :height="`${clipHeight}`" />
-                        </clipPath>
-                    </defs>
+                <svg class="Wave" :style="`bottom: 0;height: ${svgBottom}`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
+                    <path :d="waves[0]">
+                        <animate
+                            dur="5s"
+                            repeatCount="indefinite"
+                            attributeName="d"
+                            :values="`${waves[0]}; ${waves[1]}; ${waves[0]};`"
+                        />
+                    </path>
                 </svg>
                 <div ref="labels" class="nrdb-ui-gauge-water-labels">
-                    <label class="nrdb-ui-gauge-water--fglabel" :style="{'line-height': labelLineHeight, 'clip-path': `url(#${clipId})`}">{{ pc }}%</label>
-                    <label class="nrdb-ui-gauge-water--bglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
+                    <label class="nrdb-ui-gauge-water--fglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
                 </div>
             </div>
         </div>
@@ -85,7 +52,10 @@ export default {
             clipWidth: 0,
             clipHeight: 0,
             labelLineHeight: 0,
-            svgOffset: 0
+            svgOffset: 0,
+            svgBottom: 0,
+            amplitude: 15,
+            svgScaleRatio: 1
         }
     },
     computed: {
@@ -106,6 +76,15 @@ export default {
         },
         clipId: function () {
             return `clip-${this.id}`
+        },
+        waves: function () {
+            const amplitude = this.amplitude * this.svgScaleRatio
+            const svgBottom = this.svgBottom
+            const svgScaleRatio = this.svgScaleRatio
+            return [
+                `M750,${amplitude} c -125,0 -125,-${amplitude} -250,-${amplitude} s -125,${amplitude} -250,${amplitude} S 125,0, 0,0 v${svgScaleRatio * (svgBottom + amplitude)}h1000 V0 c-125,0 -125,${amplitude} -250,${amplitude}Z`,
+                `M750,0 c -125,0 -125,${amplitude} -250,${amplitude} S 375,0 250,0, S 125,${amplitude}, 0,${amplitude} v${svgScaleRatio * svgBottom}h1000 V${amplitude} c-125,0 -125-${amplitude} -250-${amplitude}Z`
+            ]
         }
     },
     watch: {
@@ -125,15 +104,20 @@ export default {
         getTextColor: UIGaugeMethods.getTextColor,
         updateMask () {
             const h = this.$refs.fill?.clientHeight || 0
-            this.clipWidth = `${this.$refs.fill?.clientWidth || 0}px`
+            const w = this.$refs.fill?.clientWidth || 0
+            this.clipWidth = `${w}px`
             this.clipHeight = `${h}px`
             // read from the DOM if it's ready, otherwise reverse-engineer
             this.labelLineHeight = this.$refs.labels ? `${this.$refs.labels.clientHeight}px` : `${100 * h / this.pc}px`
             // work out if we need to offset our SVG mask
             if (this.orientation === 'vertical' && h >= 0 && this.pc !== 0) {
                 this.svgOffset = (h / (this.pc / 100)) - h
+                this.svgBottom = h
+                this.svgScaleRatio = w !== 0 ? 1000 / w : 1
             } else {
                 this.svgOffset = 0
+                this.svgBottom = 0
+                this.svgScaleRatio = 1
             }
         }
     }
@@ -145,6 +129,7 @@ export default {
 .WaveBG {
     width: 200%;
     position: absolute;
+    overflow: visible;
     animation-name: swell;
     animation-fill-mode: forwards;
     animation-iteration-count: infinite;
@@ -155,8 +140,9 @@ export default {
 
 .WaveBG {
     opacity: 0.4;
-    animation-duration: 2s;
-    animation-delay: 1s;
+    /* offset the animation so that the wave's standing nodes never overlap */
+    animation-duration: 1.5s;
+    animation-delay: 1.2s;
 }
 .Wave {
     animation-duration: 2s;
@@ -189,7 +175,7 @@ export default {
     position: relative;
 }
 .nrdb-ui-gauge-water--fill {
-    background-color: var(--gauge-fill);
+    background-color: transparent;
 }
 .nrdb-ui-gauge-water--horizontal {
     margin-right: var(--water-margin);
@@ -216,15 +202,9 @@ export default {
     height: 100%;
     text-align: center;
     white-space: nowrap;
+    color: black;
 }
 
-.nrdb-ui-gauge-water label.nrdb-ui-gauge-water--bglabel {
-    color: rgb(var(--v-theme-on-group-background));
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-}
 .nrdb-ui-gauge-water--center {
     display: flex;
     justify-content: center;
