@@ -295,7 +295,7 @@
                 "t": "set",
                 "p": "ui_update.fontSize",
                 "pt": "msg",
-                "to": "28px",
+                "to": "28",
                 "tot": "str"
             }
         ],
