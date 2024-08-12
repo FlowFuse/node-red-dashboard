@@ -35,7 +35,7 @@ export default {
         style () {
             return {
                 'font-family': this.getProperty('font'),
-                'font-size': this.getProperty('fontSize'),
+                'font-size': `${this.getProperty('fontSize')}px`,
                 color: this.getProperty('color')
             }
         }
