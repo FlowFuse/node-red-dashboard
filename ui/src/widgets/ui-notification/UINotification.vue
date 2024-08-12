@@ -122,7 +122,7 @@ export default {
                 })
             }
 
-            if (msg.show == true || typeof msg.payload !== 'undefined') {
+            if (msg.show === true || typeof msg.payload !== 'undefined') {
                 // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
                 if (!this.show) {
                     this.show = true
@@ -132,8 +132,7 @@ export default {
                         this.startCountdown(this.displayTime * 1000)
                     }
                 }
-            }
-            else if (msg.show == false) {
+            } else if (msg.show === false) {
                 // If msg.show is false, the notification popup need to be hidden (if currently showed)
                 if (this.show) {
                     this.close('input_msg')
