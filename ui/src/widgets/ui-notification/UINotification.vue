@@ -122,22 +122,21 @@ export default {
                 })
             }
 
-            if ('show' in msg) {
-                if (msg.show) {
-                    // If msg.show is true, then the notification will be showed (if currently hidden)
-                    if (!this.show) {
-                        this.show = true
+            if (msg.show == true || typeof msg.payload !== 'undefined') {
+                // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
+                if (!this.show) {
+                    this.show = true
 
-                        // If a display time has been specified, close the notification automatically after that time
-                        if (this.displayTime > 0) {
-                            this.startCountdown(this.displayTime * 1000)
-                        }
+                    // If a display time has been specified, close the notification automatically after that time
+                    if (this.displayTime > 0) {
+                        this.startCountdown(this.displayTime * 1000)
                     }
-                } else {
-                    // If msg.show is false, then the notification will be hidden (if currently showed)
-                    if (this.show) {
-                        this.close('input_msg')
-                    }
+                }
+            }
+            else if (msg.show == false) {
+                // If msg.show is false, the notification popup need to be hidden (if currently showed)
+                if (this.show) {
+                    this.close('input_msg')
                 }
             }
         },
