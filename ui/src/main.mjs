@@ -146,7 +146,7 @@ fetch('_setup')
             if (disconnected) {
                 // send a notification/alert to the user to let them know the connection is live again
                 Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                    displayTime: 3,
+                    displayTime: 1,
                     allowDismiss: true,
                     showCountdown: true
                 })
