@@ -170,7 +170,7 @@
             // only show relevant options
 
             function showTypeOptions (type) {
-                if (type === 'gauge-tile' || type === 'gauge-battery' || type === 'gauge-water-tank') {
+                if (type === 'gauge-tile' || type === 'gauge-battery' || type === 'gauge-tank') {
                     $('#node-input-container-sizes').hide()
                     $('#node-input-container-gstyle').hide()
                     $('#node-input-container-label-extras').hide()
@@ -180,7 +180,7 @@
                     $('#node-input-container-label-extras').show()
                 }
 
-                if (type === 'gauge-water-tank' && initGType !== 'gauge-water-tank') {
+                if (type === 'gauge-tank' && initGType !== 'gauge-tank') {
                     // set new min/max
                     $('#node-input-min').val(0)
                     $('#node-input-max').val(100)
@@ -307,7 +307,7 @@
             <option value="gauge-34" data-i18n="ui-gauge.label.gauge34"></option>
             <option value="gauge-half" data-i18n="ui-gauge.label.gaugeHalf"></option>
             <option value="gauge-battery" data-i18n="ui-gauge.label.gaugeBattery"></option>
-            <option value="gauge-water-tank" data-i18n="ui-gauge.label.gaugeWaterTank"></option>
+            <option value="gauge-tank" data-i18n="ui-gauge.label.gaugeTank"></option>
             <!-- <segment value="donut">Donut</segment>
             <segment value="compass">Compass</segment>
             <segment value="wave">Level</segment> -->
