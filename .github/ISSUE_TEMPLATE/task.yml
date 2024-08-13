@@ -1,6 +1,6 @@
 name: 📄 Task
 description: Create a task
-labels: [task]
+labels: [needs-triage, task]
 body:
 - type: markdown
   attributes:
