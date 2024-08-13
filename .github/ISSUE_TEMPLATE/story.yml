@@ -1,6 +1,6 @@
 name: 📖 Story
 description: Create a story
-labels: [story]
+labels: [needs-triage, story]
 body:
 - type: markdown
   attributes:
