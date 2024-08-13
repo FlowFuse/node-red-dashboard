@@ -155,7 +155,7 @@ export default {
 .nrdb-ui-gauge-battery label {
     font-weight: bold;
     resize: both;
-    font-size: min(2.5rem, 30cqmin);
+    font-size: min(2.5rem,max(30cqmin, .5rem));
     position: relative;
     z-index: 2;
     width: 100%;
@@ -230,5 +230,8 @@ export default {
     width: 40%;
     height: 40%;
     position: relative;
+}
+.nrdb-ui-gauge-battery--horizontal .nrdb-ui-gauge-battery-icon svg {
+    height: 80%;
 }
 </style>
