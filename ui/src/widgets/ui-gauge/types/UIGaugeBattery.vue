@@ -3,6 +3,9 @@
         <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
         <div class="nrdb-ui-gauge-battery" :class="`nrdb-ui-gauge-battery--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
             <div class="nrdb-ui-gauge-battery--center">
+                <div class="nrdb-ui-gauge-battery-icon nrdb-ui-gauge-battery-icon--bg">
+                    <BatteryIcon :style="{'color': color}" />
+                </div>
                 <div ref="fill" class="nrdb-ui-gauge-battery--fill" />
                 <svg width="0" height="0">
                     <defs>
@@ -11,6 +14,9 @@
                         </clipPath>
                     </defs>
                 </svg>
+                <div class="nrdb-ui-gauge-battery-icon nrdb-ui-gauge-battery-icon--fill">
+                    <BatteryIcon />
+                </div>
                 <div ref="labels" class="nrdb-ui-gauge-battery-labels">
                     <label class="nrdb-ui-gauge-battery--fglabel" :style="{'line-height': labelLineHeight, 'clip-path': `url(#${clipId})`}">{{ pc }}%</label>
                     <label class="nrdb-ui-gauge-battery--bglabel" :style="{'line-height': labelLineHeight}">{{ pc }}%</label>
@@ -22,10 +28,14 @@
 
 <script>
 
+import BatteryIcon from '../../../components/icons/BatteryIcon.vue'
 import UIGaugeMethods from '../ui-gauge.js'
 
 export default {
     name: 'DBUIGaugeBattery',
+    components: {
+        BatteryIcon
+    },
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -116,6 +126,23 @@ export default {
 .nrdb-ui-gauge-battery--vertical {
     margin-top: var(--battery-margin);
 }
+.nrdb-ui-gauge-battery-icon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    fill-opacity: 0.25;
+}
+.nrdb-ui-gauge-battery-icon.nrdb-ui-gauge-battery-icon--bg {
+    color: black;
+}
+.nrdb-ui-gauge-battery-icon.nrdb-ui-gauge-battery-icon--fill {
+    color: white;
+}
+.nrdb-ui-gauge-battery-icon.nrdb-ui-gauge-battery-icon--fill svg {
+}
 .nrdb-ui-gauge-battery-labels {
     position: relative;
     width: 100%;
@@ -198,5 +225,10 @@ export default {
     right: 30%;
     border-top-left-radius: calc(var(--battery-radius) * 0.5);
     border-top-right-radius: calc(var(--battery-radius) * 0.5);
+}
+.nrdb-ui-gauge-battery-icon svg {
+    width: 40%;
+    height: 40%;
+    position: relative;
 }
 </style>
