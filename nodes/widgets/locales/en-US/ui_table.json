@@ -17,7 +17,8 @@
             "column": "column",
             "selection": "Interaction",
             "search": "Search",
-            "showSearch": "Show"
+            "showSearch": "Show",
+            "mobileBreakpoint": "Breakpoint"
         },
         "selection": {
             "none": "None",
