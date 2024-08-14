@@ -5,7 +5,7 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
         cy.visit('/dashboard/page1')
     })
 
-    const numberInputOne = '#nrdb-ui-widget-5b751bff9a6c7439 input[type="text"]'
+    const numberInputOne = '#nrdb-ui-widget-696f064e3552fe7d input[type="text"]'
 
     // Test case: Renders the Number Input widget correctly
     it('renders the Number Input widget correctly', () => {
@@ -18,12 +18,14 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
         cy.get(numberInputOne).clear()
         cy.get(numberInputOne).type('4')
         cy.get(numberInputOne).should('have.value', '4')
+        // Wait for the output to be updated as the default delay is 300ms
+        cy.wait(300)
         cy.checkOutput('msg.payload', 4)
     })
 
     // Test case: Displays the tooltip correctly
     it('displays the tooltip correctly', () => {
-        cy.get('#nrdb-ui-widget-5b751bff9a6c7439 .nrdb-ui-number-field').trigger('mouseover')
+        cy.get('#nrdb-ui-widget-696f064e3552fe7d .nrdb-ui-number-field').trigger('mouseover')
         cy.get('.v-tooltip').should('contain', 'Tooltip Text')
     })
 
@@ -31,10 +33,10 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
     it('reset field on onClear event correctly and outputs the correct payload', () => {
         cy.get(numberInputOne).clear()
         cy.get(numberInputOne).type('2')
-        cy.get('#nrdb-ui-widget-5b751bff9a6c7439 .nrdb-ui-number-field .v-field__clearable').click()
+        cy.get('#nrdb-ui-widget-696f064e3552fe7d .nrdb-ui-number-field .v-field__clearable').click()
         cy.get(numberInputOne).should('have.value', '')
         cy.checkOutput('msg.payload', null)
-        cy.get('#nrdb-ui-widget-5b751bff9a6c7439 .nrdb-ui-number-field').trigger('blur')
+        cy.get('#nrdb-ui-widget-696f064e3552fe7d .nrdb-ui-number-field').trigger('blur')
     })
 })
 
@@ -45,20 +47,20 @@ describe('Node-RED Dashboard 2.0 - Number Input (Dynamic Properties)', () => {
     })
 
     it('Set the dynnamic properties: set input "icon"', () => {
-        cy.get('#nrdb-ui-widget-3616bf2d05dc6b68').should('exist')
+        cy.get('#nrdb-ui-widget-91363b41f01492e8').should('exist')
         cy.clickAndWait(cy.get('button').contains('Dynamic Property: Icon'))
-        cy.get('#nrdb-ui-widget-3616bf2d05dc6b68 .v-field__prepend-inner').find('i.mdi-numeric').should('exist')
+        cy.get('#nrdb-ui-widget-91363b41f01492e8 .v-field__prepend-inner').find('i.mdi-numeric').should('exist')
     })
 
     it('Set the dynnamic properties: change input "icon" position', () => {
-        cy.get('#nrdb-ui-widget-c7a86c799d34c234').should('exist')
+        cy.get('#nrdb-ui-widget-2f5451b0216e7dd4').should('exist')
         cy.clickAndWait(cy.get('button').contains('Dynamic Property: Icon Position'))
-        cy.get('#nrdb-ui-widget-c7a86c799d34c234 .v-field .v-field__append-inner').find('i.mdi-numeric').should('exist')
+        cy.get('#nrdb-ui-widget-2f5451b0216e7dd4 .v-field .v-field__append-inner').find('i.mdi-numeric').should('exist')
     })
 
     it('Set the dynnamic properties: move input "icon" to', () => {
-        cy.get('#nrdb-ui-widget-df1f392297c5e2b1').should('exist')
+        cy.get('#nrdb-ui-widget-605d4a5fb8802bf4').should('exist')
         cy.clickAndWait(cy.get('button').contains('Dynamic Property: Icon Inner Position'))
-        cy.get('#nrdb-ui-widget-df1f392297c5e2b1 .v-input .v-input__prepend').find('i.mdi-numeric').should('exist')
+        cy.get('#nrdb-ui-widget-605d4a5fb8802bf4 .v-input .v-input__prepend').find('i.mdi-numeric').should('exist')
     })
 })

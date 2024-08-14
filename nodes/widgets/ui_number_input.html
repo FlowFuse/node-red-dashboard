@@ -29,6 +29,12 @@
                 max: { value: 10, required: true, validate: RED.validators.number() },
                 step: { value: 1 },
                 tooltip: { value: '' },
+                delay: {
+                    value: 300,
+                    validate: function (v) {
+                        return RED.validators.number()(v)
+                    }
+                },
                 passthru: { value: true },
                 className: { value: '' },
                 clearable: { value: false },
@@ -173,6 +179,13 @@
     </div>    
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
+    </div>
+    <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
+        <label style="width:auto" for="node-input-sendOnDelay"> Delay</label>
+        <div id="node-input-delay-box">
+            <input type="text" style="width:58px" id="node-input-delay">
+            <label for="node-input-delay">(ms)</label>
+        </div>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>

@@ -1,38 +1,35 @@
 [
     {
-        "id": "5b751bff9a6c7439",
-        "type": "ui-number-input",
-        "z": "28027232f30399b8",
-        "group": "1d6b148cbc6d62ba",
-        "name": "dashboard-ui-number-input",
-        "label": "number global store",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "Tooltip Text",
-        "passthru": true,
-        "className": "number-input-1",
-        "clearable": true,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 600,
-        "y": 140,
-        "wires": [
-            [
-                "26ea1c6aefa94d41"
-            ]
-        ]
+        "id": "1f4fd97829933c1b",
+        "type": "group",
+        "z": "f4f554a38c3ce158",
+        "name": "Number Input",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "d92b128565cf0da0",
+            "12c2e152d27857e7",
+            "1dac17139e6f07a7",
+            "3b7160ef18b028fd",
+            "bf5c63014c89a04b",
+            "2e9d2967c7f75090",
+            "07c0321d2f5f6653",
+            "91363b41f01492e8",
+            "2f5451b0216e7dd4",
+            "605d4a5fb8802bf4",
+            "696f064e3552fe7d"
+        ],
+        "x": 14,
+        "y": 539,
+        "w": 1172,
+        "h": 262
     },
     {
-        "id": "26ea1c6aefa94d41",
+        "id": "d92b128565cf0da0",
         "type": "function",
-        "z": "28027232f30399b8",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
         "name": "Store Latest Msg",
         "func": "global.set('msg', msg)\nreturn msg;",
         "outputs": 1,
@@ -42,16 +39,17 @@
         "finalize": "",
         "libs": [],
         "x": 890,
-        "y": 140,
+        "y": 580,
         "wires": [
             []
         ]
     },
     {
-        "id": "2e213fbb714fa84a",
+        "id": "12c2e152d27857e7",
         "type": "ui-button",
-        "z": "28027232f30399b8",
-        "group": "c8d81f5153170599",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "05b923de3f2d2970",
         "name": "Dynamic Property: Icon",
         "label": "Dynamic Property: Icon",
         "order": 1,
@@ -72,17 +70,18 @@
         "textColor": "",
         "iconColor": "",
         "x": 230,
-        "y": 200,
+        "y": 640,
         "wires": [
             [
-                "0c4a565404e7d2c4"
+                "1dac17139e6f07a7"
             ]
         ]
     },
     {
-        "id": "0c4a565404e7d2c4",
+        "id": "1dac17139e6f07a7",
         "type": "change",
-        "z": "28027232f30399b8",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -99,18 +98,19 @@
         "to": "",
         "reg": false,
         "x": 610,
-        "y": 200,
+        "y": 640,
         "wires": [
             [
-                "3616bf2d05dc6b68"
+                "91363b41f01492e8"
             ]
         ]
     },
     {
-        "id": "2b2c184d1e54cbf2",
+        "id": "3b7160ef18b028fd",
         "type": "ui-button",
-        "z": "28027232f30399b8",
-        "group": "913da0a9471bb867",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "730d0fcc2b4628ba",
         "name": "Dynamic Property: Icon Position",
         "label": "Dynamic Property: Icon Position",
         "order": 1,
@@ -131,17 +131,18 @@
         "textColor": "",
         "iconColor": "",
         "x": 210,
-        "y": 260,
+        "y": 700,
         "wires": [
             [
-                "2687c766dae561d2"
+                "bf5c63014c89a04b"
             ]
         ]
     },
     {
-        "id": "2687c766dae561d2",
+        "id": "bf5c63014c89a04b",
         "type": "change",
-        "z": "28027232f30399b8",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -158,45 +159,18 @@
         "to": "",
         "reg": false,
         "x": 590,
-        "y": 260,
+        "y": 700,
         "wires": [
             [
-                "c7a86c799d34c234"
+                "2f5451b0216e7dd4"
             ]
         ]
     },
     {
-        "id": "3616bf2d05dc6b68",
-        "type": "ui-number-input",
-        "z": "28027232f30399b8",
-        "group": "c8d81f5153170599",
-        "name": "",
-        "label": "number: Dynamic Property: Icon",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "passthru": true,
-        "className": "number-input-2",
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 990,
-        "y": 200,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "2a9b0a22432ef4e9",
+        "id": "2e9d2967c7f75090",
         "type": "change",
-        "z": "28027232f30399b8",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -213,18 +187,19 @@
         "to": "",
         "reg": false,
         "x": 570,
-        "y": 320,
+        "y": 760,
         "wires": [
             [
-                "df1f392297c5e2b1"
+                "605d4a5fb8802bf4"
             ]
         ]
     },
     {
-        "id": "c0770c33555a3768",
+        "id": "07c0321d2f5f6653",
         "type": "ui-button",
-        "z": "28027232f30399b8",
-        "group": "f7bc7ca4128eda1d",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "6e46363f590502ee",
         "name": "Dynamic Property: Icon Inner Position",
         "label": "Dynamic Property: Icon Inner Position",
         "order": 1,
@@ -245,18 +220,49 @@
         "textColor": "",
         "iconColor": "",
         "x": 190,
-        "y": 320,
+        "y": 760,
         "wires": [
             [
-                "2a9b0a22432ef4e9"
+                "2e9d2967c7f75090"
             ]
         ]
     },
     {
-        "id": "c7a86c799d34c234",
+        "id": "91363b41f01492e8",
         "type": "ui-number-input",
-        "z": "28027232f30399b8",
-        "group": "913da0a9471bb867",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "05b923de3f2d2970",
+        "name": "",
+        "label": "number: Dynamic Property: Icon",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "delay": 300,
+        "passthru": true,
+        "className": "number-input-2",
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 930,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f5451b0216e7dd4",
+        "type": "ui-number-input",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "730d0fcc2b4628ba",
         "name": "",
         "label": "number: Dynamic Property: Icon Position",
         "order": 2,
@@ -268,23 +274,25 @@
         "max": 10,
         "step": 1,
         "tooltip": "",
+        "delay": 300,
         "passthru": true,
         "className": "number-input-2",
         "clearable": false,
         "icon": "numeric",
         "iconPosition": "left",
         "iconInnerPosition": "inside",
-        "x": 1020,
-        "y": 260,
+        "x": 960,
+        "y": 700,
         "wires": [
             []
         ]
     },
     {
-        "id": "df1f392297c5e2b1",
+        "id": "605d4a5fb8802bf4",
         "type": "ui-number-input",
-        "z": "28027232f30399b8",
-        "group": "f7bc7ca4128eda1d",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "6e46363f590502ee",
         "name": "",
         "label": "number: Dynamic Property: Icon Inner Position",
         "order": 2,
@@ -296,62 +304,56 @@
         "max": 10,
         "step": 1,
         "tooltip": "",
+        "delay": 300,
         "passthru": true,
         "className": "number-input-2",
         "clearable": false,
         "icon": "numeric",
         "iconPosition": "left",
         "iconInnerPosition": "inside",
-        "x": 1040,
-        "y": 320,
+        "x": 980,
+        "y": 760,
         "wires": [
             []
         ]
     },
     {
-        "id": "1d6b148cbc6d62ba",
-        "type": "ui-group",
-        "name": "Page1 Group1",
-        "page": "ac2a3b3768a9b00e",
-        "width": "6",
-        "height": "1",
-        "order": 1,
-        "showTitle": true,
+        "id": "696f064e3552fe7d",
+        "type": "ui-number-input",
+        "z": "f4f554a38c3ce158",
+        "g": "1f4fd97829933c1b",
+        "group": "5107b8a93a5ac068",
+        "name": "",
+        "label": "number global store",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "Tooltip Text",
+        "delay": 300,
+        "passthru": true,
         "className": "",
-        "visible": "true",
-        "disabled": "false"
+        "clearable": true,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 620,
+        "y": 580,
+        "wires": [
+            [
+                "d92b128565cf0da0"
+            ]
+        ]
     },
     {
-        "id": "c8d81f5153170599",
+        "id": "05b923de3f2d2970",
         "type": "ui-group",
         "name": "Page1 Group2",
-        "page": "ac2a3b3768a9b00e",
-        "width": "6",
-        "height": "1",
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "913da0a9471bb867",
-        "type": "ui-group",
-        "name": "Page1 Group3",
-        "page": "ac2a3b3768a9b00e",
-        "width": "6",
-        "height": "1",
-        "order": 3,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "f7bc7ca4128eda1d",
-        "type": "ui-group",
-        "name": "Page1 Group4",
-        "page": "ac2a3b3768a9b00e",
+        "page": "9849a6ac1bf4073a",
         "width": "6",
         "height": "1",
         "order": 4,
@@ -361,7 +363,46 @@
         "disabled": "false"
     },
     {
-        "id": "ac2a3b3768a9b00e",
+        "id": "730d0fcc2b4628ba",
+        "type": "ui-group",
+        "name": "Page1 Group3",
+        "page": "9849a6ac1bf4073a",
+        "width": "6",
+        "height": "1",
+        "order": 5,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "6e46363f590502ee",
+        "type": "ui-group",
+        "name": "Page1 Group4",
+        "page": "9849a6ac1bf4073a",
+        "width": "6",
+        "height": "1",
+        "order": 6,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "5107b8a93a5ac068",
+        "type": "ui-group",
+        "name": "Page1 Group1",
+        "page": "9849a6ac1bf4073a",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "9849a6ac1bf4073a",
         "type": "ui-page",
         "name": "Page1",
         "ui": "a171c8195c1b8e57",
@@ -371,8 +412,8 @@
         "theme": "9d8bfd7e0d216779",
         "order": 1,
         "className": "",
-        "visible": "true",
-        "disabled": "false"
+        "visible": true,
+        "disabled": false
     },
     {
         "id": "a171c8195c1b8e57",

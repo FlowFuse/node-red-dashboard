@@ -111,6 +111,11 @@ export default {
         this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
     },
     methods: {
+        tempLog (str) {
+            const currentTime = new Date()
+            const formattedTime = currentTime.toISOString().replace('T', ' ').split('.')[0] + '.' + currentTime.getMilliseconds()
+            console.log(str, formattedTime, this.value)
+        },
         onInput (msg) {
             // update our vuex store with the value retrieved from Node-RED
             this.$store.commit('data/bind', {
@@ -134,10 +139,17 @@ export default {
             }
         },
         send () {
+            this.tempLog('sent')
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange () {
-            this.send()
+            this.tempLog('initiated')
+            // delay enabled and set 300ms by default as the number input emits value after each change.
+            if (this.delayTimer) {
+                // reset the timer to count from the latest change
+                clearTimeout(this.delayTimer)
+            }
+            this.delayTimer = setTimeout(this.send, this.props.delay)
         },
         onClear () {
             this.send()
