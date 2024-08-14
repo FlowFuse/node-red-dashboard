@@ -5,7 +5,7 @@
     </p>
     <p>
         Each received <code>msg.payload</code> will update the value shown
-        inside the notification dialog.
+        inside the notification dialog (and the notification will be displayed).
     </p>
     <h3>Properties</h3>
     <dl class="message-properties">
@@ -68,6 +68,10 @@
     <dl class="message-properties">
         <dt class="optional">raw<span class="property-type">boolean</span></dt>
         <dd>Whether you're passing in raw HTML that should be processed client-side.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">show<span class="property-type">boolean</span></dt>
+        <dd>Whether you want to show (even when no <code>msg.payload</code> available) or hide the notification.</dd>
     </dl>
     <dl class="message-properties">
         <dt class="optional">showCountdown<span class="property-type">boolean</span></dt>

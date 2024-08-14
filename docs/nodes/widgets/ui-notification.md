@@ -43,6 +43,9 @@ dynamic:
     Accept raw html:
         payload: msg.ui_update.raw
         structure: ["Boolean"]
+    Show:
+        payload: msg.ui_update.show
+        structure: ["Boolean"]
     Show countdown bar:
         payload: msg.ui_update.showCountdown
         structure: ["Boolean"]
