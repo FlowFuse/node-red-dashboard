@@ -5,7 +5,7 @@ props:
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control. Set to "0" for no pagination.
-    Breakpoint: Controls when a table will render, instead, as a card, with each column from a row rendering as a row in a larger, contain a row, for a single entry.
+    Breakpoint: Controls when a table will render, instead, as a card, with each column from a row rendering as a row in a larger, contain a row, for a single entry.The breakpoint is measured based on the <b>width of the table</b>, not the width of the screen.
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
     Show Search: Defines whether or not to show a search bar above the table. Will permit searching and filtering across all columns.
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
@@ -77,7 +77,7 @@ You can also add a [Button](#interaction-buttons) cell type and have events emit
 
 ### Responsiveness <AddedIn version="1.15.0" />
 
-The _"Breakpoint"_ property for UI table gives you control over when a table will switch to "mobile" mode, and render reach row of data as a card. This is useful when you have a lot of columns, and the table is too wide to fit on a mobile screen.
+The _"Breakpoint"_ property for UI table gives you control over when a table will switch to "mobile" mode, and render reach row of data as a card. This is useful when you have a lot of columns, and the table is too wide to fit on a mobile screen. The breakpoint is measured based on the **width of the table**, not the width of the screen.
 
 ![Desktop View of a UI Table example](/images/node-examples/ui-table-responsiveness-desktop.png)
 _Desktop View of a UI Table example_
