@@ -9,8 +9,11 @@
         single-line
     />
     <v-data-table
+        ref="table"
         v-model="selected"
         class="nrdb-table"
+        :mobile="isMobile"
+        :class="{'nrdb-table--mobile': isMobile}"
         :items="messages[id]?.payload" :return-object="true"
         :items-per-page="itemsPerPage"
         :headers="headers" :show-select="props.selectionType === 'checkbox'"
@@ -20,14 +23,17 @@
         <template v-if="itemsPerPage === 0" #bottom />
         <template #item="{ item, index, internalItem, isSelected, toggleSelect }">
             <tr
-                :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item}"
+                :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item, 'v-data-table__tr--mobile': isMobile}"
                 @click="props.selectionType === 'click' ? onRowClick(item) : {}"
             >
                 <td v-if="props.selectionType === 'checkbox'" class="v-data-table__td v-data-table-column--no-padding v-data-table-column--align-start">
                     <v-checkbox-btn :modelValue="isSelected(internalItem)" @click="toggleSelect(internalItem)" />
                 </td>
                 <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
-                    <div class="nrdb-table-cell-align" :style="{'justify-content': col.align || 'start'}">
+                    <div v-if="isMobile">
+                        {{ col.title }}
+                    </div>
+                    <div class="nrdb-table-cell-align" :style="{'justify-content': isMobile ? 'end' : (col.align || 'start')}">
                         <UITableCell :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick" />
                     </div>
                 </td>
@@ -58,6 +64,7 @@ export default {
             search: '',
             input: {},
             isValid: null,
+            isMobile: false,
             pagination: {
                 page: 1,
                 pages: 0,
@@ -144,6 +151,8 @@ export default {
     },
     mounted () {
         this.calculatePaginatedRows()
+        this.updateIsMobile()
+        window.addEventListener('resize', this.updateIsMobile)
     },
     methods: {
         calculatePaginatedRows () {
@@ -183,7 +192,41 @@ export default {
                 action: 'multi_select'
             }
             this.$socket.emit('widget-action', this.id, msg)
+        },
+        updateIsMobile () {
+            this.isMobile = this.checkBreakpoint()
+        },
+        checkBreakpoint () {
+            let table = this.$refs.table
+            if (!table) {
+                return false
+            }
+            table = table.$el
+            const width = table.clientWidth
+            const maxPx = {
+                xs: 576,
+                md: 768,
+                lg: 1024
+            }
+            if (!this.props.mobileBreakpointType || this.props.mobileBreakpointType === 'none') {
+                // no switching to mobile view
+                return false
+            } else if (this.props.mobileBreakpointType === 'px') {
+                return width <= this.props.mobileBreakpoint
+            } else if (this.props.mobileBreakpointType === 'defaults') {
+                const max = maxPx[this.props.mobileBreakpoint]
+                if (max === 0) {
+                    // no mobile view
+                    return false
+                } else {
+                    return width <= max
+                }
+            }
+            return true
         }
+    },
+    unounted () {
+        window.removeEventListener('resize', this.updateIsMobile)
     }
 }
 </script>
@@ -235,5 +278,21 @@ export default {
 }
 .nrdb-table-row-selected {
     background-color: rgba(var(--v-theme-primary), var(--v-selected-opacity));
+}
+
+.nrdb-table--mobile {
+
+}
+.nrdb-table--mobile td {
+    align-items: center;
+    column-gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    min-height: var(--v-table-row-height);
+}
+
+.nrdb-table--mobile .v-data-table__tr--mobile>td:not(:last-child) {
+    --mobile-border-opacity: calc(var(--v-border-opacity) * 0.5);
+    border-bottom: thin solid rgba(var(--v-border-color), var(--mobile-border-opacity)) !important;
 }
 </style>
