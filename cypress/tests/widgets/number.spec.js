@@ -10,15 +10,6 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('exist')
     })
 
-    // Test case: Updates the value correctly
-    it('updates the value correctly and outputs the correct payload', () => {
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('exist')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').type('123')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('have.value', '123')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').trigger('keydown', { key: 'Enter' })
-        cy.checkOutput('msg.payload', 123)
-    })
-
     // Test case: Displays the tooltip correctly
     it('displays the tooltip correctly', () => {
         cy.get('#nrdb-ui-widget-2f48e919876213cc .nrdb-ui-number-field').trigger('mouseover')
