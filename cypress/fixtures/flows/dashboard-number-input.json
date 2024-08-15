@@ -1,35 +1,8 @@
 [
     {
-        "id": "1f4fd97829933c1b",
-        "type": "group",
-        "z": "f4f554a38c3ce158",
-        "name": "Number Input",
-        "style": {
-            "label": true
-        },
-        "nodes": [
-            "d92b128565cf0da0",
-            "12c2e152d27857e7",
-            "1dac17139e6f07a7",
-            "3b7160ef18b028fd",
-            "bf5c63014c89a04b",
-            "2e9d2967c7f75090",
-            "07c0321d2f5f6653",
-            "91363b41f01492e8",
-            "2f5451b0216e7dd4",
-            "605d4a5fb8802bf4",
-            "696f064e3552fe7d"
-        ],
-        "x": 14,
-        "y": 539,
-        "w": 1172,
-        "h": 262
-    },
-    {
-        "id": "d92b128565cf0da0",
+        "id": "efce10fee9e8e91d",
         "type": "function",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
         "name": "Store Latest Msg",
         "func": "global.set('msg', msg)\nreturn msg;",
         "outputs": 1,
@@ -39,27 +12,26 @@
         "finalize": "",
         "libs": [],
         "x": 890,
-        "y": 580,
+        "y": 600,
         "wires": [
             []
         ]
     },
     {
-        "id": "12c2e152d27857e7",
+        "id": "2209fb72ae22a9e2",
         "type": "ui-button",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "05b923de3f2d2970",
+        "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon",
         "label": "Dynamic Property: Icon",
-        "order": 1,
+        "order": 3,
         "width": 0,
         "height": 0,
         "emulateClick": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
-        "className": "set-icon-button",
+        "className": "",
         "icon": "home",
         "iconPosition": "left",
         "payload": "",
@@ -70,18 +42,17 @@
         "textColor": "",
         "iconColor": "",
         "x": 230,
-        "y": 640,
+        "y": 800,
         "wires": [
             [
-                "1dac17139e6f07a7"
+                "3ad8c5a73d651490"
             ]
         ]
     },
     {
-        "id": "1dac17139e6f07a7",
+        "id": "3ad8c5a73d651490",
         "type": "change",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -98,29 +69,28 @@
         "to": "",
         "reg": false,
         "x": 610,
-        "y": 640,
+        "y": 800,
         "wires": [
             [
-                "91363b41f01492e8"
+                "927729e90dd54c44"
             ]
         ]
     },
     {
-        "id": "3b7160ef18b028fd",
+        "id": "167c4efd3c5abd33",
         "type": "ui-button",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "730d0fcc2b4628ba",
+        "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon Position",
         "label": "Dynamic Property: Icon Position",
-        "order": 1,
+        "order": 4,
         "width": 0,
         "height": 0,
         "emulateClick": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
-        "className": "set-icon-position",
+        "className": "",
         "icon": "",
         "iconPosition": "left",
         "payload": "",
@@ -131,18 +101,17 @@
         "textColor": "",
         "iconColor": "",
         "x": 210,
-        "y": 700,
+        "y": 860,
         "wires": [
             [
-                "bf5c63014c89a04b"
+                "949d1411c09c7154"
             ]
         ]
     },
     {
-        "id": "bf5c63014c89a04b",
+        "id": "949d1411c09c7154",
         "type": "change",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -159,18 +128,17 @@
         "to": "",
         "reg": false,
         "x": 590,
-        "y": 700,
+        "y": 860,
         "wires": [
             [
-                "2f5451b0216e7dd4"
+                "927729e90dd54c44"
             ]
         ]
     },
     {
-        "id": "2e9d2967c7f75090",
+        "id": "6db1ab2724965cfe",
         "type": "change",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
         "name": "",
         "rules": [
             {
@@ -187,29 +155,28 @@
         "to": "",
         "reg": false,
         "x": 570,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
-                "605d4a5fb8802bf4"
+                "927729e90dd54c44"
             ]
         ]
     },
     {
-        "id": "07c0321d2f5f6653",
+        "id": "47c37fe0a80bbf88",
         "type": "ui-button",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "6e46363f590502ee",
+        "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon Inner Position",
         "label": "Dynamic Property: Icon Inner Position",
-        "order": 1,
+        "order": 5,
         "width": 0,
         "height": 0,
         "emulateClick": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
-        "className": "set-icon-to-outside",
+        "className": "",
         "icon": "",
         "iconPosition": "left",
         "payload": "",
@@ -220,112 +187,21 @@
         "textColor": "",
         "iconColor": "",
         "x": 190,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
-                "2e9d2967c7f75090"
+                "6db1ab2724965cfe"
             ]
         ]
     },
     {
-        "id": "91363b41f01492e8",
+        "id": "8425f6d80325c223",
         "type": "ui-number-input",
         "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "05b923de3f2d2970",
-        "name": "",
-        "label": "number: Dynamic Property: Icon",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "delay": 300,
-        "passthru": true,
-        "className": "number-input-2",
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 930,
-        "y": 640,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "2f5451b0216e7dd4",
-        "type": "ui-number-input",
-        "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "730d0fcc2b4628ba",
-        "name": "",
-        "label": "number: Dynamic Property: Icon Position",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "delay": 300,
-        "passthru": true,
-        "className": "number-input-2",
-        "clearable": false,
-        "icon": "numeric",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 960,
-        "y": 700,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "605d4a5fb8802bf4",
-        "type": "ui-number-input",
-        "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "6e46363f590502ee",
-        "name": "",
-        "label": "number: Dynamic Property: Icon Inner Position",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "delay": 300,
-        "passthru": true,
-        "className": "number-input-2",
-        "clearable": false,
-        "icon": "numeric",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 980,
-        "y": 760,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "696f064e3552fe7d",
-        "type": "ui-number-input",
-        "z": "f4f554a38c3ce158",
-        "g": "1f4fd97829933c1b",
-        "group": "5107b8a93a5ac068",
+        "group": "da4b0aa545f9b323",
         "name": "",
         "label": "number global store",
-        "order": 0,
+        "order": 1,
         "width": 0,
         "height": 0,
         "topic": "topic",
@@ -342,18 +218,165 @@
         "iconPosition": "left",
         "iconInnerPosition": "inside",
         "x": 620,
-        "y": 580,
+        "y": 600,
         "wires": [
             [
-                "d92b128565cf0da0"
+                "efce10fee9e8e91d"
             ]
         ]
     },
     {
-        "id": "05b923de3f2d2970",
+        "id": "4907a3daa2e993bd",
+        "type": "ui-button",
+        "z": "f4f554a38c3ce158",
+        "group": "4f87d7d9fab04a9d",
+        "name": "Dynamic Property: Clearable",
+        "label": "Dynamic Property: Clearable",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 220,
+        "y": 740,
+        "wires": [
+            [
+                "7a6367f473c303e3"
+            ]
+        ]
+    },
+    {
+        "id": "7a6367f473c303e3",
+        "type": "change",
+        "z": "f4f554a38c3ce158",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.clearable",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 740,
+        "wires": [
+            [
+                "927729e90dd54c44"
+            ]
+        ]
+    },
+    {
+        "id": "927729e90dd54c44",
+        "type": "ui-number-input",
+        "z": "f4f554a38c3ce158",
+        "group": "4f87d7d9fab04a9d",
+        "name": "Number: Dynamic Property",
+        "label": "",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "delay": 300,
+        "passthru": true,
+        "className": "",
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 940,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c00a96200e70a317",
+        "type": "ui-button",
+        "z": "f4f554a38c3ce158",
+        "group": "4f87d7d9fab04a9d",
+        "name": "Dynamic Property: Label",
+        "label": "Dynamic Property: Label",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 230,
+        "y": 680,
+        "wires": [
+            [
+                "80edc9655b77ee71"
+            ]
+        ]
+    },
+    {
+        "id": "80edc9655b77ee71",
+        "type": "change",
+        "z": "f4f554a38c3ce158",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 680,
+        "wires": [
+            [
+                "927729e90dd54c44"
+            ]
+        ]
+    },
+    {
+        "id": "4f87d7d9fab04a9d",
         "type": "ui-group",
-        "name": "Page1 Group2",
-        "page": "9849a6ac1bf4073a",
+        "name": "Number Input Dynamic Properties",
+        "page": "dashboard-ui-page-1",
         "width": "6",
         "height": "1",
         "order": 4,
@@ -363,36 +386,10 @@
         "disabled": "false"
     },
     {
-        "id": "730d0fcc2b4628ba",
+        "id": "da4b0aa545f9b323",
         "type": "ui-group",
-        "name": "Page1 Group3",
-        "page": "9849a6ac1bf4073a",
-        "width": "6",
-        "height": "1",
-        "order": 5,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "6e46363f590502ee",
-        "type": "ui-group",
-        "name": "Page1 Group4",
-        "page": "9849a6ac1bf4073a",
-        "width": "6",
-        "height": "1",
-        "order": 6,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "5107b8a93a5ac068",
-        "type": "ui-group",
-        "name": "Page1 Group1",
-        "page": "9849a6ac1bf4073a",
+        "name": "Number Input Global Store",
+        "page": "dashboard-ui-page-1",
         "width": "6",
         "height": "1",
         "order": 3,
@@ -402,65 +399,40 @@
         "disabled": "false"
     },
     {
-        "id": "9849a6ac1bf4073a",
+        "id": "dashboard-ui-page-1",
         "type": "ui-page",
-        "name": "Page1",
-        "ui": "a171c8195c1b8e57",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
         "path": "/page1",
-        "icon": "numeric-1",
+        "icon": "",
         "layout": "grid",
-        "theme": "9d8bfd7e0d216779",
-        "order": 1,
+        "theme": "dashboard-ui-theme",
+        "order": -1,
         "className": "",
-        "visible": true,
+        "visible": "true",
         "disabled": false
     },
     {
-        "id": "a171c8195c1b8e57",
+        "id": "dashboard-ui-base",
         "type": "ui-base",
-        "name": "My Dashboard",
+        "name": "UI Name",
         "path": "/dashboard",
         "includeClientData": true,
         "acceptsClientConfig": [
-            "ui-control",
-            "ui-gauge",
-            "ui-chart",
-            "ui-form",
-            "ui-text-input",
-            "ui-file-input",
-            "ui-button",
-            "ui-button-group",
-            "ui-dropdown",
-            "ui-radio-group",
-            "ui-slider",
-            "ui-switch",
-            "ui-text",
-            "ui-table",
-            "ui-markdown",
             "ui-notification",
-            "ui-template"
-        ],
-        "showPathInSidebar": false,
-        "showPageTitle": true,
-        "navigationStyle": "icon",
-        "titleBarStyle": "fixed"
+            "ui-control"
+        ]
     },
     {
-        "id": "9d8bfd7e0d216779",
+        "id": "dashboard-ui-theme",
         "type": "ui-theme",
-        "name": "Default Theme",
+        "name": "Theme Name",
         "colors": {
             "surface": "#ffffff",
-            "primary": "#15617e",
+            "primary": "#0094ce",
             "bgPage": "#eeeeee",
             "groupBg": "#ffffff",
             "groupOutline": "#cccccc"
-        },
-        "sizes": {
-            "pagePadding": "12px",
-            "groupGap": "12px",
-            "groupBorderRadius": "4px",
-            "widgetGap": "12px"
         }
     }
 ]

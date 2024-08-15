@@ -38,13 +38,13 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label () {
-            return this.props.label
+            return this.getProperty('label')
         },
         tooltip () {
             return this.props.tooltip
         },
         clearable () {
-            return this.props.clearable
+            return this.getProperty('clearable')
         },
         prependIcon () {
             const icon = this.getProperty('icon')
@@ -162,6 +162,8 @@ export default {
             if (!updates) {
                 return
             }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('label', updates.clearable)
             this.updateDynamicProperty('icon', updates.icon)
             this.updateDynamicProperty('iconPosition', updates.iconPosition)
             this.updateDynamicProperty('iconInnerPosition', updates.iconInnerPosition)
