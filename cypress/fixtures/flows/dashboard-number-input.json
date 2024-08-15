@@ -4,14 +4,14 @@
         "type": "function",
         "z": "f4f554a38c3ce158",
         "name": "Store Latest Msg",
-        "func": "global.set('msg', msg)\nreturn msg;",
+        "func": "global.set('msg', msg);\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
+        "x": 610,
         "y": 600,
         "wires": [
             []
@@ -24,7 +24,7 @@
         "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon",
         "label": "Dynamic Property: Icon",
-        "order": 3,
+        "order": 4,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -68,11 +68,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 610,
+        "x": 590,
         "y": 800,
         "wires": [
             [
-                "927729e90dd54c44"
+                "bc2a346d36830a3f"
             ]
         ]
     },
@@ -83,7 +83,7 @@
         "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon Position",
         "label": "Dynamic Property: Icon Position",
-        "order": 4,
+        "order": 5,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -127,11 +127,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 590,
+        "x": 570,
         "y": 860,
         "wires": [
             [
-                "927729e90dd54c44"
+                "bc2a346d36830a3f"
             ]
         ]
     },
@@ -154,11 +154,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 570,
+        "x": 550,
         "y": 920,
         "wires": [
             [
-                "927729e90dd54c44"
+                "bc2a346d36830a3f"
             ]
         ]
     },
@@ -169,7 +169,7 @@
         "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Icon Inner Position",
         "label": "Dynamic Property: Icon Inner Position",
-        "order": 5,
+        "order": 6,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -195,44 +195,13 @@
         ]
     },
     {
-        "id": "8425f6d80325c223",
-        "type": "ui-number-input",
-        "z": "f4f554a38c3ce158",
-        "group": "da4b0aa545f9b323",
-        "name": "",
-        "label": "number global store",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "Tooltip Text",
-        "delay": 300,
-        "passthru": true,
-        "className": "",
-        "clearable": true,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 620,
-        "y": 600,
-        "wires": [
-            [
-                "efce10fee9e8e91d"
-            ]
-        ]
-    },
-    {
         "id": "4907a3daa2e993bd",
         "type": "ui-button",
         "z": "f4f554a38c3ce158",
         "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Clearable",
         "label": "Dynamic Property: Clearable",
-        "order": 2,
+        "order": 3,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -276,51 +245,49 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 600,
+        "x": 580,
         "y": 740,
         "wires": [
             [
-                "927729e90dd54c44"
+                "bc2a346d36830a3f"
             ]
         ]
     },
     {
-        "id": "927729e90dd54c44",
-        "type": "ui-number-input",
+        "id": "80edc9655b77ee71",
+        "type": "change",
         "z": "f4f554a38c3ce158",
-        "group": "4f87d7d9fab04a9d",
-        "name": "Number: Dynamic Property",
-        "label": "",
-        "order": 6,
-        "width": 0,
-        "height": 0,
-        "topic": "topic",
-        "topicType": "msg",
-        "min": 0,
-        "max": 10,
-        "step": 1,
-        "tooltip": "",
-        "delay": 300,
-        "passthru": true,
-        "className": "",
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "x": 940,
-        "y": 800,
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Label",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 680,
         "wires": [
-            []
+            [
+                "bc2a346d36830a3f"
+            ]
         ]
     },
     {
-        "id": "c00a96200e70a317",
+        "id": "037c9d623a84bc6c",
         "type": "ui-button",
         "z": "f4f554a38c3ce158",
         "group": "4f87d7d9fab04a9d",
         "name": "Dynamic Property: Label",
         "label": "Dynamic Property: Label",
-        "order": 1,
+        "order": 2,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -346,30 +313,65 @@
         ]
     },
     {
-        "id": "80edc9655b77ee71",
-        "type": "change",
+        "id": "2f48e919876213cc",
+        "type": "ui-number-input",
         "z": "f4f554a38c3ce158",
+        "group": "da4b0aa545f9b323",
         "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "ui_update.label",
-                "pt": "msg",
-                "to": "Dynamic Label",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 610,
-        "y": 680,
+        "label": "number global store",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "Tooltip Text",
+        "passthru": true,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": true,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 340,
+        "y": 600,
         "wires": [
             [
-                "927729e90dd54c44"
+                "efce10fee9e8e91d"
             ]
+        ]
+    },
+    {
+        "id": "bc2a346d36830a3f",
+        "type": "ui-number-input",
+        "z": "f4f554a38c3ce158",
+        "group": "4f87d7d9fab04a9d",
+        "name": "Number: Dynamic Property",
+        "label": "Number: Dynamic Property",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "tooltip": "",
+        "passthru": true,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 900,
+        "y": 800,
+        "wires": [
+            []
         ]
     },
     {

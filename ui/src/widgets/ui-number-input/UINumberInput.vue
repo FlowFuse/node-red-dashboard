@@ -7,7 +7,7 @@
                 v-bind="props" :disabled="!state.enabled" class="nrdb-ui-number-field" :label="label"
                 :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
-                :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange" @click:clear="onClear"
+                :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
             />
         </template>
     </v-tooltip>
@@ -32,7 +32,8 @@ export default {
     data () {
         return {
             delayTimer: null,
-            textValue: null
+            textValue: null,
+            previousValue: null
         }
     },
     computed: {
@@ -111,11 +112,6 @@ export default {
         this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
     },
     methods: {
-        tempLog (str) {
-            const currentTime = new Date()
-            const formattedTime = currentTime.toISOString().replace('T', ' ').split('.')[0] + '.' + currentTime.getMilliseconds()
-            console.log(str, formattedTime, this.value)
-        },
         onInput (msg) {
             // update our vuex store with the value retrieved from Node-RED
             this.$store.commit('data/bind', {
@@ -136,20 +132,35 @@ export default {
             // make sure we've got the relevant option selected on load of the page
             if (msg?.payload !== undefined) {
                 this.textValue = msg.payload
+                this.previousValue = msg.payload
             }
         },
         send () {
-            this.tempLog('sent')
             this.$socket.emit('widget-change', this.id, this.value)
         },
-        onChange () {
-            this.tempLog('initiated')
-            // delay enabled and set 300ms by default as the number input emits value after each change.
-            if (this.delayTimer) {
-                // reset the timer to count from the latest change
-                clearTimeout(this.delayTimer)
+        onChange (e) {
+            // Since the Vuetify Input Number component doesn't currently support an onClick event,
+            // compare the previous value with the current value and check whether the value has been increased or decreased by one.
+            if (
+                this.previousValue === null ||
+                this.previousValue + 1 === this.value ||
+                this.previousValue - 1 === this.value
+            ) {
+                this.send()
             }
-            this.delayTimer = setTimeout(this.send, this.props.delay)
+            this.previousValue = this.value
+        },
+        onBlur: function () {
+            if (this.props.sendOnBlur) {
+                // user has to click away (focus out / blur) they want it submitted
+                this.send()
+            }
+        },
+        onEnter: function () {
+            if (this.props.sendOnEnter) {
+                // user has to press <enter> they want it submitted
+                this.send()
+            }
         },
         onClear () {
             this.send()
@@ -163,7 +174,7 @@ export default {
                 return
             }
             this.updateDynamicProperty('label', updates.label)
-            this.updateDynamicProperty('label', updates.clearable)
+            this.updateDynamicProperty('clearable', updates.clearable)
             this.updateDynamicProperty('icon', updates.icon)
             this.updateDynamicProperty('iconPosition', updates.iconPosition)
             this.updateDynamicProperty('iconInnerPosition', updates.iconInnerPosition)
