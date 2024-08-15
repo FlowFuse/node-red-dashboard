@@ -13,10 +13,9 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
     // Test case: Updates the value correctly
     it('updates the value correctly and outputs the correct payload', () => {
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('exist')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').focus()
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').type('123')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').blur()
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('have.value', '123')
+        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').trigger('keydown', { key: 'Enter' })
         cy.checkOutput('msg.payload', 123)
     })
 
@@ -30,11 +29,10 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
     it('reset field on onClear event correctly and outputs the correct payload', () => {
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').clear()
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').type('2')
-        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').blur()
+        cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').trigger('keydown', { key: 'Enter' })
         cy.get('#nrdb-ui-widget-2f48e919876213cc .nrdb-ui-number-field .v-field__clearable').click()
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('have.value', '')
         cy.checkOutput('msg.payload', null)
-        cy.get('#nrdb-ui-widget-2f48e919876213cc .nrdb-ui-number-field').trigger('blur')
     })
 })
 
