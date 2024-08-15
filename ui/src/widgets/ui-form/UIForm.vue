@@ -170,8 +170,8 @@ export default {
                 this.updateDynamicProperty('dropdownOptions', updates.dropdownOptions)
             }
         },
-        filteredDropdownOptions(dropdownName) {
-            return this.dropdownOptions.filter(obj => obj.dropdown == dropdownName)
+        filteredDropdownOptions (dropdownName) {
+            return this.dropdownOptions.filter(obj => obj.dropdown === dropdownName)
         }
     }
 }
