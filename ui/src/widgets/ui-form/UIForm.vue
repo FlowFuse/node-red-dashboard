@@ -3,8 +3,33 @@
     <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
-                <v-checkbox v-if="row.type === 'checkbox'" v-model="input[row.key]" :label="row.label" hide-details="auto" />
-                <v-switch v-else-if="row.type === 'switch'" v-model="input[row.key]" class="nrdb-ui-widget" :label="row.label" :class="{'active': state}" hide-details="auto" color="primary" />
+                <v-checkbox
+                    v-if="row.type === 'checkbox'"
+                    v-model="input[row.key]"
+                    :label="row.label"
+                    hide-details="auto"
+                />
+                <v-select
+                    v-else-if="row.type === 'dropdown'"
+                    v-model="input[row.key]"
+                    class="nrdb-ui-widget"
+                    :label="row.label"
+                    :class="{'active': state}"
+                    hide-details="auto"
+                    color="primary"
+                    :items="filteredDropdownOptions(row.key)"
+                    item-title="label"
+                    item-value="key"
+                />
+                <v-switch
+                    v-else-if="row.type === 'switch'"
+                    v-model="input[row.key]"
+                    class="nrdb-ui-widget"
+                    :label="row.label"
+                    :class="{'active': state}"
+                    hide-details="auto"
+                    color="primary"
+                />
                 <v-textarea
                     v-else-if="row.type === 'multiline'"
                     v-model="input[row.key]" :rules="rules(row)"
@@ -51,6 +76,9 @@ export default {
         options: function () {
             return this.getProperty('options') || []
         },
+        dropdownOptions: function () {
+            return this.getProperty('dropdownOptions') || []
+        },
         submitEnabled: function () {
             return !(this.isValid && !!this.getProperty('enabled'))
         }
@@ -75,7 +103,7 @@ export default {
                         [key]: this.input[key]
                     }
                 }, {})
-            // Prevent sending null for switch and combobox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
+            // Prevent sending null for switch and checkbox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
             options.forEach(opt => {
                 if (opt.type === 'checkbox' || opt.type === 'switch') {
                     if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
@@ -139,7 +167,11 @@ export default {
             if (updates) {
                 this.updateDynamicProperty('label', updates.label)
                 this.updateDynamicProperty('options', updates.options)
+                this.updateDynamicProperty('dropdownOptions', updates.dropdownOptions)
             }
+        },
+        filteredDropdownOptions(dropdownName) {
+            return this.dropdownOptions.filter(obj => obj.dropdown == dropdownName)
         }
     }
 }
