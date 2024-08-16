@@ -18,10 +18,10 @@ props:
     Tooltip:
         description: The number shown when hovering over the number input field.
     Passthrough: If this node receives a msg in Node-RED, should it be passed through to the output as if a new value was inserted to the input?
-    Clear selection with button: If true, a clear icon/button appears on the rigth side to clear the number input
-    Send On "Clear Button":
-        description: Send a msg when the user clear the number input using the clear button, the "Clear Selection" button must be enabled.
+    Clear selection with button:
+        description: If true, a clear icon/button appears on the rigth side to clear the number input.
         dynamic: true
+    Send On "Clear Button": Send a msg when the user clear the number input using the clear button, the "Clear Selection" button must be enabled.
 controls:
     enabled:
         example: true | false
