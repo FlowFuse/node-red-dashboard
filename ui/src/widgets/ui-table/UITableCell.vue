@@ -20,14 +20,14 @@
     </template>
     <template v-else-if="type === 'sparkline-trend'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-sparkline v-model="value" color="primary" :padding="2" line-width="6" />
+        <v-sparkline v-model="value" color="primary" :padding="12" line-width="4" />
     </template>
     <template v-else-if="type === 'sparkline-bar'">
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-sparkline v-model="value" type="bar" color="primary" :padding="2" line-width="16" />
+        <v-sparkline v-model="value" type="bar" color="primary" :padding="12" line-width="16" :autoLineWidth="false" />
     </template>
     <template v-else-if="type === 'button'">
-        <v-btn color="primary" variant="flat" :height="8" @click="onButtonClick($event, item)">{{ value }}</v-btn>
+        <v-btn color="primary" variant="flat" @click="onButtonClick($event, item)">{{ value }}</v-btn>
     </template>
     <template v-else>
         {{ value }}

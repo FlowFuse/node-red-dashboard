@@ -15,6 +15,12 @@
             Defines the maximum number of data-rows to render in the table.
             Excess rows will be available through pagination control. Set to "0" for no pagination.
         </dd>
+        <dt>Breakpoint <span class="property-type">str | num</span></dt>
+        <dd>
+            Controls when a table will render, instead, as a card, with each column from a row rendering
+            as a row in a larger, contain a row, for a single entry. The breakpoint is measured based on
+            the <b>width of the table</b>, not the width of the screen.
+        </dd>
         <dt>Selection <span class="property-type">none | click | checkbox</span></dt>
         <dd>
             Defines any interaction available on the table. This will emit events

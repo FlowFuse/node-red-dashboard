@@ -84,7 +84,9 @@
                 selectionType: { value: 'none' },
                 columns: {
                     value: null
-                }
+                },
+                mobileBreakpoint: { value: 'sm' },
+                mobileBreakpointType: { value: 'defaults' }
             },
             inputs: 1,
             outputs: 1,
@@ -118,9 +120,30 @@
                         group: '#node-input-group'
                     })
                 }
-    
-                const autocols = $('#node-input-autocols')
 
+                // setup mobile breakpoint TypedInput
+                $('#node-input-mobileBreakpoint').typedInput({
+                    typeField: '#node-input-mobileBreakpointType',
+                    types: [{
+                        value: 'defaults',
+                        label: 'defaults:',
+                        options: [
+                            { value: 'sm', label: 'Mobile (< 576px)' },
+                            { value: 'md', label: 'Tablet (< 768px)' },
+                            { value: 'lg', label: 'Desktop (< 1024px)' }
+                        ]
+                    }, {
+                        value: 'px',
+                        label: 'px:',
+                        validate: RED.validators.number()
+                    }, {
+                        value: 'none',
+                        label: 'None',
+                        hasValue: false
+                    }]
+                })
+
+                const autocols = $('#node-input-autocols')
                 $(autocols).change(() => {
                     const val = autocols.is(':checked')
                     const customColsDiv = $('#node-input-columns-container')
@@ -291,6 +314,11 @@
     <div class="form-row">
         <label for="node-input-maxrows"><i class="fa fa-tag"></i> <span data-i18n="ui-table.label.maxRows"></label>
         <input type="number" id="node-input-maxrows">
+    </div>
+    <div class="form-row">
+        <label for="node-input-mobileBreakpoint"><i class="fa fa-mobile"></i> <span data-i18n="ui-table.label.mobileBreakpoint"></label>
+        <input type="text" id="node-input-mobileBreakpoint">
+        <input type="hidden" id="node-input-mobileBreakpointType">
     </div>
     <div class="form-row">
         <label for="node-input-selectionType"><i class="fa fa-crosshairs"></i> <span data-i18n="ui-table.label.selection"></span></label>
