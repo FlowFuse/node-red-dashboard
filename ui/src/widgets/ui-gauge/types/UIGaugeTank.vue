@@ -185,6 +185,13 @@ export default {
     text-align: center;
     white-space: nowrap;
     color: black;
+    --text-border: 1px;
+    --text-border-inv: calc(-1 * 1px);
+    --text-border-color: white;
+    text-shadow: var(--text-border) var(--text-border-inv) var(--text-border-color),
+        var(--text-border-inv) var(--text-border-inv) var(--text-border-color),
+        var(--text-border-inv) var(--text-border) var(--text-border-color),
+        var(--text-border) var(--text-border) var(--text-border-color);
 }
 
 .nrdb-ui-gauge-tank--center {
