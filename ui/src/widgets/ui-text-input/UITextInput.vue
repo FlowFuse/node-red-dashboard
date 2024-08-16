@@ -42,48 +42,54 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
-            return this.props.label
+            return this.getProperty('label')
         },
         type: function () {
-            return this.props.mode || 'text'
+            return this.getProperty('mode') || 'text'
         },
         tooltip: function () {
             return this.props.tooltip
         },
         clearable: function () {
-            return this.props.clearable
+            return this.getProperty('clearable')
         },
         prependIcon () {
-            const icon = this.props?.icon
+            const icon = this.getProperty('icon')
             if (!icon) {
                 return undefined
             }
             const mdiIcon = this.makeMdiIcon(icon)
-            return icon && this.props.iconPosition === 'left' && this.props.iconInnerPosition === 'outside' ? mdiIcon : undefined
+            return icon && this.iconPosition === 'left' && this.iconInnerPosition === 'outside' ? mdiIcon : undefined
         },
         appendIcon () {
-            const icon = this.props?.icon
+            const icon = this.getProperty('icon')
             if (!icon) {
                 return undefined
             }
             const mdiIcon = this.makeMdiIcon(icon)
-            return icon && this.props.iconPosition === 'right' && this.props.iconInnerPosition === 'outside' ? mdiIcon : undefined
+            return icon && this.iconPosition === 'right' && this.iconInnerPosition === 'outside' ? mdiIcon : undefined
         },
         prependInnerIcon () {
-            const icon = this.props?.icon
+            const icon = this.getProperty('icon')
             if (!icon) {
                 return undefined
             }
             const mdiIcon = this.makeMdiIcon(icon)
-            return icon && this.props.iconPosition === 'left' && this.props.iconInnerPosition === 'inside' ? mdiIcon : undefined
+            return icon && this.iconPosition === 'left' && this.iconInnerPosition === 'inside' ? mdiIcon : undefined
         },
         appendInnerIcon () {
-            const icon = this.props?.icon
+            const icon = this.getProperty('icon')
             if (!icon) {
                 return undefined
             }
             const mdiIcon = this.makeMdiIcon(icon)
-            return icon && this.props.iconPosition === 'right' && this.props.iconInnerPosition === 'inside' ? mdiIcon : undefined
+            return icon && this.iconPosition === 'right' && this.iconInnerPosition === 'inside' ? mdiIcon : undefined
+        },
+        iconPosition () {
+            return this.getProperty('iconPosition')
+        },
+        iconInnerPosition () {
+            return this.getProperty('iconInnerPosition')
         },
         value: {
             get () {
@@ -109,7 +115,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
     },
     methods: {
         onInput (msg) {
@@ -137,6 +143,7 @@ export default {
             }
         },
         send: function () {
+            console.log('send', this.id, this.value)
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange: function () {
@@ -169,6 +176,18 @@ export default {
         },
         makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
+        },
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('mode', updates.mode)
+            this.updateDynamicProperty('clearable', updates.clearable)
+            this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('iconPosition', updates.iconPosition)
+            this.updateDynamicProperty('iconInnerPosition', updates.iconInnerPosition)
         }
     }
 }
