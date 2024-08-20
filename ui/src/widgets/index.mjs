@@ -9,6 +9,7 @@ import UIForm from './ui-form/UIForm.vue'
 import UIGauge from './ui-gauge/UIGauge.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
+import UINumberInput from './ui-number-input/UINumberInput.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
 import UISlider from './ui-slider/UISlider.vue'
 import UISwitch from './ui-switch/UISwitch.vue'
@@ -30,6 +31,7 @@ export {
     UIGauge,
     UIMarkdown,
     UINotification,
+    UINumberInput,
     UIRadioGroup,
     UISlider,
     UISwitch,
@@ -55,6 +57,7 @@ export default {
     'ui-gauge': UIGauge,
     'ui-markdown': UIMarkdown,
     'ui-notification': UINotification,
+    'ui-number-input': UINumberInput,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-switch': UISwitch,

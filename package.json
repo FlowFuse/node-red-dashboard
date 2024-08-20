@@ -123,6 +123,7 @@
             "ui-theme": "nodes/config/ui_theme.js",
             "ui-form": "nodes/widgets/ui_form.js",
             "ui-text-input": "nodes/widgets/ui_text_input.js",
+            "ui-number-input": "nodes/widgets/ui_number_input.js",
             "ui-file-input": "nodes/widgets/ui_file_input.js",
             "ui-button": "nodes/widgets/ui_button.js",
             "ui-button-group": "nodes/widgets/ui_button_group.js",
