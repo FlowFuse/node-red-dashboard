@@ -33,11 +33,14 @@ export default {
             return this.getProperty('layout')
         },
         style () {
-            return {
-                'font-family': this.getProperty('font'),
-                'font-size': `${this.getProperty('fontSize')}px`,
-                color: this.getProperty('color')
+            if (this.props.style) {
+                return {
+                    'font-family': this.getProperty('font'),
+                    'font-size': `${this.getProperty('fontSize')}px`,
+                    color: this.getProperty('color')
+                }
             }
+            return null
         }
     },
     created () {
