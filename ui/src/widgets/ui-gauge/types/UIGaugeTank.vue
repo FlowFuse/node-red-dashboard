@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-ui-gauge-tank--container">
+    <div v-resize="onResize" class="nrdb-ui-gauge-tank--container">
         <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
         <div
             class="nrdb-ui-gauge-tank"
@@ -107,6 +107,9 @@ export default {
                 this.svgBottom = 0
                 this.svgScaleRatio = 1
             }
+        },
+        onResize () {
+            this.updateMask()
         }
     }
 }
@@ -148,15 +151,28 @@ export default {
 .nrdb-ui-gauge-tank--container {
     display: flex;
     flex-direction: column;
+    container: tank-container / size;
 }
 .nrdb-ui-gauge-tank {
-    --tank-margin: 12px;
-    --tank-radius: 12px;
-    --tank-border: 8px;
+    --tank-margin: 6px;
+    --tank-padding: 3px;
+    --tank-radius: 6px;
+    --tank-border: 4px;
+}
 
+@container tank-container (min-width: 75px) and (min-height: 75px) {
+    .nrdb-ui-gauge-tank {
+        --tank-margin: 12px;
+        --tank-radius: 12px;
+        --tank-border: 8px;
+        --tank-padding: 6px;
+    }
+}
+
+.nrdb-ui-gauge-tank {
     border-radius: var(--tank-radius);
     border-width: var(--tank-border);
-    padding: 6px;
+    padding: var(--tank-padding);
     border-color: var(--gauge-fill);
     border-style: solid;
     flex-grow: 1;
@@ -177,7 +193,7 @@ export default {
 .nrdb-ui-gauge-tank label {
     font-weight: bold;
     resize: both;
-    font-size: min(2.5rem, 30cqmin);
+    font-size: min(2.5rem, 50cqmin);
     position: relative;
     z-index: 2;
     width: 100%;
