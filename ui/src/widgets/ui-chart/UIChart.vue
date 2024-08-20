@@ -369,7 +369,7 @@ export default {
                 }
                 // add the new dataset to the chart
                 const d = {
-                    backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length],
+                    backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length % this.props.colors.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
                     pointHoverRadius: radius * 1.25,
