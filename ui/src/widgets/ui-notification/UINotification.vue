@@ -9,7 +9,7 @@
         :style="{'--nrdb-ui-notification-color': color}"
     >
         <div v-if="showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" :color="color" style="display: block; width: 100%" />
+            <v-progress-linear v-model="countdown" :color="progressColor" style="display: block; width: 100%" />
         </div>
         <div v-if="!raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -66,6 +66,9 @@ export default {
         },
         allowDismiss () {
             return this.getProperty('allowDismiss')
+        },
+        progressColor () {
+            return this.messages[this.id]?.color || (this.props.colorDefault ? 'primary' : this.color)
         },
         color () {
             if (this.props.colorDefault) {
