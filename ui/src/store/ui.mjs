@@ -161,7 +161,9 @@ const mutations = {
         const config = data.config
 
         for (const prop in config) {
-            state.widgets[wId].state[prop] = config[prop]
+            if (state.widgets[wId]) {
+                state.widgets[wId].state[prop] = config[prop]
+            }
         }
     },
     /**
