@@ -21,7 +21,7 @@ describe('Node/-RED Dashboard 2.0 - Number Input Widget', () => {
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').clear()
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').type('2')
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').trigger('keydown', { key: 'Enter' })
-        cy.get('#nrdb-ui-widget-2f48e919876213cc .nrdb-ui-number-field .v-field__clearable').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-2f48e919876213cc .nrdb-ui-number-field .v-field__clearable'))
         cy.get('#nrdb-ui-widget-2f48e919876213cc input[type="text"]').should('have.value', '')
         cy.checkOutput('msg.payload', null)
     })
