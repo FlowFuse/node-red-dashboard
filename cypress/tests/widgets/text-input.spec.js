@@ -20,7 +20,7 @@ describe('Node/-RED Dashboard 2.0 - Text Input Widget', () => {
     it('reset field on onClear event correctly and outputs the correct payload', () => {
         cy.get('#nrdb-ui-widget-ab3346b81a7cf742 input[type="text"]').clear()
         cy.get('#nrdb-ui-widget-ab3346b81a7cf742 input[type="text"]').type('New text')
-        cy.get('#nrdb-ui-widget-ab3346b81a7cf742 .nrdb-ui-text-field .v-field__clearable').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-ab3346b81a7cf742 .nrdb-ui-text-field .v-field__clearable'))
         cy.get('#nrdb-ui-widget-ab3346b81a7cf742 input[type="text"]').should('have.value', '')
         cy.checkOutput('msg.payload', null)
     })
