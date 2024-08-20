@@ -150,15 +150,15 @@
         "wires": []
     },
     {
-        "id": "dashboard-ui-gauge-water-tank",
+        "id": "dashboard-ui-gauge-tank",
         "type": "ui-gauge",
         "z": "node-red-tab-gauges",
-        "name": "Water Tank",
+        "name": "Tank",
         "group": "dashboard-ui-group",
         "order": 1,
         "width": "3",
         "height": "5",
-        "gtype": "gauge-water-tank",
+        "gtype": "gauge-tank",
         "gstyle": "needle",
         "title": "",
         "units": "",
