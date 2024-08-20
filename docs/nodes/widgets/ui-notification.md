@@ -7,8 +7,6 @@ props:
     Timeout: Number of seconds before the notification will automatically close.
     Show Countdown Bar: Whether or not to show a reducing progress bar to indicate the time remaining before the notification will close.
     Allow Manual Dismissal: Whether or not to show a button that will allow the user to dismiss the notification. Otherwise, will only close after Timeout.
-    Button Label: If "Allow Manual Dismissal" is enabled, this is the label for the button.
-    Allow Manual Confirmation: Whether or not to show a button that will allow the user to confirm the notification. Otherwise, will only close after Timeout.
     Button Label: If "Allow Manual Confirmation" is enabled, this is the label for the button.
     Accept Raw: Whether you're passing in raw HTML that should be processed client-side.
     Class: Appends CSS classes to the widget
