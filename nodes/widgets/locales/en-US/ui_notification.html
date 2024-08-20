@@ -1,0 +1,80 @@
+<script type="text/html" data-help-name="ui-notification">
+    <p>
+        Displays text/HTML in a small window, that will appear on the screen
+        a defined duration of time(out) at a defined location.
+    </p>
+    <p>
+        Each received <code>msg.payload</code> will update the value shown
+        inside the notification dialog (and the notification will be displayed).
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Position <span class="property-type">list</span></dt>
+        <dd>The position on the screen whethere the notification will appear.</dd>
+        <dt>Color <span class="property-type">color</span></dt>
+        <dd>The color that should be used for the notification border.</dd>
+        <dt>Timeout <span class="property-type">number</span></dt>
+        <dd>Number of seconds before the notification will automatically close.</dd>
+        <dt>Show Countdown Bar <span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a reducing progress bar to indicate the time remaining.</dd>
+        <dt>Allow Manual Dismissal <span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a button that will allow the user to dismiss the notification.</dd>
+        <dt>Allow Manual Confirmation <span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a button that will allow the user to confirm the notification.</dd>
+        <dt>Accept Raw <span class="property-type">boolean</span></dt>
+        <dd>Whether you're passing in raw HTML that should be processed client-side.</dd>
+    </dl>
+    <h3>Dynamic Properties (Inputs)</h3>
+    <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
+    <dl class="message-properties">
+        <dt class="optional">allowConfirm<span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a button that will allow the user to confirm the notification.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">allowDismiss<span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a button that will allow the user to dismiss the notification.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>The color that should be used for the notification border.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">confirmText<span class="property-type">string</span></dt>
+        <dd>The text that will displayed on the confirmation button.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">dismissText<span class="property-type">string</span></dt>
+        <dd>The text that will displayed on the dismiss button.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">displayTime<span class="property-type">number</span></dt>
+        <dd>Number of seconds before the notification will automatically close.  Note: this needs to be overridden before the notification becomes visible!</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">position<span class="property-type">string</span></dt>
+        <dd>
+            The position on the screen whethere the notification will appear.
+            <ul>
+                <li><code>top right</code></li>
+                <li><code>top center</code></li>
+                <li><code>top left</code></li>
+                <li><code>bottom right</code></li>
+                <li><code>bottom center</code></li>
+                <li><code>bottom left</code></li>
+                <li><code>center center</code></li>
+            </ul>
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">raw<span class="property-type">boolean</span></dt>
+        <dd>Whether you're passing in raw HTML that should be processed client-side.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">show<span class="property-type">boolean</span></dt>
+        <dd>Whether you want to show (even when no <code>msg.payload</code> available) or hide the notification.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">showCountdown<span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show a reducing progress bar to indicate the time remaining.</dd>
+    </dl>
+</script>

@@ -21,8 +21,10 @@
                 displayTime: { value: '3' },
                 showCountdown: { value: true },
                 outputs: { value: 1 },
-                allowDismiss: { value: 'OK' },
+                allowDismiss: { value: true },
                 dismissText: { value: 'Close' },
+                allowConfirm: { value: false },
+                confirmText: { value: 'Confirm' },
                 raw: { value: false },
                 className: { value: '' },
                 name: { value: '' }
@@ -47,6 +49,15 @@
                         $('#node-notification-dismissText').show()
                     } else {
                         $('#node-notification-dismissText').hide()
+                    }
+                })
+
+                $('#node-input-allowConfirm').on('change', function () {
+                    const allowConfirm = $('#node-input-allowConfirm').is(':checked')
+                    if (allowConfirm) {
+                        $('#node-notification-confirmText').show()
+                    } else {
+                        $('#node-notification-confirmText').hide()
                     }
                 })
 
@@ -115,6 +126,14 @@
     <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-dismissText">
         <label for="node-input-dismissText"><i class="fa fa-check"></i> Button Label</label>
         <input type="text" id="node-input-dismissText" placeholder="Close">
+    </div>
+    <div class="form-row form-row-flex" id="node-notification-allowConfirm">
+        <input type="checkbox" id="node-input-allowConfirm">
+        <label for="node-input-allowConfirm"> Allow Manual Confirmation</label>
+    </div>
+    <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-confirmText">
+        <label for="node-input-confirmText"><i class="fa fa-check"></i> Button Label</label>
+        <input type="text" id="node-input-confirmText" placeholder="Confirm">
     </div>
     <div class="form-row form-row-flex" id="node-toast-raw">
         <input type="checkbox" id="node-input-raw" style="display:inline-block; width:auto; vertical-align:baseline;">

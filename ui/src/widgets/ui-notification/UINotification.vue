@@ -5,21 +5,29 @@
         vertical
         multi-line
         :timeout="-1"
-        :location="props.position"
+        :location="position"
         :style="{'--nrdb-ui-notification-color': color}"
     >
-        <div v-if="props.showCountdown" class="nrdb-ui-notification-countdown">
-            <v-progress-linear v-model="countdown" :color="messages[id]?.color || (props.colorDefault ? 'primary' : color)" style="display: block; width: 100%" />
+        <div v-if="showCountdown" class="nrdb-ui-notification-countdown">
+            <v-progress-linear v-model="countdown" :color="progressColor" style="display: block; width: 100%" />
         </div>
-        <div v-if="!props.raw">{{ value }}</div>
+        <div v-if="!raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else v-html="value" />
-        <template v-if="props.allowDismiss" #actions>
+        <template v-if="allowDismiss || allowConfirm" #actions>
             <v-btn
+                v-if="allowDismiss"
                 variant="text"
-                @click="close('clicked')"
+                @click="close('dismiss_clicked')"
             >
-                {{ props.dismissText || "Close" }}
+                {{ dismissText }}
+            </v-btn>
+            <v-btn
+                v-if="allowConfirm"
+                variant="text"
+                @click="close('confirm_clicked')"
+            >
+                {{ confirmText }}
             </v-btn>
         </template>
     </v-snackbar>
@@ -33,7 +41,8 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
@@ -49,32 +58,88 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         value: function () {
+            // Get the value (i.e. the notification text content) from the last input msg
             return this.messages[this.id]?.payload
         },
-        color: function () {
-            if (this.messages[this.id]?.color) {
-                return this.messages[this.id]?.color
-            } else if (this.props.colorDefault) {
+        allowConfirm () {
+            return this.getProperty('allowConfirm')
+        },
+        allowDismiss () {
+            return this.getProperty('allowDismiss')
+        },
+        progressColor () {
+            return this.messages[this.id]?.color || (this.props.colorDefault ? 'primary' : this.color)
+        },
+        color () {
+            if (this.props.colorDefault) {
                 return 'rgb(var(--v-theme-group-background))'
             } else {
-                return this.props.color
+                return this.getProperty('color')
             }
+        },
+        confirmText () {
+            return this.getProperty('confirmText')
+        },
+        dismissText () {
+            return this.getProperty('dismissText')
+        },
+        displayTime () {
+            return this.getProperty('displayTime')
+        },
+        position () {
+            return this.getProperty('position')
+        },
+        raw () {
+            return this.getProperty('raw')
+        },
+        showCountdown () {
+            return this.getProperty('showCountdown')
         }
     },
     created () {
         // can't do this in setup as we have custom onInput function
-        this.$dataTracker(this.id, this.onMsgInput)
+        this.$dataTracker(this.id, this.onMsgInput, null, this.onDynamicProperties)
     },
     methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('allowConfirm', updates.allowConfirm)
+            this.updateDynamicProperty('allowDismiss', updates.allowDismiss)
+            this.updateDynamicProperty('color', updates.color)
+            this.updateDynamicProperty('confirmText', updates.confirmText)
+            this.updateDynamicProperty('dismissText', updates.dismissText)
+            this.updateDynamicProperty('displayTime', updates.displayTime)
+            this.updateDynamicProperty('position', updates.position)
+            this.updateDynamicProperty('raw', updates.raw)
+            this.updateDynamicProperty('showCountdown', updates.showCountdown)
+        },
         onMsgInput (msg) {
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            this.show = true
-            if (this.props.displayTime > 0) {
-                // begin countdown
-                this.startCountdown(this.props.displayTime * 1000)
+            // Make sure the last msg (that has a payload, containing the notification content) is being stored
+            if (msg.payload) {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
+
+            if (msg.show === true || typeof msg.payload !== 'undefined') {
+                // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
+                if (!this.show) {
+                    this.show = true
+
+                    // If a display time has been specified, close the notification automatically after that time
+                    if (this.displayTime > 0) {
+                        this.startCountdown(this.displayTime * 1000)
+                    }
+                }
+            } else if (msg.show === false) {
+                // If msg.show is false, the notification popup need to be hidden (if currently showed)
+                if (this.show) {
+                    this.close('input_msg')
+                }
             }
         },
         startCountdown (time) {
@@ -91,12 +156,17 @@ export default {
                 // how many seconds have elapsed
                 const elapsed = (tok - this.tik) / 1000
                 // 100 = full bar, 0 = empty bar
-                this.countdown = 100 - (elapsed / parseFloat(this.props.displayTime)) * 100
+                this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
             }, 100)
         },
         close (payload) {
             this.show = false
-            this.$socket.emit('widget-action', this.id, payload)
+
+            const msg = this.messages[this.id] || {}
+            this.$socket.emit('widget-action', this.id, {
+                ...msg,
+                payload
+            })
 
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
