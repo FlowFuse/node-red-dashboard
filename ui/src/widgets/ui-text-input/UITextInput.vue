@@ -143,7 +143,6 @@ export default {
             }
         },
         send: function () {
-            console.log('send', this.id, this.value)
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange: function () {
