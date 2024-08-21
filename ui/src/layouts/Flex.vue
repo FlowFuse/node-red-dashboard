@@ -125,7 +125,6 @@ export default {
 }
 
 .nrdb-layout--flex > div {
-    width: var(--layout-card-width);
     max-width: 100%;
 }
 
