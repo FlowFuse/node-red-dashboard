@@ -35,7 +35,7 @@ describe('Node-RED Dashboard 2.0 - Text Input (Dynamic Properties)', () => {
     it('Set the dynamic properties: set input "label"', () => {
         cy.get('#nrdb-ui-widget-8b7d7031372e4275').should('exist')
         cy.clickAndWait(cy.get('button').contains('Dynamic Property: Label'))
-        cy.get('#nrdb-ui-widget-8b7d7031372e4275 .v-input .v-field .v-field__field').find('.v-field-label').should('exist')
+        cy.get('#nrdb-ui-widget-8b7d7031372e4275 .v-input .v-field .v-field__field').find('.v-field-label').contains('label updated')
     })
 
     it('Set the dynamic properties: set input "clearable"', () => {
