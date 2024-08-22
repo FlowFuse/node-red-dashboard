@@ -49,6 +49,10 @@ main {
     gap: 6px;
 }
 
+#app-bar-title {
+    flex-grow: 1;
+}
+
 /**
 * Loading Animation
 */
