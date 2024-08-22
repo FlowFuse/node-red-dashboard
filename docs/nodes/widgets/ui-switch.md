@@ -18,7 +18,28 @@ controls:
         description: Allow control over whether or not the switch can be toggled via the UI.
 dynamic:
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
+        structure: ["String"]
+    Label:
+        payload: msg.ui_update.label
+        structure: ["Boolean"]
+    Passthrough:
+        payload: msg.ui_update.passthru
+        structure: ["Boolean"]
+    Indicator:
+        payload: msg.ui_update.decouple
+        structure: ["Boolean"]
+    On Color:
+        payload: msg.ui_update.oncolor
+        structure: ["String"]
+    Off Color:
+        payload: msg.ui_update.offcolor
+        structure: ["String"]
+    On Icon:
+        payload: msg.ui_update.onicon
+        structure: ["String"]
+    Off Icon:
+        payload: msg.ui_update.officon
         structure: ["String"]
 ---
 
