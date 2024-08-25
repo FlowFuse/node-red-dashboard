@@ -59,7 +59,7 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             // Get the value (i.e. the notification text content) from the last input msg
-            return this.messages[this.id]?.payload
+            return this.messages[this.id]?.ui_payload || this.messages[this.id]?.payload
         },
         allowConfirm () {
             return this.getProperty('allowConfirm')
@@ -118,15 +118,16 @@ export default {
         },
         onMsgInput (msg) {
             // Make sure the last msg (that has a payload, containing the notification content) is being stored
-            if (msg.payload) {
+            const payload = msg.ui_payload || msg.payload
+            if (typeof payload !== 'undefined') {
                 this.$store.commit('data/bind', {
                     widgetId: this.id,
                     msg
                 })
             }
 
-            if (msg.show === true || typeof msg.payload !== 'undefined') {
-                // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
+            if (msg.show === true || typeof payload !== 'undefined') {
+                // If msg.show is true or payload contains a notification title, the notification popup need to be showed (if currently hidden)
                 if (!this.show) {
                     this.show = true
 
