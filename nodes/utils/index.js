@@ -30,6 +30,28 @@ async function appendTopic (RED, config, wNode, msg) {
 }
 
 /**
+ * Evaluates the property/propertyType and sets ui_payload in the message object
+ * This leaves the original payload untouched
+ * This permits an TypedInput widget to be used to set the payload
+ * @param {*} RED - The RED object
+ * @param {Object} config - The node configuration
+ * @param {Object} wNode - The node object
+ * @param {Object} msg - The message object
+ * @returns {Object} - The updated message object
+ */
+async function updatePayload (RED, config, wNode, msg) {
+    if (config.propertyType && config.property) {
+        try {
+            msg.ui_payload = await asyncEvaluateNodeProperty(RED, config.property, config.propertyType || 'msg', wNode, msg) || ''
+        } catch (_err) {
+            // do nothing
+            console.error(_err)
+        }
+    }
+    return msg
+}
+
+/**
  * Adds socket/client data to a msg payload, if enabled
  *
  */
@@ -57,5 +79,6 @@ function addConnectionCredentials (RED, msg, conn, config) {
 module.exports = {
     asyncEvaluateNodeProperty,
     appendTopic,
-    addConnectionCredentials
+    addConnectionCredentials,
+    updatePayload
 }

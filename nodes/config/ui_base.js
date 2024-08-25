@@ -4,7 +4,7 @@ const path = require('path')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, updatePayload } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
