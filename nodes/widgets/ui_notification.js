@@ -5,6 +5,7 @@ module.exports = function (RED) {
         const node = this
 
         RED.nodes.createNode(this, config)
+        config.passthru = false // prevent default passthru by setting it explicity to `false`. The notification itself will send msg on timeout, dismissal or confirmation!
 
         // Which ui are we rendering this widget.
         // In contradiction to other ui nodes (which belong to a group), the notification node belongs to a ui instead.
