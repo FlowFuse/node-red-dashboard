@@ -149,7 +149,7 @@ export default {
             this.timeouts.close = setTimeout(() => {
                 // close the notification after time has elapsed
                 this.close('timeout')
-            }, time)
+            }, time + 100) // add 100ms grace before firing timeout in case user clicked a button (ui update is slow)
 
             // update the progress bar every 100ms
             this.timeouts.step = setInterval(() => {
