@@ -160,20 +160,22 @@ export default {
                 this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
             }, 100)
         },
-        close (payload) {
-            this.show = false
-
-            const msg = this.messages[this.id] || {}
-            this.$socket.emit('widget-action', this.id, {
-                ...msg,
-                payload
-            })
-
+        close (reason) {
+            // always kill timers
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
             this.tik = null
             this.timeouts.close = null
             this.timeouts.step = null
+
+            // interlock to prevent double-sending
+            if (this.show === false) {
+                return
+            }
+            this.show = false
+            const msg = { ...this.messages[this.id] || {}, ui_reason: reason }
+            delete msg.ui_payload // remove the temporary ui_payload added in `updateMessage`
+            this.$socket.emit('widget-action', this.id, msg)
         }
     }
 }
