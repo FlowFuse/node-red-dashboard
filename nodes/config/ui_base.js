@@ -977,6 +977,10 @@ module.exports = function (RED) {
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
+                                if (widgetConfig.property || widgetConfig.propertyType) {
+                                    // append ui_payload to msg if property/propertyType is set
+                                    msg = await updatePayload(RED, widgetConfig, wNode, msg)
+                                }
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {
                                         send(msg)
