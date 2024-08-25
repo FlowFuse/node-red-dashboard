@@ -11,58 +11,49 @@ Provides a means to render custom content or a set of node-styles depending on s
 
 ### Type: Widget
 When the scope is set to **Widget**, the template will be rendered in the Dashboard as HTML.
-You can render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`)
-and access incoming data to the node via the `msg` object, e.g:
 
-<pre>
-&lt;template&gt;
-  &lt;div&gt;
-      &lt;h2&gt;Counter&lt;/h2&gt;
-      &lt;p&gt;Current Count: {{ count }}&lt;/p&gt;
-      &lt;p class="test-class"&gt;Formatted Count: {{ formattedCount }}&lt;/p&gt;
-      &lt;v-btn @click="increase()"&gt;Increment&lt;/v-btn&gt;
-      &lt;/div&gt;
-&lt;/template&gt;
+You can render dynamic content using any VueJS data-binding expressions, (e.g. `v-if`, `v-for`, `:class`)
+and access incoming data to the node via the `msg` object.
 
-&lt;script&gt;
-  export default {
-      data() {
-          // define variables available component-wide
-          // (in &lt;template&gt; and component functions)
-          return {
-              count: 0
-          }
-      },
-      watch: {
-          // watch for any changes of "count"
-          count() {
-              if (this.count % 5 === 0) {
-                  this.send({payload: 'Multiple of 5'})
-              }
-          }
-      },
-      computed: {
-          // automatically compute this variable
-          // whenever VueJS deems appropriate
-          formattedCount() {
-              return `${this.count} Apples`
-          }
-      },
-      methods: {
-          // expose a method to our &lt;template&gt; and Vue Application
-          increase() {
-              this.count++
-          }
-      }
-  }
-&lt;/script&gt;
+#### Working with Variables
 
-&lt;style&gt;
-.test-class {
-  color: red;
-}
-&lt;/style&gt;
-</pre>
+Any variables that you want to render into your `<template />` are done so in one of two ways:
+
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the `""` here is treated as JavaScript, for example: 
+
+```html
+&lt;p :class="msg.payload">Hello World&lt;/p>
+````
+
+or, if you want to use `msg.payload` as part of the value, you can do this:
+
+```html
+&lt;!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->`
+&lt;p :class="'text-' + msg.payload">Hello World&lt;/p>
+&lt;!-- or with string literals: -->
+&lt;p :class="`text-${msg.payload}`">Hello World&lt;/p>
+````
+
+or even use `msg.payload` as a condition:
+
+```html
+&lt;!-- 
+  Change color based on the value of msg.payload: 
+  * When msg.payload equals "error", set text to the predefined `text-error` color. 
+  * Otherwise, set text to the predefined `text-info` color.
+-->
+&lt;p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World&lt;/p>
+````
+
+- **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Anything inside the curly brackets is treated as JavaScript. For example:
+
+```html
+&lt;p>Hello {{ msg.payload }}&lt;/p>
+```
+
+```html
+&lt;p>Percentage {{ msg.payload * 100 }}%&lt;/p>
+```
 
 #### Built In Functions
 
@@ -71,7 +62,7 @@ The template comes with two built-in functions:
 `send(msg)` -  Can be used to send a `msg` from the template, e.g:
 
 ```html
-<v-btn @click="send({'hello': 'world'})"></v-btn>
+&lt;v-btn @click="send({'hello': 'world'})">&lt;/v-btn>
 ```
 
 `submit()` - Can be attached to a `<form />`. The `msg` sent will be an object
@@ -112,10 +103,10 @@ Additionally, we also bind a computed variable `value` to `msg.payload`. This me
 Such an example would be:
 
 ```html
-<div>
-    <h2>Latest <code>msg</code> received:</h2>
-    <pre>{{ msg }}</pre>
-</div>
+&lt;div>
+    &lt;h2>Latest &lt;code>msg&lt;/code> received:&lt;/h2>
+    &lt;pre>{{ msg }}&lt;/pre>
+&lt;/div>
 ```
 
 #### Vuetify Widgets
