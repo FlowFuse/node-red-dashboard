@@ -30,7 +30,6 @@ export default {
     },
     computed: {
         columns () {
-            console.log(this.group.width)
             return this.group.width
         }
     },
