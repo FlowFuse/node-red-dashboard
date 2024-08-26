@@ -48,7 +48,7 @@ export default {
     data () {
         const rowHeight = getComputedStyle(document.body).getPropertyValue('--widget-row-height')
         return {
-            rowHeight
+            rowHeight: parseFloat(rowHeight)
         }
     },
     computed: {
