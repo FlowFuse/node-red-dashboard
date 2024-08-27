@@ -53,6 +53,15 @@ export default {
         icon () {
             return this.getProperty('icon')
         },
+        segments () {
+            return this.getProperty('segments')
+        },
+        min () {
+            return this.getProperty('min')
+        },
+        max () {
+            return this.getProperty('max')
+        },
         dynamicProps () {
             const props = {
                 ...this.props,
@@ -62,7 +71,10 @@ export default {
                 prefix: this.prefix,
                 suffix: this.suffix,
                 units: this.units,
-                icon: this.icon
+                icon: this.icon,
+                segments: this.segments,
+                min: this.min,
+                max: this.max
             }
             console.log('props', this.props, props)
             return props
@@ -84,6 +96,9 @@ export default {
             this.updateDynamicProperty('suffix', updates.suffix)
             this.updateDynamicProperty('units', updates.units)
             this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('segments', updates.segments)
+            this.updateDynamicProperty('min', updates.min)
+            this.updateDynamicProperty('max', updates.max)
         }
     }
 }
