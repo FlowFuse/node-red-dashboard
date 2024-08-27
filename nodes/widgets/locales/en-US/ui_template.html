@@ -1,4 +1,4 @@
-<script type="text/markdown" data-help-name="ui-template">
+
   (see [full docs](https://dashboard.flowfuse.com/nodes/widgets/ui-template.html))
 
 The content of `ui-template` is controlled by the "Type" property.
@@ -19,7 +19,7 @@ and access incoming data to the node via the `msg` object.
 
 Any variables that you want to render into your `<template />` are done so in one of two ways:
 
-- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the `""` here is treated as JavaScript, for example: 
+- **Attribute Binding** - Use `:` to bind a variable to an attribute. Anything inside the double quotes `""` is treated as JavaScript, for example: 
 
 ```html
 &lt;p :class="msg.payload">Hello World&lt;/p>
@@ -28,13 +28,13 @@ Any variables that you want to render into your `<template />` are done so in on
 or, if you want to use `msg.payload` as part of the value, you can do this:
 
 ```html
-&lt;!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->`
+&lt;!-- Change color based on msg.payload. Expects payload to be either "error", "warning" or "info" -->
 &lt;p :class="'text-' + msg.payload">Hello World&lt;/p>
 &lt;!-- or with string literals: -->
 &lt;p :class="`text-${msg.payload}`">Hello World&lt;/p>
 ````
 
-or even use `msg.payload` as a condition:
+or use `msg.payload` as a condition:
 
 ```html
 &lt;!-- 
@@ -44,6 +44,22 @@ or even use `msg.payload` as a condition:
 -->
 &lt;p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hello World&lt;/p>
 ````
+
+or even as a conditional block:
+
+```html
+&lt;!-- 
+  Show a message based on the value of msg.payload:
+  * When msg.payload equals "error", show the error message.
+  * When msg.payload equals "warning", show the warning message.
+  * Otherwise, show the info message.
+-->
+&lt;div>
+  &lt;p v-if="msg.payload === 'error'">Error: Something went wrong!&lt;/p>
+  &lt;p v-else-if="msg.payload === 'warning'">Warning: Be careful!&lt;/p>
+  &lt;p v-else>Info: Everything is fine!&lt;/p>
+&lt;/div>
+```
 
 - **Text Interpolation** - Use `{{ }}` to interpolate a variable into the text of an element. Anything inside the curly brackets is treated as JavaScript. For example:
 
@@ -68,11 +84,11 @@ The template comes with two built-in functions:
 `submit()` - Can be attached to a `<form />`. The `msg` sent will be an object
   representation of the `FormData` from the attached form, e.g:
 ```html
-&lt;form @submit.prevent="submit"&gt;
-    &lt;v-text-field name="first" label="First Name"&gt;&lt;/v-text-field&gt;
-    &lt;v-text-field name="last" label="Last Name"&gt;&lt;/v-text-field&gt;
-    &lt;v-btn type="submit"&gt;&lt;/v-btn&gt;
-&lt;/form&gt;
+&lt;form @submit.prevent="submit">
+    &lt;v-text-field name="first" label="First Name">&lt;/v-text-field>
+    &lt;v-text-field name="last" label="Last Name">&lt;/v-text-field>
+    &lt;v-btn type="submit">&lt;/v-btn>
+&lt;/form>
 ```
 Would send the following `msg` when submitted:
 ```js
@@ -83,14 +99,14 @@ Would send the following `msg` when submitted:
 Here, we call it when someone clicks our "Send Hello World" button:
 
 ```vue
-<v-btn @click="send({payload: 'Hello World'})">Send Hello World</v-btn>
+&lt;v-btn @click="send({payload: 'Hello World'})">Send Hello World</v-btn>
 ```
 
 #### Sending on Change
 Or another example, where the payload is automatically sent any time the `v-model` is changed:
 
 ```vue
-<v-rating hover :length="5" :size="32" v-model="value"
+&lt;v-rating hover :length="5" :size="32" v-model="value"
     active-color="primary" @update:modelValue="send({payload: value})"/>
 ```
 
@@ -132,5 +148,3 @@ e.g.
   color: green;
 }
 ```
-
-</script>
