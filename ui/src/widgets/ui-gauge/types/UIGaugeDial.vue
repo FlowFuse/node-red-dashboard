@@ -96,10 +96,8 @@ export default {
             this.resize()
             this.update(val)
         },
-        updateOn: {
-            handler () {
-                this.update(this.value)
-            }
+        updateOn () {
+            this.update(this.value)
         }
     },
     mounted () {
