@@ -1,5 +1,6 @@
 <template>
-    <component :is="gaugeType" :id="id" :props="dynamicProps" :value="value" />
+    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
+    <ui-gauge-dial v-else :id="id" :props="dynamicProps" :value="value" />
 </template>
 
 <script>
@@ -26,9 +27,6 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        gaugeType () {
-            return `ui-${this.gtype}` || 'ui-gauge-dial'
-        },
         value: function () {
             return this.messages[this.id]?.payload
         },
