@@ -155,7 +155,7 @@ export default {
 .nrdb-ui-gauge-battery label {
     font-weight: bold;
     resize: both;
-    font-size: min(2.5rem,max(30cqmin, .5rem));
+    font-size: min(2.5rem,max(25cqmin, .5rem));
     position: relative;
     z-index: 2;
     width: 100%;

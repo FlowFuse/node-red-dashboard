@@ -34,6 +34,7 @@ export default {
     border: 1px solid rgb(var(--v-theme-group-outline));
     label {
         font-size: min(2.5rem, max(40cqmin, .5rem));
+        text-align: center;
     }
 }
 </style>
