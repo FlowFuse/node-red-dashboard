@@ -48,9 +48,11 @@ dynamic:
     Icon Position:
         payload: msg.ui_update.iconPosition
         structure: ["String"]
+        examples: ["left", "right"]
     Icon Inner Position:
         payload: msg.ui_update.iconInnerPosition
         structure: ["String"]
+        examples: ["inside", "outside"]
     Clearable:
         payload: msg.ui_update.clearable
         structure: ["Boolean"]
