@@ -20,23 +20,23 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'label', updates.label)
                     }
                     if (typeof updates.mode !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "mode" property
                         statestore.set(group.getBase(), node, msg, 'mode', updates.mode)
                     }
                     if (typeof updates.clearable !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "clearable" property
                         statestore.set(group.getBase(), node, msg, 'clearable', updates.clearable)
                     }
                     if (typeof updates.icon !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "icon" property
                         statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
                     }
                     if (typeof updates.iconPosition !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "icon position" property
                         statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
                     }
                     if (typeof updates.iconInnerPosition !== 'undefined') {
-                        // dynamically set "label" property
+                        // dynamically set "icon inner position" property
                         statestore.set(group.getBase(), node, msg, 'iconInnerPosition', updates.iconInnerPosition)
                     }
                 }
