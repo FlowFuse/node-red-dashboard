@@ -1,7 +1,7 @@
 <template>
     <v-radio-group
         v-model="value" class="nrdb-ui-radio-group" :disabled="!state.enabled"
-        :class="'nrdb-ui-radio-group--cols-' + props.columns + ' ' + className"
+        :class="'nrdb-ui-radio-group--cols-' + columns + ' ' + className"
         :label="label" variant="outlined" hide-details="auto"
         @update:model-value="onChange"
     >
@@ -32,11 +32,14 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
-            return this.props.label
+            return this.getProperty('label')
+        },
+        columns: function () {
+            return this.getProperty('columns')
         },
         options: {
             get () {
-                const items = this.items || this.props.options
+                const items = this.items || this.getProperty('options')
                 return items.map((item) => {
                     if (typeof item !== 'object') {
                         return {
@@ -60,7 +63,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -127,6 +130,15 @@ export default {
 
             // ensure we set our local "value" to match
             this.value = value
+        },
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('columns', updates.columns)
+            this.updateDynamicProperty('options', updates.options)
         }
     }
 }

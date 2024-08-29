@@ -48,11 +48,6 @@ export default {
         BaselineLayout,
         WidgetGroup
     },
-    data () {
-        return {
-            rowHeight: 48
-        }
-    },
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),

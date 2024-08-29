@@ -1,0 +1,349 @@
+[
+    {
+        "id": "5ddb62efe94b969e",
+        "type": "ui-button",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "group": "9b435df5fa058922",
+        "name": "Dynamic Property: Label",
+        "label": "Dynamic Property: Label",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 230,
+        "y": 680,
+        "wires": [
+            [
+                "cdc6001a3a5f2b30"
+            ]
+        ]
+    },
+    {
+        "id": "cdc6001a3a5f2b30",
+        "type": "change",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "label updated",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 680,
+        "wires": [
+            [
+                "989e0aa95644bf28"
+            ]
+        ]
+    },
+    {
+        "id": "989e0aa95644bf28",
+        "type": "ui-radio-group",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "group": "9b435df5fa058922",
+        "name": "",
+        "label": "",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "columns": "1",
+        "passthru": false,
+        "options": [
+            {
+                "label": "Option 1",
+                "value": "option1",
+                "type": "str"
+            },
+            {
+                "label": "Option 2",
+                "value": "option2",
+                "type": "str"
+            },
+            {
+                "label": "Option 3",
+                "value": "option3",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 930,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2fa304a3a803130",
+        "type": "change",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.columns",
+                "pt": "msg",
+                "to": "3",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 720,
+        "wires": [
+            [
+                "989e0aa95644bf28"
+            ]
+        ]
+    },
+    {
+        "id": "e00df4e1e8a372d0",
+        "type": "change",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.options",
+                "pt": "msg",
+                "to": "[{\"value\":\"option1\",\"label\":\"Option 1\"},{\"value\":\"option2\",\"label\":\"Option 2\"},{\"value\":\"option3\",\"label\":\"Option 3\"},{\"value\":\"option4\",\"label\":\"Option 4\"},{\"value\":\"option5\",\"label\":\"Option 5\"},{\"value\":\"option6\",\"label\":\"Option 6\"}]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 760,
+        "wires": [
+            [
+                "989e0aa95644bf28"
+            ]
+        ]
+    },
+    {
+        "id": "3a4229d9b651e126",
+        "type": "ui-button",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "group": "9b435df5fa058922",
+        "name": "Dynamic Property: Columns",
+        "label": "Dynamic Property: Columns",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 240,
+        "y": 720,
+        "wires": [
+            [
+                "f2fa304a3a803130"
+            ]
+        ]
+    },
+    {
+        "id": "830c2ce6e0466a8e",
+        "type": "ui-button",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "group": "9b435df5fa058922",
+        "name": "Dynamic Property: Columns",
+        "label": "Dynamic Property: Options",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 240,
+        "y": 760,
+        "wires": [
+            [
+                "e00df4e1e8a372d0"
+            ]
+        ]
+    },
+    {
+        "id": "c39496d2b6c5b35f",
+        "type": "ui-radio-group",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "group": "d0f809574015556c",
+        "name": "",
+        "label": "Select Option:",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Option 1",
+                "value": "option1",
+                "type": "str"
+            },
+            {
+                "label": "Option 2",
+                "value": "option2",
+                "type": "str"
+            },
+            {
+                "label": "Option 3",
+                "value": "option3",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 260,
+        "y": 600,
+        "wires": [
+            [
+                "4ae09e5eef06e04c"
+            ]
+        ]
+    },
+    {
+        "id": "4ae09e5eef06e04c",
+        "type": "function",
+        "z": "f4f554a38c3ce158",
+        "g": "528b93a2dfbf14e2",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9b435df5fa058922",
+        "type": "ui-group",
+        "name": "Radio Group Dynamic Properties",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0f809574015556c",
+        "type": "ui-group",
+        "name": "Radio Group Global Store",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    }
+]

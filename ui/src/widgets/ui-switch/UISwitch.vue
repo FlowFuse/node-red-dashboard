@@ -1,9 +1,10 @@
 <template>
-    <div class="nrdb-switch" :class="{'nrdb-nolabel': !props.label, [className]: !!className}">
-        <label v-if="props.label" class="v-label">{{ props.label }}</label>
+    <div class="nrdb-switch" :class="{'nrdb-nolabel': !label, [className]: !!className}">
+        <label v-if="label" class="v-label">{{ label }}</label>
         <v-switch
             v-if="!icon" v-model="status"
-            :disabled="!state.enabled" :class="{'active': status}"
+            :disabled="!state.enabled"
+            :class="{'active': status}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
@@ -33,21 +34,30 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        icon: function () {
-            if (this.props.onicon && this.props.officon) {
-                const icon = this.status ? this.props.onicon : this.props.officon
+        label () {
+            return this.getProperty('label')
+        },
+        icon () {
+            const onicon = this.getProperty('onicon')
+            const officon = this.getProperty('officon')
+
+            if (onicon && officon) {
+                const icon = this.status ? onicon : officon
                 return 'mdi-' + icon.replace(/^mdi-/, '')
             } else {
                 return null
             }
         },
-        color: function () {
-            if (this.props.oncolor || this.props.offcolor) {
-                return this.status ? this.props.oncolor : this.props.offcolor
+        color () {
+            const oncolor = this.getProperty('oncolor')
+            const offcolor = this.getProperty('offcolor')
+
+            if (oncolor || offcolor) {
+                return this.status ? oncolor : offcolor
             }
             return null
         },
-        value: function () {
+        value () {
             return this.selection
         },
         status: {
@@ -72,7 +82,7 @@ export default {
                 msg.payload = val
                 this.selection = val
                 this.messages[this.id] = msg
-                if (this.decouple) {
+                if (this.getProperty('decouple')) {
                     this.loading = true
                 }
             }
@@ -80,20 +90,33 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, null)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
     },
     methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('decouple', updates.decouple)
+            this.updateDynamicProperty('oncolor', updates.oncolor)
+            this.updateDynamicProperty('offcolor', updates.offcolor)
+            this.updateDynamicProperty('onicon', updates.onicon)
+            this.updateDynamicProperty('officon', updates.officon)
+        },
         onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure our v-model is updated to reflect the value from Node-RED
+            // Update our vuex store with the value (in the payload) retrieved from Node-RED.
             if (msg.payload !== undefined) {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+
+                // make sure our v-model is updated to reflect the value from Node-RED
                 this.selection = msg.payload
                 this.loading = false
             }
@@ -113,7 +136,7 @@ export default {
         },
         toggle () {
             if (this.state.enabled) {
-                if (this.props.decouple) {
+                if (this.getProperty('decouple')) {
                     this.loading = true
                     // send the inverse, but don't update the status until we get a response
                     this.$socket.emit('widget-change', this.id, !this.status)

@@ -2,12 +2,6 @@
 
 Documentation can be found here: https://dashboard.flowfuse.com
 
-## Motivation
-
-The original [Node-RED Dashboard](https://github.com/node-red/node-red-dashboard) has served us well for many years, providing an intuitive way to create live dashboards for Node-RED flows. However, the original Dashboard is based on Angular v1, which is no longer actively maintained. We identified the need for a secure, updated, and innovative successor.
-
-Node-RED Dashboard 2.0 was re-built from the ground up, learning from the popular features and feedback of Node-RED Dashboard 1.0. It will carry the legacy forward, adapting to future needs while keeping the essence of open-source and community-driven development intact. The project will is licensed under Apache 2.0.
-
 ## Installation
 
 FlowFuse's Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
@@ -70,6 +64,12 @@ We are constantly reviewing the priority of our backlog, and have multiple publi
 
 - [Activity Tracker](https://github.com/orgs/FlowFuse/projects/15/views/1): See what's being actively worked on, what's up next, and if there are any "Blocked" items you could help with.
 - [Dashboard 1.0 Feature Parity](https://github.com/orgs/FlowFuse/projects/15/views/5): We haven't quite yet achieved 100% feature parity with the original Node-RED Dashboard, and this board tracks the progress and priority of those features.
+
+## Motivation
+
+The original [Node-RED Dashboard](https://github.com/node-red/node-red-dashboard) has served us well for many years, providing an intuitive way to create live dashboards for Node-RED flows. However, the original Dashboard is based on Angular v1, which is no longer actively maintained. We identified the need for a secure, updated, and innovative successor.
+
+Node-RED Dashboard 2.0 was re-built from the ground up, learning from the popular features and feedback of Node-RED Dashboard 1.0. It will carry the legacy forward, adapting to future needs while keeping the essence of open-source and community-driven development intact. The project will is licensed under Apache 2.0.
 
 ## License
 

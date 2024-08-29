@@ -49,7 +49,7 @@ export default {
     data () {
         const rowHeight = getComputedStyle(document.body).getPropertyValue('--widget-row-height')
         return {
-            rowHeight
+            rowHeight: parseFloat(rowHeight)
         }
     },
     computed: {
@@ -125,7 +125,6 @@ export default {
 }
 
 .nrdb-layout--flex > div {
-    width: var(--layout-card-width);
     max-width: 100%;
 }
 

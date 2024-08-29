@@ -1,4 +1,5 @@
 const datastore = require('../store/data.js')
+const statestore = require('../store/state.js')
 const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
@@ -14,16 +15,19 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
+        // retrieve the assigned on/off values
+        const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, node)
+        const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, node)
+
+        config.evaluated = {
+            on,
+            off
+        }
+
         const evts = {
             // runs on UI interaction
             // value = true | false from the ui-switch
             onChange: async function (msg, value) {
-                // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(node.id)
-
-                // retrieve the assigned on/off value
-                const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
-                const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
                 msg.payload = value ? on : off
 
                 if (config.topic || config.topicType) {
@@ -31,7 +35,7 @@ module.exports = function (RED) {
                 }
 
                 if (!config.passthru && config.decouple) {
-                    wNode.send(msg)
+                    node.send(msg)
                 } else {
                     node.status({
                         fill: value ? 'green' : 'red',
@@ -41,17 +45,11 @@ module.exports = function (RED) {
                     datastore.save(group.getBase(), node, msg)
 
                     // simulate Node-RED node receiving an input
-                    wNode.send(msg)
+                    node.send(msg)
                 }
             },
             onInput: async function (msg, send) {
                 let error = null
-                // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(node.id)
-
-                // retrieve the assigned on/off value
-                const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
-                const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
 
                 if (msg.payload === undefined) {
                     // may be setting class dynamically or something else that doesn't require a payload
@@ -100,20 +98,41 @@ module.exports = function (RED) {
                 }
             },
             beforeSend: async function (msg) {
-                // ensure we have latest instance of the widget's node
-                const wNode = RED.nodes.getNode(node.id)
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.label !== 'undefined') {
+                        // dynamically set "label" property
+                        statestore.set(group.getBase(), node, msg, 'label', updates.label)
+                    }
+                    if (typeof updates.passthru !== 'undefined') {
+                        // dynamically set "passthru" property
+                        statestore.set(group.getBase(), node, msg, 'passthru', updates.passthru)
+                    }
+                    if (typeof updates.decouple !== 'undefined') {
+                        // dynamically set "decouple" property
+                        statestore.set(group.getBase(), node, msg, 'decouple', updates.decouple)
+                    }
+                    if (typeof updates.oncolor !== 'undefined') {
+                        // dynamically set "oncolor" property
+                        statestore.set(group.getBase(), node, msg, 'oncolor', updates.oncolor)
+                    }
+                    if (typeof updates.offcolor !== 'undefined') {
+                        // dynamically set "offcolor" property
+                        statestore.set(group.getBase(), node, msg, 'offcolor', updates.offcolor)
+                    }
+                    if (typeof updates.onicon !== 'undefined') {
+                        // dynamically set "onicon" property
+                        statestore.set(group.getBase(), node, msg, 'onicon', updates.onicon)
+                    }
+                    if (typeof updates.officon !== 'undefined') {
+                        // dynamically set "officon" property
+                        statestore.set(group.getBase(), node, msg, 'officon', updates.officon)
+                    }
+                }
 
-                msg = await appendTopic(RED, config, wNode, msg)
+                msg = await appendTopic(RED, config, node, msg)
                 return msg
             }
-        }
-
-        const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, node)
-        const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, node)
-
-        config.evaluated = {
-            on,
-            off
         }
 
         // inform the dashboard UI that we are adding this node
