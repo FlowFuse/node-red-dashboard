@@ -16,7 +16,7 @@
                     :label="row.label"
                     :class="{'active': state}"
                     hide-details="auto"
-                    color="primary"
+                    color="primary" variant="outlined"
                     :items="filteredDropdownOptions(row.key)"
                     item-title="label"
                     item-value="key"
