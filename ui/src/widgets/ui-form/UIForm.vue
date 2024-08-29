@@ -15,7 +15,7 @@
                     class="nrdb-ui-widget"
                     :label="row.label"
                     :class="{'active': state}"
-                    hide-details="auto"
+                    hide-details="auto" :rules="rules(row)"
                     color="primary" variant="outlined"
                     :items="filteredDropdownOptions(row.key)"
                     item-title="label"
