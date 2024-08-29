@@ -24,7 +24,7 @@ module.exports = function (RED) {
                     // dynamically set "columns" property
                     statestore.set(group.getBase(), node, msg, 'columns', updates.columns)
                 }
-                if (updates.options) {
+                if (updates?.options) {
                     // dynamically set "options" property
                     statestore.set(group.getBase(), node, msg, 'options', updates.options)
                 }
