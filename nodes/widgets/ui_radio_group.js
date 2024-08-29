@@ -15,7 +15,6 @@ module.exports = function (RED) {
             onChange: true,
             beforeSend: async function (msg) {
                 const updates = msg.ui_update
-                console.log('ui_radio_group: beforeSend', msg)
                 if (typeof updates?.label !== 'undefined') {
                     // dynamically set "label" property
                     statestore.set(group.getBase(), node, msg, 'label', updates.label)
