@@ -170,6 +170,27 @@ If you want to override the configuration for your `ui-form`, and provide detail
     "required": true
 }
 ```
+#### Element: Dropdown
+
+```json
+{
+    "type": "dropdown",
+    "label": "Dropdown",
+    "key": "selection"
+}
+```
+
+### Defining Dropdown Options
+
+If you want to override the configuration for your `ui-form`, and provide details of your dropdown options after your Node-RED flow has been deployed, you can do so by passing a `msg.ui_update.dropdownOptions` value. This value should be an array of objects, where each object represents a dropdown element. Each object should have the following properties:
+
+```json
+[{
+    "dropdown": "Dropdown Name",
+    "value": "1",
+    "label": "Option 1"
+}]
+```
 
 
 ## Example

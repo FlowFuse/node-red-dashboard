@@ -111,17 +111,18 @@
                 }
 
                 // Show all available dropdowns (from the first tabsheet) in a single dropdown field (on the second tabsheet)
-                function showDropdowns (dropdownNameField, dropdowns, selectedValue) {
+                function showDropdowns (dropdownLabelField, dropdowns, selectedValue) {
                     // If the currently selected dropdown (in the second tabsheet) doesn't exist anymore (in the first tabsheet),
                     // then apply an empty selection
                     if (dropdowns.filter(obj => obj.key === selectedValue).length === 0) {
                         selectedValue = ''
                     }
 
-                    dropdownNameField.empty()
+                    dropdownLabelField.empty()
                     dropdowns.forEach((obj) => {
+                        console.log(obj, selectedValue)
                         const isSelected = obj.key === selectedValue
-                        dropdownNameField.append($('<option>').attr('value', obj.key).text(obj.label).prop('selected', isSelected))
+                        dropdownLabelField.append($('<option>').attr('value', obj.key).text(obj.label).prop('selected', isSelected))
                     })
                 }
 
@@ -158,19 +159,19 @@
                             // Label field
                             $('<input/>').addClass('node-input-option-label')
                                 .attr('type', 'text')
-                                .attr('placeholder', c_('label.egName'))
+                                .attr('placeholder', c_('label.egLabel'))
                                 .css('width', '20%')
                                 .css('margin-left', '5px')
                                 .css('margin-right', '5px')
                                 .val(option.label)
                                 .appendTo(row)
 
-                            // Key field
+                            // Value field
                             let keyClass = 'node-input-option-key'
                             if (!option.key) { keyClass = 'node-input-option-key input-error' }
                             const keyField = $('<input/>').addClass(keyClass)
                                 .attr('type', 'text')
-                                .attr('placeholder', c_('label.egName2'))
+                                .attr('placeholder', c_('label.egValue'))
                                 .css('width', '20%')
                                 .css('margin-left', '5px')
                                 .css('margin-right', '5px')
@@ -274,37 +275,38 @@
                         header: $('<div>').css('margin-left', '28px')
                             .css('margin-right', '28px')
                             .css('padding-right', '0px')
-                            .append($.parseHTML("<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.dropdown') + '</div>' +
-                                                      "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.key') + '</div>' +
-                                                      "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid' data-i18n='node-red:common.label.name'></div>")),
+                            .append($.parseHTML("<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.dropdown') + '</div>' +
+                                                      "<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.value') + '</div>' +
+                                                      "<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.label') + '</div>')),
                         addItem: function (container, i, option) {
                             const row = $('<div/>').appendTo(container)
 
                             // Dropdown name field
-                            const dropdownNameField = $('<select/>').addClass('node-input-option-dropdown')
+                            const dropdownLabelField = $('<select/>').addClass('node-input-option-dropdown')
                                 .attr('type', 'text')
-                                .css('width', '20%')
+                                .css('width', '30%')
                                 .css('margin-left', '5px')
                                 .css('margin-right', '5px')
                                 .appendTo(row)
                             const dropdowns = getDropdowns()
-                            showDropdowns(dropdownNameField, dropdowns, option.dropdown)
+                            console.log(dropdowns)
+                            showDropdowns(dropdownLabelField, dropdowns, option.dropdown)
 
-                            // Key field
-                            $('<input/>').addClass('node-input-option-key')
+                            // Value Field
+                            $('<input/>').addClass('node-input-option-value')
                                 .attr('type', 'text')
-                                .attr('placeholder', c_('label.egName'))
-                                .css('width', '20%')
+                                .attr('placeholder', c_('label.egLabel'))
+                                .css('width', '30%')
                                 .css('margin-left', '5px')
                                 .css('margin-right', '5px')
-                                .val(option.key)
+                                .val(option.value)
                                 .appendTo(row)
 
                             // Label field
                             $('<input/>').addClass('node-input-option-label')
                                 .attr('type', 'text')
-                                .attr('placeholder', c_('label.egName'))
-                                .css('width', '20%')
+                                .attr('placeholder', c_('label.egLabel'))
+                                .css('width', '30%')
                                 .css('margin-left', '5px')
                                 .css('margin-right', '5px')
                                 .val(option.label)
@@ -332,9 +334,9 @@
                             const dropdownOptionsList = $('#node-input-dropdown-options-container').editableList('items')
                             dropdownOptionsList.each(function (i) {
                                 const dropdownOption = $(this)
-                                const dropdownNameField = dropdownOption.find('.node-input-option-dropdown')
-                                const selectedValue = dropdownNameField.val()
-                                showDropdowns(dropdownNameField, dropdowns, selectedValue)
+                                const dropdownLabelField = dropdownOption.find('.node-input-option-dropdown')
+                                const selectedValue = dropdownLabelField.val()
+                                showDropdowns(dropdownLabelField, dropdowns, selectedValue)
                             })
                         }
 
@@ -377,7 +379,7 @@
                     const dropdownOption = $(this)
                     const o = {
                         dropdown: dropdownOption.find('.node-input-option-dropdown').val(),
-                        key: dropdownOption.find('.node-input-option-key').val(),
+                        value: dropdownOption.find('.node-input-option-value').val(),
                         label: dropdownOption.find('.node-input-option-label').val()
                     }
                     node.dropdownOptions.push(o)

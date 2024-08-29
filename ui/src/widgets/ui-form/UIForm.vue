@@ -19,7 +19,7 @@
                     color="primary" variant="outlined"
                     :items="filteredDropdownOptions(row.key)"
                     item-title="label"
-                    item-value="key"
+                    item-value="value"
                 />
                 <v-switch
                     v-else-if="row.type === 'switch'"
