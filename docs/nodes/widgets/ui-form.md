@@ -19,6 +19,9 @@ props:
     Two Columns: Will render the form as a two-column layout.
     Reset on Submit: If checked, the form will be reset to an empty state after the form is submitted.
     Topic: Defines how to compute the topic, included in the `msg` object, when the form is submitted.
+    Dropdown Options:
+        dynamic: true
+        description: This list can define options for multiple dropdown/select field in a single form.
 dynamic:
     Label:
         payload: msg.ui_update.label
@@ -26,6 +29,9 @@ dynamic:
     Options:
         payload: msg.ui_update.options
         structure: ["Array<Object>"]
+    Dropdown Options:
+        payload: msg.ui_update.dropdownOptions
+        structure: ["Array<{ dropdown: <string>, key: <string>, label: <string> }>"]
     Class:
         payload: msg.class
         structure: ["String"]
