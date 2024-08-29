@@ -74,7 +74,6 @@ export default {
                 min: this.min,
                 max: this.max
             }
-            console.log('props', this.props, props)
             return props
         }
     },
