@@ -17,13 +17,13 @@ dynamic:
         payload: msg.ui_update.label
         structure: ["String"]
     Options:
-        payload: msg.options
+        payload: msg.ui_update.options
         structure: ["Array<String>", "Array<{value: String}>", "Array<{value: String, label: String}>"]
     Class:
-        payload: msg.class
+        payload: msg.ui_update.class
         structure: ["String"]
     Columns:
-        payload: msg.columns
+        payload: msg.ui_update.columns
         structure: ["Number"]
 ---
 

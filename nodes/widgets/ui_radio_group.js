@@ -1,4 +1,5 @@
 const statestore = require('../store/state.js')
+const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function RadioGroupNode (config) {
@@ -12,11 +13,21 @@ module.exports = function (RED) {
 
         const evts = {
             onChange: true,
-            beforeSend: function (msg) {
-                if (msg.options) {
-                    // dynamically set "options" property
-                    statestore.set(group.getBase(), node, msg, 'options', msg.options)
+            beforeSend: async function (msg) {
+                const updates = msg.ui_update
+                if (typeof updates?.label !== 'undefined') {
+                    // dynamically set "label" property
+                    statestore.set(group.getBase(), node, msg, 'label', updates.label)
                 }
+                if (typeof updates?.columns !== 'undefined') {
+                    // dynamically set "columns" property
+                    statestore.set(group.getBase(), node, msg, 'columns', updates.columns)
+                }
+                if (updates?.options) {
+                    // dynamically set "options" property
+                    statestore.set(group.getBase(), node, msg, 'options', updates.options)
+                }
+                msg = await appendTopic(RED, config, node, msg)
                 return msg
             }
         }
