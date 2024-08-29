@@ -1,6 +1,5 @@
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function TextInputNode (config) {
