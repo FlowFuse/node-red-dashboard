@@ -37,7 +37,7 @@ dynamic:
         payload: msg.class
         structure: ["String"]
     Mode:
-        payload: msg.mode
+        payload: msg.ui_update.mode
         structure: ["String"]
     Label:
         payload: msg.ui_update.label
