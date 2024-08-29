@@ -40,7 +40,6 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'iconInnerPosition', updates.iconInnerPosition)
                     }
                 }
-                msg = await appendTopic(RED, config, node, msg)
                 return msg
             },
             onInput: function (msg, send) {
