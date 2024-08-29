@@ -21,7 +21,7 @@
                     <code v-else>{{ value.structure[0] }}</code>
                 </td>
                 <td>
-                    <div v-if="value.examples" style="display: flex; gap: 4px; align-items: center;">
+                    <div v-if="value.examples" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
                         <template v-for="(example, i) in value.examples" :key="example">
                             <code >{{ example }}</code>
                             <span v-if="i !== value.examples?.length - 1">|</span>

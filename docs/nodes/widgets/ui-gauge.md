@@ -50,6 +50,7 @@ dynamic:
     Type:
         payload: msg.ui_update.gtype
         structure: ["String"]
+        examples: ['gauge-tile', 'gauge-battery', 'gauge-tank', 'gauge-half', 'gauge-34']
     Style:
         payload: msg.ui_update.gstyle
         structure: ["String"]
