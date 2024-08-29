@@ -7,6 +7,7 @@
                 <th>Prop</th>
                 <th>Payload</th>
                 <th>Structures</th>
+                <th>Example Values</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,14 @@
                         <li v-for="s in value.structure" :key="s"><code>{{ s }}</code></li>
                     </ul>
                     <code v-else>{{ value.structure[0] }}</code>
+                </td>
+                <td>
+                    <div v-if="value.examples" style="display: flex; gap: 4px; align-items: center;">
+                        <template v-for="(example, i) in value.examples" :key="example">
+                            <code >{{ example }}</code>
+                            <span v-if="i !== value.examples?.length - 1">|</span>
+                        </template>
+                    </div>
                 </td>
             </tr>
         </tbody>
