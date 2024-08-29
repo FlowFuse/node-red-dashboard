@@ -31,26 +31,37 @@
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">
-        <dt class="optional">label <span class="property-type">array</span></dt>
-        <dd>Update the label rendered with the Radio Group</dd>
-        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dt class="optional">title <span class="property-type">string</span></dt>
+        <dd>Update the label rendered above the Gauge</dd>
+        <dt class="optional">segments <span class="property-type">array</span></dt>
         <dd>
             Change the options available in the dropdown at runtime
             <ul>
-                <li><code>Array&lt;string&gt;</code></li>
-                <li><code>Array&lt;{value: String}&gt;</code></li>
-                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+                <li><code>Array&lt;{color: String, from: Number}&gt;</code></li>
             </ul>
         </dd>
-        <dt class="optional">columns <span class="property-type">array</span></dt>
-        <dd>
-            Change the options available in the dropdown at runtime
+        <dt class="optional">gstyle <span class="property-type">see detail</span></dt>
+        <dd>Modify the type of Gauge rendered, with the following options:
             <ul>
-                <li><code>Array&lt;string&gt;</code></li>
-                <li><code>Array&lt;{value: String}&gt;</code></li>
-                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+                <li><code>gauge-battery</code></li>
+                <li><code>gauge-34</code></li>
+                <li><code>gauge-half</code></li>
+                <li><code>gauge-tile</code></li>
+                <li><code>gauge-tank</code></li>
             </ul>
         </dd>
+        <dt class="optional">min <span class="property-type">number</span></dt>
+        <dd>Change the minimum value the gauge supports</dd>
+        <dt class="optional">max <span class="property-type">number</span></dt>
+        <dd>Change the maximum value the gauge supports</dd>
+        <dt class="optional">prefix <span class="property-type">string</span></dt>
+        <dd>Change the text rendered after the Gauge's value</dd>
+        <dt class="optional">suffix <span class="property-type">string</span></dt>
+        <dd>Change the text rendered after the Gauge's value</dd>
+        <dt class="optional">units <span class="property-type">array</span></dt>
+        <dd>Controls the "unit" display underneath the gauge's value for 3/4 and Half gauges.</dd>
+        <dt class="optional">icon <span class="property-type">string</span></dt>
+        <dd>Modify which icon is rendered within the gauge (must be a Material Design icon)</dd>
         <dt class="optional">class <span class="property-type">string</span></dt>
         <dd>Add a CSS class, or more, to the Button at runtime.</dd>
     </dl>
