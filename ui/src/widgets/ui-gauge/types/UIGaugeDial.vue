@@ -230,12 +230,29 @@ export default {
             // update sections
             this.updateSegmentArc()
 
+            const svgPaths = this.svg.select('#sections').selectAll('path')
+            const pathNodes = svgPaths._groups[0]
             const segments = this.segments
-            this.svg.select('#sections')
-                .selectAll('path')
-                .data(segments)
-                .enter()
-                .append('path')
+
+            // check there are more paths than segments
+            if (pathNodes.length !== 0 && pathNodes.length > segments.length) {
+                this.svg.select('#sections')
+                    .selectAll('path')
+                    .data(segments)
+                    .enter()
+                    .append('path')
+                    // remove any extra paths
+                    .filter((_d, i) => {
+                        return i > segments.length - 1
+                    })
+                    .remove()
+            } else {
+                this.svg.select('#sections')
+                    .selectAll('path')
+                    .data(segments)
+                    .enter()
+                    .append('path')
+            }
 
             this.svg.select('#sections').selectAll('path')
                 .attr('d', this.arcs.sections)
