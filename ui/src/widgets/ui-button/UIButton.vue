@@ -82,14 +82,8 @@ export default {
             if (!this.enablePointerDown) {
                 return
             }
-            const evt = {
-                type: $evt.type,
-                clientX: $evt.clientX,
-                clientY: $evt.clientY,
-                bbox: $evt.target.getBoundingClientRect()
-            }
             const msg = this.messages[this.id] || {}
-            msg._event = evt
+            msg.pointerDown = true
             msg.payload = this.messageOnPointerDown
             this.$socket.emit('widget-action', this.id, msg)
         },
@@ -97,14 +91,8 @@ export default {
             if (!this.enablePointerUp) {
                 return
             }
-            const evt = {
-                type: $evt.type,
-                clientX: $evt.clientX,
-                clientY: $evt.clientY,
-                bbox: $evt.target.getBoundingClientRect()
-            }
             const msg = this.messages[this.id] || {}
-            msg._event = evt
+            msg.pointerUp = true
             msg.payload = this.messageOnPointerUp
             this.$socket.emit('widget-action', this.id, msg)
         },

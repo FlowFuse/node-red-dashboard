@@ -87,6 +87,30 @@
                     types: ['str', 'msg', 'flow', 'global']
                 })
 
+                $('#node-input-payload').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-payloadType'),
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                })
+
+                $('#node-input-pointerdown-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
+                $('#node-input-payload').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-payloadType'),
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                })
+
+                $('#node-input-pointerup-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
                 }
@@ -155,24 +179,45 @@
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-button.label.tooltip"></label>
         <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-button.label.optionalTooltip">
     </div>-->
-    <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.whenClicked"></label>
-    </div>
+
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------- -->
+    
     <div class="form-row">
         <label for="node-input-enablePointerdown"><i class="fa fa-hand-pointer-o"></i> Enable Pointer Down</label>
         <input type="checkbox" id="node-input-enablePointerdown">
     </div>
     <div class="form-row">
-        <label for="node-input-messageOnPointerdown"><i class="fa fa-envelope"></i> Message on Pointer Down</label>
-        <input type="text" id="node-input-messageOnPointerdown">
+        <label for="node-input-pointerdownpayload" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.payload"></label>
+        <input type="text" id="node-input-pointerdownpayload" style="width:70%">
+        <input type="hidden" id="node-input-pointerdownpayloadType">
     </div>
+    <div class="form-row">
+        <label for="node-input-pointerdowntopic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.topic"></label>
+        <input type="text" id="node-input-pointerdowntopic" style="width:70%">
+        <input type="hidden" id="node-input-pointerdowntopicType">
+    </div>
+
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------- -->
+
     <div class="form-row">
         <label for="node-input-enablePointerup"><i class="fa fa-hand-pointer-o"></i> Enable Pointer Up</label>
         <input type="checkbox" id="node-input-enablePointerup">
     </div>
     <div class="form-row">
-        <label for="node-input-messageOnPointerup"><i class="fa fa-envelope"></i> Message on Pointer Up</label>
-        <input type="text" id="node-input-messageOnPointerup">
+        <label for="node-input-enablePointerup" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.payload"></label>
+        <input type="text" id="node-input-pointeruppayload" style="width:70%">
+        <input type="hidden" id="node-input-pointeruppayloadType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.topic"></label>
+        <input type="text" id="node-input-pointeruptopic" style="width:70%">
+        <input type="hidden" id="node-input-pointeruptopicType">
+    </div>
+    
+    <!-- ------------------------------------------------------------------------------------------------------------------------------------- -->
+    
+    <div class="form-row">
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.whenClicked"></label>
     </div>
     <div class="form-row">
         <label for="node-input-payload" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.payload"></label>
