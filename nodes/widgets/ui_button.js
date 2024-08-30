@@ -97,7 +97,20 @@ module.exports = function (RED) {
 
                     node.send(msg)
                 }
-            }
+            },
+            onPointerdown: async function (msg) {
+                if (config.enablePointerdown || false) {
+                    msg.payload = config.messageOnPointerdown || '';
+                    node.send(msg);
+                }
+            },
+
+            onPointerup: async function (msg) {
+                if (config.enablePointerup || false) {
+                    msg.payload = config.messageOnPointerup || '';
+                    node.send(msg);
+                }
+            },
         }
 
         // inform the dashboard UI that we are adding this node
