@@ -14,6 +14,7 @@ module.exports = function (RED) {
             let error = null
 
             
+            console.log(msg.pointerUp, msg.pointerUp)
             if (!(msg.pointerUp || msg.pointerDown || false)) {
                 // retrieve the payload we're sending from this button
                 let payloadType = config.payloadType
