@@ -2,7 +2,7 @@
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
-        @click="action" @pointerdown="action"
+        @click="pointerdown" @pointerup="action"
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
