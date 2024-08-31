@@ -21,14 +21,10 @@ module.exports = function (RED) {
                 case 'pointerdown':
                     payload = config.pointerdownPayload
                     payloadType = config.pointerdownPayloadType
-                    //topic = config.pointerdownTopic
-                    //topicType = config.pointerdownTopicType
                     break
                 case 'pointerup':
                     payload = config.pointerupPayload
                     payloadType = config.pointerupPayloadType
-                    //topic = config.pointerupTopic
-                    //topicType = config.pointerupTopicType
                     break
                 case 'click':
                     payload = config.payload
