@@ -13,107 +13,38 @@ module.exports = function (RED) {
         const beforeSend = async function (msg) {
             let error = null
 
-            //if (!(msg.pointerUp || msg.pointerDown || false)) {
-                // retrieve the payload we're sending from this button
-                let payloadType = config.payloadType
-                let payload = config.payload
-                if (payloadType === 'flow' || payloadType === 'global') {
-                    try {
-                        const parts = RED.util.normalisePropertyExpression(payload)
-                        if (parts.length === 0) {
-                            throw new Error()
-                        }
-                        payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
-                    } catch (err) {
-                        node.warn('Invalid payload property expression - defaulting to node id')
-                        payload = node.id
-                        payloadType = 'str'
-                    }
-                } else if (payloadType === 'date') {
-                    payload = Date.now()
-                } else {
-                    try {
-                        payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
-                    } catch (err) {
-                        error = err
-                        if (payloadType === 'bin') {
-                            node.error('Badly formatted buffer')
-                        } else {
-                            node.error(err, payload)
-                        }
-                    }
-                }
-                msg.payload = payload
-            //}
-            /*
-            if (msg.pointerUp  || false) {
-                let pointerupPayloadType = config.pointeruppayloadType
-                let pointerupPayload = config.pointeruppayload
+            // retrieve the payload we're sending from this button
+            let payloadType = config.payloadType
+            let payload = config.payload
 
-                if (pointerupPayloadType === 'flow' || pointerupPayloadType === 'global') {
-                    try {
-                        const parts = RED.util.normalisePropertyExpression(pointerupPayload)
-                        if (parts.length === 0) {
-                            throw new Error()
-                        }
-                        pointerupPayload = RED.util.evaluateNodeProperty(pointerupPayload, pointerupPayloadType, node)
-                    } catch (err) {
-                        node.warn('Invalid payload property expression - defaulting to node id')
-                        pointerupPayload = node.id
-                        pointerupPayloadType = 'str'
+            if (payloadType === 'flow' || payloadType === 'global') {
+                try {
+                    const parts = RED.util.normalisePropertyExpression(payload)
+                    if (parts.length === 0) {
+                        throw new Error()
                     }
-                } else if (pointerupPayloadType === 'date') {
-                    pointerupPayload = Date.now()
-                } else {
-                    try {
-                        pointerupPayload = RED.util.evaluateNodeProperty(pointerupPayload, pointerupPayloadType, node)
-                    } catch (err) {
-                        error = err
-                        if (pointerupPayloadType === 'bin') {
-                            node.error('Badly formatted buffer')
-                        } else {
-                            node.error(err, pointerupPayload)
-                        }
+                    payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
+                } catch (err) {
+                    node.warn('Invalid payload property expression - defaulting to node id')
+                    payload = node.id
+                    payloadType = 'str'
+                }
+            } else if (payloadType === 'date') {
+                payload = Date.now()
+            } else {
+                try {
+                    payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
+                } catch (err) {
+                    error = err
+                    if (payloadType === 'bin') {
+                        node.error('Badly formatted buffer')
+                    } else {
+                        node.error(err, payload)
                     }
                 }
-                msg.topic = 'pointerup'
-                msg.pointerupPayload = payload
             }
 
-            if (msg.pointerDown || false) {
-                let pointerdownPayloadType = config.pointerdownpayloadType
-                let pointerdownPayload = config.pointerdownpayload
-
-                if (pointerdownPayloadType === 'flow' || pointerdownPayloadType === 'global') {
-                    try {
-                        const parts = RED.util.normalisePropertyExpression(pointerdownPayload)
-                        if (parts.length === 0) {
-                            throw new Error()
-                        }
-                        pointerdownPayload = RED.util.evaluateNodeProperty(pointerdownPayload, pointerdownPayloadType, node)
-                    } catch (err) {
-                        node.warn('Invalid payload property expression - defaulting to node id')
-                        pointerdownPayload = node.id
-                        pointerdownPayloadType = 'str'
-                    }
-                } else if (pointerdownPayloadType === 'date') {
-                    pointerdownPayload = Date.now()
-                } else {
-                    try {
-                        pointerdownPayload = RED.util.evaluateNodeProperty(pointerdownPayload, pointerdownPayloadType, node)
-                    } catch (err) {
-                        error = err
-                        if (pointerdownPayloadType === 'bin') {
-                            node.error('Badly formatted buffer')
-                        } else {
-                            node.error(err, pointerdownPayload)
-                        }
-                    }
-                }
-                msg.topic = 'pointerdown'
-                msg.pointerdownPayload = payload
-            }
-
+            msg.payload = payload
 
             const updates = msg.ui_update
 
@@ -144,8 +75,7 @@ module.exports = function (RED) {
                     statestore.set(group.getBase(), node, msg, 'iconColor', updates.iconColor)
                 }
             }
-            */
-           
+
             if (!error) {
                 return msg
             } else {
@@ -167,38 +97,7 @@ module.exports = function (RED) {
 
                     node.send(msg)
                 }
-            },
-            // pointerDown event
-            onPointerDown: async function (msg) {
-                if (config.enablePointerdown) {
-                    let pointerdownPayloadType = config.pointerdownpayloadType;
-                    let pointerdownPayload = config.pointerdownpayload;
-                    let pointerdownTopic = config.pointerdowntopic;
-                    let pointerdownTopicType = config.pointerdowntopicType;
-
-                    try {
-                        pointerdownPayload = RED.util.evaluateNodeProperty(pointerdownPayload, pointerdownPayloadType, node);
-                        msg.payload = pointerdownPayload;
-                    } catch (err) {
-                        node.warn('Invalid pointerdown payload property expression - defaulting to node id');
-                        pointerdownPayload = node.id;
-                        pointerdownPayloadType = 'str';
-                    }
-                    try {
-                        pointerdownTopic = RED.util.evaluateNodeProperty(pointerdownTopic, pointerdownTopicType, node);
-                        msg.topic = pointerdownTopic;
-                    }catch (err) {
-                        node.warn('Invalid pointerdown topic property expression - defaulting to node id');
-                        pointerdownTopic = node.id;
-                        pointerdownTopicType = 'str';
-                    }
-
-
-                    //msg = await beforeSend(msg);
-                    node.send(msg);
-                }
             }
-
         }
 
         // inform the dashboard UI that we are adding this node

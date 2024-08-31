@@ -40,9 +40,9 @@
                 
                 // Pointer Down event support
                 enablePointerdown: { value: false },
-                pointerdownpayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }) },
+                pointerdownpayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdownpayloadType') : function (v) { return true }) },
                 pointerdownpayloadType: { value: 'str' },
-                pointerdowntopic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                pointerdowntopic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdowntopicType') : function (v) { return true }) },
                 pointerdowntopicType: { value: 'msg' },
             },
             inputs: 1,
@@ -90,18 +90,17 @@
                     types: ['str', 'msg', 'flow', 'global']
                 })
 
-                $('#node-input-pointerdowntopic').typedInput({
-                    default: 'str',
-                    typeField: $('#node-input-pointerdowntopicType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                });
-
                 $('#node-input-pointerdownpayload').typedInput({
                     default: 'str',
                     typeField: $('#node-input-pointerdownpayloadType'),
                     types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
                 });
-
+                
+                $('#node-input-pointerdowntopic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-pointerdowntopicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                });
 
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
