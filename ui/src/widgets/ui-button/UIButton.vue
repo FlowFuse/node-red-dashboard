@@ -2,7 +2,9 @@
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
-        @click="pointerdown" @pointerup="action"
+        @click="action"
+        @pointerdown="pointerdown" 
+        @pointerup="pointerup" 
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
@@ -68,8 +70,36 @@ export default {
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
-            msg._event = evt
             const msg = this.messages[this.id] || {}
+            msg._event = evt
+            this.$socket.emit('widget-action', this.id, msg)
+        },
+        pointerdown: function ($evt) {
+            if(!this.props.enablePointerdown) {
+                return
+            }
+            const evt = {
+                type: $evt.type,
+                clientX: $evt.clientX,
+                clientY: $evt.clientY,
+                bbox: $evt.target.getBoundingClientRect()
+            }
+            const msg = this.messages[this.id] || {}
+            msg._event = evt
+            this.$socket.emit('widget-action', this.id, msg)
+        },
+        pointerup: function ($evt) {
+            if(!this.props.enablePointerup) {
+                return
+            }
+            const evt = {
+                type: $evt.type,
+                clientX: $evt.clientX,
+                clientY: $evt.clientY,
+                bbox: $evt.target.getBoundingClientRect()
+            }
+            const msg = this.messages[this.id] || {}
+            msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
         },
 

@@ -11,11 +11,29 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const beforeSend = async function (msg) {
+            let payloadType = null
+            let payload = null
+            let topic = null
             let error = null
 
             // retrieve the payload we're sending from this button
-            let payloadType = config.payloadType
-            let payload = config.payload
+            switch (msg._event.type) {
+                case 'pointerdown':
+                    payload = config.pointerdownPayload
+                    payloadType = config.pointerdownPayloadType
+                    //topic = config.pointerdownTopic
+                    //topicType = config.pointerdownTopicType
+                    break
+                case 'pointerup':
+                    payload = config.pointerupPayload
+                    payloadType = config.pointerupPayloadType
+                    //topic = config.pointerupTopic
+                    //topicType = config.pointerupTopicType
+                    break
+                case 'click':
+                    payload = config.payload
+                    payloadType = config.payloadType
+            }
 
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
@@ -43,7 +61,7 @@ module.exports = function (RED) {
                     }
                 }
             }
-
+            
             msg.payload = payload
 
             const updates = msg.ui_update
