@@ -168,6 +168,37 @@ module.exports = function (RED) {
                     node.send(msg)
                 }
             },
+            // pointerDown event
+            onPointerDown: async function (msg) {
+                if (config.enablePointerdown) {
+                    let pointerdownPayloadType = config.pointerdownpayloadType;
+                    let pointerdownPayload = config.pointerdownpayload;
+                    let pointerdownTopic = config.pointerdowntopic;
+                    let pointerdownTopicType = config.pointerdowntopicType;
+
+                    try {
+                        pointerdownPayload = RED.util.evaluateNodeProperty(pointerdownPayload, pointerdownPayloadType, node);
+                        msg.payload = pointerdownPayload;
+                    } catch (err) {
+                        node.warn('Invalid pointerdown payload property expression - defaulting to node id');
+                        pointerdownPayload = node.id;
+                        pointerdownPayloadType = 'str';
+                    }
+                    try {
+                        pointerdownTopic = RED.util.evaluateNodeProperty(pointerdownTopic, pointerdownTopicType, node);
+                        msg.topic = pointerdownTopic;
+                    }catch (err) {
+                        node.warn('Invalid pointerdown topic property expression - defaulting to node id');
+                        pointerdownTopic = node.id;
+                        pointerdownTopicType = 'str';
+                    }
+
+
+                    //msg = await beforeSend(msg);
+                    node.send(msg);
+                }
+            }
+
         }
 
         // inform the dashboard UI that we are adding this node

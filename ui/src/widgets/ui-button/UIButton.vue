@@ -2,7 +2,7 @@
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
-        @click="action" @pointerdown="action" @pointerup="handlePointerUp"
+        @click="action" @pointerdown="handlePointerDown"
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
@@ -72,36 +72,22 @@ export default {
             const msg = this.messages[this.id] || {}
             this.$socket.emit('widget-action', this.id, msg)
         },
-        handlePointerDown ($evt) {
-            if (!this.enablePointerDown) {
-                return
-            }
-            const evt = {
-                type: $evt.type,
-                clientX: $evt.clientX,
-                clientY: $evt.clientY,
-                bbox: $evt.target.getBoundingClientRect()
-            }
-            const msg = {}
-            msg._event = evt
-            msg.pointerDown = true
-            this.$socket.emit('widget-action', this.id, msg)
-        },
-        handlePointerUp ($evt) {
-            if (!this.enablePointerUp) {
-                return
-            }
-            const evt = {
-                type: $evt.type,
-                clientX: $evt.clientX,
-                clientY: $evt.clientY,
-                bbox: $evt.target.getBoundingClientRect()
-            }
-            const msg = {}
-            msg._event = evt
-            msg.pointerUp = true
-            this.$socket.emit('widget-action', this.id, msg)
-        },
+        handlePointerDown($evt) {
+        if (!this.getProperty('enablePointerdown')) {
+            return;
+        }
+        const evt = {
+            type: $evt.type,
+            clientX: $evt.clientX,
+            clientY: $evt.clientY,
+            bbox: $evt.target.getBoundingClientRect()
+        };
+        const msg = this.messages[this.id] || {};
+        msg._event = evt;
+        msg.pointerDown = true;
+        msg.payload = this.getProperty('pointerdownPayload');
+        this.$socket.emit('widget-action', this.id, msg);
+    },
 
         makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
