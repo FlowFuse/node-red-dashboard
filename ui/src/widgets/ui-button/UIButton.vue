@@ -2,9 +2,7 @@
     <v-btn
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
-        @click="action"
-        @pointerdown="action"
-        @pointerup="handlePointerUp"
+        @click="action" @pointerdown="action" @pointerup="handlePointerUp"
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
@@ -26,9 +24,7 @@ export default {
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
-        state: { type: Object, default: () => ({}) },
-        enablePointerDown: {type: Boolean,default: false},
-        enablePointerUp: {type: Boolean,default: false}
+        state: { type: Object, default: () => ({}) }
     },
     computed: {
         ...mapState('data', ['messages']),
