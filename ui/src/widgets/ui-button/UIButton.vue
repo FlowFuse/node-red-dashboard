@@ -78,6 +78,7 @@ export default {
             if(!this.props.enablePointerdown) {
                 return
             }
+            $evt.target.setPointerCapture($evt.pointerId);
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
@@ -92,6 +93,7 @@ export default {
             if(!this.props.enablePointerup) {
                 return
             }
+            $evt.target.releasePointerCapture($evt.pointerId);
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
