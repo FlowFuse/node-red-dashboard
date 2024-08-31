@@ -28,9 +28,7 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) },
         enablePointerDown: {type: Boolean,default: false},
-        enablePointerUp: {type: Boolean,default: false},
-        messageOnPointerDown: {type: String,default: ""},
-        messageOnPointerUp: {type: String,default: ""}
+        enablePointerUp: {type: Boolean,default: false}
     },
     computed: {
         ...mapState('data', ['messages']),
@@ -74,26 +72,38 @@ export default {
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
-            const msg = this.messages[this.id] || {}
             msg._event = evt
+            const msg = this.messages[this.id] || {}
             this.$socket.emit('widget-action', this.id, msg)
         },
         handlePointerDown ($evt) {
             if (!this.enablePointerDown) {
                 return
             }
-            const msg = this.messages[this.id] || {}
+            const evt = {
+                type: $evt.type,
+                clientX: $evt.clientX,
+                clientY: $evt.clientY,
+                bbox: $evt.target.getBoundingClientRect()
+            }
+            const msg = {}
+            msg._event = evt
             msg.pointerDown = true
-            msg.payload = this.messageOnPointerDown
             this.$socket.emit('widget-action', this.id, msg)
         },
         handlePointerUp ($evt) {
             if (!this.enablePointerUp) {
                 return
             }
-            const msg = this.messages[this.id] || {}
+            const evt = {
+                type: $evt.type,
+                clientX: $evt.clientX,
+                clientY: $evt.clientY,
+                bbox: $evt.target.getBoundingClientRect()
+            }
+            const msg = {}
+            msg._event = evt
             msg.pointerUp = true
-            msg.payload = this.messageOnPointerUp
             this.$socket.emit('widget-action', this.id, msg)
         },
 

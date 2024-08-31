@@ -13,9 +13,7 @@ module.exports = function (RED) {
         const beforeSend = async function (msg) {
             let error = null
 
-            
-            console.log(msg.pointerUp, msg.pointerUp)
-            if (!(msg.pointerUp || msg.pointerDown || false)) {
+            //if (!(msg.pointerUp || msg.pointerDown || false)) {
                 // retrieve the payload we're sending from this button
                 let payloadType = config.payloadType
                 let payload = config.payload
@@ -46,8 +44,8 @@ module.exports = function (RED) {
                     }
                 }
                 msg.payload = payload
-            }
-
+            //}
+            /*
             if (msg.pointerUp  || false) {
                 let pointerupPayloadType = config.pointeruppayloadType
                 let pointerupPayload = config.pointeruppayload
@@ -146,7 +144,8 @@ module.exports = function (RED) {
                     statestore.set(group.getBase(), node, msg, 'iconColor', updates.iconColor)
                 }
             }
-
+            */
+           
             if (!error) {
                 return msg
             } else {
