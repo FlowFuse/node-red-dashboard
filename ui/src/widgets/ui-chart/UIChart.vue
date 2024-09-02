@@ -346,7 +346,7 @@ export default {
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
 
             // make sure we have the relevant (x-axis) labels added to the chart too
-            if (!xLabels.includes(datapoint.x)) {
+            if (!xLabels.includes(datapoint.x) && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                 xLabels.push(datapoint.x)
             }
 
