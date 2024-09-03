@@ -220,7 +220,7 @@ export default {
 
             arc.select('path')
                 .datum({
-                    endAngle: this.valueToAngle(value) + (-this.sizes.angle / 2)
+                    endAngle: this.valueToAngle(value || 0) + (-this.sizes.angle / 2)
                 })
                 // .attr('filter', 'url(#innershadow)')
                 .transition().duration(duration)
@@ -329,7 +329,9 @@ export default {
         // in radians
         valueToAngle (value) {
             const angle = this.sizes.angle
-            return angle * (value - this.min) / (this.max - this.min)
+            // ensure this does not go over the max or under the min
+            const clampedValue = Math.min(Math.max(value, this.min), this.max)
+            return angle * (clampedValue - this.min) / (this.max - this.min)
         },
         // in radians
         valueToNeedleAngle (value) {
