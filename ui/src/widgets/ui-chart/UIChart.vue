@@ -360,9 +360,13 @@ export default {
                 const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
 
-                const data = Array(xLabels.length).fill({}) // initialize the data array
-                data[xIndex] = datapoint
-
+                // ensure we have a datapoint for the relevant series
+                const data = Array(sLabels.length).fill({})
+                if (xIndex === -1) {
+                    data[xLabels.length] = datapoint
+                } else {
+                    data[xIndex] = datapoint
+                }
                 // add the new dataset to the chart
                 const d = {
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length % this.props.colors.length],
@@ -379,8 +383,8 @@ export default {
 
                 this.chart.data.datasets.push(d)
             } else {
-                // Update existing series
-                if (xIndex >= 0) {
+                // have we seen this x-value before?
+                if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
                     // yes, so we need to update the data at this index
                     this.chart.data.datasets[sIndex].data[xIndex] = datapoint
                 } else {
