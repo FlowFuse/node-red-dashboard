@@ -257,7 +257,7 @@ export default {
             this.svg.select('#sections').selectAll('path')
                 .attr('d', this.arcs.sections)
                 .attr('transform', transform)
-                .style('fill', (d) => d.color)
+                .style('fill', (d) => d?.color)
 
             // update needle
             const needleMask = this.svg.select('#needle-mask')
