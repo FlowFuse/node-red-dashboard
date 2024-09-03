@@ -77,12 +77,27 @@ export default {
         },
         iconOnly () {
             return this.props.icon && !this.props.units
+        },
+        gaugeStyle () {
+            return this.props.gstyle
+        },
+        updateOn () {
+            return `${this.segments} ${this.gaugeStyle} ${this.min} ${this.max}`
+        },
+        min () {
+            return this.props.min
+        },
+        max () {
+            return this.props.max
         }
     },
     watch: {
-        value: function (val, oldVal) {
+        value: function (val) {
             this.resize()
             this.update(val)
+        },
+        updateOn () {
+            this.update(this.value)
         }
     },
     mounted () {
@@ -94,7 +109,7 @@ export default {
             // initial SVG size setting
             this.resize()
             if (this.value === undefined) {
-                this.update(this.props.min, 0)
+                this.update(this.min, 0)
             } else {
                 this.update(this.value, 0)
             }
@@ -148,7 +163,7 @@ export default {
                 .startAngle(-this.sizes.angle / 2)
                 .endAngle(this.sizes.angle / 2)
                 .cornerRadius(() => {
-                    return this.props.gstyle === 'rounded' ? this.sizes.gaugeThickness : 0
+                    return this.gaugeStyle === 'rounded' ? this.sizes.gaugeThickness : 0
                 })
 
             const backdrop = this.svg.select('#backdrop')
@@ -188,7 +203,7 @@ export default {
                 .outerRadius(gaugeR)
                 .startAngle(-this.sizes.angle / 2)
                 .cornerRadius(() => {
-                    return this.props.gstyle === 'rounded' ? this.sizes.gaugeThickness : 0
+                    return this.gaugeStyle === 'rounded' ? this.sizes.gaugeThickness : 0
                 })
 
             const arcTween = function (to) {
@@ -215,17 +230,34 @@ export default {
             // update sections
             this.updateSegmentArc()
 
+            const svgPaths = this.svg.select('#sections').selectAll('path')
+            const pathNodes = svgPaths._groups[0]
             const segments = this.segments
-            this.svg.select('#sections')
-                .selectAll('path')
-                .data(segments)
-                .enter()
-                .append('path')
+
+            // check there are more paths than segments
+            if (pathNodes.length !== 0 && pathNodes.length > segments.length) {
+                this.svg.select('#sections')
+                    .selectAll('path')
+                    .data(segments)
+                    .enter()
+                    .append('path')
+                    // remove any extra paths
+                    .filter((_d, i) => {
+                        return i > segments.length - 1
+                    })
+                    .remove()
+            } else {
+                this.svg.select('#sections')
+                    .selectAll('path')
+                    .data(segments)
+                    .enter()
+                    .append('path')
+            }
 
             this.svg.select('#sections').selectAll('path')
                 .attr('d', this.arcs.sections)
                 .attr('transform', transform)
-                .style('fill', (d) => d.color)
+                .style('fill', (d) => d?.color)
 
             // update needle
             const needleMask = this.svg.select('#needle-mask')
@@ -247,7 +279,7 @@ export default {
 
             const needle = this.svg.select('#needle')
                 .style('opacity', () => {
-                    return this.props.gstyle === 'needle' ? 1 : 0
+                    return this.gaugeStyle === 'needle' ? 1 : 0
                 })
                 .style('transform', () => {
                     const x = (this.width / 2) - this.r
@@ -297,7 +329,7 @@ export default {
         // in radians
         valueToAngle (value) {
             const angle = this.sizes.angle
-            return angle * (value - this.props.min) / (this.props.max - this.props.min)
+            return angle * (value - this.min) / (this.max - this.min)
         },
         // in radians
         valueToNeedleAngle (value) {
@@ -351,8 +383,8 @@ export default {
         },
         updateSegmentArc () {
             const segments = this.segments
-            const minValue = this.props.min
-            const maxValue = this.props.max
+            const minValue = this.min
+            const maxValue = this.max
             let cAngle = -this.sizes.angle / 2
 
             this.arcs.sections = d3.arc()
@@ -380,7 +412,7 @@ export default {
             this.$nextTick(() => {
                 this.resize()
                 if (this.value === undefined) {
-                    this.update(this.props.min, 0)
+                    this.update(this.min, 0)
                 } else {
                     this.update(this.value, 0)
                 }
