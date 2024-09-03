@@ -6,8 +6,11 @@ props:
     Type:
         description: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Half Gauge" or "3/4 Gauge"
         dynamic: true
+    Type:
+        description: Defines the type of gauge rendered, "Tile", "3/4 Gauge", "Hald Gauge", "Battery Level" or "Tank Level"
+        dynamic: true
     Style:
-        description: Defines the style of arc rendered, "Needle" or "Rounded"
+        description: Defines the tyle of arc rendered, "Needle" or "Rounded". (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Range (min):
         description: The smallest value that can be shown on the gauge
@@ -22,16 +25,16 @@ props:
         description: Text shown above the gauge, labelling what the gauge is showing.
         dynamic: true
     Prefix:
-        description: Text to be added _before_ the value in the middle of the gauge.
+        description: Text to be added _before_ the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Suffix:
-        description: Text to be shown _after_ the value in the middle of the gauge.
+        description: Text to be shown _after_ the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Units:
-        description: Small text to be shown below the value in the middle of the gauge.
+        description: Small text to be shown below the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Icon:
-        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix.
+        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix. (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Sizes (Gauge): (px) How thick the arc and backdrop of the gauge are rendered.
     Sizes (Gap): (px) How big the gap/padding is between the Gauge and the "Segments"
