@@ -363,7 +363,10 @@ export default {
                 // ensure we have a datapoint for the relevant series
                 const data = Array(sLabels.length).fill({})
                 if (xIndex === -1) {
-                    data[xLabels.length] = datapoint
+                    // Add the new x-value to xLabels
+                    xLabels.push(datapoint.x)
+                    // Assign the datapoint to the new index (last position)
+                    data[xLabels.length - 1] = datapoint
                 } else {
                     data[xIndex] = datapoint
                 }
