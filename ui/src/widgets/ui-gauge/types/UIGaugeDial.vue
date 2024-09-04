@@ -81,8 +81,8 @@ export default {
         gaugeStyle () {
             return this.props.gstyle
         },
-        updateOn () {
-            return `${this.segments} ${this.gaugeStyle} ${this.min} ${this.max}`
+        gaugeType () {
+            return this.props.gtype
         },
         min () {
             return this.props.min
@@ -95,9 +95,6 @@ export default {
         value: function (val) {
             this.resize()
             this.update(val)
-        },
-        updateOn () {
-            this.update(this.value)
         }
     },
     mounted () {
@@ -381,7 +378,6 @@ export default {
 
             min.style.transform = `translate(${minX}px, ${y}px)`
             max.style.transform = `translate(${maxX}px, ${y}px)`
-            console.log(bbox.x, bbox.width, thickness, paddingX)
         },
         resizeText () {
             // work out how much space we have within which to render the value/icon

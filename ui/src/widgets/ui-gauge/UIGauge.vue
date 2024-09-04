@@ -1,6 +1,6 @@
 <template>
     <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
-    <ui-gauge-dial v-else :id="id" :props="dynamicProps" :value="value" />
+    <ui-gauge-dial v-else :id="id" :key="updateGaugeDial" :props="dynamicProps" :value="value" />
 </template>
 
 <script>
@@ -75,6 +75,9 @@ export default {
                 max: this.max
             }
             return props
+        },
+        updateGaugeDial () {
+            return JSON.stringify(this.dynamicProps)
         }
     },
     created () {
