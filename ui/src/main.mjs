@@ -232,8 +232,10 @@ fetch('_setup')
                 getProperty (property) {
                     const config = this.props ? this.props[property] : null // last known value for the config of this widget property
                     const state = this.state[property] // chec if there have been any dynamic updates to this property
+                    // check if the state is null or a string 'null'
+                    const isNull = typeof state === 'string' ? state === 'null' : state === null
                     // return the dynamic property if it exists, otherwise return the last known configuration
-                    return this.state && property in this.state && state !== null ? state : config
+                    return this.state && property in this.state && !isNull ? state : config
                 }
             }
         })
