@@ -302,6 +302,9 @@ export default {
             // set needle position to default
             // this.svg.select('#needle-container')
 
+            // scale the needle if the gauge value container is small
+            const needleScale = this.$refs.value?.clientWidth < 80 ? 'scale(0.75)' : 'scale(1)'
+
             this.svg.select('#needle-container')
                 .style('transform-origin', () => {
                     return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
@@ -316,7 +319,7 @@ export default {
                         const rotate = d3.interpolate(start, end)(t)
                         const deg = rotate * (180 / Math.PI)
                         // -6 is fudge factor to ensure needle is visible and doesn't have half hanging out of SVG window
-                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)`
+                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)` + needleScale
                     }
                     return tween
                 })
@@ -355,6 +358,7 @@ export default {
             // get the backdrop bounding box
             const bbox = this.svg.select('#backdrop').node().getBBox()
 
+
             // position min in the botom-left
             const thickness = parseFloat(this.props.sizeThickness)
             const paddingX = this.props.gtype === 'gauge-half' ? 8 : 16
@@ -362,17 +366,29 @@ export default {
 
             const y = bbox.y + bbox.height + paddingY
 
-            const minX = bbox.x + thickness + paddingX
-            min.style.transform = `translate(${minX}px, ${y}px)`
+            let minX = bbox.x + thickness + paddingX
+            let maxX = bbox.x + bbox.width - thickness - paddingX
 
-            const maxX = bbox.x + bbox.width - thickness - paddingX
+            const valueContainerWidth = this.$refs.value?.clientWidth
+            if (valueContainerWidth < 80) {
+                minX = minX - 16
+                maxX = maxX + 16
+            }
+            if (valueContainerWidth === 0) {
+                minX = minX - 32
+                maxX = maxX + 32
+            }
+
+            min.style.transform = `translate(${minX}px, ${y}px)`
             max.style.transform = `translate(${maxX}px, ${y}px)`
+            console.log(bbox.x, bbox.width, thickness, paddingX)
         },
         resizeText () {
             // work out how much space we have within which to render the value/icon
             const width = this.$refs.value?.clientWidth
-            if (!width) {
-                this.size = 'default'
+            this.size = 'default'
+            if (width < 80) {
+                this.size = 'xxs'
             } else if (width < 150) {
                 this.size = 'xs'
             } else if (width < 225) {
@@ -513,10 +529,21 @@ export default {
 
 /* Size Overrides */
 
+/* xxs */
+/* hide gauge textual contents as they are not visible to naked eye in this grid size */
+.nrdb-ui-gauge-size-xxs .nrdb-ui-gauge-value,
+.nrdb-ui-gauge-size-xxs #limits {
+    display: none;
+}
+
 /* xs */
 .nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value span {
-    font-size: 1.5rem;
-    line-height: 1.75rem;
+    font-size: min(1.5rem,max(2cqmin,1.2rem));
+    line-height: min(1.5rem,max(2cqmin,1.5rem));
+}
+.nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value {
+    font-size: min(.75rem,max(2cqmin,.5rem));
+    line-height: min(.825rem,max(2cqmin,.65rem));
 }
 
 /* sm */
