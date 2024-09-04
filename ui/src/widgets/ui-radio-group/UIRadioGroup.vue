@@ -143,3 +143,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.nrdb-ui-radio-group .v-radio-group>.v-input__control > .v-label {
+    margin-inline-start: 0;
+}
+</style>
