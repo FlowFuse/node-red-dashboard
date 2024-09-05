@@ -57,7 +57,6 @@ module.exports = function (RED) {
                     }
                 }
             }
-            
             msg.payload = payload
 
             const updates = msg.ui_update
