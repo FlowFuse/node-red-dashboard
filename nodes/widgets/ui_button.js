@@ -14,9 +14,25 @@ module.exports = function (RED) {
             let payloadType = null
             let payload = null
             let topic = null
+            let payloadType = null
+            let payload = null
+            let topic = null
             let error = null
 
             // retrieve the payload we're sending from this button
+            switch (msg._event.type) {
+                case 'pointerdown':
+                    payload = config.pointerdownPayload
+                    payloadType = config.pointerdownPayloadType
+                    break
+                case 'pointerup':
+                    payload = config.pointerupPayload
+                    payloadType = config.pointerupPayloadType
+                    break
+                case 'click':
+                    payload = config.payload
+                    payloadType = config.payloadType
+            }
             switch (msg._event.type) {
                 case 'pointerdown':
                     payload = config.pointerdownPayload
@@ -57,7 +73,6 @@ module.exports = function (RED) {
                     }
                 }
             }
-            
             msg.payload = payload
 
             const updates = msg.ui_update

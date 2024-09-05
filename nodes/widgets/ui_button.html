@@ -46,6 +46,16 @@
                 pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
                 pointerupPayloadType: { value: 'str' },
 
+                iconColor: { value: '' },
+                
+                // pointerup/down event support
+                enablePointerdown: { value: false },
+                pointerdownPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdownPayloadType') : function (v) { return true }) },
+                pointerdownPayloadType: { value: 'str' },
+                enablePointerup: { value: false },
+                pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
+                pointerupPayloadType: { value: 'str' },
+
             },
             inputs: 1,
             outputs: 1,
