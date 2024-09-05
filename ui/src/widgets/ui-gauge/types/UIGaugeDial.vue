@@ -355,7 +355,6 @@ export default {
             // get the backdrop bounding box
             const bbox = this.svg.select('#backdrop').node().getBBox()
 
-
             // position min in the botom-left
             const thickness = parseFloat(this.props.sizeThickness)
             const paddingX = this.props.gtype === 'gauge-half' ? 8 : 16
