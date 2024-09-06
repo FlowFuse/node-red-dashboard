@@ -9,7 +9,7 @@ Layouts are a configuration available on a page-by-page basis. They control how 
 ![Screenshot of the layout options on a ui-page](../assets/images/layouts-page-layout-option.png){data-zoomable}
 _Screenshot of the layout options on a `ui-page`_
 
-We currently offer three different layout options:
+We currently offer four different layout options:
 
 - [Grid](./types/grid.md)
 - [Fixed](./types/fixed.md)
