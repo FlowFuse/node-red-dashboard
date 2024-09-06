@@ -93,7 +93,6 @@ export default {
     },
     watch: {
         value: function (val) {
-            this.resize()
             this.update(val)
         }
     },
