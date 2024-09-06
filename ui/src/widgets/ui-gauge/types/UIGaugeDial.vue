@@ -1,7 +1,7 @@
 <template>
     <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
         <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
-        <svg ref="gauge" width="0" height="0">
+        <svg ref="gauge" width="0" height="100%">
             <g id="sections" />
             <g id="backdrop">
                 <path /></g>
@@ -127,7 +127,6 @@ export default {
             const h = this.height
 
             this.$refs.gauge.setAttribute('width', w)
-            this.$refs.gauge.setAttribute('height', h)
 
             if (this.props.gtype === 'gauge-half') {
                 const minDimension = Math.min(w / 2, h)
