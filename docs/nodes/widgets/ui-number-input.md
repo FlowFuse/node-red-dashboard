@@ -15,6 +15,15 @@ props:
     Label:
         description: The number shown within the number input field.
         dynamic: true
+    Min:
+        description: Defines the minimum allowable value for the number input field.
+        dynamic: true
+    Max:
+        description: Defines the maximum allowable value for the number input field.
+        dynamic: true
+    Step:
+        description: Sets the increment/decrement step for adjusting the number value in the input field.
+        dynamic: true
     Tooltip:
         description: The number shown when hovering over the number input field.
     Passthrough: If this node receives a msg in Node-RED, should it be passed through to the output as if a new value was inserted to the input?
@@ -45,6 +54,15 @@ dynamic:
     Icon Inner Position:
         payload: msg.ui_update.iconInnerPosition
         structure: ["String"]
+    Min:
+        payload: msg.ui_update.min
+        structure: ["Number"]
+    Max:
+        payload: msg.ui_update.max
+        structure: ["Number"]
+    Step:
+        payload: msg.ui_update.step
+        structure: ["Number"]
 ---
 
 <script setup>
