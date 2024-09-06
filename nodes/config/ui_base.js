@@ -88,38 +88,66 @@ module.exports = function (RED) {
             }
 
             /**
-             * Load in third party widgets
-             */
-            let packagePath, packageJson
-            if (RED.settings?.userDir) {
-                packagePath = path.join(RED.settings.userDir, 'package.json')
-                packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
-            } else {
-                node.log('Cannot import third party widgets. No access to Node-RED package.json')
-            }
+            * Load in third party widgets
+            */
 
-            if (packageJson && packageJson.dependencies) {
-                Object.entries(packageJson.dependencies)?.filter(([packageName, _packageVersion]) => {
-                    return packageName.includes('node-red-dashboard-2-')
-                }).map(([packageName, _packageVersion]) => {
-                    const modulePath = path.join(RED.settings.userDir, 'node_modules', packageName)
-                    const packagePath = path.join(modulePath, 'package.json')
-                    // get third party package.json
-                    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
-                    if (packageJson?.['node-red-dashboard-2']) {
-                        // loop over object of widgets
-                        Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([widgetName, widgetConfig]) => {
+            const load3rdPartyWidgetsFromModule = (packageName, modulePath) => {
+                const packagePath = path.join(modulePath, 'package.json');
+                console.log("CHECKING: " + packagePath + " for widgets");
+
+                const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+                if (packageJson?.['node-red-dashboard-2']) {
+                    console.log("node-red-dashboard-2 found in " + packagePath);
+
+                    Object
+                        .entries(packageJson['node-red-dashboard-2'].widgets)
+                        .forEach(([widgetName, widgetConfig]) => {
+                            if(uiShared.contribs[widgetName]) {
+                                console.log("widget " + widgetName + " already loaded");
+                                return;
+                            }
+
                             uiShared.contribs[widgetName] = {
                                 package: packageName,
                                 name: widgetName,
                                 src: widgetConfig.output,
                                 component: widgetConfig.component
-                            }
+                            };
+                            console.log("loaded widget " + widgetName);
                         })
-                    }
-                    return packageJson
-                })
+                }
+                return packageJson;
             }
+
+            const load3rdPartyWidgetsFromPackage = (basePath) => {
+                // step 1. get the contents of baseFolder/package.json.
+                let packagePath = path.join(basePath, 'package.json');
+                let packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+
+                // step 2. filter out non 'node-red-dashboard-2-' dependencies
+                if (packageJson && packageJson.dependencies && Object.entries(packageJson.dependencies)) {
+
+                    Object
+                        .entries(packageJson.dependencies)
+                        .filter(([packageName, packageReference]) => packageName.includes('node-red-dashboard-2-'))
+                        .map(([packageName, packageReference]) => {
+                            // step3. calculate module path based on the packageReference:
+                            // if packageReference starts with "file:" modulePath is relative to basePath
+                            // else modulepath is releative to 'node_modules' folder.
+                            const modulePath = (packageReference.startsWith("file:"))
+                                ? path.join(basePath, packageReference.substring("file:".length))
+                                : path.join(basePath, 'node_modules', packageName);
+                            
+                            return load3rdPartyWidgetsFromModule(packageName, modulePath);
+                        });
+                }
+            };
+
+            if(RED.settings?.userDir){  load3rdPartyWidgetsFromPackage(RED.settings.userDir);  }
+            else{ node.log('Cannot import third party widgets from userDir package.json'); }
+
+            if(process.cwd()){  load3rdPartyWidgetsFromPackage(process.cwd());  }
+            else{ node.log('Cannot import third party widgets from root package.json'); }
 
             /**
              * Configure Web Server to handle UI traffic
