@@ -1,11 +1,11 @@
 <script type="text/javascript">
     (async function () {
         // convert to i18 text
-        function c_(x) {
+        function c_ (x) {
             return RED._('@flowfuse/node-red-dashboard/ui-template:ui-template.' + x)
         }
         // TODO: move this to util.js for reuse & unit testing
-        function hasProperty(obj, prop) {
+        function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
 
@@ -14,8 +14,13 @@
         template.push('<template>')
         template.push('    <div>')
         template.push('        <h2>Counter</h2>')
-        template.push('        <p>Current Count: {{ count }}</p>')
+        template.push('        <!-- Conditional Styling using Attribute Binding (":") -->')
+        template.push('        <!-- and rendering content inside <tags></tags> with {{ }} -->')
+        template.push('        <p :style="{\'color\' : (count > 5 ? \'red\' : \'green\' )}">Current Count: {{ count }}</p>')
+        template.push('        <!-- Computed Rendering using Vue Computed Variables -->')
         template.push('        <p class="my-class">Formatted Count: {{ formattedCount }}</p>')
+        template.push('        <!-- Conditional Rendering with "v-if" -->')
+        template.push('        <b v-if="count > 5">Too many!</b>')
         template.push('        <v-btn @click="increase()">Increment</v-btn>')
         template.push('    </div>')
         template.push('</template>')
@@ -41,7 +46,7 @@
         template.push('            // automatically compute this variable')
         template.push('            // whenever VueJS deems appropriate')
         template.push('            formattedCount: function () {')
-        template.push('                return this.count + \'Apples\'')
+        template.push('                return this.count + \' Apples\'')
         template.push('            }')
         template.push('        },')
         template.push('        methods: {')
@@ -216,34 +221,34 @@
                     $('#template-row-group, #template-row-page, #template-row-ui, #template-row-class').hide()
 
                     switch ($templateScope.val()) {
-                        case 'site:style':
-                            $('#template-row-ui').show()
-                            that.editor.getSession().setMode('ace/mode/css')
-                            break
-                        case 'page:style':
-                            $('#template-row-page').show()
-                            that.editor.getSession().setMode('ace/mode/css')
-                            break
-                        case 'site:script':
-                            $('#template-row-ui').show()
-                            that.editor.getSession().setMode('ace/mode/javascript')
-                            break
-                        case 'page:script':
-                            $('#template-row-page').show()
-                            that.editor.getSession().setMode('ace/mode/javascript')
-                            break
-                        case 'widget:ui':
-                            $('#template-row-ui').show()
-                            that.editor.getSession().setMode('ace/mode/html')
-                            break
-                        case 'widget:page':
-                            $('#template-row-page').show()
-                            that.editor.getSession().setMode('ace/mode/html')
-                            break
-                        default:
-                            $('#template-row-group, #template-row-class').show()
-                            that.editor.getSession().setMode('ace/mode/html')
-                            break
+                    case 'site:style':
+                        $('#template-row-ui').show()
+                        that.editor.getSession().setMode('ace/mode/css')
+                        break
+                    case 'page:style':
+                        $('#template-row-page').show()
+                        that.editor.getSession().setMode('ace/mode/css')
+                        break
+                    case 'site:script':
+                        $('#template-row-ui').show()
+                        that.editor.getSession().setMode('ace/mode/javascript')
+                        break
+                    case 'page:script':
+                        $('#template-row-page').show()
+                        that.editor.getSession().setMode('ace/mode/javascript')
+                        break
+                    case 'widget:ui':
+                        $('#template-row-ui').show()
+                        that.editor.getSession().setMode('ace/mode/html')
+                        break
+                    case 'widget:page':
+                        $('#template-row-page').show()
+                        that.editor.getSession().setMode('ace/mode/html')
+                        break
+                    default:
+                        $('#template-row-group, #template-row-class').show()
+                        that.editor.getSession().setMode('ace/mode/html')
+                        break
                     }
                     resize.call(that)
                 })
@@ -332,7 +337,7 @@
             oneditresize: resize.bind(this)
         })
 
-        function resize(size) {
+        function resize (size) {
             const rows = $('#dialog-form>div:not(.node-text-editor-row)')
             let fixRowsHeight = 0
             for (let i = 0; i < rows.size(); i++) {

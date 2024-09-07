@@ -1,8 +1,6 @@
 <template>
-    <ui-gauge-tile v-if="props.gtype === 'gauge-tile'" :id="id" :props="props" :value="value" />
-    <ui-gauge-battery v-else-if="props.gtype === 'gauge-battery'" :id="id" :props="props" :value="value" />
-    <ui-gauge-tank v-else-if="props.gtype === 'gauge-tank'" :id="id" :props="props" :value="value" />
-    <ui-gauge-dial v-else :id="id" :props="props" :value="value" />
+    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
+    <ui-gauge-dial v-else :id="id" :props="dynamicProps" :value="value" />
 </template>
 
 <script>
@@ -32,12 +30,73 @@ export default {
         value: function () {
             return this.messages[this.id]?.payload
         },
+        title () {
+            return this.getProperty('title')
+        },
+        gtype () {
+            return this.getProperty('gtype')
+        },
+        gstyle () {
+            return this.getProperty('gstyle')
+        },
+        prefix () {
+            return this.getProperty('prefix')
+        },
+        suffix () {
+            return this.getProperty('suffix')
+        },
+        units () {
+            return this.getProperty('units')
+        },
         icon () {
-            return this.props.icon?.replace(/^mdi-/, '')
+            return this.getProperty('icon')
+        },
+        segments () {
+            return this.getProperty('segments')
+        },
+        min () {
+            return this.getProperty('min')
+        },
+        max () {
+            return this.getProperty('max')
+        },
+        dynamicProps () {
+            const props = {
+                ...this.props,
+                title: this.title,
+                gtype: this.gtype,
+                gstyle: this.gstyle,
+                prefix: this.prefix,
+                suffix: this.suffix,
+                units: this.units,
+                icon: this.icon,
+                segments: this.segments,
+                min: this.min,
+                max: this.max
+            }
+            return props
         }
     },
     created () {
-        this.$dataTracker(this.id)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
+    },
+    methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            this.updateDynamicProperty('title', updates.title)
+            this.updateDynamicProperty('gtype', updates.gtype)
+            this.updateDynamicProperty('gstyle', updates.gstyle)
+            this.updateDynamicProperty('prefix', updates.prefix)
+            this.updateDynamicProperty('suffix', updates.suffix)
+            this.updateDynamicProperty('units', updates.units)
+            this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('segments', updates.segments)
+            this.updateDynamicProperty('min', updates.min)
+            this.updateDynamicProperty('max', updates.max)
+        }
     }
 }
 </script>

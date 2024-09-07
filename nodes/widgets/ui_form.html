@@ -52,7 +52,8 @@
                 topicType: { value: 'msg' },
                 splitLayout: { value: '' },
                 className: { value: '' },
-                passthru: { value: false }
+                passthru: { value: false },
+                dropdownOptions: { value: [] }
             },
             inputs: 1,
             outputs: 1,
@@ -61,6 +62,8 @@
             label: function () { return this.name || this.label || 'form' },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                const node = this
+
                 if ($('#node-input-submit').val() === null) { $('#node-input-submit').val('submit') }
                 if ($('#node-input-cancel').val() === null) { $('#node-input-cancel').val('cancel') }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
@@ -88,6 +91,41 @@
                     //  option.find(".node-input-option-key").width(newWidth);
                 }
 
+                // Get all the form options of type 'dropdown' (from the first tabsheet)
+                function getDropdowns () {
+                    const dropdowns = [{ key: '', label: '' }]
+                    // Create a list of all the available dropdowns
+                    // TODO replace this afterwards
+                    //                  let formOptionsList = $('#node-input-options-container').editableList('items')
+                    const formOptionsList = $('#node-input-option-container').children()
+                    formOptionsList.each(function (i) {
+                        const formOption = $(this)
+                        const formOptionType = formOption.find('.node-input-option-type').val()
+                        if (formOptionType === 'dropdown') {
+                            const label = formOption.find('.node-input-option-label').val()
+                            const key = formOption.find('.node-input-option-key').val()
+                            dropdowns.push({ label, key })
+                        }
+                    })
+                    return dropdowns
+                }
+
+                // Show all available dropdowns (from the first tabsheet) in a single dropdown field (on the second tabsheet)
+                function showDropdowns (dropdownLabelField, dropdowns, selectedValue) {
+                    // If the currently selected dropdown (in the second tabsheet) doesn't exist anymore (in the first tabsheet),
+                    // then apply an empty selection
+                    if (dropdowns.filter(obj => obj.key === selectedValue).length === 0) {
+                        selectedValue = ''
+                    }
+
+                    dropdownLabelField.empty()
+                    dropdowns.forEach((obj) => {
+                        console.log(obj, selectedValue)
+                        const isSelected = obj.key === selectedValue
+                        dropdownLabelField.append($('<option>').attr('value', obj.key).text(obj.label).prop('selected', isSelected))
+                    })
+                }
+
                 const supportedTypes = [
                     { val: 'text', text: c_('label.text') },
                     { val: 'multiline', text: c_('label.multiline') },
@@ -96,6 +134,7 @@
                     { val: 'password', text: c_('label.password') },
                     { val: 'checkbox', text: c_('label.checkbox') },
                     { val: 'switch', text: c_('label.switch') },
+                    { val: 'dropdown', text: c_('label.dropdown') },
                     { val: 'date', text: c_('label.date') },
                     { val: 'time', text: c_('label.time') }
                 ]
@@ -103,113 +142,113 @@
                 // which input types don't need a 'require' option
                 const noReqd = ['checkbox', 'switch']
 
-                let formOptionsList = $('#node-input-option-container').css('min-height','150px')
-                                                                       .css('min-width','450px')
-                                                                       .editableList({
-                    header: $('<div>').css('margin-left','28px')
-                                      .css('margin-right','28px')
-                                      .css('padding-right','0px')
-                                      .append($.parseHTML("<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.label') + "</div>" +
-                                                          "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid' data-i18n='node-red:common.label.name'></div>" +
-                                                          "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.type') + "</div>" +
-                                                          "<div style='width:16%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.required') + "</div>" +
-                                                          "<div style='width:10%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.rows') + "</div>")),
-                    addItem: function(container, i, option) {
-                        let row = $('<div/>').appendTo(container)
+                const formOptionsList = $('#node-input-option-container').css('min-height', '150px')
+                    .css('min-width', '450px')
+                    .editableList({
+                        header: $('<div>').css('margin-left', '28px')
+                            .css('margin-right', '28px')
+                            .css('padding-right', '0px')
+                            .append($.parseHTML("<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.label') + '</div>' +
+                                                      "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid' data-i18n='node-red:common.label.name'></div>" +
+                                                      "<div style='width:20%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.type') + '</div>' +
+                                                      "<div style='width:16%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.required') + '</div>' +
+                                                      "<div style='width:10%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.rows') + '</div>')),
+                        addItem: function (container, i, option) {
+                            const row = $('<div/>').appendTo(container)
 
-                        // Label field
-                        let labelField = $('<input/>').addClass('node-input-option-label')
-                                                      .attr('type','text')
-                                                      .attr('placeholder',c_('label.egName'))
-                                                      .css('width','20%')
-                                                      .css('margin-left','5px')
-                                                      .css('margin-right','5px')
-                                                      .val(option.label)
-                                                      .appendTo(row)
+                            // Label field
+                            $('<input/>').addClass('node-input-option-label')
+                                .attr('type', 'text')
+                                .attr('placeholder', c_('label.egLabel'))
+                                .css('width', '20%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .val(option.label)
+                                .appendTo(row)
 
-                        // Key field
-                        let keyClass = 'node-input-option-key'
-                        if (!option.key) { keyClass = 'node-input-option-key input-error' }
-                        let keyField = $('<input/>').addClass(keyClass)
-                                                    .attr('type','text')
-                                                    .attr('placeholder',c_('label.egName2'))
-                                                    .css('width','20%')
-                                                    .css('margin-left','5px')
-                                                    .css('margin-right','5px')
-                                                    .val(option.key)
-                                                    .appendTo(row)
-                        keyField.keyup(function () {
-                            if ($(this).val() && $(this).hasClass('input-error')) {
-                                $(this).removeClass('input-error')
-                            } else {
-                                if (!$(this).val()) {
-                                    $(this).addClass('input-error')
+                            // Value field
+                            let keyClass = 'node-input-option-key'
+                            if (!option.key) { keyClass = 'node-input-option-key input-error' }
+                            const keyField = $('<input/>').addClass(keyClass)
+                                .attr('type', 'text')
+                                .attr('placeholder', c_('label.egValue'))
+                                .css('width', '20%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .val(option.key)
+                                .appendTo(row)
+                            keyField.keyup(function () {
+                                if ($(this).val() && $(this).hasClass('input-error')) {
+                                    $(this).removeClass('input-error')
+                                } else {
+                                    if (!$(this).val()) {
+                                        $(this).addClass('input-error')
+                                    }
                                 }
-                            }
-                        })
+                            })
 
-                        // Type field
-                        let typeField = $('<select/>').addClass('node-input-option-type')
-                                                      .attr('type','text')
-                                                      .css('width','20%')
-                                                      .css('margin-left','5px')
-                                                      .css('margin-right','5px')
-                                                      .appendTo(row)
-                        $(supportedTypes).each(function () {
-                            let isSelected = false
-                            if (option.type === this.val) {
-                                isSelected = true
-                            }
-                            typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
-                        })
+                            // Type field
+                            const typeField = $('<select/>').addClass('node-input-option-type')
+                                .attr('type', 'text')
+                                .css('width', '20%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .appendTo(row)
+                            $(supportedTypes).each(function () {
+                                let isSelected = false
+                                if (option.type === this.val) {
+                                    isSelected = true
+                                }
+                                typeField.append($('<option>').attr('value', this.val).text(this.text).prop('selected', isSelected))
+                            })
 
-                        // Required field
-                        const reqVis = noReqd.includes(option.type) ? 'hidden' : 'visible'
-                        let requiredField = $('<input/>').addClass('node-input-option-required')
-                                                         .attr('type','checkbox')
-                                                         .css('width','16%')
-                                                         .css('margin-left','5px')
-                                                         .css('margin-right','5px')
-                                                         .css('visibility', reqVis)
-                                                         .prop('checked',option.required)
-                                                         .appendTo(row)
+                            // Required field
+                            const reqVis = noReqd.includes(option.type) ? 'hidden' : 'visible'
+                            const requiredField = $('<input/>').addClass('node-input-option-required')
+                                .attr('type', 'checkbox')
+                                .css('width', '16%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .css('visibility', reqVis)
+                                .prop('checked', option.required)
+                                .appendTo(row)
 
-                        // Rows field
-                        const rowsVis = option.rows ? 'visible' : 'hidden'
-                        let rowsField = $('<input/>').addClass('node-input-option-rows')
-                                                     .attr('type','number')
-                                                     .attr('placeholder','Rows') // TODO localize
-                                                     .css('width','10%')
-                                                     .css('margin-left','5px')
-                                                     .css('margin-right','5px')
-                                                     .css('visibility', rowsVis)
-                                                     .val(option.rows)
-                                                     .appendTo(row)
+                            // Rows field
+                            const rowsVis = option.rows ? 'visible' : 'hidden'
+                            const rowsField = $('<input/>').addClass('node-input-option-rows')
+                                .attr('type', 'number')
+                                .attr('placeholder', 'Rows') // TODO localize
+                                .css('width', '10%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .css('visibility', rowsVis)
+                                .val(option.rows)
+                                .appendTo(row)
 
-                        typeField.change(function (e) {
-                            // decide whether we need to show the "rows" option
-                            if (e.target.value !== 'multiline') {
-                                rowsField.val(undefined)
-                                option.rows = null
-                                rowsField.css('visibility', 'hidden')
-                            } else {
-                                rowsField.css('visibility', 'visible')
-                                if (!rowsField[0].value) rowsField[0].value = 3
-                            }
+                            typeField.change(function (e) {
+                                // decide whether we need to show the "rows" option
+                                if (e.target.value !== 'multiline') {
+                                    rowsField.val(undefined)
+                                    option.rows = null
+                                    rowsField.css('visibility', 'hidden')
+                                } else {
+                                    rowsField.css('visibility', 'visible')
+                                    if (!rowsField[0].value) rowsField[0].value = 3
+                                }
 
-                            // device whether we need to show the "required" option
-                            if (noReqd.includes(e.target.value)) {
-                                requiredField.val(false)
-                                option.required = false
-                                requiredField.css('visibility', 'hidden')
-                            } else {
-                                requiredField.css('visibility', 'visible')
-                            }
-                        })
-                    },
-                    removable: true,
-                    sortable: true
-                })
+                                // device whether we need to show the "required" option
+                                if (noReqd.includes(e.target.value)) {
+                                    requiredField.val(false)
+                                    option.required = false
+                                    requiredField.css('visibility', 'hidden')
+                                } else {
+                                    requiredField.css('visibility', 'visible')
+                                }
+                            })
+                        },
+                        removable: true,
+                        sortable: true
+                    })
 
                 for (let i = 0; i < this.options.length; i++) {
                     const option = this.options[i]
@@ -229,6 +268,91 @@
                         delay: 150
                     }
                 })
+
+                const dropdownOptionsList = $('#node-input-dropdown-options-container').css('min-height', '150px')
+                    .css('min-width', '450px')
+                    .editableList({
+                        header: $('<div>').css('margin-left', '28px')
+                            .css('margin-right', '28px')
+                            .css('padding-right', '0px')
+                            .append($.parseHTML("<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.dropdown') + '</div>' +
+                                                      "<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.value') + '</div>' +
+                                                      "<div style='width:30%; margin-left:5px; margin-right:5px; display: inline-grid'>" + c_('label.label') + '</div>')),
+                        addItem: function (container, i, option) {
+                            const row = $('<div/>').appendTo(container)
+
+                            // Dropdown name field
+                            const dropdownLabelField = $('<select/>').addClass('node-input-option-dropdown')
+                                .attr('type', 'text')
+                                .css('width', '30%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .appendTo(row)
+                            const dropdowns = getDropdowns()
+                            console.log(dropdowns)
+                            showDropdowns(dropdownLabelField, dropdowns, option.dropdown)
+
+                            // Value Field
+                            $('<input/>').addClass('node-input-option-value')
+                                .attr('type', 'text')
+                                .attr('placeholder', c_('label.egLabel'))
+                                .css('width', '30%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .val(option.value)
+                                .appendTo(row)
+
+                            // Label field
+                            $('<input/>').addClass('node-input-option-label')
+                                .attr('type', 'text')
+                                .attr('placeholder', c_('label.egLabel'))
+                                .css('width', '30%')
+                                .css('margin-left', '5px')
+                                .css('margin-right', '5px')
+                                .val(option.label)
+                                .appendTo(row)
+                        },
+                        removable: true,
+                        sortable: true
+                    })
+
+                if (this.dropdownOptions) {
+                    for (let i = 0; i < this.dropdownOptions.length; i++) {
+                        const option = this.dropdownOptions[i]
+                        dropdownOptionsList.editableList('addItem', option)
+                    }
+                }
+
+                // Show tabsheets
+                node.tabs = RED.tabs.create({
+                    id: 'node-ui-form-tabsheets',
+                    onchange: function (tab) {
+                        // When switching to the dropdown options tabsheet, make sure all the dropdowns (from the first
+                        // tabsheet) are becoming available for selection (in the second tabsheet)
+                        if (tab.id === 'node-ui-form-tabsheet-dropdown-options') {
+                            const dropdowns = getDropdowns()
+                            const dropdownOptionsList = $('#node-input-dropdown-options-container').editableList('items')
+                            dropdownOptionsList.each(function (i) {
+                                const dropdownOption = $(this)
+                                const dropdownLabelField = dropdownOption.find('.node-input-option-dropdown')
+                                const selectedValue = dropdownLabelField.val()
+                                showDropdowns(dropdownLabelField, dropdowns, selectedValue)
+                            })
+                        }
+
+                        // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
+                        $('#node-ui-form-tabsheets-content').children().hide()
+                        $('#' + tab.id).show()
+                    }
+                })
+                node.tabs.addTab({
+                    id: 'node-ui-form-tabsheet-form',
+                    label: 'Form'
+                })
+                node.tabs.addTab({
+                    id: 'node-ui-form-tabsheet-dropdown-options',
+                    label: 'Dropdown options'
+                })
             },
             oneditsave: function () {
                 const options = $('#node-input-option-container').editableList('items')
@@ -246,6 +370,19 @@
                     }
                     node.formValue[o.key] = o.type === 'checkbox' || o.type === 'switch' ? false : ''
                     node.options.push(o)
+                })
+
+                // Copy all the dropdown options from the editableList to this node
+                node.dropdownOptions = []
+                const dropdownOptionsList = $('#node-input-dropdown-options-container').editableList('items')
+                dropdownOptionsList.each(function (i) {
+                    const dropdownOption = $(this)
+                    const o = {
+                        dropdown: dropdownOption.find('.node-input-option-dropdown').val(),
+                        value: dropdownOption.find('.node-input-option-value').val(),
+                        label: dropdownOption.find('.node-input-option-label').val()
+                    }
+                    node.dropdownOptions.push(o)
                 })
             },
             oneditresize: function () {
@@ -355,31 +492,47 @@
             </a>
         </div>
     </div>
-    <div class="form-row node-input-option-container-row" style="width:100%; min-width:520px">
-        <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.formElements"></label>
-        <div style="display:inline-block; width:70%;">
-            <ol id="node-input-option-container" style=" list-style-type:none; margin: 0;"></ol>
+    <div class="form-row">
+        <!-- Tabsheets -->
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-ui-form-tabsheets"></ul>
+    </div>
+    <div id="node-ui-form-tabsheets-content" style="min-height: 150px">
+        <!-- Content of all tabsheets -->
+        <div id="node-ui-form-tabsheet-form" style="position: relative; margin-top: 30px;">
+            <div class="form-row" style="width:100%; min-width:520px">
+                <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.formElements"></label>
+                <div style="display:inline-block; width:70%;">
+                    <ol id="node-input-option-container" style=" list-style-type:none; margin: 0;"></ol>
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="node-input-submit"><i class="fa fa-square"></i> <span data-i18n="ui-form.label.buttons"></label>
+                <i class="fa fa-thumbs-o-up"></i> <input type="text" id="node-input-submit" data-i18n="[placeholder]ui-form.label.submitButtonText" style="width:32%;">
+                <span style="margin-left:16px"><i class="fa fa-thumbs-o-down"></i></span>
+                <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:32%;">
+            </div>
+            <div class="form-row">
+                <label></label>
+                <input type="checkbox" id="node-input-splitLayout" style="display:inline-block; width:auto; vertical-align:top;">
+                <label for="node-input-splitLayout" style="width: auto" data-i18n="ui-form.label.splitLayout">
+            </div>
+            <div class="form-row">
+                <label></label>
+                <input type="checkbox" id="node-input-resetOnSubmit" style="display:inline-block; width:auto; vertical-align:top;">
+                <label for="node-input-resetOnSubmit" style="width: auto" data-i18n="ui-form.label.resetOnSubmit"></label>
+            </div>
+            <div class="form-row">
+                <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
+                <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
+                <input type="hidden" id="node-input-topicType">
+            </div>
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-submit"><i class="fa fa-square"></i> <span data-i18n="ui-form.label.buttons"></label>
-        <i class="fa fa-thumbs-o-up"></i> <input type="text" id="node-input-submit" data-i18n="[placeholder]ui-form.label.submitButtonText" style="width:32%;">
-        <span style="margin-left:16px"><i class="fa fa-thumbs-o-down"></i></span>
-        <input type="text" id="node-input-cancel" data-i18n="[placeholder]ui-form.label.cancelButtonText" style="width:32%;">
-    </div>
-    <div class="form-row">
-        <label></label>
-        <input type="checkbox" id="node-input-splitLayout" style="display:inline-block; width:auto; vertical-align:top;">
-        <label for="node-input-splitLayout" style="width: auto" data-i18n="ui-form.label.splitLayout">
-    </div>
-    <div class="form-row">
-        <label></label>
-        <input type="checkbox" id="node-input-resetOnSubmit" style="display:inline-block; width:auto; vertical-align:top;">
-        <label for="node-input-resetOnSubmit" style="width: auto" data-i18n="ui-form.label.resetOnSubmit"></label>
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
-        <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
-        <input type="hidden" id="node-input-topicType">
-    </div>
+        <div id="node-ui-form-tabsheet-dropdown-options" style="position: relative; margin-top: 30px;">
+            <div class="form-row" style="width:100%; min-width:520px">
+                <label style="vertical-align:top;"><i class="fa fa-list-alt"></i> <span data-i18n="ui-form.label.dropdownOptions"></label>
+                <div style="display:inline-block; width:70%;">
+                    <ol id="node-input-dropdown-options-container"></ol>
+                </div>
+        </div>
+        </div>
 </script>

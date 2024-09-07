@@ -19,6 +19,9 @@ props:
     Two Columns: Will render the form as a two-column layout.
     Reset on Submit: If checked, the form will be reset to an empty state after the form is submitted.
     Topic: Defines how to compute the topic, included in the `msg` object, when the form is submitted.
+    Dropdown Options:
+        dynamic: true
+        description: This list can define options for multiple dropdown/select field in a single form.
 dynamic:
     Label:
         payload: msg.ui_update.label
@@ -26,6 +29,9 @@ dynamic:
     Options:
         payload: msg.ui_update.options
         structure: ["Array<Object>"]
+    Dropdown Options:
+        payload: msg.ui_update.dropdownOptions
+        structure: ["Array<{ dropdown: <string>, key: <string>, label: <string> }>"]
     Class:
         payload: msg.class
         structure: ["String"]
@@ -163,6 +169,27 @@ If you want to override the configuration for your `ui-form`, and provide detail
     "key": "tob",
     "required": true
 }
+```
+#### Element: Dropdown
+
+```json
+{
+    "type": "dropdown",
+    "label": "Dropdown",
+    "key": "selection"
+}
+```
+
+### Defining Dropdown Options
+
+If you want to override the configuration for your `ui-form`, and provide details of your dropdown options after your Node-RED flow has been deployed, you can do so by passing a `msg.ui_update.dropdownOptions` value. This value should be an array of objects, where each object represents a dropdown element. Each object should have the following properties:
+
+```json
+[{
+    "dropdown": "Dropdown Name",
+    "value": "1",
+    "label": "Option 1"
+}]
 ```
 
 

@@ -190,6 +190,7 @@ export default {
     background-color: rgb(var(--v-theme-group-background));
     color: rgb(var(--v-theme-on-group-background));
     border-left: 6px solid var(--nrdb-ui-notification-color);
+    min-width: auto;
 }
 .nrdb-ui-notification .v-snackbar__content {
     padding: 8px 12px;

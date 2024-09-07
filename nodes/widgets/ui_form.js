@@ -25,6 +25,12 @@ module.exports = function (RED) {
                         // dynamically set "options" property
                         statestore.set(group.getBase(), node, msg, 'options', update.options)
                     }
+                    if (typeof update.dropdownOptions !== 'undefined') {
+                        // todo: sanity check dropdownOptions is valid format?
+
+                        // dynamically set "dropdownOptions" property
+                        statestore.set(group.getBase(), node, msg, 'dropdownOptions', update.dropdownOptions)
+                    }
                 }
                 return msg
             }

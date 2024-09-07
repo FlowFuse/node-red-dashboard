@@ -3,19 +3,75 @@ description: Display real-time metrics with ui-gauge in Node-RED Dashboard 2.0 f
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
-    Type: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Half Gauge" or "3/4 Gauge"
-    Style: Defines the style of arc rendered, "Needle" or "Rounded"
-    Range (min): The smallest value that can be shown on the gauge
-    Range (max): The largest value that can be shown on the gauge
-    Segments: Defines the barriers by which the arc is color coded. These segments can also be shown on the gauge.
-    Label: Text shown above the gauge, labelling what the gauge is showing.
-    Prefix: Text to be added _before_ the value in the middle of the gauge.
-    Suffix: Text to be shown _after_ the value in the middle of the gauge.
-    Units: Small text to be shown below the value in the middle of the gauge.
-    Icon: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix.
+    Type:
+        description: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Half Gauge" or "3/4 Gauge"
+        dynamic: true
+    Style:
+        description: Defines the style of arc rendered, "Needle" or "Rounded"
+        dynamic: true
+    Range (min):
+        description: The smallest value that can be shown on the gauge
+        dynamic: true
+    Range (max):
+        description: The largest value that can be shown on the gauge
+        dynamic: true
+    Segments:
+        description: Defines the barriers by which the arc is color coded. These segments can also be shown on the gauge.
+        dynamic: true
+    Label:
+        description: Text shown above the gauge, labelling what the gauge is showing.
+        dynamic: true
+    Prefix:
+        description: Text to be added _before_ the value in the middle of the gauge.
+        dynamic: true
+    Suffix:
+        description: Text to be shown _after_ the value in the middle of the gauge.
+        dynamic: true
+    Units:
+        description: Small text to be shown below the value in the middle of the gauge.
+        dynamic: true
+    Icon:
+        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix.
+        dynamic: true
     Sizes (Gauge): (px) How thick the arc and backdrop of the gauge are rendered.
     Sizes (Gap): (px) How big the gap/padding is between the Gauge and the "Segments"
     Sizes (Segments): (px) How thick the segments are rendered.
+controls:
+    enabled:
+        example: true | false
+        description: Allow control over whether or not the number-input is enabled
+dynamic:
+    Label:
+        payload: msg.ui_update.title
+        structure: ["String"]
+    Icon:
+        payload: msg.ui_update.icon
+        structure: ["String"]
+    Type:
+        payload: msg.ui_update.gtype
+        structure: ["String"]
+        examples: ['gauge-tile', 'gauge-battery', 'gauge-tank', 'gauge-half', 'gauge-34']
+    Style:
+        payload: msg.ui_update.gstyle
+        structure: ["String"]
+    Min:
+        payload: msg.ui_update.min
+        structure: ["Number"]
+    Max:
+        payload: msg.ui_update.max
+        structure: ["Number"]
+    Segments:
+        payload: msg.ui_update.segments
+        structure: ["Array<{color: String, from: Number}>"]
+    Prefix:
+        payload: msg.ui_update.prefix
+        structure: ["String"]
+    Suffix:
+        payload: msg.ui_update.suffix
+        structure: ["String"]
+    Units:
+        payload: msg.ui_update.units
+        structure: ["String"]
 ---
 
 
@@ -42,6 +98,14 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 ## Properties
 
 <PropsTable/>
+
+## Dynamic Properties
+
+<DynamicPropsTable/>
+
+## Controls
+
+<ControlsTable/>
 
 ## Examples
 
