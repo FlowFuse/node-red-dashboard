@@ -13,10 +13,6 @@ module.exports = function (RED) {
         const beforeSend = async function (msg) {
             let payloadType = null
             let payload = null
-            let topic = null
-            let payloadType = null
-            let payload = null
-            let topic = null
             let error = null
 
             // retrieve the payload we're sending from this button
