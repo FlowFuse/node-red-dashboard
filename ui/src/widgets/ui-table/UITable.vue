@@ -78,7 +78,7 @@ export default {
             if (this.props.autocols) {
                 if (this.payload) {
                     // loop over data and get keys
-                    let cols = []
+                    const cols = []
                     for (const row of this.payload) {
                         Object.keys(row).forEach((key) => {
                             if (!cols.includes(key)) {
@@ -86,10 +86,9 @@ export default {
                             }
                         })
                     }
-                    cols = cols.map((col) => {
+                    return cols.map((col) => {
                         return { key: col, title: col }
                     })
-                    return cols
                 } else {
                     return []
                 }
