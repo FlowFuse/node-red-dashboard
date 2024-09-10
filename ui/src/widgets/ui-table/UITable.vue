@@ -14,7 +14,7 @@
         class="nrdb-table"
         :mobile="isMobile"
         :class="{'nrdb-table--mobile': isMobile}"
-        :items="messages[id]?.payload" :return-object="true"
+        :items="payload || []" :return-object="true"
         :items-per-page="itemsPerPage"
         :headers="headers" :show-select="props.selectionType === 'checkbox'"
         :search="search"
@@ -76,23 +76,22 @@ export default {
         ...mapState('data', ['messages']),
         headers () {
             if (this.props.autocols) {
-                if (this.messages[this.id]?.payload) {
+                if (this.payload) {
                     // loop over data and get keys
-                    const cols = []
-                    for (const row of this.messages[this.id].payload) {
+                    let cols = []
+                    for (const row of this.payload) {
                         Object.keys(row).forEach((key) => {
                             if (!cols.includes(key)) {
                                 cols.push(key)
                             }
                         })
                     }
-                    return cols.map((col) => {
+                    cols = cols.map((col) => {
                         return { key: col, title: col }
                     })
+                    return cols
                 } else {
-                    return [{
-                        key: '', title: ''
-                    }]
+                    return []
                 }
             } else if (this.props.columns) {
                 return this.props.columns.map((col) => {
@@ -113,8 +112,8 @@ export default {
         },
         rows () {
             // store full set of data rows
-            if (this.messages[this.id]?.payload) {
-                return this.messages[this.id].payload
+            if (this.payload) {
+                return this.payload
             } else {
                 return undefined
             }
@@ -127,6 +126,17 @@ export default {
                 typeMap[col.key] = col.type
                 return typeMap
             }, {})
+        },
+        payload () {
+            const value = this.messages[this.id]?.payload
+            if (value !== null && typeof value !== 'undefined') {
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    return [value]
+                } else {
+                    return value
+                }
+            }
+            return value
         }
     },
     watch: {

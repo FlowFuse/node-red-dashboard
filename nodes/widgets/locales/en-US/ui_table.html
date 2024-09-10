@@ -4,9 +4,9 @@
     </p>
     <h3>Input</h3>
     <p>
-        The ui-table widget requires an array of data to be sent via <code>msg.payload</code>.
-        The table will then render a row for each object within the array, and, by default, a
-        column for each property in the objects.
+        The ui-table widget requires an array or an object of data to be sent via <code>msg.payload</code>.
+        If an array is provided, the table will render a row for each object within the array, and, by default, a column for each property in the objects.
+        If an object is provided, the table will render a single row with columns for each property in the object.
     </p>
     <h3>Properties</h3>
     <dl class="message-properties">

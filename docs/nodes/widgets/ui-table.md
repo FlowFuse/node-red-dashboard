@@ -53,6 +53,18 @@ Renders a set of data in a tabular format. Expects an input (`msg.payload`) in t
 
 The table will be rendered with colums `colA`, `colB` and `colC`, unless "Columns" are explicitely defined on the node, with "Auto Columns" toggled off.
 
+or render just one row by simply passing an object. Expects an input (`msg.payload`) in the format of:
+
+```json
+{
+    "colA": "A",
+    "colB": "Hello",
+    "colC": 3
+}
+```
+
+The table will render same but only one row.
+
 ## Properties
 
 <PropsTable/>
