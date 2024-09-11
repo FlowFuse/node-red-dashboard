@@ -72,7 +72,7 @@ function getThirdPartyWidgets (directory) {
                     package: packageJson.name,
                     name: widgetName,
                     src: widgetConfig.output,
-                    path: path.resolve(path.join(directory)),
+                    path: path.resolve(directory),
                     component: widgetConfig.component
                 }
             })
