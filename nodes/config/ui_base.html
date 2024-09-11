@@ -235,6 +235,26 @@
         display: flex;
         flex-direction: column;
     }
+    div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable {
+        min-height: 20px; /* IMPORTANT! So that user when last element is dragged out it doesnt collapse. */
+    }
+    div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
+        border: 1px dashed #c4c4c4;
+        padding: 8px; /* should be 9px to match the other entries but border width is 2px */
+        height: 20px; /* To make it visible */
+        text-align: center;
+        border-left-width: 0;
+        border-right-width: 0;
+        background-color: #f9f9f9;
+    }
+    div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
+        content: "empty";
+        color: #d2d2d2;
+        font-style: italic;
+    }
+    ol.nrdb2-sb-group-list li:last-child ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
+        border-bottom-width: 0px;
+    }
 </style>
 
 
@@ -1043,7 +1063,7 @@
             addItem: function (container, i, /** @type {DashboardItem} */ widget) {
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-widgets-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-widget-list-handle fa fa-bars"></i>').appendTo(titleRow)
-                
+
                 // Set the icon
                 const ico = $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon' }).appendTo(titleRow)
                 let widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
