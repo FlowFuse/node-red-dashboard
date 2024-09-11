@@ -80,7 +80,7 @@ In the [Dashboard sidebar](./sidebar.md#client-data) within the Node-RED Editor,
 <img data-zoomable style="max-width: 400px; margin: auto;" src="/images/dashboard-sidebar-clientdata.png" alt="Screenshot of an example 'Client Data' tab"/>
 <em>Screenshot of an example "Client Data" tab</em>
 
-Client data defines information on the user/client interacting with the Dashboard. This data can be appended to every `msg` a node emits, underneath teh `msg._client` object.
+Client data defines information on the user/client interacting with the Dashboard. This data can be appended to every `msg` a node emits, underneath the `msg._client` object.
 
 When "Include Client Data" is enabled, every `msg._client` will detail the `socketId` and `socketIp` of any connected users. 
 
