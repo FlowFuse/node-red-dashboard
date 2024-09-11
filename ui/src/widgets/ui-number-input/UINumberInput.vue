@@ -190,8 +190,8 @@ export default {
             // compare the previous value with the current value and check whether the value has been increased or decreased by one.
             if (
                 this.previousValue === null ||
-                this.previousValue + 1 === this.value ||
-                this.previousValue - 1 === this.value
+                this.previousValue + (this.step || 1) === this.value ||
+                this.previousValue - (this.step || 1) === this.value
             ) {
                 this.send()
             }
