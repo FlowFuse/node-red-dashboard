@@ -37,12 +37,18 @@ module.exports = function (RED) {
          * Function for widgets to register themselves with this page
          * Calls the parent UI Base "register" function and registers this page,
          * along with the widget
-         * @param {*} widget
+         * @param {*} group - the group we are registering
+         * @param {*} widgetNode - the node we are registering
+         * @param {*} widgetConfig - the nodes' configuration object
+         * @param {*} widgetEvents - the widget event hooks
+         * @param {Object} [widgetOptions] - additional configuration options for dynamic features the widget
+         * @param {Object} [widgetOptions.dynamicProperties] - dynamic properties that the node will support
+         * @param {import('../utils/index.js').NodeTypedInputs} [widgetOptions.typedInputs] - typed inputs that the node will support
          */
-        node.register = function (group, widgetNode, widgetConfig, widgetEvents) {
+        node.register = function (group, widgetNode, widgetConfig, widgetEvents, widgetOptions) {
             const page = config
             if (ui) {
-                ui.register(page, group, widgetNode, widgetConfig, widgetEvents)
+                ui.register(page, group, widgetNode, widgetConfig, widgetEvents, widgetOptions)
             } else {
                 node.error(`Error registering Widget - ${widgetNode.name || widgetNode.id}. No parent ui-base node found for ui-page node: ${(page.name || page.id)}`)
             }

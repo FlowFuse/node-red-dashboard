@@ -11,6 +11,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     const socket = inject('$socket')
 
     function checkDynamicProperties (msg) {
+        console.log('checkDynamicProperties', msg)
         // set standard dynamic properties states if passed into msg
         if ('enabled' in msg) {
             store.commit('ui/widgetState', {
@@ -52,6 +53,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             socket.on('widget-load:' + widgetId, (msg, state) => {
                 // automatic handle state/dynamic  updates for ALL widgets
                 if (state) {
+                    console.log('widget-load:  store.commit "ui/widgetState"', widgetId, state)
                     store.commit('ui/widgetState', {
                         widgetId,
                         config: state
@@ -59,9 +61,11 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
                 }
                 // then see if there is custom onLoad functionality to deal with the latest data payloads
                 if (onLoad) {
+                    console.log('widget-load: onLoad', msg)
                     onLoad(msg)
                 } else {
                     if (msg) {
+                        console.log('widget-load: store.commit "data/bind"', widgetId, msg)
                         store.commit('data/bind', {
                             widgetId,
                             msg
@@ -71,6 +75,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             })
             // This will on in msg input for ALL components
             socket.on('msg-input:' + widgetId, (msg) => {
+                console.log('socket on msg-input', widgetId, msg)
                 // check for common dynamic properties cross all widget types
                 checkDynamicProperties(msg)
 

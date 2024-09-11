@@ -57,9 +57,8 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        value: function () {
-            // Get the value (i.e. the notification text content) from the last input msg
-            return this.messages[this.id]?.ui_payload || this.messages[this.id]?.payload
+        value () {
+            return this.getProperty('message') || ''
         },
         allowConfirm () {
             return this.getProperty('allowConfirm')
@@ -115,10 +114,11 @@ export default {
             this.updateDynamicProperty('position', updates.position)
             this.updateDynamicProperty('raw', updates.raw)
             this.updateDynamicProperty('showCountdown', updates.showCountdown)
+            this.updateDynamicProperty('message', updates.message)
         },
         onMsgInput (msg) {
             // Make sure the last msg (that has a payload, containing the notification content) is being stored
-            const payload = msg.ui_payload || msg.payload
+            const payload = this.getProperty('message')
             if (typeof payload !== 'undefined') {
                 this.$store.commit('data/bind', {
                     widgetId: this.id,
@@ -173,8 +173,9 @@ export default {
                 return
             }
             this.show = false
-            const msg = { ...this.messages[this.id] || {}, ui_reason: reason }
-            delete msg.ui_payload // remove the temporary ui_payload added in `updateMessage`
+            const msg = { ...this.messages[this.id] || {} }
+            msg._event = msg._event || {}
+            msg._event.reason = reason
             this.$socket.emit('widget-action', this.id, msg)
         }
     }

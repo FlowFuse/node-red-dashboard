@@ -28,8 +28,8 @@
                 raw: { value: false },
                 className: { value: '' },
                 name: { value: '' },
-                property: { value: 'payload' },
-                propertyType: { value: 'msg' }
+                message: { value: 'payload' },
+                messageType: { value: 'msg' }
             },
             inputs: 1,
             outputs: 1,
@@ -39,9 +39,9 @@
             label: function () { return this.name || (this.position === 'prompt' ? 'show dialog' : (this.position === 'dialog' ? 'show dialog' : 'show notification')) },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
-                $('#node-input-property').typedInput({
+                $('#node-input-message').typedInput({
                     default: 'msg',
-                    typeField: $('#node-input-propertyType'),
+                    typeField: $('#node-input-messageType'),
                     types: ['str', 'msg', 'jsonata']
                 })
 
@@ -96,9 +96,9 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> Message</label>
-        <input type="hidden" id="node-input-propertyType">
-        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
+        <label for="node-input-message"><i class="fa fa-ellipsis-h"></i> Message</label>
+        <input type="hidden" id="node-input-messageType">
+        <input type="text" id="node-input-message" placeholder="payload" style="width: 70%;">
     </div>
     <div class="form-row">
         <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
