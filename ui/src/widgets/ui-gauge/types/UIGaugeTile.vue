@@ -1,6 +1,6 @@
 <template>
     <div class="nrdb-ui-gauge-tile" :style="{'background-color': valueToColor(props.segments, value), 'color': getTextColor(props.segments, value)}">
-        {{ props.title }}
+        <label>{{ props.title }}</label>
     </div>
 </template>
 
@@ -23,14 +23,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .nrdb-ui-gauge-tile {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.5rem;
+    container-type: size;
     font-weight: bold;
     transition: 0.15s background-color;
     border: 1px solid rgb(var(--v-theme-group-outline));
+    label {
+        font-size: min(2.5rem, max(40cqmin, .5rem));
+        text-align: center;
+    }
 }
 </style>
