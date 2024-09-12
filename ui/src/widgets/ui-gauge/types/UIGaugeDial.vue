@@ -297,9 +297,6 @@ export default {
             // set needle position to default
             // this.svg.select('#needle-container')
 
-            // scale the needle if the gauge value container is small
-            const needleScale = this.$refs.value?.clientWidth < 80 ? 'scale(0.75)' : 'scale(1)'
-
             this.svg.select('#needle-container')
                 .style('transform-origin', () => {
                     return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
@@ -314,7 +311,7 @@ export default {
                         const rotate = d3.interpolate(start, end)(t)
                         const deg = rotate * (180 / Math.PI)
                         // -6 is fudge factor to ensure needle is visible and doesn't have half hanging out of SVG window
-                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)` + needleScale
+                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)`
                     }
                     return tween
                 })
@@ -433,7 +430,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .nrdb-ui-gauge {
     position: relative;
 }
@@ -463,6 +460,7 @@ export default {
     text-align: center;
     flex-wrap: wrap;
     padding-top: 12px;
+    container-type: size;
 }
 
 .nrdb-ui-gauge-value span {
@@ -488,6 +486,10 @@ export default {
 .nrdb-ui-gauge #limits {
     opacity: 0.5;
     fill: rgb(var(--v-theme-on-group-background));
+    container-type: size;
+    & text {
+        font-size: min(1rem,max(2cqmin,0.8rem));
+    }
 }
 
 /* needle styling */
@@ -526,13 +528,13 @@ export default {
 /* hide gauge textual contents as they are not visible to naked eye in this grid size */
 .nrdb-ui-gauge-size-xxs .nrdb-ui-gauge-value,
 .nrdb-ui-gauge-size-xxs #limits {
-    display: none;
+    visibility: hidden;
 }
 
 /* xs */
 .nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value span {
-    font-size: min(1.5rem,max(2cqmin,1.2rem));
-    line-height: min(1.5rem,max(2cqmin,1.5rem));
+    font-size: min(1.5rem,max(2cqmin,0.8rem));
+    line-height: min(1.5rem,max(2cqmin,1rem));
 }
 .nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value {
     font-size: min(.75rem,max(2cqmin,.5rem));
