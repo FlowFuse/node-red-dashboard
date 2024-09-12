@@ -4,7 +4,7 @@
             <!-- eslint-disable-next-line vue/no-template-shadow -->
             <template #activator="{ props }">
                 <v-number-input
-                    v-model="value" :class="{'compressed': isCompressed}" :reverse="false" :controlVariant="'stacked'" :hideInput="false" :inset="false"
+                    v-model="value" :class="{'compressed': isCompressed, 'stacked-spinner': spinner === 'stacked'}" :reverse="false" :controlVariant="spinner" :hideInput="false" :inset="false"
                     v-bind="props" :disabled="!state.enabled" :label="label"
                     :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
                     :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
@@ -95,11 +95,18 @@ export default {
             return this.getProperty('max')
         },
         step () {
-            return this.getProperty('step')
+            return Math.abs(this.getProperty('step')) || 1
+        },
+        spinner () {
+            return this.getProperty('spinner')
         },
         value: {
             get () {
-                return this.textValue !== null ? Number(this.textValue) : this.textValue
+                if (this.textValue === null || this.textValue === undefined || this.textValue === '') {
+                    return this.textValue
+                } else {
+                    return Number(this.textValue)
+                }
             },
             set (val) {
                 if (this.value === val) {
@@ -213,7 +220,7 @@ export default {
             this.send()
         },
         makeMdiIcon (icon) {
-            return 'mdi-' + icon.replace(/^mdi-/, '')
+            return 'mdi-' + icon?.replace(/^mdi-/, '')
         },
         onDynamicProperties (msg) {
             const updates = msg.ui_update
@@ -228,6 +235,7 @@ export default {
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
             this.updateDynamicProperty('step', updates.step)
+            this.updateDynamicProperty('spinner', updates.spinner)
         },
         resize () {
             // set isCompressed to true when clearable is true, icon is present and the container is less than 120px
@@ -260,20 +268,19 @@ export default {
         color: var(--red-ui-form-input-border-color);
     }
 
-    .v-field__field {
-        position: relative;
-        z-index: 2;
-        min-width: 50px;
-    }
-
-    .v-field__append-inner {
-        position: relative;
-        z-index: 1;
+    .v-field__field input {
+        padding-inline: var(--v-field-padding-start) 0;
     }
 
     .v-btn--icon.v-btn--density-default {
-        width: calc(var(--v-btn-height) + 0);
-        min-height: 0;
+        width: calc(var(--v-btn-height) + 0px);
+    }
+
+    .stacked-spinner {
+        .v-btn--icon.v-btn--density-default {
+            width: auto;
+            min-height: 0;
+        }
     }
 
     .compressed {

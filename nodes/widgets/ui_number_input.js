@@ -40,6 +40,10 @@ module.exports = function (RED) {
                         // dynamically set "iconInnerPosition" property
                         statestore.set(group.getBase(), node, msg, 'iconInnerPosition', updates.iconInnerPosition)
                     }
+                    if (typeof updates.spinner !== 'undefined') {
+                        // dynamically set "spinner" property
+                        statestore.set(group.getBase(), node, msg, 'spinner', updates.spinner)
+                    }
                 }
                 msg = await appendTopic(RED, config, node, msg)
                 return msg

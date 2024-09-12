@@ -24,6 +24,9 @@ props:
     Step:
         description: Sets the increment/decrement step for adjusting the number value in the input field.
         dynamic: true
+    Spinner:
+        description: Sets the layout of the spinners either as inline or stacked. 
+        dynamic: true
     Tooltip:
         description: The number shown when hovering over the number input field.
     Passthrough: If this node receives a msg in Node-RED, should it be passed through to the output as if a new value was inserted to the input?
@@ -63,6 +66,10 @@ dynamic:
     Step:
         payload: msg.ui_update.step
         structure: ["Number"]
+    Spinner:
+        payload: msg.ui_update.spinner
+        structure: ["String"]
+
 ---
 
 <script setup>
