@@ -30,6 +30,7 @@
                 topicType: { value: 'msg' },
                 style: { value: '' },
                 className: { value: '' },
+                clickableArea: { value: 'switch' },
                 // on state
                 onvalue: { value: true, validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('onvalueType') : function (v) { return true }) },
                 onvalueType: { value: 'bool' },
@@ -48,6 +49,11 @@
             label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'switch' },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                // Migration of older nodes without clickableArea
+                if (!this.clickableArea) {
+                    $('#node-input-clickableArea').val('switch')
+                }
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -168,6 +174,14 @@
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
+        <label for="node-input-clickableArea"><i class="fa fa-hand-pointer-o"></i> Clickable</label>
+        <select id="node-input-clickableArea" style="width:70%">
+            <option value="switch">Only switch</option>
+            <option value="label">Label and switch</option>
+            <option value="line">Entire line</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
         <div style="display: inline;">
             <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
@@ -186,7 +200,7 @@
     </div>-->
     <div class="form-row">
         <label for="node-input-custom-icons"><i class="fa fa-picture-o"></i> Icon</label>
-        <select id="node-input-custom-icons" style="width:35%">
+        <select id="node-input-custom-icons" style="width:70%">
             <option value="default">Default</option>
             <option value="custom">Custom</option>
         </select>

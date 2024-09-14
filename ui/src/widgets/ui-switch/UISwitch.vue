@@ -1,6 +1,19 @@
 <template>
     <div class="nrdb-switch" :class="{'nrdb-nolabel': !label, [className]: !!className}">
-        <label v-if="label" class="v-label">{{ label }}</label>
+        <label
+            v-if="label"
+            class="v-label"
+            :style="{cursor: lineClickable ? 'pointer' : 'default'}"
+            @click="lineClickable ? toggle() : null"
+        >
+            <span
+                class="clickable-label"
+                :style="{cursor: textClickable ? 'pointer' : 'default'}"
+                @click.stop="textClickable ? toggle() : null"
+            >
+                {{ props.label }}
+            </span>
+        </label>
         <v-switch
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
@@ -57,6 +70,12 @@ export default {
             }
             return null
         },
+        lineClickable: function () {
+            return this.getProperty('clickableArea') === 'line'
+        },
+        textClickable: function () {
+            return this.getProperty('clickableArea') === 'label' || this.getProperty('clickableArea') === 'line'
+        },
         value () {
             return this.selection
         },
@@ -102,6 +121,7 @@ export default {
                 return
             }
             this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('clickableArea', updates.clickableArea)
             this.updateDynamicProperty('decouple', updates.decouple)
             this.updateDynamicProperty('oncolor', updates.oncolor)
             this.updateDynamicProperty('offcolor', updates.offcolor)
