@@ -104,6 +104,10 @@ module.exports = function (RED) {
                         // dynamically set "label" property
                         statestore.set(group.getBase(), node, msg, 'label', updates.label)
                     }
+                    if (typeof updates.clickableArea !== 'undefined') {
+                        // dynamically set "clickableArea" property
+                        statestore.set(group.getBase(), node, msg, 'clickableArea', updates.clickableArea)
+                    }
                     if (typeof updates.passthru !== 'undefined') {
                         // dynamically set "passthru" property
                         statestore.set(group.getBase(), node, msg, 'passthru', updates.passthru)
