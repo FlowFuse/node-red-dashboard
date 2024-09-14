@@ -1,0 +1,20 @@
+{
+    "name": "@me/node-red-dashboard-2-two-widgets",
+    "version": "1.0.0",
+    "description": "My dashboard 2 test node package",
+    "node-red-dashboard-2": {
+        "version": "1.0.0",
+        "widgets": {
+            "ui-widget-1": {
+                "output": "ui-widget-1.js",
+                "component": "ui-widget-1"
+            },
+            "ui-widget-2": {
+                "output": "ui-widget-2.js",
+                "component": "ui-widget-2"
+            }
+        }
+    },
+    "author": "Your Name",
+    "license": "Apache-2.0"
+}

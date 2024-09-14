@@ -1,0 +1,11 @@
+{
+    "name": "@me/my-2-widgets",
+    "version": "1.0.0",
+    "description": "My dashboard 2 test node",
+    "dependencies": {
+        "@me/node-red-dashboard-2-widget-a": "1.0.0",
+        "@me/node-red-dashboard-2-widget-b": "1.0.0"
+    },
+    "author": "Your Name",
+    "license": "Apache-2.0"
+}
