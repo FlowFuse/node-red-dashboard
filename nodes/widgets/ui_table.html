@@ -86,7 +86,8 @@
                     value: null
                 },
                 mobileBreakpoint: { value: 'sm' },
-                mobileBreakpointType: { value: 'defaults' }
+                mobileBreakpointType: { value: 'defaults' },
+                action: { value: 'append' }
             },
             inputs: 1,
             outputs: 1,
@@ -97,10 +98,15 @@
                 return this.name || 'table'
             },
             oneditprepare: function () {
+                debugger;
                 // handle backward compatibility
                 const validSelectionTypes = ['none', 'checkbox', 'click']
                 if (!validSelectionTypes.includes(this.selectionType)) {
                     $('#node-input-selectionType').val('none')
+                }
+                const validActionTypes = ['append', 'replace']
+                if (!validActionTypes.includes(this.action)) {
+                    $('#node-input-action').val('append')
                 }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -351,5 +357,12 @@
                 <a href="#" class="editor-button editor-button-small" id="node-input-add-column" style="margin-top:4px;"><i class="fa fa-plus"></i> <span data-i18n="ui-table.label.columns"></span></a>
             </div>
         </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-action" data-i18n="ui-table.label.action"></label></label>
+        <select id="node-input-action">
+            <option value="append" data-i18n="ui-table.label.append"></option>
+            <option value="replace" data-i18n="ui-table.label.replace"></option>
+        </select>
     </div>
 </script>

@@ -128,14 +128,10 @@ export default {
         },
         payload () {
             const value = this.messages[this.id]?.payload
-            if (value !== null && typeof value !== 'undefined') {
-                if (typeof value === 'object' && !Array.isArray(value)) {
-                    return [value]
-                } else {
-                    return value
-                }
-            }
-            return value
+            return this.formatPayload(value) || []
+        },
+        isAppend () {
+            return this.props.action === 'append'
         }
     },
     watch: {
@@ -156,14 +152,40 @@ export default {
         }
     },
     created () {
-        this.$dataTracker(this.id)
+        this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
-        this.calculatePaginatedRows()
         this.updateIsMobile()
         window.addEventListener('resize', this.updateIsMobile)
     },
     methods: {
+        formatPayload (value) {
+            if (value !== null && typeof value !== 'undefined') {
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    return [value]
+                } else {
+                    return value
+                }
+            }
+            return value
+        },
+        onMsgInput (msg) {
+            const value = this.formatPayload(msg?.payload)
+
+            this.$store.commit('data/push', {
+                action: this.props.action,
+                msg: {
+                    _msgid: msg?._msgid,
+                    payload: value
+                },
+                widgetId: this.id
+            })
+
+            this.calculatePaginatedRows()
+        },
+        onLoad (history) {
+            this.onMsgInput(history)
+        },
         calculatePaginatedRows () {
             if (this.props.maxrows > 0) {
                 this.pagination.pages = Math.ceil(this.rows?.length / this.props.maxrows)
