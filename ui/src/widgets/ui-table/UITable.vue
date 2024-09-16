@@ -69,17 +69,18 @@ export default {
                 page: 1,
                 pages: 0,
                 rows: []
-            }
+            },
+            localData: []
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         headers () {
             if (this.props.autocols) {
-                if (this.payload) {
+                if (this.localData?.length) {
                     // loop over data and get keys
                     const cols = []
-                    for (const row of this.payload) {
+                    for (const row of this.localData) {
                         Object.keys(row).forEach((key) => {
                             if (!cols.includes(key)) {
                                 cols.push(key)
@@ -110,12 +111,7 @@ export default {
             }
         },
         rows () {
-            // store full set of data rows
-            if (this.payload) {
-                return this.payload
-            } else {
-                return undefined
-            }
+            return this.localData
         },
         itemsPerPage () {
             return this.props.maxrows || 0
@@ -171,32 +167,34 @@ export default {
         },
         onMsgInput (msg) {
             const value = this.formatPayload(msg?.payload)
+            if (this.props.action === 'append') {
+                this.localData = value ? [...this.localData || [], ...value] : value
+            } else {
+                this.localData = value
+            }
 
-            this.$store.commit('data/push', {
-                action: this.props.action,
+            this.$store.commit('data/bind', {
+                widgetId: this.id,
                 msg: {
-                    _msgid: msg?._msgid,
-                    payload: value
-                },
-                widgetId: this.id
+                    payload: this.localData
+                }
             })
-
             this.calculatePaginatedRows()
         },
         onLoad (history) {
             this.onMsgInput(history)
         },
         calculatePaginatedRows () {
-            if (this.props.maxrows > 0) {
-                this.pagination.pages = Math.ceil(this.rows?.length / this.props.maxrows)
-                this.pagination.rows = this.rows?.slice(
+            if (this.itemsPerPage > 0) {
+                this.pagination.pages = Math.ceil(this.localData?.length / this.props.maxrows)
+                this.pagination.rows = this.localData.slice(
                     (this.pagination.page - 1) * this.props.maxrows,
                     (this.pagination.page) * this.props.maxrows
                 )
             } else {
                 this.pagination.page = 1
                 this.pagination.pages = 0
-                this.pagination.rows = this.rows
+                this.pagination.rows = this.localData
             }
         },
         onRowClick (row) {

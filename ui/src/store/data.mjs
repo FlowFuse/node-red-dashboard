@@ -36,24 +36,6 @@ const mutations = {
             state.messages[widgetId] = data.msg
         }
     },
-    push (state, data) {
-        const widgetId = data.widgetId
-        if ('msg' in data) {
-            // Check if the action is 'append' to concatenate the payloads
-            if (data.action === 'append') {
-                const existingPayload = state.messages[widgetId]?.payload || []
-                const newPayload = data.msg.payload
-                state.messages[widgetId] = {
-                    ...state.messages[widgetId],
-                    _msgid: data.msg._msgid,
-                    payload: newPayload?.length > 0 ? [...existingPayload, ...newPayload] : newPayload
-                }
-            } else {
-                // Replace the message for other actions
-                state.messages[widgetId] = data.msg
-            }
-        }
-    },
     append (state, data) {
         const widgetId = data.widgetId
         // if packet contains a msg, then we process it
