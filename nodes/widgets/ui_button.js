@@ -17,30 +17,30 @@ module.exports = function (RED) {
 
             // retrieve the payload we're sending from this button
             switch (msg._event.type) {
-                case 'pointerdown':
-                    payload = config.pointerdownPayload
-                    payloadType = config.pointerdownPayloadType
-                    break
-                case 'pointerup':
-                    payload = config.pointerupPayload
-                    payloadType = config.pointerupPayloadType
-                    break
-                case 'click':
-                    payload = config.payload
-                    payloadType = config.payloadType
+            case 'pointerdown':
+                payload = config.pointerdownPayload
+                payloadType = config.pointerdownPayloadType
+                break
+            case 'pointerup':
+                payload = config.pointerupPayload
+                payloadType = config.pointerupPayloadType
+                break
+            case 'click':
+                payload = config.payload
+                payloadType = config.payloadType
             }
             switch (msg._event.type) {
-                case 'pointerdown':
-                    payload = config.pointerdownPayload
-                    payloadType = config.pointerdownPayloadType
-                    break
-                case 'pointerup':
-                    payload = config.pointerupPayload
-                    payloadType = config.pointerupPayloadType
-                    break
-                case 'click':
-                    payload = config.payload
-                    payloadType = config.payloadType
+            case 'pointerdown':
+                payload = config.pointerdownPayload
+                payloadType = config.pointerdownPayloadType
+                break
+            case 'pointerup':
+                payload = config.pointerupPayload
+                payloadType = config.pointerupPayloadType
+                break
+            case 'click':
+                payload = config.payload
+                payloadType = config.payloadType
             }
 
             if (payloadType === 'flow' || payloadType === 'global') {

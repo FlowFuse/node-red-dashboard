@@ -3,8 +3,8 @@
         block variant="flat" :disabled="!state.enabled" :prepend-icon="prependIcon" :append-icon="appendIcon"
         :class="{ 'nrdb-ui-button--icon': iconOnly }" :color="buttonColor" :style="{ 'min-width': iconOnly ?? 'auto' }"
         @click="action"
-        @pointerdown="pointerdown" 
-        @pointerup="pointerup" 
+        @pointerdown="pointerdown"
+        @pointerup="pointerup"
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
@@ -75,10 +75,10 @@ export default {
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerdown: function ($evt) {
-            if(!this.props.enablePointerdown) {
+            if (!this.props.enablePointerdown) {
                 return
             }
-            $evt.target.setPointerCapture($evt.pointerId);
+            $evt.target.setPointerCapture($evt.pointerId)
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
@@ -90,10 +90,10 @@ export default {
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerup: function ($evt) {
-            if(!this.props.enablePointerup) {
+            if (!this.props.enablePointerup) {
                 return
             }
-            $evt.target.releasePointerCapture($evt.pointerId);
+            $evt.target.releasePointerCapture($evt.pointerId)
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
