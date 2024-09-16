@@ -6,11 +6,8 @@ props:
     Type:
         description: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Half Gauge" or "3/4 Gauge"
         dynamic: true
-    Type:
-        description: Defines the type of gauge rendered, "Tile", "3/4 Gauge", "Hald Gauge", "Battery Level" or "Tank Level"
-        dynamic: true
     Style:
-        description: Defines the tyle of arc rendered, "Needle" or "Rounded". (only applicable to for 3/4 and Half gauges)
+        description: Defines the style of arc rendered, "Needle" or "Rounded". (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Range (min):
         description: The smallest value that can be shown on the gauge
