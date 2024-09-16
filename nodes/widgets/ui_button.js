@@ -25,22 +25,10 @@ module.exports = function (RED) {
                 payload = config.pointerupPayload
                 payloadType = config.pointerupPayloadType
                 break
-            case 'click':
+            default:
                 payload = config.payload
                 payloadType = config.payloadType
-            }
-            switch (msg._event.type) {
-            case 'pointerdown':
-                payload = config.pointerdownPayload
-                payloadType = config.pointerdownPayloadType
                 break
-            case 'pointerup':
-                payload = config.pointerupPayload
-                payloadType = config.pointerupPayloadType
-                break
-            case 'click':
-                payload = config.payload
-                payloadType = config.payloadType
             }
 
             if (payloadType === 'flow' || payloadType === 'global') {
