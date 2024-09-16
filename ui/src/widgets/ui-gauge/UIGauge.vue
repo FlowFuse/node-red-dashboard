@@ -1,6 +1,6 @@
 <template>
     <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
-    <ui-gauge-dial v-else :id="id" :props="dynamicProps" :value="value" />
+    <ui-gauge-dial v-else :id="id" :key="updateGaugeDial" :props="dynamicProps" :value="value" />
 </template>
 
 <script>
@@ -75,10 +75,13 @@ export default {
                 max: this.max
             }
             return props
+        },
+        updateGaugeDial () {
+            return JSON.stringify(this.dynamicProps)
         }
     },
     created () {
-        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     methods: {
         onDynamicProperties (msg) {
@@ -96,6 +99,14 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+        },
+        onInput (msg) {
+            if (typeof msg.payload !== 'undefined') {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
         }
     }
 }

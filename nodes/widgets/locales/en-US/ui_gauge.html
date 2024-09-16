@@ -40,7 +40,7 @@
                 <li><code>Array&lt;{color: String, from: Number}&gt;</code></li>
             </ul>
         </dd>
-        <dt class="optional">gstyle <span class="property-type">see detail</span></dt>
+        <dt class="optional">gtype <span class="property-type">see detail</span></dt>
         <dd>Modify the type of Gauge rendered, with the following options:
             <ul>
                 <li><code>gauge-battery</code></li>
@@ -50,18 +50,25 @@
                 <li><code>gauge-tank</code></li>
             </ul>
         </dd>
+        <dt class="optional">gstyle <span class="property-type">see detail</span></dt>
+        <dd>Modify the style of 3/4 and half Gauge rendered, with the following options: (only applicable to for 3/4 and Half gauges)
+            <ul>
+                <li><code>neelde</code></li>
+                <li><code>rounded</code></li>
+            </ul>
+        </dd>
         <dt class="optional">min <span class="property-type">number</span></dt>
         <dd>Change the minimum value the gauge supports</dd>
         <dt class="optional">max <span class="property-type">number</span></dt>
         <dd>Change the maximum value the gauge supports</dd>
         <dt class="optional">prefix <span class="property-type">string</span></dt>
-        <dd>Change the text rendered after the Gauge's value</dd>
+        <dd>Change the text rendered before the Gauge's value (only applicable to for 3/4 and Half gauges)</dd>
         <dt class="optional">suffix <span class="property-type">string</span></dt>
-        <dd>Change the text rendered after the Gauge's value</dd>
+        <dd>Change the text rendered after the Gauge's value (only applicable to for 3/4 and Half gauges)</dd>
         <dt class="optional">units <span class="property-type">array</span></dt>
-        <dd>Controls the "unit" display underneath the gauge's value for 3/4 and Half gauges.</dd>
+        <dd>Controls the "unit" display underneath the gauge's value for 3/4 and Half gauges (only applicable to for 3/4 and Half gauges)</dd>
         <dt class="optional">icon <span class="property-type">string</span></dt>
-        <dd>Modify which icon is rendered within the gauge (must be a Material Design icon)</dd>
+        <dd>Modify which icon is rendered within the gauge (must be a Material Design icon and only applicable to for 3/4 and Half gauges)</dd>
         <dt class="optional">class <span class="property-type">string</span></dt>
         <dd>Add a CSS class, or more, to the Button at runtime.</dd>
     </dl>
