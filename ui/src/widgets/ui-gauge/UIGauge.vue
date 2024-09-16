@@ -81,7 +81,7 @@ export default {
         }
     },
     created () {
-        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     methods: {
         onDynamicProperties (msg) {
@@ -99,6 +99,14 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+        },
+        onInput (msg) {
+            if (typeof msg.payload !== 'undefined') {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
         }
     }
 }
