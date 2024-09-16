@@ -487,7 +487,7 @@ export default {
     opacity: 0.5;
     fill: rgb(var(--v-theme-on-group-background));
     container-type: size;
-    & text {
+    text {
         font-size: min(1rem,max(2cqmin,0.8rem));
     }
 }
