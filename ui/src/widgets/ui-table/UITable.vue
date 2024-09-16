@@ -159,8 +159,6 @@ export default {
             if (value !== null && typeof value !== 'undefined') {
                 if (typeof value === 'object' && !Array.isArray(value)) {
                     return [value]
-                } else {
-                    return value
                 }
             }
             return value
@@ -168,12 +166,13 @@ export default {
         onMsgInput (msg) {
             const value = this.formatPayload(msg?.payload)
             if (this.props.action === 'append') {
-                this.localData = value ? [...this.localData || [], ...value] : value
+                this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
             } else {
                 this.localData = value
             }
 
             this.$store.commit('data/bind', {
+                action: this.props.action,
                 widgetId: this.id,
                 msg: {
                     payload: this.localData
@@ -182,6 +181,7 @@ export default {
             this.calculatePaginatedRows()
         },
         onLoad (history) {
+            this.localData = []
             this.onMsgInput(history)
         },
         calculatePaginatedRows () {
