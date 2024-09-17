@@ -55,6 +55,7 @@
                 <ui-notification
                     id="ui-inline-alert" ref="alert"
                     :props="{position: 'top right', showCountdown: alert.showCountdown, displayTime: alert.displayTime, raw: true, allowDismiss: alert.allowDismiss}"
+                    @mounted="subscribeAlerts"
                 />
             </div>
         </v-main>
@@ -187,18 +188,20 @@ export default {
     },
     mounted () {
         this.updateTheme()
-        Alerts.subscribe((title, description, color, alertOptions) => {
-            this.$refs.alert.close()
-            this.alert = alertOptions
-            this.$nextTick(() => {
-                this.$refs.alert.onMsgInput({
-                    payload: `<h3>${title}</h3><p>${description}</p>`,
-                    color
-                })
-            })
-        })
     },
     methods: {
+        subscribeAlerts (context) {
+            Alerts.subscribe((title, description, color, alertOptions) => {
+                context.close()
+                this.alert = alertOptions
+                this.$nextTick(() => {
+                    context.onMsgInput({
+                        payload: `<h3>${title}</h3><p>${description}</p>`,
+                        color
+                    })
+                })
+            })
+        },
         go: function (name) {
             this.$router.push({
                 name
