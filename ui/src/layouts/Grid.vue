@@ -35,7 +35,8 @@
 </template>
 
 <script>
-// eslint-disable-next-line import/order
+import Responsiveness from '../mixins/responsiveness.js'
+
 import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
 
@@ -47,6 +48,12 @@ export default {
     components: {
         BaselineLayout,
         WidgetGroup
+    },
+    mixins: [Responsiveness],
+    data () {
+        return {
+            columns: 0
+        }
     },
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
@@ -113,7 +120,7 @@ export default {
     --layout-gap: 12px;
 }
 .nrdb-layout--grid {
-    --layout-columns: 12;
+    --layout-columns: v-bind(columns);
     display: grid;
     grid-template-columns: repeat(var(--layout-columns), 1fr);
     flex-wrap: wrap;
@@ -128,24 +135,6 @@ export default {
 
 .v-card {
     width: 100%;
-}
-
-@media only screen and (max-width: 1024px) {
-    .nrdb-layout--grid {
-        --layout-columns: 9;
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    .nrdb-layout--grid {
-        --layout-columns: 6;
-    }
-}
-
-@media only screen and (max-width: 576px) {
-    .nrdb-layout--grid {
-        --layout-columns: 3;
-    }
 }
 
 </style>

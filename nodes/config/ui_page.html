@@ -1,4 +1,33 @@
+<style>
+    .red-ui-editableList-header.node-config-list-breakpoints-header {
+        display: flex;
+        gap: 12px;
+        margin: 0 33px 0 5px;
+        padding: 6px 0 3px;
+    }
+    .node-config-list-breakpoints-header > div,
+    .node-config-list-breakpoints-item input {
+        width: 33.3%;
+    }
+    .node-config-list-breakpoints-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-right: 28px;
+    }
+    .node-config-list-breakpoints-item label {
+        width: 50px;
+    }
+    #node-config-list-breakpoints li {
+        border-bottom: none;
+    }
+</style>
+
 <script type="text/javascript">
+    // convert to i18 text
+    function c_ (x) {
+        return RED._('@flowfuse/node-red-dashboard/ui-page:ui-page.' + x)
+    }
     RED.nodes.registerType('ui-page', {
         category: 'config',
         defaults: {
@@ -27,6 +56,14 @@
                 type: 'ui-theme',
                 value: 'default',
                 required: true
+            },
+            breakpoints: {
+                value: [
+                    { name: 'Default', px: 0, cols: 3 },
+                    { name: 'Tablet', px: 576, cols: 6 },
+                    { name: 'Small Desktop', px: 768, cols: 9 },
+                    { name: 'Desktop', px: 1024, cols: 12 }
+                ]
             },
             order: {
                 value: -1
@@ -60,6 +97,85 @@
                 typeField: '#node-input-layoutType'
             })
 
+            $('#node-config-input-layout').on('change', function (event, type, value) {
+                console.log(value)
+                // show for the others
+                if (value === 'flex') {
+                    $('#node-config-container-breakpoints').hide()
+                } else {
+                    $('#node-config-container-breakpoints').show()
+                }
+            })
+
+            // Breakpoints Editable List
+            const breakpointsList = $('#node-config-list-breakpoints').editableList({
+                header: $('<div>').addClass('node-config-list-breakpoints-header')
+                    .append($.parseHTML('<div>' + c_('label.name') + '</div>' +
+                        '<div>' + c_('label.breakpoint') + '</div>' +
+                        '<div>' + c_('label.columns') + '</div>')),
+                addItem: function (container, i, breakpoint) {
+                    const row = $('<div>').addClass('node-config-list-breakpoints-item').appendTo(container)
+                    // Value Field
+                    // $('<label/>').text('px:').appendTo(row)
+                    $('<input/>').addClass('node-input-breakpoint-name')
+                        .attr('type', 'text')
+                        .attr('placeholder', 'Mobile (sm)')
+                        .val(breakpoint.name)
+                        .attr('disabled', () => {
+                            return i === 0
+                        })
+                        .appendTo(row)
+
+                    $('<input/>').addClass('node-input-breakpoint-px')
+                        .attr('type', 'text')
+                        .attr('required', 'true')
+                        .attr('placeholder', '1024')
+                        .val(breakpoint.px)
+                        .attr('disabled', () => {
+                            return i === 0
+                        })
+                        .appendTo(row)
+
+                    // Label field
+                    // $('<label/>').text('cols:').appendTo(row)
+                    $('<input/>').addClass('node-input-breakpoint-cols')
+                        .attr('type', 'text')
+                        .attr('required', 'true')
+                        .attr('placeholder', '12')
+                        .val(breakpoint.cols)
+                        .appendTo(row)
+    
+                    // remove button
+                    // <a <i class="fa fa-remove"></i></a>
+                    const removeButton = $('<a href="#" class="red-ui-editableList-item-remove red-ui-button red-ui-button-small"><i class="fa fa-remove"></i></a>')
+                    removeButton.on('click', function (e) {
+                        e.preventDefault()
+                        if (i > 0) {
+                            breakpointsList.editableList('removeItem', i)
+                        }
+                    })
+                    if (i > 0) {
+                        row.append($.parseHTML('<a href="#" class="red-ui-editableList-item-remove red-ui-button red-ui-button-small"><i class="fa fa-remove"></i></a>'))
+                    }
+                    return row
+                }
+            })
+
+            // set defaults
+            if (!this.breakpoints) {
+                this.breakpoints = [
+                    { name: 'Default', px: 0, cols: 3 },
+                    { name: 'Tablet', px: 576, cols: 6 },
+                    { name: 'Small Desktop', px: 768, cols: 9 },
+                    { name: 'Desktop', px: 1024, cols: 12 }
+                ]
+            }
+
+            for (let i = 0; i < this.breakpoints.length; i++) {
+                const breakpoint = this.breakpoints[i]
+                breakpointsList.editableList('addItem', breakpoint)
+            }
+
             // backwards compatibility - because NR can't do boolean values on dropdowns
             if (this.visible === false || this.visible === 'false') {
                 this.visible = false
@@ -79,6 +195,7 @@
             }
         },
         oneditsave: function () {
+            const node = this
             // convert string to boolean
             const visible = $('#node-config-input-visible').val()
             if (visible === 'true') {
@@ -94,6 +211,20 @@
             } else {
                 this.disabled = false
             }
+
+            // breakpoints
+            const breakpoints = $('#node-config-list-breakpoints').editableList('items')
+    
+            node.breakpoints = []
+            breakpoints.each(function (i) {
+                const row = $(this)
+                const breakpoint = {
+                    name: row.find('.node-input-breakpoint-name').val(),
+                    px: parseFloat(row.find('.node-input-breakpoint-px').val()),
+                    cols: parseFloat(row.find('.node-input-breakpoint-cols').val())
+                }
+                node.breakpoints.push(breakpoint)
+            })
         },
         label: function () {
             const baseNode = RED.nodes.node(this.ui)
@@ -133,6 +264,14 @@
     <div class="form-row" id="text-row-class">
         <label for="node-config-input-className"><i class="w-16 fa fa-code"></i> <span data-i18n="ui-page.label.class"></label>
         <input type="text" id="node-config-input-className" data-i18n="[placeholder]ui-page.label.classNamePlaceholder"/>
+    </div>
+    <div id="node-config-container-breakpoints">
+        <div class="form-row" style="font-weight: 600;">
+            <i class="w-16 fa fa-mobile"></i> <span data-i18n="ui-page.label.responsiveness">
+        </div>
+        <div class="form-row">
+            <ol id="node-config-list-breakpoints"></ol>
+        </div>
     </div>
     <div class="form-row" style="font-weight: 600;">
         <i class="w-16 fa fa-eye"></i> <span data-i18n="ui-page.label.defaultState">
