@@ -21,6 +21,14 @@
     #node-config-list-breakpoints li {
         border-bottom: none;
     }
+    .node-config-breakpoints-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .node-config-breakpoints-actions {
+
+    }
 </style>
 
 <script type="text/javascript">
@@ -147,30 +155,42 @@
                     removeButton.on('click', function (e) {
                         e.preventDefault()
                         if (i > 0) {
-                            breakpointsList.editableList('removeItem', i)
+                            breakpointsList.editableList('removeItem', breakpoint)
                         }
                     })
                     if (i > 0) {
-                        row.append($.parseHTML('<a href="#" class="red-ui-editableList-item-remove red-ui-button red-ui-button-small"><i class="fa fa-remove"></i></a>'))
+                        row.append(removeButton)
                     }
                     return row
                 }
             })
 
             // set defaults
+            const defaultBreakpoints = [
+                { name: 'Default', px: 0, cols: 3 },
+                { name: 'Tablet', px: 576, cols: 6 },
+                { name: 'Small Desktop', px: 768, cols: 9 },
+                { name: 'Desktop', px: 1024, cols: 12 }
+            ]
+
             if (!this.breakpoints) {
-                this.breakpoints = [
-                    { name: 'Default', px: 0, cols: 3 },
-                    { name: 'Tablet', px: 576, cols: 6 },
-                    { name: 'Small Desktop', px: 768, cols: 9 },
-                    { name: 'Desktop', px: 1024, cols: 12 }
-                ]
+                this.breakpoints = defaultBreakpoints
             }
 
             for (let i = 0; i < this.breakpoints.length; i++) {
                 const breakpoint = this.breakpoints[i]
                 breakpointsList.editableList('addItem', breakpoint)
             }
+
+            // setup reset to defaults button
+            $('#node-config-breakpoints-reset').on('click', function (e) {
+                e.preventDefault()
+                breakpointsList.editableList('empty')
+                for (let i = 0; i < defaultBreakpoints.length; i++) {
+                    const breakpoint = defaultBreakpoints[i]
+                    breakpointsList.editableList('addItem', breakpoint)
+                }
+            })
 
             // backwards compatibility - because NR can't do boolean values on dropdowns
             if (this.visible === false || this.visible === 'false') {
@@ -262,8 +282,15 @@
         <input type="text" id="node-config-input-className" data-i18n="[placeholder]ui-page.label.classNamePlaceholder"/>
     </div>
     <div id="node-config-container-breakpoints">
-        <div class="form-row" style="font-weight: 600;">
-            <i class="w-16 fa fa-mobile"></i> <span data-i18n="ui-page.label.responsiveness">
+        <div class="form-row node-config-breakpoints-header" style="font-weight: 600;">
+            <div>
+                <i class="w-16 fa fa-mobile"></i> <span data-i18n="ui-page.label.responsiveness">
+            </div>
+            <div class="node-config-breakpoints-actions">
+                <button id="node-config-breakpoints-reset" type="button" class="red-ui-button red-ui-button-small" style="margin-top: 4px; margin-right: 5px;" title="add an item">
+                    <i class="fa fa-refresh"></i><span> <span data-i18n="ui-page.label.reset"></span>
+                </button>
+            </div>
         </div>
         <div class="form-row">
             <ol id="node-config-list-breakpoints"></ol>

@@ -14,6 +14,7 @@
             "class": "Class",
             "classNamePlaceholder": "Optional CSS class name(s) for page",
             "responsiveness": "Responsive Layouts",
+            "reset": "reset to defaults",
             "name": "Name",
             "breakpoint": "Breakpoint (px)",
             "columns": "Columns",
