@@ -136,7 +136,7 @@ fetch('_setup')
             }
             // tell the user we're trying to connect
             Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
-                displayTime: 0,
+                displayTime: 0, // displayTime 0 persists notifications until another notification closes it
                 allowDismiss: false,
                 showCountdown: false
             })
