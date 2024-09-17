@@ -12,30 +12,12 @@ The layout will automatically move widgets to the next row if they don't fit wit
 
 ## Breakpoints
 
-Depending on the screen size, the number of default columns rendered will change. Here you can see examples of the columns rendered at three breakpoints:
+Depending on the screen size, the number of default columns rendered can change. Here you can see examples of the columns rendered at three breakpoints:
 
 ![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-columns.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
-### Desktop
-
-- **Breakpoint:** 1024px
-- **Columns:** 12
-
-### Tablet
-
-- **Breakpoint:** 768px
-- **Columns:** 9
-
-### Medium
-
-- **Breakpoint:** > 576px
-- **Columns:** 6
-
-### Mobile
-
-- **Breakpoint:** < 576px
-- **Columns:** 3
+The exact breakpoints used can be configured in the [page's settings](../../nodes/config/ui-page.md#breakpoints).
 
 ## Controlling Width
 

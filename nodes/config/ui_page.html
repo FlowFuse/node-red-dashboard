@@ -98,7 +98,6 @@
             })
 
             $('#node-config-input-layout').on('change', function (event, type, value) {
-                console.log(value)
                 // show for the others
                 if (value === 'flex') {
                     $('#node-config-container-breakpoints').hide()
@@ -116,7 +115,6 @@
                 addItem: function (container, i, breakpoint) {
                     const row = $('<div>').addClass('node-config-list-breakpoints-item').appendTo(container)
                     // Value Field
-                    // $('<label/>').text('px:').appendTo(row)
                     $('<input/>').addClass('node-input-breakpoint-name')
                         .attr('type', 'text')
                         .attr('placeholder', 'Mobile (sm)')
@@ -137,7 +135,6 @@
                         .appendTo(row)
 
                     // Label field
-                    // $('<label/>').text('cols:').appendTo(row)
                     $('<input/>').addClass('node-input-breakpoint-cols')
                         .attr('type', 'text')
                         .attr('required', 'true')
@@ -146,7 +143,6 @@
                         .appendTo(row)
     
                     // remove button
-                    // <a <i class="fa fa-remove"></i></a>
                     const removeButton = $('<a href="#" class="red-ui-editableList-item-remove red-ui-button red-ui-button-small"><i class="fa fa-remove"></i></a>')
                     removeButton.on('click', function (e) {
                         e.preventDefault()
