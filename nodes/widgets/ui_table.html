@@ -321,6 +321,13 @@
         <input type="number" id="node-input-maxrows">
     </div>
     <div class="form-row">
+        <label for="node-input-action" data-i18n="ui-table.label.action"></label></label>
+        <select id="node-input-action">
+            <option value="append" data-i18n="ui-table.label.append"></option>
+            <option value="replace" data-i18n="ui-table.label.replace"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-mobileBreakpoint"><i class="fa fa-mobile"></i> <span data-i18n="ui-table.label.mobileBreakpoint"></label>
         <input type="text" id="node-input-mobileBreakpoint">
         <input type="hidden" id="node-input-mobileBreakpointType">
@@ -356,12 +363,5 @@
                 <a href="#" class="editor-button editor-button-small" id="node-input-add-column" style="margin-top:4px;"><i class="fa fa-plus"></i> <span data-i18n="ui-table.label.columns"></span></a>
             </div>
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-action" data-i18n="ui-table.label.action"></label></label>
-        <select id="node-input-action">
-            <option value="append" data-i18n="ui-table.label.append"></option>
-            <option value="replace" data-i18n="ui-table.label.replace"></option>
-        </select>
     </div>
 </script>

@@ -37,6 +37,8 @@ dynamic:
 
 </TryDemo>
 
+## Sending Data
+
 Renders a set of data in a tabular format. Expects an input (`msg.payload`) in the format of:
 
 ```json
@@ -53,7 +55,7 @@ Renders a set of data in a tabular format. Expects an input (`msg.payload`) in t
 
 The table will be rendered with colums `colA`, `colB` and `colC`, unless "Columns" are explicitely defined on the node, with "Auto Columns" toggled off.
 
-or render just one row by simply passing an object. Expects an input (`msg.payload`) in the format of:
+You can also send a single piece of data to append to the existing table, in this case, the `ui-table` expects an input (`msg.payload`) in the format of:
 
 ```json
 {
@@ -63,7 +65,13 @@ or render just one row by simply passing an object. Expects an input (`msg.paylo
 }
 ```
 
-The table will render same but only one row.
+### Clear Data
+
+You can send an empty array to clear the table.
+
+```json
+[]
+```
 
 ## Properties
 
