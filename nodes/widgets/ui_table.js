@@ -9,6 +9,7 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
+        const base = group.getBase() // Used for datastore
 
         config.maxrows = parseInt(config.maxrows) || 0
 
@@ -29,9 +30,26 @@ module.exports = function (RED) {
         group.register(node, config, {
             onAction: true,
             onInput: function (msg) {
-                // store the latest msg passed to node
-                datastore.save(group.getBase(), node, msg)
-                // do nothing else - do not pass the message on
+                const existingData = datastore.get(node.id) || []
+                const formatPayload = (value) => {
+                    if (value !== null && typeof value !== 'undefined') {
+                        // push object into array if user sends object instead of array
+                        if (typeof value === 'object' && !Array.isArray(value)) {
+                            return [value]
+                        }
+                    }
+                    return value
+                }
+                let payload = formatPayload(msg?.payload)
+                // check if the action is to append records
+                if (config.action === 'append') {
+                    payload = payload && payload.length > 0 ? [...existingData.payload || [], ...payload || []] : payload
+                }
+
+                datastore.save(base, node, {
+                    ...msg,
+                    payload
+                })
             }
         })
     }

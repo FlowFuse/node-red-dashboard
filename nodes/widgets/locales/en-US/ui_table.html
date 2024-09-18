@@ -4,9 +4,9 @@
     </p>
     <h3>Input</h3>
     <p>
-        The ui-table widget requires an array of data to be sent via <code>msg.payload</code>.
-        The table will then render a row for each object within the array, and, by default, a
-        column for each property in the objects.
+        The ui-table widget requires an array or an object of data to be sent via <code>msg.payload</code>.
+        If an array is provided, the table will render a row for each object within the array, and, by default, a column for each property in the objects.
+        If an object is provided, the table will render a single row with columns for each property in the object.
     </p>
     <h3>Properties</h3>
     <dl class="message-properties">
@@ -14,6 +14,11 @@
         <dd>
             Defines the maximum number of data-rows to render in the table.
             Excess rows will be available through pagination control. Set to "0" for no pagination.
+        </dd>
+        <dt>Action <span class="property-type">append | replace</span></dt>
+        <dd>
+            Determines the action taken when new data arrives, and whether the new data is appended
+            to the chart, or replaces the existing contents.
         </dd>
         <dt>Breakpoint <span class="property-type">str | num</span></dt>
         <dd>
