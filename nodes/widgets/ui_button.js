@@ -11,19 +11,22 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const beforeSend = async function (msg) {
-            let payloadType = null
-            let payload = null
             let error = null
+            let payload = null
+            let payloadType = null
 
-            // retrieve the payload we're sending from this button
-            switch (msg._event.type) {
+            switch (msg.type) {
+            case 'pointerup':
+                payload = config.pointerupPayload
+                payloadType = config.pointerupPayloadType
+                break
             case 'pointerdown':
                 payload = config.pointerdownPayload
                 payloadType = config.pointerdownPayloadType
                 break
-            case 'pointerup':
-                payload = config.pointerupPayload
-                payloadType = config.pointerupPayloadType
+            case 'click':
+                payload = config.payload
+                payloadType = config.payloadType
                 break
             default:
                 payload = config.payload

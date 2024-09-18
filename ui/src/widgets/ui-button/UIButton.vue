@@ -65,43 +65,46 @@ export default {
     methods: {
         action ($evt) {
             const evt = {
-                type: $evt.type,
+                type: 'click',
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
             const msg = this.messages[this.id] || {}
             msg._event = evt
+            msg.type = 'click'
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerdown: function ($evt) {
             if (!this.props.enablePointerdown) {
                 return
             }
-            $evt.target.setPointerCapture($evt.pointerId)
             const evt = {
-                type: $evt.type,
+                type: 'click',
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
             const msg = this.messages[this.id] || {}
             msg._event = evt
+            $evt.target.setPointerCapture($evt.pointerId)
+            msg.type = 'pointerdown'
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerup: function ($evt) {
             if (!this.props.enablePointerup) {
                 return
             }
-            $evt.target.releasePointerCapture($evt.pointerId)
             const evt = {
-                type: $evt.type,
+                type: 'click',
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
             const msg = this.messages[this.id] || {}
             msg._event = evt
+            $evt.target.releasePointerCapture($evt.pointerId)
+            msg.type = 'pointerup'
             this.$socket.emit('widget-action', this.id, msg)
         },
 
