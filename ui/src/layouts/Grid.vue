@@ -50,11 +50,6 @@ export default {
         WidgetGroup
     },
     mixins: [Responsiveness],
-    data () {
-        return {
-            columns: 0
-        }
-    },
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
