@@ -33,7 +33,6 @@ export default {
                 })
             }
             this.columns = cols
-            console.log('columns', this.columns)
         }
     }
 }
