@@ -1,18 +1,17 @@
+import axios from 'axios'
+
 export default {
-    deploy: function () {
+    deployChanges: function (dashboardId, changes) {
         console.log('deploy changes')
-        // return cy.request({
-        //     method: 'POST',
-        //     url: 'http://localhost:1881/flows',
-        //     headers: {
-        //         'Content-type': 'application/json',
-        //         'Node-RED-API-Version': 'v2',
-        //         'Node-RED-Deployment-Type': 'full'
-        //     },
-        //     body: {
-        //         rev,
-        //         flows
-        //     }
-        // })
+        return axios.request({
+            method: 'PATCH',
+            url: '/editor/dashboard/' + dashboardId,
+            headers: {
+                'Content-type': 'application/json',
+                'Node-RED-API-Version': 'v2',
+                'Node-RED-Deployment-Type': 'full'
+            },
+            data: changes
+        })
     }
 }

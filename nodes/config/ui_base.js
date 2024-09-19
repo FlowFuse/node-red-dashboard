@@ -1,5 +1,7 @@
 const path = require('path')
 
+const axios = require('axios')
+
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
@@ -1069,4 +1071,42 @@ module.exports = function (RED) {
     }
 
     RED.nodes.registerType('ui-base', UIBaseNode)
+
+    RED.httpAdmin.patch('/dashboard/:dashboardId', RED.auth.needsPermission('flows.write'), async function (req, res) {
+        const host = RED.settings.uiHost
+        const port = RED.settings.uiPort
+        const httpAdminRoot = RED.settings.httpAdminRoot
+        const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        console.log('url', url)
+        // get request body
+        const changes = req.body
+        console.log(changes)
+        // get the active Node-RED flows json via the GET /flows API
+        return axios.request({
+            method: 'GET',
+            url
+        }).then(response => {
+            const flows = response.data
+            // console.log('API Flows', flows)
+            // check groups for updates
+            if (changes.groups) {
+                for (const group of changes.groups) {
+                    const existingGroup = flows.find(n => n.id === group.id)
+                    if (existingGroup) {
+                        existingGroup.order = group.order
+                    }
+                }
+            }
+            return flows
+        }).then(flows => {
+            // update the flows with the new group order
+            return axios.request({
+                method: 'POST',
+                url,
+                data: flows
+            })
+        }).then(response => {
+            return res.status(200).json(response.data)
+        })
+    })
 }

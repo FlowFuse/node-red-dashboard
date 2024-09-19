@@ -67,7 +67,7 @@ export default {
     computed: {
         ...mapState('ui', ['pages']),
         ...mapState('data', ['properties']),
-        ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
+        ...mapGetters('ui', ['id', 'groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
         orderedGroups: function () {
             // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
@@ -111,7 +111,9 @@ export default {
         },
         save () {
             // API call to NR to trigger a deploy
-            NodeREDAPI.deploy()
+            NodeREDAPI.deployChanges(this.id, {
+                groups: this.groups
+            })
         },
         discard () {
             // reload groups from store
@@ -177,7 +179,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .nrdb-ui-group.dragging {
     border-style: dashed;
 }
@@ -192,8 +194,14 @@ export default {
     background-color: white;
     border: 1px solid #ccc;
     box-shadow: 0px 0px 5px black;
-    padding: 8px;
+    padding: 12px;
     border-radius: 4px;
+    display: flex;
+    gap: 6px;
+    border-radius: 2rem;
+    .v-btn {
+        border-radius: 2rem;
+    }
 }
 
 /* Actual Layout Styling */
