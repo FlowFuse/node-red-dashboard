@@ -237,8 +237,8 @@
                     const row = $(this)
                     const breakpoint = {
                         name: row.find('.node-input-breakpoint-name').val(),
-                        px: parseFloat(row.find('.node-input-breakpoint-px').val()),
-                        cols: parseFloat(row.find('.node-input-breakpoint-cols').val())
+                        px: row.find('.node-input-breakpoint-px').val(),
+                        cols: row.find('.node-input-breakpoint-cols').val()
                     }
                     node.breakpoints.push(breakpoint)
                 })
