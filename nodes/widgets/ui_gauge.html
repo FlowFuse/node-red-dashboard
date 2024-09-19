@@ -9,6 +9,7 @@
 </style>
 
 <script type="text/javascript">
+    let nodeState
     function validateGaugeSegments (segments) {
         $('#node-input-validation-segments').hide()
         const min = parseFloat(this.min)
@@ -98,6 +99,67 @@
         label: function () { return this.name || this.title || this.gtype },
         labelStyle: function () { return this.name ? 'node_label_italic' : '' },
         oneditprepare: function () {
+            // Node state for later comparison
+            nodeState = this
+
+            function isDifferent (originalValue, newValue) {
+                // Normalize values (e.g., for strings and numbers)
+                function normalize (value) {
+                    if (typeof value === 'string') {
+                        // Convert string numbers to actual numbers and normalize string case
+                        return isNaN(value) ? value.toLowerCase() : parseFloat(value)
+                    }
+                    return value
+                }
+
+                // Check if both are of the same type after normalization
+                originalValue = normalize(originalValue)
+                newValue = normalize(newValue)
+
+                if (typeof originalValue !== typeof newValue) {
+                    return true // Different types
+                }
+
+                // Handle primitive values (numbers, strings, booleans, etc.)
+                if (typeof originalValue !== 'object' || originalValue === null || newValue === null) {
+                    return originalValue !== newValue
+                }
+
+                // Handle arrays
+                if (Array.isArray(originalValue) && Array.isArray(newValue)) {
+                    if (originalValue.length !== newValue.length) {
+                        return true // Different array lengths
+                    }
+                    for (let i = 0; i < originalValue.length; i++) {
+                        if (isDifferent(originalValue[i], newValue[i])) {
+                            return true // Difference found in array element
+                        }
+                    }
+                    return false // Arrays are the same
+                }
+
+                // Handle objects
+                if (typeof originalValue === 'object' && typeof newValue === 'object') {
+                    const keys1 = Object.keys(originalValue).sort()
+                    const keys2 = Object.keys(newValue).sort()
+
+                    // Check if object keys are different
+                    if (keys1.length !== keys2.length) {
+                        return true // Different number of keys
+                    }
+
+                    // Check if values for each key are different
+                    for (const key of keys1) {
+                        if (!keys2.includes(key) || isDifferent(originalValue[key], newValue[key])) {
+                            return true // Difference found in object property
+                        }
+                    }
+                    return false // Objects are the same
+                }
+
+                return false // Default case if nothing above matched
+            }
+
             // store reference to initial gtype so we can check if it's changed
             const initGType = this.gtype
     
@@ -229,12 +291,10 @@
                         const segment = segments[i]
                         generateSegment(i + 1, segment)
                     }
-                } else if (initGType !== type) {
+                } else if (['gauge-half', 'gauge-34'].includes(type) && ['gauge-half', 'gauge-34'].includes(initGType)) {
                     // we've actually changed type, not just being triggered by the initial NR load of palette
-    
-                    // set new min/max
-                    $('#node-input-min').val(0)
-                    $('#node-input-max').val(10)
+                    const inputMin = 0
+                    const inputMax = 10
 
                     // set some sensible segments
                     const segments = [{
@@ -247,12 +307,23 @@
                         color: '#EA5353',
                         from: 7
                     }]
-                    // clear existing segments
-                    $('#node-input-segments-container').empty()
-                    // add the new "defaults" for this gType
-                    for (let i = 0; i < segments.length; i++) {
-                        const segment = segments[i]
-                        generateSegment(i + 1, segment)
+
+                    if (!isDifferent(segments, nodeState.segments)) {
+                        // clear existing segments
+                        $('#node-input-segments-container').empty()
+                        // add the new "defaults" for this gType
+                        for (let i = 0; i < segments.length; i++) {
+                            const segment = segments[i]
+                            generateSegment(i + 1, segment)
+                        }
+                    }
+                    if (!isDifferent(inputMin, nodeState.min)) {
+                        // set new min
+                        $('#node-input-min').val(0)
+                    }
+                    if (!isDifferent(inputMax, nodeState.max)) {
+                        // set new max
+                        $('#node-input-max').val(10)
                     }
                 }
             }
