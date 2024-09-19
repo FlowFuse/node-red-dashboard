@@ -12,6 +12,11 @@ export default {
             return this.pages[this.$route.meta.id]
         }
     },
+    watch: {
+        page: function () {
+            this.countColumns()
+        }
+    },
     mounted () {
         window.addEventListener('resize', () => {
             this.countColumns()
