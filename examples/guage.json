@@ -35,7 +35,7 @@
         "height": 0,
         "gtype": "gauge-34",
         "gstyle": "needle",
-        "title": "gauge",
+        "label": "gauge",
         "units": "°F",
         "prefix": "",
         "suffix": "",

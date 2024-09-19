@@ -1,6 +1,6 @@
 <template>
     <div class="nrdb-ui-gauge-battery--container">
-        <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <label v-if="props.label" class="nrdb-ui-gauge-title">{{ props.label }}</label>
         <div class="nrdb-ui-gauge-battery" :class="`nrdb-ui-gauge-battery--${orientation}`" :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}">
             <div class="nrdb-ui-gauge-battery--center">
                 <div class="nrdb-ui-gauge-battery-icon nrdb-ui-gauge-battery-icon--bg">
