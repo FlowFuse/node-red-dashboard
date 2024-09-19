@@ -15,7 +15,9 @@ module.exports = function (RED) {
             let payload = null
             let payloadType = null
 
-            switch (msg.type) {
+            msg._event = msg._event || {"type": "inject"}
+            
+            switch (msg._event.type) {
             case 'pointerup':
                 payload = config.pointerupPayload
                 payloadType = config.pointerupPayloadType
@@ -25,6 +27,10 @@ module.exports = function (RED) {
                 payloadType = config.pointerdownPayloadType
                 break
             case 'click':
+                payload = config.payload
+                payloadType = config.payloadType
+                break
+            case 'inject':
                 payload = config.payload
                 payloadType = config.payloadType
                 break
@@ -105,6 +111,7 @@ module.exports = function (RED) {
             beforeSend,
             onInput: async function (msg) {
                 if (config.emulateClick) {
+                    
                     msg = await beforeSend(msg)
 
                     if (config.topic || config.topicType) {

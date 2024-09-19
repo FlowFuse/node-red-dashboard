@@ -65,14 +65,13 @@ export default {
     methods: {
         action ($evt) {
             const evt = {
-                type: 'click',
+                type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
             }
             const msg = this.messages[this.id] || {}
             msg._event = evt
-            msg.type = 'click'
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerdown: function ($evt) {
@@ -80,7 +79,7 @@ export default {
                 return
             }
             const evt = {
-                type: 'click',
+                type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
@@ -88,7 +87,6 @@ export default {
             const msg = this.messages[this.id] || {}
             msg._event = evt
             $evt.target.setPointerCapture($evt.pointerId)
-            msg.type = 'pointerdown'
             this.$socket.emit('widget-action', this.id, msg)
         },
         pointerup: function ($evt) {
@@ -96,7 +94,7 @@ export default {
                 return
             }
             const evt = {
-                type: 'click',
+                type: $evt.type,
                 clientX: $evt.clientX,
                 clientY: $evt.clientY,
                 bbox: $evt.target.getBoundingClientRect()
@@ -104,7 +102,6 @@ export default {
             const msg = this.messages[this.id] || {}
             msg._event = evt
             $evt.target.releasePointerCapture($evt.pointerId)
-            msg.type = 'pointerup'
             this.$socket.emit('widget-action', this.id, msg)
         },
 
