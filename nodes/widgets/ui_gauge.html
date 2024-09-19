@@ -232,6 +232,7 @@
             // only show relevant options
 
             function showTypeOptions (type) {
+                debugger;
                 if (type === 'gauge-tile' || type === 'gauge-battery' || type === 'gauge-tank') {
                     $('#node-input-container-sizes').hide()
                     $('#node-input-container-gstyle').hide()
@@ -241,6 +242,8 @@
                     $('#node-input-container-gstyle').show()
                     $('#node-input-container-label-extras').show()
                 }
+
+                const otherGuages = ['gauge-battery', 'gauge-tank']
 
                 if (type === 'gauge-tank' && initGType !== 'gauge-tank') {
                     // set new min/max
@@ -291,7 +294,7 @@
                         const segment = segments[i]
                         generateSegment(i + 1, segment)
                     }
-                } else if (['gauge-half', 'gauge-34'].includes(type) && ['gauge-half', 'gauge-34'].includes(initGType)) {
+                } else if (initGType !== type) {
                     // we've actually changed type, not just being triggered by the initial NR load of palette
                     const inputMin = 0
                     const inputMax = 10
@@ -308,7 +311,7 @@
                         from: 7
                     }]
 
-                    if (!isDifferent(segments, nodeState.segments)) {
+                    if (!isDifferent(segments, nodeState.segments) || otherGuages.includes(initGType)) {
                         // clear existing segments
                         $('#node-input-segments-container').empty()
                         // add the new "defaults" for this gType
@@ -317,11 +320,11 @@
                             generateSegment(i + 1, segment)
                         }
                     }
-                    if (!isDifferent(inputMin, nodeState.min)) {
+                    if (!isDifferent(inputMin, nodeState.min) || otherGuages.includes(initGType)) {
                         // set new min
                         $('#node-input-min').val(0)
                     }
-                    if (!isDifferent(inputMax, nodeState.max)) {
+                    if (!isDifferent(inputMax, nodeState.max) || otherGuages.includes(initGType)) {
                         // set new max
                         $('#node-input-max').val(10)
                     }
