@@ -1,6 +1,6 @@
 <template>
     <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
-        <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
         <svg ref="gauge" width="0" height="100%">
             <g id="sections" />
             <g id="backdrop">

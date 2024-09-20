@@ -13,9 +13,16 @@ module.exports = function (RED) {
             beforeSend: async function (msg) {
                 const updates = msg.ui_update
                 if (updates) {
-                    if (typeof updates.title !== 'undefined') {
+                    const hasLabelKey = Object.keys(updates).includes('label')
+                    const hasTitleKey = Object.keys(updates).includes('title')
+
+                    if (!hasLabelKey && hasTitleKey) {
+                        updates.label = updates.title
+                    }
+
+                    if (typeof updates.label !== 'undefined') {
                         // dynamically set "label" property
-                        statestore.set(group.getBase(), node, msg, 'title', updates.title)
+                        statestore.set(group.getBase(), node, msg, 'label', updates.label)
                     }
                     if (typeof updates.gtype !== 'undefined') {
                         // dynamically set "gauge type" property
