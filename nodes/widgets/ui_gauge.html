@@ -59,7 +59,7 @@
             height: { value: 3 },
             gtype: { value: 'gauge-half' },
             gstyle: { value: 'needle' },
-            label: { value: 'gauge' },
+            title: { value: 'gauge' },
             units: { value: 'units' },
             icon: { value: '' },
             prefix: { value: '' },
@@ -95,7 +95,7 @@
         align: 'right',
         icon: 'ui-gauge.svg',
         paletteLabel: 'gauge',
-        label: function () { return this.name || this.label || this.gtype },
+        label: function () { return this.name || this.title || this.gtype },
         labelStyle: function () { return this.name ? 'node_label_italic' : '' },
         oneditprepare: function () {
             // store reference to initial gtype so we can check if it's changed
@@ -354,8 +354,8 @@
     </div>
     <div id="ui-gauge-labels">
         <div class="form-row">
-            <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
-            <input type="text" id="node-input-label">
+            <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
+            <input type="text" id="node-input-title">
         </div>
         <div id="node-input-container-label-extras">
             <div class="form-row form-row-flex">

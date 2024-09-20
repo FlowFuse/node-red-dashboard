@@ -63,7 +63,7 @@ export default {
         dynamicProps () {
             const props = {
                 ...this.props,
-                label: this.label,
+                label: this.label || this.props.title, // Get dynamic label or fallback to static title
                 gtype: this.gtype,
                 gstyle: this.gstyle,
                 prefix: this.prefix,
