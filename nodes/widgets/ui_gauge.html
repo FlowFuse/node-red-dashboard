@@ -9,7 +9,6 @@
 </style>
 
 <script type="text/javascript">
-    let nodeState
     function validateGaugeSegments (segments) {
         $('#node-input-validation-segments').hide()
         const min = parseFloat(this.min)
@@ -39,6 +38,7 @@
         }
         return minCovered && !extras
     }
+    let isInitialised = false
     RED.nodes.registerType('ui-gauge', {
         category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
         color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -99,66 +99,7 @@
         label: function () { return this.name || this.title || this.gtype },
         labelStyle: function () { return this.name ? 'node_label_italic' : '' },
         oneditprepare: function () {
-            // Node state for later comparison
-            nodeState = this
-
-            function isDifferent (originalValue, newValue) {
-                // Normalize values (e.g., for strings and numbers)
-                function normalize (value) {
-                    if (typeof value === 'string') {
-                        // Convert string numbers to actual numbers and normalize string case
-                        return isNaN(value) ? value.toLowerCase() : parseFloat(value)
-                    }
-                    return value
-                }
-
-                // Check if both are of the same type after normalization
-                originalValue = normalize(originalValue)
-                newValue = normalize(newValue)
-
-                if (typeof originalValue !== typeof newValue) {
-                    return true // Different types
-                }
-
-                // Handle primitive values (numbers, strings, booleans, etc.)
-                if (typeof originalValue !== 'object' || originalValue === null || newValue === null) {
-                    return originalValue !== newValue
-                }
-
-                // Handle arrays
-                if (Array.isArray(originalValue) && Array.isArray(newValue)) {
-                    if (originalValue.length !== newValue.length) {
-                        return true // Different array lengths
-                    }
-                    for (let i = 0; i < originalValue.length; i++) {
-                        if (isDifferent(originalValue[i], newValue[i])) {
-                            return true // Difference found in array element
-                        }
-                    }
-                    return false // Arrays are the same
-                }
-
-                // Handle objects
-                if (typeof originalValue === 'object' && typeof newValue === 'object') {
-                    const keys1 = Object.keys(originalValue).sort()
-                    const keys2 = Object.keys(newValue).sort()
-
-                    // Check if object keys are different
-                    if (keys1.length !== keys2.length) {
-                        return true // Different number of keys
-                    }
-
-                    // Check if values for each key are different
-                    for (const key of keys1) {
-                        if (!keys2.includes(key) || isDifferent(originalValue[key], newValue[key])) {
-                            return true // Difference found in object property
-                        }
-                    }
-                    return false // Objects are the same
-                }
-
-                return false // Default case if nothing above matched
-            }
+            let isDirty = false
 
             // store reference to initial gtype so we can check if it's changed
             const initGType = this.gtype
@@ -208,6 +149,7 @@
                     container.fadeOut(300, function () {
                         $(this).remove()
                     })
+                    isDirty = true // make dirty on delete segments
                 })
 
                 $('#node-input-segments-container').append(container)
@@ -216,6 +158,7 @@
             $('#node-input-add-segment').click(function () {
                 generateSegment($('#node-input-segments-container').children().length + 1, {})
                 $('#node-input-segments-container-div').scrollTop($('#node-input-segments-container-div').get(0).scrollHeight)
+                isDirty = true // make dirty on add segments
             })
 
             $('#node-input-segments-container').sortable({
@@ -229,9 +172,95 @@
                 generateSegment(i + 1, segment)
             }
 
-            // only show relevant options
+            let currentGaugeType
 
+            const segmentsTank = [{
+                color: '#A8F5FF',
+                from: 0
+            }, {
+                color: '#55DBEC',
+                from: 15
+            }, {
+                color: '#53B4FD',
+                from: 35
+            }, {
+                color: '#2397D1',
+                from: 50
+            }]
+            const segmentsBattery = [{
+                color: '#EA5353',
+                from: 0
+            }, {
+                color: '#FFC800',
+                from: 40
+            }, {
+                color: '#5CD65C',
+                from: 70
+            }]
+            const segmentsTileHalfand34 = [{
+                color: '#5CD65C',
+                from: 0
+            }, {
+                color: '#FFC800',
+                from: 4
+            }, {
+                color: '#EA5353',
+                from: 7
+            }]
+
+            // set default segments based on the current gauge type
+            $('#node-input-get-defaults').click(function () {
+                if (currentGaugeType === 'gauge-tank') {
+                    const segments = segmentsTank
+                    // clear existing segments
+                    $('#node-input-segments-container').empty()
+                    // add the new "defaults" for this gType
+                    for (let i = 0; i < segments.length; i++) {
+                        const segment = segments[i]
+                        generateSegment(i + 1, segment)
+                    }
+                    // set new min/max
+                    $('#node-input-min').val(0)
+                    $('#node-input-max').val(100)
+                } else if (currentGaugeType === 'gauge-battery') {
+                    const segments = segmentsBattery
+                    // clear existing segments
+                    $('#node-input-segments-container').empty()
+                    // add the new "defaults" for this gType
+                    for (let i = 0; i < segments.length; i++) {
+                        const segment = segments[i]
+                        generateSegment(i + 1, segment)
+                    }
+                    // set new min/max
+                    $('#node-input-min').val(0)
+                    $('#node-input-max').val(100)
+                } else {
+                    const segments = segmentsTileHalfand34
+                    // clear existing segments
+                    $('#node-input-segments-container').empty()
+                    // add the new "defaults" for this gType
+                    for (let i = 0; i < segments.length; i++) {
+                        const segment = segments[i]
+                        generateSegment(i + 1, segment)
+                    }
+                    // set new min/max
+                    $('#node-input-min').val(0)
+                    $('#node-input-max').val(10)
+                }
+                isDirty = false // make dirty false on defaults
+            })
+
+            // only show relevant options
             function showTypeOptions (type) {
+                currentGaugeType = type
+                const newSegments = []
+                $('#node-input-segments-container > li').each(function () {
+                    newSegments.push({
+                        color: $(this).find('.node-input-segment-color').val(),
+                        from: $(this).find('.node-input-segment-from').val()
+                    })
+                })
+
                 if (type === 'gauge-tile' || type === 'gauge-battery' || type === 'gauge-tank') {
                     $('#node-input-container-sizes').hide()
                     $('#node-input-container-gstyle').hide()
@@ -242,75 +271,10 @@
                     $('#node-input-container-label-extras').show()
                 }
 
-                const otherGuages = ['gauge-battery', 'gauge-tank']
-
                 if (type === 'gauge-tank' && initGType !== 'gauge-tank') {
-                    // set new min/max
-                    $('#node-input-min').val(0)
-                    $('#node-input-max').val(100)
-
                     // set some sensible segments
-                    const segments = [{
-                        color: '#A8F5FF',
-                        from: 0
-                    }, {
-                        color: '#55DBEC',
-                        from: 15
-                    }, {
-                        color: '#53B4FD',
-                        from: 35
-                    }, {
-                        color: '#2397D1',
-                        from: 50
-                    }]
-                    // clear existing segments
-                    $('#node-input-segments-container').empty()
-                    // add the new "defaults" for this gType
-                    for (let i = 0; i < segments.length; i++) {
-                        const segment = segments[i]
-                        generateSegment(i + 1, segment)
-                    }
-                } else if (type === 'gauge-battery' && initGType !== 'gauge-battery') {
-                    // set new min/max
-                    $('#node-input-min').val(0)
-                    $('#node-input-max').val(100)
-
-                    // set some sensible segments
-                    const segments = [{
-                        color: '#EA5353',
-                        from: 0
-                    }, {
-                        color: '#FFC800',
-                        from: 40
-                    }, {
-                        color: '#5CD65C',
-                        from: 70
-                    }]
-                    // clear existing segments
-                    $('#node-input-segments-container').empty()
-                    // add the new "defaults" for this gType
-                    for (let i = 0; i < segments.length; i++) {
-                        const segment = segments[i]
-                        generateSegment(i + 1, segment)
-                    }
-                } else if (initGType !== type) {
-                    // we've actually changed type, not just being triggered by the initial NR load of palette
-                    const inputMin = 0
-                    const inputMax = 10
-
-                    // set some sensible segments
-                    const segments = [{
-                        color: '#5CD65C',
-                        from: 0
-                    }, {
-                        color: '#FFC800',
-                        from: 4
-                    }, {
-                        color: '#EA5353',
-                        from: 7
-                    }]
-
-                    if (!isDifferent(segments, nodeState.segments) || otherGuages.includes(initGType)) {
+                    const segments = segmentsTank
+                    if (!isDirty) {
                         // clear existing segments
                         $('#node-input-segments-container').empty()
                         // add the new "defaults" for this gType
@@ -318,18 +282,50 @@
                             const segment = segments[i]
                             generateSegment(i + 1, segment)
                         }
-                    }
-                    if (!isDifferent(inputMin, nodeState.min) || otherGuages.includes(initGType)) {
-                        // set new min
+                        // set new min/max
                         $('#node-input-min').val(0)
+                        $('#node-input-max').val(100)
                     }
-                    if (!isDifferent(inputMax, nodeState.max) || otherGuages.includes(initGType)) {
-                        // set new max
+                } else if (type === 'gauge-battery' && initGType !== 'gauge-battery') {
+                    // set some sensible segments
+                    const segments = segmentsBattery
+                    if (!isDirty) {
+                        // clear existing segments
+                        $('#node-input-segments-container').empty()
+                        // add the new "defaults" for this gType
+                        for (let i = 0; i < segments.length; i++) {
+                            const segment = segments[i]
+                            generateSegment(i + 1, segment)
+                        }
+                        // set new min/max
+                        $('#node-input-min').val(0)
+                        $('#node-input-max').val(100)
+                    }
+                } else if (isInitialised) {
+                    // we've actually changed type, not just being triggered by the initial NR load of palette
+
+                    // set some sensible segments
+                    const segments = segmentsTileHalfand34
+
+                    if (!isDirty) {
+                        // clear existing segments
+                        $('#node-input-segments-container').empty()
+                        // add the new "defaults" for this gType
+                        for (let i = 0; i < segments.length; i++) {
+                            const segment = segments[i]
+                            generateSegment(i + 1, segment)
+                        }
+                        // set new min/max
+                        $('#node-input-min').val(0)
                         $('#node-input-max').val(10)
                     }
                 }
+                $('.node-input-segment-color, .node-input-segment-from, #node-input-min, #node-input-max').on('input', function () {
+                    isDirty = true // make dirty on input change
+                })
+                isInitialised = true
             }
-    
+
             $('#node-input-gtype').change((data) => {
                 const gType = $('#node-input-gtype').val()
                 showTypeOptions(gType)
@@ -421,6 +417,7 @@
     </div>
     <div class="form-row">
         <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
+        <a href="#" class="editor-button editor-button-small" id="node-input-get-defaults" style="margin-top:4px;"><span data-i18n="ui-gauge.label.defaults"></span></a>
     </div>
     <div class="form-row">
         <h3 data-i18n="ui-gauge.label.labelling"></h3>
