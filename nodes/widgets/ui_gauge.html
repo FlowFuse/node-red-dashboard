@@ -143,20 +143,11 @@
                 prefix: { value: '' },
                 suffix: { value: '' },
                 segments: {
-                    value: [{
-                        color: '#5CD65C',
-                        from: 0
-                    }, {
-                        color: '#FFC800',
-                        from: 4
-                    }, {
-                        color: '#EA5353',
-                        from: 7
-                    }],
+                    value: [...DEFAULTS['gauge-half'].segments],
                     validate: validateGaugeSegments
                 },
-                min: { value: 0, required: true, validate: RED.validators.number() },
-                max: { value: 10, required: true, validate: RED.validators.number() },
+                min: { value: DEFAULTS['gauge-half'].min, required: true, validate: RED.validators.number() },
+                max: { value: DEFAULTS['gauge-half'].max, required: true, validate: RED.validators.number() },
                 // sizes
                 sizeThickness: { value: 16, validate: RED.validators.number() },
                 sizeGap: { value: 4, validate: RED.validators.number() },
