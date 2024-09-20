@@ -28,7 +28,8 @@
             "styling": "Styling",
             "class": "Class",
             "units": "Units",
-            "icon": "Icon"
+            "icon": "Icon",
+            "defaults": "Defaults"
         },
         "errors": {
             "unique": "All 'from' values must be unique."
