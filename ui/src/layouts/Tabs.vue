@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import Responsiveness from '../mixins/responsiveness.js'
+
 // eslint-disable-next-line import/order
 import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
@@ -50,6 +52,7 @@ export default {
         BaselineLayout,
         WidgetGroup
     },
+    mixins: [Responsiveness],
     data () {
         return {
             tab: 0
@@ -118,30 +121,11 @@ export default {
 .nrdb-layout--tabs {
     --layout-gap: 12px;
     --widget-row-height: 48px;
-    --layout-columns: 12;
+    --layout-columns: v-bind(columns);
     padding: var(--page-padding);
 }
 
 .v-card {
     width: 100%;
 }
-
-@media only screen and (max-width: 1024px) {
-    .nrdb-layout--tabs {
-        --layout-columns: 9;
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    .nrdb-layout--tabs {
-        --layout-columns: 6;
-    }
-}
-
-@media only screen and (max-width: 576px) {
-    .nrdb-layout--tabs {
-        --layout-columns: 3;
-    }
-}
-
 </style>
