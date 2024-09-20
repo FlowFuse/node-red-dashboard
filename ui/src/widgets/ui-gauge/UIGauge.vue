@@ -63,7 +63,7 @@ export default {
         dynamicProps () {
             const props = {
                 ...this.props,
-                label: this.label || this.props.title, // Get dynamic label or fallback to static title
+                label: this.label || this.props.title, // Get dynamic label or fallback to legacy title
                 gtype: this.gtype,
                 gstyle: this.gstyle,
                 prefix: this.prefix,
@@ -74,6 +74,7 @@ export default {
                 min: this.min,
                 max: this.max
             }
+            delete props.title
             return props
         },
         updateGaugeDial () {
@@ -88,6 +89,11 @@ export default {
             const updates = msg.ui_update
             if (!updates) {
                 return
+            }
+            const hasLabelKey = Object.keys(updates).includes('label')
+            const hasTitleKey = Object.keys(updates).includes('title')
+            if (!hasLabelKey && hasTitleKey) {
+                updates.label = updates.title
             }
             this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('gtype', updates.gtype)
