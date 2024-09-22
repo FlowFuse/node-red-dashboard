@@ -5,6 +5,7 @@
         @click="action"
         @pointerdown="pointerdown"
         @pointerup="pointerup"
+        @pointermove="checkIsPointerOverButton"
     >
         <template v-if="prependIcon" #prepend>
             <v-icon :color="iconColor" />
@@ -27,6 +28,11 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
+    },
+    data () {
+        return {
+            isPointerOverButton: true // Tracks if the pointer is still over the button
+        }
     },
     computed: {
         ...mapState('data', ['messages']),
@@ -64,6 +70,9 @@ export default {
     },
     methods: {
         action ($evt) {
+            if (!this.isPointerOverButton) {
+                return
+            }
             const evt = {
                 type: $evt.type,
                 clientX: $evt.clientX,
@@ -103,6 +112,16 @@ export default {
             msg._event = evt
             $evt.target.releasePointerCapture($evt.pointerId)
             this.$socket.emit('widget-action', this.id, msg)
+        },
+        checkIsPointerOverButton: function ($evt) {
+            // Check if pointer is still over the button
+            const buttonRect = $evt.target.getBoundingClientRect()
+            this.isPointerOverButton = (
+                $evt.clientX >= buttonRect.left &&
+                $evt.clientX <= buttonRect.right &&
+                $evt.clientY >= buttonRect.top &&
+                $evt.clientY <= buttonRect.bottom
+            )
         },
 
         makeMdiIcon (icon) {

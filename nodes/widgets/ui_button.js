@@ -15,8 +15,8 @@ module.exports = function (RED) {
             let payload = null
             let payloadType = null
 
-            msg._event = msg._event || {"type": "inject"}
-            
+            msg._event = msg._event || { type: 'inject' }
+
             switch (msg._event.type) {
             case 'pointerup':
                 payload = config.pointerupPayload
@@ -111,7 +111,6 @@ module.exports = function (RED) {
             beforeSend,
             onInput: async function (msg) {
                 if (config.emulateClick) {
-                    
                     msg = await beforeSend(msg)
 
                     if (config.topic || config.topicType) {
