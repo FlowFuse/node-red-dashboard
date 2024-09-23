@@ -7,7 +7,7 @@ props:
         description: The text shown within the button.
         dynamic: true
     Layout:
-        description: Defines how the label and the switch are arranged. Users can choose between different layout options such as aligning elements to the left, center, right, spreading them evenly in a row or centering them in a column.
+        description: Defines how the label and the switch are arranged. Users can choose between different layout options such as aligning elements to the left, left reversed, spread evenly or spread evenly but in reversed order.
         dynamic: true
     Clickable:
         description: The clickable area (which will result in the switch toggling).

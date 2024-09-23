@@ -140,6 +140,13 @@ describe('Node-RED Dashboard 2.0 - Change the layout', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-left')
     })
 
+    it('change the layout to row-left-swapped', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-left-swapped'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-left-swapped')
+    })
+
     it('change the layout to row-spread', () => {
         cy.resetContext()
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-spread'))
@@ -147,24 +154,10 @@ describe('Node-RED Dashboard 2.0 - Change the layout', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-spread')
     })
 
-    it('change the layout to col-center', () => {
+    it('change the layout to row-spread-swapped', () => {
         cy.resetContext()
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-col-center'))
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-spread-swapped'))
 
-        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--col-center')
-    })
-
-    it('change the layout to row-right', () => {
-        cy.resetContext()
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-right'))
-
-        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-right')
-    })
-
-    it('change the layout to row-center', () => {
-        cy.resetContext()
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-center'))
-
-        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-center')
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-spread-swapped')
     })
 })

@@ -173,12 +173,12 @@
         ]
     },
     {
-        "id": "dashboard-ui-button-layout-center",
+        "id": "dashboard-ui-button-layout-left-swapped",
         "type": "ui-button",
         "z": "62c98d3bf1ed37c0",
         "group": "dashboard-ui-group-4",
         "name": "",
-        "label": "Button - Layout (Center)",
+        "label": "Button - Layout (Left Swapped)",
         "order": 6,
         "width": 0,
         "height": 0,
@@ -214,7 +214,7 @@
                 "t": "set",
                 "p": "ui_update.layout",
                 "pt": "msg",
-                "to": "row-center",
+                "to": "row-left-swapped",
                 "tot": "str"
             }
         ],
@@ -232,71 +232,12 @@
         ]
     },
     {
-        "id": "dashboard-ui-button-layout-right",
+        "id": "dashboard-ui-button-layout-spread",
         "type": "ui-button",
         "z": "62c98d3bf1ed37c0",
         "group": "dashboard-ui-group-4",
         "name": "",
-        "label": "Button - Layout (Right)",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "true",
-        "payloadType": "bool",
-        "topic": "",
-        "topicType": "str",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "x": 180,
-        "y": 480,
-        "wires": [
-            [
-                "af8260a8a9e039af"
-            ]
-        ]
-    },
-    {
-        "id": "af8260a8a9e039af",
-        "type": "change",
-        "z": "62c98d3bf1ed37c0",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "ui_update.layout",
-                "pt": "msg",
-                "to": "row-right",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 430,
-        "y": 480,
-        "wires": [
-            [
-                "dashboard-ui-switch-change-layout"
-            ]
-        ]
-    },
-    {
-        "id": "dashboard-ui-button-layout-col-center",
-        "type": "ui-button",
-        "z": "62c98d3bf1ed37c0",
-        "group": "dashboard-ui-group-4",
-        "name": "",
-        "label": "Button - Layout (Col Center)",
+        "label": "Button - Layout (Spread)",
         "order": 4,
         "width": 0,
         "height": 0,
@@ -332,7 +273,7 @@
                 "t": "set",
                 "p": "ui_update.layout",
                 "pt": "msg",
-                "to": "col-center",
+                "to": "row-spread",
                 "tot": "str"
             }
         ],
@@ -350,12 +291,12 @@
         ]
     },
     {
-        "id": "dashboard-ui-button-layout-spread",
+        "id": "dashboard-ui-button-layout-spread-swapped",
         "type": "ui-button",
         "z": "62c98d3bf1ed37c0",
         "group": "dashboard-ui-group-4",
         "name": "",
-        "label": "Button - Layout (Spread)",
+        "label": "Button - Layout (Spread Swapped)",
         "order": 3,
         "width": 0,
         "height": 0,
@@ -391,7 +332,7 @@
                 "t": "set",
                 "p": "ui_update.layout",
                 "pt": "msg",
-                "to": "row-spread",
+                "to": "row-spread-swapped",
                 "tot": "str"
             }
         ],

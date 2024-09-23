@@ -131,7 +131,7 @@
                 })
 
                 $('.nr-db-switch-layout-' + (this.layout || 'row-spread')).addClass('selected');
-                ['.nr-db-switch-layout-row-left', '.nr-db-switch-layout-row-center', '.nr-db-switch-layout-row-right', '.nr-db-switch-layout-row-spread', '.nr-db-switch-layout-col-center']
+                ['.nr-db-switch-layout-row-left', '.nr-db-switch-layout-row-left-swapped', '.nr-db-switch-layout-row-spread', '.nr-db-switch-layout-row-spread-swapped']
                     .forEach(function (id) {
                         $(id).click(function (e) {
                             $('.nr-db-switch-layout').removeClass('selected')
@@ -217,14 +217,9 @@
                     <span class="nr-db-switch-layout-value">switch</span>
                     <div class="nr-db-switch-layout-checkbox"></div>
                 </a>
-                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-center">
-                    <span class="nr-db-switch-layout-label">label</span>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-left-swapped">
                     <span class="nr-db-switch-layout-value">switch</span>
-                    <div class="nr-db-switch-layout-checkbox"></div>
-                </a>
-                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-right">
                     <span class="nr-db-switch-layout-label">label</span>
-                    <span class="nr-db-switch-layout-value">switch</span>
                     <div class="nr-db-switch-layout-checkbox"></div>
                 </a>
             </div>
@@ -234,9 +229,9 @@
                     <span class="nr-db-switch-layout-value">switch</span>
                     <div class="nr-db-switch-layout-checkbox"></div>
                 </a>
-                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-col nr-db-switch-layout-col-center">
-                    <span class="nr-db-switch-layout-label">label</span>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-spread-swapped">
                     <span class="nr-db-switch-layout-value">switch</span>
+                    <span class="nr-db-switch-layout-label">label</span>
                     <div class="nr-db-switch-layout-checkbox"></div>
                 </a>
             </div>
@@ -321,18 +316,18 @@
         font-weight: bold;
     }
     .nr-db-switch-layout-row span { top: 20px; }
+    
     .nr-db-switch-layout-row-left .nr-db-switch-layout-label { left: 2px; }
     .nr-db-switch-layout-row-left .nr-db-switch-layout-value { left: 34px; }
+    .nr-db-switch-layout-row-left-swapped .nr-db-switch-layout-label { left: 48px; }
+    .nr-db-switch-layout-row-left-swapped .nr-db-switch-layout-value { left: 2px; }
+
     .nr-db-switch-layout-row-spread .nr-db-switch-layout-label { left: 2px; }
     .nr-db-switch-layout-row-spread .nr-db-switch-layout-value { right: 2px; }
-    .nr-db-switch-layout-row-center .nr-db-switch-layout-label { left: 11px; }
-    .nr-db-switch-layout-row-center .nr-db-switch-layout-value { right: 11px; }
-    .nr-db-switch-layout-row-right .nr-db-switch-layout-label { right: 50px; }
-    .nr-db-switch-layout-row-right .nr-db-switch-layout-value { right: 2px; }
+    .nr-db-switch-layout-row-spread-swapped .nr-db-switch-layout-label { left: 2px; }
+    .nr-db-switch-layout-row-spread-swapped .nr-db-switch-layout-value { right: 2px; }
 
     .nr-db-switch-layout-col span { width: 100%;  text-align: center; left: 0px;}
-    .nr-db-switch-layout-col-center .nr-db-switch-layout-label { top: 12px; }
-    .nr-db-switch-layout-col-center .nr-db-switch-layout-value { top: 26px; }
     .nr-db-switch-layout-checkbox {
         display: none;
         width: 10px;

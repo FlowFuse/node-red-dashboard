@@ -218,25 +218,19 @@ export default {
         align-items: center;
         justify-content: flex-start;
     }
-    &--row-center {
-        align-items: center;
-        justify-content: center;
-    }
-    &--row-right {
+    &--row-left-swapped {
         align-items: center;
         justify-content: flex-end;
+        flex-direction: row-reverse;
     }
     &--row-spread {
         align-items: center;
         justify-content: space-between;
     }
-    &--col-center {
+    &--row-spread-swapped {
         align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        label, span {
-            text-align: center;
-        }
+        justify-content: space-between;
+        flex-direction: row-reverse;
     }
 }
 </style>
