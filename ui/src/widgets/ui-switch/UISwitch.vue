@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-switch" :class="{'nrdb-nolabel': !label, [className]: !!className}">
+    <div class="nrdb-switch" :class="computedClass">
         <label
             v-if="label"
             class="v-label"
@@ -50,6 +50,11 @@ export default {
         label () {
             return this.getProperty('label')
         },
+        layout () {
+            // This spreaded layout will be the default for the existing flows
+            // which doesn't have the layout property
+            return this.getProperty('layout') || 'row-spread'
+        },
         icon () {
             const onicon = this.getProperty('onicon')
             const officon = this.getProperty('officon')
@@ -59,6 +64,13 @@ export default {
                 return 'mdi-' + icon.replace(/^mdi-/, '')
             } else {
                 return null
+            }
+        },
+        computedClass () {
+            return {
+                ...(this.layout && { [`nrdb-ui-switch--${this.layout}`]: true }),
+                'nrdb-nolabel': !this.label,
+                [this.className]: !!this.className
             }
         },
         color () {
@@ -121,6 +133,7 @@ export default {
                 return
             }
             this.updateDynamicProperty('label', updates.label)
+            this.updateDynamicProperty('layout', updates.layout)
             this.updateDynamicProperty('clickableArea', updates.clickableArea)
             this.updateDynamicProperty('decouple', updates.decouple)
             this.updateDynamicProperty('oncolor', updates.oncolor)
@@ -170,26 +183,60 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .nrdb-switch {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    gap: 4px;
+    .v-switch {
+        flex-grow: 0;
+    }
+    .v-input {
+        align-items: center;
+        display: flex;
+    }
+    .v-input__control {
+        .v-selection-control {
+            justify-content: flex-end;
+            min-height: 20px;
+            .v-selection-control__wrapper {
+                height: 20px;
+            }
+        }
+    }
+    &.nrdb-nolabel .v-selection-control {
+        justify-content: center;
+    }
+    > .v-progress-circular > svg {
+        width: 24px;
+        height: 24px;
+    }
 }
-.nrdb-switch label {
-    flex-grow: 1;
-}
-.nrdb-switch .v-switch {
-    flex-grow: 0;
-}
-.nrdb-switch .v-selection-control {
-    justify-content: flex-end;
-}
-.nrdb-switch.nrdb-nolabel .v-selection-control {
-    justify-content: center;
-}
-.nrdb-switch > .v-progress-circular > svg {
-    width: 24px;
-    height: 24px;
+
+/* Layouts */
+.nrdb-ui-switch {
+    &--row-left {
+        align-items: center;
+        justify-content: flex-start;
+    }
+    &--row-center {
+        align-items: center;
+        justify-content: center;
+    }
+    &--row-right {
+        align-items: center;
+        justify-content: flex-end;
+    }
+    &--row-spread {
+        align-items: center;
+        justify-content: space-between;
+    }
+    &--col-center {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        label, span {
+            text-align: center;
+        }
+    }
 }
 </style>

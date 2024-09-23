@@ -30,6 +30,7 @@
                 topicType: { value: 'msg' },
                 style: { value: '' },
                 className: { value: '' },
+                layout: { value: 'row-spread' },
                 clickableArea: { value: 'switch' },
                 // on state
                 onvalue: { value: true, validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('onvalueType') : function (v) { return true }) },
@@ -128,6 +129,17 @@
                         delay: 150
                     }
                 })
+
+                $('.nr-db-switch-layout-' + (this.layout || 'row-spread')).addClass('selected');
+                ['.nr-db-switch-layout-row-left', '.nr-db-switch-layout-row-center', '.nr-db-switch-layout-row-right', '.nr-db-switch-layout-row-spread', '.nr-db-switch-layout-col-center']
+                    .forEach(function (id) {
+                        $(id).click(function (e) {
+                            $('.nr-db-switch-layout').removeClass('selected')
+                            $(this).addClass('selected')
+                            $('#node-input-layout').val(id.substring('.nr-db-switch-layout-'.length))
+                            e.preventDefault()
+                        })
+                    })
             },
             oneditsave: function () {
                 if ($('#node-input-custom-icons').val() === 'default') {
@@ -194,6 +206,42 @@
             </a>
         </div>
     </div>
+    <div class="form-row">
+        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span>Layout</span></label>
+        <div style="display:inline-block">
+            <input type="hidden" id="node-input-layout">
+            <input type="hidden" id="node-input-layoutAlign" >
+            <div>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-left">
+                    <span class="nr-db-switch-layout-label">label</span>
+                    <span class="nr-db-switch-layout-value">switch</span>
+                    <div class="nr-db-switch-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-center">
+                    <span class="nr-db-switch-layout-label">label</span>
+                    <span class="nr-db-switch-layout-value">switch</span>
+                    <div class="nr-db-switch-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-right">
+                    <span class="nr-db-switch-layout-label">label</span>
+                    <span class="nr-db-switch-layout-value">switch</span>
+                    <div class="nr-db-switch-layout-checkbox"></div>
+                </a>
+            </div>
+            <div>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-spread">
+                    <span class="nr-db-switch-layout-label">label</span>
+                    <span class="nr-db-switch-layout-value">switch</span>
+                    <div class="nr-db-switch-layout-checkbox"></div>
+                </a>
+                <a href="#" class="nr-db-switch-layout nr-db-switch-layout-col nr-db-switch-layout-col-center">
+                    <span class="nr-db-switch-layout-label">label</span>
+                    <span class="nr-db-switch-layout-value">switch</span>
+                    <div class="nr-db-switch-layout-checkbox"></div>
+                </a>
+            </div>
+        </div>
+    </div>
     <!--<div class="form-row">
         <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
         <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
@@ -248,3 +296,62 @@
         <input type="hidden" id="node-input-topicType">
     </div>
 </script>
+
+<style>
+    .nr-db-switch-layout {
+        position:relative;
+        display: inline-block;
+        width: 96px;
+        height: 60px;
+        border-radius:3px;
+        border:1px solid var(--red-ui-form-input-border-color, #bbb);
+        cursor:pointer;
+        color: #666;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    .nr-db-switch-layout.selected, .nr-db-switch-layout:hover {
+        border-color: var(--red-ui-form-input-border-selected-color, #333);
+        color: var(--red-ui-secondary-text-color-selected, #333);
+    }
+    .nr-db-switch-layout span {
+        position: absolute;
+    }
+    .nr-db-switch-layout-value {
+        font-weight: bold;
+    }
+    .nr-db-switch-layout-row span { top: 20px; }
+    .nr-db-switch-layout-row-left .nr-db-switch-layout-label { left: 2px; }
+    .nr-db-switch-layout-row-left .nr-db-switch-layout-value { left: 34px; }
+    .nr-db-switch-layout-row-spread .nr-db-switch-layout-label { left: 2px; }
+    .nr-db-switch-layout-row-spread .nr-db-switch-layout-value { right: 2px; }
+    .nr-db-switch-layout-row-center .nr-db-switch-layout-label { left: 11px; }
+    .nr-db-switch-layout-row-center .nr-db-switch-layout-value { right: 11px; }
+    .nr-db-switch-layout-row-right .nr-db-switch-layout-label { right: 50px; }
+    .nr-db-switch-layout-row-right .nr-db-switch-layout-value { right: 2px; }
+
+    .nr-db-switch-layout-col span { width: 100%;  text-align: center; left: 0px;}
+    .nr-db-switch-layout-col-center .nr-db-switch-layout-label { top: 12px; }
+    .nr-db-switch-layout-col-center .nr-db-switch-layout-value { top: 26px; }
+    .nr-db-switch-layout-checkbox {
+        display: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--red-ui-primary-border-color, #bbb);
+        position: absolute;
+        right: -5px;
+        top: -5px;
+        background: var(--red-ui-secondary-background, #fff);
+    }
+    .nr-db-switch-layout.selected .nr-db-switch-layout-checkbox {
+        display:inline-block;
+        box-shadow: inset 0px 0px 0px 2px #fff;
+        background: #333;
+        border-color: #333;
+    }
+    .nr-db-ui-manual-size-row {
+        display: none;
+    }
+
+</style>

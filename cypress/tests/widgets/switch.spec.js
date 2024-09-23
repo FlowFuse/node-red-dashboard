@@ -126,3 +126,45 @@ describe('Node-RED Dashboard 2.0 - Switches in "Show Input" mode', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-show-input').find('.v-input.v-input--horizontal').should('have.class', 'active')
     })
 })
+
+describe('Node-RED Dashboard 2.0 - Change the layout', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-switches')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('change the layout to row-left', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-left'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-left')
+    })
+
+    it('change the layout to row-spread', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-spread'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-spread')
+    })
+
+    it('change the layout to col-center', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-col-center'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--col-center')
+    })
+
+    it('change the layout to row-right', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-right'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-right')
+    })
+
+    it('change the layout to row-center', () => {
+        cy.resetContext()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-layout-center'))
+
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-center')
+    })
+})

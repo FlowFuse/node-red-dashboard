@@ -61,6 +61,352 @@
         "wires": [
             []
         ]
+    },{
+        "id": "dashboard-ui-button-layout-left",
+        "type": "ui-button",
+        "z": "62c98d3bf1ed37c0",
+        "group": "dashboard-ui-group-4",
+        "name": "",
+        "label": "Button - Layout (Left)",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 180,
+        "y": 400,
+        "wires": [
+            [
+                "e934c132f83bc548"
+            ]
+        ]
+    },
+    {
+        "id": "9e3d9eb72e4781b3",
+        "type": "function",
+        "z": "62c98d3bf1ed37c0",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-switch-change-layout",
+        "type": "ui-switch",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "label": "Change layout",
+        "group": "dashboard-ui-group-4",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "decouple": true,
+        "topic": "topic",
+        "topicType": "str",
+        "style": "",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 740,
+        "y": 480,
+        "wires": [
+            [
+                "9e3d9eb72e4781b3"
+            ]
+        ]
+    },
+    {
+        "id": "e934c132f83bc548",
+        "type": "change",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "row-left",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 400,
+        "wires": [
+            [
+                "dashboard-ui-switch-change-layout"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-layout-center",
+        "type": "ui-button",
+        "z": "62c98d3bf1ed37c0",
+        "group": "dashboard-ui-group-4",
+        "name": "",
+        "label": "Button - Layout (Center)",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 170,
+        "y": 440,
+        "wires": [
+            [
+                "0741382ee9cf8cd2"
+            ]
+        ]
+    },
+    {
+        "id": "0741382ee9cf8cd2",
+        "type": "change",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "row-center",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "dashboard-ui-switch-change-layout"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-layout-right",
+        "type": "ui-button",
+        "z": "62c98d3bf1ed37c0",
+        "group": "dashboard-ui-group-4",
+        "name": "",
+        "label": "Button - Layout (Right)",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 180,
+        "y": 480,
+        "wires": [
+            [
+                "af8260a8a9e039af"
+            ]
+        ]
+    },
+    {
+        "id": "af8260a8a9e039af",
+        "type": "change",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "row-right",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 480,
+        "wires": [
+            [
+                "dashboard-ui-switch-change-layout"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-layout-col-center",
+        "type": "ui-button",
+        "z": "62c98d3bf1ed37c0",
+        "group": "dashboard-ui-group-4",
+        "name": "",
+        "label": "Button - Layout (Col Center)",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 160,
+        "y": 520,
+        "wires": [
+            [
+                "cf50eac9097f2e04"
+            ]
+        ]
+    },
+    {
+        "id": "cf50eac9097f2e04",
+        "type": "change",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "col-center",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 520,
+        "wires": [
+            [
+                "dashboard-ui-switch-change-layout"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-layout-spread",
+        "type": "ui-button",
+        "z": "62c98d3bf1ed37c0",
+        "group": "dashboard-ui-group-4",
+        "name": "",
+        "label": "Button - Layout (Spread)",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 170,
+        "y": 560,
+        "wires": [
+            [
+                "c8afc95375dcf813"
+            ]
+        ]
+    },
+    {
+        "id": "c8afc95375dcf813",
+        "type": "change",
+        "z": "62c98d3bf1ed37c0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.layout",
+                "pt": "msg",
+                "to": "row-spread",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 560,
+        "wires": [
+            [
+                "dashboard-ui-switch-change-layout"
+            ]
+        ]
     },
     {
         "id": "dashboard-ui-group",
@@ -258,6 +604,19 @@
         "id": "dashboard-ui-group-3",
         "type": "ui-group",
         "name": "Group 3",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-4",
+        "type": "ui-group",
+        "name": "Group 4",
         "page": "dashboard-ui-page-1",
         "width": "6",
         "height": "1",
