@@ -44,6 +44,7 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
+    emits: ['mounted'],
     data () {
         return {
             show: false,
@@ -98,6 +99,9 @@ export default {
     created () {
         // can't do this in setup as we have custom onInput function
         this.$dataTracker(this.id, this.onMsgInput, null, this.onDynamicProperties)
+    },
+    mounted () {
+        this.$emit('mounted', this)
     },
     methods: {
         onDynamicProperties (msg) {

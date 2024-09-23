@@ -4,6 +4,7 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown within the button.
+    Clickable: The clickable area (which will result in the switch toggling).
     On Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "on" state. No need to include the <code>mdi</code> prefix.
     Off Icon: If provided, this <a href="https://pictogrammers.com/library/mdi/" target="_blank">Material Design icon</a> will replace the default switch when in "off" state. No need to include the <code>mdi</code> prefix.
     On Color: If provided with a icons, this colour is used for the icon when in "on" state
@@ -23,6 +24,9 @@ dynamic:
     Label:
         payload: msg.ui_update.label
         structure: ["Boolean"]
+    Clickable:
+        payload: msg.ui_update.clickableArea
+        structure: ["String"]
     Passthrough:
         payload: msg.ui_update.passthru
         structure: ["Boolean"]

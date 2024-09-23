@@ -28,6 +28,15 @@ module.exports = function (RED) {
             config.visible = (config.visible === 'true' || config.visible === true)
         }
 
+        if (!('breakpoints' in config)) {
+            config.breakpoints = [
+                { name: 'Default', px: 0, cols: 3 },
+                { name: 'Tablet', px: 576, cols: 6 },
+                { name: 'Small Desktop', px: 768, cols: 9 },
+                { name: 'Desktop', px: 1024, cols: 12 }
+            ]
+        }
+
         const ui = RED.nodes.getNode(config.ui)
 
         // register self

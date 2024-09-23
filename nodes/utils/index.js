@@ -14,6 +14,9 @@
  * @type {Object.<string, boolean|function>}
  */
 
+const fs = require('fs')
+const path = require('path')
+
 function asyncEvaluateNodeProperty (RED, value, type, node, msg) {
     return new Promise(function (resolve, reject) {
         RED.util.evaluateNodeProperty(value, type, node, msg, function (e, r) {
@@ -207,6 +210,47 @@ function addConnectionCredentials (RED, msg, conn, config) {
     return msg
 }
 
+function getThirdPartyWidgets (directory) {
+    const contribs = {}
+    const packagePath = path.join(directory, 'package.json')
+    if (!fs.existsSync(packagePath)) {
+        return contribs
+    }
+    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+    const getWidgets = (packageJson) => {
+        if (packageJson?.['node-red-dashboard-2']) {
+            // loop over object of widgets & add to contribs object
+            Object.entries(packageJson['node-red-dashboard-2'].widgets).forEach(([widgetName, widgetConfig]) => {
+                contribs[widgetName] = {
+                    package: packageJson.name,
+                    name: widgetName,
+                    src: widgetConfig.output,
+                    path: path.resolve(directory),
+                    component: widgetConfig.component
+                }
+            })
+        }
+    }
+    if (packageJson?.['node-red-dashboard-2']) {
+        // this _is_ a dashboard node! get its widgets.
+        getWidgets(packageJson)
+    } else if (packageJson && packageJson.dependencies) {
+        // get widgets from dependencies of this package
+        Object.entries(packageJson.dependencies)?.filter(([packageName, _packageVersion]) => {
+            return packageName.includes('node-red-dashboard-2-')
+        }).forEach(([packageName, _packageVersion]) => {
+            const modulePath = path.join(directory, 'node_modules', packageName)
+            const packagePath = path.join(modulePath, 'package.json')
+            // get third party package.json
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+            if (packageJson?.['node-red-dashboard-2']) {
+                getWidgets(packageJson)
+            }
+        })
+    }
+    return contribs
+}
+
 module.exports = {
     asyncEvaluateNodeProperty,
     appendTopic,
@@ -214,5 +258,6 @@ module.exports = {
     evaluateTypedInputs,
     applyDynamicProperties,
     applyTypedInputs,
-    applyUpdates
+    applyUpdates,
+    getThirdPartyWidgets
 }

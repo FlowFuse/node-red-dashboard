@@ -82,3 +82,9 @@ This notification was created using a `msg.payload` of:
 ```html
 <h3>Generated Notification</h3><p>This is custom HTML injected into <b>Node-RED</b></p>
 ```
+
+### Sending to all clients
+
+Notifications are, by default, constrained to send to a single user/client. In Dashboard 2.0 this constraint is defined by `msg._client`. You can read more about this [here](../../user/multi-tenancy.md#configuring-client-data).
+
+If you want to send a notification to _all_ connected clients, you can remove the `msg._client` value using a "change" node, configured to "Delete" the `_client` property.

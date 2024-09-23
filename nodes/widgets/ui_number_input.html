@@ -27,7 +27,14 @@
                 topicType: { value: 'msg' },
                 min: { value: 0, required: true, validate: RED.validators.number() },
                 max: { value: 10, required: true, validate: RED.validators.number() },
-                step: { value: 1 },
+                step: {
+                    value: 1,
+                    validate: function (v) {
+                        const isValid = RED.validators.number()(v) && v > 0
+                        $('#node-input-step').toggleClass('input-error', !isValid)
+                        return isValid
+                    }
+                },
                 tooltip: { value: '' },
                 passthru: { value: true },
                 sendOnBlur: { value: true },
@@ -36,7 +43,8 @@
                 clearable: { value: false },
                 icon: { value: '' },
                 iconPosition: { value: 'left' },
-                iconInnerPosition: { value: 'inside' }
+                iconInnerPosition: { value: 'inside' },
+                spinner: { value: 'default' }
             },
             inputs: 1,
             outputs: 1,
@@ -101,6 +109,10 @@
                 if (!this.iconInnerPosition) {
                     $('#node-input-iconInnerPosition').val('inside')
                 }
+
+                if (!this.spinner) {
+                    $('#node-input-spinner').val('default')
+                }
             },
             label: function () {
                 return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
@@ -163,6 +175,13 @@
                 <input type="text" id="node-input-step" style="width:60px">
             </div>
         </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-spinner">Spinner</label>
+        <select id="node-input-spinner">
+            <option value="default">Inline</option>
+            <option value="stacked">Stacked</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> Class</label>

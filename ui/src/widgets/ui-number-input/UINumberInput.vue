@@ -1,16 +1,18 @@
 <template>
-    <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
-        <!-- eslint-disable-next-line vue/no-template-shadow -->
-        <template #activator="{ props }">
-            <v-number-input
-                v-model="value" :reverse="false" controlVariant="default" :hideInput="false" :inset="false"
-                v-bind="props" :disabled="!state.enabled" class="nrdb-ui-number-field" :label="label"
-                :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
-                :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
-                :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
-            />
-        </template>
-    </v-tooltip>
+    <div ref="container" class="nrdb-ui-number-field">
+        <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
+            <!-- eslint-disable-next-line vue/no-template-shadow -->
+            <template #activator="{ props }">
+                <v-number-input
+                    v-model="value" :class="{'compressed': isCompressed, 'stacked-spinner': spinner === 'stacked'}" :reverse="false" :controlVariant="spinner" :hideInput="false" :inset="false"
+                    v-bind="props" :disabled="!state.enabled" :label="label"
+                    :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
+                    :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
+                    :prepend-inner-icon="prependInnerIcon" :min="min" :max="max" :step="step" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
+                />
+            </template>
+        </v-tooltip>
+    </div>
 </template>
 
 <script>
@@ -33,7 +35,8 @@ export default {
         return {
             delayTimer: null,
             textValue: null,
-            previousValue: null
+            previousValue: null,
+            isCompressed: false
         }
     },
     computed: {
@@ -85,9 +88,25 @@ export default {
         iconInnerPosition () {
             return this.getProperty('iconInnerPosition')
         },
+        min () {
+            return this.getProperty('min')
+        },
+        max () {
+            return this.getProperty('max')
+        },
+        step () {
+            return Math.abs(this.getProperty('step')) || 1
+        },
+        spinner () {
+            return this.getProperty('spinner')
+        },
         value: {
             get () {
-                return this.textValue
+                if (this.textValue === null || this.textValue === undefined || this.textValue === '') {
+                    return this.textValue
+                } else {
+                    return Number(this.textValue)
+                }
             },
             set (val) {
                 if (this.value === val) {
@@ -105,7 +124,42 @@ export default {
             } else {
                 return []
             }
+        },
+        rangeAndStep () {
+            return {
+                min: this.min,
+                max: this.max
+            }
         }
+    },
+    watch: {
+        rangeAndStep: {
+            handler () {
+                if (this.value) {
+                    if (this.value < this.min) {
+                        this.value = this.min
+                    } else if (this.value > this.max) {
+                        this.value = this.max
+                    }
+                    this.send()
+                    this.previousValue = this.value
+                }
+            }
+        },
+        props: {
+            handler () {
+                this.resize()
+            },
+            deep: true
+        }
+    },
+    mounted () {
+        // on resize handler for window resizing
+        window.addEventListener('resize', this.onResize)
+        this.onResize()
+    },
+    unmounted () {
+        window.removeEventListener('resize', this.onResize)
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
@@ -138,13 +192,13 @@ export default {
         send () {
             this.$socket.emit('widget-change', this.id, this.value)
         },
-        onChange (e) {
+        onChange () {
             // Since the Vuetify Input Number component doesn't currently support an onClick event,
             // compare the previous value with the current value and check whether the value has been increased or decreased by one.
             if (
                 this.previousValue === null ||
-                this.previousValue + 1 === this.value ||
-                this.previousValue - 1 === this.value
+                this.previousValue + (this.step || 1) === this.value ||
+                this.previousValue - (this.step || 1) === this.value
             ) {
                 this.send()
             }
@@ -166,7 +220,7 @@ export default {
             this.send()
         },
         makeMdiIcon (icon) {
-            return 'mdi-' + icon.replace(/^mdi-/, '')
+            return 'mdi-' + icon?.replace(/^mdi-/, '')
         },
         onDynamicProperties (msg) {
             const updates = msg.ui_update
@@ -178,6 +232,19 @@ export default {
             this.updateDynamicProperty('icon', updates.icon)
             this.updateDynamicProperty('iconPosition', updates.iconPosition)
             this.updateDynamicProperty('iconInnerPosition', updates.iconInnerPosition)
+            this.updateDynamicProperty('min', updates.min)
+            this.updateDynamicProperty('max', updates.max)
+            this.updateDynamicProperty('step', updates.step)
+            this.updateDynamicProperty('spinner', updates.spinner)
+        },
+        resize () {
+            // set isCompressed to true when clearable is true, icon is present and the container is less than 120px
+            this.isCompressed = this.$refs.container.clientWidth < 120 && this.clearable && Boolean(this.getProperty('icon'))
+        },
+        onResize () {
+            this.$nextTick(() => {
+                this.resize()
+            })
         }
     }
 }
@@ -190,6 +257,7 @@ export default {
             margin-left: 12px;
         }
     }
+
     .v-field__append-inner {
         > .v-icon {
             margin-right: 12px;
@@ -198,6 +266,41 @@ export default {
 
     button {
         color: var(--red-ui-form-input-border-color);
+    }
+
+    .v-field__field input {
+        padding-inline: var(--v-field-padding-start) 0;
+    }
+
+    .v-btn--icon.v-btn--density-default {
+        width: calc(var(--v-btn-height) + 0px);
+    }
+
+    .stacked-spinner {
+        .v-btn--icon.v-btn--density-default {
+            width: auto;
+            min-height: 0;
+        }
+    }
+
+    .compressed {
+        .v-field__clearable,
+        .v-field__prepend-inner > .v-icon,
+        .v-field__append-inner > .v-icon,
+        .v-input__prepend > .v-icon,
+        .v-input__append > .v-icon{
+            display: none;
+        }
+        .v-field--active input {
+            padding-inline: 0.4rem 0.4rem;
+        }
+    }
+
+    .v-btn--disabled.v-btn--variant-elevated,
+    .v-btn--disabled.v-btn--variant-flat {
+        background-color: transparent;
+        color: var(--red-ui-form-input-border-color);
+        opacity: 0.25;
     }
 }
 </style>

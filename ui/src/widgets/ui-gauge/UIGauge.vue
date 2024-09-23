@@ -1,6 +1,6 @@
 <template>
     <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
-    <ui-gauge-dial v-else :id="id" :props="dynamicProps" :value="value" />
+    <ui-gauge-dial v-else :id="id" :key="updateGaugeDial" :props="dynamicProps" :value="value" />
 </template>
 
 <script>
@@ -30,8 +30,8 @@ export default {
         value: function () {
             return this.messages[this.id]?.payload
         },
-        title () {
-            return this.getProperty('title')
+        label () {
+            return this.getProperty('label')
         },
         gtype () {
             return this.getProperty('gtype')
@@ -63,7 +63,7 @@ export default {
         dynamicProps () {
             const props = {
                 ...this.props,
-                title: this.title,
+                label: this.label || this.props.title, // Get dynamic label or fallback to legacy title
                 gtype: this.gtype,
                 gstyle: this.gstyle,
                 prefix: this.prefix,
@@ -74,11 +74,15 @@ export default {
                 min: this.min,
                 max: this.max
             }
+            delete props.title
             return props
+        },
+        updateGaugeDial () {
+            return JSON.stringify(this.dynamicProps)
         }
     },
     created () {
-        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     methods: {
         onDynamicProperties (msg) {
@@ -86,7 +90,12 @@ export default {
             if (!updates) {
                 return
             }
-            this.updateDynamicProperty('title', updates.title)
+            const hasLabelKey = Object.keys(updates).includes('label')
+            const hasTitleKey = Object.keys(updates).includes('title')
+            if (!hasLabelKey && hasTitleKey) {
+                updates.label = updates.title
+            }
+            this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('gtype', updates.gtype)
             this.updateDynamicProperty('gstyle', updates.gstyle)
             this.updateDynamicProperty('prefix', updates.prefix)
@@ -96,6 +105,14 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+        },
+        onInput (msg) {
+            if (typeof msg.payload !== 'undefined') {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
         }
     }
 }

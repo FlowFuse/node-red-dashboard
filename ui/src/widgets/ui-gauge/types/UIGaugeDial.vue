@@ -1,7 +1,7 @@
 <template>
     <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
-        <label v-if="props.title" ref="title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
-        <svg ref="gauge" width="0" height="0">
+        <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
+        <svg ref="gauge" width="0" height="100%">
             <g id="sections" />
             <g id="backdrop">
                 <path /></g>
@@ -81,8 +81,8 @@ export default {
         gaugeStyle () {
             return this.props.gstyle
         },
-        updateOn () {
-            return `${this.segments} ${this.gaugeStyle} ${this.min} ${this.max}`
+        gaugeType () {
+            return this.props.gtype
         },
         min () {
             return this.props.min
@@ -93,11 +93,7 @@ export default {
     },
     watch: {
         value: function (val) {
-            this.resize()
             this.update(val)
-        },
-        updateOn () {
-            this.update(this.value)
         }
     },
     mounted () {
@@ -130,7 +126,6 @@ export default {
             const h = this.height
 
             this.$refs.gauge.setAttribute('width', w)
-            this.$refs.gauge.setAttribute('height', h)
 
             if (this.props.gtype === 'gauge-half') {
                 const minDimension = Math.min(w / 2, h)
@@ -220,7 +215,7 @@ export default {
 
             arc.select('path')
                 .datum({
-                    endAngle: this.valueToAngle(value) + (-this.sizes.angle / 2)
+                    endAngle: this.valueToAngle(value || 0) + (-this.sizes.angle / 2)
                 })
                 // .attr('filter', 'url(#innershadow)')
                 .transition().duration(duration)
@@ -329,7 +324,9 @@ export default {
         // in radians
         valueToAngle (value) {
             const angle = this.sizes.angle
-            return angle * (value - this.min) / (this.max - this.min)
+            // ensure this does not go over the max or under the min
+            const clampedValue = Math.min(Math.max(value, this.min), this.max)
+            return angle * (clampedValue - this.min) / (this.max - this.min)
         },
         // in radians
         valueToNeedleAngle (value) {
@@ -360,17 +357,28 @@ export default {
 
             const y = bbox.y + bbox.height + paddingY
 
-            const minX = bbox.x + thickness + paddingX
-            min.style.transform = `translate(${minX}px, ${y}px)`
+            let minX = bbox.x + thickness + paddingX
+            let maxX = bbox.x + bbox.width - thickness - paddingX
 
-            const maxX = bbox.x + bbox.width - thickness - paddingX
+            const valueContainerWidth = this.$refs.value?.clientWidth
+            if (valueContainerWidth < 80) {
+                minX = minX - 16
+                maxX = maxX + 16
+            }
+            if (valueContainerWidth === 0) {
+                minX = minX - 32
+                maxX = maxX + 32
+            }
+
+            min.style.transform = `translate(${minX}px, ${y}px)`
             max.style.transform = `translate(${maxX}px, ${y}px)`
         },
         resizeText () {
             // work out how much space we have within which to render the value/icon
             const width = this.$refs.value?.clientWidth
-            if (!width) {
-                this.size = 'default'
+            this.size = 'default'
+            if (width < 80) {
+                this.size = 'xxs'
             } else if (width < 150) {
                 this.size = 'xs'
             } else if (width < 225) {
@@ -422,7 +430,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .nrdb-ui-gauge {
     position: relative;
 }
@@ -452,6 +460,7 @@ export default {
     text-align: center;
     flex-wrap: wrap;
     padding-top: 12px;
+    container-type: size;
 }
 
 .nrdb-ui-gauge-value span {
@@ -477,6 +486,10 @@ export default {
 .nrdb-ui-gauge #limits {
     opacity: 0.5;
     fill: rgb(var(--v-theme-on-group-background));
+    container-type: size;
+    text {
+        font-size: min(1rem,max(2cqmin,0.8rem));
+    }
 }
 
 /* needle styling */
@@ -511,10 +524,21 @@ export default {
 
 /* Size Overrides */
 
+/* xxs */
+/* hide gauge textual contents as they are not visible to naked eye in this grid size */
+.nrdb-ui-gauge-size-xxs .nrdb-ui-gauge-value,
+.nrdb-ui-gauge-size-xxs #limits {
+    visibility: hidden;
+}
+
 /* xs */
 .nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value span {
-    font-size: 1.5rem;
-    line-height: 1.75rem;
+    font-size: min(1.5rem,max(2cqmin,0.8rem));
+    line-height: min(1.5rem,max(2cqmin,1rem));
+}
+.nrdb-ui-gauge-size-xs .nrdb-ui-gauge-value {
+    font-size: min(.75rem,max(2cqmin,.5rem));
+    line-height: min(.825rem,max(2cqmin,.65rem));
 }
 
 /* sm */

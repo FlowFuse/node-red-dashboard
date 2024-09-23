@@ -18,7 +18,10 @@
             "selection": "Interaction",
             "search": "Search",
             "showSearch": "Show",
-            "mobileBreakpoint": "Breakpoint"
+            "mobileBreakpoint": "Breakpoint",
+            "action": "Action",
+            "append": "Append",
+            "replace": "Replace"
         },
         "selection": {
             "none": "None",

@@ -9,7 +9,7 @@ Layouts are a configuration available on a page-by-page basis. They control how 
 ![Screenshot of the layout options on a ui-page](../assets/images/layouts-page-layout-option.png){data-zoomable}
 _Screenshot of the layout options on a `ui-page`_
 
-We currently offer three different layout options:
+We currently offer four different layout options:
 
 - [Grid](./types/grid.md)
 - [Fixed](./types/fixed.md)
@@ -29,6 +29,12 @@ The core differences are in the "width" property of the size:
 
 - For "Grid" and "Notebook", the width is calculated as a portion of 12 _columns_, i.e. a width of "6", would take up half of the width of the layout.
 - For "Fixed", the width is calculated as a multiple of 90 _pixels_, i.e. a width of "3", would take up 270px of the screen.
+
+## Breakpoints
+
+Most layouts in Dashboard utilise a concept of "Columns", whereby the group width is defined as a number of columns, e.g. 6, and the page then renders a given number of columns too, e.g. 12. This means that a group with a width of 6 would take up half of the page's width.
+
+Breakpoints [can be configured](../nodes/config/ui-page.md#breakpoints) on a page-by-page basis, controlling how many columns are rendered at different screen sizes. This is particularly useful for responsive design, allowing you to control how many columns are rendered on a mobile device, tablet, or desktop.
 
 ## Theme Options
 

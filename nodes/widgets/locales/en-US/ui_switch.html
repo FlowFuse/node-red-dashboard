@@ -24,6 +24,8 @@
         <dd>If "Icon" is defined, this property controls which side of the "Label" the icon will render on</dd>
         <dt>Label <span class="property-type">string</span></dt>
         <dd>The text shown within the button. If not provided, then the button will only render the icon. It supports HTML content</dd>
+        <dt>Clickable <span class="property-type">string</span></dt>
+        <dd>The part of the horizontal line that is clickable.  By default only the switch icon will be clickable.</dd>
         <dt>Icon <span class="property-type">default | custom</span></dt>
         <dd>Either use the "default" switch appearance, or define your own custom icons.</dd>
         <dt>On Icon <span class="property-type">string</span></dt>
@@ -54,6 +56,17 @@
     <dl class="message-properties">
         <dt class="optional">label <span class="property-type">string</span></dt>
         <dd>Change the switch label at runtime.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">clickableArea <span class="property-type">string</span></dt>
+        <dd>
+            Change the clickable area at runtime:
+            <ul>
+                <li><code>switch</code>: only the switch icon is clickable</li>
+                <li><code>label</code>: both the label text and the switch icon are clickable</li>
+                <li><code>line</code>: the entire line is clickable</li>
+            </ul>
+        </dd>
     </dl>
     <dl class="message-properties">
         <dt class="optional">passthru <span class="property-type">boolean</span></dt>

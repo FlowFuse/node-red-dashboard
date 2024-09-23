@@ -27,22 +27,6 @@ Depending on the screen size, the number of default columns rendered will change
 ![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-columns.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
-### Desktop
+The exact breakpoints used can be configured in the [page's settings](../../nodes/config/ui-page.md#breakpoints).
 
-- **Breakpoint:** 1024px
-- **Columns:** 12
-
-### Tablet
-
-- **Breakpoint:** 768px
-- **Columns:** 9
-
-### Medium
-
-- **Breakpoint:** > 576px
-- **Columns:** 6
-
-### Mobile
-
-- **Breakpoint:** < 576px
-- **Columns:** 3
+Also, because Tab layouts render groups at the full width of the screen, the number of columns _within_ the group is driven by the _minimum_ of the group's columns/width and the page's columns. So, in a case where a Group has 9 columns, if the page layout enforces 6 columns due to the breakpoint, it will render with 6. If however, the group's width is 6, and the page breakpoint defines 12 columns, the group will still render at 6.
