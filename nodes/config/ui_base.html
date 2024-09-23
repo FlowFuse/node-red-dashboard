@@ -241,7 +241,6 @@
     }
     div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty,
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
-        border: 1px dashed #c4c4c4;
         padding: 8px; /* should be 9px to match the other entries but border width is 2px */
         height: 20px; /* To make it visible */
         text-align: center;
@@ -249,13 +248,15 @@
         border-right-width: 0;
         background-color: #f9f9f9;
     }
+    div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
+        border: 1px dashed #c4c4c4;
+    }
     div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
         content: "empty";
         color: #d2d2d2;
         font-style: italic;
     }
-    ol.nrdb2-sb-group-list li:last-child ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty,
     ol.nrdb2-sb-group-list li:last-child ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
         border-bottom-width: 0px;
     }
