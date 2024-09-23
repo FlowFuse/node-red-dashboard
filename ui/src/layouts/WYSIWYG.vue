@@ -1,6 +1,15 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
         <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--wysiwyg nrdb-ui-page" :class="page?.className">
+            <!-- <div
+                v-for="(g, $index) in groups"
+                :id="'nrdb-ui-group-' + g.id"
+                :key="g.id"
+                class="nrdb-ui-group"
+                :disabled="g.disabled === true ? 'disabled' : null"
+                :class="getGroupClass(g)"
+                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
+            > -->
             <div
                 v-for="(g, $index) in groups"
                 :id="'nrdb-ui-group-' + g.id"
@@ -11,13 +20,14 @@
                 :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
                 draggable="true"
                 @dragstart="onDragStart($event, $index)"
+                @dragend="onDragEnd($event, $index)"
                 @dragover="onDragOver($event, $index)"
                 @drop="onDrop($event, $index)"
             >
                 <v-card variant="outlined" class="bg-group-background">
-                    <template #title>{{ g.name }} {{ g.order }}</template>
+                    <template #title>{{ g.name }} {{ g.order }} {{ g.width + 'x' + g.height }}</template>
                     <template #text>
-                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                        <widget-group :group="g" :index="$index" :widgets="widgetsByGroup(g.id)" :resizable="true" @resize="onGroupResize" />
                     </template>
                 </v-card>
             </div>
@@ -124,16 +134,21 @@ export default {
             event.dataTransfer.effectAllowed = 'move'
         },
         onDragOver (event, index) {
-            event.preventDefault()
-            event.dataTransfer.dropEffect = 'move'
-            this.moveGroup(this.dragging.index, index)
+            if (this.dragging.index >= 0) {
+                event.preventDefault()
+                event.dataTransfer.dropEffect = 'move'
+                this.moveGroup(this.dragging.index, index)
+            }
         },
         onDrop (event, index) {
             event.preventDefault()
             if (this.dragging.index >= 0) {
                 this.moveGroup(this.dragging.index, index)
-                this.dragging.index = null
+                this.dragging.index = -1
             }
+        },
+        onDragEnd (event, index) {
+            this.dragging.index = -1
         },
         moveGroup (fromIndex, toIndex) {
             const movedItem = this.groups.splice(fromIndex, 1)[0]
@@ -174,6 +189,10 @@ export default {
                 classes.push('dragging')
             }
             return classes.join(' ')
+        },
+        onGroupResize (opts) {
+            this.groups[opts.index].width = opts.width
+            // this.groups[opts.index].height = opts.height
         }
     }
 }

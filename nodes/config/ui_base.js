@@ -1093,6 +1093,7 @@ module.exports = function (RED) {
                 for (const group of changes.groups) {
                     const existingGroup = flows.find(n => n.id === group.id)
                     if (existingGroup) {
+                        existingGroup.width = group.width
                         existingGroup.order = group.order
                     }
                 }

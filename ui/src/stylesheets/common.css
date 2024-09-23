@@ -131,7 +131,8 @@ main {
 }
 
 .nrdb-ui-group > .v-card {
-    border-radius: var(--group-border-radius)
+    border-radius: var(--group-border-radius);
+    overflow: visible;
 }
 
 /**
