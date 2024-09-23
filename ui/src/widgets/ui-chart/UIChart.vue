@@ -354,24 +354,26 @@ export default {
             // are we adding a new datapoint to an existing x-value
             const xIndex = xLabels.indexOf(datapoint.x)
 
-            // the chart is empty, we're adding a new series
+            // this series doesn't exist yet in our chart
             if (sIndex === -1) {
                 // if we have no series, then can color each bar/x a different value, or if it's a radial chart
                 const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
 
-                // ensure we have a datapoint for the relevant series
-                const data = Array(sLabels.length).fill({})
+                // ensure we have a datapoint for each of the known x-value
+                // ChartsJS doesn't like undefined data points
+                const data = Array(xLabels.length).fill({})
                 if (xIndex === -1) {
                     // Add the new x-value to xLabels
                     xLabels.push(datapoint.x)
-                    // Assign the datapoint to the new index (last position)
-                    data[xLabels.length - 1] = datapoint
+                    // Add data to the end of the array
+                    data.push(datapoint)
                 } else {
+                    // we've got a new series, but a previously seen x-value
                     data[xIndex] = datapoint
                 }
-                // add the new dataset to the chart
-                const d = {
+                // add the new dataset/series to the chart
+                const series = {
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length % this.props.colors.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
@@ -381,10 +383,10 @@ export default {
                 }
 
                 if (!colorByIndex) {
-                    d.borderColor = this.props.colors[sLabels.length]
+                    series.borderColor = this.props.colors[sLabels.length]
                 }
 
-                this.chart.data.datasets.push(d)
+                this.chart.data.datasets.push(series)
             } else {
                 // have we seen this x-value before?
                 if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {
