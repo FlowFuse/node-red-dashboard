@@ -28,6 +28,22 @@ module.exports = function (RED) {
             return value
         }
 
+        // ensure sane defaults
+        if (!['msg', 'str', 'property'].includes(config.xAxisPropertyType)) {
+            config.xAxisPropertyType = 'property' // default to 'key'
+        }
+        if (!['msg', 'property'].includes(config.yAxisPropertyType)) {
+            config.yAxisPropertyType = 'property' // default to 'key'
+        }
+        if (config.xAxisPropertyType === 'msg' && !config.xAxisProperty) {
+            config.xAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
+        }
+        if (config.yAxisPropertyType === 'msg' && !config.yAxisProperty) {
+            config.yAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
+        }
+        config.xAxisProperty = config.xAxisProperty || ''
+        config.yAxisProperty = config.yAxisProperty || ''
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
