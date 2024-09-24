@@ -114,13 +114,13 @@
                 $('#node-input-label').typedInput({
                     default: 'str',
                     typeField: $('#node-input-labelType'),
-                    types: ['str', 'msg', 'flow', 'global', 'jsonata']
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
                 })
-                // payload
+                // value
                 $('#node-input-property').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-propertyType'),
-                    types: ['str', 'msg', 'jsonata']
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
                 })
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -242,7 +242,7 @@
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> Message</label>
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.value">Value</label>
         <input type="hidden" id="node-input-propertyType">
         <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
     </div>
