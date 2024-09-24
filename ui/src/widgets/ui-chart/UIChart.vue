@@ -299,9 +299,12 @@ export default {
             this.chart.update()
         },
         addPoints (payload, datapoint, label) {
-            const d = {
-                ...datapoint,
-                ...payload
+            const d = { ...datapoint, ...payload }
+            if (!this.chart.config?.options?.parsing?.xAxisKey) {
+                d.x = datapoint.x // if there is no mapping key, ensure server side computed datapoint.x is used
+            }
+            if (!this.chart.config?.options?.parsing?.yAxisKey) {
+                d.y = datapoint.y // if there is no mapping key, ensure server side computed datapoint.y is used
             }
 
             if (Array.isArray(label) && label.length > 0) {
