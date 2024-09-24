@@ -21,6 +21,7 @@ export default {
     },
     data () {
         return {
+            /** @type {Chart} */
             chart: null,
             hasData: false
         }
