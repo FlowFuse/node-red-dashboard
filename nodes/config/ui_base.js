@@ -91,6 +91,8 @@ module.exports = function (RED) {
              */
 
             uiShared.contribs = loadContribs(node)
+            node.onTypeRegistered = onTypeRegistered.bind(null, node)
+            RED.events.on('type-registered', node.onTypeRegistered)
 
             /**
              * Configure Web Server to handle UI traffic
@@ -188,6 +190,20 @@ module.exports = function (RED) {
         }
     }
 
+    function onTypeRegistered (node, type) {
+        // reload nodes from user directory package.json
+        if (RED.settings?.userDir) {
+            try {
+                const contribs = getThirdPartyWidgets(RED.settings.userDir)
+                if (contribs[type]) {
+                    uiShared.contribs[type] = contribs[type]
+                }
+            } catch (error) {
+                node.log('Cannot import third party widget for type ' + type)
+            }
+        }
+    }
+
     function loadContribs (node) {
         // from nodesDir
         let contribs = { ...uiShared.contribs }
@@ -273,6 +289,7 @@ module.exports = function (RED) {
         }
         node.ui.dashboards.clear() // ensure we clear out any dashboards that may have been left over
         node.uiShared = null // remove reference to ui object
+        RED.events.off('type-registered', node.onTypeRegistered)
         done && done()
     }
 
