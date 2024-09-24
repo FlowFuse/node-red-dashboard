@@ -298,9 +298,9 @@
                     }
                 })
 
-                // handle event when chart's type is changed
+                // handle event when chart's series property is changed
                 $('#node-input-category').change((evt) => {
-                    const categoryType = $(evt.target).val()
+                    const categoryType = $('#node-input-category').typedInput('type')
 
                     if (categoryType === 'json') {
                         // hide y-axis property setting as category will now control that
