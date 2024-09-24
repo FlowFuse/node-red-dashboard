@@ -66,7 +66,7 @@ export default {
                 parsing.xAxisKey = this.props.xAxisProperty
             }
 
-            if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
+            if (this.props.categoryType !== 'json' && this.props.yAxisProperty && this.props.yAxisPropertyType === 'property') {
                 parsing.yAxisKey = this.props.yAxisProperty
             }
         } else {
