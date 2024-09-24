@@ -42,7 +42,7 @@
             return RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.' + property)
         }
         const noneType = { value: 'none', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none'), hasValue: false }
-        const propertyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
+        const keyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
 
         function hexToRgb (hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -57,9 +57,9 @@
 
         function getSeriesTypes (xAxisType) {
             if (xAxisType === 'category') {
-                return [noneType, 'msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', keyType]
             } else {
-                return [noneType, 'msg', 'str', 'json', propertyType]
+                return [noneType, 'msg', 'str', 'json', keyType]
             }
         }
 
@@ -225,14 +225,14 @@
                     types: getSeriesTypes($('#node-input-xAxisType').val())
                 })
                 $('#node-input-xAxisProperty').typedInput({
-                    default: propertyType.value,
+                    default: keyType.value,
                     typeField: $('#node-input-xAxisPropertyType'),
-                    types: ['msg', 'str', propertyType]
+                    types: ['msg', 'str', keyType]
                 })
                 $('#node-input-yAxisProperty').typedInput({
-                    default: propertyType.value,
+                    default: keyType.value,
                     typeField: $('#node-input-yAxisPropertyType'),
-                    types: ['msg', propertyType] // makes no sense for the y-axis to be a string
+                    types: ['msg', keyType] // makes no sense for the y-axis to be a string
                 })
 
                 const updateXAxisTypeOptions = function (options, defaultValue) {
@@ -314,8 +314,8 @@
                 // ensure the xAxis PropertyType isn't an invalid value
                 if (this.xAxisPropertyType === 'msg' && this.xAxisProperty === '') {
                     // auto-fix it for the user
-                    this.xAxisPropertyType = propertyType.value
-                    $('#node-input-xAxisProperty').typedInput('type', propertyType.value)
+                    this.xAxisPropertyType = keyType.value
+                    $('#node-input-xAxisProperty').typedInput('type', keyType.value)
                 }
 
                 // Stack/Group-By Options - convert from bool to string values for <select>
