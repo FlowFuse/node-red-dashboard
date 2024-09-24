@@ -201,7 +201,6 @@ export default {
         }
     }
     textarea.v-field__input {
-        padding-top: 1rem;
         height:100%;
     }
 }
