@@ -315,19 +315,15 @@ export default {
                     }
                     dd.category = d.category[i]
                     dd.y = d.y[i]
-                    this.addPoint(payload, dd, label[i])
+                    this.addToChart(d, label)
+                    this.commit(payload, dd, label[i])
                 }
             } else {
-                this.addPoint(payload, datapoint, label)
+                this.addToChart(d, label)
+                this.commit(payload, datapoint, label)
             }
         },
-        addPoint (payload, datapoint, label) {
-            const d = {
-                ...datapoint,
-                ...payload
-            }
-            this.addToChart(d, label)
-
+        commit (payload, datapoint, label) {
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
                 widgetId: this.id,
