@@ -1,0 +1,451 @@
+[
+    {
+        "id": "0056ef6146b6c928",
+        "type": "inject",
+        "z": "862ec766f2af6f61",
+        "name": "clear charts",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 1430,
+        "y": 1100,
+        "wires": [
+            [
+                "bar-chart-1",
+                "scatter-chart-1",
+                "line-chart-1",
+                "line-chart-2"
+            ]
+        ]
+    },
+    {
+        "id": "bar-chart-1",
+        "type": "ui-chart",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Sales in Million",
+        "order": 3,
+        "chartType": "bar",
+        "category": "{}",
+        "categoryType": "json",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "str",
+        "xAxisType": "category",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "sales_millions",
+        "yAxisPropertyType": "property",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "5",
+        "className": "water",
+        "x": 520,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "be87d656fb6d60d9",
+        "type": "ui-button",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Button 1 (json)",
+        "label": "Button 1 (json)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"location\":\"New York\",\"sales_millions\":3.2},{\"location\":\"Los Angeles\",\"sales_millions\":2.5},{\"location\":\"Chicago\",\"sales_millions\":1.8},{\"location\":\"Houston\",\"sales_millions\":2.9},{\"location\":\"Miami\",\"sales_millions\":2.1}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 340,
+        "y": 860,
+        "wires": [
+            [
+                "bar-chart-1"
+            ]
+        ]
+    },
+    {
+        "id": "scatter-chart-1",
+        "type": "ui-chart",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Scatter Chart",
+        "label": "chart",
+        "order": 4,
+        "chartType": "scatter",
+        "category": "",
+        "categoryType": "str",
+        "xAxisLabel": "",
+        "xAxisProperty": "x",
+        "xAxisPropertyType": "property",
+        "xAxisType": "linear",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "y",
+        "yAxisPropertyType": "property",
+        "ymin": "",
+        "ymax": "",
+        "action": "replace",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "5",
+        "className": "",
+        "x": 510,
+        "y": 940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3b758b5a5bdc3f02",
+        "type": "ui-button",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Button 2 (json)",
+        "label": "Button 2 (json)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"x\":1,\"y\":2},{\"x\":3,\"y\":4},{\"x\":5.5,\"y\":6.6}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 340,
+        "y": 980,
+        "wires": [
+            [
+                "scatter-chart-1"
+            ]
+        ]
+    },
+    {
+        "id": "line-chart-2",
+        "type": "ui-chart",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Line Chart",
+        "label": "chart",
+        "order": 9007199254740991,
+        "chartType": "line",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "datestamp",
+        "xAxisPropertyType": "property",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "temp",
+        "yAxisPropertyType": "property",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "5",
+        "className": "",
+        "x": 510,
+        "y": 1060,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c745fdedc0a456ec",
+        "type": "ui-button",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Button 4 (json)",
+        "label": "Button 4 (json)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"location\":\"New York\",\"temp\":56,\"datestamp\":1643784000},{\"location\":\"Los Angeles\",\"temp\":67,\"datestamp\":1643784000},{\"location\":\"Chicago\",\"temp\":44,\"datestamp\":1643784000},{\"location\":\"New York\",\"temp\":60,\"datestamp\":1643798400},{\"location\":\"Los Angeles\",\"temp\":71,\"datestamp\":1643798400},{\"location\":\"Chicago\",\"temp\":48,\"datestamp\":1643798400},{\"location\":\"New York\",\"temp\":65,\"datestamp\":1643812800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1643812800},{\"location\":\"Chicago\",\"temp\":52,\"datestamp\":1643812800},{\"location\":\"New York\",\"temp\":69,\"datestamp\":1643827200},{\"location\":\"Los Angeles\",\"temp\":77,\"datestamp\":1643827200},{\"location\":\"Chicago\",\"temp\":56,\"datestamp\":1643827200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643841600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643841600},{\"location\":\"Chicago\",\"temp\":60,\"datestamp\":1643841600},{\"location\":\"New York\",\"temp\":77,\"datestamp\":1643856000},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643856000},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1643856000},{\"location\":\"New York\",\"temp\":80,\"datestamp\":1643870400},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643870400},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1643870400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643884800},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643884800},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1643884800},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643899200},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643899200},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1643899200},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Los Angeles\",\"temp\":89,\"datestamp\":1643913600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1643913600},{\"location\":\"New York\",\"temp\":89,\"datestamp\":1643928000},{\"location\":\"Los Angeles\",\"temp\":88,\"datestamp\":1643928000},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1643928000},{\"location\":\"New York\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Los Angeles\",\"temp\":86,\"datestamp\":1643942400},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1643942400},{\"location\":\"New York\",\"temp\":83,\"datestamp\":1643956800},{\"location\":\"Los Angeles\",\"temp\":84,\"datestamp\":1643956800},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1643956800},{\"location\":\"New York\",\"temp\":79,\"datestamp\":1643971200},{\"location\":\"Los Angeles\",\"temp\":82,\"datestamp\":1643971200},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1643971200},{\"location\":\"New York\",\"temp\":73,\"datestamp\":1643985600},{\"location\":\"Los Angeles\",\"temp\":80,\"datestamp\":1643985600},{\"location\":\"Chicago\",\"temp\":100,\"datestamp\":1643985600},{\"location\":\"New York\",\"temp\":66,\"datestamp\":1644000000},{\"location\":\"Los Angeles\",\"temp\":78,\"datestamp\":1644000000},{\"location\":\"Chicago\",\"temp\":96,\"datestamp\":1644000000},{\"location\":\"New York\",\"temp\":59,\"datestamp\":1644014400},{\"location\":\"Los Angeles\",\"temp\":76,\"datestamp\":1644014400},{\"location\":\"Chicago\",\"temp\":92,\"datestamp\":1644014400},{\"location\":\"New York\",\"temp\":53,\"datestamp\":1644028800},{\"location\":\"Los Angeles\",\"temp\":74,\"datestamp\":1644028800},{\"location\":\"Chicago\",\"temp\":88,\"datestamp\":1644028800},{\"location\":\"New York\",\"temp\":47,\"datestamp\":1644043200},{\"location\":\"Los Angeles\",\"temp\":72,\"datestamp\":1644043200},{\"location\":\"Chicago\",\"temp\":84,\"datestamp\":1644043200},{\"location\":\"New York\",\"temp\":42,\"datestamp\":1644057600},{\"location\":\"Los Angeles\",\"temp\":70,\"datestamp\":1644057600},{\"location\":\"Chicago\",\"temp\":80,\"datestamp\":1644057600},{\"location\":\"New York\",\"temp\":39,\"datestamp\":1644072000},{\"location\":\"Los Angeles\",\"temp\":68,\"datestamp\":1644072000},{\"location\":\"Chicago\",\"temp\":76,\"datestamp\":1644072000},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644086400},{\"location\":\"Los Angeles\",\"temp\":66,\"datestamp\":1644086400},{\"location\":\"Chicago\",\"temp\":72,\"datestamp\":1644086400},{\"location\":\"New York\",\"temp\":36,\"datestamp\":1644100800},{\"location\":\"Los Angeles\",\"temp\":64,\"datestamp\":1644100800},{\"location\":\"Chicago\",\"temp\":68,\"datestamp\":1644100800},{\"location\":\"New York\",\"temp\":37,\"datestamp\":1644115200},{\"location\":\"Los Angeles\",\"temp\":62,\"datestamp\":1644115200},{\"location\":\"Chicago\",\"temp\":64,\"datestamp\":1644115200}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 340,
+        "y": 1100,
+        "wires": [
+            [
+                "line-chart-2"
+            ]
+        ]
+    },
+    {
+        "id": "line-chart-1",
+        "type": "ui-chart",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Simple Line chart",
+        "label": "chart",
+        "order": 4,
+        "chartType": "line",
+        "category": "",
+        "categoryType": "str",
+        "xAxisLabel": "Time",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "property",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "HH:mm:ss",
+        "yAxisLabel": "",
+        "yAxisProperty": "",
+        "yAxisPropertyType": "property",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "star",
+        "pointRadius": "8",
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#b31e43",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#4f56b5",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "5",
+        "className": "",
+        "x": 530,
+        "y": 1200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui-button-3",
+        "type": "ui-button",
+        "z": "862ec766f2af6f61",
+        "group": "dashboard-ui-group",
+        "name": "Button 3 (number)",
+        "label": "Button 3 (number)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "3",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 340,
+        "y": 1240,
+        "wires": [
+            [
+                "line-chart-1"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "12",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#6771f4",
+            "bgPage": "#e5dcdc",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d39292"
+        },
+        "sizes": {
+            "pagePadding": "6px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "6px",
+            "density": "default"
+        }
+    }
+]
