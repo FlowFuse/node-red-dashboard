@@ -4,6 +4,6 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        "@flowfuse/node-red-dashboard": "file:../../.."
+        
     }
 }

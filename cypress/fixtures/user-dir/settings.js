@@ -20,6 +20,8 @@
  *
  **/
 
+const path = require('path')
+
 module.exports = {
 
     /*******************************************************************************
@@ -58,7 +60,9 @@ module.exports = {
     /** Node-RED scans the `nodes` directory in the userDir to find local node files.
      * The following property can be used to specify an additional directory to scan.
      */
-    // nodesDir: '/home/nol/.node-red/nodes',
+    // eslint-disable-next-line n/no-path-concat
+
+    nodesDir: [path.join(__dirname, '../../../').replace(/\\/g, '/')],
 
     /*******************************************************************************
  * Security
