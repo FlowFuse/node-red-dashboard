@@ -55,6 +55,12 @@ export default {
         this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
+        if (window.Cypress) {
+            // when testing, we expose the chart object to the window object
+            // so we can do an end-to-end test and ensure the right data is applied
+            window.uiCharts = window.uiCharts || {}
+            window.uiCharts[this.id] = this
+        }
         // get a reference to the canvas element
         const el = this.$refs.chart
 
