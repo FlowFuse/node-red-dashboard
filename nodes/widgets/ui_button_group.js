@@ -9,9 +9,30 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
+        function findOptionByValue(val) {
+            const opt = config.options?.find(option => {
+                if (typeof (val) === 'object') {
+                    return (JSON.stringify(val) === JSON.stringify(option.value))
+                } else {
+                    return option.value == val
+                }
+            })
+            if (opt) {
+                return opt
+            }
+            return null
+        }
+
         const evts = {
             onChange: true,
             beforeSend: function (msg) {
+                if (typeof msg.payload !== 'undefined') {
+                    const option = findOptionByValue(msg.payload)
+                    if (option) {
+                        node.status({fill: 'blue', shape: 'dot', text: option.label})
+                    }
+                }
+
                 if (msg.ui_update) {
                     const update = msg.ui_update
                     if (typeof update.options !== 'undefined') {
