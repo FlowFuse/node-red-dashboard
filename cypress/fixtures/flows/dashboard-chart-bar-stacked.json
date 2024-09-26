@@ -1,0 +1,214 @@
+[
+    {
+        "id": "stacked-bar-chart",
+        "type": "ui-chart",
+        "z": "9524c548fb0b956c",
+        "group": "dashboard-ui-group",
+        "name": "sales stacked",
+        "label": "sales stacked",
+        "order": 3,
+        "chartType": "bar",
+        "category": "location",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "year",
+        "xAxisPropertyType": "property",
+        "xAxisType": "category",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "sales_millions",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": true,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "4",
+        "className": "",
+        "x": 1660,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+
+    {
+        "id": "e7490f641158dc11",
+        "type": "inject",
+        "z": "9524c548fb0b956c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 1450,
+        "y": 820,
+        "wires": [
+            [
+                "stacked-bar-chart"
+            ]
+        ]
+    },
+    {
+        "id": "5247f541ca20264a",
+        "type": "ui-button",
+        "z": "9524c548fb0b956c",
+        "group": "dashboard-ui-group",
+        "name": "stack 2023",
+        "label": "stack 2023",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": true,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"location\":\"New York\",\"sales_millions\":2.31,\"year\":2023},{\"location\":\"Los Angeles\",\"sales_millions\":2.32,\"year\":2023}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 1430,
+        "y": 740,
+        "wires": [
+            [
+                "stacked-bar-chart"
+            ]
+        ]
+    },
+    {
+        "id": "7e6189da9f4da319",
+        "type": "ui-button",
+        "z": "9524c548fb0b956c",
+        "group": "dashboard-ui-group",
+        "name": "stack 2024",
+        "label": "stack 2024",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": true,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"location\":\"New York\",\"sales_millions\":2.41,\"year\":2024},{\"location\":\"Los Angeles\",\"sales_millions\":2.42,\"year\":2024}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 1430,
+        "y": 780,
+        "wires": [
+            [
+                "stacked-bar-chart"
+            ]
+        ]
+    },
+
+
+
+
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "12",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#6771f4",
+            "bgPage": "#e5dcdc",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d39292"
+        },
+        "sizes": {
+            "pagePadding": "6px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "6px",
+            "density": "default"
+        }
+    }
+]
