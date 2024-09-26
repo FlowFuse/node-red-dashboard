@@ -9,12 +9,13 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
-        function findOptionByValue(val) {
+        // Keep the code of this function in sync with the client-side function
+        function findOptionByValue (val) {
             const opt = config.options?.find(option => {
                 if (typeof (val) === 'object') {
                     return (JSON.stringify(val) === JSON.stringify(option.value))
                 } else {
-                    return option.value == val
+                    return option.value === val
                 }
             })
             if (opt) {
@@ -29,7 +30,7 @@ module.exports = function (RED) {
                 if (typeof msg.payload !== 'undefined') {
                     const option = findOptionByValue(msg.payload)
                     if (option) {
-                        node.status({fill: 'blue', shape: 'dot', text: option.label})
+                        node.status({ fill: 'blue', shape: 'dot', text: option.label })
                     }
                 }
 
