@@ -154,6 +154,9 @@ export default {
         appBarStyle: function () {
             return this.dashboard.titleBarStyle || 'default'
         },
+        appIcon () {
+            return this.dashboard.appIcon
+        },
         navigationStyle: function () {
             const style = this.dashboard.navigationStyle
             if (![null, 'default', 'fixed', 'icon', 'temporary', 'none'].includes(style)) {
@@ -182,6 +185,34 @@ export default {
 
                 if (['icon'].includes(this.navigationStyle)) {
                     this.rail = true
+                }
+            }
+        },
+        appIcon: {
+            immediate: true,
+            handler (url) {
+                // extract the file extension from the URL
+                const getFileTypeFromURL = (url) => {
+                    const segments = url.split('.')
+                    const extension = segments[segments.length - 1]
+                    return extension.toLowerCase()
+                }
+                if (url) {
+                    const fileType = getFileTypeFromURL(url)
+                    // The existing rel types in the index.html
+                    const relTypes = ['icon', 'alternate icon', 'apple-touch-icon']
+                    relTypes.forEach((relType) => {
+                        // iterate through the rel types and update the link tag
+                        const link = document.querySelector(`link[rel="${relType}"]`)
+                        // remove the type and href attributes
+                        link.removeAttribute('type')
+                        link.removeAttribute('href')
+                        if (link) {
+                            // set the type and href attributes
+                            link.setAttribute('type', `image/${fileType}`)
+                            link.setAttribute('href', url)
+                        }
+                    })
                 }
             }
         }
