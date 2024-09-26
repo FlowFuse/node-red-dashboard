@@ -326,6 +326,9 @@
                 value: '/dashboard',
                 required: true
             },
+            appIcon: {
+                value: ''
+            },
             includeClientData: {
                 value: true
             },
@@ -349,6 +352,7 @@
             return `${this.name} [${this.path}]` || 'UI Config'
         },
         oneditprepare: function () {
+            debugger
             // backward compatibility for navigation style
             if (!this.titleBarStyle) {
                 // set to default
@@ -363,6 +367,10 @@
                 this.showPageTitle = true
                 // update the jquery checkbox
                 $('#node-config-input-showPageTitle').prop('checked', true)
+            }
+
+            if (this.appIcon) {
+                $('#node-config-input-appIcon').val(this.appIcon)
             }
         },
         onpaletteadd: function () {
@@ -391,6 +399,7 @@
             icon: null,
             color: null,
             isSubflowInstance: false,
+            appIcon: node.appIcon,
             node
         }
         if (hasProperty(node, 'group')) { item.group = node.group }
@@ -1987,6 +1996,11 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></label>
+        <input type="text" id="node-config-input-appIcon">
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">Enter the url of your app icon here</span>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.header"></label>
