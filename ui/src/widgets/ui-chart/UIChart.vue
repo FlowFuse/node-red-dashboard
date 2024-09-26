@@ -214,7 +214,7 @@ export default {
                 break
             default:
                 delete this.chart.options.interaction.axis
-                this.chart.options.plugins.mode = 'point'
+                this.chart.options.interaction.mode = 'nearest' // default
                 break
             }
         },
