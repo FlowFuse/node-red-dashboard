@@ -182,7 +182,6 @@
         ],
         "mobileBreakpoint": "sm",
         "mobileBreakpointType": "defaults",
-        "action": "append",
         "x": 990,
         "y": 1020,
         "wires": [
@@ -232,7 +231,6 @@
         ],
         "mobileBreakpoint": "sm",
         "mobileBreakpointType": "defaults",
-        "action": "append",
         "x": 1050,
         "y": 1060,
         "wires": [
