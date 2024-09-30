@@ -89,8 +89,8 @@ function getContrast (bg) {
 
     // http://www.w3.org/TR/AERT#color-contrast
     const brightness = Math.round(((parseInt(bgRgb[0]) * 299) +
-                        (parseInt(bgRgb[1]) * 587) +
-                        (parseInt(bgRgb[2]) * 114)) / 1000)
+        (parseInt(bgRgb[1]) * 587) +
+        (parseInt(bgRgb[2]) * 114)) / 1000)
 
     const textColor = (brightness > 125) ? '#000000' : '#ffffff'
     return textColor
@@ -197,20 +197,32 @@ export default {
                     const extension = segments[segments.length - 1]
                     return extension.toLowerCase()
                 }
+                // The existing rel types in the index.html
+                const relTypes = ['icon', 'alternate icon', 'apple-touch-icon']
                 if (url) {
                     const fileType = getFileTypeFromURL(url)
-                    // The existing rel types in the index.html
-                    const relTypes = ['icon', 'alternate icon', 'apple-touch-icon']
                     relTypes.forEach((relType) => {
                         // iterate through the rel types and update the link tag
                         const link = document.querySelector(`link[rel="${relType}"]`)
-                        // remove the type and href attributes
-                        link.removeAttribute('type')
-                        link.removeAttribute('href')
                         if (link) {
                             // set the type and href attributes
                             link.setAttribute('type', `image/${fileType}`)
                             link.setAttribute('href', url)
+                        }
+                    })
+                } else {
+                    relTypes.forEach((relType) => {
+                        // iterate through the rel types and update the link tag
+                        const link = document.querySelector(`link[rel="${relType}"]`)
+                        if (relType === 'icon') {
+                            link.setAttribute('type', 'image/x-icon')
+                            link.setAttribute('href', '/dashboard/favicon.ico')
+                        } else if (relType === 'alternate icon') {
+                            link.setAttribute('type', 'image/svg+xml')
+                            link.setAttribute('href', '/dashboard/favicon.svg')
+                        } else if (relType === 'apple-touch-icon') {
+                            link.setAttribute('type', 'image/png')
+                            link.setAttribute('href', '/dashboard/apple-touch-icon.png')
                         }
                     })
                 }
