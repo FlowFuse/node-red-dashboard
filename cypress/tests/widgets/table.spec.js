@@ -46,6 +46,12 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
     })
     it('uses fixed value for button text', () => {
         // this one uses a `str` value for the button text
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').should('have.text', 'Button Text Is String Value')
+        const fixedString = 'Button Text Is String Value'
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(0).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(1).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(2).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(3).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(4).should('have.text', fixedString)
     })
 })
