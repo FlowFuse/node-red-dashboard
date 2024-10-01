@@ -12,10 +12,33 @@ module.exports = function (RED) {
 
         const beforeSend = async function (msg) {
             let error = null
+            let payload = null
+            let payloadType = null
 
-            // retrieve the payload we're sending from this button
-            let payloadType = config.payloadType
-            let payload = config.payload
+            msg._event = msg._event || { type: 'inject' }
+
+            switch (msg._event.type) {
+            case 'pointerup':
+                payload = config.pointerupPayload
+                payloadType = config.pointerupPayloadType
+                break
+            case 'pointerdown':
+                payload = config.pointerdownPayload
+                payloadType = config.pointerdownPayloadType
+                break
+            case 'click':
+                payload = config.payload
+                payloadType = config.payloadType
+                break
+            case 'inject':
+                payload = config.payload
+                payloadType = config.payloadType
+                break
+            default:
+                payload = config.payload
+                payloadType = config.payloadType
+                break
+            }
 
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
@@ -43,7 +66,6 @@ module.exports = function (RED) {
                     }
                 }
             }
-
             msg.payload = payload
 
             const updates = msg.ui_update
