@@ -96,7 +96,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     function onConnect () {
-        console.log('socket connect detected in data-tracker' + (emitWidgetLoadOnConnect ? ', emitting widget-load' : ''))
         if (emitWidgetLoadOnConnect) {
             emitWidgetLoadOnConnect = false
             socket.emit('widget-load', widgetId)
