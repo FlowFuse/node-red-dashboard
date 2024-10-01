@@ -48,7 +48,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     function onWidgetLoad (msg, state) {
-        // console.log('widget-load::msg-input:' + widgetId, msg, state)
         // automatic handle state/dynamic  updates for ALL widgets
         if (state) {
             store.commit('ui/widgetState', {
