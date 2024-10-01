@@ -209,12 +209,15 @@ export default {
         updateInteraction () {
             switch (this.chart.config.type) {
             case 'line':
+                this.chart.options.interaction.mode = 'x'
+                break
+            case 'scatter':
                 this.chart.options.interaction.axis = 'x'
-                this.chart.options.interaction.mode = 'index'
+                this.chart.options.interaction.mode = 'nearest'
                 break
             default:
                 delete this.chart.options.interaction.axis
-                this.chart.options.interaction.mode = 'nearest' // default
+                this.chart.options.interaction.mode = 'index' // default
                 break
             }
         },
