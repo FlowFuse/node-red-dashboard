@@ -9,7 +9,7 @@
             style="display: grid"
             :style="`grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(${w.props.height}, minmax(var(--widget-row-height), auto)); grid-row-end: span ${w.props.height}; grid-column-end: span min(${ w.props.width || columns }, var(--layout-columns))`"
         >
-            <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
+            <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :widgets="widgets" :style="`grid-row-end: span ${w.props.height}`" />
         </div>
     </div>
 </template>
