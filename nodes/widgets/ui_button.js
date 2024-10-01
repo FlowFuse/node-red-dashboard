@@ -45,8 +45,6 @@ module.exports = function (RED) {
                 break
             }
 
-            console.log('payload', payload, payloadType)
-
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
                     const parts = RED.util.normalisePropertyExpression(payload)
