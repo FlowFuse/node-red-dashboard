@@ -90,7 +90,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     function onDisconnect () {
-        console.log('socket disconnect detected in data-tracker, setting doReconnectSendWidgetLoad to true')
         // To get a disconnect, we must have previously been connected.
         // Set flag to inform onConnect to emit widget-load
         emitWidgetLoadOnConnect = true
