@@ -96,15 +96,15 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - chart options', () => {
         })
     })
 
-    it('sets tooltip `mode` to "index" for donut charts', () => {
-        const chartName = 'donut-chart-1'
+    it('sets tooltip `mode` to "index" for doughnut charts', () => {
+        const chartName = 'doughnut-chart-1'
         const overrides = [
             {
                 id: 'chart-1', // the ID in the base flow fixture (required)
                 mode: 'merge',
                 data: {
                     label: chartName, // set the label
-                    chartType: 'donut' // change the chart type
+                    chartType: 'doughnut' // change the chart type
                 }
             }
         ]
@@ -120,7 +120,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - chart options', () => {
             should(win.uiCharts).is.not.empty()
             const chartObject = win.uiCharts['chart-1']
             should(chartObject).is.not.empty()
-            should(chartObject.chart.options.type).be.equal('donut')
+            should(chartObject.chart.options.type).be.equal('doughnut')
             should(chartObject.chart.options.interaction).be.an.Object()
             should(chartObject.chart.options.interaction.mode).be.equal('index')
             should(chartObject.chart.options.interaction).not.have.property('axis')
