@@ -30,7 +30,7 @@ module.exports = function (RED) {
                 if (typeof msg.payload !== 'undefined') {
                     const option = findOptionByValue(msg.payload)
                     if (option) {
-                        node.status({ fill: 'blue', shape: 'dot', text: option.label })
+                        node.status({ fill: 'blue', shape: 'dot', text: option.label || option.value })
                     }
                 }
 
