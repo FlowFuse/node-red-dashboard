@@ -70,7 +70,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     function onMsgInput (msg) {
-        // console.log('data-tracker::msg-input:' + widgetId, msg)
         // check for common dynamic properties cross all widget types
         checkDynamicProperties(msg)
 
