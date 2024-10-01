@@ -21,6 +21,7 @@
             "linear": "Linear",
             "categorical": "Categorical",
             "radial": "Radial",
+            "histogram": "Histogram",
             "group": "Group",
             "size": "Size",
             "label": "Label",

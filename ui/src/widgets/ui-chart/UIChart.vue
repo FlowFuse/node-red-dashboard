@@ -27,18 +27,24 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
+        chartType () {
+            if (this.props.chartType === 'histogram') {
+                return 'bar'
+            }
+            return this.props.chartType
+        },
         radialChart () {
             // radial charts have no placeholder in ChartJS - we need to add one
             return this.props.xAxisType === 'radial'
         }
     },
     watch: {
-        'props.label': function (value) {
-            this.chart.options.plugins.title.text = value
+        chartType: function (value) {
+            this.chart.config.type = value
             this.chart.update()
         },
-        'props.chartType': function (value) {
-            this.chart.config.type = value
+        'props.label': function (value) {
+            this.chart.options.plugins.title.text = value
             this.chart.update()
         },
         'props.xAxisType': function (value) {
@@ -81,7 +87,7 @@ export default {
 
         // do we need the "stacked" property?
         let stacked = false
-        if (this.props.stackSeries === true && this.props.chartType === 'bar') {
+        if (this.props.stackSeries === true && this.chartType === 'bar') {
             stacked = true
         }
 
@@ -163,7 +169,7 @@ export default {
 
         // create our ChartJS object
         const config = {
-            type: this.props.chartType,
+            type: this.chartType,
             data: {
                 labels: [],
                 datasets: []
@@ -173,6 +179,9 @@ export default {
                 maintainAspectRatio: false,
                 borderJoinStyle: 'round',
                 scales,
+                interaction: {
+                    mode: 'x'
+                },
                 plugins: {
                     title: {
                         display: true,
@@ -298,7 +307,7 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
+            if (this.chartType === 'line' || this.chartType === 'scatter') {
                 this.limitDataSize()
             }
             this.chart.update()
@@ -363,7 +372,7 @@ export default {
             // this series doesn't exist yet in our chart
             if (sIndex === -1) {
                 // if we have no series, then can color each bar/x a different value, or if it's a radial chart
-                const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
+                const colorByIndex = (this.props.categoryType === 'none' && this.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
 
                 // ensure we have a datapoint for each of the known x-value
