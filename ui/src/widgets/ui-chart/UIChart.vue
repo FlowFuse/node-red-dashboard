@@ -209,6 +209,7 @@ export default {
         updateInteraction () {
             switch (this.chart.config.type) {
             case 'line':
+                delete this.chart.options.interaction.axis
                 this.chart.options.interaction.mode = 'x'
                 break
             case 'scatter':
