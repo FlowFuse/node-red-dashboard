@@ -21,6 +21,12 @@ props:
     Icon Color:
         description: Icon color. If not provided, will have the same color as text / label.
         dynamic: true
+    Enable pointerup event:
+        description: Enables the capturing of pointerup events on the button
+        dynamic: false
+    Enable pointerdown event:
+        description: Enables the capturing of pointerdown events on the button
+        dynamic: false
     Emulate Button Click: If enabled, any received message will trigger a button click, emitting the relevant payload and topic.
 controls:
     enabled:
