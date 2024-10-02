@@ -23,7 +23,8 @@ export default {
         return {
             chart: null,
             hasData: false,
-            histogram: [] // populate later for bins per series
+            histogram: [], // populate later for bins per series
+            chartUpdateDebounceTimeout: null
         }
     },
     computed: {
@@ -50,13 +51,18 @@ export default {
             this.chart.options.plugins.title.text = value
             this.update()
         },
+        'props.chartType': function (value) {
+            this.chart.config.type = value
+            this.updateInteraction()
+            this.update(false)
+        },
         'props.xAxisType': function (value) {
             this.chart.options.scales.x.type = value
-            this.update()
+            this.update(false)
         },
         'props.xAxisFormatType': function (value) {
             this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
-            this.update()
+            this.update(false)
         }
     },
     created () {
@@ -181,10 +187,8 @@ export default {
                 animation: false,
                 maintainAspectRatio: false,
                 borderJoinStyle: 'round',
+                interaction: {},
                 scales,
-                interaction: {
-                    mode: 'x'
-                },
                 plugins: {
                     title: {
                         display: true,
@@ -214,12 +218,55 @@ export default {
         }
         const chart = new Chart(el, config)
 
+        // Useful for debugging: uncomment to expose the chart object to the window
+        // window.uiChart = window.uiChart || {}
+        // window.uiChart[this.id] = chart
+
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
+
+        // ensure the chart is updated with the correct interaction mode
+        // based on the type of chart we are creating
+        this.updateInteraction()
     },
     methods: {
-        update () {
-            this.chart.update()
+        updateInteraction () {
+            switch (this.chart.config.type) {
+            case 'line':
+                delete this.chart.options.interaction.axis
+                this.chart.options.interaction.mode = 'x'
+                break
+            case 'scatter':
+                this.chart.options.interaction.axis = 'x'
+                this.chart.options.interaction.mode = 'nearest'
+                break
+            default:
+                delete this.chart.options.interaction.axis
+                this.chart.options.interaction.mode = 'index' // default
+                break
+            }
+        },
+        update (immediate = true) {
+            // for data adding, we want to update immediately
+            // but in some cases, like updating multiple props, we want to debounce
+            if (immediate) {
+                if (this.chartUpdateDebounceTimeout) {
+                    clearTimeout(this.chartUpdateDebounceTimeout)
+                    this.chartUpdateDebounceTimeout = null
+                }
+                this.chart.update()
+                return
+            }
+            if (this.chartUpdateDebounceTimeout) {
+                return
+            }
+            this.chartUpdateDebounceTimeout = setTimeout(() => {
+                try {
+                    this.chart.update()
+                } finally {
+                    this.chartUpdateDebounceTimeout = null
+                }
+            }, 30)
         },
         // given an object, return the value of the category property (which can be nested)
         getLabel (value, category) {
