@@ -306,9 +306,6 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $(evt.target).val()
 
-                    // default value for all chart types, except for "histogram"
-                    $('#node-container-yAxisProperty').show()
-
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -357,7 +354,7 @@
 
                 // handle event when chart's type is changed
                 $('#node-input-category').change((evt) => {
-                    const categoryType = $(evt.target).val()
+                    const categoryType = $('#node-input-categoryType').val()
 
                     if (categoryType === 'json' || this.chartType === 'histogram') {
                         // hide y-axis property setting as category will now control that
