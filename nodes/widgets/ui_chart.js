@@ -42,6 +42,8 @@ module.exports = function (RED) {
             beforeSend: function (msg) {
                 const p = msg.payload
 
+                console.log('chart beforeSend', p)
+
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
                 if (config.categoryType === 'property') {
@@ -89,7 +91,8 @@ module.exports = function (RED) {
                     const x = RED.util.evaluateNodeProperty(config.xAxisProperty, config.xAxisPropertyType, node, msg)
 
                     // construct our datapoint
-                    if (typeof payload === 'number') {
+                    console.log('type', typeof payload)
+                    if (typeof payload === 'number' || typeof payload === 'string') {
                         // do we have an x-property defined - if not, we're assuming time series
                         datapoint.x = config.xAxisProperty !== '' ? x : (new Date()).getTime()
                         datapoint.y = payload

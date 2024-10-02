@@ -217,12 +217,19 @@
                     } else {
                         $('#x-axis-format').hide()
                     }
+                    // default for most: hide the bins
+                    $('#node-container-xAxisBins').hide()
 
                     if (value === 'radial') {
                         // hide irrelevant fields
                         $('#node-container-xAxisLabel').hide()
                         $('#node-container-yAxisLabel').hide()
                         $('#y-axis-show').hide()
+                    } else if (value === 'bins') {
+                        $('#node-container-xAxisLabel').show()
+                        $('#node-container-yAxisLabel').show()
+                        // show the options to configure the histogram bins
+                        $('#node-container-xAxisBins').show()
                     } else {
                         // make sure they're shown
                         $('#node-container-xAxisLabel').show()
@@ -271,7 +278,8 @@
                         { value: 'time', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
                         { value: 'linear', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') },
                         { value: 'radial', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.radial') },
-                        { value: 'category', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
+                        { value: 'category', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') },
+                        { value: 'bins', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.binsAxis') }
                     ]
                     const theseOptions = allOptions.filter((option) => options.indexOf(option.value) !== -1)
                     $el.css('pointer-events', 'none') // temporarily inhibit events
@@ -299,7 +307,6 @@
                     const value = $(evt.target).val()
 
                     // default value for all chart types, except for "histogram"
-                    $('#node-container-xAxisBins').hide()
                     $('#node-container-yAxisProperty').show()
 
                     if (value === 'line' || value === 'scatter') {
@@ -323,11 +330,9 @@
                     } else if (value === 'histogram') {
                         // for histogram
                         // types - categorical
-                        updateXAxisTypeOptions(['category'], 'category')
+                        updateXAxisTypeOptions(['bins', 'category'], 'bins')
                         // no need for a y-axis property as it's a frequency chart
                         $('#node-container-yAxisProperty').hide()
-                        // show the options to configure the histogram bins
-                        $('#node-container-xAxisBins').show()
 
                         // show the ability to control if content is stacked or not
                         $('#config-stackSeries').show()

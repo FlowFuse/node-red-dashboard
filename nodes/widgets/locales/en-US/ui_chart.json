@@ -47,6 +47,7 @@
             "yLabel": "Y-Axis Label",
             "min": "min.",
             "max": "max.",
+            "binsAxis": "Bins",
             "bins": "bins",
             "properties": "Properties",
             "series": "Series:",
