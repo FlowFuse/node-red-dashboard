@@ -22,12 +22,15 @@ export default {
     data () {
         return {
             chart: null,
-            hasData: false
+            hasData: false,
+            histogram: [] // populate later for bins per series
         }
     },
     computed: {
         ...mapState('data', ['messages']),
         chartType () {
+            // ChartJS doesn't support Histograms, so we render it as a bar chart,
+            // but maintain the ref to our own config
             if (this.props.chartType === 'histogram') {
                 return 'bar'
             }
@@ -41,19 +44,19 @@ export default {
     watch: {
         chartType: function (value) {
             this.chart.config.type = value
-            this.chart.update()
+            this.update()
         },
         'props.label': function (value) {
             this.chart.options.plugins.title.text = value
-            this.chart.update()
+            this.update()
         },
         'props.xAxisType': function (value) {
             this.chart.options.scales.x.type = value
-            this.chart.update()
+            this.update()
         },
         'props.xAxisFormatType': function (value) {
             this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
-            this.chart.update()
+            this.update()
         }
     },
     created () {
@@ -193,6 +196,17 @@ export default {
                         labels: {
                             color: textColor
                         }
+                    },
+                    tooltip: {
+                        itemSort: (a, b) => {
+                            console.log('sort', a, b)
+                            return b.parsed.y - a.parsed.y
+                        },
+                        filter: (tooltipItem) => {
+                            console.log('filter', tooltipItem)
+                            // don't show tooltips for empty data points
+                            return tooltipItem.parsed.y !== undefined && tooltipItem.parsed.y > 0
+                        }
                     }
                 },
                 parsing
@@ -204,6 +218,9 @@ export default {
         this.chart = shallowRef(chart)
     },
     methods: {
+        update () {
+            this.chart.update()
+        },
         // given an object, return the value of the category property (which can be nested)
         getLabel (value, category) {
             if (this.props.categoryType !== 'property') {
@@ -276,7 +293,8 @@ export default {
         clear () {
             this.chart.data.labels = []
             this.chart.data.datasets = []
-            this.chart.update()
+            this.histogram = []
+            this.update()
             this.hasData = false
         },
         add (msg) {
@@ -310,7 +328,7 @@ export default {
             if (this.chartType === 'line' || this.chartType === 'scatter') {
                 this.limitDataSize()
             }
-            this.chart.update()
+            this.update()
         },
         addPoints (payload, datapoint, label) {
             const d = {
@@ -337,7 +355,6 @@ export default {
                 ...datapoint,
                 ...payload
             }
-            this.addToChart(d, label)
 
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
@@ -348,6 +365,8 @@ export default {
                     series: label
                 }
             })
+
+            this.addToChart(d, label)
         },
         /**
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
@@ -356,6 +375,11 @@ export default {
         addToChart (datapoint, label) {
             // record we've added data
             this.hasData = true
+
+            if (this.props.chartType === 'histogram') {
+                this.addToHistogram(datapoint, label)
+                return
+            }
 
             const xLabels = this.chart.data.labels // the x-axis categories
             const sLabels = this.chart.data.datasets.map((d) => d.label) // the data series labels
@@ -455,6 +479,66 @@ export default {
                 min: cutoff,
                 points
             })
+        },
+        calculateBins () {
+            if (this.props.chartType !== 'histogram') {
+                return []
+            }
+            // given the x-min, x-max and number of bins (bins), calculate the bins
+            const bins = []
+            const minX = this.props.xmin || 0
+            const maxX = this.props.xmax || 100
+            const numBins = this.props.bins || 10
+            const binSize = (maxX - minX) / numBins
+            for (let i = 0; i < numBins; i++) {
+                const min = minX + (i * binSize)
+                const max = minX + ((i + 1) * binSize)
+                bins.push({
+                    label: `${min}-${max}`,
+                    min,
+                    max,
+                    count: 0
+                })
+            }
+            return bins
+        },
+        addToHistogram (datapoint, label) {
+            // handle multi-series in the histogram
+            const sLabels = this.chart.data.datasets.map((d) => d.label) // the existing data series labels
+            const seriesLabel = datapoint.category
+            const sIndex = sLabels.indexOf(seriesLabel)
+
+            let bins = []
+
+            if (sIndex === -1) {
+                this.histogram.push({
+                    bins: this.calculateBins()
+                })
+                bins = this.histogram[this.histogram.length - 1].bins
+            } else {
+                bins = this.histogram[sIndex].bins
+            }
+
+            const binSize = Math.floor((this.props.xmax - this.props.xmin) / this.props.bins)
+            const binIndex = Math.min(Math.floor((datapoint.x - this.props.xmin) / binSize), bins.length - 1)
+
+            bins[binIndex].count++
+
+            // define x-labels
+            const labels = bins.map((b) => b.label)
+            const values = bins.map((b) => b.count)
+
+            this.chart.data.labels = labels
+            const series = {
+                data: values,
+                label: seriesLabel,
+                backgroundColor: this.props.colors[sLabels.length % this.props.colors.length]
+            }
+            if (sIndex === -1) {
+                this.chart.data.datasets.push(series)
+            } else {
+                this.chart.data.datasets[sIndex] = series
+            }
         }
     }
 }

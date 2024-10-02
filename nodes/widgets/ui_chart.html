@@ -82,8 +82,38 @@
                 xAxisFormatType: { value: 'auto' },
                 yAxisLabel: { value: '' },
                 yAxisProperty: { value: null },
+                xmin: {
+                    value: '',
+                    validate: function (value) {
+                        if (this.chartType === 'histogram') {
+                            return typeof value !== 'undefined' && value !== '' && RED.validators.number()
+                        } else {
+                            return value === '' || RED.validators.number()
+                        }
+                    }
+                },
+                xmax: {
+                    value: '',
+                    validate: function (value) {
+                        if (this.chartType === 'histogram') {
+                            return typeof value !== 'undefined' && value !== '' && RED.validators.number()
+                        } else {
+                            return value === '' || RED.validators.number()
+                        }
+                    }
+                },
                 ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
                 ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                bins: {
+                    value: 10,
+                    validate: function (value) {
+                        if (this.chartType === 'histogram') {
+                            return typeof value !== 'undefined' && value !== '' && RED.validators.number()
+                        } else {
+                            return value === '' || RED.validators.number()
+                        }
+                    }
+                },
                 action: { value: 'append' },
                 stackSeries: { value: false },
                 pointShape: { value: 'circle' },
@@ -268,6 +298,10 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $(evt.target).val()
 
+                    // default value for all chart types, except for "histogram"
+                    $('#node-container-xAxisBins').hide()
+                    $('#node-container-yAxisProperty').show()
+
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -283,6 +317,24 @@
                         updateXAxisTypeOptions(['radial'], 'radial')
                         // no stacking options in pie/doughnut charts
                         $('#config-stackSeries').hide()
+                        // hide x-axis limit options & points sizing
+                        $('#x-axis-show').hide()
+                        $('#point-radius-show').hide()
+                    } else if (value === 'histogram') {
+                        // for histogram
+                        // types - categorical
+                        updateXAxisTypeOptions(['category'], 'category')
+                        // no need for a y-axis property as it's a frequency chart
+                        $('#node-container-yAxisProperty').hide()
+                        // show the options to configure the histogram bins
+                        $('#node-container-xAxisBins').show()
+
+                        // show the ability to control if content is stacked or not
+                        $('#config-stackSeries').show()
+
+                        $('#node-container-xAxisLabel').show()
+                        $('#node-container-yAxisLabel').hide()
+
                         // hide x-axis limit options & points sizing
                         $('#x-axis-show').hide()
                         $('#point-radius-show').hide()
@@ -302,7 +354,7 @@
                 $('#node-input-category').change((evt) => {
                     const categoryType = $(evt.target).val()
 
-                    if (categoryType === 'json') {
+                    if (categoryType === 'json' || this.chartType === 'histogram') {
                         // hide y-axis property setting as category will now control that
                         $('#node-container-yAxisProperty').hide()
                     } else {
@@ -509,6 +561,15 @@
     <div class="form-row" id="node-container-xAxisLabel">
         <label for="node-input-xAxisLabel" data-i18n="ui-chart.label.xLabel"></label></label>
         <input type="text" id="node-input-xAxisLabel">
+    </div>
+    <div class="form-row" id="node-container-xAxisBins">
+        <label id="y-label-show" for="node-input-ymin" data-i18n="ui-chart.label.xAxis"></label>
+        <label for="node-input-xmin" style="width:auto" data-i18n="ui-chart.label.min"></label>
+        <input type="text" id="node-input-xmin" style="width:92px">
+        <label for="node-input-bins" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.bins"></label>
+        <input type="text" id="node-input-bins" style="width:92px">
+        <label for="node-input-xmax" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.max"></label>
+        <input type="text" id="node-input-xmax" style="width:92px">
     </div>
     <div class="form-row" id="x-axis-show">
         <label for="node-input-removeOlder" data-i18n="ui-chart.label.xLimit"></label>

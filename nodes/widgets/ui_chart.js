@@ -11,6 +11,14 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
 
+        // correct typing
+        if (typeof config.xmin !== 'undefined') {
+            config.xmin = parseFloat(config.xmin)
+        }
+        if (typeof config.xmax !== 'undefined') {
+            config.xmax = parseFloat(config.xmax)
+        }
+
         node.clearHistory = function () {
             const empty = []
             datastore.save(base, node, empty)
@@ -89,7 +97,7 @@ module.exports = function (RED) {
                         // may have been given an x/y object already
                         let x = getProperty(payload, config.xAxisProperty)
                         let y = payload.y
-                        if (x === undefined || x === null) {
+                        if ((x === undefined || x === null) && config.xAxisProperty === '') {
                             x = (new Date()).getTime()
                         }
                         if (Array.isArray(series)) {
