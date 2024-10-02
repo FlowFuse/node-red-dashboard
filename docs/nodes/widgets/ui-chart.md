@@ -44,6 +44,9 @@ dynamic:
     import ExampleChartBarFinance from '../../examples/chart-bar-finance-grouped.json'
     import ExampleChartBarElection from '../../examples/chart-bar-election-grouped.json'
     import ExampleChartPieDoughnut from '../../examples/chart-pie-doughnut.json'
+    import ExampleChartHistogramBins from '../../examples/chart-histogram-bins.json'
+    import ExampleChartHistogramCategories from '../../examples/chart-histogram-categories.json'
+    import ExampleChartHistogramSeries from '../../examples/chart-histogram-series.json'
     import ExampleChartScatter from '../../examples/chart-scatter-grouped.json'
     import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
     import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
@@ -55,6 +58,9 @@ dynamic:
       'chart-bar-finance': ExampleChartBarFinance,
       'chart-bar-election': ExampleChartBarElection,
       'chart-pie-doughnut': ExampleChartPieDoughnut,
+      'chart-histogram-bins': ExampleChartHistogramBins,
+      'chart-histogram-categories': ExampleChartHistogramCategories,
+      'chart-histogram-series': ExampleChartHistogramSeries,
       'chart-scatter-grouped': ExampleChartScatter,
       'custom-chart-line': ExampleCustomChartLine,
       'custom-chart-polar': ExampleCustomChartPolar
@@ -73,6 +79,7 @@ Provides configuration options to create the following chart types:
 - [Scatter Plot](#scatter-charts)
 - [Bar Chart](#bar-charts)
 - [Pie/Doughnut Charts](#pie-doughnut-charts)
+- [Histograms](#histograms)
 
 ## Properties
 
@@ -301,6 +308,43 @@ Results in the following, where for the "Doughnut" chart has two "Series" worth 
 
 ![Example of Pie and Doughnut Charts](/images/node-examples/ui-chart-pie-doughnut.png "Example of Pie and Doughnut Charts"){data-zoomable}
 _Example of Pie and Doughnut Charts_
+
+### Histograms
+
+Histograms are unique in that they do not _just_ plot the data provided to them. Instead, they calculate and keep track of frequencies of messages received, grouped by the "X" and "Series" properties.
+
+#### Bins
+
+<FlowViewer :flow="examples['chart-histogram-bins']" height="200px"/>
+
+If you want to render numerical data on the x-axis, then you should use the "Bins" x-axis type. This will allow you to define the range of values that should be grouped together, and how many "bins" your range should be split into.
+
+![Example Histogram with numerical bins](/images/node-examples/ui-chart-histogram-bins.png "Example Histogram with numerical bins"){data-zoomable}
+
+Here, we have a slider that inject a payload into the chart everytime it is moved, with numbers being split into 5 bins between 0 and 10.
+
+#### Categorical
+
+<FlowViewer :flow="examples['chart-histogram-categories']" height="400px"/>
+
+If instead, you have fixed string or categorical values for your x-axis, you should use the "Categorical" x-axis type. This will group data by the x-axis value, and then calculate the frequency of each value.
+
+![Example Histogram with categorical bins](/images/node-examples/ui-chart-histogram-categories.png "Example Histogram with categorical bins"){data-zoomable}
+
+Here, each button emits a payload matching a given letter (the x-axis value), and the chart calculates the frequency of each letter received. Additionally, we have the first row of buttons belonging to the "Series 1", and the second row of buttons belonging to the "Series 2", defined through `msg.topic`.
+
+#### Grouping into Series
+
+<FlowViewer :flow="examples['chart-histogram-series']" height="200px"/>
+
+We can also add an extra dimension of data to our Histogram with "Series".
+
+![Example Histogram with categorical bins and grouped by Series](/images/node-examples/ui-chart-histogram-bins-series.png "Example Histogram with categorical bins and grouped by Series"){data-zoomable}
+_Screenshot showing two histograms rendering hte same data source, but with different series_ 
+
+Here, we have a sample data set which details licenses for software running for _n_ days. Each license details the operating system (`os`), which `version` of the software it is running, and whether or not it is a paid for `license`.
+
+Our two side-by-side charts show the same frequency data (with bins for the `age` on the x-axis), but one breaks it down by `version` and the other by `os`.
 
 ## Controls
 
