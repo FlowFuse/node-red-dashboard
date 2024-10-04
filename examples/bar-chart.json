@@ -6,17 +6,23 @@
         "group": "",
         "name": "",
         "label": "Sales in Million",
-        "order": 9007199254740991,
+        "order": 3,
         "chartType": "bar",
         "category": "location",
         "categoryType": "property",
+        "xAxisLabel": "",
         "xAxisProperty": "",
-        "xAxisPropertyType": "msg",
+        "xAxisPropertyType": "str",
         "xAxisType": "category",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
         "yAxisProperty": "sales_millions",
+        "yAxisPropertyType": "property",
         "ymin": "",
         "ymax": "",
         "action": "append",
+        "stackSeries": false,
         "pointShape": "circle",
         "pointRadius": 4,
         "showLegend": false,
@@ -66,6 +72,36 @@
         "payloadType": "json",
         "x": 210,
         "y": 760,
+        "wires": [
+            [
+                "2a23595f05d3331e"
+            ]
+        ]
+    },
+    {
+        "id": "f4c5f4c74fbd2db2",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Clear",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "action",
+                "v": "replace",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 210,
+        "y": 800,
         "wires": [
             [
                 "2a23595f05d3331e"

@@ -28,6 +28,22 @@ module.exports = function (RED) {
             return value
         }
 
+        // ensure sane defaults
+        if (!['msg', 'str', 'property'].includes(config.xAxisPropertyType)) {
+            config.xAxisPropertyType = 'property' // default to 'key'
+        }
+        if (!['msg', 'property'].includes(config.yAxisPropertyType)) {
+            config.yAxisPropertyType = 'property' // default to 'key'
+        }
+        if (config.xAxisPropertyType === 'msg' && !config.xAxisProperty) {
+            config.xAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
+        }
+        if (config.yAxisPropertyType === 'msg' && !config.yAxisProperty) {
+            config.yAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
+        }
+        config.xAxisProperty = config.xAxisProperty || ''
+        config.yAxisProperty = config.yAxisProperty || ''
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
@@ -67,32 +83,36 @@ module.exports = function (RED) {
                     }
                 }
 
+                function evaluateNodePropertyWithKey (node, msg, payload, property, propertyType) {
+                    if (propertyType === 'property' /* AKA key */) {
+                        return RED.util.evaluateNodeProperty(property, 'msg', node, payload)
+                    }
+                    return RED.util.evaluateNodeProperty(property, propertyType, node, msg)
+                }
+
                 // function to process a data point being appended to a line/scatter chart
                 function addToChart (payload, series) {
                     const datapoint = {}
                     // we group/categorize data by "series"
                     datapoint.category = series
 
-                    // get our x value, if set
-                    if (config.xAxisPropertyType === 'msg' && config.xAxisProperty === '') {
-                        // handle a missing declaration of x-axis property, and backup to time series
-                        config.xAxisPropertyType = 'property'
-                    }
-                    const x = RED.util.evaluateNodeProperty(config.xAxisProperty, config.xAxisPropertyType, node, msg)
-
                     // construct our datapoint
                     if (typeof payload === 'number') {
                         // do we have an x-property defined - if not, we're assuming time series
-                        datapoint.x = config.xAxisProperty !== '' ? x : (new Date()).getTime()
+                        // since key would attempt to evaluate a property on a number, we don't do evaluation when
+                        // x-axis is type is 'key' (only when it's 'msg' or 'str')
+                        datapoint.x = config.xAxisPropertyType === 'msg' || config.xAxisPropertyType === 'str'
+                            ? evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
+                            : (new Date()).getTime()
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
+                        let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         // may have been given an x/y object already
-                        let x = getProperty(payload, config.xAxisProperty)
-                        let y = payload.y
                         if (x === undefined || x === null) {
                             x = (new Date()).getTime()
                         }
                         if (Array.isArray(series)) {
+                            let y
                             if (series.length > 1) {
                                 y = series.map((s) => {
                                     return getProperty(payload, s)
@@ -100,9 +120,11 @@ module.exports = function (RED) {
                             } else {
                                 y = getProperty(payload, series[0])
                             }
+                            datapoint.y = y
+                        } else {
+                            datapoint.y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
                         }
                         datapoint.x = x
-                        datapoint.y = y
                     }
                     return datapoint
                 }
