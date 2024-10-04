@@ -94,6 +94,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     function onConnect () {
+        // when we unexpectedly disconnect, this is set to true
         if (emitWidgetLoadOnConnect) {
             emitWidgetLoadOnConnect = false
             socket.emit('widget-load', widgetId)
