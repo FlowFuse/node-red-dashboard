@@ -31,8 +31,8 @@ module.exports = function (RED) {
     statestore.setConfig(RED)
 
     /**
-     * @typedef {import('socket.io/dist').Socket} Socket
-     * @typedef {import('socket.io/dist').Server} Server
+     * @typedef {import('socket.io').Socket} Socket
+     * @typedef {import('socket.io').Server} Server
      */
 
     // store state that can maintain cross re-deployments
@@ -152,7 +152,7 @@ module.exports = function (RED) {
                 const root = RED.settings.httpNodeRoot || '/'
                 const fullPath = join(root, config.path)
                 const socketIoPath = join('/', fullPath, 'socket.io')
-                /** @type {import('socket.io/dist').ServerOptions} */
+                /** @type {import('socket.io').ServerOptions} */
                 const serverOptions = {
                     path: socketIoPath,
                     maxHttpBufferSize: uiShared.settings.maxHttpBufferSize || 1e6 // SocketIO default size
