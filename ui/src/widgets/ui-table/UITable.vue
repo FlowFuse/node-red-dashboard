@@ -34,7 +34,7 @@
                         {{ col.title }}
                     </div>
                     <div class="nrdb-table-cell-align" :style="{'justify-content': isMobile ? 'end' : (col.align || 'start')}">
-                        <UITableCell :row="index + 1" :item="item" :property="col.key" :type="col.type" @action-click="onCellClick" />
+                        <UITableCell :row="index + 1" :item="item" :property="col.key" :propertyType="col.keyType" :type="col.type" @action-click="onCellClick" />
                     </div>
                 </td>
             </tr>
@@ -97,6 +97,7 @@ export default {
                 return this.props.columns.map((col) => {
                     return {
                         key: col.key,
+                        keyType: col.keyType || 'key',
                         title: col.label || col.title,
                         type: col.type,
                         align: col.align,

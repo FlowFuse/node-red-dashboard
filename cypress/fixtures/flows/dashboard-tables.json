@@ -64,7 +64,9 @@
                 "dashboard-ui-table-default",
                 "dashboard-ui-table-max-rows",
                 "dashboard-ui-table-single-row-click",
-                "dashboard-ui-table-multi-select"
+                "dashboard-ui-table-multi-select",
+                "dashboard-ui-table-table-buttons-string-value",
+                "dashboard-ui-table-buttons-text-from-payload"
             ]
         ]
     },
@@ -135,6 +137,104 @@
             [
                 "test-helper"
             ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-table-buttons-string-value",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "dashboard-ui-table-table-buttons-string-value",
+        "label": "dashboard-ui-table-table-buttons-string-value",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": false,
+        "showSearch": false,
+        "selectionType": "none",
+        "columns": [
+            {
+                "title": "ID",
+                "key": "id",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Name",
+                "key": "name",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "",
+                "key": "Button Text Is String Value",
+                "keyType": "str",
+                "type": "button",
+                "width": "",
+                "align": "start"
+            }
+        ],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "x": 990,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-buttons-text-from-payload",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "dashboard-ui-table-buttons-text-from-payload",
+        "label": "text",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": false,
+        "showSearch": false,
+        "selectionType": "none",
+        "columns": [
+            {
+                "title": "ID",
+                "key": "id",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Name",
+                "key": "name",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "",
+                "key": "name",
+                "keyType": "key",
+                "type": "button",
+                "width": "",
+                "align": "start"
+            }
+        ],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "x": 1050,
+        "y": 1060,
+        "wires": [
+            []
         ]
     },
     {
