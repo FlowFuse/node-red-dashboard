@@ -118,6 +118,7 @@ export default {
                 this.$socket.emit('widget-change', this.id, value)
             }
         },
+        // Keep the code of this function in sync with the server-side function
         findOptionByValue: function (val) {
             const opt = this.options?.find(option => {
                 if (typeof (val) === 'object') {
