@@ -474,8 +474,6 @@ NB! supresses the gridarea for messages, but those are not in use*/
 /* Ensures we have consistent height across all widgets */
 .v-input .v-field__input {
     min-height: var(--widget-row-height);
-    padding-top: initial;
-    padding-bottom: initial;
 }
 
 /* Button Overrides */
@@ -483,5 +481,6 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .v-btn.v-btn--density-default,
 .v-btn.v-btn--density-compact, 
 .v-btn.v-btn--density-comfortable {
+    height: auto;
     min-height: var(--widget-row-height);
 }

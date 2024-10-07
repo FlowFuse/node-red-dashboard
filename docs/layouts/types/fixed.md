@@ -19,4 +19,4 @@ It will automatically move widgets to the next row if they don't fit within a gi
 
 ## Breakpoints
 
-Below 576px, Fixed layouts will render in a responsive mode in order to support mobile rendering. Here, they actually become [Grid](../grid.md) layouts, with the width of each group being calculated as a portion of 3 columns, rather than a fixed pixel size.
+Below 576px, Fixed layouts will render in a responsive mode in order to support mobile rendering. Here, they actually become [Grid](./grid.md) layouts, with the width of each group being calculated as a portion of 3 columns, rather than a fixed pixel size.

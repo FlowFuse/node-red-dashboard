@@ -132,6 +132,10 @@ module.exports = function (RED) {
                         // dynamically set "officon" property
                         statestore.set(group.getBase(), node, msg, 'officon', updates.officon)
                     }
+                    if (typeof updates.layout !== 'undefined') {
+                        // dynamically set "layout" property
+                        statestore.set(group.getBase(), node, msg, 'layout', updates.layout)
+                    }
                 }
 
                 msg = await appendTopic(RED, config, node, msg)

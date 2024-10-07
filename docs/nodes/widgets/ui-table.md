@@ -118,7 +118,7 @@ _Screenshot of the configuration options available for column types in Node-RED_
 
 If you toggle "off" the "Auto Columns" option, you will have more control to define the columns for your table. For each column, you can define the following:
 
-- **Key**: The key in the object to use for the column data.
+- **Value**: The value to use for rendering the control. Typically, you would provide a key to the value in the data row object but it can be changed to provide a fixed string value.
 - **Label**: The text to display in the column header.
 - **Width**: The width of the column, can be in `px`, `%`, or any other valid CSS sizing.
 - **Align:** The alignment of the text in the column. Can be `Left`, `Center`, or `Right`. Note that some columns do look odd with "Center" alignment as the header does also contain space for the sorting icon.
@@ -137,7 +137,7 @@ _An example of a ui-table displaying various of the cell types available_
 - **Progress**: Renders the cell as a progress bar. The `Value` field should contain a number between 0 and 100.
 - **Sparkline - Trend**: Renders the cell as a small line chart without axes. The `Value` field should contain an array of numbers to be plotted.
 - **Sparkline - Bar**: Renders the cell as a small bar chart without axes. The `Value` field should contain an array of numbers to be plotted.
-- **Button**: Renders a clickable button in the cell. The label of the button will be the `row[key]` value.
+- **Button**: Renders a clickable button in the cell. The label of the button will be either the `row[key]` or the fixed string entered on the manual column configuration.
 - **Row Number**: Renders the row number into the cell.
 
 #### Interaction: Buttons

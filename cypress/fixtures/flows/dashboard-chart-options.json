@@ -1,0 +1,210 @@
+[
+    {
+        "id": "chart-1",
+        "type": "ui-chart",
+        "z": "9524c548fb0b956c",
+        "group": "dashboard-ui-group",
+        "name": "chart-name",
+        "label": "chart-label",
+        "order": 2,
+        "chartType": "line",
+        "category": "",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "property",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
+        "yAxisProperty": "",
+        "ymin": "",
+        "ymax": "",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "10",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": "4",
+        "className": "",
+        "x": 1690,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "da1332f160b6a255",
+        "type": "inject",
+        "z": "9524c548fb0b956c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 1490,
+        "y": 680,
+        "wires": [
+            [
+                "chart-1"
+            ]
+        ]
+    },
+    {
+        "id": "13bf93c81c0bd0a7",
+        "type": "change",
+        "z": "9524c548fb0b956c",
+        "name": "rand",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "(\t    $minimum := 1;\t    $maximum := 10;\t    $round(($random() * ($maximum-$minimum)) + $minimum, 0)\t)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1490,
+        "y": 640,
+        "wires": [
+            [
+                "chart-1"
+            ]
+        ]
+    },
+    {
+        "id": "12a55e898bb4162f",
+        "type": "ui-button",
+        "z": "9524c548fb0b956c",
+        "group": "dashboard-ui-group",
+        "name": "random",
+        "label": "random",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": true,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 1340,
+        "y": 640,
+        "wires": [
+            [
+                "13bf93c81c0bd0a7"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "import demos",
+        "ui": "dashboard-ui-base",
+        "path": "/page4",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "base",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default",
+        "titleBarStyle": "default"
+    },
+
+
+
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#6771f4",
+            "bgPage": "#e5dcdc",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d39292"
+        },
+        "sizes": {
+            "pagePadding": "6px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "6px",
+            "density": "default"
+        }
+    }
+]

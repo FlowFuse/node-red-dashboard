@@ -1,10 +1,10 @@
 <template>
     <v-tooltip :key="key" :text="tooltip" :disabled="!tooltip?.length" location="bottom">
         <!-- eslint-disable-next-line vue/no-template-shadow -->
-        <template #activator="{ props }">
+        <template #activator="{ props: activatorProps }">
             <v-text-field
                 v-if="type !== 'textarea'" v-model="value"
-                v-bind="props"
+                v-bind="activatorProps"
                 :disabled="!state.enabled" class="nrdb-ui-text-field"
                 :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
@@ -12,8 +12,8 @@
             />
             <v-textarea
                 v-else
-                v-bind="props"
-                v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field"
+                v-bind="activatorProps"
+                v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field nrdb-ui-textarea" :style="{ 'grid-row-end': `span ${props.height}` }"
                 :label="label" :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
                 :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
                 @click:clear="onClear"
@@ -194,4 +194,16 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss">
+.nrdb-ui-textarea {
+    height: 100%; /* Ensure the textarea takes full height */
+    &.v-input--horizontal{
+        &:has(textarea) {
+            grid-template-rows: auto 0;
+        }
+    }
+    textarea.v-field__input {
+        height:100%;
+    }
+}
+</style>
