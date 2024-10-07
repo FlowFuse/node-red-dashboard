@@ -1,5 +1,5 @@
 <template>
-    <v-tooltip :key="key" :text="tooltip" :disabled="!tooltip?.length" location="bottom">
+    <v-tooltip :text="tooltip" :disabled="!tooltip?.length" location="bottom">
         <!-- eslint-disable-next-line vue/no-template-shadow -->
         <template #activator="{ props: activatorProps }">
             <v-text-field
@@ -36,8 +36,7 @@ export default {
     data () {
         return {
             delayTimer: null,
-            textValue: null,
-            key: 0
+            textValue: null
         }
     },
     computed: {
@@ -188,7 +187,6 @@ export default {
             this.updateDynamicProperty('icon', updates.icon)
             this.updateDynamicProperty('iconPosition', updates.iconPosition)
             this.updateDynamicProperty('iconInnerPosition', updates.iconInnerPosition)
-            this.key = Math.random()
         }
     }
 }
