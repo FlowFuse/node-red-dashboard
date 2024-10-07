@@ -102,6 +102,21 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
     })
 })
 
+describe('Node-RED Dashboard 2.0 - Control - Show/Hide Dialog', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-controls')
+        cy.visit('/dashboard/controls')
+    })
+
+    it('can hide and show a particular dialog group', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-dialog-show'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-group-dialog').should('exist')
+
+        cy.clickAndWait(cy.get('.v-dialog .v-card-item > .v-card-item__append > button'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-group-dialog').should('not.exist')
+    })
+})
+
 describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
@@ -146,20 +161,5 @@ describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
         cy.get('[data-nav="dashboard-ui-page-controls"]').should('not.have.class', 'v-list-item--disabled')
         cy.get('[data-nav="dashboard-ui-page-1"]').should('not.have.class', 'v-list-item--disabled')
         cy.get('[data-nav="dashboard-ui-page-2"]').should('not.have.class', 'v-list-item--disabled')
-    })
-})
-
-describe('Node-RED Dashboard 2.0 - Control - Show/Hide Dialog', () => {
-    beforeEach(() => {
-        cy.deployFixture('dashboard-controls')
-        cy.visit('/dashboard/controls')
-    })
-
-    it('can hide and show a particular dialog group', () => {
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-dialog-show'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-group-dialog').should('exist')
-
-        cy.clickAndWait(cy.get('.v-dialog .v-card-item > .v-card-item__append > button'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-group-dialog').should('not.exist')
     })
 })
