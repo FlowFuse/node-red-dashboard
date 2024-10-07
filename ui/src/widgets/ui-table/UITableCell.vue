@@ -53,13 +53,21 @@ export default {
         property: {
             type: String,
             required: true
+        },
+        propertyType: {
+            type: String,
+            default: 'key'
         }
     },
     emits: ['update:modelValue', 'action-click'],
     computed: {
         value: {
             get () {
-                // get nested property from item
+                // if this is a string property, just return the string
+                if (this.propertyType === 'str') {
+                    return this.property ?? ''
+                }
+                // default to getting property from item by key
                 const keys = this.property.split('.')
                 const value = keys.reduce((val, key) => {
                     return val?.[key] ?? null

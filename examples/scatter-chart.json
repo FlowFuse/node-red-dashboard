@@ -4,19 +4,25 @@
         "type": "ui-chart",
         "z": "0758321f1687e812",
         "group": "",
-        "name": "",
+        "name": "Scatter Chart",
         "label": "chart",
-        "order": 9007199254740991,
+        "order": 4,
         "chartType": "scatter",
         "category": "",
         "categoryType": "str",
+        "xAxisLabel": "",
         "xAxisProperty": "x",
-        "xAxisPropertyType": "msg",
+        "xAxisPropertyType": "property",
         "xAxisType": "linear",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
         "yAxisProperty": "y",
+        "yAxisPropertyType": "property",
         "ymin": "",
         "ymax": "",
         "action": "replace",
+        "stackSeries": false,
         "pointShape": "circle",
         "pointRadius": 4,
         "showLegend": true,
@@ -47,7 +53,7 @@
         "id": "937b42a40fdcf424",
         "type": "inject",
         "z": "0758321f1687e812",
-        "name": "",
+        "name": "Arc data",
         "props": [
             {
                 "p": "payload"
@@ -66,6 +72,36 @@
         "payloadType": "json",
         "x": 250,
         "y": 820,
+        "wires": [
+            [
+                "91ced026339a3eeb"
+            ]
+        ]
+    },
+    {
+        "id": "60e4dfb81bdbcb03",
+        "type": "inject",
+        "z": "0758321f1687e812",
+        "name": "Clear",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "action",
+                "v": "replace",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 250,
+        "y": 860,
         "wires": [
             [
                 "91ced026339a3eeb"

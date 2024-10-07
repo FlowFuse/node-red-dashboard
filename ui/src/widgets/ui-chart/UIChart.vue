@@ -21,6 +21,7 @@ export default {
     },
     data () {
         return {
+            /** @type {Chart} */
             chart: null,
             hasData: false,
             histogram: [], // populate later for bins per series
@@ -94,7 +95,7 @@ export default {
                 parsing.xAxisKey = this.props.xAxisProperty
             }
 
-            if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
+            if (this.props.categoryType !== 'json' && this.props.yAxisProperty && this.props.yAxisPropertyType === 'property') {
                 parsing.yAxisKey = this.props.yAxisProperty
             }
         } else {
@@ -390,9 +391,12 @@ export default {
             this.update()
         },
         addPoints (payload, datapoint, label) {
-            const d = {
-                ...datapoint,
-                ...payload
+            const d = { ...datapoint, ...payload }
+            if (!this.chart.config?.options?.parsing?.xAxisKey) {
+                d.x = datapoint.x // if there is no mapping key, ensure server side computed datapoint.x is used
+            }
+            if (!this.chart.config?.options?.parsing?.yAxisKey) {
+                d.y = datapoint.y // if there is no mapping key, ensure server side computed datapoint.y is used
             }
 
             if (Array.isArray(label) && label.length > 0) {
@@ -403,10 +407,12 @@ export default {
                     }
                     dd.category = d.category[i]
                     dd.y = d.y[i]
-                    this.addPoint(payload, dd, label[i])
+                    this.addToChart(d, label)
+                    this.commit(payload, dd, label[i])
                 }
             } else {
-                this.addPoint(payload, datapoint, label)
+                this.addToChart(d, label)
+                this.commit(payload, datapoint, label)
             }
         },
         addPoint (payload, datapoint, label) {
@@ -414,7 +420,9 @@ export default {
                 ...datapoint,
                 ...payload
             }
-
+            this.addToChart(d, label)
+        },
+        commit (payload, datapoint, label) {
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
                 widgetId: this.id,
@@ -424,8 +432,6 @@ export default {
                     series: label
                 }
             })
-
-            this.addToChart(d, label)
         },
         /**
          * Function to handle adding a datapoint (generated NR-side) to Line Charts
