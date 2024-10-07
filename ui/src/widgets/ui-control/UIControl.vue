@@ -1,5 +1,4 @@
 <script>
-import { group } from 'd3';
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -176,7 +175,7 @@ export default {
             if ('groups' in payload) {
                 if ('show' in payload.groups) {
                     payload.groups.show.forEach((name) => {
-                        const [pageName, groupName] = name.split(':')
+                        const groupName = name.split(':')[1]
                         let exactGroup
                         Object.entries(vue.groups).forEach(([key, value]) => {
                             if (value.name === groupName) {
@@ -194,7 +193,7 @@ export default {
                 }
                 if ('hide' in payload.groups) {
                     payload.groups.show.forEach((name) => {
-                        const [pageName, groupName] = name.split(':')
+                        const groupName = name.split(':')[1]
                         let exactGroup
                         Object.entries(vue.groups).forEach(([key, value]) => {
                             if (value.name === groupName) {
