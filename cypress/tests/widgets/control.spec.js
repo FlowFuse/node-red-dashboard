@@ -109,7 +109,7 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide Dialog', () => {
     })
 
     it('can hide and show a particular dialog group', () => {
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-dialog-show'))
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-int-group-dialog-show'), 1000)
         cy.get('#nrdb-ui-widget-dashboard-ui-form-group-dialog').should('exist')
 
         cy.clickAndWait(cy.get('.v-dialog .v-card-item > .v-card-item__append > button'))
