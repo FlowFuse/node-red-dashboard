@@ -1,9 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
-
-import manifest from './manifest.json'
-
 /**
  * Vite is used to build the UI for the dashboard,
  * is is not used for the nodes themselves.
@@ -24,7 +21,7 @@ export default defineConfig({
             registerType: 'autoUpdate',
             injectRegister: false,
 
-            manifest,
+            manifest: false,
 
             injectManifest: {
                 maximumFileSizeToCacheInBytes: 3000000,
