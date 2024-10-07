@@ -861,7 +861,7 @@ module.exports = function (RED) {
             // store our UI state properties under the .state key too
 
             let widget = null
-            if (!widgetConfig || typeof widgetConfig !== 'object') {
+            if (!widgetOptions || typeof widgetOptions !== 'object') {
                 widgetOptions = {} // ensure we have an object to work with
             }
             if (widgetNode && widgetConfig) {
