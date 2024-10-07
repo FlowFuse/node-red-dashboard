@@ -85,7 +85,7 @@ export default {
                 // only show hte groups that haven't had their "visible" property set to false
                 .filter((g) => {
                     if ('visible' in g) {
-                        return g.visible
+                        return g.visible && g.groupType !== 'dialog'
                     }
                     return true
                 })
