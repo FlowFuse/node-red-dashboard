@@ -355,11 +355,7 @@
 
                 // handle event when chart's series property is changed
                 $('#node-input-category').change((evt) => {
-<<<<<<< HEAD
-                    const categoryType = $('#node-input-categoryType').val()
-=======
                     const categoryType = $('#node-input-category').typedInput('type')
->>>>>>> main
 
                     if (categoryType === 'json' || this.chartType === 'histogram') {
                         // hide y-axis property setting as category will now control that
