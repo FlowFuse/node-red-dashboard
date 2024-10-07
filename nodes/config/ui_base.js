@@ -861,7 +861,9 @@ module.exports = function (RED) {
             // store our UI state properties under the .state key too
 
             let widget = null
-
+            if (!widgetConfig || typeof widgetConfig !== 'object') {
+                widgetOptions = {} // ensure we have an object to work with
+            }
             if (widgetNode && widgetConfig) {
                 // default states
                 if (statestore.getProperty(widgetConfig.id, 'enabled') === undefined) {
@@ -884,8 +886,8 @@ module.exports = function (RED) {
                         height: widgetConfig.height || 1,
                         order: widgetConfig.order || 0
                     },
-                    typedInputs: widgetOptions?.typedInputs,
-                    dynamicProperties: widgetOptions?.dynamicProperties,
+                    typedInputs: widgetOptions.typedInputs,
+                    dynamicProperties: widgetOptions.dynamicProperties,
                     state: statestore.getAll(widgetConfig.id),
                     hooks: widgetEvents,
                     src: uiShared.contribs[widgetConfig.type]
