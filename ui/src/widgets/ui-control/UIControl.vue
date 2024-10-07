@@ -177,12 +177,15 @@ export default {
                     payload.groups.show.forEach((name) => {
                         const groupName = name.split(':')[1]
                         let exactGroup
-                        Object.entries(vue.groups).forEach(([key, value]) => {
-                            if (value.name === groupName) {
-                                exactGroup = value
-                            }
-                        })
-                        if (exactGroup.groupType === 'dialog') {
+                        if (vue.groups) {
+                            const allGroups = Object.entries(vue.groups) || []
+                            allGroups?.forEach(([key, value]) => {
+                                if (value?.name === groupName) {
+                                    exactGroup = value
+                                }
+                            })
+                        }
+                        if (exactGroup?.groupType === 'dialog') {
                             // we are setting dialog visibiliry: true
                             setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
                         } else {
@@ -195,12 +198,15 @@ export default {
                     payload.groups.show.forEach((name) => {
                         const groupName = name.split(':')[1]
                         let exactGroup
-                        Object.entries(vue.groups).forEach(([key, value]) => {
-                            if (value.name === groupName) {
-                                exactGroup = value
-                            }
-                        })
-                        if (exactGroup.groupType === 'dialog') {
+                        if (vue.groups) {
+                            const allGroups = Object.entries(vue.groups) || []
+                            allGroups?.forEach(([key, value]) => {
+                                if (value?.name === groupName) {
+                                    exactGroup = value
+                                }
+                            })
+                        }
+                        if (exactGroup?.groupType === 'dialog') {
                             // we are setting dialog visibiliry: false
                             setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
                         } else {
