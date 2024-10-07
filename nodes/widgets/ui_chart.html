@@ -85,7 +85,7 @@
                 xmin: {
                     value: '',
                     validate: function (value) {
-                        if (this.chartType === 'histogram') {
+                        if (this.chartType === 'histogram' && this.xAxisType === 'bins') {
                             return typeof value !== 'undefined' && value !== '' && RED.validators.number()
                         } else {
                             return value === '' || RED.validators.number()
@@ -95,7 +95,7 @@
                 xmax: {
                     value: '',
                     validate: function (value) {
-                        if (this.chartType === 'histogram') {
+                        if (this.chartType === 'histogram' && this.xAxisType === 'bins') {
                             return typeof value !== 'undefined' && value !== '' && RED.validators.number()
                         } else {
                             return value === '' || RED.validators.number()
@@ -107,7 +107,7 @@
                 bins: {
                     value: 10,
                     validate: function (value) {
-                        if (this.chartType === 'histogram') {
+                        if (this.chartType === 'histogram' && this.xAxisType === 'bins') {
                             return typeof value !== 'undefined' && value !== '' && RED.validators.number()
                         } else {
                             return value === '' || RED.validators.number()
