@@ -1,4 +1,5 @@
 <script>
+import { group } from 'd3';
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -174,15 +175,39 @@ export default {
 
             if ('groups' in payload) {
                 if ('show' in payload.groups) {
-                    // we are setting visibility: true
                     payload.groups.show.forEach((name) => {
-                        setGroup(name, 'visible', true)
+                        const [pageName, groupName] = name.split(':')
+                        let exactGroup
+                        Object.entries(vue.groups).forEach(([key, value]) => {
+                            if (value.name === groupName) {
+                                exactGroup = value
+                            }
+                        })
+                        if (exactGroup.groupType === 'dialog') {
+                            // we are setting dialog visibiliry: true
+                            setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
+                        } else {
+                            // we are setting visibility: true
+                            setGroup(name, 'visible', true)
+                        }
                     })
                 }
                 if ('hide' in payload.groups) {
-                    // we are setting visibility: false
-                    payload.groups.hide.forEach((name) => {
-                        setGroup(name, 'visible', false)
+                    payload.groups.show.forEach((name) => {
+                        const [pageName, groupName] = name.split(':')
+                        let exactGroup
+                        Object.entries(vue.groups).forEach(([key, value]) => {
+                            if (value.name === groupName) {
+                                exactGroup = value
+                            }
+                        })
+                        if (exactGroup.groupType === 'dialog') {
+                            // we are setting dialog visibiliry: false
+                            setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
+                        } else {
+                            // we are setting visibility: false
+                            setGroup(name, 'visible', false)
+                        }
                     })
                 }
                 if ('disable' in payload.groups) {
@@ -195,21 +220,6 @@ export default {
                     // we are setting visibility: false
                     payload.groups.enable.forEach((name) => {
                         setGroup(name, 'disabled', false)
-                    })
-                }
-                if ('show-dialog' in payload.groups) {
-                    // we are setting showDialog: true
-                    payload.groups['show-dialog'].forEach((name) => {
-                        // Append the timestamp with the boolean value to
-                        // detect the "show-dialog" trigger from the Vue UI,
-                        // as the dialog can also be closed directly from the UI.
-                        setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
-                    })
-                }
-                if ('hide-dialog' in payload.groups) {
-                    // we are setting showDialog: false
-                    payload.groups['hide-dialog'].forEach((name) => {
-                        setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
                     })
                 }
             }

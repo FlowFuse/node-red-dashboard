@@ -989,7 +989,7 @@
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
                 const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
-                const groupicon = 'fa-table'
+                const groupicon = group.node.groupType === 'dialog' ? 'fa-window-restore' : 'fa-table'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${widgets.length} Widgets`).appendTo(titleRow)

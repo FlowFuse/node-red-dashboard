@@ -134,21 +134,6 @@ msg.payload = {
 
 _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
 
-### Show/Hide Dialog
-
-You can programmaticaly show/hide dialog groups and pages with the following payload into `ui-control`:
-
-```js
-msg.payload = {
-    groups: {
-        'show-dialog': ['<Page Name>:<Group Name>', '<Page Name>:<Group Name>'],
-        'hide-dialog': ['<Page Name>:<Group Name>']
-    }
-}
-```
-
-To use this you need to change the group type as [follows](/nodes/config/ui-group.html#properties)
-
 _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
 
 ## Events List

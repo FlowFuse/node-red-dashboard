@@ -79,6 +79,13 @@
         <input type="text" id="node-config-input-page">
     </div>
     <div class="form-row">
+        <label for="node-config-input-groupType"><i class="fa fa-window-restore"></i> <span data-i18n="ui-group.label.type"></label>
+        <select id="node-config-input-groupType" style="width: 70%;">
+            <option value="default" data-i18n="ui-group.label.typeDefault"></option>
+            <option value="dialog" data-i18n="ui-group.label.typeDialog"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-config-input-size"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-group.label.size"></label>
         <input type="hidden" id="node-config-input-width">
         <input type="hidden" id="node-config-input-height">
@@ -110,15 +117,6 @@
             <select id="node-config-input-disabled" style="width: 150px;">
                 <option value="false" data-i18n="ui-group.label.active"></option>
                 <option value="true" data-i18n="ui-group.label.disabled"></option>
-            </select>
-        </div>
-    </div>
-    <div class="form-row">
-        <div style="display: flex; align-items: center; gap: 2px;">
-            <label for="node-config-input-groupType" style="margin-bottom: 0" data-i18n="ui-group.label.type"></label>
-            <select id="node-config-input-groupType" style="width: 150px;">
-                <option value="default" data-i18n="ui-group.label.typeDefault"></option>
-                <option value="dialog" data-i18n="ui-group.label.typeDialog"></option>
             </select>
         </div>
     </div>
