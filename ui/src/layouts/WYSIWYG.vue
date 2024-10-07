@@ -44,10 +44,25 @@
         </div> -->
         <div class="nrdb-ui-editor-tray-container">
             <div class="nrdb-ui-editor-tray">
-                <v-btn variant="outlined" @click="discard">Discard Changes</v-btn>
-                <v-btn variant="flat" @click="save">Save Changes</v-btn>
+                <v-tooltip text="Cancel Edit Mode">
+                    <template #activator>
+                        <v-btn variant="outlined" icon="mdi-close" color="warning" @click="cancel" />
+                    </template>
+                </v-tooltip>
+                <v-tooltip text="Discard Changes">
+                    <template #activator>
+                        <v-btn :disabled="!hasChanges" variant="outlined" icon="mdi-arrow-u-left-top" @click="discard" />
+                    </template>
+                </v-tooltip>
+                <v-tooltip text="Save Changes">
+                    <template #activator>
+                        <v-btn :disabled="!hasChanges" variant="flat" icon="mdi-content-save-outline" @click="save" />
+                    </template>
+                </v-tooltip>
             </div>
         </div>
+        {{ groups }}
+        {{ init.groups }}
     </BaselineLayout>
 </template>
 
@@ -71,6 +86,9 @@ export default {
             groups: [],
             dragging: {
                 index: -1
+            },
+            init: {
+                groups: []
             }
         }
     },
@@ -98,11 +116,17 @@ export default {
         },
         page: function () {
             return this.pages[this.$route.meta.id]
+        },
+        hasChanges () {
+            return JSON.stringify(this.groups) !== JSON.stringify(this.init.groups)
         }
     },
     mounted () {
         // get groups for this page
         this.groups = this.loadGroupsFromStore()
+
+        // clone to track changes
+        this.init.groups = JSON.parse(JSON.stringify(this.groups))
     },
     methods: {
         loadGroupsFromStore () {
@@ -123,11 +147,19 @@ export default {
             // API call to NR to trigger a deploy
             NodeREDAPI.deployChanges(this.id, {
                 groups: this.groups
+            }).then(() => {
+                // update saved state
+                this.init.groups = JSON.parse(JSON.stringify(this.groups))
+            }).catch((error) => {
+                console.error('Error saving changes', error)
             })
         },
         discard () {
             // reload groups from store
-            this.groups = this.loadGroupsFromStore()
+            this.groups = JSON.parse(JSON.stringify(this.init.groups))
+        },
+        cancel () {
+            console.log('cancel editing placeholder')
         },
         onDragStart (event, index) {
             this.dragging.index = index
@@ -212,7 +244,7 @@ export default {
 .nrdb-ui-editor-tray {
     background-color: white;
     border: 1px solid #ccc;
-    box-shadow: 0px 0px 5px black;
+    box-shadow: 0px 0px 5px #00000021;
     padding: 12px;
     border-radius: 4px;
     display: flex;
