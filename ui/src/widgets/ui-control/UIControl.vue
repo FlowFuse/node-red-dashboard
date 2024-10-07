@@ -197,6 +197,21 @@ export default {
                         setGroup(name, 'disabled', false)
                     })
                 }
+                if ('show-dialog' in payload.groups) {
+                    // we are setting showDialog: true
+                    payload.groups['show-dialog'].forEach((name) => {
+                        // Append the timestamp with the boolean value to
+                        // detect the "show-dialog" trigger from the Vue UI,
+                        // as the dialog can also be closed directly from the UI.
+                        setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
+                    })
+                }
+                if ('hide-dialog' in payload.groups) {
+                    // we are setting showDialog: false
+                    payload.groups['hide-dialog'].forEach((name) => {
+                        setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
+                    })
+                }
             }
 
             if ('url' in payload) {

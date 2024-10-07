@@ -30,6 +30,21 @@
                 :state="widget.state"
             />
         </div>
+        <div v-if="dialogGroups">
+            <div
+                v-for="g in dialogGroups"
+                :id="'nrdb-ui-group-' + g.id"
+                :key="g.id"
+                class="nrdb-ui-group"
+                :disabled="g.disabled === true ? 'disabled' : null"
+                :class="getGroupClass(g)"
+                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
+            >
+                <DialogGroup :group="g">
+                    <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                </DialogGroup>
+            </div>
+        </div>
     </BaselineLayout>
 </template>
 
@@ -39,12 +54,14 @@ import { mapGetters, mapState } from 'vuex'
 import Responsiveness from '../mixins/responsiveness.js'
 
 import BaselineLayout from './Baseline.vue'
+import DialogGroup from './DialogGroup.vue'
 import WidgetGroup from './Group.vue'
 
 export default {
     name: 'LayoutFlex',
     components: {
         BaselineLayout,
+        DialogGroup,
         WidgetGroup
     },
     mixins: [Responsiveness],
@@ -71,6 +88,10 @@ export default {
                 .sort((a, b) => {
                     return a.order - b.order
                 })
+            return groups
+        },
+        dialogGroups () {
+            const groups = this.groupsByPage(this.$route.meta.id).filter((g) => g.groupType === 'dialog')
             return groups
         },
         pageWidgets: function () {
