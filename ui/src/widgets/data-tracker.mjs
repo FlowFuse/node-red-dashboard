@@ -8,7 +8,9 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
     }
 
     const store = useStore()
+    /** @type {import('socket.io-client').Socket} */
     const socket = inject('$socket')
+    let emitWidgetLoadOnConnect = false
 
     function checkDynamicProperties (msg) {
         // set standard dynamic properties states if passed into msg
@@ -45,55 +47,85 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
         }
     }
 
+    function onWidgetLoad (msg, state) {
+        // automatic handle state/dynamic  updates for ALL widgets
+        if (state) {
+            store.commit('ui/widgetState', {
+                widgetId,
+                config: state
+            })
+        }
+        // then see if there is custom onLoad functionality to deal with the latest data payloads
+        if (onLoad) {
+            onLoad(msg)
+        } else {
+            if (msg) {
+                store.commit('data/bind', {
+                    widgetId,
+                    msg
+                })
+            }
+        }
+    }
+
+    function onMsgInput (msg) {
+        // check for common dynamic properties cross all widget types
+        checkDynamicProperties(msg)
+
+        if (onInput) {
+            // sometimes we need to have different behaviour
+            onInput(msg)
+        } else {
+            // but most of the time, we just care about the value of msg
+            store.commit('data/bind', {
+                widgetId,
+                msg // TODO: we should sanitise what is stored in the store?
+                // One way to do this is to permit only keys explicitly listed in the widget's config (default to topic+payload if none are specified)
+                // A smarter? way to do this is to scan the template for msg.? binds and store only those keys
+                // For now, we'll just store the whole msg
+            })
+        }
+    }
+
+    function onDisconnect () {
+        // To get a disconnect, we must have previously been connected.
+        // Set flag to inform onConnect to emit widget-load
+        emitWidgetLoadOnConnect = true
+    }
+
+    function onConnect () {
+        // when we unexpectedly disconnect, this is set to true
+        if (emitWidgetLoadOnConnect) {
+            emitWidgetLoadOnConnect = false
+            socket.emit('widget-load', widgetId)
+        }
+    }
+
+    function removeAllListeners () {
+        emitWidgetLoadOnConnect = false
+        socket?.off('disconnect', onDisconnect)
+        socket?.off('msg-input:' + widgetId, onMsgInput)
+        socket?.off('widget-load:' + widgetId, onWidgetLoad)
+        socket?.off('connect', onConnect)
+    }
+
     // a composable can also hook into its owner component's
-    // lifecycle to setup and teardown side effects.
+    // lifecycle to setup and tear-down side effects.
     onMounted(() => {
         if (socket && widgetId) {
-            socket.on('widget-load:' + widgetId, (msg, state) => {
-                // automatic handle state/dynamic  updates for ALL widgets
-                if (state) {
-                    store.commit('ui/widgetState', {
-                        widgetId,
-                        config: state
-                    })
-                }
-                // then see if there is custom onLoad functionality to deal with the latest data payloads
-                if (onLoad) {
-                    onLoad(msg)
-                } else {
-                    if (msg) {
-                        store.commit('data/bind', {
-                            widgetId,
-                            msg
-                        })
-                    }
-                }
-            })
-            // This will on in msg input for ALL components
-            socket.on('msg-input:' + widgetId, (msg) => {
-                // check for common dynamic properties cross all widget types
-                checkDynamicProperties(msg)
+            removeAllListeners()
 
-                if (onInput) {
-                    // sometimes we need to have different behaviour
-                    onInput(msg)
-                } else {
-                    // but most of the time, we just care about the value of msg
-                    store.commit('data/bind', {
-                        widgetId,
-                        msg // TODO: we should sanitise what is stored in the store?
-                        // One way to do this is to permit only keys explicitly listed in the widget's config (default to topic+payload if none are specified)
-                        // A smarter? way to do this is to scan the template for msg.? binds and store only those keys
-                        // For now, we'll just store the whole msg
-                    })
-                }
-            })
+            socket.on('disconnect', onDisconnect)
+            socket.on('msg-input:' + widgetId, onMsgInput)
+            socket.on('widget-load:' + widgetId, onWidgetLoad)
+            socket.on('connect', onConnect)
+
             // let Node-RED know that this widget has loaded
             // useful as Node-RED can return (via msg-input) any stored data
             socket.emit('widget-load', widgetId)
         }
     })
     onUnmounted(() => {
-        socket?.off('msg-input:' + widgetId)
+        removeAllListeners()
     })
 }

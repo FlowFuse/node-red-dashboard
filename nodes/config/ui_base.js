@@ -33,8 +33,8 @@ module.exports = function (RED) {
     statestore.setConfig(RED)
 
     /**
-     * @typedef {import('socket.io/dist').Socket} Socket
-     * @typedef {import('socket.io/dist').Server} Server
+     * @typedef {import('socket.io').Socket} Socket
+     * @typedef {import('socket.io').Server} Server
      */
 
     // store state that can maintain cross re-deployments
@@ -93,6 +93,8 @@ module.exports = function (RED) {
              */
 
             uiShared.contribs = loadContribs(node)
+            node.onTypeRegistered = onTypeRegistered.bind(null, node)
+            RED.events.on('type-registered', node.onTypeRegistered)
 
             /**
              * Configure Web Server to handle UI traffic
@@ -152,7 +154,7 @@ module.exports = function (RED) {
                 const root = RED.settings.httpNodeRoot || '/'
                 const fullPath = join(root, config.path)
                 const socketIoPath = join('/', fullPath, 'socket.io')
-                /** @type {import('socket.io/dist').ServerOptions} */
+                /** @type {import('socket.io').ServerOptions} */
                 const serverOptions = {
                     path: socketIoPath,
                     maxHttpBufferSize: uiShared.settings.maxHttpBufferSize || 1e6 // SocketIO default size
@@ -186,6 +188,20 @@ module.exports = function (RED) {
                 node.log('Created socket.io server ' + bindOn + ' at path ' + socketIoPath)
             } else {
                 node.warn('Cannot create UI Base node when httpNodeRoot set to false')
+            }
+        }
+    }
+
+    function onTypeRegistered (node, type) {
+        // reload nodes from user directory package.json
+        if (RED.settings?.userDir) {
+            try {
+                const contribs = getThirdPartyWidgets(RED.settings.userDir)
+                if (contribs[type]) {
+                    uiShared.contribs[type] = contribs[type]
+                }
+            } catch (error) {
+                node.log('Cannot import third party widget for type ' + type)
             }
         }
     }
@@ -275,6 +291,7 @@ module.exports = function (RED) {
         }
         node.ui.dashboards.clear() // ensure we clear out any dashboards that may have been left over
         node.uiShared = null // remove reference to ui object
+        RED.events.off('type-registered', node.onTypeRegistered)
         done && done()
     }
 

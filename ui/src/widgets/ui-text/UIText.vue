@@ -73,12 +73,14 @@ export default {
     flex-wrap: wrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: initial;
 }
 .nrdb-ui-text-value {
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: initial;
 }
 
 /* Layouts */

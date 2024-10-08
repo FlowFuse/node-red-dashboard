@@ -1,6 +1,6 @@
 <template>
     <div v-resize="onResize" class="nrdb-ui-gauge-tank--container">
-        <label v-if="props.title" class="nrdb-ui-gauge-title">{{ props.title }}</label>
+        <label v-if="props.label" class="nrdb-ui-gauge-title">{{ props.label }}</label>
         <div
             class="nrdb-ui-gauge-tank"
             :style="{'--gauge-fill': color, '--gauge-fill-pc': pc + '%', 'color': getTextColor(props.segments, value)}"

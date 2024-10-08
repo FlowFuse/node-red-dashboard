@@ -1,6 +1,6 @@
 <template>
     <div class="nrdb-ui-gauge-tile" :style="{'background-color': valueToColor(props.segments, value), 'color': getTextColor(props.segments, value)}">
-        <label>{{ props.title }}</label>
+        <label>{{ props.label }}</label>
     </div>
 </template>
 

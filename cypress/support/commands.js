@@ -54,8 +54,22 @@ Cypress.Commands.add('loadFlows', loadFlows)
 
 Cypress.Commands.add('deployFlow', deployFlow)
 
-Cypress.Commands.add('deployFixture', (fixture) => {
+Cypress.Commands.add('deployFixture', (fixture, overrides) => {
     // disables service worker in testing due to ongoing issue with cypress - https://github.com/cypress-io/cypress/issues/27501
+    // NOTES on deployFixture():
+    // * The `fixture` is expected to be in the cypress/fixtures/flows folder. The name of the fixture should be the name of the file without the extension.
+    // * The `overrides` is an array of objects that will override the properties of the specified nodes in the fixture. The `mode` can be 'merge' or 'replace'
+    //   * The point of this is to have a base flow that can be used across multiple tests, and then override specific properties for each test
+    //     this saves writing lots of similar fixtures for each test
+    //   * mode 'merge': will merge the the overrides `data` with the existing properties of the node
+    //   * mode 'replace': will replace the entire node with the `data`
+    //   * mode 'append': will add nodes to the flow i.e. the `data` should be a well formed node JSON
+    //   example overrides:
+    //     [
+    //       { id: 'node-id-1', type: 'node-type', mode: 'merge', data: { name: 'new name', method: 'GET' } },
+    //       { id: 'node-id-2', type: 'node-type', mode: 'replace', data: { id: 'new-id', type: 'new-type', ... } }
+    //     ]
+
     cy.intercept('/dashboard/sw.js', {
         body: undefined
     })
@@ -73,6 +87,25 @@ Cypress.Commands.add('deployFixture', (fixture) => {
         })
         .then((flow) => {
             const flows = [...flow, ...helperApi]
+            if (overrides) {
+                overrides.forEach((override) => {
+                    const index = flows.findIndex((node) => node.id === override.id)
+                    if (index >= 0) {
+                        const node = flows[index]
+                        switch (override.mode) {
+                        case 'merge':
+                            Object.assign(node, override.data)
+                            break
+                        case 'replace':
+                            flows[index] = override.data
+                            break
+                        case 'append':
+                            flows.push(override.data)
+                            break
+                        }
+                    }
+                })
+            }
             console.log(flows)
             return deployFlow(rev, flows)
         })
