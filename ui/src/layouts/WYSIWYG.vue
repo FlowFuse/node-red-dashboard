@@ -61,8 +61,6 @@
                 </v-tooltip>
             </div>
         </div>
-        {{ groups }}
-        {{ init.groups }}
     </BaselineLayout>
 </template>
 
@@ -71,6 +69,8 @@ import NodeREDAPI from '../api/node-red'
 
 import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
+
+import WYSIWYG from './wysiwyg'
 
 // eslint-disable-next-line import/order, sort-imports
 import { mapState, mapGetters } from 'vuex'
@@ -81,6 +81,7 @@ export default {
         BaselineLayout,
         WidgetGroup
     },
+    mixins: [WYSIWYG],
     data () {
         return {
             groups: [],
@@ -161,36 +162,6 @@ export default {
         cancel () {
             console.log('cancel editing placeholder')
         },
-        onDragStart (event, index) {
-            this.dragging.index = index
-            event.dataTransfer.effectAllowed = 'move'
-        },
-        onDragOver (event, index) {
-            if (this.dragging.index >= 0) {
-                event.preventDefault()
-                event.dataTransfer.dropEffect = 'move'
-                this.moveGroup(this.dragging.index, index)
-            }
-        },
-        onDrop (event, index) {
-            event.preventDefault()
-            if (this.dragging.index >= 0) {
-                this.moveGroup(this.dragging.index, index)
-                this.dragging.index = -1
-            }
-        },
-        onDragEnd (event, index) {
-            this.dragging.index = -1
-        },
-        moveGroup (fromIndex, toIndex) {
-            const movedItem = this.groups.splice(fromIndex, 1)[0]
-            this.groups.splice(toIndex, 0, movedItem)
-            // update .order property of all groups
-            this.groups.forEach((group, index) => {
-                group.order = index + 1
-            })
-            this.dragging.index = toIndex
-        },
         getWidgetClass (widget) {
             const classes = []
             // ensure each widget has a class for its type
@@ -221,10 +192,6 @@ export default {
                 classes.push('dragging')
             }
             return classes.join(' ')
-        },
-        onGroupResize (opts) {
-            this.groups[opts.index].width = opts.width
-            // this.groups[opts.index].height = opts.height
         }
     }
 }
