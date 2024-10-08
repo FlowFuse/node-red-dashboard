@@ -23,8 +23,7 @@ export default {
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
-        state: { type: Object, default: () => ({}) },
-        widgets: { type: Array, default: () => ([]) }
+        state: { type: Object, default: () => ({}) }
     },
     computed: {
         ...mapState('data', ['messages']),
@@ -79,7 +78,7 @@ export default {
             return props
         },
         updateGaugeDial () {
-            return JSON.stringify({ ...this.dynamicProps, widgetsCount: this.widgets.length })
+            return JSON.stringify(this.dynamicProps)
         }
     },
     created () {

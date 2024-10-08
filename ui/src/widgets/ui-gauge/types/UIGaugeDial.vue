@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
+    <div ref="container" :key="rerenderCount" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
         <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
         <svg ref="gauge" width="0" height="100%">
             <g id="sections" />
@@ -58,7 +58,8 @@ export default {
                 sections: null,
                 gauge: null
             },
-            size: 'default'
+            size: 'default',
+            rerenderCount: 0
         }
     },
     computed: {
@@ -374,16 +375,19 @@ export default {
             max.style.transform = `translate(${maxX}px, ${y}px)`
         },
         resizeText () {
-            // work out how much space we have within which to render the value/icon
-            const width = this.$refs.value?.clientWidth
+            const clientWidth = this.$refs.value?.clientWidth
+            const clientHeight = this.$refs.value?.clientHeight
+
+            // work out how much space we have within which to render the value/icon/range
+            const minDimension = Math.min(clientWidth || 0, clientHeight || 0)
             this.size = 'default'
-            if (width < 80) {
+            if (minDimension < 80) {
                 this.size = 'xxs'
-            } else if (width < 150) {
+            } else if (minDimension < 150) {
                 this.size = 'xs'
-            } else if (width < 225) {
+            } else if (minDimension < 225) {
                 this.size = 'sm'
-            } else if (width < 300) {
+            } else if (minDimension < 300) {
                 this.size = 'md'
             } else {
                 this.size = 'lg'
@@ -417,6 +421,7 @@ export default {
                 })
         },
         onResize () {
+            this.rerenderCount++
             this.$nextTick(() => {
                 this.resize()
                 if (this.value === undefined) {
