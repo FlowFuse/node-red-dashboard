@@ -30,7 +30,8 @@ export default {
     },
     data () {
         return {
-            isActive: false
+            isActive: false,
+            windowWidth: window.innerWidth
         }
     },
     computed: {
@@ -38,9 +39,31 @@ export default {
             return this.group.showDialog
         },
         dialogStyles () {
-            const groupWidth = this.group.width || 12
+            let groupWidth = this.group.width || 12
+            if (this.deviceType === 'mobile') {
+                // Dialogs should take up the full width on mobile
+                groupWidth = 12
+            } else if (this.deviceType === 'tablet') {
+                // Dialogs should take up 50% of the width on tablet if the column size 6 or less
+                groupWidth = (() => {
+                    if (groupWidth <= 6) {
+                        return 6
+                    } else {
+                        return groupWidth
+                    }
+                })()
+            }
             return {
-                'max-width': Math.min(Math.max((groupWidth / 12 * 100).toFixed(2), 0), 100) + '%'
+                'max-width': `${Math.min(Math.max((groupWidth / 12 * 100).toFixed(2), 0), 100)}%`
+            }
+        },
+        deviceType () {
+            if (this.windowWidth <= 768) {
+                return 'mobile'
+            } else if (this.windowWidth <= 1024) {
+                return 'tablet'
+            } else {
+                return 'desktop'
             }
         }
     },
@@ -54,6 +77,15 @@ export default {
                 }
                 this.isActive = state
             }
+        }
+    },
+    mounted () {
+        // on resize handler for window resizing
+        window.addEventListener('resize', this.onResize)
+    },
+    methods: {
+        onResize () {
+            this.windowWidth = window.innerWidth
         }
     }
 }
