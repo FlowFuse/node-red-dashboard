@@ -30,17 +30,14 @@ Each group is rendered within a `ui-page` as part of a [Layout](../../contributi
 
 ## Type
 
-Title: **Group Type**
+Defines how the group will be displayed. Either as a regular (**Default**) group or as a **Dialog** group. A 'Default' group is visible by default, while a 'Dialog' group must be triggered manually using the `ui-control` node ([see documentation](/nodes/widgets/ui-control.html#show-hide)). You can choose between these two options based on your layout needs.
 
-Defines how the group will be displayed. Either as a regular (**Default**) group or as a **Dialog** group. A 'Default' group is visible by default, while a 'Dialog' group must be triggered manually using the `ui-control` node [See the documentation](/nodes/widgets/ui-control.html#show-hide). You can choose between these two options based on your layout needs.
-
-### Default Groups:
+### Default Groups
 
 ![Example of how the type 'Default' option looks](/images/node-examples/ui-group-type-default.png "Example of how the type 'Default' option looks"){data-zoomable}
 _Example of how the type 'Default' option looks_
 
-
-### Dialog Groups:
+### Dialog Groups
 
 ![Example of how the type 'Dialog' option looks](/images/node-examples/ui-group-type-dialog.png "Example of how the type 'Dialog' option looks"){data-zoomable}
 _Example of how the type 'Dialog' option looks_
