@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" max-width="500">
+    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
         <v-card title="Dialog">
             <template v-if="group.showTitle" #title>
                 {{ group.name }}
@@ -36,6 +36,12 @@ export default {
     computed: {
         showDialogState () {
             return this.group.showDialog
+        },
+        dialogStyles () {
+            const groupWidth = this.group.width || 12
+            return {
+                'max-width': Math.min(Math.max((groupWidth / 12 * 100).toFixed(2), 0), 100) + '%'
+            }
         }
     },
     watch: {
