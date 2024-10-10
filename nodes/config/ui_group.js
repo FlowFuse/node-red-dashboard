@@ -7,6 +7,10 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config)
         const node = this
 
+        if (!config.groupType || typeof config.groupType === 'undefined') {
+            config.groupType = 'default'
+        }
+
         const page = RED.nodes.getNode(config.page)
 
         if (!('showTitle' in config)) {
