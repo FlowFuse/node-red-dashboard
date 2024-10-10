@@ -28,7 +28,15 @@ export default {
             let cols = 0
             if (this.page) {
                 // set default breakpoints if none are defined
-                const b = this.page.breakpoints || defaultBreakpoints
+                let b = this.page.breakpoints
+                if (!b || !Array.isArray(b) || b.length === 0) {
+                    b = [
+                        { name: 'Default', px: 0, cols: 3 },
+                        { name: 'Tablet', px: 576, cols: 6 },
+                        { name: 'Small Desktop', px: 768, cols: 9 },
+                        { name: 'Desktop', px: 1024, cols: 12 }
+                    ]
+                }
                 // ensure breakpoints are sorted in reverse order
                 const breakpoints = b.sort((a, b) => a.px - b.px)
 
