@@ -54,7 +54,7 @@ export default {
     watch: {
         chartType: function (value) {
             this.chart.config.type = value
-            this.update()
+            this.update(false)
         },
         'props.label': function (value) {
             this.chart.options.plugins.title.text = value
