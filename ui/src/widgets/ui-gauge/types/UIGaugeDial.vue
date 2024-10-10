@@ -58,7 +58,8 @@ export default {
                 sections: null,
                 gauge: null
             },
-            size: 'default'
+            size: 'default',
+            resizeObserver: null
         }
     },
     computed: {
@@ -110,9 +111,15 @@ export default {
             }
         })
     },
+    unmounted () {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect()
+            this.resizeObserver = null
+        }
+    },
     methods: {
         initResizeObserver () {
-            const resizeObserver = new ResizeObserver(entries => {
+            this.resizeObserver = new ResizeObserver(entries => {
                 for (const entry of entries) {
                     if (entry.target === this.$refs.container || entry.target === this.$el.parentElement) {
                         this.resize()
@@ -124,8 +131,8 @@ export default {
                     }
                 }
             })
-            resizeObserver.observe(this.$refs.container)
-            resizeObserver.observe(this.$el.parentElement) // Observe the parent element
+            this.resizeObserver.observe(this.$refs.container)
+            this.resizeObserver.observe(this.$el.parentElement) // Observe the parent element
         },
         resize () {
             this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
