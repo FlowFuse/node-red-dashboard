@@ -37,16 +37,14 @@
                 buttonColor: { value: '' },
                 textColor: { value: '' },
                 iconColor: { value: '' },
-                
+                enableClick: { value: true },
                 // pointerup/down event support
                 enablePointerdown: { value: false },
                 pointerdownPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdownPayloadType') : function (v) { return true }) },
                 pointerdownPayloadType: { value: 'str' },
                 enablePointerup: { value: false },
                 pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
-                pointerupPayloadType: { value: 'str' },
-
-                iconColor: { value: '' }
+                pointerupPayloadType: { value: 'str' }
             },
             inputs: 1,
             outputs: 1,
@@ -93,6 +91,20 @@
                     types: ['str', 'msg', 'flow', 'global']
                 })
 
+                // backward compatability
+                if (typeof this.enableClick === 'undefined') {
+                    this.enableClick = true
+                    $('#node-input-enableClick').prop('checked', true)
+                }
+
+                $('#node-input-enableClick').on('change', function () {
+                    if (this.checked) {
+                        $('.form-row-click').show()
+                    } else {
+                        $('.form-row-click').hide()
+                    }
+                })
+
                 $('#node-input-enablePointerdown').on('change', function () {
                     if (this.checked) {
                         $('.form-row-pointerdown').show()
@@ -105,8 +117,8 @@
                     default: 'str',
                     typeField: $('#node-input-pointerdownPayloadType'),
                     types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                });
-                
+                })
+    
                 $('#node-input-enablePointerup').on('change', function () {
                     if (this.checked) {
                         $('.form-row-pointerup').show()
@@ -117,9 +129,9 @@
 
                 $('#node-input-pointerupPayload').typedInput({
                     default: 'str',
-                    typeField: $('#node-input-pointerdownPayloadType'),
+                    typeField: $('#node-input-pointerupPayloadType'),
                     types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                });
+                })
 
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
@@ -208,12 +220,16 @@
         <input type="hidden" id="node-input-pointerupPayloadType">
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.whenClicked"></label>
+        <label style="width:auto" for="node-input-enableClick"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="ui-button.label.enableClick"></span></label>
+        <input type="checkbox" id="node-input-enableClick" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
-    <div class="form-row">
+    <div class="form-row form-row-click">
         <label for="node-input-payload" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.payload"></label>
         <input type="text" id="node-input-payload" style="width:70%">
         <input type="hidden" id="node-input-payloadType">
+    </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-button.label.alwaysSend"></label>
     </div>
     <div class="form-row">
         <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-button.label.topic"></label>

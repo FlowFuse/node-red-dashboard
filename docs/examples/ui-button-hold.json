@@ -1,0 +1,263 @@
+[
+    {
+        "id": "41af91ca7e2d0577",
+        "type": "ui-button",
+        "z": "9cb9bb3cd8e3faee",
+        "group": "4400cdcbaa768e57",
+        "name": "",
+        "label": "Hold Duration Test",
+        "order": 1,
+        "width": "3",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "Click",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": false,
+        "enablePointerdown": true,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "date",
+        "enablePointerup": true,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "date",
+        "x": 1110,
+        "y": 4380,
+        "wires": [
+            [
+                "57e8b3025bda5b1b",
+                "c09876e76c45d7fb"
+            ]
+        ]
+    },
+    {
+        "id": "57e8b3025bda5b1b",
+        "type": "debug",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "debug 2569",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1290,
+        "y": 4340,
+        "wires": []
+    },
+    {
+        "id": "c09876e76c45d7fb",
+        "type": "join",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "_event.type",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1270,
+        "y": 4380,
+        "wires": [
+            [
+                "9503bfb0e2713b08"
+            ]
+        ]
+    },
+    {
+        "id": "9503bfb0e2713b08",
+        "type": "change",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.held",
+                "pt": "msg",
+                "to": "$number(msg.payload.pointerup) - $number(msg.payload.pointerdown)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1440,
+        "y": 4380,
+        "wires": [
+            [
+                "d289e0f09ddd90f9",
+                "6314f8f6c76cc4e5"
+            ]
+        ]
+    },
+    {
+        "id": "d289e0f09ddd90f9",
+        "type": "debug",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "debug 2571",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1630,
+        "y": 4380,
+        "wires": []
+    },
+    {
+        "id": "ac3f3589547ed27b",
+        "type": "ui-text",
+        "z": "9cb9bb3cd8e3faee",
+        "group": "4400cdcbaa768e57",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "name": "",
+        "label": "Held For:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 1840,
+        "y": 4340,
+        "wires": []
+    },
+    {
+        "id": "6314f8f6c76cc4e5",
+        "type": "change",
+        "z": "9cb9bb3cd8e3faee",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "msg.payload.held & \"ms\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1660,
+        "y": 4340,
+        "wires": [
+            [
+                "ac3f3589547ed27b"
+            ]
+        ]
+    },
+    {
+        "id": "4400cdcbaa768e57",
+        "type": "ui-group",
+        "name": "Hold Duration Test",
+        "page": "ea42e606327de0a5",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ea42e606327de0a5",
+        "type": "ui-page",
+        "name": "Demo Page",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/page2",
+        "icon": "",
+        "layout": "grid",
+        "theme": "afa24cae12543ca5",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 23,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "afa24cae12543ca5",
+        "type": "ui-theme",
+        "name": "Example Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#fafdff",
+            "groupOutline": "#000000"
+        },
+        "sizes": {
+            "groupGap": "12px",
+            "widgetGap": "12px",
+            "pagePadding": "12px",
+            "groupBorderRadius": "0px",
+            "density": "default"
+        }
+    }
+]

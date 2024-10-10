@@ -23,11 +23,13 @@
         <dt>Label <span class="property-type">string</span></dt>
         <dd>The text shown within the button. If not provided, then the button will only render the icon. It supports HTML content</dd>
         <dt>Enable pointerdown event <span class="property-type">bool</span></dt>
-        <dd>If enabled, the button will emit a message on pointerdown event with the given payload</dd>
+        <dd>If enabled, the button will emit a message on pointerdown event with the given payload. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.</dd>
         <dt>Enable pointerup event <span class="property-type">bool</span></dt>
-        <dd>If enabled, the button will emit a message on pointerup event with the given payload</dd>
+        <dd>If enabled, the button will emit a message on pointerup event with the given payload. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.</dd>
+        <dt>Enable Click event <span class="property-type">bool</span></dt>
+        <dd>If enabled, the button will emit a click event, which fires when both the up and down events occur over the button. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.</dd>
         <dt>Emulate Button Click <span class="property-type">bool</span></dt>
-        <dd>If enabled, any received message will trigger a button click, emitting the relevant payload and topic</dd>
+        <dd>If enabled, any received message will trigger a button click, emitting the relevant payload and topic.</dd>
         <dt>Background Color<span class="property-type">string</span></dt>
         <dd>Background color for the button, valid values as <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>green-darken-2</b>, check <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> for help, send empty string to use default theme color</dd>
         <dt>Text Color<span class="property-type">string</span></dt>

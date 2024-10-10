@@ -10,6 +10,11 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
+        // backward compatability
+        if (typeof config.enableClick === 'undefined') {
+            config.enableClick = true
+        }
+
         const beforeSend = async function (msg) {
             let error = null
             let payload = null
@@ -54,6 +59,8 @@ module.exports = function (RED) {
                 }
             } else if (payloadType === 'date') {
                 payload = Date.now()
+            } else if (payloadType === 'num') {
+                payload = Number(payload)
             } else {
                 try {
                     payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
