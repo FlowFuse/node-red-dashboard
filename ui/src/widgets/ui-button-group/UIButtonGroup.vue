@@ -1,8 +1,6 @@
 <template>
     <div class="nrdb-ui-button-group-wrapper">
-        <label v-if="label" class="v-label">
-            {{ label }}
-        </label>
+        <label v-if="label" class="v-label" v-html="label"></label>
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
                 <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>

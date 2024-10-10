@@ -2,9 +2,12 @@
     <v-radio-group
         v-model="value" class="nrdb-ui-radio-group" :disabled="!state.enabled"
         :class="'nrdb-ui-radio-group--cols-' + columns + ' ' + className"
-        :label="label" variant="outlined" hide-details="auto"
+        variant="outlined" hide-details="auto"
         @update:model-value="onChange"
     >
+        <template v-slot:label>
+            <span v-html="label"></span>
+        </template>
         <v-radio
             v-for="option in options" :key="option.value"
             :label="option.label" :value="option.value"

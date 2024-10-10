@@ -3,7 +3,7 @@ description: Employ the ui-text widget in Node-RED Dashboard 2.0 to display stat
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown within the button.
+    Label: The text shown within the button.  Html content is allowed.
     Layout: Choose how to layout your label (if deifned) & value.
     Style: Checkbox to define whether or not to include custom styling for the text. Enabling this will then show the below options.
     Font: If "style" is enabled, this will define the font of the text.

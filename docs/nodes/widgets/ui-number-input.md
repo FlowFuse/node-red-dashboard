@@ -13,7 +13,7 @@ props:
         description: If "Icon" is defined, this property controls if icon is render inside or outside the number input box.
         dynamic: true
     Label:
-        description: The number shown within the number input field.
+        description: The number shown within the number input field.  Html content is allowed.
         dynamic: true
     Min:
         description: Defines the minimum allowable value for the number input field.

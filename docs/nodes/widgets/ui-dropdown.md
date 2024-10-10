@@ -4,7 +4,7 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
     Label:
-        description: The text shown to the left of the dropdown.
+        description: The text shown to the left of the dropdown.  Html content is allowed.
         dynamic: true
     Options:
         description: A list of the options available in the dropdown. Each row defines a 'label' (shown in the dropdown) and `value` (emitted on selection) property.

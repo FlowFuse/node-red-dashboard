@@ -3,7 +3,7 @@ description: Facilitate easy option selection with ui-radio-group in Node-RED Da
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Label:
-        description: The text shown above the radio group to inform the user of what options are available.
+        description: The text shown above the radio group to inform the user of what options are available.  Html content is allowed.
         dynamic: true
     Options:
         description: A list of the options available in the radio group. Each row defines a `label` (shown alongisde each radio button) and `value` (emitted on selection) property.
