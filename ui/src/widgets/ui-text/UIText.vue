@@ -20,11 +20,7 @@ export default {
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value: function () {
-            const m = this.messages[this.id] || {}
-            if (Object.prototype.hasOwnProperty.call(m, 'payload')) {
-                return m.payload
-            }
-            return ''
+            return this.getProperty('payload') || ''
         },
         label () {
             return this.getProperty('label')
@@ -57,6 +53,7 @@ export default {
             this.updateDynamicProperty('font', updates.font)
             this.updateDynamicProperty('fontSize', updates.fontSize)
             this.updateDynamicProperty('color', updates.color)
+            this.updateDynamicProperty('payload', updates.payload)
         }
     }
 }
