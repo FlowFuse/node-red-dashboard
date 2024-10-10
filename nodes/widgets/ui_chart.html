@@ -63,6 +63,14 @@
             }
         }
 
+        function numberValidator (value, allowBlank = false, errorMessage = undefined) {
+            const options = errorMessage ? { label: errorMessage } : undefined
+            if (typeof value === 'string') {
+                value = value.trim()
+            }
+            return RED.validators.number(allowBlank)(value || undefined, options)
+        }
+
         RED.nodes.registerType('ui-chart', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -80,11 +88,32 @@
                 xAxisType: { value: 'time' },
                 xAxisFormat: { value: '' },
                 xAxisFormatType: { value: 'auto' },
+                xmin: {
+                    value: '',
+                    validate: function (value) {
+                        const required = this.chartType === 'histogram' && this.xAxisType === 'bins'
+                        return numberValidator(value, !required)
+                    }
+                },
+                xmax: {
+                    value: '',
+                    validate: function (value) {
+                        const required = this.chartType === 'histogram' && this.xAxisType === 'bins'
+                        return numberValidator(value, !required)
+                    }
+                },
                 yAxisLabel: { value: '' },
                 yAxisProperty: { value: null },
                 yAxisPropertyType: { value: 'property' },
-                ymin: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
-                ymax: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                ymin: { value: '', validate: function (value) { return numberValidator(value, true) } },
+                ymax: { value: '', validate: function (value) { return numberValidator(value, true) } },
+                bins: {
+                    value: 10,
+                    validate: function (value) {
+                        const required = this.chartType === 'histogram' && this.xAxisType === 'bins'
+                        return numberValidator(value, !required)
+                    }
+                },
                 action: { value: 'append' },
                 stackSeries: { value: false },
                 pointShape: { value: 'circle' },
@@ -92,7 +121,7 @@
                 showLegend: { value: true },
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
                 removeOlderUnit: { value: '3600', required: true },
-                removeOlderPoints: { value: '', validate: function (value) { return value === '' || RED.validators.number() } },
+                removeOlderPoints: { value: '', validate: function (value) { return numberValidator(value, true) } },
                 colors: { value: ['#0095FF', '#FF0000', '#FF7F0E', '#2CA02C', '#A347E1', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'] },
                 textColor: { value: ['#666666'] },
                 textColorDefault: { value: true },
@@ -188,12 +217,19 @@
                     } else {
                         $('#x-axis-format').hide()
                     }
+                    // default for most: hide the bins
+                    $('#node-container-xAxisBins').hide()
 
                     if (value === 'radial') {
                         // hide irrelevant fields
                         $('#node-container-xAxisLabel').hide()
                         $('#node-container-yAxisLabel').hide()
                         $('#y-axis-show').hide()
+                    } else if (value === 'bins') {
+                        $('#node-container-xAxisLabel').show()
+                        $('#node-container-yAxisLabel').show()
+                        // show the options to configure the histogram bins
+                        $('#node-container-xAxisBins').show()
                     } else {
                         // make sure they're shown
                         $('#node-container-xAxisLabel').show()
@@ -242,7 +278,8 @@
                         { value: 'time', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timescale') },
                         { value: 'linear', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.linear') },
                         { value: 'radial', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.radial') },
-                        { value: 'category', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') }
+                        { value: 'category', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.categorical') },
+                        { value: 'bins', text: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.binsAxis') }
                     ]
                     const theseOptions = allOptions.filter((option) => options.indexOf(option.value) !== -1)
                     $el.css('pointer-events', 'none') // temporarily inhibit events
@@ -287,6 +324,22 @@
                         // hide x-axis limit options & points sizing
                         $('#x-axis-show').hide()
                         $('#point-radius-show').hide()
+                    } else if (value === 'histogram') {
+                        // for histogram
+                        // types - categorical
+                        updateXAxisTypeOptions(['bins', 'category'], 'bins')
+                        // no need for a y-axis property as it's a frequency chart
+                        $('#node-container-yAxisProperty').hide()
+
+                        // show the ability to control if content is stacked or not
+                        $('#config-stackSeries').show()
+
+                        $('#node-container-xAxisLabel').show()
+                        $('#node-container-yAxisLabel').hide()
+
+                        // hide x-axis limit options & points sizing
+                        $('#x-axis-show').hide()
+                        $('#point-radius-show').hide()
                     } else if (value === 'bar') {
                         // for bar
                         // types - categorical
@@ -303,7 +356,7 @@
                 $('#node-input-category').change((evt) => {
                     const categoryType = $('#node-input-category').typedInput('type')
 
-                    if (categoryType === 'json') {
+                    if (categoryType === 'json' || this.chartType === 'histogram') {
                         // hide y-axis property setting as category will now control that
                         $('#node-container-yAxisProperty').hide()
                     } else {
@@ -449,6 +502,7 @@
                 <option value="scatter" data-i18n="ui-chart.label.scatter"></option>
                 <option value="pie" data-i18n="ui-chart.label.pie"></option>
                 <option value="doughnut" data-i18n="ui-chart.label.doughnut"></option>
+                <option value="histogram" data-i18n="ui-chart.label.histogram"></option>
             </select>
         </div>
         <div>
@@ -509,6 +563,15 @@
     <div class="form-row" id="node-container-xAxisLabel">
         <label for="node-input-xAxisLabel" data-i18n="ui-chart.label.xLabel"></label></label>
         <input type="text" id="node-input-xAxisLabel">
+    </div>
+    <div class="form-row" id="node-container-xAxisBins">
+        <label id="y-label-show" for="node-input-ymin" data-i18n="ui-chart.label.xAxis"></label>
+        <label for="node-input-xmin" style="width:auto" data-i18n="ui-chart.label.min"></label>
+        <input type="text" id="node-input-xmin" style="width:92px">
+        <label for="node-input-bins" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.bins"></label>
+        <input type="text" id="node-input-bins" style="width:92px">
+        <label for="node-input-xmax" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.max"></label>
+        <input type="text" id="node-input-xmax" style="width:92px">
     </div>
     <div class="form-row" id="x-axis-show">
         <label for="node-input-removeOlder" data-i18n="ui-chart.label.xLimit"></label>

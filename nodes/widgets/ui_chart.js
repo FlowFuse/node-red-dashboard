@@ -11,6 +11,14 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
 
+        // correct typing
+        if (typeof config.xmin !== 'undefined') {
+            config.xmin = parseFloat(config.xmin)
+        }
+        if (typeof config.xmax !== 'undefined') {
+            config.xmax = parseFloat(config.xmax)
+        }
+
         node.clearHistory = function () {
             const empty = []
             datastore.save(base, node, empty)
@@ -97,7 +105,7 @@ module.exports = function (RED) {
                     datapoint.category = series
 
                     // construct our datapoint
-                    if (typeof payload === 'number') {
+                    if (typeof payload === 'number' || typeof payload === 'string') {
                         // do we have an x-property defined - if not, we're assuming time series
                         // since key would attempt to evaluate a property on a number, we don't do evaluation when
                         // x-axis is type is 'key' (only when it's 'msg' or 'str')
@@ -108,11 +116,12 @@ module.exports = function (RED) {
                     } else if (typeof payload === 'object') {
                         let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         // may have been given an x/y object already
-                        if (x === undefined || x === null) {
+                        // let x = getProperty(payload, config.xAxisProperty)
+                        let y = payload.y
+                        if ((x === undefined || x === null) && config.xAxisProperty === '') {
                             x = (new Date()).getTime()
                         }
                         if (Array.isArray(series)) {
-                            let y
                             if (series.length > 1) {
                                 y = series.map((s) => {
                                     return getProperty(payload, s)
@@ -120,11 +129,11 @@ module.exports = function (RED) {
                             } else {
                                 y = getProperty(payload, series[0])
                             }
-                            datapoint.y = y
                         } else {
-                            datapoint.y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
                         }
                         datapoint.x = x
+                        datapoint.y = y
                     }
                     return datapoint
                 }
