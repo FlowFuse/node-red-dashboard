@@ -58,7 +58,8 @@ export default {
                 sections: null,
                 gauge: null
             },
-            size: 'default'
+            size: 'default',
+            resizeObserver: null
         }
     },
     computed: {
@@ -97,8 +98,7 @@ export default {
         }
     },
     mounted () {
-        // on resize handler for window resizing
-        window.addEventListener('resize', this.onResize)
+        this.initResizeObserver()
 
         // had an odd SVG sizing issue, better to draw nextTick
         this.$nextTick(() => {
@@ -112,9 +112,28 @@ export default {
         })
     },
     unmounted () {
-        window.removeEventListener('resize', this.onResize)
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect()
+            this.resizeObserver = null
+        }
     },
     methods: {
+        initResizeObserver () {
+            this.resizeObserver = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    if (entry.target === this.$refs.container || entry.target === this.$el.parentElement) {
+                        this.resize()
+                        if (this.value === undefined) {
+                            this.update(this.min, 0)
+                        } else {
+                            this.update(this.value, 0)
+                        }
+                    }
+                }
+            })
+            this.resizeObserver.observe(this.$refs.container)
+            this.resizeObserver.observe(this.$el.parentElement) // Observe the parent element
+        },
         resize () {
             this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
 
@@ -374,16 +393,19 @@ export default {
             max.style.transform = `translate(${maxX}px, ${y}px)`
         },
         resizeText () {
-            // work out how much space we have within which to render the value/icon
-            const width = this.$refs.value?.clientWidth
+            const clientWidth = this.$refs.value?.clientWidth
+            const clientHeight = this.$refs.value?.clientHeight
+
+            // work out how much space we have within which to render the value/icon/range
+            const minDimension = Math.min(clientWidth || 0, clientHeight || 0)
             this.size = 'default'
-            if (width < 80) {
+            if (minDimension < 80) {
                 this.size = 'xxs'
-            } else if (width < 150) {
+            } else if (minDimension < 150) {
                 this.size = 'xs'
-            } else if (width < 225) {
+            } else if (minDimension < 225) {
                 this.size = 'sm'
-            } else if (width < 300) {
+            } else if (minDimension < 300) {
                 this.size = 'md'
             } else {
                 this.size = 'lg'
