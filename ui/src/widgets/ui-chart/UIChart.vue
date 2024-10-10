@@ -58,7 +58,7 @@ export default {
         },
         'props.label': function (value) {
             this.chart.options.plugins.title.text = value
-            this.update()
+            this.update(false)
         },
         'props.chartType': function (value) {
             this.chart.config.type = value
