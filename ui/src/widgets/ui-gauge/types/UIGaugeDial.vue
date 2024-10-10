@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" :key="rerenderCount" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
+    <div ref="container" class="nrdb-ui-gauge-dial" style="display: flex;flex-direction: column;" :class="`nrdb-ui-gauge-size-${size}${iconOnly ? ' nrdb-ui-gauge-icon-only' : ''}`">
         <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
         <svg ref="gauge" width="0" height="100%">
             <g id="sections" />
@@ -58,8 +58,7 @@ export default {
                 sections: null,
                 gauge: null
             },
-            size: 'default',
-            rerenderCount: 0
+            size: 'default'
         }
     },
     computed: {
@@ -98,8 +97,7 @@ export default {
         }
     },
     mounted () {
-        // on resize handler for window resizing
-        window.addEventListener('resize', this.onResize)
+        this.initResizeObserver()
 
         // had an odd SVG sizing issue, better to draw nextTick
         this.$nextTick(() => {
@@ -112,10 +110,23 @@ export default {
             }
         })
     },
-    unmounted () {
-        window.removeEventListener('resize', this.onResize)
-    },
     methods: {
+        initResizeObserver () {
+            const resizeObserver = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    if (entry.target === this.$refs.container || entry.target === this.$el.parentElement) {
+                        this.resize()
+                        if (this.value === undefined) {
+                            this.update(this.min, 0)
+                        } else {
+                            this.update(this.value, 0)
+                        }
+                    }
+                }
+            })
+            resizeObserver.observe(this.$refs.container)
+            resizeObserver.observe(this.$el.parentElement) // Observe the parent element
+        },
         resize () {
             this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
 
@@ -421,7 +432,6 @@ export default {
                 })
         },
         onResize () {
-            this.rerenderCount++
             this.$nextTick(() => {
                 this.resize()
                 if (this.value === undefined) {
