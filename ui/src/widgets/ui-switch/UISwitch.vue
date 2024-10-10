@@ -10,9 +10,8 @@
                 class="clickable-label"
                 :style="{cursor: textClickable ? 'pointer' : 'default'}"
                 @click.stop="textClickable ? toggle() : null"
-            >
-                {{ props.label }}
-            </span>
+                v-html="label"
+            ></span>
         </label>
         <v-switch
             v-if="!icon" v-model="status"

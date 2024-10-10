@@ -1,16 +1,24 @@
 <template>
     <v-combobox
-        v-if="typeIsComboBox === true" v-model="value" :disabled="!state.enabled" :class="className" :label="label"
+        v-if="typeIsComboBox === true" v-model="value" :disabled="!state.enabled" :class="className"
         :multiple="multiple" :chips="chips" :clearable="clearable" :items="options" item-title="label"
         item-value="value" variant="outlined" hide-details="auto" auto-select-first
         :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
-    />
+    >
+        <template v-slot:label>
+            <span v-html="label"></span>
+        </template>
+    </v-combobox>
     <v-select
-        v-else v-model="value" :disabled="!state.enabled" :class="className" :label="label" :multiple="multiple"
+        v-else v-model="value" :disabled="!state.enabled" :class="className" :multiple="multiple"
         :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
         hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
-    />
+    >
+        <template v-slot:label>
+            <span v-html="label"></span>
+        </template>
+    </v-select>
 </template>
 
 <script>

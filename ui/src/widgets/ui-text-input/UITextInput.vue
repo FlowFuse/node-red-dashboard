@@ -6,18 +6,26 @@
                 v-if="type !== 'textarea'" v-model="value"
                 v-bind="activatorProps"
                 :disabled="!state.enabled" class="nrdb-ui-text-field"
-                :label="label" :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
+                :type="type" :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
                 @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
-            />
+            >
+                <template v-slot:label>
+                    <span v-html="label"></span>
+                </template>
+            </v-text-field>
             <v-textarea
                 v-else
                 v-bind="activatorProps"
                 v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field nrdb-ui-textarea" :style="{ 'grid-row-end': `span ${props.height}` }"
-                :label="label" :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
+                :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
                 :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
                 @click:clear="onClear"
-            />
+            >
+                <template v-slot:label>
+                    <span v-html="label"></span>
+                </template>
+            </v-textarea>
         </template>
     </v-tooltip>
 </template>
