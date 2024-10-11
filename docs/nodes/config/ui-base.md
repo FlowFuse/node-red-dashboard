@@ -32,16 +32,14 @@ The **Application Icon** feature allows you to set a custom icon for your Node-R
 ![Example of how the 'App Icon' property looks](/images/node-examples/ui-base-app-icon.png "Example of how the 'App Icon' property looks"){data-zoomable}
 _Example of how the 'App Icon' property looks_
 
-![Example of how the 'App Icon' looks on browser tab](/images/node-examples/ui-base-app-icon-favicon.png "Example of how the 'App Icon' looks on browser tab"){data-zoomable}
+![Example of how the 'App Icon' looks on browser tab](/images/node-examples/ui-base-app-icon-favicon.png "Example of how the 'App Icon' looks on browser tab"){data-zoomable style="max-width: 400px; margin: auto;"}
 _Example of how the 'App Icon' looks on browser tab_
 
-![Example of how the 'App Icon' looks on installation](/images/node-examples/ui-base-app-icon-installation.png "Example of how the 'App Icon' looks on installation"){data-zoomable}
+![Example of how the 'App Icon' looks on installation](/images/node-examples/ui-base-app-icon-installation.png  "Example of how the 'App Icon' looks on installation" ){data-zoomable style="margin: auto; max-width: 600px"}
 _Example of how the 'App Icon' looks on installation_
 
-![Example of how the 'App Icon' looks](/images/node-examples/ui-base-app-icon-launcher.png "Example of how the 'App Icon' looks"){data-zoomable}
+![Example of how the 'App Icon' looks](/images/node-examples/ui-base-app-icon-launcher.png "Example of how the 'App Icon' looks"){data-zoomable style="max-width: 200px; margin: auto"}
 _Example of how the 'App Icon' looks_
-
-
 
 ## Title Bar Style Options <AddedIn version="1.10.0" />
 
