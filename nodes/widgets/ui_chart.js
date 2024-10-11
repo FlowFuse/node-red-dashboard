@@ -49,6 +49,12 @@ module.exports = function (RED) {
         if (config.yAxisPropertyType === 'msg' && !config.yAxisProperty) {
             config.yAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
         }
+        if (config.xAxisPropertyType === 'property' && !config.xAxisProperty) {
+            config.xAxisProperty = 'x' // if yAxisProperty is blank, default to 'y'
+        }
+        if (config.yAxisPropertyType === 'property' && !config.yAxisProperty) {
+            config.yAxisProperty = 'y' // if yAxisProperty is blank, default to 'y'
+        }
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
