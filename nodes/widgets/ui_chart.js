@@ -37,11 +37,11 @@ module.exports = function (RED) {
         }
 
         // ensure sane defaults
-        if (!['msg', 'str', 'property'].includes(config.xAxisPropertyType)) {
-            config.xAxisPropertyType = 'property' // default to 'key'
+        if (!['msg', 'str', 'property', 'timestamp'].includes(config.xAxisPropertyType)) {
+            config.xAxisPropertyType = 'timestamp' // default to 'timestamp'
         }
         if (!['msg', 'property'].includes(config.yAxisPropertyType)) {
-            config.yAxisPropertyType = 'property' // default to 'key'
+            config.yAxisPropertyType = 'property' // default to 'key' for older chart nodes
         }
         if (config.xAxisPropertyType === 'msg' && !config.xAxisProperty) {
             config.xAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
@@ -119,7 +119,7 @@ module.exports = function (RED) {
                         // may have been given an x/y object already
                         // let x = getProperty(payload, config.xAxisProperty)
                         let y = payload.y
-                        if (config.xAxisProperty === '') {
+                        if (config.xAxisPropertyType === 'timestamp' || config.xAxisProperty === '') {
                             // no property defined, therefore use time
                             x = (new Date()).getTime()
                         } else {

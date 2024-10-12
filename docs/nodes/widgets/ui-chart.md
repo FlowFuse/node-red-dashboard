@@ -19,8 +19,8 @@ props:
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
-        <b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</br>
-        <b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.
+        <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>
+        <b>Y:</b> Defines how to render the y-value of any data point.
     Text Color: Option to override Chart.Js default color for text.
         At moment overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
         It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Text Colors</code>
