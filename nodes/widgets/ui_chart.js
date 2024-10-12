@@ -49,12 +49,6 @@ module.exports = function (RED) {
         if (config.yAxisPropertyType === 'msg' && !config.yAxisProperty) {
             config.yAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
         }
-        if (config.xAxisPropertyType === 'property' && !config.xAxisProperty) {
-            config.xAxisProperty = 'x' // if yAxisProperty is blank, default to 'y'
-        }
-        if (config.yAxisPropertyType === 'property' && !config.yAxisProperty) {
-            config.yAxisProperty = 'y' // if yAxisProperty is blank, default to 'y'
-        }
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
@@ -120,12 +114,17 @@ module.exports = function (RED) {
                             : (new Date()).getTime()
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
-                        let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
+                        // let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
+                        let x = null
                         // may have been given an x/y object already
                         // let x = getProperty(payload, config.xAxisProperty)
                         let y = payload.y
-                        if ((x === undefined || x === null) && config.xAxisProperty === '') {
+                        if (config.xAxisProperty === '') {
+                            // no property defined, therefore use time
                             x = (new Date()).getTime()
+                        } else {
+                            // evaluate the x-axis property
+                            x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         }
                         if (Array.isArray(series)) {
                             if (series.length > 1) {
