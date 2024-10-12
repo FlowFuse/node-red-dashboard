@@ -29,6 +29,7 @@
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUISwitch',
@@ -47,7 +48,8 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
             // This spreaded layout will be the default for the existing flows

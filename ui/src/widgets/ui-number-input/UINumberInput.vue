@@ -23,6 +23,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
 import { mapState } from 'vuex' // eslint-disable-line import/order
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUITextInput',
@@ -46,7 +47,8 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         tooltip () {
             return this.props.tooltip

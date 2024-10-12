@@ -20,6 +20,7 @@
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUISlider',
@@ -49,7 +50,8 @@ export default {
             return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         thumbLabel: function () {
             return this.getProperty('thumbLabel')

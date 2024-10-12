@@ -23,6 +23,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUIDropdown',
@@ -73,7 +74,8 @@ export default {
             return this.getProperty('clearable')
         },
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         typeIsComboBox: function () {
             return this.props.typeIsComboBox ?? true

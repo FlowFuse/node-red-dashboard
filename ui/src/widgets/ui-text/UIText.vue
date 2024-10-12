@@ -8,6 +8,7 @@
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUIText',
@@ -27,7 +28,8 @@ export default {
             return ''
         },
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
             return this.getProperty('layout')

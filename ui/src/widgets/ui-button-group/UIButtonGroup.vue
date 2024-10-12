@@ -15,6 +15,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUIButtonGroup',
@@ -42,7 +43,8 @@ export default {
             return this.look === 'default' ? null : this.look
         },
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         options: function () {
             const options = this.getProperty('options')

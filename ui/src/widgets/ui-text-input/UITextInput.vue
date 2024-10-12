@@ -32,6 +32,7 @@
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
+import DOMPurify from 'dompurify'
 
 export default {
     name: 'DBUITextInput',
@@ -50,7 +51,8 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         type: function () {
             return this.getProperty('mode') || 'text'
