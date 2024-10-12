@@ -394,18 +394,14 @@ export default {
         },
         resizeText () {
             const clientWidth = this.$refs.value?.clientWidth
-            const clientHeight = this.$refs.value?.clientHeight
-
-            // work out how much space we have within which to render the value/icon/range
-            const minDimension = Math.min(clientWidth || 0, clientHeight || 0)
             this.size = 'default'
-            if (minDimension < 80) {
+            if (clientWidth < 80) {
                 this.size = 'xxs'
-            } else if (minDimension < 150) {
+            } else if (clientWidth < 150) {
                 this.size = 'xs'
-            } else if (minDimension < 225) {
+            } else if (clientWidth < 225) {
                 this.size = 'sm'
-            } else if (minDimension < 300) {
+            } else if (clientWidth < 300) {
                 this.size = 'md'
             } else {
                 this.size = 'lg'
