@@ -1,6 +1,7 @@
 <template>
     <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + layout" :style="style">
-        <label class="nrdb-ui-text-label" v-html="label"></label>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <label class="nrdb-ui-text-label" v-html="label" />
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span class="nrdb-ui-text-value" v-html="value" />
     </div>

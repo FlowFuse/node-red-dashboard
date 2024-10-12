@@ -6,13 +6,13 @@
             :style="{cursor: lineClickable ? 'pointer' : 'default'}"
             @click="lineClickable ? toggle() : null"
         >
-            <!-- eslint-disable-next-line vue/no-v-html -->
+            <!-- eslint-disable vue/no-v-html -->
             <span
                 class="clickable-label"
                 :style="{cursor: textClickable ? 'pointer' : 'default'}"
                 @click.stop="textClickable ? toggle() : null"
                 v-html="label"
-            ></span>
+            />
         </label>
         <v-switch
             v-if="!icon" v-model="status"

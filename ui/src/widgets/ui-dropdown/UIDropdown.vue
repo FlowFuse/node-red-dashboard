@@ -5,9 +5,9 @@
         item-value="value" variant="outlined" hide-details="auto" auto-select-first
         :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
     >
-        <template v-slot:label>
+        <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="label"></span>
+            <span v-html="label" />
         </template>
     </v-combobox>
     <v-select
@@ -16,9 +16,9 @@
         hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
         @update:model-value="onChange"
     >
-        <template v-slot:label>
+        <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="label"></span>
+            <span v-html="label" />
         </template>
     </v-select>
 </template>

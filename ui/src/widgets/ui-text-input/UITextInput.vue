@@ -10,9 +10,9 @@
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon" @update:model-value="onChange"
                 @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
             >
-                <template v-slot:label>
+                <template #label>
                     <!-- eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="label"></span>
+                    <span v-html="label" />
                 </template>
             </v-text-field>
             <v-textarea
@@ -23,9 +23,9 @@
                 :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
                 @click:clear="onClear"
             >
-                <template v-slot:label>
+                <template #label>
                     <!-- eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="label"></span>
+                    <span v-html="label" />
                 </template>
             </v-textarea>
         </template>

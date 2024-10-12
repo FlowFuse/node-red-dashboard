@@ -10,9 +10,9 @@
                     :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon"
                     :prepend-inner-icon="prependInnerIcon" :min="min" :max="max" :step="step" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
                 >
-                    <template v-slot:label>
+                    <template #label>
                         <!-- eslint-disable-next-line vue/no-v-html -->
-                        <span v-html="label"></span>
+                        <span v-html="label" />
                     </template>
                 </v-number-input>
             </template>
@@ -21,9 +21,9 @@
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 // eslint-disable-next-line import/no-unresolved
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
-import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {

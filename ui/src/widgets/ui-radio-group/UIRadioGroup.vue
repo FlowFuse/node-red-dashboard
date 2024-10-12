@@ -5,9 +5,9 @@
         variant="outlined" hide-details="auto"
         @update:model-value="onChange"
     >
-        <template v-slot:label>
+        <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="label"></span>
+            <span v-html="label" />
         </template>
         <v-radio
             v-for="option in options" :key="option.value"

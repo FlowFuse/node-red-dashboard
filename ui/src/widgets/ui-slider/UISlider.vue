@@ -12,9 +12,9 @@
         :max="max" :step="step || 1" :show-ticks="showTicks"
         @update:model-value="onChange" @end="onBlur"
     >
-        <template v-slot:label>
+        <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="label"></span>
+            <span v-html="label" />
         </template>
     </v-slider>
 </template>
