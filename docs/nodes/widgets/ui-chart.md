@@ -99,8 +99,8 @@ To map your data to the chart, the most important properties to configure are:
 _Example key mapping config for UI Chart_
 
 - **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
-- **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
-- **Y**: Define where to read the value to plot on the y-axis. If left blank, the y-value will be read from `msg.payload` directly, and assume it to be a number.
+- **X**: Defines where to read the value to plot on the x-axis. This can be read from the `msg` object, as a `key` on an object, or generate a new `timestamp` for each data point being received to the node.
+- **Y**: Define where to read the value to plot on the y-axis. This can be read as a property on the `msg` object, or as a `key` on objects in an array of data.
 
 The next most important properties to configure are the "Chart Type" and "X-Axis Type".
 
