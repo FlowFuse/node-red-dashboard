@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex' // eslint-disable-line import/order
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIText',

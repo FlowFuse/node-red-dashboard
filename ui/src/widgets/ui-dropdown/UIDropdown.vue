@@ -6,6 +6,7 @@
         :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
     >
         <template v-slot:label>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="label"></span>
         </template>
     </v-combobox>
@@ -16,14 +17,15 @@
         @update:model-value="onChange"
     >
         <template v-slot:label>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="label"></span>
         </template>
     </v-select>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex'
 
 export default {
     name: 'DBUIDropdown',

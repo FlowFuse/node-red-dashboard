@@ -11,6 +11,7 @@
                 @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
             >
                 <template v-slot:label>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
                     <span v-html="label"></span>
                 </template>
             </v-text-field>
@@ -23,6 +24,7 @@
                 @click:clear="onClear"
             >
                 <template v-slot:label>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
                     <span v-html="label"></span>
                 </template>
             </v-textarea>
@@ -31,8 +33,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex' // eslint-disable-line import/order
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITextInput',

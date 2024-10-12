@@ -6,6 +6,7 @@
         @update:model-value="onChange"
     >
         <template v-slot:label>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="label"></span>
         </template>
         <v-radio
@@ -16,8 +17,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex' // eslint-disable-line import/order
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIRadioGroup',

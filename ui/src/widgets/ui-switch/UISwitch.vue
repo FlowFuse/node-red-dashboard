@@ -6,6 +6,7 @@
             :style="{cursor: lineClickable ? 'pointer' : 'default'}"
             @click="lineClickable ? toggle() : null"
         >
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span
                 class="clickable-label"
                 :style="{cursor: textClickable ? 'pointer' : 'default'}"
@@ -28,8 +29,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex' // eslint-disable-line import/order
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUISwitch',

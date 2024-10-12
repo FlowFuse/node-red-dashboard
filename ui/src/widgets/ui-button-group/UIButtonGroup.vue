@@ -1,5 +1,6 @@
 <template>
     <div class="nrdb-ui-button-group-wrapper">
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <label v-if="label" class="v-label" v-html="label"></label>
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
@@ -14,8 +15,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex'
 
 export default {
     name: 'DBUIButtonGroup',

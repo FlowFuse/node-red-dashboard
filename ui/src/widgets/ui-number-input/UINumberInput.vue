@@ -11,6 +11,7 @@
                     :prepend-inner-icon="prependInnerIcon" :min="min" :max="max" :step="step" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
                 >
                     <template v-slot:label>
+                        <!-- eslint-disable-next-line vue/no-v-html -->
                         <span v-html="label"></span>
                     </template>
                 </v-number-input>
@@ -22,8 +23,8 @@
 <script>
 // eslint-disable-next-line import/no-unresolved
 import { VNumberInput } from 'vuetify/labs/VNumberInput'
-import { mapState } from 'vuex' // eslint-disable-line import/order
 import DOMPurify from 'dompurify'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
     name: 'DBUITextInput',
