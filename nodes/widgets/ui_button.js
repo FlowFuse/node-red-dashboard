@@ -45,8 +45,6 @@ module.exports = function (RED) {
                 break
             }
 
-            console.log('payload', payload, payloadType)
-
             if (payloadType === 'flow' || payloadType === 'global') {
                 try {
                     const parts = RED.util.normalisePropertyExpression(payload)
@@ -119,7 +117,7 @@ module.exports = function (RED) {
             onAction: true,
             beforeSend,
             onInput: async function (msg) {
-                if (config.emulateClick) {
+                if (config.emulateClick && config.enableClick) {
                     msg = await beforeSend(msg)
 
                     if (config.topic || config.topicType) {
