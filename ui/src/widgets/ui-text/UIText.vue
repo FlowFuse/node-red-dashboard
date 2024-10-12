@@ -24,7 +24,8 @@ export default {
         value: function () {
             const m = this.messages[this.id] || {}
             if (Object.prototype.hasOwnProperty.call(m, 'payload')) {
-                return m.payload
+                // Sanetize the html to avoid XSS attacks
+                return DOMPurify.sanitize(m.payload)
             }
             return ''
         },

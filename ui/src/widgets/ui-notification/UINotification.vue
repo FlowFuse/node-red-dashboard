@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex'
 
 export default {
@@ -60,7 +61,9 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             // Get the value (i.e. the notification text content) from the last input msg
-            return this.messages[this.id]?.payload
+            const value = this.messages[this.id]?.payload
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(value)
         },
         allowConfirm () {
             return this.getProperty('allowConfirm')

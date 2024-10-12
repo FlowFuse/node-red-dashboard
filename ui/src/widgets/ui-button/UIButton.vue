@@ -19,6 +19,8 @@
 </template>
 
 <script>
+
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
@@ -47,7 +49,8 @@ export default {
             return icon && this.iconPosition === 'right' ? mdiIcon : undefined
         },
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         iconPosition () {
             return this.getProperty('iconPosition')
