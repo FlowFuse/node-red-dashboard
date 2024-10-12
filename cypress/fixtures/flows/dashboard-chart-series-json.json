@@ -10,7 +10,7 @@
     {
         "id": "be87d656fb6d60d9",
         "type": "ui-button",
-        "z": "862ec766f2af6f61",
+        "z": "node-red-tab-charts",
         "group": "dashboard-ui-group",
         "name": "Load Finance Data",
         "label": "Load Finance Data",
@@ -35,12 +35,12 @@
         "y": 860,
         "wires": [
             [
-                "bar-chart-1"
+                "bar-chart-finance"
             ]
         ]
     },
     {
-        "id": "bar-chart-1",
+        "id": "bar-chart-finance",
         "type": "ui-chart",
         "z": "node-red-tab-charts",
         "g": "23f6eaad0550d87f",

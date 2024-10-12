@@ -121,14 +121,14 @@ describe('Node/-RED Dashboard 2.0 - Chart - Data Sets', () => {
         cy.deployFixture('dashboard-chart-series-json')
         cy.visit('/dashboard/page1')
 
-        cy.get('#nrdb-ui-widget-bar-chart-1 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-bar-chart-finance > div > canvas').should('exist')
 
         cy.clickAndWait(cy.get('button').contains('Load Finance Data')) // bar chart
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
             should(win.uiCharts).is.not.empty()
-            const barChart = win.uiCharts['bar-chart-1']
+            const barChart = win.uiCharts['bar-chart-finance']
 
             // Bar chart
             should(barChart.chart.config.data).be.an.Object()
