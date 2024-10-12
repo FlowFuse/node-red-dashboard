@@ -407,7 +407,7 @@ export default {
                     }
                     dd.category = d.category[i]
                     dd.y = d.y[i]
-                    this.addToChart(d, label)
+                    this.addToChart(dd, label[i])
                     this.commit(payload, dd, label[i])
                 }
             } else {
