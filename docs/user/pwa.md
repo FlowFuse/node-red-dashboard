@@ -32,3 +32,9 @@ You'll then be prompted to name your application:
 
 <img src="../assets/images/pwa-ios-install.jpg" alt="Options presented in Safari on Android" style="max-width: 300px;margin: auto;">
 <em>Options presented in Safari on iOS</em>
+
+## Customization
+
+### Icon
+
+You can personalize your Dashboard's App Icon to enhance branding and make it easily recognizable. To customize the icon, simply add a URL to the image in the App Icon field under the ui-base configuration. For detailed instructions, visit the [UI Base documentation](/nodes/config/ui-base.html#application-icon).
