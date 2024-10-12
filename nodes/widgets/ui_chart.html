@@ -43,6 +43,7 @@
         }
         const noneType = { value: 'none', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none'), hasValue: false }
         const keyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
+        const timestampType = { value: 'timestamp', icon: 'fa fa-clock-o', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timestamp'), hasValue: false }
 
         function hexToRgb (hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -84,7 +85,7 @@
                 categoryType: { value: 'msg' },
                 xAxisLabel: { value: '' },
                 xAxisProperty: { value: null },
-                xAxisPropertyType: { value: 'property' },
+                xAxisPropertyType: { value: 'timestamp' },
                 xAxisType: { value: 'time' },
                 xAxisFormat: { value: '' },
                 xAxisFormatType: { value: 'auto' },
@@ -103,8 +104,8 @@
                     }
                 },
                 yAxisLabel: { value: '' },
-                yAxisProperty: { value: null },
-                yAxisPropertyType: { value: 'property' },
+                yAxisProperty: { value: 'payload' },
+                yAxisPropertyType: { value: 'msg' },
                 ymin: { value: '', validate: function (value) { return numberValidator(value, true) } },
                 ymax: { value: '', validate: function (value) { return numberValidator(value, true) } },
                 bins: {
@@ -260,16 +261,22 @@
                     typeField: $('#node-input-categoryType'),
                     types: getSeriesTypes($('#node-input-xAxisType').val())
                 })
+    
                 $('#node-input-xAxisProperty').typedInput({
-                    default: keyType.value,
+                    default: timestampType.value,
                     typeField: $('#node-input-xAxisPropertyType'),
-                    types: ['msg', 'str', keyType]
+                    types: ['msg', keyType, 'str', timestampType]
                 })
                 $('#node-input-yAxisProperty').typedInput({
-                    default: keyType.value,
                     typeField: $('#node-input-yAxisPropertyType'),
                     types: ['msg', keyType] // makes no sense for the y-axis to be a string
                 })
+                if (typeof node.yAxisPropertyType === 'undefined') {
+                    // older chart nodes had no yAxisPropertyType, so need to default "key"
+                    node.yAxisPropertyType = keyType.value
+                    // make selection via jQuery
+                    $('#node-input-yAxisProperty').typedInput('type', keyType.value)
+                }
 
                 const updateXAxisTypeOptions = function (options, defaultValue) {
                     const $el = $('#node-input-xAxisType')

@@ -151,4 +151,55 @@ describe('Node/-RED Dashboard 2.0 - Chart - Data Sets', () => {
             checkSeries(barChart.chart.config.data.datasets[3], 'Q4', [[2021, 163], [2022, 210], [2023, 138]])
         })
     })
+
+    it('renders charts correctly when x is set to "timestamp"', () => {
+        cy.deployFixture('dashboard-chart-timestamp')
+        cy.visit('/dashboard/page1')
+
+        // new (from 1.18.1)
+        cy.get('#nrdb-ui-widget-line-chart-timestamp > div > canvas').should('exist')
+
+        // legacy charts pre 1.18.1, which rendered time when xAxisProperty was empty
+        cy.get('#nrdb-ui-widget-line-chart-empty-xProp > div > canvas').should('exist')
+
+        // Clear both charts
+        cy.clickAndWait(cy.get('button').contains('Button - Clear'))
+
+        // Add 3 data points to BOTH charts, 200 milliseconds apart
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.window().then(win => {
+            should(win.uiCharts).is.not.empty()
+            const timestampXChart = win.uiCharts['line-chart-timestamp']
+            const emptyXChart = win.uiCharts['line-chart-empty-xProp']
+
+            // New Charts
+            should(timestampXChart.chart.config.data).be.an.Object()
+            should(timestampXChart.chart.config.data.datasets).be.an.Array()
+
+            // Legacy Charts
+            should(emptyXChart.chart.config.data).be.an.Object()
+            should(emptyXChart.chart.config.data.datasets).be.an.Array()
+
+            // Check data populated correctly
+            // New Charts
+            should(timestampXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+
+            // Legacy Charts
+            should(emptyXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+            // loop over the three data points
+            // eslint-disable-next-line promise/always-return
+            for (let i = 0; i < 3; i++) {
+                // New Charts
+                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('x')
+                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
+                // Legacy Charts
+                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('x')
+                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
+            }
+        })
+    })
 })
