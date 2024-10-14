@@ -115,12 +115,21 @@ export default {
                 }
             }
         },
+        onHandleDragEnd (event) {
             if (this.dragging.active === false) { return }
             this.dragging.active = false
-            const width = Math.max(this.dragging.current.columns, 1)
-            const height = Math.max(this.dragging.current.rows, 1)
+            if (this.dragging.current.columns === null && this.dragging.current.rows === null) {
+                // console.log('drag handle end reset due to null columns or rows')
+                this.resetDragState()
+                return
+            }
+            const columns = Math.max(this.dragging.current.columns, 1)
+            const rows = Math.max(this.dragging.current.rows, 1)
+            const changed = this.dragging.init.columns !== columns || this.dragging.init.rows !== rows
             this.resetDragState()
-            this.$emit('resize', { index: this.index, width, height })
+            if (changed) {
+                this.$emit('resize', { index: this.index, width: columns, height: rows })
+            }
         },
         resetDragState () {
             this.dragging.current.width = null
