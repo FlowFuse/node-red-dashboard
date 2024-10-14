@@ -485,3 +485,8 @@ NB! supresses the gridarea for messages, but those are not in use*/
     height: auto;
     min-height: var(--widget-row-height);
 }
+
+/* WYSIWYG styling */
+.nrdb-ui-group.dragging {
+    border-style: dashed;
+}

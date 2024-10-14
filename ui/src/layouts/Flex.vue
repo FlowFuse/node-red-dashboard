@@ -1,24 +1,30 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--flex nrdb-ui-page" :class="page?.className">
+        <div v-if="pageGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--flex nrdb-ui-page" :class="page?.className">
             <div
-                v-for="g in orderedGroups"
+                v-for="(g, $index) in pageGroups"
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
                 :disabled="g.disabled === true ? 'disabled' : null"
                 :class="getGroupClass(g)"
                 :style="{'width': ((rowHeight * 2 * g.width) + 'px')}"
+                :draggable="editMode"
+                @dragstart="onDragStart($event, $index)"
+                @dragend="onDragEnd($event, $index)"
+                @dragover="onDragOver($event, $index)"
+                @drop="onDrop($event, $index)"
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
                     <template v-if="g.showTitle" #title>
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                        <widget-group :group="g" :index="$index" :widgets="widgetsByGroup(g.id)" :resizable="editMode" @resize="onGroupResize" />
                     </template>
                 </v-card>
             </div>
+            <EditControls v-if="editMode" :dirty="dirty" :saveBusy="saving" @cancel="leaveEditMode" @discard="discardEdits" @save="saveEdits" />
         </div>
         <div>
             <!-- Render any widgets with a 'page' scope -->
@@ -32,31 +38,55 @@
             />
         </div>
     </BaselineLayout>
+    <ConfirmDialog ref="confirmDialog" />
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
 
+import ConfirmDialog from '../components/ConfirmDialog.vue'
+
 import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
+import WYSIWYG from './wysiwyg'
+import EditControls from './wysiwyg/EditControls.vue'
 
 export default {
     name: 'LayoutFlex',
     components: {
         BaselineLayout,
+        ConfirmDialog,
+        EditControls,
         WidgetGroup
     },
+    mixins: [WYSIWYG],
     data () {
         const rowHeight = getComputedStyle(document.body).getPropertyValue('--widget-row-height')
         return {
+            pageGroups: [],
+            saving: false,
             rowHeight: parseFloat(rowHeight)
         }
     },
     computed: {
-        ...mapState('ui', ['groups', 'widgets', 'pages']),
+        ...mapState('ui', ['groups', 'widgets', 'pages', 'edits']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
-        orderedGroups: function () {
+        pageWidgets: function () {
+            return this.widgetsByPage(this.$route.meta.id)
+        },
+        page: function () {
+            return this.pages[this.$route.meta.id]
+        }
+    },
+    mounted () {
+        this.pageGroups = this.getPageGroups()
+        if (this.editMode) { // mixin property
+            this.initializeEditTracking() // Mixin method
+        }
+    },
+    methods: {
+        getPageGroups () {
             // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
                 // only show hte groups that haven't had their "visible" property set to false
@@ -71,14 +101,6 @@ export default {
                 })
             return groups
         },
-        pageWidgets: function () {
-            return this.widgetsByPage(this.$route.meta.id)
-        },
-        page: function () {
-            return this.pages[this.$route.meta.id]
-        }
-    },
-    methods: {
         getWidgetClass (widget) {
             const classes = []
             // ensure each widget has a class for its type
@@ -102,7 +124,69 @@ export default {
             if (properties && properties.class) {
                 classes.push(properties.class)
             }
+            // dragging interaction classes
+            if (this.isDragging(group)) { // Mixin method
+                classes.push('dragging')
+            }
             return classes.join(' ')
+        },
+
+        // WYSIWYG Edit Control Methods
+        async saveEdits () {
+            if (!this.dirty) { // Mixin property
+                return
+            }
+            // show a confirmation dialog
+            const doSave = await this.$refs.confirmDialog.show({
+                title: 'Save Changes',
+                icon: 'mdi-content-save-edit-outline',
+                message: 'This will deploy your changes to the Node-RED runtime. Are you sure?',
+                cancelButton: 'No',
+                okButton: 'Yes'
+            })
+            if (!doSave) { return }
+            this.saving = true
+            this.deployChanges({
+                dashboard: this.page.ui,
+                page: this.page.id,
+                groups: this.pageGroups
+            }).then(() => {
+                this.acceptChanges() // Mixin method
+            }).catch((error) => {
+                console.error('Error saving changes', error)
+                this.$refs.confirmDialog.show({
+                    title: 'Error saving changes',
+                    icon: 'mdi-alert-circle-outline',
+                    message: error.message || 'An error occurred while saving your changes.',
+                    okButton: 'Close',
+                    cancelButton: null
+                })
+            }).finally(() => {
+                this.saving = false
+            })
+        },
+        discardEdits () {
+            this.revertEdits() // Mixin method
+        },
+        async leaveEditMode () {
+            let leave = true
+            if (this.dirty) {
+                // show a confirmation dialog
+                leave = await this.$refs.confirmDialog.show({
+                    title: 'Leave Edit Mode',
+                    icon: 'mdi-help-circle-outline',
+                    message: 'There are unsaved changes that will be discarded if you leave edit mode. Are you sure?',
+                    cancelButton: 'No',
+                    okButton: 'Yes'
+                })
+            }
+            if (!leave) {
+                return
+            }
+            if (this.dirty) {
+                this.discardEdits()
+            }
+            this.exitEditMode() // Mixin method
         }
     }
 }
