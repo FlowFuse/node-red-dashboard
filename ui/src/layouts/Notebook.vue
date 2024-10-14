@@ -42,7 +42,7 @@ import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
 
 export default {
-    name: 'LayoutFlex',
+    name: 'LayoutNotebook',
     components: {
         BaselineLayout,
         WidgetGroup
