@@ -101,6 +101,7 @@ export default {
             return false
         },
         onHandleDrag (event, vertical, horizontal) {
+            if (this.dragging.active === false) { return }
             if (event.x > 0 && event.y > 0) {
                 // odd event fired on mouse up with x/y = 0
                 const stepX = this.$el.clientWidth / this.group.width
