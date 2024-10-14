@@ -418,6 +418,7 @@ module.exports = function (RED) {
 
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
+                meta: node.ui.meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
                 pages: Object.fromEntries(node.ui.pages),
@@ -758,6 +759,15 @@ module.exports = function (RED) {
          */
         // store ui config to be sent to UI
         node.ui = {
+            meta: {
+                wysiwyg: {
+                    enabled: false,
+                    timestamp: null,
+                    dashboard: null,
+                    page: null,
+                    editKey: null
+                }
+            },
             heads: new Map(),
             dashboards: new Map(),
             pages: new Map(),
@@ -1089,7 +1099,8 @@ module.exports = function (RED) {
 
     RED.nodes.registerType('ui-base', UIBaseNode)
 
-    RED.httpAdmin.patch('/dashboard/:dashboardId', RED.auth.needsPermission('flows.write'), async function (req, res) {
+    // PATCH: /dashboard/api/v1/:dashboardId/flows - deploy curated/controlled updates to the flows
+    RED.httpAdmin.patch('/dashboard/api/v1/:dashboardId/flows', RED.auth.needsPermission('flows.write'), async function (req, res) {
         const host = RED.settings.uiHost
         const port = RED.settings.uiPort
         const httpAdminRoot = RED.settings.httpAdminRoot
@@ -1126,5 +1137,36 @@ module.exports = function (RED) {
         }).then(response => {
             return res.status(200).json(response.data)
         })
+            console.error(error)
+            const status = error.response?.status || 500
+            return res.status(status).json({ error: error.message })
+        })
+    })
+
+    // PATCH: /dashboard/api/v1/:dashboardId/edit/:pageId - start editing a page
+    RED.httpAdmin.patch('/dashboard/api/v1/:dashboardId/edit/:pageId', RED.auth.needsPermission('flows.write'), async function (req, res) {
+        /** @type {UIBaseNode} */
+        const baseNode = RED.nodes.getNode(req.params.dashboardId)
+        if (!baseNode) {
+            return res.status(404).json({ error: 'Dashboard not found' })
+        }
+        const pageNode = baseNode.ui.pages.get(req.params.pageId)
+        if (!pageNode) {
+            return res.status(404).json({ error: 'Page not found' })
+        }
+        const editConfig = {
+            timestamp: Date.now(),
+            path: pageNode.path || '',
+            dashboard: baseNode.id,
+            page: pageNode.id,
+            editKey: Math.random().toString(36).substring(2)
+        }
+        baseNode.ui.meta.wysiwyg.enabled = true
+        baseNode.ui.meta.wysiwyg.timestamp = editConfig.timestamp
+        baseNode.ui.meta.wysiwyg.editKey = editConfig.editKey
+        baseNode.ui.meta.wysiwyg.dashboard = baseNode.id
+        baseNode.ui.meta.wysiwyg.page = pageNode.id
+
+        return res.status(200).json(editConfig)
     })
 }
