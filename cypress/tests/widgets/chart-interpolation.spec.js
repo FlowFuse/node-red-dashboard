@@ -53,9 +53,11 @@ describe('Node-RED Dashboard 2.0 - Chart - Type: Interpolation', () => {
 
             // Check interpolation config for cubic
             should(cubic.chart.config.data.datasets[0].cubicInterpolationMode).be.equal('default')
+            should(cubic.chart.config.data.datasets[0].tension).be.equal(0.4)
 
-            // Check interpolation config for mono
+            // Check interpolation config for monotone
             should(mono.chart.config.data.datasets[0].cubicInterpolationMode).be.equal('monotone')
+            should(mono.chart.config.data.datasets[0].tension).be.equal(0.4)
         })
     })
 })

@@ -655,40 +655,34 @@ export default {
             }
         },
         setInterpolation (interpolationType) {
+            // Updated chart configs for interpolation as per the new chart.js version
+            // https://www.chartjs.org/docs/latest/samples/line/interpolation.html
             const getInterpolation = (type) => {
                 switch (type) {
                 case 'cubic': {
                     return {
                         cubicInterpolationMode: 'default',
-                        tension: undefined,
-                        stepped: undefined
+                        tension: 0.4
                     }
                 }
                 case 'cubicMono': {
                     return {
                         cubicInterpolationMode: 'monotone',
-                        tension: undefined,
-                        stepped: undefined
+                        tension: 0.4
                     }
                 }
                 case 'linear': {
                     return {
-                        tension: 0,
-                        cubicInterpolationMode: undefined,
-                        stepped: undefined
+                        tension: 0
                     }
                 }
                 case 'bezier': {
                     return {
-                        tension: 0.4,
-                        cubicInterpolationMode: undefined,
-                        stepped: undefined
+                        tension: 0.4
                     }
                 }
                 case 'step': {
                     return {
-                        cubicInterpolationMode: undefined,
-                        tension: undefined,
                         stepped: true
                     }
                 }
