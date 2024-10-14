@@ -90,15 +90,8 @@ export default {
         },
         onHandleDragStart (event, vertical, horizontal) {
             this.dragging.active = true
-            this.dragging.init.columns = parseFloat(this.group.width)
-            this.dragging.init.rows = parseFloat(this.group.height)
-            // event.preventDefault()
-            event.stopPropagation()
-            // don't show image preview
-            const EMPTY_IMAGE = this.$refs['blank-img']
-            event.dataTransfer.setDragImage(EMPTY_IMAGE, 0, 0)
-
-            this.dragging.init.x = event.x
+            this.dragging.init.columns = +this.group.width || 1
+            this.dragging.init.rows = +this.group.height || 1
             this.dragging.init.width = this.$refs['resize-view'].clientWidth
             return false
         },
