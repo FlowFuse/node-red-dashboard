@@ -103,29 +103,15 @@ export default {
         onHandleDrag (event, vertical, horizontal) {
             if (this.dragging.active === false) { return }
             if (event.x > 0 && event.y > 0) {
-                // odd event fired on mouse up with x/y = 0
-                const stepX = this.$el.clientWidth / this.group.width
-                // const stepY = 50
-
+                const stepX = this.$el.clientWidth / +this.group.width
                 const dx = event.x - this.dragging.init.x
-                // what change does this reflect in the grid?
                 const dw = dx < 0 ? Math.ceil(dx / stepX) : Math.floor(dx / stepX)
-
-                // const dh = Math.floor(event.offsetY / stepY)
-
                 this.dragging.current.width = this.dragging.init.width + dx
-
-                if (dw !== 0) {
-                    const width = this.dragging.init.columns + dw
-                    // const height = this.dragging.init.rows + dh
-
-                    if (width !== this.group.width) {
-                        this.dragging.current.columns = width
-                        this.$emit('resize', {
-                            index: this.index,
-                            width
-                        })
-                    }
+                const width = Math.max(this.dragging.init.columns + dw, 1)
+                if (width !== +this.group.width) {
+                    // console.log('drag handle drag: width', width, 'emitting resize')
+                    this.dragging.current.columns = width
+                    this.$emit('resize', { index: this.index, width })
                 }
             }
         },
