@@ -125,6 +125,7 @@ export default {
         resetDragState () {
             this.dragging.current.width = null
             this.dragging.current.columns = null
+            this.dragging.current.rows = null
         }
     }
 
