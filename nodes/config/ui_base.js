@@ -1107,36 +1107,112 @@ module.exports = function (RED) {
         const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
         console.log('url', url)
         // get request body
-        const changes = req.body
-        console.log(changes)
-        // get the active Node-RED flows json via the GET /flows API
+        const dashboardId = req.params.dashboardId
+        const pageId = req.body.page
+        const changes = req.body.changes || {}
+        const editKey = req.body.key
+        const groups = changes.groups || []
+        console.log(changes, editKey, dashboardId)
+        const baseNode = RED.nodes.getNode(dashboardId)
+
+        // validity checks
+        if (groups.length === 0) {
+            // this could be a 200 but since the group data might be missing due to
+            // a bug or regression, we'll return a 400 and let the user know
+            // there were no changes provided.
+            return res.status(400).json({ error: 'No changes to deploy' })
+        }
+        if (!baseNode) {
+            return res.status(404).json({ error: 'Dashboard not found' })
+        }
+        if (!baseNode.ui.meta.wysiwyg.enabled) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        if (editKey !== baseNode.ui.meta.wysiwyg.editKey) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        if (pageId !== baseNode.ui.meta.wysiwyg.page) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        for (const modified of groups) {
+            if (modified.page !== baseNode.ui.meta.wysiwyg.page) {
+                return res.status(400).json({ error: 'Invalid page id' })
+            }
+        }
+
+        // Prepare headers for the requests
+        const getHeaders = {
+            'Node-RED-API-Version': 'v2',
+            Accept: 'application/json'
+        }
+        const postHeaders = {
+            'Node-RED-Deployment-Type': 'nodes', // only update the nodes (don't restart ALL nodes! Only those that have changed)
+            'Node-RED-API-Version': 'v2',
+            'Content-Type': 'application/json'
+        }
+        // apply headers from the incoming request
+        if (req.headers.cookie) {
+            getHeaders.cookie = req.headers.cookie
+            postHeaders.cookie = req.headers.cookie
+        }
+        if (req.headers.authorization) {
+            getHeaders.authorization = req.headers.authorization
+            postHeaders.authorization = req.headers.authorization
+        }
+        if (req.headers.referer) {
+            getHeaders.referer = req.headers.referer
+            postHeaders.referer = req.headers.referer
+        }
+
+        const applyIfDifferent = (node, nodeNew, propName) => {
+            const origValue = node[propName]
+            const newValue = nodeNew[propName]
+            if (origValue !== newValue) {
+                node[propName] = newValue
+                return true
+            }
+            return false
+        }
+        let rev = null
         return axios.request({
             method: 'GET',
+            headers: getHeaders,
             url
         }).then(response => {
-            const flows = response.data
-            // console.log('API Flows', flows)
-            // check groups for updates
-            if (changes.groups) {
-                for (const group of changes.groups) {
-                    const existingGroup = flows.find(n => n.id === group.id)
-                    if (existingGroup) {
-                        existingGroup.width = group.width
-                        existingGroup.order = group.order
-                    }
+            const flows = response.data?.flows || []
+            rev = response.data?.rev
+            const changeResult = []
+            for (const modified of groups) {
+                const current = flows.find(n => n.id === modified.id)
+                if (!current) {
+                    // group not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Group not found', code: 'GROUP_NOT_FOUND' })
                 }
+                if (modified.page !== current.page) {
+                    // integrity of data suspect! Has flow changed on the server?
+                    return res.status(400).json({ error: 'Invalid page id', code: 'INVALID_PAGE_ID' })
+                }
+                changeResult.push(applyIfDifferent(current, modified, 'width'))
+                changeResult.push(applyIfDifferent(current, modified, 'order'))
+            }
+            if (changeResult.length === 0 || !changeResult.includes(true)) {
+                return res.status(200).json({ message: 'No changes were' })
             }
             return flows
         }).then(flows => {
             // update the flows with the new group order
             return axios.request({
                 method: 'POST',
+                headers: postHeaders,
                 url,
-                data: flows
+                data: {
+                    flows,
+                    rev
+                }
             })
         }).then(response => {
             return res.status(200).json(response.data)
-        })
+        }).catch(error => {
             console.error(error)
             const status = error.response?.status || 500
             return res.status(status).json({ error: error.message })
