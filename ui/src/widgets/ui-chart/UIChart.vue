@@ -49,6 +49,9 @@ export default {
         radialChart () {
             // radial charts have no placeholder in ChartJS - we need to add one
             return this.props.xAxisType === 'radial'
+        },
+        interpolation () {
+            return this.props.interpolation
         }
     },
     watch: {
@@ -71,6 +74,10 @@ export default {
         },
         'props.xAxisFormatType': function (value) {
             this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
+            this.update(false)
+        },
+        interpolation (value) {
+            this.setInterpolation(value)
             this.update(false)
         }
     },
@@ -507,6 +514,9 @@ export default {
                     }
                 }
             }
+            if (this.chartType === 'line') {
+                this.setInterpolation(this.interpolation)
+            }
         },
         limitDataSize () {
             let cutoff = null
@@ -643,6 +653,54 @@ export default {
             } else {
                 this.chart.data.datasets[sIndex] = series
             }
+        },
+        setInterpolation (interpolationType) {
+            const getInterpolation = (type) => {
+                switch (type) {
+                case 'cubic': {
+                    return {
+                        cubicInterpolationMode: 'default',
+                        tension: undefined,
+                        stepped: undefined
+                    }
+                }
+                case 'cubicMono': {
+                    return {
+                        cubicInterpolationMode: 'monotone',
+                        tension: undefined,
+                        stepped: undefined
+                    }
+                }
+                case 'linear': {
+                    return {
+                        tension: 0,
+                        cubicInterpolationMode: undefined,
+                        stepped: undefined
+                    }
+                }
+                case 'bezier': {
+                    return {
+                        tension: 0.4,
+                        cubicInterpolationMode: undefined,
+                        stepped: undefined
+                    }
+                }
+                case 'step': {
+                    return {
+                        cubicInterpolationMode: undefined,
+                        tension: undefined,
+                        stepped: true
+                    }
+                }
+                }
+            }
+            const interpolation = getInterpolation(interpolationType)
+            this.chart.data.datasets = this.chart.data.datasets.map((d) => {
+                return {
+                    ...d,
+                    ...interpolation
+                }
+            })
         }
     }
 }

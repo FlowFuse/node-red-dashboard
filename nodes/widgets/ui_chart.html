@@ -140,7 +140,8 @@
                     }
                 },
                 height: { value: 8 },
-                className: { value: '' }
+                className: { value: '' },
+                interpolation: { value: 'linear' }
             },
             inputs: 1,
             outputs: 1,
@@ -428,6 +429,12 @@
                 if (this.gridColorDefault || this.gridColorDefault === undefined) {
                     $('#node-chart-grid-color').hide()
                 }
+
+                if (this.interpolation) {
+                    $('#node-input-interpolation').val(this.interpolation)
+                } else {
+                    $('#node-input-interpolation').val('linear')
+                }
             },
             oneditsave: function () {
                 // Stack By - convert from string values to bool
@@ -625,6 +632,16 @@
                 <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" data-i18n="[placeholder]ui-chart.label.propertyPlaceholder">
             </div>
         </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-interpolation" data-i18n="ui-chart.label.interpolation"></label></label>
+        <select id="node-input-interpolation" style="width: 70%;">
+            <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
+            <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
+            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
+            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
+            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+        </select>
     </div>
     <h4>Styling/Colors</h4>
     <div class="form-row" id="ui-chart-colors">

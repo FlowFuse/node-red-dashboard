@@ -74,7 +74,13 @@
             "setGridColorDefault": "Use ChartJs Default Grid Colors" ,
             "stackSeries": "Group By",
             "stackSeriesTrue": "Stacks",
-            "stackSeriesFalse": "Side-by-Side"
+            "stackSeriesFalse": "Side-by-Side",
+            "interpolation": "Interpolation",
+            "linearInterpolation": "linear",
+            "stepInterpolation": "step",
+            "bezierInterpolation": "bezier",
+            "cubicInterpolation": "cubic",
+            "cubicMonoInterpolation": "cubic-mono"
         },
         "notifications": {
             "clearSuccess": "Chart data cleared successfully",
