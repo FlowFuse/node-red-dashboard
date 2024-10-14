@@ -115,7 +115,7 @@ export default {
                 }
             }
         },
-        onHandleDragEnd () {
+            if (this.dragging.active === false) { return }
             this.dragging.active = false
             const width = Math.max(this.dragging.current.columns, 1)
             const height = Math.max(this.dragging.current.rows, 1)
