@@ -60,7 +60,7 @@ export default {
                     columns: 0,
                     rows: 0,
                     width: 0,
-                    heigh: 0
+                    height: 0
                 },
                 current: {
                     columns: 0,
