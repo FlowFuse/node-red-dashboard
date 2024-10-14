@@ -453,8 +453,8 @@
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
-
-        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
+        const target = `nr-dashboard-${id}` // try to reuse the same window per base
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="${target}" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
             c_('label.openDashboard') + ' <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
 
         label.appendTo(header)
