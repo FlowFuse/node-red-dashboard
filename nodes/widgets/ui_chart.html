@@ -314,6 +314,9 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $(evt.target).val()
 
+                    const interpolationWrapper = $('#interpolation-wrapper')
+                    interpolationWrapper.hide()
+
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -323,6 +326,9 @@
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
+                        if (value === 'line') {
+                            interpolationWrapper.show()
+                        }
                     } else if (value === 'pie' || value === 'doughnut') {
                         // for pie/doughnut
                         // types - radial
@@ -524,6 +530,16 @@
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
     </div>
+    <div id="interpolation-wrapper" class="form-row">
+        <label for="node-input-interpolation" data-i18n="ui-chart.label.interpolation"></label></label>
+        <select id="node-input-interpolation">
+            <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
+            <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
+            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
+            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
+            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+        </select>
+    </div>
     <div class="form-row" id="config-stackSeries">
         <!-- do not use node-input here to prevent NR automatic binding -->
         <label for="chart-input-stackSeries"><i class="fa fa-bookmark"></i> <span data-i18n="ui-chart.label.stackSeries"></span></label>
@@ -632,16 +648,6 @@
                 <input style="flex-grow: 1" type="text" id="node-input-yAxisProperty" data-i18n="[placeholder]ui-chart.label.propertyPlaceholder">
             </div>
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-interpolation" data-i18n="ui-chart.label.interpolation"></label></label>
-        <select id="node-input-interpolation" style="width: 70%;">
-            <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
-            <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
-            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
-            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
-            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
-        </select>
     </div>
     <h4>Styling/Colors</h4>
     <div class="form-row" id="ui-chart-colors">
