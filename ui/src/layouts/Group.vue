@@ -72,8 +72,7 @@ export default {
     },
     computed: {
         columns () {
-            const cols = this.dragging.current.columns > 0 ? this.dragging.current.columns : this.group.width
-            return cols
+            return this.dragging.current.columns > 0 ? this.dragging.current.columns : +this.group.width
         }
     },
     methods: {
