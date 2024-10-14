@@ -63,8 +63,8 @@ export default {
                     height: 0
                 },
                 current: {
-                    columns: 0,
-                    rows: 0,
+                    columns: null,
+                    rows: null,
                     width: null
                 }
             }
