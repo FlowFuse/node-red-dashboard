@@ -155,7 +155,9 @@ export default {
     top: 0;
     left: 0;
     --handler-size: 12px;
+    cursor: grab;
     &.active {
+        cursor: grabbing !important;
         background-color: #ff00001f;
         border: 1px dashed red;
     }
@@ -167,7 +169,6 @@ export default {
     background-color: white;
     border: 1px solid black;
     border-radius: 6px;
-    cursor: pointer;
 }
 .nrdb-resizable--top-right {
     top: calc(-1 * var(--handler-size) / 2);
@@ -185,6 +186,9 @@ export default {
     &:hover {
         cursor: ew-resize;
         background-color: #eee;
+    }
+    &:active {
+        cursor: ew-resize !important;
     }
 }
 
