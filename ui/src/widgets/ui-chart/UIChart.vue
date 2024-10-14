@@ -21,8 +21,10 @@ export default {
     },
     data () {
         return {
+            /** @type {Chart} */
             chart: null,
-            hasData: false
+            hasData: false,
+            chartUpdateDebounceTimeout: null
         }
     },
     computed: {
@@ -35,19 +37,20 @@ export default {
     watch: {
         'props.label': function (value) {
             this.chart.options.plugins.title.text = value
-            this.chart.update()
+            this.chartUpdate(false)
         },
         'props.chartType': function (value) {
             this.chart.config.type = value
-            this.chart.update()
+            this.updateInteraction()
+            this.chartUpdate(false)
         },
         'props.xAxisType': function (value) {
             this.chart.options.scales.x.type = value
-            this.chart.update()
+            this.chartUpdate(false)
         },
         'props.xAxisFormatType': function (value) {
             this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
-            this.chart.update()
+            this.chartUpdate(false)
         }
     },
     created () {
@@ -55,6 +58,12 @@ export default {
         this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
+        if (window.Cypress) {
+            // when testing, we expose the chart object to the window object
+            // so we can do an end-to-end test and ensure the right data is applied
+            window.uiCharts = window.uiCharts || {}
+            window.uiCharts[this.id] = this
+        }
         // get a reference to the canvas element
         const el = this.$refs.chart
 
@@ -65,7 +74,7 @@ export default {
                 parsing.xAxisKey = this.props.xAxisProperty
             }
 
-            if (this.props.categoryType !== 'json' && this.props.yAxisProperty) {
+            if (this.props.categoryType !== 'json' && this.props.yAxisProperty && this.props.yAxisPropertyType === 'property') {
                 parsing.yAxisKey = this.props.yAxisProperty
             }
         } else {
@@ -166,6 +175,7 @@ export default {
                 animation: false,
                 maintainAspectRatio: false,
                 borderJoinStyle: 'round',
+                interaction: {},
                 scales,
                 plugins: {
                     title: {
@@ -185,10 +195,56 @@ export default {
         }
         const chart = new Chart(el, config)
 
+        // Useful for debugging: uncomment to expose the chart object to the window
+        // window.uiChart = window.uiChart || {}
+        // window.uiChart[this.id] = chart
+
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
+
+        // ensure the chart is updated with the correct interaction mode
+        // based on the type of chart we are creating
+        this.updateInteraction()
     },
     methods: {
+        updateInteraction () {
+            switch (this.chart.config.type) {
+            case 'line':
+                delete this.chart.options.interaction.axis
+                this.chart.options.interaction.mode = 'x'
+                break
+            case 'scatter':
+                this.chart.options.interaction.axis = 'x'
+                this.chart.options.interaction.mode = 'nearest'
+                break
+            default:
+                delete this.chart.options.interaction.axis
+                this.chart.options.interaction.mode = 'index' // default
+                break
+            }
+        },
+        chartUpdate (immediate = true) {
+            // for data adding, we want to update immediately
+            // but in some cases, like updating multiple props, we want to debounce
+            if (immediate) {
+                if (this.chartUpdateDebounceTimeout) {
+                    clearTimeout(this.chartUpdateDebounceTimeout)
+                    this.chartUpdateDebounceTimeout = null
+                }
+                this.chart.update()
+                return
+            }
+            if (this.chartUpdateDebounceTimeout) {
+                return
+            }
+            this.chartUpdateDebounceTimeout = setTimeout(() => {
+                try {
+                    this.chart.update()
+                } finally {
+                    this.chartUpdateDebounceTimeout = null
+                }
+            }, 30)
+        },
         // given an object, return the value of the category property (which can be nested)
         getLabel (value, category) {
             if (this.props.categoryType !== 'property') {
@@ -261,7 +317,7 @@ export default {
         clear () {
             this.chart.data.labels = []
             this.chart.data.datasets = []
-            this.chart.update()
+            this.chartUpdate()
             this.hasData = false
         },
         add (msg) {
@@ -295,12 +351,15 @@ export default {
             if (this.props.chartType === 'line' || this.props.chartType === 'scatter') {
                 this.limitDataSize()
             }
-            this.chart.update()
+            this.chartUpdate()
         },
         addPoints (payload, datapoint, label) {
-            const d = {
-                ...datapoint,
-                ...payload
+            const d = { ...datapoint, ...payload }
+            if (!this.chart.config?.options?.parsing?.xAxisKey) {
+                d.x = datapoint.x // if there is no mapping key, ensure server side computed datapoint.x is used
+            }
+            if (!this.chart.config?.options?.parsing?.yAxisKey) {
+                d.y = datapoint.y // if there is no mapping key, ensure server side computed datapoint.y is used
             }
 
             if (Array.isArray(label) && label.length > 0) {
@@ -311,19 +370,15 @@ export default {
                     }
                     dd.category = d.category[i]
                     dd.y = d.y[i]
-                    this.addPoint(payload, dd, label[i])
+                    this.addToChart(d, label)
+                    this.commit(payload, dd, label[i])
                 }
             } else {
-                this.addPoint(payload, datapoint, label)
+                this.addToChart(d, label)
+                this.commit(payload, datapoint, label)
             }
         },
-        addPoint (payload, datapoint, label) {
-            const d = {
-                ...datapoint,
-                ...payload
-            }
-            this.addToChart(d, label)
-
+        commit (payload, datapoint, label) {
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
                 widgetId: this.id,
@@ -354,24 +409,26 @@ export default {
             // are we adding a new datapoint to an existing x-value
             const xIndex = xLabels.indexOf(datapoint.x)
 
-            // the chart is empty, we're adding a new series
+            // this series doesn't exist yet in our chart
             if (sIndex === -1) {
                 // if we have no series, then can color each bar/x a different value, or if it's a radial chart
                 const colorByIndex = (this.props.categoryType === 'none' && this.props.chartType === 'bar') || this.props.xAxisType === 'radial'
                 const radius = this.props.pointRadius ? this.props.pointRadius : 4
 
-                // ensure we have a datapoint for the relevant series
-                const data = Array(sLabels.length).fill({})
+                // ensure we have a datapoint for each of the known x-value
+                // ChartsJS doesn't like undefined data points
+                const data = Array(xLabels.length).fill({})
                 if (xIndex === -1) {
                     // Add the new x-value to xLabels
                     xLabels.push(datapoint.x)
-                    // Assign the datapoint to the new index (last position)
-                    data[xLabels.length - 1] = datapoint
+                    // Add data to the end of the array
+                    data.push(datapoint)
                 } else {
+                    // we've got a new series, but a previously seen x-value
                     data[xIndex] = datapoint
                 }
-                // add the new dataset to the chart
-                const d = {
+                // add the new dataset/series to the chart
+                const series = {
                     backgroundColor: colorByIndex ? this.props.colors : this.props.colors[sLabels.length % this.props.colors.length],
                     pointStyle: this.props.pointShape === 'false' ? false : this.props.pointShape || 'circle',
                     pointRadius: radius,
@@ -381,10 +438,10 @@ export default {
                 }
 
                 if (!colorByIndex) {
-                    d.borderColor = this.props.colors[sLabels.length]
+                    series.borderColor = this.props.colors[sLabels.length]
                 }
 
-                this.chart.data.datasets.push(d)
+                this.chart.data.datasets.push(series)
             } else {
                 // have we seen this x-value before?
                 if (xIndex >= 0 && (this.props.xAxisType === 'category' || this.props.xAxisType === 'radial')) {

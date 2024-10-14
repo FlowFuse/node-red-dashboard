@@ -36,15 +36,18 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 
+import Responsiveness from '../mixins/responsiveness.js'
+
 import BaselineLayout from './Baseline.vue'
 import WidgetGroup from './Group.vue'
 
 export default {
-    name: 'LayoutFlex',
+    name: 'LayoutNotebook',
     components: {
         BaselineLayout,
         WidgetGroup
     },
+    mixins: [Responsiveness],
     data () {
         const rowHeight = getComputedStyle(document.body).getPropertyValue('--widget-row-height')
         return {
@@ -122,7 +125,7 @@ export default {
     min-height: 100%;
     flex-wrap: wrap;
     padding: var(--page-padding);
-    --layout-columns: 12;
+    --layout-columns: v-bind(columns);
 }
 .nrdb-layout--notebook > div {
     width: 100%;
@@ -131,23 +134,5 @@ export default {
 
 .v-card {
     width: 100%;
-}
-
-@media only screen and (max-width: 1024px) {
-    .nrdb-layout--notebook {
-        --layout-columns: 9;
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    .nrdb-layout--notebook {
-        --layout-columns: 6;
-    }
-}
-
-@media only screen and (max-width: 576px) {
-    .nrdb-layout--notebook {
-        --layout-columns: 3;
-    }
 }
 </style>

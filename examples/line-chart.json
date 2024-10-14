@@ -4,19 +4,25 @@
         "type": "ui-chart",
         "z": "0758321f1687e812",
         "group": "",
-        "name": "",
+        "name": "Line Chart",
         "label": "chart",
         "order": 9007199254740991,
         "chartType": "line",
         "category": "location",
         "categoryType": "property",
+        "xAxisLabel": "",
         "xAxisProperty": "datestamp",
-        "xAxisPropertyType": "msg",
+        "xAxisPropertyType": "property",
         "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "",
         "yAxisProperty": "temp",
+        "yAxisPropertyType": "property",
         "ymin": "",
         "ymax": "",
         "action": "append",
+        "stackSeries": false,
         "pointShape": "circle",
         "pointRadius": 4,
         "showLegend": true,
@@ -66,6 +72,36 @@
         "payloadType": "json",
         "x": 210,
         "y": 700,
+        "wires": [
+            [
+                "efccfdf502300871"
+            ]
+        ]
+    },
+    {
+        "id": "33ee5762cce0ee32",
+        "type": "inject",
+        "z": "862ec766f2af6f61",
+        "name": "Clear",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "action",
+                "v": "replace",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 290,
+        "y": 1100,
         "wires": [
             [
                 "efccfdf502300871"

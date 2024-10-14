@@ -34,4 +34,24 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
 
         cy.checkOutput('msg.payload[0].value', 4)
     })
+
+    it('uses table value for button text', () => {
+        // this one will render the 5 buttons text using the key "name" from the payload
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').eq(0).should('have.text', 'Name 1')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').eq(1).should('have.text', 'Name 2')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').eq(2).should('have.text', 'Name 3')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').eq(3).should('have.text', 'Name 4')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-buttons-text-from-payload').find('button').eq(4).should('have.text', 'Name 5')
+    })
+    it('uses fixed value for button text', () => {
+        // this one uses a `str` value for the button text
+        const fixedString = 'Button Text Is String Value'
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(0).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(1).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(2).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(3).should('have.text', fixedString)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(4).should('have.text', fixedString)
+    })
 })

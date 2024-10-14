@@ -42,7 +42,7 @@ controls:
         description: Allow control over whether or not the number-input is enabled
 dynamic:
     Label:
-        payload: msg.ui_update.title
+        payload: msg.ui_update.label
         structure: ["String"]
     Icon:
         payload: msg.ui_update.icon

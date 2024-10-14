@@ -33,7 +33,8 @@
     .node-input-column-row-property:not(:first-child) {
         margin-top: 3px;
     }
-    #node-input-column-container .node-input-column-row-property input,
+    #node-input-column-container .node-input-column-row-property input:not(.red-ui-typedInput-input):not(.red-ui-typedInput),
+    #node-input-column-container .node-input-column-row-property div.red-ui-typedInput-container,
     #node-input-column-container .node-input-column-row-property select {
         flex-grow: 1;
         width: 50%;
@@ -178,14 +179,26 @@
                     // key
                     const keyRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
                     $('<label/>', {
-                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key')}:`
+                        text: `${RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.value')}:`
                     }).appendTo(keyRow)
-                    $('<input/>', {
+                    const keyTypedInput = $('<input/>', {
                         class: 'node-input-column-key',
                         type: 'text',
-                        placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key'),
+                        placeholder: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.value'),
                         value: col.key
                     }).appendTo(keyRow)
+                    const keyType = ['str', 'key'].includes(col.keyType) ? col.keyType : 'key'
+                    $('<input/>', {
+                        class: 'node-input-column-keyType',
+                        type: 'hidden',
+                        value: keyType
+                    }).appendTo(keyRow)
+                    $(keyTypedInput).typedInput({
+                        default: 'key',
+                        value: col.key,
+                        typeField: keyRow.find('.node-input-column-keyType'),
+                        types: [{ value: 'key', label: RED._('@flowfuse/node-red-dashboard/ui-table:ui-table.label.key') }, 'str']
+                    })
     
                     // label
                     const labelRow = $('<div />', { class: 'node-input-column-row-property' }).appendTo(options)
@@ -281,9 +294,11 @@
                 node.columns = []
                 columns.each(function (i) {
                     const column = $(this)
+                    const keyField = column.find('.node-input-column-key')
                     const o = {
                         title: column.find('.node-input-column-label').val(),
-                        key: column.find('.node-input-column-key').val(),
+                        key: keyField.typedInput('value'),
+                        keyType: keyField.typedInput('type') || 'key',
                         type: column.find('.node-input-column-type').find(':selected').val(),
                         width: column.find('.node-input-column-width').val(),
                         align: column.find('.node-input-column-align').find(':selected').val()

@@ -19,6 +19,7 @@ module.exports = function (RED) {
                 return {
                     title: col.title || col.label,
                     key: col.key,
+                    keyType: col.keyType || 'key',
                     type: col.type,
                     width: col.width,
                     align: col.align

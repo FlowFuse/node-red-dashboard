@@ -60,11 +60,11 @@ export default {
                     columns: 0,
                     rows: 0,
                     width: 0,
-                    heigh: 0
+                    height: 0
                 },
                 current: {
-                    columns: 0,
-                    rows: 0,
+                    columns: null,
+                    rows: null,
                     width: null
                 }
             }
@@ -72,8 +72,7 @@ export default {
     },
     computed: {
         columns () {
-            const cols = this.dragging.current.columns > 0 ? this.dragging.current.columns : this.group.width
-            return cols
+            return this.dragging.current.columns > 0 ? this.dragging.current.columns : +this.group.width
         }
     },
     methods: {
@@ -91,56 +90,51 @@ export default {
         },
         onHandleDragStart (event, vertical, horizontal) {
             this.dragging.active = true
-            this.dragging.init.columns = parseFloat(this.group.width)
-            this.dragging.init.rows = parseFloat(this.group.height)
-            // event.preventDefault()
-            event.stopPropagation()
-            // don't show image preview
-            const EMPTY_IMAGE = this.$refs['blank-img']
-            event.dataTransfer.setDragImage(EMPTY_IMAGE, 0, 0)
-
-            this.dragging.init.x = event.x
+            this.dragging.init.columns = +this.group.width || 1
+            this.dragging.init.rows = +this.group.height || 1
             this.dragging.init.width = this.$refs['resize-view'].clientWidth
+            this.dragging.init.x = event.x
+            const EMPTY_IMAGE = this.$refs['blank-img'] // don't show image preview
+            event.dataTransfer.setDragImage(EMPTY_IMAGE, 0, 0)
+            // prevent default drag behavior
+            event.stopPropagation()
             return false
         },
         onHandleDrag (event, vertical, horizontal) {
+            if (this.dragging.active === false) { return }
             if (event.x > 0 && event.y > 0) {
-                // odd event fired on mouse up with x/y = 0
-                const stepX = this.$el.clientWidth / this.group.width
-                // const stepY = 50
-
+                const stepX = this.$el.clientWidth / +this.group.width
                 const dx = event.x - this.dragging.init.x
-                // what change does this reflect in the grid?
                 const dw = dx < 0 ? Math.ceil(dx / stepX) : Math.floor(dx / stepX)
-
-                // const dh = Math.floor(event.offsetY / stepY)
-
                 this.dragging.current.width = this.dragging.init.width + dx
-
-                if (dw !== 0) {
-                    const width = this.dragging.init.columns + dw
-                    // const height = this.dragging.init.rows + dh
-
-                    if (width !== this.group.width) {
-                        this.dragging.current.columns = width
-                        this.$emit('resize', {
-                            index: this.index,
-                            width
-                        })
-                    }
+                const width = Math.max(this.dragging.init.columns + dw, 1)
+                if (width !== +this.group.width) {
+                    // console.log('drag handle drag: width', width, 'emitting resize')
+                    this.dragging.current.columns = width
+                    this.$emit('resize', { index: this.index, width })
                 }
             }
         },
-        onHandleDragEnd () {
+        onHandleDragEnd (event) {
+            if (this.dragging.active === false) { return }
             this.dragging.active = false
-            const width = Math.max(this.dragging.current.columns, 1)
-            const height = Math.max(this.dragging.current.rows, 1)
+            if (this.dragging.current.columns === null && this.dragging.current.rows === null) {
+                // console.log('drag handle end reset due to null columns or rows')
+                this.resetDragState()
+                return
+            }
+            const columns = Math.max(this.dragging.current.columns, 1)
+            const rows = Math.max(this.dragging.current.rows, 1)
+            const changed = this.dragging.init.columns !== columns || this.dragging.init.rows !== rows
             this.resetDragState()
-            this.$emit('resize', { index: this.index, width, height })
+            if (changed) {
+                this.$emit('resize', { index: this.index, width: columns, height: rows })
+            }
         },
         resetDragState () {
             this.dragging.current.width = null
             this.dragging.current.columns = null
+            this.dragging.current.rows = null
         }
     }
 
@@ -155,7 +149,9 @@ export default {
     top: 0;
     left: 0;
     --handler-size: 12px;
+    cursor: grab;
     &.active {
+        cursor: grabbing !important;
         background-color: #ff00001f;
         border: 1px dashed red;
     }
@@ -167,7 +163,6 @@ export default {
     background-color: white;
     border: 1px solid black;
     border-radius: 6px;
-    cursor: pointer;
 }
 .nrdb-resizable--top-right {
     top: calc(-1 * var(--handler-size) / 2);
@@ -185,6 +180,9 @@ export default {
     &:hover {
         cursor: ew-resize;
         background-color: #eee;
+    }
+    &:active {
+        cursor: ew-resize !important;
     }
 }
 
