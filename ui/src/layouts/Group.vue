@@ -93,6 +93,11 @@ export default {
             this.dragging.init.columns = +this.group.width || 1
             this.dragging.init.rows = +this.group.height || 1
             this.dragging.init.width = this.$refs['resize-view'].clientWidth
+            this.dragging.init.x = event.x
+            const EMPTY_IMAGE = this.$refs['blank-img'] // don't show image preview
+            event.dataTransfer.setDragImage(EMPTY_IMAGE, 0, 0)
+            // prevent default drag behavior
+            event.stopPropagation()
             return false
         },
         onHandleDrag (event, vertical, horizontal) {
