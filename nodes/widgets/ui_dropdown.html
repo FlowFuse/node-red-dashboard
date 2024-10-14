@@ -54,13 +54,13 @@
                 }
                 if (this.chips === undefined) {
                     $('#node-input-chips').prop('checked', false)
-                }    
+                }
                 if (this.clearable === undefined) {
                     $('#node-input-clearable').prop('checked', false)
-                }  
+                }
                 if (this.typeIsComboBox === undefined) {
                     $('#node-input-typeIsComboBox').prop('checked', true)
-                }                            
+                }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
