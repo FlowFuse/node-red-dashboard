@@ -141,6 +141,28 @@ module.exports = function (RED) {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })
 
+            uiShared.app.get('/dashboard/manifest.webmanifest', (req, res) => {
+                const hasAppIcon = (config.appIcon && config.appIcon.trim() !== '')
+                const manifest = {
+                    name: 'Node-RED Dashboard 2.0',
+                    short_name: 'Dashboard',
+                    start_url: './',
+                    display: 'standalone',
+                    background_color: '#ffffff',
+                    lang: 'en',
+                    scope: './',
+                    description: 'Node-RED Dashboard 2.0',
+                    theme_color: '#ffffff',
+                    icons: [
+                        { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
+                        { src: hasAppIcon ? config.appIcon : 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+                        { src: hasAppIcon ? config.appIcon : 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+                        { src: hasAppIcon ? config.appIcon : 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+                    ]
+                }
+                return res.json(manifest)
+            })
+
             uiShared.app.get(config.path + '/*', uiShared.httpMiddleware, (req, res) => {
                 res.sendFile(path.join(__dirname, '../../dist/index.html'))
             })

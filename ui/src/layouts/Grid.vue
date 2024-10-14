@@ -37,6 +37,21 @@
                 :state="widget.state"
             />
         </div>
+        <div v-if="dialogGroups">
+            <div
+                v-for="g in dialogGroups"
+                :id="'nrdb-ui-group-' + g.id"
+                :key="g.id"
+                class="nrdb-ui-group"
+                :disabled="g.disabled === true ? 'disabled' : null"
+                :class="getGroupClass(g)"
+                :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
+            >
+                <DialogGroup :group="g">
+                    <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                </DialogGroup>
+            </div>
+        </div>
     </BaselineLayout>
     <ConfirmDialog ref="confirmDialog" />
 </template>
@@ -46,6 +61,7 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import Responsiveness from '../mixins/responsiveness.js'
 
 import BaselineLayout from './Baseline.vue'
+import DialogGroup from './DialogGroup.vue'
 import WidgetGroup from './Group.vue'
 import WYSIWYG from './wysiwyg'
 import EditControls from './wysiwyg/EditControls.vue'
@@ -58,6 +74,7 @@ export default {
     components: {
         BaselineLayout,
         ConfirmDialog,
+        DialogGroup,
         EditControls,
         WidgetGroup
     },
@@ -72,6 +89,10 @@ export default {
         ...mapState('ui', ['groups', 'widgets', 'pages', 'edits']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage', 'editedGroups']),
+        dialogGroups () {
+            const groups = this.groupsByPage(this.$route.meta.id).filter((g) => g.groupType === 'dialog')
+            return groups
+        },
         pageWidgets: function () {
             return this.widgetsByPage(this.$route.meta.id)
         },
@@ -92,7 +113,7 @@ export default {
                 // only show hte groups that haven't had their "visible" property set to false
                 .filter((g) => {
                     if ('visible' in g) {
-                        return g.visible
+                        return g.visible && g.groupType !== 'dialog'
                     }
                     return true
                 })

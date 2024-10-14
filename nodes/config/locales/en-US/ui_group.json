@@ -14,7 +14,10 @@
             "interactivity": "Interactivity",
             "active": "Active",
             "disabled": "Disabled",
-            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar"
+            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar",
+            "type": "Type",
+            "typeDefault": "Default",
+            "typeDialog": "Dialog"
         }
     }
 }

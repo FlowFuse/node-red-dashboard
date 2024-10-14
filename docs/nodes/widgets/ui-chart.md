@@ -19,8 +19,8 @@ props:
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
-        <b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</br>
-        <b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.
+        <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>
+        <b>Y:</b> Defines how to render the y-value of any data point.
     Text Color: Option to override Chart.Js default color for text.
         At moment overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
         It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Text Colors</code>
@@ -44,6 +44,9 @@ dynamic:
     import ExampleChartBarFinance from '../../examples/chart-bar-finance-grouped.json'
     import ExampleChartBarElection from '../../examples/chart-bar-election-grouped.json'
     import ExampleChartPieDoughnut from '../../examples/chart-pie-doughnut.json'
+    import ExampleChartHistogramBins from '../../examples/chart-histogram-bins.json'
+    import ExampleChartHistogramCategories from '../../examples/chart-histogram-categories.json'
+    import ExampleChartHistogramSeries from '../../examples/chart-histogram-series.json'
     import ExampleChartScatter from '../../examples/chart-scatter-grouped.json'
     import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
     import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
@@ -55,6 +58,9 @@ dynamic:
       'chart-bar-finance': ExampleChartBarFinance,
       'chart-bar-election': ExampleChartBarElection,
       'chart-pie-doughnut': ExampleChartPieDoughnut,
+      'chart-histogram-bins': ExampleChartHistogramBins,
+      'chart-histogram-categories': ExampleChartHistogramCategories,
+      'chart-histogram-series': ExampleChartHistogramSeries,
       'chart-scatter-grouped': ExampleChartScatter,
       'custom-chart-line': ExampleCustomChartLine,
       'custom-chart-polar': ExampleCustomChartPolar
@@ -73,6 +79,7 @@ Provides configuration options to create the following chart types:
 - [Scatter Plot](#scatter-charts)
 - [Bar Chart](#bar-charts)
 - [Pie/Doughnut Charts](#pie-doughnut-charts)
+- [Histograms](#histograms)
 
 ## Properties
 
@@ -92,8 +99,8 @@ To map your data to the chart, the most important properties to configure are:
 _Example key mapping config for UI Chart_
 
 - **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
-- **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
-- **Y**: Define where to read the value to plot on the y-axis. If left blank, the y-value will be read from `msg.payload` directly, and assume it to be a number.
+- **X**: Defines where to read the value to plot on the x-axis. This can be read from the `msg` object, as a `key` on an object, or generate a new `timestamp` for each data point being received to the node.
+- **Y**: Define where to read the value to plot on the y-axis. This can be read as a property on the `msg` object, or as a `key` on objects in an array of data.
 
 The next most important properties to configure are the "Chart Type" and "X-Axis Type".
 
@@ -301,6 +308,43 @@ Results in the following, where for the "Doughnut" chart has two "Series" worth 
 
 ![Example of Pie and Doughnut Charts](/images/node-examples/ui-chart-pie-doughnut.png "Example of Pie and Doughnut Charts"){data-zoomable}
 _Example of Pie and Doughnut Charts_
+
+### Histograms
+
+Histograms are unique in that they do not _just_ plot the data provided to them. Instead, they calculate and keep track of frequencies of messages received, grouped by the "X" and "Series" properties.
+
+#### Bins
+
+<FlowViewer :flow="examples['chart-histogram-bins']" height="200px"/>
+
+If you want to render numerical data on the x-axis, then you should use the "Bins" x-axis type. This will allow you to define the range of values that should be grouped together, and how many "bins" your range should be split into.
+
+![Example Histogram with numerical bins](/images/node-examples/ui-chart-histogram-bins.png "Example Histogram with numerical bins"){data-zoomable}
+
+Here, we have a slider that inject a payload into the chart everytime it is moved, with numbers being split into 5 bins between 0 and 10.
+
+#### Categorical
+
+<FlowViewer :flow="examples['chart-histogram-categories']" height="400px"/>
+
+If instead, you have fixed string or categorical values for your x-axis, you should use the "Categorical" x-axis type. This will group data by the x-axis value, and then calculate the frequency of each value.
+
+![Example Histogram with categorical bins](/images/node-examples/ui-chart-histogram-categories.png "Example Histogram with categorical bins"){data-zoomable}
+
+Here, each button emits a payload matching a given letter (the x-axis value), and the chart calculates the frequency of each letter received. Additionally, we have the first row of buttons belonging to the "Series 1", and the second row of buttons belonging to the "Series 2", defined through `msg.topic`.
+
+#### Grouping into Series
+
+<FlowViewer :flow="examples['chart-histogram-series']" height="200px"/>
+
+We can also add an extra dimension of data to our Histogram with "Series".
+
+![Example Histogram with categorical bins and grouped by Series](/images/node-examples/ui-chart-histogram-bins-series.png "Example Histogram with categorical bins and grouped by Series"){data-zoomable}
+_Screenshot showing two histograms rendering hte same data source, but with different series_ 
+
+Here, we have a sample data set which details licenses for software running for _n_ days. Each license details the operating system (`os`), which `version` of the software it is running, and whether or not it is a paid for `license`.
+
+Our two side-by-side charts show the same frequency data (with bins for the `age` on the x-axis), but one breaks it down by `version` and the other by `os`.
 
 ## Controls
 

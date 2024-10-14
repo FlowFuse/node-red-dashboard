@@ -4,6 +4,7 @@
         "label": {
             "uiName": "UI Name",
             "path": "Path",
+            "appIcon": "App Icon",
             "category": "dashboard 2",
             "dashboard2": "Dashboard 2.0",
             "editSettings": "Edit Settings",
