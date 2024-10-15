@@ -490,3 +490,17 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .nrdb-ui-group.dragging {
     border-style: dashed;
 }
+.nrdb-ui-group.drag-start {
+    opacity: 0.5;
+}
+.nrdb-ui-group.drag-over {
+    outline: 2px dashed black;
+}
+.nrdb-ui-page > .nrdb-ui-group[draggable="true"] > .v-card.resize-active {
+     /*
+        ensure card is on top while being actively resized
+        this is important to ensure the resize handles are visible
+        above sibling cards
+     */
+    z-index: 1000 !important;
+}

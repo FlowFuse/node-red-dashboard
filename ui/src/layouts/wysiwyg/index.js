@@ -6,7 +6,9 @@ export default {
         return {
             pageGroups: [],
             dragging: {
-                index: -1
+                active: false,
+                index: -1,
+                dropIndex: -1
             }
         }
     },
@@ -51,52 +53,54 @@ export default {
          * @param {Number} index - The index of the group
          */
         onDragStart (event, index) {
+            this.dragging.active = true
             this.dragging.index = index
-            event.dataTransfer.effectAllowed = 'move'
+            this.dragging.dropIndex = index
+            event.dataTransfer.effectAllowed = 'all'
+            event.dataTransfer.dropEffect = 'move'
+            event.stopPropagation()
+            return false
         },
         /**
          * Event handler for dragover event
          * @param {DragEvent} event - The drag event
          * @param {Number} index - The index of the group
          */
-        onDragOver (event, index) {
+        onDragOver (event, index, group) {
+            if (this.dragging.active === false) { return }
             // ensure the mouse is over a different group
+            if (index !== this.dragging.index) {
+                this.dragging.dropIndex = index
+            }
             if (this.dragging.index === index || this.dragging.index < 0) {
+                event.dataTransfer.dropEffect = 'none'
                 return
             }
-            // ensure the mouse is within the bounds of the source group size
-            // to avoid flip-flop when the target group is larger than the source group
-            const sourceGroup = this.pageGroups[this.dragging.index]
-            const sourceId = `nrdb-ui-group-${sourceGroup.id}`
-            const sourceEl = document.getElementById(sourceId)
-            const sourceBounds = sourceEl.getBoundingClientRect()
-            const targetGroup = this.pageGroups[index]
-            const targetId = `nrdb-ui-group-${targetGroup.id}`
-            const targetEl = document.getElementById(targetId)
-            const targetBounds = targetEl.getBoundingClientRect()
-            const hitBoundX1 = targetBounds.left
-            const hitBoundX2 = targetBounds.left + sourceBounds.width
-            const hitBoundY1 = targetBounds.top
-            const hitBoundY2 = targetBounds.top + sourceBounds.height
-            if (event.clientX < hitBoundX1 || event.clientX > hitBoundX2 || event.clientY < hitBoundY1 || event.clientY > hitBoundY2) {
-                return
-            }
-
+            console.log('onDragOver index', index, 'group', group)
+            event.dataTransfer.dropEffect = 'move'
             if (this.dragging.index >= 0) {
                 event.preventDefault()
                 event.dataTransfer.dropEffect = 'drop'
-                this.moveGroup(this.dragging.index, index)
             }
         },
-        onDrop (event, index) {
+        onDrop (event, index, group) {
+            if (this.dragging.active === false) { return }
+            this.dragging.dropIndex = index
             event.preventDefault()
             if (this.dragging.index >= 0) {
-                this.moveGroup(this.dragging.index, index)
+                this.moveGroup(this.dragging.index, this.dragging.dropIndex)
+                this.dragging.active = false
                 this.dragging.index = -1
+                this.dragging.dropIndex = -1
             }
         },
-        onDragEnd (event, index) {
+        onDragLeave (event, index, group) {
+            this.dragging.dropIndex = -1
+        },
+        onDragEnd (event, index, group) {
+            this.dragging.active = false
             this.dragging.index = -1
+            this.dragging.dropIndex = -1
         },
         moveGroup (fromIndex, toIndex) {
             const movedItem = this.pageGroups.splice(fromIndex, 1)[0]
@@ -114,19 +118,28 @@ export default {
             }
             this.pageGroups[opts.index].width = opts.width
         },
+        getDragDropClass (group) {
+            if (this.isDragging(group)) {
+                console.log('getDragDropClass returning drag-start')
+                return 'drag-start'
+            }
+            const targetGroup = this.pageGroups[this.dragging.dropIndex]
+            if (targetGroup?.id === group?.id) {
+                console.log('getDragDropClass returning drag-over')
+                return 'drag-over'
+            }
+            console.log('getDragDropClass returning ""')
+            return ''
+        },
         isDragging (group) {
+            if (!this.dragging.active) {
+                return false
+            }
             const dragging = this.pageGroups[this.dragging.index]
             if (dragging?.id === group?.id) {
                 return true
             }
             return false
-        },
-        getElementBounds (id) {
-            const sourceGroup = this.pageGroups[this.dragging.index]
-            const sourceId = `nrdb-ui-group-${sourceGroup.id}`
-            const sourceEl = document.getElementById(sourceId)
-            const sourceBounds = sourceEl.getBoundingClientRect()
-            return sourceBounds
         }
     }
 }

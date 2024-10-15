@@ -11,9 +11,11 @@
                 :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
                 :draggable="editMode"
                 @dragstart="onDragStart($event, $index)"
-                @dragend="onDragEnd($event, $index)"
-                @dragover="onDragOver($event, $index)"
-                @drop="onDrop($event, $index)"
+                @dragend="onDragEnd($event, $index, g)"
+                @dragover="onDragOver($event, $index, g)"
+                @drop="onDrop($event, $index, g)"
+                @dragleave="onDragLeave($event, $index, g)"
+                @dragenter.prevent
             >
                 <v-card variant="outlined" class="bg-group-background">
                     <template v-if="g.showTitle" #title>
@@ -146,8 +148,9 @@ export default {
                 classes.push(properties.class)
             }
             // dragging interaction classes
-            if (this.isDragging(group)) { // Mixin method
-                classes.push('dragging')
+            const dragDropClass = this.getDragDropClass(group) // Mixin method
+            if (dragDropClass) {
+                classes.push(dragDropClass)
             }
             return classes.join(' ')
         },

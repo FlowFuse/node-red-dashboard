@@ -12,8 +12,8 @@
             <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
         </div>
         <div
-            v-if="resizable" ref="resize-view" class="nrdb-resizable" :class="{'active': dragging.active}"
-            :style="{'width': dragging.current.width ? `${dragging.current.width}px` : null }"
+            v-if="resizable" ref="resize-view" class="nrdb-resizable" :class="{'resizing': resizing.active}"
+            :style="{'width': resizing.current.width ? `${resizing.current.width}px` : null }"
         >
             <div
                 draggable="true"
@@ -21,6 +21,8 @@
                 @dragstart="onHandleDragStart($event, 'top', 'right')"
                 @drag="onHandleDrag($event, 'top', 'right')"
                 @dragend="onHandleDragEnd($event, 'top', 'right')"
+                @dragover="onHandleOver($event, 'top', 'right')"
+                @dragenter.prevent
             />
         </div>
         <img ref="blank-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="">
@@ -52,7 +54,7 @@ export default {
     emits: ['resize'],
     data () {
         return {
-            dragging: {
+            resizing: {
                 active: false,
                 init: {
                     x: 0,
@@ -72,7 +74,15 @@ export default {
     },
     computed: {
         columns () {
-            return this.dragging.current.columns > 0 ? this.dragging.current.columns : +this.group.width
+            return this.resizing.current.columns > 0 ? this.resizing.current.columns : +this.group.width
+        }
+    },
+    watch: {
+        'resizing.active' (active) {
+            // add class 'resize-active' to parent group v-card
+            // that class is solely to raise the z-index of the group while resizing
+            // the associated resize-active CSS is in `common.css`
+            this.$el.parentElement.closest('.nrdb-ui-group > .v-card')?.classList.toggle('resize-active', active)
         }
     },
     methods: {
@@ -88,53 +98,61 @@ export default {
             }
             return classes.join(' ')
         },
-        onHandleDragStart (event, vertical, horizontal) {
-            this.dragging.active = true
-            this.dragging.init.columns = +this.group.width || 1
-            this.dragging.init.rows = +this.group.height || 1
-            this.dragging.init.width = this.$refs['resize-view'].clientWidth
-            this.dragging.init.x = event.x
+        onHandleDragStart (/** @type {DragEvent} */ event, vertical, horizontal) {
+            this.resizing.active = true
+            this.resizing.init.columns = +this.group.width || 1
+            this.resizing.init.rows = +this.group.height || 1
+            this.resizing.init.width = this.$refs['resize-view'].clientWidth
+            this.resizing.init.x = event.x
             const EMPTY_IMAGE = this.$refs['blank-img'] // don't show image preview
             event.dataTransfer.setDragImage(EMPTY_IMAGE, 0, 0)
-            // prevent default drag behavior
+            event.dataTransfer.effectAllowed = 'all'
+            event.dataTransfer.dropEffect = 'move'
             event.stopPropagation()
             return false
         },
-        onHandleDrag (event, vertical, horizontal) {
-            if (this.dragging.active === false) { return }
+        onHandleOver (/** @type {DragEvent} */ event, vertical, horizontal) {
+            if (this.resizing.active === false) { return }
+            console.log('onHandleOver', event)
+            event.dataTransfer.dropEffect = 'move'
+            event.preventDefault()
+        },
+        onHandleDrag (/** @type {DragEvent} */ event, vertical, horizontal) {
+            if (this.resizing.active === false) { return }
+            console.log('onHandleDrag', event)
+            event.dataTransfer.dropEffect = 'move'
             if (event.x > 0 && event.y > 0) {
                 const stepX = this.$el.clientWidth / +this.group.width
-                const dx = event.x - this.dragging.init.x
+                const dx = event.x - this.resizing.init.x
                 const dw = dx < 0 ? Math.ceil(dx / stepX) : Math.floor(dx / stepX)
-                this.dragging.current.width = this.dragging.init.width + dx
-                const width = Math.max(this.dragging.init.columns + dw, 1)
+                this.resizing.current.width = this.resizing.init.width + dx
+                const width = Math.max(this.resizing.init.columns + dw, 1)
                 if (width !== +this.group.width) {
-                    // console.log('drag handle drag: width', width, 'emitting resize')
-                    this.dragging.current.columns = width
+                    this.resizing.current.columns = width
                     this.$emit('resize', { index: this.index, width })
                 }
             }
         },
-        onHandleDragEnd (event) {
-            if (this.dragging.active === false) { return }
-            this.dragging.active = false
-            if (this.dragging.current.columns === null && this.dragging.current.rows === null) {
-                // console.log('drag handle end reset due to null columns or rows')
+        onHandleDragEnd (/** @type {DragEvent} */ event) {
+            if (this.resizing.active === false) { return }
+            this.resizing.active = false
+            if (this.resizing.current.columns === null && this.resizing.current.rows === null) {
                 this.resetDragState()
                 return
             }
-            const columns = Math.max(this.dragging.current.columns, 1)
-            const rows = Math.max(this.dragging.current.rows, 1)
-            const changed = this.dragging.init.columns !== columns || this.dragging.init.rows !== rows
+            const columns = Math.max(this.resizing.current.columns, 1)
+            const rows = Math.max(this.resizing.current.rows, 1)
+            const changed = this.resizing.init.columns !== columns || this.resizing.init.rows !== rows
             this.resetDragState()
             if (changed) {
                 this.$emit('resize', { index: this.index, width: columns, height: rows })
             }
         },
         resetDragState () {
-            this.dragging.current.width = null
-            this.dragging.current.columns = null
-            this.dragging.current.rows = null
+            this.resizing.active = false
+            this.resizing.current.width = null
+            this.resizing.current.columns = null
+            this.resizing.current.rows = null
         }
     }
 
@@ -150,8 +168,7 @@ export default {
     left: 0;
     --handler-size: 12px;
     cursor: grab;
-    &.active {
-        cursor: grabbing !important;
+    &.resizing {
         background-color: #ff00001f;
         border: 1px dashed red;
     }
@@ -163,6 +180,10 @@ export default {
     background-color: white;
     border: 1px solid black;
     border-radius: 6px;
+    cursor: ew-resize;
+    &:active {
+        cursor: ew-resize !important;
+    }
 }
 .nrdb-resizable--top-right {
     top: calc(-1 * var(--handler-size) / 2);
