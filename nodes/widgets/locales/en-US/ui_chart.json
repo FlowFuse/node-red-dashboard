@@ -76,11 +76,11 @@
             "stackSeriesTrue": "Stacks",
             "stackSeriesFalse": "Side-by-Side",
             "interpolation": "Interpolation",
-            "linearInterpolation": "linear",
-            "stepInterpolation": "step",
-            "bezierInterpolation": "bezier",
-            "cubicInterpolation": "cubic",
-            "cubicMonoInterpolation": "cubic-mono"
+            "linearInterpolation": "Linear",
+            "stepInterpolation": "Step",
+            "bezierInterpolation": "Bezier",
+            "cubicInterpolation": "Cubic",
+            "cubicMonoInterpolation": "Cubic-Mono"
         },
         "notifications": {
             "clearSuccess": "Chart data cleared successfully",
