@@ -58,9 +58,8 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        value: function () {
-            // Get the value (i.e. the notification text content) from the last input msg
-            return this.messages[this.id]?.payload
+        value () {
+            return this.getProperty('message') || ''
         },
         allowConfirm () {
             return this.getProperty('allowConfirm')
@@ -119,18 +118,20 @@ export default {
             this.updateDynamicProperty('position', updates.position)
             this.updateDynamicProperty('raw', updates.raw)
             this.updateDynamicProperty('showCountdown', updates.showCountdown)
+            this.updateDynamicProperty('message', updates.message)
         },
         onMsgInput (msg) {
             // Make sure the last msg (that has a payload, containing the notification content) is being stored
-            if (msg.payload) {
+            const payload = this.getProperty('message')
+            if (typeof payload !== 'undefined') {
                 this.$store.commit('data/bind', {
                     widgetId: this.id,
                     msg
                 })
             }
 
-            if (msg.show === true || typeof msg.payload !== 'undefined') {
-                // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
+            if (msg.show === true || typeof payload !== 'undefined') {
+                // If msg.show is true or payload contains a notification title, the notification popup need to be showed (if currently hidden)
                 if (!this.show) {
                     this.show = true
 
@@ -152,7 +153,7 @@ export default {
             this.timeouts.close = setTimeout(() => {
                 // close the notification after time has elapsed
                 this.close('timeout')
-            }, time)
+            }, time + 100) // add 100ms grace before firing timeout in case user clicked a button (ui update is slow)
 
             // update the progress bar every 100ms
             this.timeouts.step = setInterval(() => {
@@ -163,20 +164,23 @@ export default {
                 this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
             }, 100)
         },
-        close (payload) {
-            this.show = false
-
-            const msg = this.messages[this.id] || {}
-            this.$socket.emit('widget-action', this.id, {
-                ...msg,
-                payload
-            })
-
+        close (reason) {
+            // always kill timers
             clearTimeout(this.timeouts.close)
             clearInterval(this.timeouts.step)
             this.tik = null
             this.timeouts.close = null
             this.timeouts.step = null
+
+            // interlock to prevent double-sending
+            if (this.show === false) {
+                return
+            }
+            this.show = false
+            const msg = { ...this.messages[this.id] || {} }
+            msg._event = msg._event || {}
+            msg._event.reason = reason
+            this.$socket.emit('widget-action', this.id, msg)
         }
     }
 }
