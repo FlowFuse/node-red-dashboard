@@ -5,6 +5,14 @@
         <dt>Label <span class="property-type">string</span></dt>
         <dd>Text shown above the rendered chart in the Dashboard.</dd>
         <dt>Type <span class="property-type">Line | Bar | Scatter | Pie | Doughnut | Histogram</span></dt>
+        <dt>Interpolation <span class="property-type">Linear | Step | Bezier | Cubic | Cubic Mono</span></dt>
+        <ul>
+            <li> <b>linear</b> : Creates straight lines between data points, producing a standard linear chart.</li>
+            <li> <b>step</b> : Creates step-like transitions between points, useful for representing changes that occur in stages.</li>
+            <li> <b>bezier</b> : Draws a smooth, curved line with subtle tension, providing a flowing transition between points.</li>
+            <li> <b>cubic</b> : Draw curved cubic line chart with a tension.</li>
+            <li> <b>cubic-mono</b> : Similar to cubic, but ensures monotonic behavior.</li>
+        </ul>
         <dd>Choose the type of graph that you wish to render data with. Note
             that different data structures are accepted for different chart types.</dd>
         <dt>Show Legend <span class="property-type">boolean</span></dt>
