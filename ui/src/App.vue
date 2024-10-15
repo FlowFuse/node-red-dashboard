@@ -191,10 +191,7 @@ export default {
 
             // if this is the first time we load the Dashboard, the router hasn't registered the current route properly,
             // so best we just navigate to the existing URL to let router catch up
-            // ensure we remove the edit key from the URL
-            const url = new URL(window.location.href)
-            url.searchParams.delete('edit-key')
-            this.$router.push(url)
+            this.$router.push(this.$route.fullPath)
 
             // loop over the widgets defined in Node-RED,
             // map their respective Vue component for rendering on a page
