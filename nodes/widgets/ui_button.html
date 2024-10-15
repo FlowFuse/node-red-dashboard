@@ -37,16 +37,14 @@
                 buttonColor: { value: '' },
                 textColor: { value: '' },
                 iconColor: { value: '' },
-                
+    
                 // pointerup/down event support
                 enablePointerdown: { value: false },
                 pointerdownPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdownPayloadType') : function (v) { return true }) },
                 pointerdownPayloadType: { value: 'str' },
                 enablePointerup: { value: false },
                 pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
-                pointerupPayloadType: { value: 'str' },
-
-                iconColor: { value: '' }
+                pointerupPayloadType: { value: 'str' }
             },
             inputs: 1,
             outputs: 1,
@@ -105,8 +103,8 @@
                     default: 'str',
                     typeField: $('#node-input-pointerdownPayloadType'),
                     types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                });
-                
+                })
+    
                 $('#node-input-enablePointerup').on('change', function () {
                     if (this.checked) {
                         $('.form-row-pointerup').show()
@@ -119,7 +117,7 @@
                     default: 'str',
                     typeField: $('#node-input-pointerdownPayloadType'),
                     types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                });
+                })
 
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
