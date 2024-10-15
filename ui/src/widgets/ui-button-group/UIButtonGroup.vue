@@ -1,8 +1,7 @@
 <template>
     <div class="nrdb-ui-button-group-wrapper">
-        <label v-if="label" class="v-label">
-            {{ label }}
-        </label>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <label v-if="label" class="v-label" v-html="label" />
         <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
                 <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
@@ -16,6 +15,7 @@
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex'
 
 export default {
@@ -44,7 +44,8 @@ export default {
             return this.look === 'default' ? null : this.look
         },
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         options: function () {
             const options = this.getProperty('options')

@@ -1,12 +1,14 @@
 <template>
     <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + layout" :style="style">
-        <label class="nrdb-ui-text-label">{{ label }}</label>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <label class="nrdb-ui-text-label" v-html="label" />
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span class="nrdb-ui-text-value" v-html="value" />
     </div>
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
@@ -27,7 +29,8 @@ export default {
             return ''
         },
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
             return this.getProperty('layout')

@@ -13,7 +13,7 @@ props:
         description: If "Icon" is defined, this property controls if icon is render inside or outside the text input box.
         dynamic: true
     Label:
-        description: The text shown within the text input field.
+        description: The text shown within the text input field.  Html content is allowed.
         dynamic: true
     Tooltip: The text shown when hovering over the text input field.
     Mode:

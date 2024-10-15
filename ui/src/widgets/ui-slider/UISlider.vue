@@ -2,7 +2,7 @@
 <!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
-        v-model="value" :disabled="!state.enabled" :label="label" hide-details="auto"
+        v-model="value" :disabled="!state.enabled" hide-details="auto"
         :class="className" :style="`--nrdb-slider-track-color:${colorTrack};--nrdb-slider-tick-scaleY:${tickScaleY};--nrdb-slider-tick-scaleX:${tickScaleX};`"
         :thumb-label="thumbLabel"
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
@@ -11,10 +11,16 @@
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="step || 1" :show-ticks="showTicks"
         @update:model-value="onChange" @end="onBlur"
-    />
+    >
+        <template #label>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <span v-html="label" />
+        </template>
+    </v-slider>
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
@@ -45,7 +51,8 @@ export default {
             return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         thumbLabel: function () {
             return this.getProperty('thumbLabel')
