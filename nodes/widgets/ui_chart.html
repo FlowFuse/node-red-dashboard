@@ -43,6 +43,7 @@
         }
         const noneType = { value: 'none', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.none'), hasValue: false }
         const keyType = { value: 'property', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.key') }
+        const timestampType = { value: 'timestamp', icon: 'fa fa-clock-o', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.timestamp'), hasValue: false }
 
         function hexToRgb (hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -84,7 +85,7 @@
                 categoryType: { value: 'msg' },
                 xAxisLabel: { value: '' },
                 xAxisProperty: { value: null },
-                xAxisPropertyType: { value: 'property' },
+                xAxisPropertyType: { value: 'timestamp' },
                 xAxisType: { value: 'time' },
                 xAxisFormat: { value: '' },
                 xAxisFormatType: { value: 'auto' },
@@ -103,8 +104,8 @@
                     }
                 },
                 yAxisLabel: { value: '' },
-                yAxisProperty: { value: null },
-                yAxisPropertyType: { value: 'property' },
+                yAxisProperty: { value: 'payload' },
+                yAxisPropertyType: { value: 'msg' },
                 ymin: { value: '', validate: function (value) { return numberValidator(value, true) } },
                 ymax: { value: '', validate: function (value) { return numberValidator(value, true) } },
                 bins: {
@@ -139,7 +140,8 @@
                     }
                 },
                 height: { value: 8 },
-                className: { value: '' }
+                className: { value: '' },
+                interpolation: { value: 'linear' }
             },
             inputs: 1,
             outputs: 1,
@@ -260,16 +262,22 @@
                     typeField: $('#node-input-categoryType'),
                     types: getSeriesTypes($('#node-input-xAxisType').val())
                 })
+    
                 $('#node-input-xAxisProperty').typedInput({
-                    default: keyType.value,
+                    default: timestampType.value,
                     typeField: $('#node-input-xAxisPropertyType'),
-                    types: ['msg', 'str', keyType]
+                    types: ['msg', keyType, 'str', timestampType]
                 })
                 $('#node-input-yAxisProperty').typedInput({
-                    default: keyType.value,
                     typeField: $('#node-input-yAxisPropertyType'),
                     types: ['msg', keyType] // makes no sense for the y-axis to be a string
                 })
+                if (typeof node.yAxisPropertyType === 'undefined') {
+                    // older chart nodes had no yAxisPropertyType, so need to default "key"
+                    node.yAxisPropertyType = keyType.value
+                    // make selection via jQuery
+                    $('#node-input-yAxisProperty').typedInput('type', keyType.value)
+                }
 
                 const updateXAxisTypeOptions = function (options, defaultValue) {
                     const $el = $('#node-input-xAxisType')
@@ -306,6 +314,9 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $(evt.target).val()
 
+                    const interpolationWrapper = $('#interpolation-wrapper')
+                    interpolationWrapper.hide()
+
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -315,6 +326,9 @@
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
+                        if (value === 'line') {
+                            interpolationWrapper.show()
+                        }
                     } else if (value === 'pie' || value === 'doughnut') {
                         // for pie/doughnut
                         // types - radial
@@ -421,6 +435,12 @@
                 if (this.gridColorDefault || this.gridColorDefault === undefined) {
                     $('#node-chart-grid-color').hide()
                 }
+
+                if (this.interpolation) {
+                    $('#node-input-interpolation').val(this.interpolation)
+                } else {
+                    $('#node-input-interpolation').val('linear')
+                }
             },
             oneditsave: function () {
                 // Stack By - convert from string values to bool
@@ -509,6 +529,16 @@
             <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> <span data-i18n="ui-chart.label.showLegend"></span></label>
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
+    </div>
+    <div id="interpolation-wrapper" class="form-row">
+        <label for="node-input-interpolation" data-i18n="ui-chart.label.interpolation"></label></label>
+        <select id="node-input-interpolation">
+            <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
+            <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
+            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
+            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
+            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+        </select>
     </div>
     <div class="form-row" id="config-stackSeries">
         <!-- do not use node-input here to prevent NR automatic binding -->

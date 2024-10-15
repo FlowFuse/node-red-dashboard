@@ -19,8 +19,8 @@ props:
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
-        <b>X:</b> Only available for Line & Scatter Charts. This defines the key (which can be nested) of the value that should be plotted onto the x-axis. If left blank, the x-value will be calculated as the current timestamp.</br>
-        <b>Y:</b> Defines the key (which can be nested, e.g. <code>'nested.value'</code>) of the value that should be plotted onto the x-axis. This value is ignored if injecting single numerical values into the chart.
+        <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>
+        <b>Y:</b> Defines how to render the y-value of any data point.
     Text Color: Option to override Chart.Js default color for text.
         At moment overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
         It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Text Colors</code>
@@ -99,8 +99,8 @@ To map your data to the chart, the most important properties to configure are:
 _Example key mapping config for UI Chart_
 
 - **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
-- **X**: Define where to read the value to plot on the x-axis. If left blank, the x-value will be calculated as the current timestamp.
-- **Y**: Define where to read the value to plot on the y-axis. If left blank, the y-value will be read from `msg.payload` directly, and assume it to be a number.
+- **X**: Defines where to read the value to plot on the x-axis. This can be read from the `msg` object, as a `key` on an object, or generate a new `timestamp` for each data point being received to the node.
+- **Y**: Define where to read the value to plot on the y-axis. This can be read as a property on the `msg` object, or as a `key` on objects in an array of data.
 
 The next most important properties to configure are the "Chart Type" and "X-Axis Type".
 
@@ -136,6 +136,20 @@ Then, the last piece of the puzzle would be to set the `y` property would be one
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1234567890, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
 
+#### Interpolation Methods for Line Charts
+
+Interpolation defines how the line is drawn between data points on a line chart. In Dashboard, you can choose between several interpolation methods to suit your data visualization needs:
+- Linear: Draws a straight line between each data point. Best for continuous datasets with smooth transitions.
+- Step: Creates a stepped line between points, where the value jumps abruptly to the next point. This method is ideal for visualizing data that changes in discrete steps, such as states or thresholds.
+- Bezier: Produces a smooth curve with slight tension between points, creating a more aesthetically pleasing line. Useful for datasets where a smooth transition is important.
+- Cubic: Draws a cubic curve for even more smoothing between data points, providing a rounded visual representation.
+- Cubic-Mono: Similar to cubic, but with an additional constraint that ensures the curve maintains a monotonic behavior. This means it avoids overshooting between points, making it more stable.
+
+![Example Line Chart with stepped interpolation](/images/node-examples/ui-chart-line-interpolation-stepped.png "Example Line Chart with stepped interpolation"){data-zoomable}
+_Example Line Chart with stepped interpolation_
+
+![Example Line Chart with bezier interpolation](/images/node-examples/ui-chart-line-interpolation-bezier.png "Example Line Chart with bezier interpolation"){data-zoomable}
+_Example Line Chart with bezier interpolation_
 
 #### Multiple Lines
 

@@ -37,11 +37,11 @@ module.exports = function (RED) {
         }
 
         // ensure sane defaults
-        if (!['msg', 'str', 'property'].includes(config.xAxisPropertyType)) {
-            config.xAxisPropertyType = 'property' // default to 'key'
+        if (!['msg', 'str', 'property', 'timestamp'].includes(config.xAxisPropertyType)) {
+            config.xAxisPropertyType = 'timestamp' // default to 'timestamp'
         }
         if (!['msg', 'property'].includes(config.yAxisPropertyType)) {
-            config.yAxisPropertyType = 'property' // default to 'key'
+            config.yAxisPropertyType = 'property' // default to 'key' for older chart nodes
         }
         if (config.xAxisPropertyType === 'msg' && !config.xAxisProperty) {
             config.xAxisPropertyType = 'property' // msg needs a property to evaluate, default to 'key'
@@ -51,6 +51,10 @@ module.exports = function (RED) {
         }
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
+
+        if (!config.interporlation || typeof config.interporlation === 'undefined') {
+            config.interporlation = 'linear'
+        }
 
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
@@ -114,12 +118,17 @@ module.exports = function (RED) {
                             : (new Date()).getTime()
                         datapoint.y = payload
                     } else if (typeof payload === 'object') {
-                        let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
+                        // let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
+                        let x = null
                         // may have been given an x/y object already
                         // let x = getProperty(payload, config.xAxisProperty)
                         let y = payload.y
-                        if ((x === undefined || x === null) && config.xAxisProperty === '') {
+                        if (config.xAxisPropertyType === 'timestamp' || config.xAxisProperty === '') {
+                            // no property defined, therefore use time
                             x = (new Date()).getTime()
+                        } else {
+                            // evaluate the x-axis property
+                            x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         }
                         if (Array.isArray(series)) {
                             if (series.length > 1) {

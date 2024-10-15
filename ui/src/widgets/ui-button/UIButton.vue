@@ -73,7 +73,7 @@ export default {
     },
     methods: {
         action ($evt) {
-            if (!this.isPointerOverButton) {
+            if (!this.isPointerOverButton || !this.props.enableClick) {
                 return
             }
             const evt = {
