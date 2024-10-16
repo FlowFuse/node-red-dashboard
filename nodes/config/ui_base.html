@@ -908,7 +908,7 @@
                     window.open(url, target)
                 } catch (err) {
                     console.error('layout mode error', err)
-                    RED.notify(base._('common.notification.error', { message: 'Unable to begin layout editor' }), 'error')
+                    RED.notify('Unable to begin layout editor', 'error')
                 }
                 return false // return false to click event to prevent default
             })
