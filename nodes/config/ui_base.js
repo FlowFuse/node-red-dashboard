@@ -437,10 +437,14 @@ module.exports = function (RED) {
                     node.ui.groups.set(id, { ...group, ...state })
                 }
             }
-
+            const handshakeEditKey = socket.handshake.query?.editKey
+            const meta = { ...node.ui.meta }
+            if (!node.ui.meta?.wysiwyg?.editKey || handshakeEditKey !== node.ui.meta.wysiwyg.editKey) {
+                delete meta.wysiwyg
+            }
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
-                meta: node.ui.meta,
+                meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
                 pages: Object.fromEntries(node.ui.pages),

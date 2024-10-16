@@ -132,10 +132,11 @@ fetch('_setup')
 
         let reconnectTO = null
         const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
-
+        const editKey = host.searchParams.get('edit-key')
         const socket = io({
             ...setup.socketio,
-            reconnection: false
+            reconnection: false,
+            query: editKey ? { editKey } : undefined // include handshake data so that only original edit-key holder can edit
         })
 
         // handle final disconnection
