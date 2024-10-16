@@ -120,15 +120,12 @@ export default {
         },
         getDragDropClass (group) {
             if (this.isDragging(group)) {
-                console.log('getDragDropClass returning drag-start')
                 return 'drag-start'
             }
             const targetGroup = this.pageGroups[this.dragging.dropIndex]
             if (targetGroup?.id === group?.id) {
-                console.log('getDragDropClass returning drag-over')
                 return 'drag-over'
             }
-            console.log('getDragDropClass returning ""')
             return ''
         },
         isDragging (group) {
