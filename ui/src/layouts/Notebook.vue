@@ -58,7 +58,7 @@ import DialogGroup from './DialogGroup.vue'
 import WidgetGroup from './Group.vue'
 
 export default {
-    name: 'LayoutFlex',
+    name: 'LayoutNotebook',
     components: {
         BaselineLayout,
         DialogGroup,
