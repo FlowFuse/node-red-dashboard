@@ -29,7 +29,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - chart options', () => {
             should(chartObject).is.not.empty()
             should(chartObject.chart.options.type).be.equal('line')
             should(chartObject.chart.options.interaction).be.an.Object()
-            should(chartObject.chart.options.interaction.mode).be.equal('nearest')
+            should(chartObject.chart.options.interaction.mode).be.equal('x')
             should(chartObject.chart.options.interaction).not.have.property('axis')
         })
     })
