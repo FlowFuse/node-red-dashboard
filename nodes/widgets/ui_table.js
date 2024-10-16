@@ -27,6 +27,10 @@ module.exports = function (RED) {
             })
         }
 
+        if (!config.action || typeof config.action === 'undefined') {
+            config.action = 'append'
+        }
+
         // inform the dashboard UI that we are adding this node
         group.register(node, config, {
             onAction: true,
