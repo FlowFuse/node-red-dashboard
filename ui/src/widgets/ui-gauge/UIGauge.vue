@@ -1,5 +1,5 @@
 <template>
-    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
+    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank', 'gauge-thermometer'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
     <ui-gauge-dial v-else :id="id" :key="updateGaugeDial" :props="dynamicProps" :value="value" />
 </template>
 
@@ -9,6 +9,7 @@ import { mapState } from 'vuex' // eslint-disable-line import/order
 import UIGaugeBattery from './types/UIGaugeBattery.vue'
 import UIGaugeDial from './types/UIGaugeDial.vue'
 import UIGaugeTank from './types/UIGaugeTank.vue'
+import UIGaugeThermometer from './types/UIGaugeThermometer.vue'
 import UIGaugeTile from './types/UIGaugeTile.vue'
 
 export default {
@@ -17,7 +18,8 @@ export default {
         'ui-gauge-battery': UIGaugeBattery,
         'ui-gauge-tank': UIGaugeTank,
         'ui-gauge-dial': UIGaugeDial,
-        'ui-gauge-tile': UIGaugeTile
+        'ui-gauge-tile': UIGaugeTile,
+        'ui-gauge-thermometer': UIGaugeThermometer
     },
     inject: ['$socket', '$dataTracker'],
     props: {
