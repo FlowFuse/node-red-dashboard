@@ -9,6 +9,10 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
+        if (!config.thermoTooltipPosition || typeof config.thermoTooltipPosition === 'undefined') {
+            config.thermoTooltipPosition = 'right'
+        }
+
         const evts = {
             beforeSend: async function (msg) {
                 const updates = msg.ui_update
