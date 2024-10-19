@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-    <div id="nrdb-ui-gauge-thermometer-wrapper" ref="container">
+    <div class="nrdb-ui-gauge-thermometer-wrapper" ref="container">
         <div id="thermometer-container" ref="thermometerContainer">
             <div id="thermometer" ref="thermometer">
                 <div id="temperature" :class="`${value && 'tooltip'} tooltip-${tooltipPosition}`" :style="{ height: `${temperatureHeight}%` }" :data-value="temperatureValue"></div>
-                <div id="range">
+                <div id="range" :class="tooltipPosition">
                     <div v-if="max" id="max">{{ max }}</div>
                     <div v-if="min" id="min">{{ min }}</div>
                 </div>
@@ -107,7 +107,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#nrdb-ui-gauge-thermometer-wrapper {
+.nrdb-ui-gauge-thermometer-wrapper {
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -118,17 +118,13 @@ export default {
   height: 100%;
 }
 
-// VARIABLES (Have fun) ―――――――――――――――――――――――――
-
-$TM-mainTint: #3d3d44;
-$TM-backgroundColor: darken($TM-mainTint, 2%);
 $TM-borderSize: 4px;
-$TM-borderColor: darken($TM-mainTint, 8%);
+$TM-borderColor: rgb(var(--v-theme-on-group-background));
 $TM-width: 20px;
 $TM-height: 115px;
 $TM-bulbSize: $TM-width * 1.6;
 $TM-radius: 20px;
-$TM-graduationsStyle: 2px solid rgba(0, 0, 0, 0.5);
+$TM-graduationsStyle: 2px solid rgba(var(--v-theme-on-group-background), 0.5);
 $TM-bulbColor: #3dcadf;
 $TM-mercuryColor : linear-gradient(#f17a65, $TM-bulbColor) no-repeat bottom;
 
@@ -169,21 +165,34 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   background-color: #686868;
   #range {
     position: relative;
-    right: 1.1rem;
+    &.right {
+      right: 1.1rem;
+      #min {
+        bottom: 0;
+        right: 0;
+      }
+      #max {
+        top: 0;
+        right: 0;
+      }
+    }
+    &.left {
+      left: 1.1rem;
+      #min {
+        bottom: 0;
+        left: 0;
+      }
+      #max {
+        top: 0;
+        left: 0;
+      }
+    }
     height: 100%;
     #min, #max {
       position: absolute;
       font-size: 0.8em;
       color: rgb(var(--v-theme-on-group-background)) !important;
       font-weight: bold;
-    }
-    #min {
-      bottom: 0;
-      right: 0;
-    }
-    #max {
-      top: 0;
-      right: 0;
     }
   }
   #graduations {
@@ -271,7 +280,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
 }
 .nrdb-ui-gauge-title {
   position: absolute;
-  bottom: 0;
+  top: 80%;
   display: block;
   text-align: center;
   font-weight: bold;
