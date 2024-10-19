@@ -9,8 +9,8 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
-        if (!config.thermoTooltipPosition || typeof config.thermoTooltipPosition === 'undefined') {
-            config.thermoTooltipPosition = 'right'
+        if (!config.tooltipPosition || typeof config.tooltipPosition === 'undefined') {
+            config.tooltipPosition = 'right'
         }
 
         const evts = {
@@ -63,6 +63,9 @@ module.exports = function (RED) {
                     if (typeof updates.max !== 'undefined') {
                         // dynamically set "max" property
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
+                    }
+                    if (typeof updates.tooltipPosition !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'tooltipPosition', updates.tooltipPosition)
                     }
                 }
                 msg = await appendTopic(RED, config, node, msg)

@@ -62,6 +62,9 @@ export default {
         max () {
             return this.getProperty('max')
         },
+        tooltipPosition () {
+            return this.getProperty('tooltipPosition')
+        },
         dynamicProps () {
             const props = {
                 ...this.props,
@@ -74,7 +77,8 @@ export default {
                 icon: this.icon,
                 segments: this.segments,
                 min: this.min,
-                max: this.max
+                max: this.max,
+                tooltipPosition: this.tooltipPosition
             }
             delete props.title
             return props
@@ -107,6 +111,7 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+            this.updateDynamicProperty('tooltipPosition', updates.tooltipPosition)
         },
         onInput (msg) {
             if (typeof msg.payload !== 'undefined') {

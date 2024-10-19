@@ -3,7 +3,11 @@
     <div id="nrdb-ui-gauge-thermometer-wrapper" ref="container">
         <div id="thermometer-container" ref="thermometerContainer">
             <div id="thermometer" ref="thermometer">
-                <div id="temperature" :style="{ height: `${temperatureHeight}%` }" :data-value="temperatureValue"></div>
+                <div id="temperature" :class="`${value && 'tooltip'} tooltip-${tooltipPosition}`" :style="{ height: `${temperatureHeight}%` }" :data-value="temperatureValue"></div>
+                <div id="range">
+                    <div v-if="max" id="max">{{ max }}</div>
+                    <div v-if="min" id="min">{{ min }}</div>
+                </div>
                 <div id="graduations"></div>
             </div>
             <div id="mercury-bulb"></div>
@@ -38,12 +42,6 @@ export default {
         max () {
             return this.props.max
         },
-        prefix () {
-            return this.props.prefix
-        },
-        suffix () {
-            return this.props.suffix
-        },
         units () {
             return this.props.units
         },
@@ -54,7 +52,10 @@ export default {
             return (this.clampedValue - this.min) / (this.max - this.min) * 100
         },
         temperatureValue () {
-            return `${this.prefix} ${this.clampedValue}${this.units} ${this.suffix}`
+            return `${this.value}${this.units}`
+        },
+        tooltipPosition () {
+            return this.props.tooltipPosition
         }
     },
     mounted () {
@@ -143,6 +144,11 @@ $TM-tooltipArrowWidth: 1.5; // Higher numbers produce smaller width
 $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
 
 @mixin border() { border: $TM-borderSize solid $TM-borderColor; }
+@mixin trianlge() {
+  border-top: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
+  border-bottom: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
+  border-right: $TM-tooltipSize / $TM-tooltipArrowWidth solid $TM-tooltipColor;
+}
 
 // THERMOMETER ―――――――――――――――――――――――――
 
@@ -161,7 +167,25 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   border-radius: $TM-radius $TM-radius 0 0;
   z-index: 1;
   background-color: #686868;
-
+  #range {
+    position: relative;
+    right: 1.1rem;
+    height: 100%;
+    #min, #max {
+      position: absolute;
+      font-size: 0.8em;
+      color: rgb(var(--v-theme-on-group-background)) !important;
+      font-weight: bold;
+    }
+    #min {
+      bottom: 0;
+      right: 0;
+    }
+    #max {
+      top: 0;
+      right: 0;
+    }
+  }
   #graduations {
     height: 59%;
     top: 20%;
@@ -193,32 +217,42 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
       position: absolute;
     }
 
-    // Temperature value - Tooltip
-
-    &:before {
-      content: attr(data-value);
-      background: $TM-tooltipColor;
-      color: white;
-      z-index: 2;
-      padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
-      border-radius: $TM-tooltipRadius;
-      font-size: $TM-tooltipSize;
-      line-height: 1;
-      transform: translateY(50%);
-      left: calc(100% + 13px);
-      top: calc(-1em - 11px);
-      white-space: nowrap;
-    }
-
-    // Tooltip arrow
-
-    &:after {
-      content: "";
-      border-top: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
-      border-bottom: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
-      border-right: $TM-tooltipSize / $TM-tooltipArrowWidth solid $TM-tooltipColor;
-      left: calc(100% + 4px);
-      top: calc(-#{$TM-tooltipSize} / #{$TM-tooltipArrowHeight} - 1px);
+    &.tooltip {
+      &:before {
+        content: attr(data-value);
+        background: $TM-tooltipColor;
+        color: white;
+        z-index: 2;
+        padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
+        border-radius: $TM-tooltipRadius;
+        font-size: $TM-tooltipSize;
+        line-height: 1;
+        white-space: nowrap;
+        top: calc(1em - 28px);
+      }
+      &:after {
+        content: "";
+        top: calc(-#{$TM-tooltipSize} / #{$TM-tooltipArrowHeight} - 1px);
+      }
+      &.tooltip-right {
+        &:before {
+          left: calc(100% + 13px);
+        }
+        &:after {
+          @include trianlge;
+          left: calc(100% + 4px);
+        }
+      }
+      &.tooltip-left {
+        &:before {
+          right: calc(100% + 13px);
+        }
+        &:after {
+          @include trianlge;
+          transform: rotate(180deg);
+          right: calc(100% + 4px);
+        }
+      }
     }
   }
 }
@@ -244,5 +278,9 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   font-size: 1rem;
   padding-bottom: 4px;
   font-size: min(1rem,max(2cqmin,0.8rem));
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
 }
 </style>

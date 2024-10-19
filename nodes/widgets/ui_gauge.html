@@ -23,6 +23,9 @@
                     minCovered = true
                 }
             }
+            if (this.gtype === 'gauge-thermometer') {
+                minCovered = true
+            }
             if (!minCovered) {
                 $('#node-input-validation-segments').text("It's advised to make sure your first segment's 'from' value and the gauge's 'min' value are the same.").show()
             }
@@ -39,7 +42,7 @@
             }
             const unique = new Set(this.segments.map(function (o) { return o.from }))
             if (this.segments.length === unique.size) { $('#valWarning').hide() } else { $('#valWarning').show() }
-            return this.gtype !== 'gauge-thermometer' ? minCovered && !extras && this.segments.length === unique.size : false
+            return minCovered && !extras && this.segments.length === unique.size
         }
 
         const DEFAULTS = {
@@ -142,7 +145,7 @@
                 height: { value: 3 },
                 gtype: { value: 'gauge-half' },
                 gstyle: { value: 'needle' },
-                thermoTooltipPosition: { value: 'right' },
+                tooltipPosition: { value: 'right' },
                 title: { value: 'gauge' },
                 units: { value: 'units' },
                 icon: { value: '' },
@@ -194,10 +197,10 @@
                     })
                 }
 
-                if (this.thermoTooltipPosition === 'left') {
-                    $('#node-input-thermoTooltipPosition').val('left')
+                if (this.tooltipPosition === 'left') {
+                    $('#node-input-tooltipPosition').val('left')
                 } else {
-                    $('#node-input-thermoTooltipPosition').val('right')
+                    $('#node-input-tooltipPosition').val('right')
                 }
 
                 function generateSegment (i, segment) {
@@ -240,14 +243,14 @@
                     }
 
                     if (type === 'gauge-thermometer') {
-                        $('#node-input-container-thermoTooltipPosition').show()
+                        $('#node-input-container-tooltipPosition').show()
                         $('.node-input-segments-container-row').hide()
                         $('#node-input-add-segment').hide()
                         $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': '103px' })
                         $('#ui-gauge-icon').hide()
                         $('#node-input-container-sizes').hide()
                     } else {
-                        $('#node-input-container-thermoTooltipPosition').hide()
+                        $('#node-input-container-tooltipPosition').hide()
                         $('.node-input-segments-container-row').show()
                         $('#node-input-add-segment').show()
                         $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': 0 })
@@ -365,9 +368,9 @@
             <!-- <option value=rounded">Rounded</option> -->
         </select>
     </div>
-    <div id="node-input-container-thermoTooltipPosition" class="form-row">
-        <label for="node-input-thermoTooltipPosition"><i class="fa fa-thermometer-three-quarters"></i> <span data-i18n="ui-gauge.label.tooltip"></span></label>
-        <select id="node-input-thermoTooltipPosition" style="width:150px">
+    <div id="node-input-container-tooltipPosition" class="form-row" style="display: flex; align-items: center;">
+        <label for="node-input-tooltipPosition"><i class="fa fa-thermometer-three-quarters"></i> <span data-i18n="ui-gauge.label.tooltipPosition"></span></label>
+        <select id="node-input-tooltipPosition" style="width:150px">
             <option value="left" data-i18n="ui-gauge.label.left"></option>
             <option value="right" data-i18n="ui-gauge.label.right"></option>
         </select>
