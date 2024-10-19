@@ -11,10 +11,10 @@
                 :style="{'width': ((rowHeight * 2 * g.width) + 'px')}"
                 :draggable="editMode"
                 @dragstart="onDragStart($event, $index)"
-                @dragend="onDragEnd($event, $index, g)"
                 @dragover="onDragOver($event, $index, g)"
-                @drop="onDrop($event, $index, g)"
+                @dragend="onDragEnd($event, $index, g)"
                 @dragleave="onDragLeave($event, $index, g)"
+                @drop.prevent
                 @dragenter.prevent
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
@@ -66,8 +66,8 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import BaselineLayout from './Baseline.vue'
 import DialogGroup from './DialogGroup.vue'
 import WidgetGroup from './Group.vue'
-import WYSIWYG from './wysiwyg'
 import EditControls from './wysiwyg/EditControls.vue'
+import WYSIWYG from './wysiwyg/index.js'
 
 export default {
     name: 'LayoutFlex',

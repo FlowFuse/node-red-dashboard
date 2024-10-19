@@ -11,10 +11,10 @@
                 :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
                 :draggable="editMode"
                 @dragstart="onDragStart($event, $index)"
-                @dragend="onDragEnd($event, $index, g)"
                 @dragover="onDragOver($event, $index, g)"
-                @drop="onDrop($event, $index, g)"
+                @dragend="onDragEnd($event, $index, g)"
                 @dragleave="onDragLeave($event, $index, g)"
+                @drop.prevent
                 @dragenter.prevent
             >
                 <v-card variant="outlined" class="bg-group-background">
@@ -65,8 +65,8 @@ import Responsiveness from '../mixins/responsiveness.js'
 import BaselineLayout from './Baseline.vue'
 import DialogGroup from './DialogGroup.vue'
 import WidgetGroup from './Group.vue'
-import WYSIWYG from './wysiwyg'
 import EditControls from './wysiwyg/EditControls.vue'
+import WYSIWYG from './wysiwyg/index.js'
 
 // eslint-disable-next-line import/order, sort-imports
 import { mapState, mapGetters } from 'vuex'
