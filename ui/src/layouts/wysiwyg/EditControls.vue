@@ -54,7 +54,12 @@ export default {
     gap: 6px;
     border-radius: 2rem;
     .v-btn {
-        border-radius: 2rem;
+        border-radius: 2.6rem;
+        // override theme for consistent button size
+        width: 2.6rem;
+        height: 2.6rem;
+        min-width: 2.6rem;
+        min-height: 2.6rem;
     }
     button:disabled {
         filter: grayscale(1);
