@@ -9,6 +9,12 @@ const state = () => ({
 
 // getters
 const getters = {
+    id: (state) => {
+        // should only be one dashboard for now
+        console.log(state.dashboards)
+        const id = state.dashboards ? Object.keys(state.dashboards)[0] : null
+        return id
+    },
     dashboards (state) {
         return state.dashboards
     },

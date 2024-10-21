@@ -133,7 +133,8 @@ main {
 }
 
 .nrdb-ui-group > .v-card {
-    border-radius: var(--group-border-radius)
+    border-radius: var(--group-border-radius);
+    overflow: visible;
 }
 
 /**
@@ -483,4 +484,23 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .v-btn.v-btn--density-comfortable {
     height: auto;
     min-height: var(--widget-row-height);
+}
+
+/* WYSIWYG styling */
+.nrdb-ui-group.dragging {
+    border-style: dashed;
+}
+
+.nrdb-ui-group.drag-start {
+    opacity: 0.8;
+    outline: 2px dashed black;
+}
+
+.nrdb-ui-page > .nrdb-ui-group[draggable="true"] > .v-card.resize-active {
+     /*
+        ensure card is on top while being actively resized
+        this is important to ensure the resize handles are visible
+        above sibling cards
+     */
+    z-index: 1000 !important;
 }
