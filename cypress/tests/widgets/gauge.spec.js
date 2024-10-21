@@ -11,5 +11,6 @@ describe('Node-RED Dashboard 2.0 - Gauges', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-dial-34').find('.nrdb-ui-gauge-dial').should('exist')
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-battery').find('.nrdb-ui-gauge-battery').should('exist')
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tank').find('.nrdb-ui-gauge-tank').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-gauge-thermometer').find('.nrdb-ui-gauge-thermometer-wrapper').should('exist')
     })
 })

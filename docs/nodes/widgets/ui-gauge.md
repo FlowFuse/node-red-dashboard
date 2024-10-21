@@ -4,10 +4,10 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.
     Type:
-        description: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Half Gauge" or "3/4 Gauge"
+        description: Defines the shape of the gauge, "Tile", "Battery", "Water Tank", "Thermometer", "Half Gauge" or "3/4 Gauge"
         dynamic: true
     Style:
-        description: Defines the style of arc rendered, "Needle" or "Rounded". (only applicable to for 3/4 and Half gauges)
+        description: Defines the style of arc rendered, "Needle" or "Rounded". (only applicable to 3/4 and Half gauges)
         dynamic: true
     Range (min):
         description: The smallest value that can be shown on the gauge
@@ -22,16 +22,19 @@ props:
         description: Text shown above the gauge, labelling what the gauge is showing.
         dynamic: true
     Prefix:
-        description: Text to be added _before_ the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
+        description: Text to be added _before_ the value in the middle of the gauge. (only applicable to 3/4 and Half gauges)
         dynamic: true
     Suffix:
-        description: Text to be shown _after_ the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
+        description: Text to be shown _after_ the value in the middle of the gauge. (only applicable to 3/4 and Half gauges)
         dynamic: true
     Units:
-        description: Small text to be shown below the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
+        description: Small text to be shown below the value in the middle of the gauge. (only applicable to 3/4 and Half gauges)
         dynamic: true
     Icon:
-        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix. (only applicable to for 3/4 and Half gauges)
+        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix. (only applicable to 3/4 and Half gauges)
+        dynamic: true
+    Tooltip:
+        description: Defines the tooltip position of the thermometer "Right" or "Left". (only applicable to thermometer gauges)
         dynamic: true
     Sizes (Gauge): (px) How thick the arc and backdrop of the gauge are rendered.
     Sizes (Gap): (px) How big the gap/padding is between the Gauge and the "Segments"
@@ -72,6 +75,10 @@ dynamic:
     Units:
         payload: msg.ui_update.units
         structure: ["String"]
+    Tooltip:
+        payload: msg.ui_update.tooltipPosition
+        structure: ["String"]
+        examples: ['left', 'right']
 ---
 
 
@@ -174,21 +181,15 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 
 When switching to a "Water Tank" type, the segments will be overridden with the following values:
 
-```js
-[{
-    color: '#A8F5FF',
-    from: 0
-}, {
-    color: '#55DBEC',
-    from: 15
-}, {
-    color: '#53B4FD',
-    from: 35
-}, {
-    color: '#2397D1',
-    from: 50
-}]
-```
+### Thermometer <AddedIn version="1.19.0" />
+
+| Type | Tooltip | Min | Max |
+| --- | --- | --- | --- |
+| Thermometer | Right | -20 | 50 |
+
+![Examples of some Thermometer gauges](/images/node-examples/ui-gauge-thermometer.png "Examples of some Thermometer gauges"){data-zoomable}
+*Examples of some Thermometer gauges*
+
 
 ## Overriding CSS
 

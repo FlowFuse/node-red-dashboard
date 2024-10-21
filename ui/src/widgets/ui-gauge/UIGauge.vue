@@ -1,5 +1,5 @@
 <template>
-    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
+    <component :is="`ui-${gtype}`" v-if="['gauge-tile', 'gauge-battery', 'gauge-tank', 'gauge-thermometer'].includes(gtype)" :id="id" :props="dynamicProps" :value="value" />
     <ui-gauge-dial v-else :id="id" :key="updateGaugeDial" :props="dynamicProps" :value="value" />
 </template>
 
@@ -9,6 +9,7 @@ import { mapState } from 'vuex' // eslint-disable-line import/order
 import UIGaugeBattery from './types/UIGaugeBattery.vue'
 import UIGaugeDial from './types/UIGaugeDial.vue'
 import UIGaugeTank from './types/UIGaugeTank.vue'
+import UIGaugeThermometer from './types/UIGaugeThermometer.vue'
 import UIGaugeTile from './types/UIGaugeTile.vue'
 
 export default {
@@ -17,7 +18,8 @@ export default {
         'ui-gauge-battery': UIGaugeBattery,
         'ui-gauge-tank': UIGaugeTank,
         'ui-gauge-dial': UIGaugeDial,
-        'ui-gauge-tile': UIGaugeTile
+        'ui-gauge-tile': UIGaugeTile,
+        'ui-gauge-thermometer': UIGaugeThermometer
     },
     inject: ['$socket', '$dataTracker'],
     props: {
@@ -60,6 +62,9 @@ export default {
         max () {
             return this.getProperty('max')
         },
+        tooltipPosition () {
+            return this.getProperty('tooltipPosition')
+        },
         dynamicProps () {
             const props = {
                 ...this.props,
@@ -72,7 +77,8 @@ export default {
                 icon: this.icon,
                 segments: this.segments,
                 min: this.min,
-                max: this.max
+                max: this.max,
+                tooltipPosition: this.tooltipPosition
             }
             delete props.title
             return props
@@ -105,6 +111,7 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+            this.updateDynamicProperty('tooltipPosition', updates.tooltipPosition)
         },
         onInput (msg) {
             if (typeof msg.payload !== 'undefined') {

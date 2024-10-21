@@ -3,9 +3,11 @@
     <h3>Properties</h3>
     <dl class="message-properties">
         <dt>Type <span class="property-type">half | 3/4</span></dt>
-        <dd>Defines the shape of the gauge, <i>"Tile"</i>, <i>"Battery"</i>, <i>"Water Tank"</i>, <i>"Half Gauge"</i> or <i>"3/4 Gauge"</i>.</dd>
+        <dd>Defines the shape of the gauge, <i>"Tile"</i>, <i>"Battery"</i>, <i>"Water Tank"</i>, <i>"Thermometer"</i>, <i>"Half Gauge"</i> or <i>"3/4 Gauge"</i>.</dd>
         <dt>Style <span class="property-type">rounded | needle</span></dt>
         <dd>Defines the style of arc rendered, "Needle" or "Rounded". Not available for "Tile".</dd>
+        <dt>Tooltip <span class="property-type">left | right</span></dt>
+        <dd>Defines the tooltip position of the thermometer "Right" or "Left". (only applicable to Thermometer)</dd>
         <dt>Range <span class="property-type">number</span></dt>
         <dd>The smallest and largest values that can be rendered on the gauge</dd>
         <dt>Segments <span class="property-type">list</span></dt>
@@ -53,7 +55,7 @@
             </ul>
         </dd>
         <dt class="optional">gstyle <span class="property-type">see detail</span></dt>
-        <dd>Modify the style of 3/4 and half Gauge rendered, with the following options: (only applicable to for 3/4 and Half gauges)
+        <dd>Modify the style of 3/4 and half Gauge rendered, with the following options: (only applicable to 3/4 and Half gauges)
             <ul>
                 <li><code>neelde</code></li>
                 <li><code>rounded</code></li>
@@ -64,13 +66,13 @@
         <dt class="optional">max <span class="property-type">number</span></dt>
         <dd>Change the maximum value the gauge supports</dd>
         <dt class="optional">prefix <span class="property-type">string</span></dt>
-        <dd>Change the text rendered before the Gauge's value (only applicable to for 3/4 and Half gauges)</dd>
+        <dd>Change the text rendered before the Gauge's value (only applicable to 3/4 and Half gauges)</dd>
         <dt class="optional">suffix <span class="property-type">string</span></dt>
-        <dd>Change the text rendered after the Gauge's value (only applicable to for 3/4 and Half gauges)</dd>
+        <dd>Change the text rendered after the Gauge's value (only applicable to 3/4 and Half gauges)</dd>
         <dt class="optional">units <span class="property-type">array</span></dt>
-        <dd>Controls the "unit" display underneath the gauge's value for 3/4 and Half gauges (only applicable to for 3/4 and Half gauges)</dd>
+        <dd>Controls the "unit" display underneath the gauge's value for 3/4 and Half gauges (only applicable to 3/4 and Half gauges)</dd>
         <dt class="optional">icon <span class="property-type">string</span></dt>
-        <dd>Modify which icon is rendered within the gauge (must be a Material Design icon and only applicable to for 3/4 and Half gauges)</dd>
+        <dd>Modify which icon is rendered within the gauge (must be a Material Design icon and only applicable to 3/4 and Half gauges)</dd>
         <dt class="optional">class <span class="property-type">string</span></dt>
         <dd>Add a CSS class, or more, to the Button at runtime.</dd>
     </dl>

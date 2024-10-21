@@ -23,6 +23,9 @@
                     minCovered = true
                 }
             }
+            if (this.gtype === 'gauge-thermometer') {
+                minCovered = true
+            }
             if (!minCovered) {
                 $('#node-input-validation-segments').text("It's advised to make sure your first segment's 'from' value and the gauge's 'min' value are the same.").show()
             }
@@ -87,6 +90,11 @@
                     color: '#EA5353',
                     from: 7
                 }]
+            },
+            'gauge-thermometer': {
+                min: -20,
+                max: 50,
+                segments: []
             }
         }
         DEFAULTS['gauge-34'] = DEFAULTS['gauge-tile']
@@ -137,6 +145,7 @@
                 height: { value: 3 },
                 gtype: { value: 'gauge-half' },
                 gstyle: { value: 'needle' },
+                tooltipPosition: { value: 'right' },
                 title: { value: 'gauge' },
                 units: { value: 'units' },
                 icon: { value: '' },
@@ -188,6 +197,12 @@
                     })
                 }
 
+                if (this.tooltipPosition === 'left') {
+                    $('#node-input-tooltipPosition').val('left')
+                } else {
+                    $('#node-input-tooltipPosition').val('right')
+                }
+
                 function generateSegment (i, segment) {
                     const container = $('<li/>', { style: 'background: var(--red-ui-secondary-background, #fff); margin:0; padding:8px 0px 0px; border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);' })
                     const row = $('<div/>').appendTo(container)
@@ -225,6 +240,24 @@
                         $('#node-input-container-sizes').show()
                         $('#node-input-container-gstyle').show()
                         $('#node-input-container-label-extras').show()
+                    }
+
+                    if (type === 'gauge-thermometer') {
+                        $('#node-input-container-gstyle').hide()
+                        $('#node-input-container-tooltipPosition').show()
+                        $('.node-input-segments-container-row').hide()
+                        $('#node-input-add-segment').hide()
+                        $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': '103px' })
+                        $('#ui-gauge-icon').hide()
+                        $('#node-input-container-sizes').hide()
+                        $('.node-prefix-suffix-container').hide()
+                    } else {
+                        $('#node-input-container-gstyle').show()
+                        $('#node-input-container-tooltipPosition').hide()
+                        $('.node-input-segments-container-row').show()
+                        $('#node-input-add-segment').show()
+                        $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': 0 })
+                        $('.node-prefix-suffix-container').show()
                     }
 
                     if (isInitialised && isChanging && isDefault(oldType)) {
@@ -326,6 +359,7 @@
             <option value="gauge-half" data-i18n="ui-gauge.label.gaugeHalf"></option>
             <option value="gauge-battery" data-i18n="ui-gauge.label.gaugeBattery"></option>
             <option value="gauge-tank" data-i18n="ui-gauge.label.gaugeTank"></option>
+            <option value="gauge-thermometer" data-i18n="ui-gauge.label.gaugeThermometer"></option>
             <!-- <segment value="donut">Donut</segment>
             <segment value="compass">Compass</segment>
             <segment value="wave">Level</segment> -->
@@ -337,6 +371,13 @@
             <option value="needle" data-i18n="ui-gauge.label.needle"></option>
             <option value="rounded" data-i18n="ui-gauge.label.rounded"></option>
             <!-- <option value=rounded">Rounded</option> -->
+        </select>
+    </div>
+    <div id="node-input-container-tooltipPosition" class="form-row">
+        <label for="node-input-tooltipPosition"><i class="fa fa-thermometer-three-quarters"></i> <span data-i18n="ui-gauge.label.tooltip"></span></label>
+        <select id="node-input-tooltipPosition" style="width:150px">
+            <option value="left" data-i18n="ui-gauge.label.left"></option>
+            <option value="right" data-i18n="ui-gauge.label.right"></option>
         </select>
     </div>
     <div class="form-row">
@@ -377,7 +418,7 @@
             <input type="text" id="node-input-title">
         </div>
         <div id="node-input-container-label-extras">
-            <div class="form-row form-row-flex">
+            <div class="form-row form-row-flex node-prefix-suffix-container">
                 <div>
                     <label for="node-input-prefix"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.prefix"></span></label>
                     <input type="text" id="node-input-prefix" style="width: 75px">
