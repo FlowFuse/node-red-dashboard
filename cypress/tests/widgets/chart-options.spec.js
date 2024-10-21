@@ -3,7 +3,7 @@ import should from 'should'
 
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Node/-RED Dashboard 2.0 - Chart Widget - chart options', () => {
-    it('sets tooltip `mode` to "nearest" for line charts', () => {
+    it('sets tooltip `mode` to "x" for line charts', () => {
         const chartName = 'line-chart-1'
         const overrides = [
             {
