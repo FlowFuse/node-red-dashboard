@@ -485,12 +485,19 @@ export default {
 
                 // ensure we have a datapoint for each of the known x-value
                 // ChartsJS doesn't like undefined data points
-                const data = Array(xLabels.length).fill({})
+                let data = Array(xLabels.length).fill({})
+                if (this.props.removeOlderPoints) {
+                    data = Array(sLabels.length + 1).fill({})
+                }
                 if (xIndex === -1) {
-                    // Add the new x-value to xLabels
-                    xLabels.push(datapoint.x)
-                    // Add data to the end of the array
-                    data.push(datapoint)
+                    if (this.props.removeOlderPoints) {
+                        data[xLabels.length] = datapoint
+                    } else {
+                        // Add the new x-value to xLabels
+                        xLabels.push(datapoint.x)
+                        // Add data to the end of the array
+                        data.push(datapoint)
+                    }
                 } else {
                     // we've got a new series, but a previously seen x-value
                     data[xIndex] = datapoint

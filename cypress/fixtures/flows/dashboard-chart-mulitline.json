@@ -1,0 +1,226 @@
+[
+    {
+        "id": "1bc5a69e1358d15b",
+        "type": "split",
+        "z": "d03c59d3654ae31a",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 290,
+        "y": 480,
+        "wires": [
+            [
+                "126b3ed93bfb87c6"
+            ]
+        ]
+    },
+    {
+        "id": "126b3ed93bfb87c6",
+        "type": "change",
+        "z": "d03c59d3654ae31a",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.topic",
+                "pt": "msg",
+                "to": "topic",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 480,
+        "wires": [
+            [
+                "dashboard-ui-chart-multiline"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-chart-multiline",
+        "type": "ui-chart",
+        "z": "d03c59d3654ae31a",
+        "group": "20f46524b2d3d7c7",
+        "name": "",
+        "label": "chart",
+        "order": 4,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "payload.x",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "linear",
+        "xAxisFormat": "s",
+        "xAxisFormatType": "custom",
+        "yAxisLabel": "",
+        "yAxisProperty": "v",
+        "ymin": "0",
+        "ymax": "11",
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#a347e1",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "x": 650,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-add",
+        "type": "ui-button",
+        "z": "d03c59d3654ae31a",
+        "group": "20f46524b2d3d7c7",
+        "name": "",
+        "label": "Add Multiline Data",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[{\"topic\":\"t1\",\"payload\":{\"x\":2,\"v\":4},\"_msgid\":\"2279f52ad5738a66\"},{\"topic\":\"t2\",\"payload\":{\"x\":2,\"v\":8},\"_msgid\":\"2279f52ad5738a66\"},{\"topic\":\"t1\",\"payload\":{\"x\":3,\"v\":6},\"_msgid\":\"b59dd85692696016\"},{\"topic\":\"t2\",\"payload\":{\"x\":3,\"v\":10},\"_msgid\":\"b59dd85692696016\"},{\"topic\":\"t1\",\"payload\":{\"x\":4,\"v\":4},\"_msgid\":\"b59dd85692696016\"},{\"topic\":\"t2\",\"payload\":{\"x\":4,\"v\":8},\"_msgid\":\"b59dd85692696016\"}]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "green",
+        "textColor": "",
+        "iconColor": "",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "1bc5a69e1358d15b"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-clear",
+        "type": "ui-button",
+        "z": "d03c59d3654ae31a",
+        "group": "20f46524b2d3d7c7",
+        "name": "",
+        "label": "Clear",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "[]",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "x": 490,
+        "y": 520,
+        "wires": [
+            [
+                "dashboard-ui-chart-multiline"
+            ]
+        ]
+    },
+    {
+        "id": "20f46524b2d3d7c7",
+        "type": "ui-group",
+        "name": "#1255 Multi line chart does not draw line for first point on additional topics",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    }
+]
