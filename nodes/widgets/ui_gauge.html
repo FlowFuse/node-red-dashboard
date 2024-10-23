@@ -94,7 +94,25 @@
             'gauge-thermometer': {
                 min: -20,
                 max: 50,
-                segments: []
+                segments: [{
+                    color: '#0257a8',
+                    from: -20
+                }, {
+                    color: '#01a2e5',
+                    from: 0
+                }, {
+                    color: '#86ce8d',
+                    from: 10
+                }, {
+                    color: '#ffe914',
+                    from: 20
+                }, {
+                    color: '#ffa32e',
+                    from: 30
+                }, {
+                    color: '#ff1d02',
+                    from: 40
+                }]
             }
         }
         DEFAULTS['gauge-34'] = DEFAULTS['gauge-tile']
@@ -245,18 +263,12 @@
                     if (type === 'gauge-thermometer') {
                         $('#node-input-container-gstyle').hide()
                         $('#node-input-container-tooltipPosition').show()
-                        $('.node-input-segments-container-row').hide()
-                        $('#node-input-add-segment').hide()
-                        $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': '103px' })
                         $('#ui-gauge-icon').hide()
                         $('#node-input-container-sizes').hide()
                         $('.node-prefix-suffix-container').hide()
                     } else {
                         $('#node-input-container-gstyle').show()
                         $('#node-input-container-tooltipPosition').hide()
-                        $('.node-input-segments-container-row').show()
-                        $('#node-input-add-segment').show()
-                        $('#node-input-get-defaults').css({ 'margin-top': '4px', 'margin-left': 0 })
                         $('.node-prefix-suffix-container').show()
                     }
 

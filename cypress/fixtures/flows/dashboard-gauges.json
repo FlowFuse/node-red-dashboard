@@ -304,7 +304,32 @@
         "icon": "",
         "prefix": "",
         "suffix": "",
-        "segments": [],
+        "segments": [
+            {
+                "color": "#0257a8",
+                "from": -20
+            },
+            {
+                "color": "#01a2e5",
+                "from": 0
+            },
+            {
+                "color": "#86ce8d",
+                "from": 10
+            },
+            {
+                "color": "#ffe914",
+                "from": 20
+            },
+            {
+                "color": "#ffa32e",
+                "from": 30
+            },
+            {
+                "color": "#ff1d02",
+                "from": 40
+            }
+        ],
         "min": "-20",
         "max": "40",
         "sizeThickness": 16,
