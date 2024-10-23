@@ -1,21 +1,21 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-  <div ref="container" class="nrdb-ui-gauge-thermometer-wrapper">
-      <div ref="thermometerContainer" class="thermometer-container">
-          <div ref="thermometer" class="thermometer" :style="thermometerStyles">
-              <div class="temperature" :style="tempuratureStyles" :data-value="temperatureValue"></div>
-          </div>
-          <div class="mercury-bulb" :style="mercuryBulbStyles"></div>
-          <div v-if="showTooltip" class="tooltip-container">
-              <div :class="`thermometer-tooltip ${tooltipPosition}`" :style="tooltipStyles">{{ temperatureValue }}</div>
-          </div>
-          <div class="thermometer-range" :class="tooltipPosition">
-              <div v-if="max" class="max">{{ max }}</div>
-              <div v-if="min" class="min">{{ min }}</div>
-          </div>
-      </div>
-      <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
-  </div>
+    <div ref="container" class="nrdb-ui-gauge-thermometer-wrapper">
+        <div ref="thermometerContainer" class="thermometer-container">
+            <div ref="thermometer" class="thermometer" :style="thermometerStyles">
+                <div class="temperature" :style="tempuratureStyles" :data-value="temperatureValue"></div>
+            </div>
+            <div class="mercury-bulb" :style="mercuryBulbStyles"></div>
+            <div v-if="showTooltip" class="tooltip-container">
+                <div :class="`thermometer-tooltip ${tooltipPosition}`" :style="tooltipStyles">{{ temperatureValue }}</div>
+            </div>
+            <div class="thermometer-range" :class="tooltipPosition">
+                <div v-if="max" class="max">{{ max }}</div>
+                <div v-if="min" class="min">{{ min }}</div>
+            </div>
+        </div>
+        <label v-if="props.label" ref="title" class="nrdb-ui-gauge-title">{{ props.label }}</label>
+    </div>
 </template>
 
 <script>
@@ -23,121 +23,121 @@ import { mapState } from 'vuex' // eslint-disable-line import/order
 import UIGaugeMethods from '../ui-gauge.js'
 
 export default {
-  name: 'DBUIGaugeThermometer',
-  props: {
-      id: { type: String, required: true },
-      props: { type: Object, default: () => ({}) },
-      state: { type: Object, default: () => ({}) }
-  },
-  data () {
-      return {
-          resizeObserver: null
-      }
-  },
-  computed: {
-      ...mapState('data', ['messages']),
-      value () {
-          return this.messages[this.id]?.payload
-      },
-      min () {
-          return this.props.min
-      },
-      max () {
-          return this.props.max
-      },
-      units () {
-          return this.props.units
-      },
-      segments () {
-          return this.props.segments
-      },
-      clampedValue () {
-          return Math.min(Math.max(this.value, this.min), this.max)
-      },
-      temperatureHeight () {
-          return (this.clampedValue - this.min) / (this.max - this.min) * 100
-      },
-      temperatureValue () {
-          return `${this.value}${this.units}`
-      },
-      tooltipPosition () {
-          return this.props.tooltipPosition
-      },
-      color () {
-          return UIGaugeMethods.valueToColor(this.segments, this.value)
-      },
-      tooltipStyles () {
-          return { bottom: `calc(${parseInt(this.temperatureHeight)}% - 8px)` }
-      },
-      tempuratureStyles () {
-          return {
-              backgroundColor: this?.color,
-              height: `${this.temperatureHeight}%`
-          }
-      },
-      thermometerStyles () {
-          return {
-              borderLeft: `4px solid ${this?.color}`,
-              borderTop: `4px solid ${this?.color}`,
-              borderRight: `4px solid ${this?.color}`,
-              borderBottom: '4px solid transparent'
-          }
-      },
-      mercuryBulbStyles () {
-          return {
-              backgroundColor: this?.color,
-              border: `4px solid ${this?.color}`
-          }
-      },
-      showTooltip () {
-          return this.value !== undefined
-      }
-  },
-  mounted () {
-      this.initResizeObserver()
-  },
-  unmounted () {
-      if (this.resizeObserver) {
-          this.resizeObserver.disconnect()
-          this.resizeObserver = null
-      }
-  },
-  methods: {
-      initResizeObserver () {
-          this.resizeObserver = new ResizeObserver(entries => {
-              for (const entry of entries) {
-                  if (entry.target === this.$refs.container || entry.target === this.$el.parentElement) {
-                      this.resize()
-                  }
-              }
-          })
-          this.resizeObserver.observe(this.$refs.container)
-          this.resizeObserver.observe(this.$el.parentElement) // Observe the parent element
-      },
-      resize () {
-          const container = this.$el.parentElement
-          const thermometer = this.$refs.thermometerContainer
+    name: 'DBUIGaugeThermometer',
+    props: {
+        id: { type: String, required: true },
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
+    },
+    data () {
+        return {
+            resizeObserver: null
+        }
+    },
+    computed: {
+        ...mapState('data', ['messages']),
+        value () {
+            return this.messages[this.id]?.payload
+        },
+        min () {
+            return this.props.min
+        },
+        max () {
+            return this.props.max
+        },
+        units () {
+            return this.props.units
+        },
+        segments () {
+            return this.props.segments
+        },
+        clampedValue () {
+            return Math.min(Math.max(this.value, this.min), this.max)
+        },
+        temperatureHeight () {
+            return (this.clampedValue - this.min) / (this.max - this.min) * 100
+        },
+        temperatureValue () {
+            return `${this.value}${this.units}`
+        },
+        tooltipPosition () {
+            return this.props.tooltipPosition
+        },
+        color () {
+            return UIGaugeMethods.valueToColor(this.segments, this.value)
+        },
+        tooltipStyles () {
+            return { bottom: `calc(${parseInt(this.temperatureHeight)}% - 8px)` }
+        },
+        tempuratureStyles () {
+            return {
+                backgroundColor: this?.color,
+                height: `${this.temperatureHeight}%`
+            }
+        },
+        thermometerStyles () {
+            return {
+                borderLeft: `4px solid ${this?.color}`,
+                borderTop: `4px solid ${this?.color}`,
+                borderRight: `4px solid ${this?.color}`,
+                borderBottom: '4px solid transparent'
+            }
+        },
+        mercuryBulbStyles () {
+            return {
+                backgroundColor: this?.color,
+                border: `4px solid ${this?.color}`
+            }
+        },
+        showTooltip () {
+            return this.value !== undefined
+        }
+    },
+    mounted () {
+        this.initResizeObserver()
+    },
+    unmounted () {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect()
+            this.resizeObserver = null
+        }
+    },
+    methods: {
+        initResizeObserver () {
+            this.resizeObserver = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    if (entry.target === this.$refs.container || entry.target === this.$el.parentElement) {
+                        this.resize()
+                    }
+                }
+            })
+            this.resizeObserver.observe(this.$refs.container)
+            this.resizeObserver.observe(this.$el.parentElement) // Observe the parent element
+        },
+        resize () {
+            const container = this.$el.parentElement
+            const thermometer = this.$refs.thermometerContainer
 
-          if (container && thermometer) {
-              const containerHeight = container.clientHeight
-              const containerWidth = container.clientWidth
+            if (container && thermometer) {
+                const containerHeight = container.clientHeight
+                const containerWidth = container.clientWidth
 
-              const originalHeight = 180 // Original height of thermometer
-              const originalWidth = 20 // Original width of thermometer
+                const originalHeight = 180 // Original height of thermometer
+                const originalWidth = 20 // Original width of thermometer
 
-              // Calculate scale factors for width and height
-              const scaleX = containerWidth / originalWidth
-              const scaleY = containerHeight / originalHeight
+                // Calculate scale factors for width and height
+                const scaleX = containerWidth / originalWidth
+                const scaleY = containerHeight / originalHeight
 
-              // Use the smaller scale to maintain aspect ratio
-              const scale = Math.min(scaleX, scaleY)
+                // Use the smaller scale to maintain aspect ratio
+                const scale = Math.min(scaleX, scaleY)
 
-              // Apply the scale transform
-              thermometer.style.transform = `scale(${scale})`
-              thermometer.style.transformOrigin = 'top center'
-          }
-      }
-  }
+                // Apply the scale transform
+                thermometer.style.transform = `scale(${scale})`
+                thermometer.style.transformOrigin = 'top center'
+            }
+        }
+    }
 }
 </script>
 
