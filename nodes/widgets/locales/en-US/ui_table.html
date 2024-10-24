@@ -65,5 +65,11 @@
         <dd>Renders an interactive button in the cell. Will emit a <code>msg.action</code> of "button_click" and <code>msg.column</code> of the corresponding key</dd>
         <dt>Row Number <span class="property-type">number</span></dt>
         <dd>Requires no "key" to be provided as this will just render the row number (1 -> n).</dd>
+        <dt>Image <span class="property-type">url</span></dt>
+        <dd>
+            Renders the cell as an image. The "Image" value provided should be a valid URL.
+            A data url is also supported for base64 encoded images.
+            When an invalid url is specified, an empty space will appear.
+        </dd>
     </dl>
 </script>
