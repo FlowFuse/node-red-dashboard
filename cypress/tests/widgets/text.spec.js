@@ -64,4 +64,14 @@ describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-color'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'color', 'rgb(255, 0, 0)')
     })
+
+    it('retains previous value on dynamic input without payload', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-left').should('not.contain', 'injected text')
+        cy.get('#nrdb-ui-widget-button-inject-text-2').click()
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-label-no-payload'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label-No Payload')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')
+    })
 })
