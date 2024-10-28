@@ -1,8 +1,8 @@
 <template>
     <BaselineLayout :page-title="$route.meta.title">
-        <div v-if="pageGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
+        <div v-if="orderedGroups" :id="'nrdb-page-' + $route.meta.id" class="nrdb-layout--grid nrdb-ui-page" :class="page?.className">
             <div
-                v-for="(g, $index) in pageGroups"
+                v-for="(g, $index) in orderedGroups"
                 :id="'nrdb-ui-group-' + g.id"
                 :key="g.id"
                 class="nrdb-ui-group"
@@ -100,6 +100,12 @@ export default {
         },
         page: function () {
             return this.pages[this.$route.meta.id]
+        },
+        orderedGroups: function () {
+            if (this.editMode) { // mixin property
+                return this.pageGroups
+            }
+            return this.getPageGroups()
         }
     },
     mounted () {
