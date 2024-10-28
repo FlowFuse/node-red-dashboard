@@ -437,9 +437,12 @@ module.exports = function (RED) {
                     node.ui.groups.set(id, { ...group, ...state })
                 }
             }
-            const handshakeEditKey = socket.handshake.query?.editKey
+            // if the socket has an editKey & it matches the editKey in the meta, then we will
+            // send the wysiwyg meta to the client. Otherwise, we will remove it from the meta
+            // before sending it to the client
+            const handshakeEditKey = socket.handshake?.query?.editKey
             const meta = { ...node.ui.meta }
-            if (!node.ui.meta?.wysiwyg?.editKey || handshakeEditKey !== node.ui.meta.wysiwyg.editKey) {
+            if (!handshakeEditKey || !meta?.wysiwyg?.editKey || handshakeEditKey !== meta.wysiwyg.editKey) {
                 delete meta.wysiwyg
             }
             // pass the connected UI the UI config
