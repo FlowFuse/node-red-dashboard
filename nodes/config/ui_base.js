@@ -1099,19 +1099,16 @@ module.exports = function (RED) {
                 }
                 node.ui.widgets.delete(widgetNode.id)
                 changes = true
-            }
-
-            // if there are no more widgets on this group, remove the group from our UI config
-            if (group && [...node.ui.widgets].filter(w => w.props?.group === group.id).length === 0) {
+            } else if (group) {
+                // remove group from our UI config
                 node.ui.groups.delete(group.id)
                 changes = true
-            }
-
-            // if there are no more groups on this page, remove the page from our UI config
-            if (page && [...node.ui.groups].filter(g => g.page === page.id).length === 0) {
+            } else if (page) {
+                // remove page from our UI config
                 node.ui.pages.delete(page.id)
                 changes = true
             }
+
             if (changes) {
                 node.requestEmitConfig()
             }
