@@ -25,7 +25,8 @@ export default {
             chart: null,
             hasData: false,
             histogram: [], // populate later for bins per series
-            chartUpdateDebounceTimeout: null
+            chartUpdateDebounceTimeout: null,
+            tooltipDataset: []
         }
     },
     computed: {
@@ -49,6 +50,9 @@ export default {
         radialChart () {
             // radial charts have no placeholder in ChartJS - we need to add one
             return this.props.xAxisType === 'radial'
+        },
+        interpolation () {
+            return this.props.interpolation
         }
     },
     watch: {
@@ -71,6 +75,10 @@ export default {
         },
         'props.xAxisFormatType': function (value) {
             this.chart.options.scales.x.time.displayFormats = this.getXDisplayFormats(value)
+            this.update(false)
+        },
+        interpolation (value) {
+            this.setInterpolation(value)
             this.update(false)
         }
     },
@@ -217,10 +225,21 @@ export default {
                             }
                             return true
                         },
-                        filter: (tooltipItem) => {
+                        filter: (tooltipItem, tooltipIndex) => {
                             if (this.props.chartType === 'histogram') {
                                 // don't show tooltips for empty data points
                                 return tooltipItem.parsed.y !== undefined && tooltipItem.parsed.y > 0
+                            } else if (this.props.chartType === 'line') {
+                                if (tooltipIndex === 0) {
+                                    // first element in the loop
+                                    this.tooltipDataset = []
+                                }
+                                if (this.tooltipDataset.indexOf(tooltipItem.datasetIndex) === -1) {
+                                    this.tooltipDataset.push(tooltipItem.datasetIndex)
+                                    return true
+                                } else {
+                                    return false
+                                }
                             }
                             return true
                         }
@@ -507,6 +526,9 @@ export default {
                     }
                 }
             }
+            if (this.chartType === 'line') {
+                this.setInterpolation(this.interpolation)
+            }
         },
         limitDataSize () {
             let cutoff = null
@@ -643,6 +665,48 @@ export default {
             } else {
                 this.chart.data.datasets[sIndex] = series
             }
+        },
+        setInterpolation (interpolationType) {
+            // Updated chart configs for interpolation as per the new chart.js version
+            // https://www.chartjs.org/docs/latest/samples/line/interpolation.html
+            const getInterpolation = (type) => {
+                switch (type) {
+                case 'cubic': {
+                    return {
+                        cubicInterpolationMode: 'default',
+                        tension: 0.4
+                    }
+                }
+                case 'cubicMono': {
+                    return {
+                        cubicInterpolationMode: 'monotone',
+                        tension: 0.4
+                    }
+                }
+                case 'linear': {
+                    return {
+                        tension: 0
+                    }
+                }
+                case 'bezier': {
+                    return {
+                        tension: 0.4
+                    }
+                }
+                case 'step': {
+                    return {
+                        stepped: true
+                    }
+                }
+                }
+            }
+            const interpolation = getInterpolation(interpolationType)
+            this.chart.data.datasets = this.chart.data.datasets.map((d) => {
+                return {
+                    ...d,
+                    ...interpolation
+                }
+            })
         }
     }
 }

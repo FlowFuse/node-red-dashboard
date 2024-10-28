@@ -4,7 +4,7 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the slider with respect to the parent group. Maximum value is the width of the group.
     Label:
-        description: The text shown to the left of the slider.
+        description: The text shown to the left of the slider.  Html content is allowed.
         dynamic: true
     Thumb Label:
         description: Defined when the thumb of the slider will show. Defaults to 'On Drag'.

@@ -31,6 +31,7 @@ hero:
     import { ref } from 'vue';
 
     import HomeExtension from './components/HomeExtension.vue';
+    import RecommendedTutorials from './components/RecommendedTutorials.vue';
     import RecommendedReading from './components/RecommendedReading.vue';
     import FlowFuseAdvert from './components/FlowFuseAdvert.vue';
     import CopyIcon from './components/icons/CopyIcon.vue';
@@ -57,6 +58,10 @@ hero:
     <img style="max-height: 300px;" src="./assets/images/ebook-dashboard-render.png" />
     <div id="ebook-form"></div>
 </div>
+
+## Recommended Tutorials
+
+<RecommendedTutorials />
 
 ## More Recommended Reading
 

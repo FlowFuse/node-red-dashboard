@@ -6,13 +6,13 @@
             :style="{cursor: lineClickable ? 'pointer' : 'default'}"
             @click="lineClickable ? toggle() : null"
         >
+            <!-- eslint-disable vue/no-v-html -->
             <span
                 class="clickable-label"
                 :style="{cursor: textClickable ? 'pointer' : 'default'}"
                 @click.stop="textClickable ? toggle() : null"
-            >
-                {{ props.label }}
-            </span>
+                v-html="label"
+            />
         </label>
         <v-switch
             v-if="!icon" v-model="status"
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
@@ -48,7 +49,8 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label () {
-            return this.getProperty('label')
+            // Sanetize the html to avoid XSS attacks
+            return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
             // This spreaded layout will be the default for the existing flows

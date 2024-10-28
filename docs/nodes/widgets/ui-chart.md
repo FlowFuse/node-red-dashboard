@@ -136,6 +136,20 @@ Then, the last piece of the puzzle would be to set the `y` property would be one
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1234567890, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
 
+#### Interpolation Methods for Line Charts
+
+Interpolation defines how the line is drawn between data points on a line chart. In Dashboard, you can choose between several interpolation methods to suit your data visualization needs:
+- Linear: Draws a straight line between each data point. Best for continuous datasets with smooth transitions.
+- Step: Creates a stepped line between points, where the value jumps abruptly to the next point. This method is ideal for visualizing data that changes in discrete steps, such as states or thresholds.
+- Bezier: Produces a smooth curve with slight tension between points, creating a more aesthetically pleasing line. Useful for datasets where a smooth transition is important.
+- Cubic: Draws a cubic curve for even more smoothing between data points, providing a rounded visual representation.
+- Cubic-Mono: Similar to cubic, but with an additional constraint that ensures the curve maintains a monotonic behavior. This means it avoids overshooting between points, making it more stable.
+
+![Example Line Chart with stepped interpolation](/images/node-examples/ui-chart-line-interpolation-stepped.png "Example Line Chart with stepped interpolation"){data-zoomable}
+_Example Line Chart with stepped interpolation_
+
+![Example Line Chart with bezier interpolation](/images/node-examples/ui-chart-line-interpolation-bezier.png "Example Line Chart with bezier interpolation"){data-zoomable}
+_Example Line Chart with bezier interpolation_
 
 #### Multiple Lines
 

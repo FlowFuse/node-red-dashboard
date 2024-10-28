@@ -52,6 +52,10 @@ module.exports = function (RED) {
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
+        if (!config.interporlation || typeof config.interporlation === 'undefined') {
+            config.interporlation = 'linear'
+        }
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting

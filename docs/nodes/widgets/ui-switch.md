@@ -4,7 +4,7 @@ props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label:
-        description: The text shown within the button.
+        description: The text shown within the button.  Html content is allowed.
         dynamic: true
     Layout:
         description: Defines how the label and the switch are arranged. Users can choose between different layout options such as aligning elements to the left, left reversed, spread evenly or spread evenly but in reversed order.

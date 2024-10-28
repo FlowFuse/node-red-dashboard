@@ -140,7 +140,8 @@
                     }
                 },
                 height: { value: 8 },
-                className: { value: '' }
+                className: { value: '' },
+                interpolation: { value: 'linear' }
             },
             inputs: 1,
             outputs: 1,
@@ -313,6 +314,9 @@
                 $('#node-input-chartType').on('change', (evt) => {
                     const value = $(evt.target).val()
 
+                    const interpolationWrapper = $('#interpolation-wrapper')
+                    interpolationWrapper.hide()
+
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
@@ -322,6 +326,9 @@
                         // show x-axis limit options & points sizing
                         $('#x-axis-show').show()
                         $('#point-radius-show').show()
+                        if (value === 'line') {
+                            interpolationWrapper.show()
+                        }
                     } else if (value === 'pie' || value === 'doughnut') {
                         // for pie/doughnut
                         // types - radial
@@ -428,6 +435,12 @@
                 if (this.gridColorDefault || this.gridColorDefault === undefined) {
                     $('#node-chart-grid-color').hide()
                 }
+
+                if (this.interpolation) {
+                    $('#node-input-interpolation').val(this.interpolation)
+                } else {
+                    $('#node-input-interpolation').val('linear')
+                }
             },
             oneditsave: function () {
                 // Stack By - convert from string values to bool
@@ -516,6 +529,16 @@
             <label style="width:auto" for="node-input-showLegend"><i class="fa fa-th-list"></i> <span data-i18n="ui-chart.label.showLegend"></span></label>
             <input type="checkbox" checked id="node-input-showLegend" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
         </div>
+    </div>
+    <div id="interpolation-wrapper" class="form-row">
+        <label for="node-input-interpolation" data-i18n="ui-chart.label.interpolation"></label></label>
+        <select id="node-input-interpolation">
+            <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
+            <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
+            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
+            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
+            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+        </select>
     </div>
     <div class="form-row" id="config-stackSeries">
         <!-- do not use node-input here to prevent NR automatic binding -->
