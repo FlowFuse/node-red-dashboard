@@ -326,6 +326,9 @@
                 value: '/dashboard',
                 required: true
             },
+            appIcon: {
+                value: ''
+            },
             includeClientData: {
                 value: true
             },
@@ -364,6 +367,10 @@
                 // update the jquery checkbox
                 $('#node-config-input-showPageTitle').prop('checked', true)
             }
+
+            if (this.appIcon) {
+                $('#node-config-input-appIcon').val(this.appIcon)
+            }
         },
         onpaletteadd: function () {
             // add the Dashboard 2.0 sidebar
@@ -391,6 +398,7 @@
             icon: null,
             color: null,
             isSubflowInstance: false,
+            appIcon: node.appIcon,
             node
         }
         if (hasProperty(node, 'group')) { item.group = node.group }
@@ -989,7 +997,7 @@
                 const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-groups-list-header' }).appendTo(container)
                 $('<i class="nrdb2-sb-list-handle nrdb2-sb-group-list-handle fa fa-bars"></i>').appendTo(titleRow)
                 const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
-                const groupicon = 'fa-table'
+                const groupicon = group.node.groupType === 'dialog' ? 'fa-window-restore' : 'fa-table'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-group-icon fa ' + groupicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(group.name || group.id).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${widgets.length} Widgets`).appendTo(titleRow)
@@ -1987,6 +1995,11 @@
         <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
         <input type="text" id="node-config-input-path" disabled>
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></label>
+        <input type="text" id="node-config-input-appIcon">
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">Enter the url of your app icon here</span>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.header"></label>

@@ -2,6 +2,7 @@
 description: Configure the base UI settings of Node-RED Dashboard 2.0 to tailor the dashboard environment to your needs.
 props:
     Path: The endpoint proceeding the host of Node-RED where your UI will be accessible
+    App Icon: Allows you to set a custom icon for your application. Provide the URL to the App Icon, which will be displayed as the app icon and in the browser tab.
     Include Page Path in Label: The side navigation lists all available Pages for the Dashboard. By default, this will just show the page name, but this option allows you to also show the page's path.
     Side Navigation Style: The style the side navigation menu should use (default, fixed, icon, temporary, none)
 ---
@@ -16,6 +17,26 @@ props:
 ## Properties
 
 <PropsTable :hide-dynamic="true"/>
+
+## Application Icon <AddedIn version="1.18.0" />
+
+The **Application Icon** feature allows you to set a custom icon for your Node-RED Dashboard. This icon is used in the browser tab and when installing the dashboard as a Progressive Web Application (PWA). The image provided should be a square with dimensions between **192px and 512px**. To set it up, provide a URL to an image in the App Icon field, enhancing branding and user recognition.
+
+#### To configure the Application Icon feature in Node-RED Dashboard 2.0, follow these steps:
+
+1. Open the Edit ui-base node settings.
+2. In the App Icon field, enter the URL of the image you want to use as your app icon. Ensure the image is square, with dimensions between 192px and 512px.
+3. This icon will be displayed in the browser tab and when the dashboard is installed as a Progressive Web App (PWA).
+4. Click Update to save the changes.
+
+![Example of how the 'App Icon' property looks](/images/node-examples/ui-base-app-icon.png "Example of how the 'App Icon' property looks"){data-zoomable}
+Screenshot of the UI Base configuration options_
+
+![Example of how the 'App Icon' looks on browser tab](/images/node-examples/ui-base-app-icon-favicon.png "Example of how the 'App Icon' looks on browser tab"){data-zoomable style="max-width: 400px; margin: auto;"}
+_Example of how the 'App Icon' looks on a browser tab_
+
+![Example of how the 'App Icon' looks](/images/node-examples/ui-base-app-icon-launcher.png "Example of how the 'App Icon' looks"){data-zoomable style="max-width: 200px; margin: auto"}
+_Example of how the 'App Icon' appears when installed onto an iPhone_
 
 ## Title Bar Style Options <AddedIn version="1.10.0" />
 

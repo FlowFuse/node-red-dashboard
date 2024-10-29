@@ -174,15 +174,31 @@ export default {
 
             if ('groups' in payload) {
                 if ('show' in payload.groups) {
-                    // we are setting visibility: true
                     payload.groups.show.forEach((name) => {
-                        setGroup(name, 'visible', true)
+                        const groupName = name.split(':')[1]
+                        const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
+
+                        if (exactGroup?.groupType === 'dialog') {
+                            // we are setting dialog visibility: true
+                            setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
+                        } else {
+                            // we are setting visibility: true
+                            setGroup(name, 'visible', true)
+                        }
                     })
                 }
                 if ('hide' in payload.groups) {
-                    // we are setting visibility: false
                     payload.groups.hide.forEach((name) => {
-                        setGroup(name, 'visible', false)
+                        const groupName = name.split(':')[1]
+                        const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
+
+                        if (exactGroup?.groupType === 'dialog') {
+                            // we are setting dialog visibiliry: false
+                            setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
+                        } else {
+                            // we are setting visibility: false
+                            setGroup(name, 'visible', false)
+                        }
                     })
                 }
                 if ('disable' in payload.groups) {

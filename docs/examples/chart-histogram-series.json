@@ -1,0 +1,208 @@
+[
+    {
+        "id": "60c23da02739d9a1",
+        "type": "inject",
+        "z": "28aca5b1020ec1a4",
+        "name": "Software Usage Data",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"age\":{\"days\":45},\"version\":\"2.1.3\",\"license\":\"Free\",\"os\":\"Linux\"},{\"age\":{\"days\":120},\"version\":\"2.1.3\",\"license\":\"Paid\",\"os\":\"Mac\"},{\"age\":{\"days\":30},\"version\":\"2.4.5\",\"license\":\"Free\",\"os\":\"Windows\"},{\"age\":{\"days\":60},\"version\":\"2.4.5\",\"license\":\"Paid\",\"os\":\"Linux\"},{\"age\":{\"days\":90},\"version\":\"2.6.7\",\"license\":\"Free\",\"os\":\"Mac\"},{\"age\":{\"days\":15},\"version\":\"2.6.7\",\"license\":\"Paid\",\"os\":\"Windows\"},{\"age\":{\"days\":75},\"version\":\"2.8.9\",\"license\":\"Free\",\"os\":\"Linux\"},{\"age\":{\"days\":105},\"version\":\"2.8.9\",\"license\":\"Paid\",\"os\":\"Mac\"},{\"age\":{\"days\":135},\"version\":\"2.1.3\",\"license\":\"Free\",\"os\":\"Windows\"},{\"age\":{\"days\":25},\"version\":\"2.4.5\",\"license\":\"Paid\",\"os\":\"Linux\"},{\"age\":{\"days\":55},\"version\":\"2.6.7\",\"license\":\"Free\",\"os\":\"Mac\"},{\"age\":{\"days\":85},\"version\":\"2.8.9\",\"license\":\"Paid\",\"os\":\"Windows\"},{\"age\":{\"days\":115},\"version\":\"2.1.3\",\"license\":\"Free\",\"os\":\"Linux\"},{\"age\":{\"days\":145},\"version\":\"2.4.5\",\"license\":\"Paid\",\"os\":\"Mac\"},{\"age\":{\"days\":35},\"version\":\"2.6.7\",\"license\":\"Free\",\"os\":\"Windows\"},{\"age\":{\"days\":65},\"version\":\"2.8.9\",\"license\":\"Paid\",\"os\":\"Linux\"},{\"age\":{\"days\":95},\"version\":\"2.1.3\",\"license\":\"Free\",\"os\":\"Mac\"},{\"age\":{\"days\":125},\"version\":\"2.4.5\",\"license\":\"Paid\",\"os\":\"Windows\"},{\"age\":{\"days\":20},\"version\":\"2.6.7\",\"license\":\"Free\",\"os\":\"Linux\"},{\"age\":{\"days\":50},\"version\":\"2.8.9\",\"license\":\"Paid\",\"os\":\"Mac\"}]",
+        "payloadType": "json",
+        "x": 120,
+        "y": 60,
+        "wires": [
+            [
+                "c74a6ea207ded516",
+                "9d56c25ee6835aa9"
+            ]
+        ]
+    },
+    {
+        "id": "c74a6ea207ded516",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "ef4891074978d31b",
+        "name": "Histogram (by Version)",
+        "label": "Frequency of Ages (by Version)",
+        "order": 1,
+        "chartType": "histogram",
+        "category": "version",
+        "categoryType": "property",
+        "xAxisLabel": "Age of Instances (Days)",
+        "xAxisProperty": "age.days",
+        "xAxisPropertyType": "property",
+        "xAxisType": "bins",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "Frequency",
+        "yAxisProperty": "",
+        "xmin": "0",
+        "xmax": "90",
+        "ymin": "0",
+        "ymax": "",
+        "bins": "10",
+        "action": "replace",
+        "stackSeries": true,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#52b4ff",
+            "#99d5ff",
+            "#adddff",
+            "#98df8a",
+            "#ff00bb",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "3",
+        "height": "9",
+        "className": "",
+        "x": 320,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d56c25ee6835aa9",
+        "type": "ui-chart",
+        "z": "28aca5b1020ec1a4",
+        "group": "ef4891074978d31b",
+        "name": "Histogram (by OS)",
+        "label": "Frequency of Ages (by OS)",
+        "order": 2,
+        "chartType": "histogram",
+        "category": "os",
+        "categoryType": "property",
+        "xAxisLabel": "Age of Instances (Days)",
+        "xAxisProperty": "age.days",
+        "xAxisPropertyType": "property",
+        "xAxisType": "bins",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "yAxisLabel": "Frequency",
+        "yAxisProperty": "earnings",
+        "xmin": "0",
+        "xmax": "90",
+        "ymin": "0",
+        "ymax": "",
+        "bins": "10",
+        "action": "replace",
+        "stackSeries": true,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#a3d9ff",
+            "#a8e990",
+            "#ffcc85",
+            "#0295ff",
+            "#98df8a",
+            "#ff00bb",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "3",
+        "height": "9",
+        "className": "",
+        "x": 320,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef4891074978d31b",
+        "type": "ui-group",
+        "name": "Histograms",
+        "page": "d0621b8f20aee671",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d0621b8f20aee671",
+        "type": "ui-page",
+        "name": "Charts",
+        "ui": "c2e1aa56f50f03bd",
+        "path": "/charts",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "5075a7d8e4947586",
+        "order": 33,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "c2e1aa56f50f03bd",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "showPageTitle": false,
+        "navigationStyle": "icon",
+        "titleBarStyle": "default"
+    },
+    {
+        "id": "5075a7d8e4947586",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

@@ -13,7 +13,8 @@
             showTitle: { value: true }, // show title on group card
             className: { value: '' },
             visible: { value: true },
-            disabled: { value: false }
+            disabled: { value: false },
+            groupType: { value: 'default' }
         },
         label: function () {
             const page = RED.nodes.node(this.page)?.name || ''
@@ -45,6 +46,8 @@
                 this.disabled = true
                 $('#node-config-input-disabled').val('true')
             }
+
+            $('#node-config-input-groupType').val(this.groupType || 'default')
         },
         oneditsave: function () {
             // convert string to boolean
@@ -74,6 +77,13 @@
     <div class="form-row">
         <label for="node-config-input-page"><i class="fa fa-bookmark"></i> <span data-i18n="ui-group.label.page"></label>
         <input type="text" id="node-config-input-page">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-groupType"><i class="fa fa-window-restore"></i> <span data-i18n="ui-group.label.type"></label>
+        <select id="node-config-input-groupType" style="width: 70%;">
+            <option value="default" data-i18n="ui-group.label.typeDefault"></option>
+            <option value="dialog" data-i18n="ui-group.label.typeDialog"></option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-config-input-size"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-group.label.size"></label>

@@ -115,3 +115,91 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
         })
     })
 })
+
+describe('Node/-RED Dashboard 2.0 - Chart - Data Sets', () => {
+    it('renders charts correctly when "series" is set to a JSON array', () => {
+        cy.deployFixture('dashboard-chart-series-json')
+        cy.visit('/dashboard/page1')
+
+        cy.get('#nrdb-ui-widget-bar-chart-finance > div > canvas').should('exist')
+
+        cy.clickAndWait(cy.get('button').contains('Load Finance Data')) // bar chart
+
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.window().then(win => {
+            should(win.uiCharts).is.not.empty()
+            const barChart = win.uiCharts['bar-chart-finance']
+
+            // Bar chart
+            should(barChart.chart.config.data).be.an.Object()
+            should(barChart.chart.config.data.datasets).be.an.Array()
+
+            function checkSeries (dataset, label, values) {
+                should(dataset).have.property('label', label)
+                const array = dataset.data
+                should(array).be.an.Array().and.have.length(values.length)
+                for (let i = 0; i < array.length; i++) {
+                    should(array[i]).have.property('x', values[i][0])
+                    should(array[i]).have.property('y', values[i][1])
+                }
+            }
+
+            // Check Series Datasets
+            checkSeries(barChart.chart.config.data.datasets[0], 'Q1', [[2021, 115], [2022, 170], [2023, 86]])
+            checkSeries(barChart.chart.config.data.datasets[1], 'Q2', [[2021, 207], [2022, 200], [2023, 140]])
+            checkSeries(barChart.chart.config.data.datasets[2], 'Q3', [[2021, 198], [2022, 230], [2023, 180]])
+            checkSeries(barChart.chart.config.data.datasets[3], 'Q4', [[2021, 163], [2022, 210], [2023, 138]])
+        })
+    })
+
+    it('renders charts correctly when x is set to "timestamp"', () => {
+        cy.deployFixture('dashboard-chart-timestamp')
+        cy.visit('/dashboard/page1')
+
+        // new (from 1.18.1)
+        cy.get('#nrdb-ui-widget-line-chart-timestamp > div > canvas').should('exist')
+
+        // legacy charts pre 1.18.1, which rendered time when xAxisProperty was empty
+        cy.get('#nrdb-ui-widget-line-chart-empty-xProp > div > canvas').should('exist')
+
+        // Clear both charts
+        cy.clickAndWait(cy.get('button').contains('Button - Clear'))
+
+        // Add 3 data points to BOTH charts, 200 milliseconds apart
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.window().then(win => {
+            should(win.uiCharts).is.not.empty()
+            const timestampXChart = win.uiCharts['line-chart-timestamp']
+            const emptyXChart = win.uiCharts['line-chart-empty-xProp']
+
+            // New Charts
+            should(timestampXChart.chart.config.data).be.an.Object()
+            should(timestampXChart.chart.config.data.datasets).be.an.Array()
+
+            // Legacy Charts
+            should(emptyXChart.chart.config.data).be.an.Object()
+            should(emptyXChart.chart.config.data.datasets).be.an.Array()
+
+            // Check data populated correctly
+            // New Charts
+            should(timestampXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+
+            // Legacy Charts
+            should(emptyXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+            // loop over the three data points
+            // eslint-disable-next-line promise/always-return
+            for (let i = 0; i < 3; i++) {
+                // New Charts
+                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('x')
+                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
+                // Legacy Charts
+                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('x')
+                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
+            }
+        })
+    })
+})

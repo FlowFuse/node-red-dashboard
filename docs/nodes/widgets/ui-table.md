@@ -139,6 +139,7 @@ _An example of a ui-table displaying various of the cell types available_
 - **Sparkline - Bar**: Renders the cell as a small bar chart without axes. The `Value` field should contain an array of numbers to be plotted.
 - **Button**: Renders a clickable button in the cell. The label of the button will be either the `row[key]` or the fixed string entered on the manual column configuration.
 - **Row Number**: Renders the row number into the cell.
+- **Image**: Renders the cell as an image. The "Image" value provided should be a valid URL.  A data url is also supported for base64 encoded images. When an invalid url is specified, an empty space will appear.
 
 #### Interaction: Buttons
 
