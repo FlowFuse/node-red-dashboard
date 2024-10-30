@@ -142,14 +142,14 @@ module.exports = function (RED) {
             uiShared.app.get('/dashboard/manifest.webmanifest', (req, res) => {
                 const hasAppIcon = (config.appIcon && config.appIcon.trim() !== '')
                 const manifest = {
-                    name: 'Node-RED Dashboard 2.0',
-                    short_name: 'Dashboard',
+                    name: config.name,
+                    short_name: config.name,
                     start_url: './',
                     display: 'standalone',
                     background_color: '#ffffff',
                     lang: 'en',
                     scope: './',
-                    description: 'Node-RED Dashboard 2.0',
+                    description: config.name,
                     theme_color: '#ffffff',
                     icons: [
                         { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
