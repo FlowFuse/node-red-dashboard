@@ -626,9 +626,10 @@
         return existingThemes[0]
     }
 
-    function addConfigNode (node, history) {
+    function addNode (node, history) {
         if (RED._db2debug) { console.log('addConfigNode', node) }
-        if (!node.users) {
+        const configTypes = ['ui-base', 'ui-group', 'ui-link', 'ui-page', 'ui-theme']
+        if (!node.users && configTypes.indexOf(node.type) > -1) {
             node.users = []
         }
         node.dirty = true
@@ -721,7 +722,7 @@
         if (!linkName) {
             // get all links and determine the next link number
             const existingLinks = getConfigNodesByType(['ui-link']) || []
-            let counter = 1
+            let counter = existingLinks.length + 1
             linkName = `Link ${counter}`
             while (existingLinks.find(e => e.name === linkName)) {
                 counter++
@@ -737,7 +738,8 @@
             path: path || '/',
             name: linkName,
             ui: null,
-            order: nextOrder
+            order: nextOrder,
+            hasUsers: false
         }
         return linkNode
     }
@@ -960,10 +962,10 @@
             const group = createGroupNode()
 
             // add them to the editor & capture the history
-            addConfigNode(baseNode, history)
-            addConfigNode(theme, history)
-            addConfigNode(page, history)
-            addConfigNode(group, history)
+            addNode(baseNode, history)
+            addNode(theme, history)
+            addNode(page, history)
+            addNode(group, history)
 
             // hook them up to each other & capture the history
             assignBase(page, baseNode, history)
@@ -1234,7 +1236,7 @@
                     // this is a new group that's been added and we need to setup the basics
                     const history = []
                     const newGroup = createGroupNode({ order: i + 1 })
-                    addConfigNode(newGroup, history)
+                    addNode(newGroup, history)
                     assignPage(newGroup, page, history)
                     recordEvents(history)
                     RED.editor.editConfig('', newGroup.type, newGroup.id)
@@ -1585,7 +1587,7 @@
                     if (!item || !item.id) {
                         const history = []
                         const newItem = createLinkNode({ order: i + 1 })
-                        addConfigNode(newItem, history)
+                        addNode(newItem, history)
                         const defaultBase = getDefaultBase()
                         if (defaultBase) {
                             assignBase(newItem, defaultBase, history)
@@ -1617,7 +1619,7 @@
                         const history = []
                         // this is a new page that's been added and we need to setup the basics
                         const newItem = createPageNode({ order: i + 1 })
-                        addConfigNode(newItem, history)
+                        addNode(newItem, history)
                         const defaultBase = getDefaultBase()
                         if (defaultBase) {
                             assignBase(newItem, defaultBase, history)
@@ -1705,7 +1707,7 @@
                 addItem: function (container, i, group) {
                     if (!group || !group.id) {
                         const newGroup = createGroupNode()
-                        addConfigNode(newGroup)
+                        addNode(newGroup)
                         RED.editor.editConfig('', newGroup.type, newGroup.id)
                         group = toDashboardItem(newGroup)
                     }
@@ -1768,7 +1770,7 @@
             addItem: function (container, i, theme) {
                 if (!theme || !theme.id) {
                     theme = createThemeNode()
-                    addConfigNode(theme)
+                    addNode(theme)
                     RED.editor.editConfig('', theme.type, theme.id)
                 }
                 container.addClass('nrdb2-sb-pages-list-item')
