@@ -1335,6 +1335,7 @@
                         // create a default link
                         item = addDefaultLink()
                         RED.editor.editConfig('', item.type, item.id)
+                        item = toDashboardItem(item)
                     }
                     // add it to the list of pages/links
                     container.addClass('nrdb2-sb-pages-list-item')
