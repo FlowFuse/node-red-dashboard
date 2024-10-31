@@ -144,6 +144,7 @@ export default ({ mode }) => {
                 { text: 'ui-number-input', link: '/nodes/widgets/ui-number-input' },
                 { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
                 { text: 'ui-slider', link: '/nodes/widgets/ui-slider' },
+                { text: 'ui-spacer', link: '/nodes/widgets/ui-spacer' },
                 { text: 'ui-switch', link: '/nodes/widgets/ui-switch' },
                 { text: 'ui-table', link: '/nodes/widgets/ui-table' },
                 { text: 'ui-template', link: '/nodes/widgets/ui-template' },

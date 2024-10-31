@@ -131,6 +131,7 @@
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-radio-group": "nodes/widgets/ui_radio_group.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-spacer": "nodes/widgets/ui_spacer.js",
             "ui-switch": "nodes/widgets/ui_switch.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-table": "nodes/widgets/ui_table.js",
