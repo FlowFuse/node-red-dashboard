@@ -13,6 +13,9 @@ props:
         dynamic: true
     Topic: The text that needs to be send in the msg.topic field.
     Passthrough: Specify whether input messages should be passed through as output messages.
+    Class:
+        payload: msg.ui_update.class
+        structure: ["String"]
 controls:
     enabled:
         example: true | false
