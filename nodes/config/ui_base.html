@@ -829,10 +829,10 @@
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      * @param {Object} list - The editableList instance associated with this item
      */
-    function addRowActions (parent, item, list) {
+    function addRowActions (parent, item, list, other) {
         const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
-        if (!configNodes.includes(item.type)) {
+        if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
             const focusButton = $('<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-bullseye"></i> ' + c_('layout.focus') + '</a>').appendTo(btnGroup)
             focusButton.on('click', function (evt) {
                 RED.view.reveal(item.id)
@@ -854,7 +854,40 @@
             // add the "+ group" button
             $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.group') + '</a>')
                 .click(function (evt) {
-                    list.editableList('addItem')
+                    list.editableList('addItem', { type: 'ui-group', page: item.id })
+                    evt.preventDefault()
+                })
+                .appendTo(btnGroup)
+        }
+        // if this is a group & it is not an unattached group, add the "_ spacer" button
+        if (item.type === 'ui-group' && !!item.page) {
+            // add the "+ spacer" button
+            $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-arrows-h"></i> ' + c_('layout.spacer') + '</a>')
+                .click(function (evt) {
+                    // TODO: refactor this into createSpacer when #1401 is merged', parent, list
+                    const spacer = RED.nodes.getType('ui-spacer')
+                    const spacerNode = {
+                        _def: spacer,
+                        id: RED.nodes.id(),
+                        type: 'ui-spacer',
+                        ...mapDefaults(spacer.defaults),
+                        users: [],
+                        name: 'spacer',
+                        order: list.editableList('items').length + 1,
+                        group: item.id
+                    }
+                    spacerNode.dirty = true
+                    const n = RED.nodes.add(spacerNode)
+                    RED.editor.validateNode(spacerNode)
+                    RED.history.push({
+                        t: 'add',
+                        nodes: [spacerNode.id],
+                        dirty: RED.nodes.dirty()
+                    })
+                    RED.nodes.dirty(true)
+                    const widget = toDashboardItem(spacerNode)
+                    list.editableList('addItem', widget)
+                    RED.editor.edit(n)
                     evt.preventDefault()
                 })
                 .appendTo(btnGroup)
@@ -1004,8 +1037,6 @@
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${widgets.length} Widgets`).appendTo(titleRow)
 
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, group)
-                addRowStateOptions(actions, group)
 
                 // adds widgets within this group
                 const widgetsList = $('<div>', { class: 'nrdb2-sb-widget-list-container' }).appendTo(container)
@@ -1013,7 +1044,10 @@
                 // add chevron/list toggle
                 titleRow.click(titleToggle(group.id, widgetsList, chevron))
 
-                addWidgetToList(group.id, widgetsList, widgets)
+                const widgetsOL = addWidgetToList(group.id, widgetsList, widgets)
+
+                addRowActions(actions, group, widgetsOL)
+                addRowStateOptions(actions, group)
 
                 const events = []
                 updateItemOrder(groupsOL.editableList('items'), events)
@@ -1080,9 +1114,14 @@
 
                 // Set the icon
                 const ico = $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon' }).appendTo(titleRow)
-                let widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
-                if (widgetIcon.startsWith('font-awesome/')) {
-                    widgetIcon = widgetIcon.replace(/^font-awesome\//, 'fa ')
+                let widgetIcon
+                if (widget.type === 'ui-spacer') {
+                    widgetIcon = 'fa fa-arrows-h'
+                } else {
+                    widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
+                    if (widgetIcon.startsWith('font-awesome/')) {
+                        widgetIcon = widgetIcon.replace(/^font-awesome\//, 'fa ')
+                    }
                 }
                 if (widget.isSubflowInstance) {
                     // In this MVP, subflow instances are constrained to stay within own group.
@@ -1099,7 +1138,7 @@
 
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, widget)
+                addRowActions(actions, widget, widgetsOL)
 
                 const events = []
                 updateItemOrder(widgetsOL.editableList('items'), events)
@@ -1142,6 +1181,8 @@
         widgets.forEach(function (w) {
             widgetsOL.editableList('addItem', w)
         })
+
+        return widgetsOL
     }
 
     // expand / collapse buttons
@@ -1284,6 +1325,15 @@
                         subflowDefinitions.set('subflow:' + subflowDef.id, subflowDef)
                     }
                 }
+            }
+        })
+        // get ui-spacers too (they are config nodes so as not to be displayed in the editor node palette)
+        RED.nodes.eachConfig(function (n) {
+            if (n.type === 'ui-spacer' && n.group) {
+                if (!widgetsByGroup[n.group]) {
+                    widgetsByGroup[n.group] = []
+                }
+                widgetsByGroup[n.group].push(toDashboardItem(n))
             }
         })
 
