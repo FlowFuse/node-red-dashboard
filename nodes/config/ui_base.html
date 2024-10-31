@@ -827,6 +827,7 @@
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
+     * @param {Object} list - The editableList instance associated with this item
      */
     function addRowActions (parent, item, list) {
         const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
