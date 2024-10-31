@@ -42,6 +42,8 @@
             "focus": "Focus",
             "collapse": "Collapse",
             "expand": "Expand",
+            "delete": "Delete",
+            "spacer": "Spacer",
             "unattachedGroups": "Unattached Groups"
         },
         "themes": {
