@@ -1086,7 +1086,7 @@
         }
 
         // button to edit node via node-red editor panel
-        const editButton = $(`<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button" title=${c_('layout.edit')}><i class="fa fa-cog"></i></a>`).appendTo(btnGroup)
+        const editButton = $(`<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.edit')}"><i class="fa fa-cog"></i></a>`).appendTo(btnGroup)
         editButton.on('click', function (evt) {
             if (configNodes.includes(item.type)) {
                 RED.editor.editConfig('', item.type, item.id)
