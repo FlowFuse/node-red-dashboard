@@ -865,13 +865,7 @@
                 const pageId = item.id
                 const baseId = item.node.ui
                 const base = RED.nodes.node(item.node.ui)
-                let basePath = base.path || '/dashboard'
-                if (basePath.endsWith('/')) {
-                    basePath = basePath.slice(0, -1)
-                }
-                if (!basePath.startsWith('/')) {
-                    basePath = `/${basePath}`
-                }
+                const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
                 const authTokens = RED.settings.get('auth-tokens') || {}
                 const headers = {}
                 if (authTokens.access_token) {
@@ -882,7 +876,7 @@
                 const ajax = () => {
                     return new Promise((resolve, reject) => {
                         $.ajax({
-                            url: `${base.path}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
+                            url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
                             type: 'PATCH',
                             headers,
                             data: {
@@ -891,9 +885,13 @@
                                 page: pageId
                             },
                             success: function (data) {
-                                // open the dashboard on that page in a _blank window
-                                const _url = new URL(`${basePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                                // construct the url to open the layout editor
+                                const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
                                 _url.searchParams.set('edit-key', data.editKey)
+                                const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
+                                if (editorPath) {
+                                    _url.searchParams.set('editor-path', editorPath)
+                                }
                                 resolve(_url)
                             },
                             error: function (err) {

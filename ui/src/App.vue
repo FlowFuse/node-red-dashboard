@@ -146,10 +146,12 @@ export default {
             // The initEditMode setup fn in EditTracking.js module stores this and it is used to enable
             // the WYSIWYG edit tracking for the page in question.
             const editKeyInUrl = new URLSearchParams(window.location.search).get('edit-key')
+            const editorPath = new URLSearchParams(window.location.search).get('editor-path')
+
             const pageIdOk = payload.meta?.wysiwyg?.page && !!payload.pages[payload.meta.wysiwyg.page] && editKeyInUrl === payload.meta.wysiwyg.editKey
             const dashboardIdOk = payload.meta?.wysiwyg?.dashboard && !!payload.dashboards[payload.meta.wysiwyg.dashboard]
             if (payload.meta?.wysiwyg?.enabled && editKeyInUrl && pageIdOk && dashboardIdOk) {
-                initEditMode(editKeyInUrl, payload.meta.wysiwyg.page)
+                initEditMode(editKeyInUrl, payload.meta.wysiwyg.page, editorPath)
             }
 
             // loop over pages, add them to vue router

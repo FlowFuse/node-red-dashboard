@@ -1,4 +1,4 @@
-import { editKey, editMode, editPage, exitEditMode, isTrackingEdits, originalGroups, startEditTracking, updateEditTracking } from '../../EditTracking.js'
+import { editKey, editMode, editPage, editorPath, exitEditMode, isTrackingEdits, originalGroups, startEditTracking, updateEditTracking } from '../../EditTracking.js'
 import NodeRedApi from '../../api/node-red'
 
 import DraggableMixin from './draggable.js'
@@ -44,7 +44,7 @@ export default {
             this.pageGroups = JSON.parse(JSON.stringify(originalGroups.value))
         },
         deployChanges ({ dashboard, page, groups }) {
-            return NodeRedApi.deployChanges({ dashboard, page, groups, key: editKey.value })
+            return NodeRedApi.deployChanges({ dashboard, page, groups, key: editKey.value, editorPath: editorPath.value })
         }
     }
 }

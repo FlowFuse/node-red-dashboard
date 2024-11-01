@@ -1,7 +1,14 @@
 import axios from 'axios'
 
-function applyAuth (headers) {
-    let authTokens = localStorage.getItem('auth-tokens')
+function applyAuth (headers, editorPath) {
+    let itemName = 'auth-tokens'
+    if (editorPath) {
+        itemName += `-${editorPath.replace(/\//g, '-')}`
+    }
+    let authTokens = localStorage.getItem(itemName)
+    if (!authTokens) {
+        authTokens = localStorage.getItem('auth-tokens')
+    }
     if (authTokens) {
         authTokens = JSON.parse(authTokens)
         const token = authTokens.access_token
@@ -16,15 +23,19 @@ function applyAuth (headers) {
  * The path parts are appended to the url
  * @example
  * // returns a URL object for 'http://localhost:1880/dashboard/api/v1/my-dashboard/flows'
- * const url = getDashboardApiUrl('my-dashboard', 'flows')
+ * const url = getDashboardApiUrl('', 'my-dashboard', 'flows')
+ * @param {String} editorPath - The node-red editor path as provided by httpAdminRoot (e.g. 'editor') (can be empty)
  * @param {String} dashboardId - The dashboard id
  * @param  {...any} path - 1 or more path parts to append to the url
  * @returns {String} The full dashboard api url
  */
-function getDashboardApiUrl (dashboardId, ...path) {
+function getDashboardApiUrl (editorPath, dashboardId, ...path) {
     const url = new URL(window.location.href)
     const urlBase = url.pathname.split('/').slice(0, -1).join('/') + '/api/v1/' // e.g 'http://localhost:1880/dashboard/api/v1/'
     const pathParts = [urlBase, dashboardId, ...(path || [])].map(p => p.replace(/^\/|\/$/g, ''))
+    if (editorPath) {
+        pathParts.unshift(editorPath.replace(/\/$/, '').replace(/^\/+/, ''))
+    }
     const result = new URL(url)
     result.search = ''
     result.pathname = pathParts.join('/')
@@ -41,12 +52,12 @@ export default {
      * @param {Array<Object>} options.groups - The updated group objects to apply
      * @returns the axios request
      */
-    deployChanges: async function deployChangesViaHttpAdminEndpoint ({ dashboard, page, groups, key }) {
+    deployChanges: async function deployChangesViaHttpAdminEndpoint ({ dashboard, page, groups, key, editorPath }) {
         const changes = { groups }
         return axios.request({
             method: 'PATCH',
-            url: getDashboardApiUrl(dashboard, 'flows'),
-            headers: applyAuth({ 'Content-type': 'application/json' }),
+            url: getDashboardApiUrl(editorPath || '', dashboard, 'flows'),
+            headers: applyAuth({ 'Content-type': 'application/json' }, editorPath),
             data: { dashboard, page, key, changes }
         })
     }
