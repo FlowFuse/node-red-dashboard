@@ -14,7 +14,7 @@
                         const width = v || 0
                         const currentGroup = $('#node-input-group').val() || this.group
                         const groupNode = RED.nodes.node(currentGroup)
-                        const valid = !groupNode || +width <= +groupNode.width
+                        const valid = !groupNode || +width >= 0
                         $('#node-input-size').toggleClass('input-error', !valid)
                         return valid
                     }
