@@ -56,7 +56,8 @@
             { value: 'sparkline-trend', label: 'Sparkline - Trend (Array)' },
             { value: 'sparkline-bar', label: 'Sparkline - Bar (Array)' },
             { value: 'button', label: 'Button' },
-            { value: 'row', label: 'Row Number' }
+            { value: 'row', label: 'Row Number' },
+            { value: 'image', label: 'Image (https://...)' }
         ]
         RED.nodes.registerType('ui-table', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
@@ -72,7 +73,7 @@
                         const width = v || 0
                         const currentGroup = $('#node-input-group').val() || this.group
                         const groupNode = RED.nodes.node(currentGroup)
-                        const valid = !groupNode || +width <= +groupNode.width
+                        const valid = !groupNode || +width >= 0
                         $('#node-input-size').toggleClass('input-error', !valid)
                         return valid
                     }
