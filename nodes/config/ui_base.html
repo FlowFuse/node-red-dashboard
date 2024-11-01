@@ -1185,7 +1185,7 @@
         if (item.type === 'ui-group' && !!item.page) {
             // add the "+ spacer" button
             $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.spacer')}"><i class="fa fa-plus"></i></a>`)
-                .on(function (evt) {
+                .on('click', function (evt) {
                     const spacerNode = createSpacerNode({ name: 'spacer', group: item.id, order: list.editableList('items').length + 1 })
                     const history = []
                     addNode(spacerNode, history)
