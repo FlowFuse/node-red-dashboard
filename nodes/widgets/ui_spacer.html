@@ -48,6 +48,13 @@
                         group: '#node-input-group'
                     })
                 }
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
             },
             oneditsave: function () {
                 this.width = $('#node-input-width').val()
