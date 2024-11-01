@@ -6,8 +6,7 @@
             </template>
             <v-app-bar-title>
                 <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
-                    {{ pageTitle }}
-                    <v-chip v-if="showEditingIconInAppBar" v-tooltip="`${currentEditPage.name} is in edit mode`" color="warning" :to="currentEditPage.type === 'ui-page' ? { name: currentEditPage.route.name } : null">
+                    {{ pageTitle }}<v-chip v-if="showEditingIconInAppBar" v-tooltip="`${currentEditPage.name} is in edit mode`" color="warning" :to="currentEditPage.type === 'ui-page' ? { name: currentEditPage.route.name } : null">
                         <v-icon>mdi-pencil</v-icon>
                     </v-chip>
                 </template>
