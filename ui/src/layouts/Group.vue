@@ -11,26 +11,51 @@
         >
             <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
         </div>
+        <div
+            v-if="resizable" ref="resize-view" class="nrdb-resizable" :class="{'resizing': resizing.active}"
+            :style="{'width': resizing.current.width ? `${resizing.current.width}px` : null }"
+        >
+            <div
+                draggable="true"
+                class="nrdb-resizable--handle nrdb-resizable--right"
+                @dragstart="onHandleDragStart($event, 'top', 'right')"
+                @drag="onHandleDrag($event, 'top', 'right')"
+                @dragover="onHandleOver($event, 'top', 'right')"
+                @dragend="onHandleDragEnd($event, 'top', 'right')"
+                @dragenter.prevent
+            />
+        </div>
+        <img ref="blank-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="">
     </div>
 </template>
 
 <script>
-
+import WYSIWYG from './wysiwyg/index.js'
 export default {
     name: 'WidgetGroup',
+    mixins: [WYSIWYG],
     props: {
         group: {
             type: Object,
             required: true
         },
+        index: {
+            type: Number,
+            required: true
+        },
         widgets: {
             type: Array,
             required: true
+        },
+        resizable: {
+            type: Boolean,
+            default: false
         }
     },
+    emits: ['resize'],
     computed: {
         columns () {
-            return this.group.width
+            return this.resizing.current.columns > 0 ? this.resizing.current.columns : +this.group.width
         }
     },
     methods: {
@@ -47,6 +72,9 @@ export default {
             return classes.join(' ')
         }
     }
-
 }
 </script>
+
+<style scoped lang="scss">
+@import './wysiwyg/resizable.scss';
+</style>

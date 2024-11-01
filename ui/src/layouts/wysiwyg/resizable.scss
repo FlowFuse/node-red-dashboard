@@ -1,0 +1,64 @@
+.nrdb-resizable {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    --handler-size: 12px;
+    cursor: grab;
+    &.resizing {
+        background-color: #ff00001f;
+        border: 1px dashed red;
+    }
+}
+.nrdb-resizable--handle {
+    position: absolute;
+    width: var(--handler-size);
+    height: var(--handler-size);
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 6px;
+    cursor: ew-resize;
+    &:active {
+        cursor: ew-resize !important;
+    }
+}
+.nrdb-resizable--top-right {
+    top: calc(-1 * var(--handler-size) / 2);
+    right: calc(-1 * var(--handler-size) / 2);
+}
+
+.nrdb-resizable--right {
+    height: calc(2 * var(--handler-size));
+    top: 50%;
+    margin-top: calc(-1 * var(--handler-size));
+    right: calc(-1 * var(--handler-size) / 2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+        cursor: ew-resize;
+        background-color: #eee;
+    }
+    &:active {
+        cursor: ew-resize !important;
+    }
+}
+
+.nrdb-resizable--right:after {
+    content: '';
+    height: calc(0.75 * var(--handler-size));
+    width: 1px;
+    display: inline-block;
+    background-color: red;
+}
+
+.nrdb-resizable--bottom-left {
+    bottom: calc(-1 * var(--handler-size) / 2);
+    left: calc(-1 * var(--handler-size) / 2);
+}
+
+.nrdb-resizable--top-left {
+    top: calc(-1 * var(--handler-size) / 2);
+    left: calc(-1 * var(--handler-size) / 2);
+}
