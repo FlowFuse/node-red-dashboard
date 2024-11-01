@@ -1073,7 +1073,7 @@
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
      * @param {Object} list - The editableList instance associated with this item
      */
-    function addRowActions (parent, item, list, other) {
+    function addRowActions (parent, item, list) {
         const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
         if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
