@@ -67,7 +67,7 @@ describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
 
     it('retains previous value on dynamic input without payload', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-text-left').should('not.contain', 'injected text')
-        cy.get('#nrdb-ui-widget-button-inject-text-2').click()
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-inject-text-2'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label')
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-label-no-payload'))
