@@ -15,13 +15,14 @@
                     const width = v || 0
                     const currentGroup = $('#node-input-group').val() || this.group
                     const groupNode = RED.nodes.node(currentGroup)
-                    const valid = !groupNode || +width <= +groupNode.width
+                    const valid = !groupNode || +width >= 0
                     $('#node-input-size').toggleClass('input-error', !valid)
                     return valid
                 }
             },
             height: { value: 1 },
             label: { value: 'button group' },
+            className: { value: '' },
             rounded: { value: true },
             useThemeColors: { value: true },
             passthru: { value: false },
@@ -237,6 +238,19 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-button-group.label.label"></span></label>
         <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-button-group.label.className"></label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-button-group.label.classNamePlaceholder" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
     </div>
     <div class='form-row'>
         <label for='node-input-rounded'><i class='fa fa-gear'></i> <span data-i18n="ui-button-group.label.appearance"></span></label>        

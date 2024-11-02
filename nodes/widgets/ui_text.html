@@ -83,7 +83,7 @@
                         const width = v || 0
                         const currentGroup = $('#node-input-group').val() || this.group
                         const groupNode = RED.nodes.node(currentGroup)
-                        const valid = !groupNode || +width <= +groupNode.width
+                        const valid = !groupNode || +width >= 0
                         $('#node-input-size').toggleClass('input-error', !valid)
                         return valid
                     }
@@ -98,6 +98,7 @@
                 font: { value: 'Helvetica' },
                 fontSize: { value: 16 },
                 color: { value: '#717171' },
+                wrapText: { value: false },
                 className: { value: '' },
                 property: { value: 'payload' },
                 propertyType: { value: 'msg' }
@@ -280,6 +281,10 @@
         <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
         <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
     </div>-->
+    <div class="form-row">
+        <label for="node-input-wrapText"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.wrapText"></label>
+        <input type="checkbox" id="node-input-wrapText" style="width: auto">
+    </div>
     <div class="form-row">
         <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span data-i18n="ui-text.label.layout"></label>
         <div style="display:inline-block">

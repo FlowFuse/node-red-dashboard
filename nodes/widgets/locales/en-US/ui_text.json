@@ -14,7 +14,8 @@
             "font": "Font",
             "textSize": "Text Size",
             "textColor": "Text Color",
-            "enterSampleHere": "Enter Sample Here"
+            "enterSampleHere": "Enter Sample Here",
+            "wrapText": "Wrap Text"
         }
     }
 }

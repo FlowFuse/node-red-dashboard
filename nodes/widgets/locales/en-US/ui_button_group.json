@@ -8,7 +8,9 @@
             "colors": "Colors",
             "options": "Options",
             "appearance": "Appearance",
-            "tcolors": "Use theme colors"
+            "tcolors": "Use theme colors",
+            "className": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s)"
         }
     }
 }
