@@ -25,7 +25,6 @@
                 @dragenter.prevent
             />
         </div>
-        <img ref="blank-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="">
     </div>
 </template>
 
