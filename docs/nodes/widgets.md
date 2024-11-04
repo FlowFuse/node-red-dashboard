@@ -32,6 +32,10 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
         widget: 'ui-text',
         image: '/images/node-examples/ui-text.png',
         description: 'Displays a non-editable text field on your dashboard.'
+    }, {
+        name: 'Spacer',
+        widget: 'ui-spacer',
+        description: 'Adds a simple spacer to your group.'
     }]
 
     const form = [{

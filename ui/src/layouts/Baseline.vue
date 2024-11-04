@@ -15,7 +15,7 @@
             </template>
         </v-app-bar>
 
-        <v-main>
+        <v-main :class="{'nrdb-edit-mode': editMode}">
             <v-navigation-drawer
                 v-if="navigationStyle !== 'hidden'"
                 v-model="drawer"
@@ -191,6 +191,9 @@ export default {
                 return this.orderedPages.find(p => p.id === editPage.value)
             }
             return null
+        },
+        editMode: function () {
+            return editMode.value
         }
     },
     watch: {
