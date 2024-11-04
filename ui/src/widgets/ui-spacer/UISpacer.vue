@@ -12,6 +12,11 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
+    computed: {
+        placeholderText () {
+            return `"spacer (${this.props.width}x${this.props.height})"`
+        }
+    },
     created () {
         this.$socket.emit('widget-load', this.id)
     }
@@ -26,7 +31,7 @@ export default {
 }
 
 .nrdb-edit-mode .nrdb-spacer:before {
-    content: "spacer";
+    content: v-bind(placeholderText);
     font-style: italic;
     display: flex;
     justify-content: center;
