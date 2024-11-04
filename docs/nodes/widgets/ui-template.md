@@ -2,7 +2,7 @@
 description: Harness the power of ui-template in Node-RED Dashboard 2.0 to design custom widgets and unique dashboard layouts.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
-    Scope: "Template nodes can be used  for 3 purposes/scopes: <ul><li><b>Widget (Group-Scoped):</b>A standard HTML/Vue widget rendered in a group in the Dashboard.</li><li><b>Widget (Page-Scoped):</b>A HTML/Vue widget that will render on a page, outside of any existing groups. Note that these widgets will render after any Groups. An example use case for this would be if you wanted to have a fixed footer on a given page.</li><li><b>Widget (UI-Scoped):</b>A HTML/Vue widget rendered on every page of the Dashboard. Most commonly used in conjuction with <a href=\"#teleports\">Teleports</a></li><li><b>CSS (All Pages):</b>Define custom CSS classes/styling that applies to the entire Dashboard.</li><li><b>CSS (Single Page):</b>Define custom CSS classes/styling that applies just a single page of your Dashboard.</li></ul>"
+    Scope: "Template nodes can be used  for 3 purposes/scopes: <ul><li><b>Widget (Group-Scoped):</b>A standard HTML/Vue widget rendered in a group in the Dashboard.</li><li><b>Widget (Page-Scoped):</b>A HTML/Vue widget that will render on a page, outside of any existing groups. Note that these widgets will render after any Groups. An example use case for this would be if you wanted to have a fixed footer on a given page.</li><li><b>Widget (UI-Scoped):</b>A HTML/Vue widget rendered on every page of the Dashboard. Most commonly used in conjunction with <a href=\"#teleports\">Teleports</a></li><li><b>CSS (All Pages):</b>Define custom CSS classes/styling that applies to the entire Dashboard.</li><li><b>CSS (Single Page):</b>Define custom CSS classes/styling that applies just a single page of your Dashboard.</li></ul>"
     Class: Appends CSS classes to the widget
     Template: The content of the widget or CSS &lt;style&gt;. If using this for CSS, you do not need to include any &lt;style&gt; tags, as these will be automatically added.
 ---
@@ -89,7 +89,7 @@ You have access to a number of built-in variables in your `ui-template` node:
 
 When accessing the `msg` variable inside a `<script />` tag, you need to prefix the variable name with `this.` (e.g. `this.msg.payload`) so that it knows you're accessing the component-bound `msg` variable.
 
-***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occuring.
+***Important Note:*** On first load, `msg.payload` may be `null` or `undefined`, and trying to access a nested property will throw an error. Using the **optional chaining** (?.) operator, e.g. `msg.payload?.nested?.property` will prevent these errors occurring.
 
 #### Accessing Node-RED Global/Flow Context
 
@@ -436,7 +436,7 @@ Whenever a `ui-template` receives a `msg` in Node-RED, that is automatically ass
 Two exposed methods, `send` and `submit`, allow you to send messages from the Dashboard to the Node-RED flow. 
 
 - `send` - Outputs a message (defined by the input to this function call) from this node in the Node-RED flow. 
-- `submit` - Send a `FormData` object when attached to a `<form>` element. The created object will consnist of the `name` attributes for each form element, corresponding to their respective `value` attributes.
+- `submit` - Send a `FormData` object when attached to a `<form>` element. The created object will consist of the `name` attributes for each form element, corresponding to their respective `value` attributes.
 
 #### Sending on Click
 Here, we call it when someone clicks our "Send Hello World" button:
