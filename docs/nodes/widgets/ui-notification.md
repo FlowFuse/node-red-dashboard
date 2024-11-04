@@ -43,12 +43,13 @@ dynamic:
     Accept raw html:
         payload: msg.ui_update.raw
         structure: ["Boolean"]
-    Show:
-        payload: msg.ui_update.show
-        structure: ["Boolean"]
     Show countdown bar:
         payload: msg.ui_update.showCountdown
         structure: ["Boolean"]
+controls:
+    show:
+        example: true | false
+        description: Allow control over whether or not the notification is visible.
 ---
 
 <script setup>
@@ -71,6 +72,10 @@ If you want to have the notification show indefinitely, you can set `timeout` to
 ## Dynamic Properties
 
 <DynamicPropsTable/>
+
+## Controls
+
+<ControlsTable/>
 
 ## Example
 
