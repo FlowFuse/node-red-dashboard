@@ -177,13 +177,15 @@ module.exports = function (RED) {
                         // this message was sent by this particular node
                         if (evt === 'change') {
                             const wNode = RED.nodes.getNode(node.id)
-                            let msg = {
-                                payload: 'change',
-                                tab: payload.page, // index of tab
-                                name: payload.name // page name
+                            if (wNode && payload && wNode.send) {
+                                let msg = {
+                                    payload: 'change',
+                                    tab: payload.page, // index of tab
+                                    name: payload.name // page name
+                                }
+                                msg = addConnectionCredentials(RED, msg, conn, ui)
+                                wNode.send(msg)
                             }
-                            msg = addConnectionCredentials(RED, msg, conn, ui)
-                            wNode.send(msg)
                         }
                     }
                 }
