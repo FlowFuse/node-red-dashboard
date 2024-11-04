@@ -41,7 +41,21 @@ export default {
             exitEditMode() // EditTracking method
         },
         revertEdits () {
-            this.pageGroups = JSON.parse(JSON.stringify(originalGroups.value))
+            const originals = originalGroups.value || []
+            // scan through each group and revert changes
+            const propertiesOfInterest = ['width', 'height', 'order']
+            originals.forEach((originalGroup, index) => {
+                const pageGroup = this.pageGroups?.find(group => group.id === originalGroup.id)
+                if (!pageGroup) {
+                    console.warn('Group not found in pageGroups - as we do not currently support adding/removing groups, this should not happen!')
+                    return
+                }
+                propertiesOfInterest.forEach(property => {
+                    if (originalGroup[property] !== pageGroup[property]) {
+                        pageGroup[property] = originalGroup[property]
+                    }
+                })
+            })
         },
         deployChanges ({ dashboard, page, groups }) {
             return NodeRedApi.deployChanges({ dashboard, page, groups, key: editKey.value, editorPath: editorPath.value })
