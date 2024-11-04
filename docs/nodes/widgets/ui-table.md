@@ -53,7 +53,7 @@ Renders a set of data in a tabular format. Expects an input (`msg.payload`) in t
 }]
 ```
 
-The table will be rendered with colums `colA`, `colB` and `colC`, unless "Columns" are explicitely defined on the node, with "Auto Columns" toggled off.
+The table will be rendered with columns `colA`, `colB` and `colC`, unless "Columns" are explicitly defined on the node, with "Auto Columns" toggled off.
 
 You can also send a single piece of data to append to the existing table, in this case, the `ui-table` expects an input (`msg.payload`) in the format of:
 
