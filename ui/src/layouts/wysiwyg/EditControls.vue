@@ -41,14 +41,16 @@ export default {
 .nrdb-ui-editor-tray-container {
     position: fixed;
     top: 0;
-    left: 0;
     z-index: 1000;
-    width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
     --shadow: 0px 0px 5px #000000de;
+    width: fit-content;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%);
 }
 .nrdb-ui-editor-tray {
     background-color: white;
