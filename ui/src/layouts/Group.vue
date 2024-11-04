@@ -7,7 +7,7 @@
             class="nrdb-ui-widget"
             :class="getWidgetClass(w)"
             style="display: grid"
-            :style="`grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(${w.props.height}, minmax(var(--widget-row-height), auto)); grid-row-end: span ${w.props.height}; grid-column-end: span min(${ w.props.width || columns }, var(--layout-columns))`"
+            :style="`grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(${w.props.height}, minmax(var(--widget-row-height), auto)); grid-row-end: span ${w.props.height}; grid-column-end: span min(${ getWidgetWidth(w.props.width) }, var(--layout-columns))`"
         >
             <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
         </div>
@@ -70,6 +70,13 @@ export default {
                 classes.push(widget.state.class)
             }
             return classes.join(' ')
+        },
+        getWidgetWidth (width) {
+            if (width) {
+                return Math.min(width, this.columns)
+            } else {
+                return this.columns
+            }
         }
     }
 }
