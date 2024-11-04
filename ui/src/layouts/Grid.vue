@@ -239,11 +239,6 @@ export default {
     gap: var(--group-gap);
 }
 
-.nrdb-layout--grid > div {
-    width: 100%;
-    /* max-width: 100%; */
-}
-
 .v-card {
     width: 100%;
 }
