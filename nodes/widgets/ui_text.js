@@ -1,6 +1,11 @@
 module.exports = function (RED) {
     function TextNode (config) {
         const node = this
+        // In-place upgrades - ensure properties are set
+        if (typeof config.property === 'undefined') { config.property = 'payload' }
+        if (typeof config.propertyType === 'undefined') { config.propertyType = 'msg' }
+        if (typeof config.label === 'undefined') { config.label = 'text' }
+        if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
 
         const typedInputs = {
             payload: { nodeProperty: 'property', nodePropertyType: 'propertyType' },

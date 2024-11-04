@@ -3,7 +3,10 @@ const { applyUpdates } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function TextInputNode (config) {
-        // create node in Node-RED
+        // In-place upgrades - ensure properties are set
+        if (typeof config.label === 'undefined') { config.label = 'text' }
+        if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
+
         const node = this
 
         const typedInputs = {

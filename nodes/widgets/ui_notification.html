@@ -39,6 +39,13 @@
             label: function () { return this.name || (this.position === 'prompt' ? 'show dialog' : (this.position === 'dialog' ? 'show dialog' : 'show notification')) },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                console.log('ui-notification oneditprepare', this.message, this.messageType)
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-message').val() && !$('#node-input-message').val()) {
+                    $('#node-input-message').val(this.message || 'payload')
+                    $('#node-input-messageType').val(this.messageType || 'msg')
+                }
+
                 $('#node-input-message').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-messageType'),

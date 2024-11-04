@@ -111,6 +111,16 @@
             label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'text' },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-label').val() && !$('#node-input-label').val()) {
+                    $('#node-input-label').val(this.label || 'text')
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
+                if (!$('#node-input-property').val() && !$('#node-input-property').val()) {
+                    $('#node-input-property').val(this.property || 'payload')
+                    $('#node-input-propertyType').val(this.propertyType || 'msg')
+                }
+
                 // label
                 $('#node-input-label').typedInput({
                     default: 'str',

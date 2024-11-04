@@ -76,6 +76,11 @@
                     types: ['str', 'msg', 'flow', 'global']
                 })
 
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-label').val() && !$('#node-input-label').val()) {
+                    $('#node-input-label').val(this.label || 'text')
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
                 // label
                 $('#node-input-label').typedInput({
                     default: 'str',

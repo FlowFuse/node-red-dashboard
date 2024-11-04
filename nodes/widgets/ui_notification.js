@@ -3,6 +3,10 @@ module.exports = function (RED) {
         const node = this
         config.passthru = false // prevent default passthru by setting it explicity to `false`. The notification itself will send msg on timeout, dismissal or confirmation!
 
+        // In-place upgrades - ensure properties are set
+        if (typeof config.message === 'undefined') { config.message = 'payload' }
+        if (typeof config.messageType === 'undefined') { config.messageType = 'msg' }
+
         RED.nodes.createNode(this, config)
         // Which ui are we rendering this widget.
         // In contradiction to other ui nodes (which belong to a group), the notification node belongs to a ui instead.
@@ -23,6 +27,7 @@ module.exports = function (RED) {
             raw: true,
             showCountdown: true
         }
+
         const typedInputs = {
             message: { nodeProperty: 'message', nodePropertyType: 'messageType' }
         }
