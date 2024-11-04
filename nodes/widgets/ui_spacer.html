@@ -27,7 +27,7 @@
             hasUsers: false,
             icon: 'font-awesome/fa-arrows-h',
             paletteLabel: 'spacer',
-            label: function () { return this.name + ' ' + this.width + 'x' + this.height },
+            label: function () { return `${this.name || 'Spacer'} ${this.width} x ${this.height}` },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
@@ -57,6 +57,7 @@
                 })
             },
             oneditsave: function () {
+                this.name = $('#node-input-name').val()
                 this.width = $('#node-input-width').val()
                 this.height = $('#node-input-height').val()
                 this.className = $('#node-input-className').val()
