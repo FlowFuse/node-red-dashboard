@@ -1,10 +1,11 @@
 <template>
     <div class="nrdb-ui-editor-tray-container">
         <div class="nrdb-ui-editor-tray">
-            <v-btn v-tooltip="'Leave Edit Mode'" :disabled="saveBusy" variant="outlined" icon="mdi-close" color="warning" @click="cancel" />
-            <v-btn v-tooltip="'Discard Changes'" :disabled="!dirty || saveBusy" variant="outlined" color="secondary" icon="mdi-arrow-u-left-top" @click="discard" />
-            <v-btn v-tooltip="'Save Changes'" :disabled="!dirty || saveBusy" variant="flat" icon="mdi-content-save-outline" color="success" :loading="saveBusy" @click="save" />
+            <v-btn v-tooltip="'Leave Edit Mode'" :disabled="saveBusy" variant="outlined" icon="mdi-close" color="red-darken-1" @click="cancel" />
+            <v-btn v-tooltip="'Discard Changes'" :disabled="!dirty || saveBusy" variant="outlined" color="blue" icon="mdi-arrow-u-left-top" @click="discard" />
+            <v-btn v-tooltip="'Save Changes'" :disabled="!dirty || saveBusy" variant="outlined" icon="mdi-content-save-outline" color="green" :loading="saveBusy" @click="save" />
         </div>
+        <div class="nrdb-edit-mode--message">In Edit Mode</div>
     </div>
 </template>
 
@@ -39,20 +40,28 @@ export default {
 <style scoped lang="scss">
 .nrdb-ui-editor-tray-container {
     position: fixed;
-    bottom: 24px;
-    width: 100%;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    --shadow: 0px 0px 5px #000000de;
+    width: fit-content;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%);
 }
 .nrdb-ui-editor-tray {
     background-color: white;
     border: 1px solid #ccc;
-    box-shadow: 0px 0px 5px #00000021;
-    padding: 12px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
     display: flex;
-    gap: 6px;
-    border-radius: 2rem;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    z-index: 2;
     .v-btn {
         border-radius: 2.6rem;
         // override theme for consistent button size
@@ -64,5 +73,14 @@ export default {
     button:disabled {
         filter: grayscale(1);
     }
+}
+.nrdb-edit-mode--message {
+    padding: 3px 9px;
+    font-size: 0.875rem;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background-color: rgb(var(--v-theme-navigation-background));
+    color: rgba(var(--v-theme-on-navigation-background),var(--v-high-emphasis-opacity));
+    box-shadow: var(--shadow);
 }
 </style>

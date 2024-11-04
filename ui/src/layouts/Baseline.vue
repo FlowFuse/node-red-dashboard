@@ -6,9 +6,7 @@
             </template>
             <v-app-bar-title>
                 <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
-                    {{ pageTitle }}<v-chip v-if="showEditingIconInAppBar" v-tooltip="`${currentEditPage.name} is in edit mode`" color="warning" :to="currentEditPage.type === 'ui-page' ? { name: currentEditPage.route.name } : null">
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-chip>
+                    {{ pageTitle }}
                 </template>
                 <div id="app-bar-title" />
             </v-app-bar-title>
@@ -193,10 +191,6 @@ export default {
                 return this.orderedPages.find(p => p.id === editPage.value)
             }
             return null
-        },
-        showEditingIconInAppBar: function () {
-            // show the edit icon in the app bar if the page is in edit mode and the drawer is closed
-            return !!(this.currentEditPage && (this.drawer === false || this.rail === true))
         }
     },
     watch: {
