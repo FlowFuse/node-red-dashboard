@@ -156,6 +156,9 @@ export default {
         this.updateIsMobile()
         window.addEventListener('resize', this.updateIsMobile)
     },
+    unmounted () {
+        window.removeEventListener('resize', this.updateIsMobile)
+    },
     methods: {
         formatPayload (value) {
             if (value !== null && typeof value !== 'undefined') {
@@ -255,9 +258,6 @@ export default {
             }
             return true
         }
-    },
-    unounted () {
-        window.removeEventListener('resize', this.updateIsMobile)
     }
 }
 </script>
