@@ -96,6 +96,15 @@ msg.payload = {
 }
 ```
 
+ You can also specify a `target` property to open the website in a new browser window or tab.
+ 
+```js
+msg.payload = {
+    url: 'https://nodered.org',
+    target: '_blank'
+}
+```
+
 ### Show/Hide
 
 You can programmaticaly show/hide groups and pages with the following payload into `ui-control`:
