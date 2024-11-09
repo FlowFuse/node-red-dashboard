@@ -127,6 +127,10 @@ export default {
             })
 
             this.$socket.emit('widget-action', this.id, {
+                payload: this.input,
+                topic: this.getProperty('topic') || ''
+            })
+            this.$socket.emit('widget-action', this.id, {
                 payload: this.input
             })
             if (this.props.resetOnSubmit) {
@@ -153,6 +157,17 @@ export default {
                 return []
             }
         },
+        onInput (msg) {
+            if (msg.payload) {
+                const payload = msg.payload
+                for (const key in payload) {
+                    this.input[key] = payload[key]
+                }
+                this.$nextTick(() => { this.validate() })
+            }
+            if (msg.topic) {
+                this.updateDynamicProperty('topic', msg.topic)
+            }
         onInput (msg) {
             if (msg.payload) {
                 const payload = msg.payload
