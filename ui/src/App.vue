@@ -1,6 +1,31 @@
 <template>
     <v-app>
-        <div v-if="loading" class="nrdb-splash-loading">
+        <div v-if="error" class="nrdb-placeholder-container">
+            <div class="nrdb-placeholder">
+                <img src="./assets/logo.png">
+                <h1>Node-RED Dashboard 2.0</h1>
+                <img src="./assets/disconnected.png">
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p :class="'status-warning'" v-html="error.message" />
+                <br>
+                <h4>What you can try:</h4>
+                <div v-if="error.type === 'server unreachable'" style="border: none" class="nrdb-placeholder">
+                    <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
+                        Reload App
+                    </v-btn>
+                    <br>
+                    <v-btn rounded class="nrdb-placeholder-btns" @click="contactAdmin">
+                        Contact Admin
+                    </v-btn>
+                </div>
+                <div v-else-if="error.type === 'no internet'" style="border: none" class="nrdb-placeholder">
+                    <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
+                        Reload App
+                    </v-btn>
+                </div>
+            </div>
+        </div>
+        <div v-else-if="loading" class="nrdb-splash-loading">
             <DashboardLoading />
             Loading...
         </div>
@@ -44,6 +69,8 @@ export default {
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
         ...mapState('setup', ['setup']),
+        ...mapState('setup', ['error']),
+
         status: function () {
             if (this.dashboards) {
                 const dashboards = Object.keys(this.dashboards)
@@ -233,6 +260,13 @@ export default {
             this.$router.push({
                 name
             })
+        },
+        reloadApp () {
+            location.reload()
+        },
+        contactAdmin () {
+            // Add your logic to contact admin here
+            console.log('Contact admin clicked')
         }
     }
 }

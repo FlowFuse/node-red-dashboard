@@ -1,12 +1,17 @@
 // initial state
 const state = () => ({
-    setup: null
+    setup: null,
+    error: null
 })
 
 const mutations = {
     set (state, setup) {
         console.log('setup', setup)
         state.setup = setup
+    },
+    setError (state, error) {
+        console.log('error', error)
+        state.error = error
     }
 }
 
