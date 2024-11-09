@@ -250,6 +250,15 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
+
+            for (const key in payload.themes) {
+                // check if "Default Theme" theme exists
+                if (payload.themes[key].name === 'Default Theme') {
+                    // store the default theme in local storage for use when disconnected from Node-RED
+                    localStorage.setItem('defaultNRDBTheme', JSON.stringify(payload.themes[key]))
+                    break
+                }
+            }
         })
     },
     methods: {
