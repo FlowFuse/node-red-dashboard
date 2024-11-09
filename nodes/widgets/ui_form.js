@@ -6,12 +6,23 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config)
 
         const node = this
+        node.topic = ''
+    function FormNode (config) {
+        config.passthru = false
+        RED.nodes.createNode(this, config)
+
+        const node = this
 
         const group = RED.nodes.getNode(config.group)
         if (!group) { return }
 
         const evts = {
             onAction: true,
+            beforeSend: function (msg) {
+                if (msg.topic) {
+                    node.topic = msg.topic
+                }
+                if (msg.ui_update) {
             beforeSend: function (msg) {
                 if (msg.ui_update) {
                     const update = msg.ui_update
