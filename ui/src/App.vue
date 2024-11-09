@@ -265,8 +265,12 @@ export default {
             location.reload()
         },
         contactAdmin () {
-            // Add your logic to contact admin here
-            console.log('Contact admin clicked')
+            const email = ''
+            const subject = 'Node-RED Dashboard Error'
+            const body = 'Insert issue here...'
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+            window.open(mailtoLink, '_blank')
+            console.log('Mail app opening...')
         }
     }
 }
