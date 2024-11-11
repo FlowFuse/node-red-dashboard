@@ -277,13 +277,13 @@ fetch('_setup')
 
         let error = {}
         if (navigator.onLine) {
-            error = { type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
+            error = { error: err, type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
             // Add timer to reload the page every 20 seconds
             setInterval(() => {
                 location.reload()
             }, 20000)
         } else {
-            error = { type: 'no internet', message: 'Your device appears to be offline.' }
+            error = { error: err, type: 'no internet', message: 'Your device appears to be offline.' }
             // Add event listener
             window.addEventListener('online', handleOnline)
         }
