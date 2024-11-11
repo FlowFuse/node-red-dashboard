@@ -40,7 +40,8 @@
                 topicType: { value: 'msg' },
                 className: { value: '' },
                 // This field controls if the used component is going to be a `v-combox` or a `v-select`, `v-combox` allows typing and filtering possible values
-                typeIsComboBox: { value: true }
+                typeIsComboBox: { value: true },
+                msgTrigger: { value: 'onChange' }
             },
             inputs: 1,
             outputs: 1,
@@ -60,6 +61,9 @@
                 }
                 if (this.typeIsComboBox === undefined) {
                     $('#node-input-typeIsComboBox').prop('checked', true)
+                }
+                if (this.msgTrigger === undefined) {
+                    $('#node-input-msgTrigger').val('onChange')
                 }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -247,5 +251,12 @@
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
         <input type="hidden" id="node-input-topicType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-msgTrigger"><i class="fa fa-paper-plane"></i> Msg trigger</label>
+        <select id="node-input-msgTrigger" style="width: 70%;">
+            <option value="onChange">On every change</option>
+            <option value="onClose">On dropdown closed</option>
+       </select>
     </div>
 </script>
