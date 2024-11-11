@@ -10,7 +10,6 @@ const mutations = {
         state.setup = setup
     },
     setError (state, error) {
-        console.log('error', error)
         state.error = error
     }
 }
