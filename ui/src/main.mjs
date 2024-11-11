@@ -297,8 +297,6 @@ fetch('_setup')
         store.commit('setup/setError', error) // pass the error to the Vuex store
 
         // load minimal VueJS app to display error message and options to user
-        window.Vue = Vue
-        window.vuex = vuex
         const app = Vue.createApp(App)
             .use(store)
             .use(vuetify)
