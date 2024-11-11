@@ -30,10 +30,8 @@ import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-li
 function retrieveDefaultThemeFromCache () {
     const cachedTheme = localStorage.getItem('defaultNRDBTheme')
     if (cachedTheme) {
-        console.log('Found cached theme in localStorage')
         return JSON.parse(cachedTheme)
     }
-    console.log('No cached theme found in localStorage')
     return null
 }
 
@@ -271,10 +269,7 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        console.error('An error occurred:', err)
-
         function handleOnline () {
-            console.log('Back online, reloading page...')
             // remove the online event listener and reload the page
             window.removeEventListener('online', handleOnline)
             location.reload()
@@ -285,7 +280,6 @@ fetch('_setup')
             error = { type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
             // Add timer to reload the page every 20 seconds
             setInterval(() => {
-                console.log('Reloading page...')
                 location.reload()
             }, 20000)
         } else {
