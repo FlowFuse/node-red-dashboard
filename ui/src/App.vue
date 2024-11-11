@@ -13,10 +13,6 @@
                     <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
                         Reload App
                     </v-btn>
-                    <br>
-                    <v-btn rounded class="nrdb-placeholder-btns" @click="contactAdmin">
-                        Contact Admin
-                    </v-btn>
                 </div>
                 <div v-else-if="error.type === 'no internet'" style="border: none" class="nrdb-placeholder">
                     <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
@@ -271,13 +267,6 @@ export default {
         },
         reloadApp () {
             location.reload()
-        },
-        contactAdmin () {
-            const email = ''
-            const subject = 'Node-RED Dashboard Error'
-            const body = 'Insert issue here...'
-            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-            window.open(mailtoLink, '_blank')
         }
     }
 }
