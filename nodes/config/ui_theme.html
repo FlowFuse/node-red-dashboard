@@ -9,11 +9,19 @@
             // colors
             colors: {
                 value: {
-                    surface: '#ffffff',
-                    primary: '#0094CE',
-                    bgPage: '#eeeeee',
-                    groupBg: '#ffffff',
-                    groupOutline: '#cccccc'
+                    // light mode
+                    surfaceLight: '#ffffff',
+                    primaryLight: '#0094CE',
+                    bgPageLight: '#eeeeee',
+                    groupBgLight: '#ffffff',
+                    groupOutlineLight: '#cccccc',
+
+                    // dark mode
+                    surfaceDark: '#111111',
+                    primaryDark: '#0094CE',
+                    bgPageDark: '#222222',
+                    groupBgDark: '#333333',
+                    groupOutlineDark: '#cccccc'
                 }
             },
             // sizes
@@ -34,14 +42,23 @@
 
             if (!this.colors) {
                 this.colors = {}
-                // set default values
-                this.colors.surface = '#ffffff'
-                this.colors.primary = '#0094CE'
+                // set default values for light theme
+                this.colors.surfaceLight = '#ffffff'
+                this.colors.primaryLight = '#0094CE'
                 // pages
-                this.colors.bgPage = '#eeeeee'
+                this.colors.bgPageLight = '#eeeeee'
                 // groups
-                this.colors.groupBg = '#ffffff'
-                this.colors.groupOutline = '#cccccc'
+                this.colors.groupBgLight = '#ffffff'
+                this.colors.groupOutlineLight = '#cccccc'
+
+                // set default values for dark theme
+                this.colors.surfaceDark = '#111111'
+                this.colors.primaryDark = '#0094CE'
+                // pages
+                this.colors.bgPageDark = '#222222'
+                // groups
+                this.colors.groupBgDark = '#333333'
+                this.colors.groupOutlineDark = '#cccccc'
             }
 
             if (!this.sizes) {
@@ -93,6 +110,28 @@
                 })
                 wrapper.css('background-color', colorPicker.val())
             })
+
+            const that = this
+            const tabs = RED.tabs.create({
+                id: 'color-tabs',
+                onchange: function (tab) {
+                    $('#color-tabs-content').children().hide()
+                    $('#' + tab.id).show()
+                }
+            })
+            tabs.addTab({
+                id: 'color-tab-light',
+                iconClass: 'fa fa-sun',
+                label: that._('ui-theme.label.colorsLight')
+            })
+
+            tabs.addTab({
+                id: 'color-tab-dark',
+                iconClass: 'fa fa-moon',
+                label: that._('ui-theme.label.colorsDark')
+            })
+
+            tabs.activateTab('color-tab-light')
         },
         oneditsave: function () {
             // update our config values from the input values
@@ -124,49 +163,109 @@
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.colors"></h3>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-theme.label.dashboard"></h4>
+   
+    <!-- tabs -->
+    <div class="form-row color-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="color-tabs"></ul>
     </div>
-    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
-        <div>
-            <label data-i18n="ui-theme.label.header"></label>
-            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
-            </label>
+    <div id="color-tabs-content">
+    <div id="color-tab-light" style="display:none">
+        <div class="form-row node-text-editor-row" style="position:relative">
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-theme.label.dashboard"></h4>
+            </div>
+            <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                <div>
+                    <label data-i18n="ui-theme.label.header"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-surfaceLight" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-surfaceLight" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+                <div>
+                    <label data-i18n="ui-theme.label.primary"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-primaryLight" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-primaryLight" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages"></h4>
+            </div>
+            <div class="form-row labels-right" style="margin-bottom: 3px;">
+                <label data-i18n="ui-theme.label.background"></label>
+                <label class="color-picker-wrapper" for="node-config-input-bgPageLight" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                    <input type="color" id="node-config-input-bgPageLight" style="opacity: 0; width: 100%;"/>
+                </label>
+            </div>
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
+            </div>
+            <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                <div>
+                    <label data-i18n="ui-theme.label.background"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-groupBgLight" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-groupBgLight" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+                <div>
+                    <label data-i18n="ui-theme.label.outline"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-groupOutlineLight" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-groupOutlineLight" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+            </div>
         </div>
-        <div>
-            <label data-i18n="ui-theme.label.primary"></label>
-            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
-            </label>
+    </div>
+
+    <div id="color-tab-dark" style="display:none">
+        <div class="form-row node-text-editor-row" style="position:relative">
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-theme.label.dashboard"></h4>
+            </div>
+            <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                <div>
+                    <label data-i18n="ui-theme.label.header"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-surfaceDark" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-surfaceDark" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+                <div>
+                    <label data-i18n="ui-theme.label.primary"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-primaryDark" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-primaryDark" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+            </div>
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages"></h4>
+            </div>
+            <div class="form-row labels-right" style="margin-bottom: 3px;">
+                <label data-i18n="ui-theme.label.background"></label>
+                <label class="color-picker-wrapper" for="node-config-input-bgPageDark" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                    <input type="color" id="node-config-input-bgPageDark" style="opacity: 0; width: 100%;"/>
+                </label>
+            </div>
+            <div class="form-row" style="margin-bottom: 3px;">
+                <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
+            </div>
+            <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                <div>
+                    <label data-i18n="ui-theme.label.background"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-groupBgDark" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-groupBgDark" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+                <div>
+                    <label data-i18n="ui-theme.label.outline"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-groupOutlineDark" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-groupOutlineDark" style="opacity: 0; width: 100%;"/>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages"></h4>
-    </div>
-    <div class="form-row labels-right" style="margin-bottom: 3px;">
-        <label data-i18n="ui-theme.label.background"></label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
-        </label>
-    </div>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
-    </div>
-    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
-        <div>
-            <label data-i18n="ui-theme.label.background"></label>
-            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
-            </label>
-        </div>
-        <div>
-            <label data-i18n="ui-theme.label.outline"></label>
-            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
-            </label>
-        </div>
-    </div>
+</div>
+   
     <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.sizings"></h3>
     <div class="form-row">
         <label for="node-config-input-density" data-i18n="ui-theme.label.density"></label>
