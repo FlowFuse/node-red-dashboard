@@ -10,12 +10,12 @@
                 <br>
                 <h4>What you can try:</h4>
                 <div v-if="error.type === 'server unreachable'" style="border: none" class="nrdb-placeholder">
-                    <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
+                    <v-btn rounded @click="reloadApp">
                         Reload App
                     </v-btn>
                 </div>
                 <div v-else-if="error.type === 'no internet'" style="border: none" class="nrdb-placeholder">
-                    <v-btn rounded class="nrdb-placeholder-btns" @click="reloadApp">
+                    <v-btn rounded @click="reloadApp">
                         Reload App
                     </v-btn>
                 </div>
