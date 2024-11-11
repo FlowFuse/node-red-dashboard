@@ -68,8 +68,7 @@ export default {
     },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
-        ...mapState('setup', ['setup']),
-        ...mapState('setup', ['error']),
+        ...mapState('setup', ['setup', 'error']),
 
         status: function () {
             if (this.dashboards) {
