@@ -255,7 +255,7 @@ export default {
                 // check if "Default Theme" theme exists
                 if (payload.themes[key].name === 'Default Theme') {
                     // store the default theme in local storage for use when disconnected from Node-RED
-                    localStorage.setItem('defaultNRDBTheme', JSON.stringify(payload.themes[key]))
+                    localStorage.setItem('ndrb-theme-default', JSON.stringify(payload.themes[key]))
                     break
                 }
             }
