@@ -74,14 +74,19 @@ function forcePageReload (err) {
     console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
-    window.location.replace(window.location.origin + '/dashboard' + '?' + 'reloadTime=' + Date.now().toString() + Math.random()) // Seems to work on Edge and Chrome on Windows, Chromium and Firefox on Linux, and also on Chrome Android (and also as PWA App)
+    const url = new URL(window.location.origin + '/dashboard')
+    url.searchParams.set('reloadTime', Date.now().toString() + Math.random())
+    if (host.searchParams.has('edit-key')) {
+        url.searchParams.set('edit-key', host.searchParams.get('edit-key'))
+    }
+    window.location.replace(url)
 }
 
 /*
  * Configure SocketIO Client to Interact with Node-RED
  */
 
-// if our scoket disconnects, we should inform the user when it reconnects
+// if our socket disconnects, we should inform the user when it reconnects
 
 // GET our SocketIO Config from Node-RED & any other bits plugins have added to the _setup endpoint
 fetch('_setup')
@@ -93,10 +98,15 @@ fetch('_setup')
         case !response.ok:
             console.error('Failed to fetch setup data:', response)
             return
-        case host.origin !== new URL(response.url).origin:
+        case host.origin !== new URL(response.url).origin: {
             console.log('Following redirect:', response.url)
-            window.location.replace(response.url)
+            const url = new URL(response.url)
+            if (host.searchParams.has('edit-key')) {
+                url.searchParams.set('edit-key', host.searchParams.get('edit-key'))
+            }
+            window.location.replace(url)
             return
+        }
         default:
             break
         }
@@ -122,10 +132,11 @@ fetch('_setup')
 
         let reconnectTO = null
         const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
-
+        const editKey = host.searchParams.get('edit-key')
         const socket = io({
             ...setup.socketio,
-            reconnection: false
+            reconnection: false,
+            query: editKey ? { editKey } : undefined // include handshake data so that only original edit-key holder can edit
         })
 
         // handle final disconnection

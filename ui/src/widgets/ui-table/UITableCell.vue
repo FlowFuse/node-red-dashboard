@@ -29,6 +29,9 @@
     <template v-else-if="type === 'button'">
         <v-btn color="primary" variant="flat" @click="onButtonClick($event, item)">{{ value }}</v-btn>
     </template>
+    <template v-else-if="type === 'image'">
+        <v-img :src="value" />
+    </template>
     <template v-else>
         {{ value }}
     </template>

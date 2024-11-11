@@ -4,7 +4,7 @@ props:
     UI: The UI (<code>ui-base</code>) that this page will be added to. 
     Path: The URL to navigate to when a user selects this link
     Icon: Which <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a> to use for the page. No need to include the <code>mdi-</code> prefix.
-    Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this page in hte side navigation menu.</li><li><b>Interactivity</b> - Controls whether the item is disabled/enabled in the side navigation menu.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
+    Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this page in the side navigation menu.</li><li><b>Interactivity</b> - Controls whether the item is disabled/enabled in the side navigation menu.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
 ---
 
 <script setup>

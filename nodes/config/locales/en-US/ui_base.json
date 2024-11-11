@@ -38,10 +38,14 @@
             "page": "Page",
             "link": "Link",
             "group": "Group",
+            "addGroup": "Add Group",
             "edit": "Edit",
+            "layoutEditor": "Layout Editor",
             "focus": "Focus",
             "collapse": "Collapse",
             "expand": "Expand",
+            "delete": "Delete",
+            "spacer": "Add Spacer",
             "unattachedGroups": "Unattached Groups"
         },
         "themes": {

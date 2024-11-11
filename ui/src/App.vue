@@ -20,6 +20,7 @@
 <script>
 import { mapState } from 'vuex'
 import { markRaw } from 'vue' // eslint-disable-line import/order
+import { initialise as initEditMode } from './EditTracking.js'
 
 import PWABadge from './components/PWABadge.vue'
 import DashboardLoading from './components/loading.vue'
@@ -140,6 +141,19 @@ export default {
                 })
             })
 
+            // Check for edit key in query and if it matches the edit key in the
+            // configs meta.wysiwyg object, we can enable WYSIWYG editing mode for the page.
+            // The initEditMode setup fn in EditTracking.js module stores this and it is used to enable
+            // the WYSIWYG edit tracking for the page in question.
+            const editKeyInUrl = new URLSearchParams(window.location.search).get('edit-key')
+            const editorPath = new URLSearchParams(window.location.search).get('editor-path')
+
+            const pageIdOk = payload.meta?.wysiwyg?.page && !!payload.pages[payload.meta.wysiwyg.page] && editKeyInUrl === payload.meta.wysiwyg.editKey
+            const dashboardIdOk = payload.meta?.wysiwyg?.dashboard && !!payload.dashboards[payload.meta.wysiwyg.dashboard]
+            if (payload.meta?.wysiwyg?.enabled && editKeyInUrl && pageIdOk && dashboardIdOk) {
+                initEditMode(editKeyInUrl, payload.meta.wysiwyg.page, editorPath)
+            }
+
             // loop over pages, add them to vue router
             Object.values(payload.pages).forEach(page => {
                 // check that the page's bound UI is also in our config
@@ -177,7 +191,7 @@ export default {
                 })
             }
 
-            // if this is the first time we load hte Dashboard, the router hasn't registered the current route properly,
+            // if this is the first time we load the Dashboard, the router hasn't registered the current route properly,
             // so best we just navigate to the existing URL to let router catch up
             this.$router.push(this.$route.fullPath)
 

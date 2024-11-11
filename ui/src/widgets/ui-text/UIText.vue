@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-ui-text" :class="'nrdb-ui-text--' + layout" :style="style">
+    <div class="nrdb-ui-text" :class="['nrdb-ui-text--' + layout, wrapText ? 'nrdb-ui-text--wrap' : '']" :style="style">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <label class="nrdb-ui-text-label" v-html="label" />
         <!-- eslint-disable-next-line vue/no-v-html -->
@@ -35,6 +35,9 @@ export default {
         },
         layout () {
             return this.getProperty('layout')
+        },
+        wrapText () {
+            return this.getProperty('wrapText')
         },
         style () {
             if (this.props.style) {
@@ -110,6 +113,9 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: initial;
+}
+.nrdb-ui-text.nrdb-ui-text--wrap .nrdb-ui-text-value {
+    white-space: normal;
 }
 
 /* Layouts */

@@ -12,6 +12,7 @@ import UINotification from './ui-notification/UINotification.vue'
 import UINumberInput from './ui-number-input/UINumberInput.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
 import UISlider from './ui-slider/UISlider.vue'
+import UISpacer from './ui-spacer/UISpacer.vue'
 import UISwitch from './ui-switch/UISwitch.vue'
 import UITable from './ui-table/UITable.vue'
 import UITemplate from './ui-template/UITemplate.vue'
@@ -34,6 +35,7 @@ export {
     UINumberInput,
     UIRadioGroup,
     UISlider,
+    UISpacer,
     UISwitch,
     UITable,
     UITemplate,
@@ -60,6 +62,7 @@ export default {
     'ui-number-input': UINumberInput,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
+    'ui-spacer': UISpacer,
     'ui-switch': UISwitch,
     'ui-table': UITable,
     'ui-template': UITemplate,

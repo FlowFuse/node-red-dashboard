@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.18.1",
+    "version": "1.19.1",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -19,6 +19,10 @@
         {
             "name": "Pez Cuckow",
             "url": "https://github.com/pezmc"
+        },
+        {
+            "name": "Steve McLaughlin",
+            "url": "https://github.com/Steve-Mcl"
         },
         {
             "name": "FlowFuse",
@@ -54,6 +58,7 @@
     },
     "dependencies": {
         "acorn": "^8.11.2",
+        "axios": "^1.7.7",
         "chartjs-adapter-luxon": "^1.3.1",
         "core-js": "^3.32.0",
         "d3": "^7.8.5",
@@ -131,6 +136,7 @@
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-radio-group": "nodes/widgets/ui_radio_group.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-spacer": "nodes/widgets/ui_spacer.js",
             "ui-switch": "nodes/widgets/ui_switch.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-table": "nodes/widgets/ui_table.js",

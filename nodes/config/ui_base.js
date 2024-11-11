@@ -1,5 +1,7 @@
 const path = require('path')
 
+const axios = require('axios')
+
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
@@ -142,14 +144,14 @@ module.exports = function (RED) {
             uiShared.app.get('/dashboard/manifest.webmanifest', (req, res) => {
                 const hasAppIcon = (config.appIcon && config.appIcon.trim() !== '')
                 const manifest = {
-                    name: 'Node-RED Dashboard 2.0',
-                    short_name: 'Dashboard',
+                    name: config.name,
+                    short_name: config.name,
                     start_url: './',
                     display: 'standalone',
                     background_color: '#ffffff',
                     lang: 'en',
                     scope: './',
-                    description: 'Node-RED Dashboard 2.0',
+                    description: config.name,
                     theme_color: '#ffffff',
                     icons: [
                         { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
@@ -435,9 +437,17 @@ module.exports = function (RED) {
                     node.ui.groups.set(id, { ...group, ...state })
                 }
             }
-
+            // if the socket has an editKey & it matches the editKey in the meta, then we will
+            // send the wysiwyg meta to the client. Otherwise, we will remove it from the meta
+            // before sending it to the client
+            const handshakeEditKey = socket.handshake?.query?.editKey
+            const meta = { ...node.ui.meta }
+            if (!handshakeEditKey || !meta?.wysiwyg?.editKey || handshakeEditKey !== meta.wysiwyg.editKey) {
+                delete meta.wysiwyg
+            }
             // pass the connected UI the UI config
             socket.emit('ui-config', node.id, {
+                meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
                 pages: Object.fromEntries(node.ui.pages),
@@ -778,6 +788,15 @@ module.exports = function (RED) {
          */
         // store ui config to be sent to UI
         node.ui = {
+            meta: {
+                wysiwyg: {
+                    enabled: false,
+                    timestamp: null,
+                    dashboard: null,
+                    page: null,
+                    editKey: null
+                }
+            },
             heads: new Map(),
             dashboards: new Map(),
             pages: new Map(),
@@ -1083,19 +1102,16 @@ module.exports = function (RED) {
                 }
                 node.ui.widgets.delete(widgetNode.id)
                 changes = true
-            }
-
-            // if there are no more widgets on this group, remove the group from our UI config
-            if (group && [...node.ui.widgets].filter(w => w.props?.group === group.id).length === 0) {
+            } else if (group) {
+                // remove group from our UI config
                 node.ui.groups.delete(group.id)
                 changes = true
-            }
-
-            // if there are no more groups on this page, remove the page from our UI config
-            if (page && [...node.ui.groups].filter(g => g.page === page.id).length === 0) {
+            } else if (page) {
+                // remove page from our UI config
                 node.ui.pages.delete(page.id)
                 changes = true
             }
+
             if (changes) {
                 node.requestEmitConfig()
             }
@@ -1108,4 +1124,151 @@ module.exports = function (RED) {
     }
 
     RED.nodes.registerType('ui-base', UIBaseNode)
+
+    // PATCH: /dashboard/api/v1/:dashboardId/flows - deploy curated/controlled updates to the flows
+    RED.httpAdmin.patch('/dashboard/api/v1/:dashboardId/flows', RED.auth.needsPermission('flows.write'), async function (req, res) {
+        const host = RED.settings.uiHost
+        const port = RED.settings.uiPort
+        const httpAdminRoot = RED.settings.httpAdminRoot
+        const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        console.log('url', url)
+        // get request body
+        const dashboardId = req.params.dashboardId
+        const pageId = req.body.page
+        const changes = req.body.changes || {}
+        const editKey = req.body.key
+        const groups = changes.groups || []
+        console.log(changes, editKey, dashboardId)
+        const baseNode = RED.nodes.getNode(dashboardId)
+
+        // validity checks
+        if (groups.length === 0) {
+            // this could be a 200 but since the group data might be missing due to
+            // a bug or regression, we'll return a 400 and let the user know
+            // there were no changes provided.
+            return res.status(400).json({ error: 'No changes to deploy' })
+        }
+        if (!baseNode) {
+            return res.status(404).json({ error: 'Dashboard not found' })
+        }
+        if (!baseNode.ui.meta.wysiwyg.enabled) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        if (editKey !== baseNode.ui.meta.wysiwyg.editKey) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        if (pageId !== baseNode.ui.meta.wysiwyg.page) {
+            return res.status(403).json({ error: 'Unauthorized' })
+        }
+        for (const modified of groups) {
+            if (modified.page !== baseNode.ui.meta.wysiwyg.page) {
+                return res.status(400).json({ error: 'Invalid page id' })
+            }
+        }
+
+        // Prepare headers for the requests
+        const getHeaders = {
+            'Node-RED-API-Version': 'v2',
+            Accept: 'application/json'
+        }
+        const postHeaders = {
+            'Node-RED-Deployment-Type': 'nodes', // only update the nodes (don't restart ALL nodes! Only those that have changed)
+            'Node-RED-API-Version': 'v2',
+            'Content-Type': 'application/json'
+        }
+        // apply headers from the incoming request
+        if (req.headers.cookie) {
+            getHeaders.cookie = req.headers.cookie
+            postHeaders.cookie = req.headers.cookie
+        }
+        if (req.headers.authorization) {
+            getHeaders.authorization = req.headers.authorization
+            postHeaders.authorization = req.headers.authorization
+        }
+        if (req.headers.referer) {
+            getHeaders.referer = req.headers.referer
+            postHeaders.referer = req.headers.referer
+        }
+
+        const applyIfDifferent = (node, nodeNew, propName) => {
+            const origValue = node[propName]
+            const newValue = nodeNew[propName]
+            if (origValue !== newValue) {
+                node[propName] = newValue
+                return true
+            }
+            return false
+        }
+        let rev = null
+        return axios.request({
+            method: 'GET',
+            headers: getHeaders,
+            url
+        }).then(response => {
+            const flows = response.data?.flows || []
+            rev = response.data?.rev
+            const changeResult = []
+            for (const modified of groups) {
+                const current = flows.find(n => n.id === modified.id)
+                if (!current) {
+                    // group not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Group not found', code: 'GROUP_NOT_FOUND' })
+                }
+                if (modified.page !== current.page) {
+                    // integrity of data suspect! Has flow changed on the server?
+                    return res.status(400).json({ error: 'Invalid page id', code: 'INVALID_PAGE_ID' })
+                }
+                changeResult.push(applyIfDifferent(current, modified, 'width'))
+                changeResult.push(applyIfDifferent(current, modified, 'order'))
+            }
+            if (changeResult.length === 0 || !changeResult.includes(true)) {
+                return res.status(200).json({ message: 'No changes were' })
+            }
+            return flows
+        }).then(flows => {
+            // update the flows with the new group order
+            return axios.request({
+                method: 'POST',
+                headers: postHeaders,
+                url,
+                data: {
+                    flows,
+                    rev
+                }
+            })
+        }).then(response => {
+            return res.status(200).json(response.data)
+        }).catch(error => {
+            console.error(error)
+            const status = error.response?.status || 500
+            return res.status(status).json({ error: error.message })
+        })
+    })
+
+    // PATCH: /dashboard/api/v1/:dashboardId/edit/:pageId - start editing a page
+    RED.httpAdmin.patch('/dashboard/api/v1/:dashboardId/edit/:pageId', RED.auth.needsPermission('flows.write'), async function (req, res) {
+        /** @type {UIBaseNode} */
+        const baseNode = RED.nodes.getNode(req.params.dashboardId)
+        if (!baseNode) {
+            return res.status(404).json({ error: 'Dashboard not found' })
+        }
+        const pageNode = baseNode.ui.pages.get(req.params.pageId)
+        if (!pageNode) {
+            return res.status(404).json({ error: 'Page not found' })
+        }
+        const editConfig = {
+            timestamp: Date.now(),
+            path: pageNode.path || '',
+            dashboard: baseNode.id,
+            page: pageNode.id,
+            editKey: Math.random().toString(36).substring(2)
+        }
+        baseNode.ui.meta.wysiwyg.enabled = true
+        baseNode.ui.meta.wysiwyg.timestamp = editConfig.timestamp
+        baseNode.ui.meta.wysiwyg.editKey = editConfig.editKey
+        baseNode.ui.meta.wysiwyg.dashboard = baseNode.id
+        baseNode.ui.meta.wysiwyg.page = pageNode.id
+
+        return res.status(200).json(editConfig)
+    })
 }

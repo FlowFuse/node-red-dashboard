@@ -3,7 +3,7 @@ description: Display and manage complex datasets with ease using the ui-table wi
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
-    Label: The text shown within the button.
+    Label: The text shown above the table, labelling what the table is showing.
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control. Set to "0" for no pagination.
     Breakpoint: Controls when a table will render, instead, as a card, with each column from a row rendering as a row in a larger, contain a row, for a single entry.The breakpoint is measured based on the <b>width of the table</b>, not the width of the screen.
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
@@ -53,7 +53,7 @@ Renders a set of data in a tabular format. Expects an input (`msg.payload`) in t
 }]
 ```
 
-The table will be rendered with colums `colA`, `colB` and `colC`, unless "Columns" are explicitely defined on the node, with "Auto Columns" toggled off.
+The table will be rendered with columns `colA`, `colB` and `colC`, unless "Columns" are explicitly defined on the node, with "Auto Columns" toggled off.
 
 You can also send a single piece of data to append to the existing table, in this case, the `ui-table` expects an input (`msg.payload`) in the format of:
 
@@ -139,6 +139,7 @@ _An example of a ui-table displaying various of the cell types available_
 - **Sparkline - Bar**: Renders the cell as a small bar chart without axes. The `Value` field should contain an array of numbers to be plotted.
 - **Button**: Renders a clickable button in the cell. The label of the button will be either the `row[key]` or the fixed string entered on the manual column configuration.
 - **Row Number**: Renders the row number into the cell.
+- **Image**: Renders the cell as an image. The "Image" value provided should be a valid URL.  A data url is also supported for base64 encoded images. When an invalid url is specified, an empty space will appear.
 
 #### Interaction: Buttons
 

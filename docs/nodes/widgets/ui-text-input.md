@@ -23,7 +23,7 @@ props:
     Send On "Delay": If true, then a msg will be emitted will be sent after the delay specified in "Delay (ms)".
     Delay: If "Send on Delay" is true, then the value in the text input will be send after this (ms) delay.
     Clear selection with button:
-        description: If true, a clear icon/button appears on the rigth side to clear the text input
+        description: If true, a clear icon/button appears on the right side to clear the text input
         dynamic: true
     Send On "Focus Leave": Sends a msg when the text input loses focus. Will always send, even if the value has not changed.
     Send On "Press Enter": Sends a msg when the user presses the enter key. Will always send, even if the value has not changed.
@@ -86,4 +86,4 @@ Adds a single text input row to your dashboard, with a configurable "type" (text
 ## Example
 
 ![Example of Text Inputs Types](/images/node-examples/ui-text-input.png "Example of Text Inputs Types"){data-zoomable}
-*Example of severall Text Inputs Types rendered in a Dashboard.*
+*Example of several Text Inputs Types rendered in a Dashboard.*

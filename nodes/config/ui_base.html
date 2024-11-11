@@ -288,6 +288,7 @@
 // #endregion
 
 (function () {
+    const supportedEditableLayouts = ['grid', 'flex']
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
@@ -460,8 +461,8 @@
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
-
-        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="nr-dashboard" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
+        const target = `nr-dashboard-${id}` // try to reuse the same window per base
+        const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="${target}" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
             c_('label.openDashboard') + ' <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
 
         label.appendTo(header)
@@ -542,12 +543,26 @@
         }
     }
 
+    function createEditHistoryEvent (node, changes) {
+        const wasDirty = node.dirty
+        const wasChanged = node.changed
+        node.changed = true
+        node.dirty = true
+        return {
+            t: 'edit',
+            node,
+            changed: wasChanged,
+            dirty: wasDirty,
+            changes
+        }
+    }
+
     // Utility function to store events in NR history, trigger a redraw, and detect if a re-deploy is necessary
-    function recordEvents (events) {
+    function recordEvents (events, wasDirty) {
         if (events.length === 0) { return } // nothing to record
 
         // note the state of the editor before pushing to history
-        const isDirty = RED.nodes.dirty()
+        const isDirty = wasDirty ?? RED.nodes.dirty()
         if (RED._db2debug) { console.log('dashboard 2: recordEvents ()', isDirty, events) }
 
         // add our changes to NR history and trigger whether or not we need to redeploy
@@ -596,19 +611,42 @@
         }
     }
 
-    function addConfigNode (node) {
-        if (!node.users) {
+    function getDefaultBase () {
+        const existingBases = getConfigNodesByType(['ui-base']) || []
+        if (existingBases.length === 0) {
+            return null
+        }
+        return existingBases[0]
+    }
+
+    function getDefaultTheme () {
+        const existingThemes = getConfigNodesByType(['ui-theme']) || []
+        if (existingThemes.length === 0) {
+            return null
+        }
+        return existingThemes[0]
+    }
+
+    function addNode (node, history) {
+        if (RED._db2debug) { console.log('addConfigNode', node) }
+        const configTypes = ['ui-base', 'ui-group', 'ui-link', 'ui-page', 'ui-theme']
+        if (!node.users && configTypes.indexOf(node.type) > -1) {
             node.users = []
         }
         node.dirty = true
+        node.changed = true
         RED.nodes.add(node)
         RED.editor.validateNode(node)
-        RED.history.push({
+        const hev = {
             t: 'add',
             nodes: [node.id],
             dirty: RED.nodes.dirty()
-        })
-        RED.nodes.dirty(true)
+        }
+        if (history) {
+            history.push(hev)
+        } else {
+            RED.history.push(hev)
+        }
     }
 
     function mapDefaults (defaults) {
@@ -636,74 +674,294 @@
         return nodes
     }
 
-    function addDefaultPage (baseId, themeId) {
-        const page = RED.nodes.getType('ui-page')
-        // get all pages
-        const entries = getConfigNodesByType(['ui-page', 'ui-link'])
-        const pageNumber = entries.length + 1
-        const pageNode = {
-            _def: page,
+    function createBaseNode ({ name = 'My Dashboard' } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createBaseNode', name) }
+        const base = RED.nodes.getType('ui-base')
+        const baseNode = {
+            _def: base,
             id: RED.nodes.id(),
-            type: 'ui-page',
-            ...mapDefaults(page.defaults),
-            path: `/page${pageNumber}`, // TODO: generate a unique path
-            name: `Page ${pageNumber}`,
-            ui: baseId,
-            theme: themeId,
-            layout: 'grid',
-            order: pageNumber
+            type: 'ui-base',
+            ...mapDefaults(base.defaults),
+            name: name || 'My Dashboard'
         }
-
-        addConfigNode(pageNode)
-        return pageNode
+        return baseNode
     }
 
-    function addDefaultLink (baseId) {
-        const link = RED.nodes.getType('ui-link')
-        const linkNode = {
-            _def: link,
-            id: RED.nodes.id(),
-            type: 'ui-link',
-            ...mapDefaults(link.defaults),
-            path: '/',
-            name: 'Link',
-            ui: baseId
-        }
-
-        addConfigNode(linkNode)
-        return linkNode
-    }
-
-    function addDefaultGroup (pageId) {
+    function createGroupNode ({ name, order } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createGroupNode', name) }
         const group = RED.nodes.getType('ui-group')
+        let groupName = name
+        const existingGroups = getConfigNodesByType(['ui-group']) || []
+        let counter = existingGroups.length + 1
+        if (!groupName) {
+            groupName = `Group ${counter}`
+            while (existingGroups.find(e => e.name === groupName)) {
+                counter++
+                groupName = `Group ${counter}`
+            }
+        }
         const groupNode = {
             _def: group,
             id: RED.nodes.id(),
             type: 'ui-group',
             ...mapDefaults(group.defaults),
-            name: 'My Group',
-            page: pageId
+            name: groupName || 'My Group',
+            page: null
         }
-
-        addConfigNode(groupNode)
+        if (order) {
+            groupNode.order = order
+        } else {
+            groupNode.order = counter
+        }
         return groupNode
     }
 
-    function addDefaultTheme () {
+    function createLinkNode ({ name, order, path } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createLinkNode', name, path) }
+        const link = RED.nodes.getType('ui-link')
+        let linkName = name
+        if (!linkName) {
+            // get all links and determine the next link number
+            const existingLinks = getConfigNodesByType(['ui-link']) || []
+            let counter = existingLinks.length + 1
+            linkName = `Link ${counter}`
+            while (existingLinks.find(e => e.name === linkName)) {
+                counter++
+                linkName = `Link ${counter}`
+            }
+        }
+        const nextOrder = order ?? ((getConfigNodesByType(['ui-page', 'ui-link']) || []).length || 0) + 1
+        const linkNode = {
+            _def: link,
+            id: RED.nodes.id(),
+            type: 'ui-link',
+            ...mapDefaults(link.defaults),
+            path: path || '/',
+            name: linkName,
+            ui: null,
+            order: nextOrder,
+            hasUsers: false
+        }
+        return linkNode
+    }
+
+    function createSpacerNode ({ name, order, group } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createSpacerNode', name, group) }
+        const spacer = RED.nodes.getType('ui-spacer')
+        const spacerNode = {
+            _def: spacer,
+            id: RED.nodes.id(),
+            type: 'ui-spacer',
+            ...mapDefaults(spacer.defaults),
+            users: [],
+            name: name ?? 'spacer',
+            group: group || null,
+            order: order ?? 0,
+            hasUsers: false,
+            dirty: true
+        }
+        return spacerNode
+    }
+
+    function createPageNode ({ name, order, layout = 'grid' } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createPageNode', name, layout) }
+        const page = RED.nodes.getType('ui-page')
+        let pageName = name
+        let pagePath = pageName ? pageName.toLowerCase().replace(/\s/g, '-') : 'page'
+        if (!pageName) {
+            // get all pages & links and determine the next page number
+            const existingPages = getConfigNodesByType(['ui-page']) || []
+            let counter = existingPages.length + 1
+            pageName = `Page ${counter}`
+            pagePath = `/page${counter}`
+            while (existingPages.find(e => e.path === pagePath)) {
+                counter++
+                pageName = `Page ${counter}`
+                pagePath = `/page${counter}`
+            }
+        }
+        const nextOrder = order ?? ((getConfigNodesByType(['ui-page', 'ui-link']) || []).length || 0) + 1
+        const pageNode = {
+            _def: page,
+            id: RED.nodes.id(),
+            type: 'ui-page',
+            ...mapDefaults(page.defaults),
+            path: pagePath,
+            name: pageName,
+            ui: null,
+            theme: null,
+            layout: layout || 'grid',
+            order: nextOrder
+        }
+        return pageNode
+    }
+
+    function createThemeNode ({ name } = {}) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createThemeNode', name) }
         const theme = RED.nodes.getType('ui-theme')
+        let themeName = name
+        if (!themeName) {
+            // get all themes and determine the next theme number
+            const entries = getConfigNodesByType(['ui-theme']) || []
+            let counter = entries.length + 1
+            themeName = counter === 1 ? 'Default Theme' : `Theme ${counter}`
+            while (entries.find(e => e.name === themeName)) {
+                counter++
+                themeName = `Theme ${counter}`
+            }
+        }
         const themeNode = {
             _def: theme,
             id: RED.nodes.id(),
             type: 'ui-theme',
             ...mapDefaults(theme.defaults),
-            name: 'Default Theme'
+            name: themeName || 'Default Theme'
         }
-
-        addConfigNode(themeNode)
         return themeNode
     }
 
+    function assignBase (node, base, history) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: assignBase', node, base) }
+        if (base?.type !== 'ui-base') {
+            console.error('assignBase: base is not a ui-base node')
+            return
+        }
+        const addHistory = !node.ui || node.ui !== base.id
+        base.users = base.users || []
+        node.ui = base.id
+        const existing = base.users.find(u => u.id === node.id)
+        if (!existing) {
+            base.users.push(node)
+        }
+        if (addHistory) {
+            const historyEvent = createEditHistoryEvent(node, { ui: node.ui })
+            if (history) {
+                history.push(historyEvent)
+            } else {
+                RED.history.push(historyEvent)
+            }
+        }
+        RED.editor.validateNode(node)
+    }
+
+    function assignTheme (page, theme, history) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: assignTheme', page, theme) }
+        if (page?.type !== 'ui-page') {
+            console.error('assignTheme: page is not a ui-page node')
+            return
+        }
+        if (theme?.type !== 'ui-theme') {
+            console.error('assignTheme: theme is not a ui-theme node')
+            return
+        }
+        const addHistory = !page.theme || page.theme !== theme.id
+
+        // if the page has a theme value but it is different, we need to remove it from the old themes users array
+        if (page.theme && page.theme !== theme.id) {
+            const oldTheme = RED.nodes.node(page.theme)
+            if (oldTheme && oldTheme.users) {
+                const oldThemeIndex = oldTheme.users.findIndex(u => u?.id === page.id)
+                if (oldThemeIndex > -1) {
+                    oldTheme.users.splice(oldThemeIndex, 1)
+                }
+            }
+        }
+
+        page.theme = theme.id
+        theme.users = theme.users || []
+
+        const existing = theme.users.find(u => u.id === page.id)
+        if (!existing) {
+            theme.users.push(page)
+        }
+
+        if (addHistory) {
+            const historyEvent = createEditHistoryEvent(page, { theme: page.theme })
+            if (history) {
+                history.push(historyEvent)
+            } else {
+                RED.history.push(historyEvent)
+            }
+        }
+        RED.editor.validateNode(page)
+    }
+
+    function assignPage (node, page, history) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: assignPage', node, page) }
+        if (page?.type !== 'ui-page') {
+            console.error('assignPage: page is not a ui-page node')
+            return
+        }
+        const addHistory = !node.page || node.page !== page.id
+
+        // if the node has a page value but it is different, we need to remove it from the old pages users array
+        if (node.page && node.page !== page.id) {
+            const oldPage = RED.nodes.node(node.page)
+            if (oldPage && oldPage.users) {
+                const oldPageIndex = oldPage.users.findIndex(u => u?.id === node.id)
+                if (oldPageIndex > -1) {
+                    oldPage.users.splice(oldPageIndex, 1)
+                }
+            }
+        }
+
+        node.page = page.id
+        page.users = page.users || []
+        const existingUser = page.users.find(u => u.id === node.id)
+        if (!existingUser) {
+            page.users.push(node)
+        }
+
+        if (addHistory) {
+            const historyEvent = createEditHistoryEvent(node, { page: node.page })
+            if (history) {
+                history.push(historyEvent)
+            } else {
+                RED.history.push(historyEvent)
+            }
+        }
+        RED.editor.validateNode(node)
+    }
+
+    function assignGroup (node, group, history) {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: assignGroup', node, group) }
+        if (group?.type !== 'ui-group') {
+            console.error('assignGroup: group is not a ui-group node')
+            return
+        }
+        const addHistory = !node.group || node.group !== group.id
+
+        // if the widget has a group value but it is different, we need to remove it from the old groups users array
+        if (node.group && node.group !== group.id) {
+            const oldGroup = RED.nodes.node(node.group)
+            if (oldGroup && oldGroup.users) {
+                const oldGroupIndex = oldGroup.users.findIndex(u => u?.id === node.id)
+                if (oldGroupIndex > -1) {
+                    oldGroup.users.splice(oldGroupIndex, 1)
+                }
+            }
+        }
+
+        node.group = group.id
+        group.users = group.users || []
+        const existingUser = group.users.find(u => u.id === node.id)
+        if (!existingUser) {
+            group.users.push(node)
+        }
+
+        if (addHistory) {
+            const historyEvent = createEditHistoryEvent(node, { group: node.group })
+            if (history) {
+                history.push(historyEvent)
+            } else {
+                RED.history.push(historyEvent)
+            }
+        }
+        RED.editor.validateNode(node)
+    }
+
     function addLayoutsDefaults () {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addLayoutsDefaults') }
         const cNodes = ['ui-base', 'ui-page', 'ui-group', 'ui-theme']
         let exists = false
         RED.nodes.eachConfig((n) => {
@@ -714,21 +972,25 @@
 
         // check if we haven't got any of these yet
         if (!exists) {
-            // Add Single Base Node
-            const base = RED.nodes.getType('ui-base')
-            const baseNode = {
-                _def: base,
-                id: RED.nodes.id(),
-                type: 'ui-base',
-                ...mapDefaults(base.defaults),
-                name: 'My Dashboard'
-            }
+            const history = []
+            const wasDirty = RED.nodes.dirty()
 
-            addConfigNode(baseNode)
+            // create nodes
+            const baseNode = createBaseNode()
+            const theme = createThemeNode()
+            const page = createPageNode()
+            const group = createGroupNode()
 
-            const theme = addDefaultTheme()
-            const page = addDefaultPage(baseNode.id, theme.id)
-            const group = addDefaultGroup(page.id)
+            // add them to the editor & capture the history
+            addNode(baseNode, history)
+            addNode(theme, history)
+            addNode(page, history)
+            addNode(group, history)
+
+            // hook them up to each other & capture the history
+            assignBase(page, baseNode, history)
+            assignTheme(page, theme, history)
+            assignPage(group, page, history)
 
             // update existing `ui-` nodes to use the new base/page/theme/group
             RED.nodes.eachNode((node) => {
@@ -736,20 +998,21 @@
                     // if node has a group property
                     if (hasProperty(node._def.defaults, 'group') && !node.group) {
                         // group-scoped widgets - which is most of them
-                        node.group = group.id
+                        assignGroup(node, group, history)
                     } else if (hasProperty(node._def.defaults, 'page') && !node.page) {
                         // page-scoped widgets
-                        node.page = page.id
+                        assignPage(node, page, history)
                     } else if (hasProperty(node._def.defaults, 'ui') && !node.ui) {
                         // base-scoped widgets, e.g. ui-notification/control
-                        node.ui = baseNode.id
+                        assignBase(node, baseNode, history)
                     }
                     RED.editor.validateNode(node)
                 }
             })
 
-            RED.view.redraw()
+            recordEvents(history, wasDirty)
             RED.sidebar.config.refresh()
+            reloadSidebarContent()
         }
     }
 
@@ -827,19 +1090,22 @@
      * Add group of actions to the right-side of a row in the sidebar editable list.
      * @param {Object} parent - jQuery object to add this button group as a child element to
      * @param {DashboardItem} item - The page/group/widget that these actions are bound to
+     * @param {Object} list - The editableList instance associated with this item
      */
     function addRowActions (parent, item, list) {
         const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
-        if (!configNodes.includes(item.type)) {
-            const focusButton = $('<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-bullseye"></i> ' + c_('layout.focus') + '</a>').appendTo(btnGroup)
+        if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
+            const focusButton = $(`<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.focus')}"><i class="fa fa-bullseye"></i></a>`).appendTo(btnGroup)
             focusButton.on('click', function (evt) {
                 RED.view.reveal(item.id)
                 evt.stopPropagation()
                 evt.preventDefault()
             })
         }
-        const editButton = $('<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-pencil"></i> ' + c_('layout.edit') + '</a>').appendTo(btnGroup)
+
+        // button to edit node via node-red editor panel
+        const editButton = $(`<a href="#" class="nr-db-sb-tab-edit-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.edit')}"><i class="fa fa-cog"></i></a>`).appendTo(btnGroup)
         editButton.on('click', function (evt) {
             if (configNodes.includes(item.type)) {
                 RED.editor.editConfig('', item.type, item.id)
@@ -849,12 +1115,86 @@
             evt.stopPropagation()
             evt.preventDefault()
         })
-        if (item.type === 'ui-page') {
+
+        if (item.type === 'ui-page' && supportedEditableLayouts.includes(item.node.layout)) {
+            // button to edit group in wysiwyg layout editor
+            const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
+            layoutButton.on('click', async function (evt) {
+                evt.preventDefault()
+                evt.stopPropagation()
+
+                // call to httpadmin endpoint requesting layout editor mode for this group
+                const windowUrl = new URL(window.location.href)
+                const pageId = item.id
+                const baseId = item.node.ui
+                const base = RED.nodes.node(item.node.ui)
+                const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
+                const authTokens = RED.settings.get('auth-tokens') || {}
+                const headers = {}
+                if (authTokens.access_token) {
+                    headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
+                }
+
+                // promisify the ajax call so we can await it & return false after opening the popup
+                const ajax = () => {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
+                            type: 'PATCH',
+                            headers,
+                            data: {
+                                mode: 'edit',
+                                dashboard: baseId,
+                                page: pageId
+                            },
+                            success: function (data) {
+                                // construct the url to open the layout editor
+                                const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                                _url.searchParams.set('edit-key', data.editKey)
+                                const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
+                                if (editorPath) {
+                                    _url.searchParams.set('editor-path', editorPath)
+                                }
+                                resolve(_url)
+                            },
+                            error: function (err) {
+                                reject(err)
+                            }
+                        })
+                    })
+                }
+                try {
+                    const url = await ajax()
+                    const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
+                    window.open(url, target)
+                } catch (err) {
+                    console.error('layout mode error', err)
+                    RED.notify('Unable to begin layout editor', 'error')
+                }
+                return false // return false to click event to prevent default
+            })
             // add the "+ group" button
-            $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('layout.group') + '</a>')
-                .click(function (evt) {
-                    list.editableList('addItem')
+            const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
+            groupEditButton.on('click', function (evt) {
+                list.editableList('addItem')
+                evt.preventDefault()
+            })
+        }
+
+        // if this is a group & it is not an unattached group, add the "_ spacer" button
+        if (item.type === 'ui-group' && !!item.page) {
+            // add the "+ spacer" button
+            $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.spacer')}"><i class="fa fa-plus"></i></a>`)
+                .on('click', function (evt) {
+                    const spacerNode = createSpacerNode({ name: 'spacer', group: item.id, order: list.editableList('items').length + 1 })
+                    const history = []
+                    addNode(spacerNode, history)
+                    assignGroup(spacerNode, item.node, history)
+                    recordEvents(history)
                     evt.preventDefault()
+                    const widget = toDashboardItem(spacerNode)
+                    list.editableList('addItem', widget)
+                    RED.editor.edit(widget.node)
                 })
                 .appendTo(btnGroup)
         }
@@ -976,6 +1316,12 @@
         // sort groups by order
         groups.sort((a, b) => a.order - b.order)
 
+        const page = RED.nodes.node(pageId)
+        if (!page) {
+            console.error('addGroupOrderingList: page not found', pageId)
+            return
+        }
+
         // ordered list of groups to live within a container (e.g. page list item)
         const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
@@ -984,9 +1330,14 @@
             connectWith: '.nrdb2-sb-group-list',
             addItem: function (container, i, group) {
                 if (!group || !group.id) {
-                    // this is a new page that's been added and we need to setup the basics
-                    group = addDefaultGroup(pageId)
-                    RED.editor.editConfig('', group.type, group.id)
+                    // this is a new group that's been added and we need to setup the basics
+                    const history = []
+                    const newGroup = createGroupNode({ order: i + 1 })
+                    addNode(newGroup, history)
+                    assignPage(newGroup, page, history)
+                    recordEvents(history)
+                    RED.editor.editConfig('', newGroup.type, newGroup.id)
+                    group = toDashboardItem(newGroup)
                 }
 
                 const widgets = widgetsByGroup[group.id] || []
@@ -1003,8 +1354,6 @@
                 $('<span>', { class: 'nrdb2-sb-info' }).text(`${widgets.length} Widgets`).appendTo(titleRow)
 
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, group)
-                addRowStateOptions(actions, group)
 
                 // adds widgets within this group
                 const widgetsList = $('<div>', { class: 'nrdb2-sb-widget-list-container' }).appendTo(container)
@@ -1012,7 +1361,10 @@
                 // add chevron/list toggle
                 titleRow.click(titleToggle(group.id, widgetsList, chevron))
 
-                addWidgetToList(group.id, widgetsList, widgets)
+                const widgetsOL = addWidgetToList(group.id, widgetsList, widgets)
+
+                addRowActions(actions, group, widgetsOL)
+                addRowStateOptions(actions, group)
 
                 const events = []
                 updateItemOrder(groupsOL.editableList('items'), events)
@@ -1079,9 +1431,14 @@
 
                 // Set the icon
                 const ico = $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-widget-icon' }).appendTo(titleRow)
-                let widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
-                if (widgetIcon.startsWith('font-awesome/')) {
-                    widgetIcon = widgetIcon.replace(/^font-awesome\//, 'fa ')
+                let widgetIcon
+                if (widget.type === 'ui-spacer') {
+                    widgetIcon = 'fa fa-arrows-h'
+                } else {
+                    widgetIcon = RED.utils.getNodeIcon(widget.node?._def, widget.node) || 'fa-question'
+                    if (widgetIcon.startsWith('font-awesome/')) {
+                        widgetIcon = widgetIcon.replace(/^font-awesome\//, 'fa ')
+                    }
                 }
                 if (widget.isSubflowInstance) {
                     // In this MVP, subflow instances are constrained to stay within own group.
@@ -1098,7 +1455,7 @@
 
                 $('<span>', { class: 'nrdb2-sb-title' }).text(widget.label?.trim() || widget.id).appendTo(titleRow)
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
-                addRowActions(actions, widget)
+                addRowActions(actions, widget, widgetsOL)
 
                 const events = []
                 updateItemOrder(widgetsOL.editableList('items'), events)
@@ -1141,6 +1498,8 @@
         widgets.forEach(function (w) {
             widgetsOL.editableList('addItem', w)
         })
+
+        return widgetsOL
     }
 
     // expand / collapse buttons
@@ -1285,6 +1644,15 @@
                 }
             }
         })
+        // get ui-spacers too (they are config nodes so as not to be displayed in the editor node palette)
+        RED.nodes.eachConfig(function (n) {
+            if (n.type === 'ui-spacer' && n.group) {
+                if (!widgetsByGroup[n.group]) {
+                    widgetsByGroup[n.group] = []
+                }
+                widgetsByGroup[n.group].push(toDashboardItem(n))
+            }
+        })
 
         // update `widgetsByGroup` for subflow instances where its env has an entry which
         // is a ui-group
@@ -1331,9 +1699,16 @@
                 if (item && item.type === 'ui-link') {
                     // want to create a new link
                     if (!item || !item.id) {
-                        // create a default link
-                        item = addDefaultLink()
-                        RED.editor.editConfig('', item.type, item.id)
+                        const history = []
+                        const newItem = createLinkNode({ order: i + 1 })
+                        addNode(newItem, history)
+                        const defaultBase = getDefaultBase()
+                        if (defaultBase) {
+                            assignBase(newItem, defaultBase, history)
+                        }
+                        recordEvents(history)
+                        RED.editor.editConfig('', newItem.type, newItem.id)
+                        item = toDashboardItem(newItem)
                     }
                     // add it to the list of pages/links
                     container.addClass('nrdb2-sb-pages-list-item')
@@ -1355,9 +1730,21 @@
                 } else {
                     // is a page, with groups and widgets inside
                     if (!item || !item.id) {
+                        const history = []
                         // this is a new page that's been added and we need to setup the basics
-                        item = addDefaultPage()
-                        RED.editor.editConfig('', item.type, item.id)
+                        const newItem = createPageNode({ order: i + 1 })
+                        addNode(newItem, history)
+                        const defaultBase = getDefaultBase()
+                        if (defaultBase) {
+                            assignBase(newItem, defaultBase, history)
+                        }
+                        const defaultTheme = getDefaultTheme()
+                        if (defaultTheme) {
+                            assignTheme(newItem, defaultTheme, history)
+                        }
+                        recordEvents(history)
+                        RED.editor.editConfig('', newItem.type, newItem.id)
+                        item = toDashboardItem(newItem)
                     }
                     const groups = groupsByPage[item.id] || []
 
@@ -1433,9 +1820,10 @@
                 addButton: false,
                 addItem: function (container, i, group) {
                     if (!group || !group.id) {
-                        // this is a new group that's been added and we need to setup the basics
-                        group = addDefaultGroup()
-                        RED.editor.editConfig('', group.type, group.id)
+                        const newGroup = createGroupNode()
+                        addNode(newGroup)
+                        RED.editor.editConfig('', newGroup.type, newGroup.id)
+                        group = toDashboardItem(newGroup)
                     }
                     container.addClass('nrdb2-sb-unattached-groups-list-item')
 
@@ -1495,8 +1883,8 @@
             addButton: false,
             addItem: function (container, i, theme) {
                 if (!theme || !theme.id) {
-                    // this is a new theme that's been added and we need to setup the basics
-                    theme = addDefaultTheme()
+                    theme = createThemeNode()
+                    addNode(theme)
                     RED.editor.editConfig('', theme.type, theme.id)
                 }
                 container.addClass('nrdb2-sb-pages-list-item')
@@ -1707,7 +2095,7 @@
         $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
 
         // Add in Tab Content
-        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 72px);"></div>`).appendTo(sidebar)
+        const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 88px);"></div>`).appendTo(sidebar)
         return content
     }
 
@@ -1724,61 +2112,69 @@
             iconClass: 'fa fa-bar-chart',
             action: '@flowfuse/node-red-dashboard:show-dashboard-2.0-tab',
             onchange: () => {
-                sidebar.empty()
-
-                // UI Base Header
-                RED.nodes.eachConfig(function (n) {
-                    if (n.type === 'ui-base') {
-                        const base = n
-                        sidebar.append(dashboardLink(base.id, base.name, base.path))
-                        const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
-
-                        const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)
-
-                        // Add in Tabs
-                        // Tab - Pages
-                        const pagesContent = addSidebarTab(c_('label.layout'), 'pages', ulDashboardTabs, sidebar)
-                        const themesContent = addSidebarTab(c_('label.theming'), 'themes', ulDashboardTabs, sidebar)
-                        const cConstraintsContent = addSidebarTab(c_('label.constraints'), 'client-constraints', ulDashboardTabs, sidebar)
-
-                        // check for any third-party tab definitions
-                        RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
-                            if (plugin.tabs) {
-                                plugin.tabs.forEach(tab => {
-                                    // add tab to sidebar
-                                    const container = addSidebarTab(tab.label, tab.id, ulDashboardTabs, sidebar)
-                                    container.hide()
-                                    tab.init(base, container)
-                                })
-                            }
-                        })
-
-                        // on tab click, show the tab content, and hide the others
-                        ulDashboardTabs.children().on('click', function (evt) {
-                            const tab = $(this)
-                            const tabContent = $('#' + tab.attr('id').replace('-tab', ''))
-                            ulDashboardTabs.children().removeClass('active')
-                            tab.addClass('active')
-                            $('.red-ui-tab-content').hide()
-                            tabContent.show()
-                            evt.preventDefault()
-                        })
-
-                        // default to first tab
-                        ulDashboardTabs.children().first().trigger('click')
-
-                        // add page/layout editor
-                        buildLayoutOrderEditor(pagesContent)
-                        // add Themes View
-                        buildThemesEditor(themesContent)
-                        // add Themes View
-                        buildClientConstraintsEditor(base, cConstraintsContent)
-                    }
-                })
+                reloadSidebarContent()
             }
         })
         RED.actions.add('@flowfuse/node-red-dashboard:show-dashboard-2.0-tab', function () {
             RED.sidebar.show('flowfuse-nr-tools')
+        })
+    }
+
+    function reloadSidebarContent () {
+        if (RED._db2debug) { console.log('dashboard 2: ui_base.html: reloadSidebar ()') }
+        if (refreshBusy) {
+            return
+        }
+        sidebar.empty()
+
+        // UI Base Header
+        RED.nodes.eachConfig(function (n) {
+            if (n.type === 'ui-base') {
+                const base = n
+                sidebar.append(dashboardLink(base.id, base.name, base.path))
+                const divTab = $('<div class="red-ui-tabs">').appendTo(sidebar)
+
+                const ulDashboardTabs = $('<ul id="dashboard-tabs-list"></ul>').appendTo(divTab)
+
+                // Add in Tabs
+                // Tab - Pages
+                const pagesContent = addSidebarTab(c_('label.layout'), 'pages', ulDashboardTabs, sidebar)
+                const themesContent = addSidebarTab(c_('label.theming'), 'themes', ulDashboardTabs, sidebar)
+                const cConstraintsContent = addSidebarTab(c_('label.constraints'), 'client-constraints', ulDashboardTabs, sidebar)
+
+                // check for any third-party tab definitions
+                RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
+                    if (plugin.tabs) {
+                        plugin.tabs.forEach(tab => {
+                            // add tab to sidebar
+                            const container = addSidebarTab(tab.label, tab.id, ulDashboardTabs, sidebar)
+                            container.hide()
+                            tab.init(base, container)
+                        })
+                    }
+                })
+
+                // on tab click, show the tab content, and hide the others
+                ulDashboardTabs.children().on('click', function (evt) {
+                    const tab = $(this)
+                    const tabContent = $('#' + tab.attr('id').replace('-tab', ''))
+                    ulDashboardTabs.children().removeClass('active')
+                    tab.addClass('active')
+                    $('.red-ui-tab-content').hide()
+                    tabContent.show()
+                    evt.preventDefault()
+                })
+
+                // default to first tab
+                ulDashboardTabs.children().first().trigger('click')
+
+                // add page/layout editor
+                buildLayoutOrderEditor(pagesContent)
+                // add Themes View
+                buildThemesEditor(themesContent)
+                // add Themes View
+                buildClientConstraintsEditor(base, cConstraintsContent)
+            }
         })
     }
 
