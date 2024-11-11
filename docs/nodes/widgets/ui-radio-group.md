@@ -6,10 +6,10 @@ props:
         description: The text shown above the radio group to inform the user of what options are available.  Html content is allowed.
         dynamic: true
     Options:
-        description: A list of the options available in the radio group. Each row defines a `label` (shown alongisde each radio button) and `value` (emitted on selection) property.
+        description: A list of the options available in the radio group. Each row defines a `label` (shown alongside each radio button) and `value` (emitted on selection) property.
         dynamic: true
     Columns:
-        description: The number of grid columns within which to render the radio group. This is useful for when you want to render the options horizontally, or if you have many ptions and want to save vertical space.
+        description: The number of grid columns within which to render the radio group. This is useful for when you want to render the options horizontally, or if you have many options and want to save vertical space.
         dynamic: true
     Topic: The `msg.topic` that will be included in any emitted values
 dynamic:
