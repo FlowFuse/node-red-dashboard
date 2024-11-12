@@ -59,6 +59,27 @@
                 // groups
                 this.colors.groupBgDark = '#333333'
                 this.colors.groupOutlineDark = '#cccccc'
+            } else if (!hasProperty(this.colors, 'surfaceLight')) {
+                // backward compatability
+                if (hasProperty(this.colors, 'surface')) {
+                    // set default values for light theme
+                    this.colors.surfaceLight = this.colors.surface
+                    this.colors.primaryLight = this.colors.primary
+                    // pages
+                    this.colors.bgPageLight = this.colors.bgPage
+                    // groups
+                    this.colors.groupBgLight = this.colors.groupBg
+                    this.colors.groupOutlineLight = this.colors.groupOutline
+
+                    // set default values for dark theme
+                    this.colors.surfaceDark = '#111111'
+                    this.colors.primaryDark = this.colors.primary
+                    // pages
+                    this.colors.bgPageDark = '#222222'
+                    // groups
+                    this.colors.groupBgDark = '#333333'
+                    this.colors.groupOutlineDark = '#cccccc'
+                }
             }
 
             if (!this.sizes) {
