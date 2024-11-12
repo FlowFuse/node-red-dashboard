@@ -43,6 +43,18 @@
                         </template>
                     </v-list-item>
                 </v-list>
+                <v-btn
+                    class="ma-4 position-absolute bottom-0 left-0" icon
+                    :color="darkMode ? 'grey-darken-4' : 'grey-lighten-3'"
+                    @click="toggleTheme"
+                >
+                    <v-icon
+                        :color="darkMode ? 'yellow-lighten-4' : 'yellow-darken-2'"
+                        size="32"
+                    >
+                        {{ darkMode ? 'mdi-weather-night' : 'mdi-weather-sunny' }}
+                    </v-icon>
+                </v-btn>
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
             <div class="nrdb-layout-overlay">
@@ -69,7 +81,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 
-import { mapGetters, mapState, useStore} from 'vuex'
+import { mapGetters, mapState, useStore } from 'vuex'
 
 import { editMode, editPage } from '../EditTracking.js'
 
