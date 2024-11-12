@@ -227,6 +227,13 @@
         <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>option</span></a>
     </div>
     <div class="form-row">
+        <label for="node-input-msgTrigger"><i class="fa fa-paper-plane"></i> Trigger On</label>
+        <select id="node-input-msgTrigger" style="width: 70%;">
+            <option value="onChange">Selection Changed</option>
+            <option value="onClose">Dropdown Closed</option>
+       </select>
+    </div>
+    <div class="form-row">
         <label style="width:auto" for="node-input-multiple"><i class="fa fa-th-list"></i> Allow multiple selections from list: </label>
         <input type="checkbox" checked id="node-input-multiple" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>
@@ -251,12 +258,5 @@
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
         <input type="hidden" id="node-input-topicType">
-    </div>
-    <div class="form-row">
-        <label for="node-input-msgTrigger"><i class="fa fa-paper-plane"></i> Msg trigger</label>
-        <select id="node-input-msgTrigger" style="width: 70%;">
-            <option value="onChange">On every change</option>
-            <option value="onClose">On dropdown closed</option>
-       </select>
     </div>
 </script>
