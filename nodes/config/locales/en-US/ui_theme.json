@@ -3,6 +3,8 @@
         "label": {
             "themeName": "Theme Name",
             "colors": "Colors",
+            "colorsLight": "Light",
+            "colorsDark": "Dark",
             "dashboard": "Dashboard",
             "header": "Header",
             "primary": "Primary",
