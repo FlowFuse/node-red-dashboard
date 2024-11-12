@@ -2,11 +2,19 @@
     "id": "config-ui-theme",
     "type": "ui-theme",
     "name": "Theme 1",
-    "colors": {
-        "surface": "#ffffff",
-        "primary": "#0094ce",
-        "bgPage": "#eeeeee",
-        "groupBg": "#ffffff",
-        "groupOutline": "#cccccc"
+    "colors": 
+    {
+        "surfaceLight": "#ffffff",
+        "primaryLight": "#0094CE",
+        "bgPageLight": "#eeeeee",
+        "groupBgLight": "#ffffff",
+        "groupOutlineLight": "#cccccc",
+        
+        "surfaceDark": "#111111",
+        "primaryDark": "#0094CE",
+        "bgPageDark": "#222222",
+        "groupBgDark": "#333333",
+        "groupOutlineDark": "#cccccc"
     }
+    
 }
