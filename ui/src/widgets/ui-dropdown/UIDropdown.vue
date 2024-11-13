@@ -85,7 +85,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -132,6 +132,10 @@ export default {
                 this.updateDynamicProperty('chips', updates.chips)
                 this.updateDynamicProperty('clearable', updates.clearable)
             }
+        },
+        onSync (msg) {
+            // update the UI with any changes
+            this.value = msg.payload
         },
         onChange () {
             // ensure our data binding with vuex store is updated

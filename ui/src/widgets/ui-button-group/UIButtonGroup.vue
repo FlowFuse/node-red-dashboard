@@ -63,7 +63,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -112,6 +112,9 @@ export default {
                 this.updateDynamicProperty('label', updates.label)
                 this.updateDynamicProperty('options', updates.options)
             }
+        },
+        onSync (msg) {
+            this.selection = msg.payload
         },
         onChange (value) {
             if (value !== null && typeof value !== 'undefined') {

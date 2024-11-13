@@ -356,9 +356,9 @@ module.exports = function (RED) {
          * @param {Object} msg
          * @param {Object} wNode - the Node-RED node that is emitting the event
          */
-        function emit (event, msg, wNode) {
+        function emit (event, msg, wNode, exclude) {
             Object.values(uiShared.connections).forEach(conn => {
-                if (canSendTo(conn, wNode, msg)) {
+                if (canSendTo(conn, wNode, msg) && (!exclude || exclude.indexOf(conn.id) === -1)) {
                     conn.emit(event, msg)
                 }
             })
@@ -639,6 +639,8 @@ module.exports = function (RED) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
                 datastore.save(n, wNode, msg)
+                const exclude = [conn.id] // sync this change to all clients with the same widget
+                emit('widget-sync:' + id, msg, wNode, exclude) // let all other connect clients now about the value change
                 wNode.send(msg) // send the msg onwards
             }
 

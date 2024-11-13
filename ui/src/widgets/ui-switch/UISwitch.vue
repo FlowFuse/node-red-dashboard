@@ -123,7 +123,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -163,6 +163,14 @@ export default {
                     widgetId: this.id,
                     msg
                 })
+                // make sure we've got the relevant option selected on load of the page
+                if (msg.payload !== undefined) {
+                    this.selection = msg.payload
+                }
+            }
+        },
+        onSync (msg) {
+            if (msg) {
                 // make sure we've got the relevant option selected on load of the page
                 if (msg.payload !== undefined) {
                     this.selection = msg.payload

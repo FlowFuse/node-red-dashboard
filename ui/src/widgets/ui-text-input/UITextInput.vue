@@ -127,7 +127,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
     },
     methods: {
         onInput (msg) {
@@ -153,6 +153,9 @@ export default {
                     this.textValue = msg.payload
                 }
             }
+        },
+        onSync (msg) {
+            this.textValue = msg.payload
         },
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)

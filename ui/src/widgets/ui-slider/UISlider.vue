@@ -106,7 +106,7 @@ export default {
         }
     },
     created () {
-        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties, this.onSync)
     },
     mounted () {
         this.value = this.messages[this.id]?.payload
@@ -148,6 +148,11 @@ export default {
             this.updateDynamicProperty('color', updates.color)
             this.updateDynamicProperty('colorTrack', updates.colorTrack)
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
+        },
+        onSync (msg) {
+            if (msg?.payload !== undefined) {
+                this.value = Number(msg.payload)
+            }
         }
     }
 }
