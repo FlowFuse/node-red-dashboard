@@ -24,8 +24,9 @@ export default {
         value: function () {
             const m = this.messages[this.id] || {}
             if (Object.prototype.hasOwnProperty.call(m, 'payload')) {
-                // Sanetize the html to avoid XSS attacks
-                return DOMPurify.sanitize(m.payload)
+                // Sanetize the html to avoid XSS attacks.
+                // The target attribute of a href attribute is allowed (for hyperlinks).
+                return DOMPurify.sanitize(m.payload, { ADD_ATTR: ['target'] })
             }
             return ''
         },
