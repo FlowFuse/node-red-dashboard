@@ -40,8 +40,6 @@ export default {
     data () {
         return {
             delayTimer: null,
-            textValue: null,
-            previousValue: null,
             isCompressed: false
         }
     },
@@ -109,10 +107,11 @@ export default {
         },
         value: {
             get () {
-                if (this.textValue === null || this.textValue === undefined || this.textValue === '') {
-                    return this.textValue
+                const val = this.messages[this.id]?.payload
+                if (val === null || val === undefined || val === '') {
+                    return val
                 } else {
-                    return Number(this.textValue)
+                    return Number(val)
                 }
             },
             set (val) {
@@ -170,52 +169,14 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties, null)
     },
     methods: {
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure our v-model is updated to reflect the value from Node-RED
-            if (msg.payload !== undefined) {
-                this.textValue = msg.payload
-            }
-        },
-        onLoad (msg) {
-            // update vuex store to reflect server-state
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure we've got the relevant option selected on load of the page
-            if (msg?.payload !== undefined) {
-                this.textValue = msg.payload
-                this.previousValue = msg.payload
-            }
-        },
-        onSync (msg) {
-            if (msg?.payload !== undefined) {
-                this.textValue = msg.payload
-                this.previousValue = msg.payload
-            }
-        },
         send () {
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange () {
-            // Since the Vuetify Input Number component doesn't currently support an onClick event,
-            // compare the previous value with the current value and check whether the value has been increased or decreased by one.
-            if (
-                this.previousValue === null ||
-                this.previousValue + (this.step || 1) === this.value ||
-                this.previousValue - (this.step || 1) === this.value
-            ) {
-                this.send()
-            }
-            this.previousValue = this.value
+            this.send()
         },
         onBlur: function () {
             if (this.props.sendOnBlur) {
