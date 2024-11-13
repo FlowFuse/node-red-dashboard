@@ -119,7 +119,6 @@ export default {
                     return // no change
                 }
                 const msg = this.messages[this.id] || {}
-                this.textValue = val
                 msg.payload = val
                 this.messages[this.id] = msg
             }
