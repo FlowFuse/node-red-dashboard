@@ -1039,12 +1039,13 @@ module.exports = function (RED) {
                         } else {
                             // msg could be null if the beforeSend errors and returns null
                             if (msg) {
-                                // store the latest msg passed to node
-                                datastore.save(n, widgetNode, msg)
-
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
+
+                                // store the latest msg passed to node
+                                datastore.save(n, widgetNode, msg)
+
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {
                                         send(msg)
