@@ -10,10 +10,10 @@
                 :class="getGroupClass(g)"
                 :style="{'width': ((rowHeight * 2 * g.width) + 'px')}"
                 :draggable="editMode"
-                @dragstart="onDragStart($event, $index)"
-                @dragover="onDragOver($event, $index, g)"
-                @dragend="onDragEnd($event, $index, g)"
-                @dragleave="onDragLeave($event, $index, g)"
+                @dragstart="onGroupDragStart($event, $index, g)"
+                @dragover="onGroupDragOver($event, $index, g)"
+                @dragend="onGroupDragEnd($event, $index, g)"
+                @dragleave="onGroupDragLeave($event, $index, g)"
                 @drop.prevent
                 @dragenter.prevent
             >
@@ -22,7 +22,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <widget-group :group="g" :index="$index" :widgets="widgetsByGroup(g.id)" :resizable="editMode" @resize="onGroupResize" />
+                        <widget-group :group="g" :index="$index" :widgets="groupWidgets(g.id)" :resizable="editMode" :group-dragging="groupDragging.active" @resize="onGroupResize" />
                     </template>
                 </v-card>
             </div>
@@ -98,6 +98,12 @@ export default {
         pageWidgets: function () {
             return this.widgetsByPage(this.$route.meta.id)
         },
+        groupWidgets () {
+            if (this.editMode) { // mixin property
+                return (groupId) => this.pageGroupWidgets[groupId]
+            }
+            return (groupId) => this.widgetsByGroup(groupId)
+        },
         page: function () {
             return this.pages[this.$route.meta.id]
         },
@@ -109,8 +115,14 @@ export default {
         }
     },
     mounted () {
+        console.log('flex layout mounted')
         if (this.editMode) { // mixin property
             this.pageGroups = this.getPageGroups()
+            const pageGroupWidgets = {}
+            for (const group of this.pageGroups) {
+                pageGroupWidgets[group.id] = this.getGroupWidgets(group.id)
+            }
+            this.pageGroupWidgets = pageGroupWidgets
             this.initializeEditTracking() // Mixin method
         }
     },
@@ -129,6 +141,21 @@ export default {
                     return a.order - b.order
                 })
             return groups
+        },
+        getGroupWidgets (groupId) {
+            // get widgets for this group (sorted by layout.order)
+            const widgets = this.widgetsByGroup(groupId)
+                // only show the widgets that haven't had their "visible" property set to false
+                .filter((g) => {
+                    if ('visible' in g) {
+                        return g.visible && g.groupType !== 'dialog'
+                    }
+                    return true
+                })
+                .sort((a, b) => {
+                    return a?.layout?.order - b?.layout?.order
+                })
+            return widgets
         },
         getWidgetClass (widget) {
             const classes = []
@@ -154,7 +181,7 @@ export default {
                 classes.push(properties.class)
             }
             // dragging interaction classes
-            const dragDropClass = this.getDragDropClass(group) // Mixin method
+            const dragDropClass = this.getGroupDragDropClass(group) // Mixin method
             if (dragDropClass) {
                 classes.push(dragDropClass)
             }
@@ -179,7 +206,8 @@ export default {
             this.deployChanges({
                 dashboard: this.page.ui,
                 page: this.page.id,
-                groups: this.pageGroups
+                groups: this.pageGroups,
+                widgets: this.pageGroupWidgets
             }).then(() => {
                 this.acceptChanges() // Mixin method
             }).catch((error) => {
@@ -218,6 +246,13 @@ export default {
                 this.discardEdits()
             }
             this.exitEditMode() // Mixin method
+        },
+        onGroupResize (opts) {
+            // ensure opts.width is a number and is greater than 0
+            if (typeof opts.width !== 'number' || opts.width < 1) {
+                return
+            }
+            this.pageGroups[opts.index].width = opts.width
         }
     }
 }
