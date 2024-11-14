@@ -490,11 +490,21 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .nrdb-ui-group.dragging {
     border-style: dashed;
 }
+.nrdb-ui-widget.dragging {
+    border-style: dashed;
+}
 
 .nrdb-ui-group.drag-start {
     opacity: 0.8;
     outline: 2px dashed black;
 }
+
+.nrdb-resizable-widget.drag-start,
+.nrdb-ui-widget.drag-start {
+    opacity: 0.8;
+    outline: 2px dashed black;
+}
+
 
 .nrdb-ui-page > .nrdb-ui-group[draggable="true"] > .v-card.resize-active {
      /*

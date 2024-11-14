@@ -4,61 +4,70 @@
     height: 100%;
     top: 0;
     left: 0;
-    --handler-size: 12px;
+    --handle-size: 12px;
+    --handle-opacity: 0.1; // initially mostly transparent - updated in hover
+    --handle-accent: transparent; // initially no accent color - updated in hover
     cursor: grab;
     &.resizing {
+        z-index: 1000 !important;
         background-color: #ff00001f;
         border: 1px dashed red;
+    }
+    &:hover, &:active {
+        border: 1px dashed red;
+        --handle-opacity: 1;
+        --handle-accent: red;
     }
 }
 .nrdb-resizable--handle {
     position: absolute;
-    width: var(--handler-size);
-    height: var(--handler-size);
     background-color: white;
     border: 1px solid black;
     border-radius: 6px;
-    cursor: ew-resize;
-    &:active {
-        cursor: ew-resize !important;
+    opacity: var(--handle-opacity);
+    &:hover, &:active {
+        background-color: #eee;
+        --handle-opacity: 1;
+        --handle-accent: red;
     }
-}
-.nrdb-resizable--top-right {
-    top: calc(-1 * var(--handler-size) / 2);
-    right: calc(-1 * var(--handler-size) / 2);
 }
 
 .nrdb-resizable--right {
-    height: calc(2 * var(--handler-size));
+    height: calc(2 * var(--handle-size));
+    width: var(--handle-size);
     top: 50%;
-    margin-top: calc(-1 * var(--handler-size));
-    right: calc(-1 * var(--handler-size) / 2);
+    margin-top: calc(-1 * var(--handle-size));
+    right: calc(-1 * var(--handle-size) / 2);
     display: flex;
     justify-content: center;
     align-items: center;
-    &:hover {
-        cursor: ew-resize;
-        background-color: #eee;
-    }
-    &:active {
-        cursor: ew-resize !important;
-    }
+    cursor: ew-resize !important;
+}
+
+.nrdb-resizable--bottom {
+    height: var(--handle-size);
+    width: calc(2 * var(--handle-size));
+    left: 50%;
+    margin-left: calc(-1 * var(--handle-size));
+    bottom: calc(-1 * var(--handle-size) / 2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: ns-resize !important;
 }
 
 .nrdb-resizable--right:after {
     content: '';
-    height: calc(0.75 * var(--handler-size));
+    height: calc(0.75 * var(--handle-size));
     width: 1px;
     display: inline-block;
-    background-color: red;
+    background-color: var(--handle-accent);
 }
 
-.nrdb-resizable--bottom-left {
-    bottom: calc(-1 * var(--handler-size) / 2);
-    left: calc(-1 * var(--handler-size) / 2);
-}
-
-.nrdb-resizable--top-left {
-    top: calc(-1 * var(--handler-size) / 2);
-    left: calc(-1 * var(--handler-size) / 2);
+.nrdb-resizable--bottom:after {
+    content: '';
+    height: 1px;
+    width: calc(0.75 * var(--handle-size));
+    display: inline-block;
+    background-color: var(--handle-accent);
 }
