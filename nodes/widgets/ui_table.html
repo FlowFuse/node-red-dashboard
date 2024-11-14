@@ -65,7 +65,7 @@
             defaults: {
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
-                label: { value: 'text' },
+                label: { value: '' },
                 order: { value: 0 },
                 width: {
                     value: 0,
@@ -97,7 +97,7 @@
             icon: 'font-awesome/fa-table',
             paletteLabel: 'table',
             label: function () {
-                return this.name || 'table'
+                return this.name || this.label || 'table'
             },
             oneditprepare: function () {
                 // handle backward compatibility
@@ -331,6 +331,10 @@
     <div class="form-row nr-db-ui-manual-size-row">
         <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-table.label.height">Height</label>
         <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-table.label.label"></span></label>
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-table.label.optionalTableTitle">
     </div>
     <div class="form-row">
         <label for="node-input-maxrows"><i class="fa fa-tag"></i> <span data-i18n="ui-table.label.maxRows"></label>

@@ -26,18 +26,30 @@ import './stylesheets/common.css'
 import store from './store/index.mjs'
 import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
 
-// set a base theme on which we will add our custom NR-defined theme
+// Retrieve the "Default" theme from cache
+function retrieveDefaultThemeFromCache () {
+    const cachedTheme = localStorage.getItem('ndrb-theme-default')
+    if (cachedTheme) {
+        return JSON.parse(cachedTheme)
+    }
+    return null
+}
+
+const defaultTheme = retrieveDefaultThemeFromCache()
+
+// set a base theme on which we will add our custom NR-defined theme (initially set to the default theme if exists in cache)
 const theme = {
     dark: false,
     colors: {
-        background: '#fff',
-        'navigation-background': '#ffffff',
-        'group-background': '#ffffff',
-        primary: '#0000ff',
+        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
+        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
+        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
+        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
@@ -97,7 +109,7 @@ fetch('_setup')
             return
         case !response.ok:
             console.error('Failed to fetch setup data:', response)
-            return
+            throw new Error('Failed to fetch setup data:', response)
         case host.origin !== new URL(response.url).origin: {
             console.log('Following redirect:', response.url)
             const url = new URL(response.url)
@@ -257,10 +269,37 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        if (err instanceof TypeError && err.message === 'Failed to fetch') {
-            forcePageReload(err)
-        } else {
-            // handle general errors here
-            console.error('An error occurred:', err)
+        function handleOnline () {
+            // remove the online event listener and reload the page
+            window.removeEventListener('online', handleOnline)
+            location.reload()
         }
+
+        let error = {}
+        if (navigator.onLine) {
+            error = { error: err, type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
+            // Add timer to reload the page every 20 seconds
+            setInterval(() => {
+                location.reload()
+            }, 20000)
+        } else {
+            error = { error: err, type: 'no internet', message: 'Your device appears to be offline.' }
+            // Add event listener
+            window.addEventListener('online', handleOnline)
+        }
+
+        store.commit('setup/setError', error) // pass the error to the Vuex store
+
+        // load minimal VueJS app to display error message and options to user
+        const app = Vue.createApp(App)
+            .use(store)
+            .use(vuetify)
+            .use(router)
+
+        const head = createHead()
+        app.use(head)
+        app.mixin(VueHeadMixin)
+
+        // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
+        app.mount('#app')
     })

@@ -60,6 +60,7 @@
                 />
             </div>
         </div>
+        <img ref="blank-img" style="position: absolute;" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="">
     </div>
 </template>
 

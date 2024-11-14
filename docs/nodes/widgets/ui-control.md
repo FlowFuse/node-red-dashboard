@@ -37,11 +37,11 @@ Currently, we support the following controls:
 
 ### Navigation
 
-You can programmaticaly force navigation with the following payloads with `ui-control`:
+You can programmatically force navigation with the following payloads with `ui-control`:
 
 #### Change Page
 
-Explicitely choose the page you want to navigate to:
+Explicitly choose the page you want to navigate to:
 
 ```js
 // String
@@ -96,9 +96,18 @@ msg.payload = {
 }
 ```
 
+ You can also specify a `target` property to open the website in a new browser window or tab.
+ 
+```js
+msg.payload = {
+    url: 'https://nodered.org',
+    target: '_blank'
+}
+```
+
 ### Show/Hide
 
-You can programmaticaly show/hide groups and pages with the following payload into `ui-control`:
+You can programmatically show/hide groups and pages with the following payload into `ui-control`:
 
 ```js
 msg.payload = {
@@ -117,7 +126,7 @@ _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can 
 
 ### Enable/Disable
 
-You can programmaticaly disable/enable groups and pages with the following payload into `ui-control`:
+You can programmatically disable/enable groups and pages with the following payload into `ui-control`:
 
 ```js
 msg.payload = {

@@ -60,7 +60,7 @@ msg = {
 
 ## Custom Events
 
-In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embeded `$socket` operator directly. 
+In your own `ui-template` nodes, you can emit custom events that will get captured by any `ui-event` node calling the embedded `$socket` operator directly. 
 
 The `$socket.emit` function takes in 3 arguments:
 
@@ -74,7 +74,7 @@ So in the case where we want to send to a specific `ui-event` node:
 <v-btn @click="$socket.emit('ui-event', 'ui-event-node-id', msg)">Send Custom Event</v-btn>
 ```
 
-Or, in the case where we brodcast to _all_ `ui-event` nodes:
+Or, in the case where we broadcast to _all_ `ui-event` nodes:
 
 ```vue
 <v-btn @click="$socket.emit('ui-event', 'all', msg)">Send Custom Event</v-btn>

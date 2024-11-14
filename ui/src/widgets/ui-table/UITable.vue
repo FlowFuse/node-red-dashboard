@@ -1,4 +1,5 @@
 <template>
+    <label v-if="props.label" ref="title" class="nrdb-ui-table-title">{{ props.label }}</label>
     <v-text-field
         v-if="props.showSearch"
         v-model="search"
@@ -155,6 +156,9 @@ export default {
         this.updateIsMobile()
         window.addEventListener('resize', this.updateIsMobile)
     },
+    unmounted () {
+        window.removeEventListener('resize', this.updateIsMobile)
+    },
     methods: {
         formatPayload (value) {
             if (value !== null && typeof value !== 'undefined') {
@@ -254,9 +258,6 @@ export default {
             }
             return true
         }
-    },
-    unounted () {
-        window.removeEventListener('resize', this.updateIsMobile)
     }
 }
 </script>
@@ -324,5 +325,12 @@ export default {
 .nrdb-table--mobile .v-data-table__tr--mobile>td:not(:last-child) {
     --mobile-border-opacity: calc(var(--v-border-opacity) * 0.5);
     border-bottom: thin solid rgba(var(--v-border-color), var(--mobile-border-opacity)) !important;
+}
+.nrdb-ui-table-title {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+    padding-bottom: 4px;
 }
 </style>

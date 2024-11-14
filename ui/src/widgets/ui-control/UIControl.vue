@@ -216,8 +216,13 @@ export default {
             }
 
             if ('url' in payload) {
-                // we are setting the url
-                window.location.href = payload.url
+                if ('target' in payload) {
+                    // Open the link in a new browser window or tab
+                    window.open(payload.url, payload.target)
+                } else {
+                    // Open the link in the same window
+                    window.location.href = payload.url
+                }
             }
         })
     },

@@ -9,6 +9,7 @@
             "key": "key:",
             "value": "Value",
             "label": "Label",
+            "optionalTableTitle": "optional label",
             "type": "Type",
             "width": "Width",
             "align": "Align",
