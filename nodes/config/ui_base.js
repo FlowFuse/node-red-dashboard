@@ -1138,11 +1138,12 @@ module.exports = function (RED) {
         const changes = req.body.changes || {}
         const editKey = req.body.key
         const groups = changes.groups || []
+        const widgets = changes.widgets || []
         console.log(changes, editKey, dashboardId)
         const baseNode = RED.nodes.getNode(dashboardId)
 
         // validity checks
-        if (groups.length === 0) {
+        if (groups.length === 0 && widgets.length === 0) {
             // this could be a 200 but since the group data might be missing due to
             // a bug or regression, we'll return a 400 and let the user know
             // there were no changes provided.
@@ -1163,6 +1164,16 @@ module.exports = function (RED) {
         for (const modified of groups) {
             if (modified.page !== baseNode.ui.meta.wysiwyg.page) {
                 return res.status(400).json({ error: 'Invalid page id' })
+            }
+        }
+        for (const key in widgets) {
+            const groupWidgets = widgets[key]
+            for (const modified of groupWidgets) {
+                // ensure widget exists
+                const widget = baseNode.ui.widgets.get(modified.id)
+                if (!widget) {
+                    return res.status(400).json({ error: 'Widget not found' })
+                }
             }
         }
 
@@ -1199,14 +1210,19 @@ module.exports = function (RED) {
             }
             return false
         }
-        let rev = null
-        return axios.request({
-            method: 'GET',
-            headers: getHeaders,
-            url
-        }).then(response => {
-            const flows = response.data?.flows || []
-            rev = response.data?.rev
+        try {
+            const getResponse = await axios.request({
+                method: 'GET',
+                headers: getHeaders,
+                url
+            })
+
+            if (getResponse.status !== 200) {
+                return res.status(getResponse.status).json({ error: getResponse?.data?.message || 'An error occurred getting flows', code: 'GET_FAILED' })
+            }
+
+            const flows = getResponse.data?.flows || []
+            const rev = getResponse.data?.rev
             const changeResult = []
             for (const modified of groups) {
                 const current = flows.find(n => n.id === modified.id)
@@ -1221,13 +1237,28 @@ module.exports = function (RED) {
                 changeResult.push(applyIfDifferent(current, modified, 'width'))
                 changeResult.push(applyIfDifferent(current, modified, 'order'))
             }
-            if (changeResult.length === 0 || !changeResult.includes(true)) {
-                return res.status(200).json({ message: 'No changes were' })
+            for (const widgetKey in widgets) {
+                const groupWidgets = widgets[widgetKey]
+                for (const modified of groupWidgets) {
+                    const current = flows.find(n => n.id === modified.id)
+                    if (!current) {
+                        // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
+                        return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
+                    }
+                    if (modified.group !== current.group) {
+                        // integrity of data suspect! Has flow changed on the server?
+                        return res.status(400).json({ error: 'Invalid group id', code: 'INVALID_GROUP_ID' })
+                    }
+                    changeResult.push(applyIfDifferent(current, modified, 'order'))
+                    changeResult.push(applyIfDifferent(current, modified, 'width'))
+                    changeResult.push(applyIfDifferent(current, modified, 'height'))
+                }
             }
-            return flows
-        }).then(flows => {
-            // update the flows with the new group order
-            return axios.request({
+            if (changeResult.length === 0 || !changeResult.includes(true)) {
+                return res.status(201).json({ message: 'No changes were found', code: 'NO_CHANGES' })
+            }
+
+            const postResponse = await axios.request({
                 method: 'POST',
                 headers: postHeaders,
                 url,
@@ -1236,13 +1267,17 @@ module.exports = function (RED) {
                     rev
                 }
             })
-        }).then(response => {
-            return res.status(200).json(response.data)
-        }).catch(error => {
+
+            if (postResponse.status !== 200) {
+                return res.status(postResponse.status).json({ error: postResponse?.data?.message || 'An error occurred deploying flows', code: 'POST_FAILED' })
+            }
+
+            return res.status(postResponse.status).json(postResponse.data)
+        } catch (error) {
             console.error(error)
             const status = error.response?.status || 500
-            return res.status(status).json({ error: error.message })
-        })
+            return res.status(status).json({ error: error.message || 'An error occurred' })
+        }
     })
 
     // PATCH: /dashboard/api/v1/:dashboardId/edit/:pageId - start editing a page
