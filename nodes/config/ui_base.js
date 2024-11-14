@@ -889,9 +889,9 @@ module.exports = function (RED) {
                     type: widgetConfig.type,
                     props: widgetConfig,
                     layout: {
-                        width: widgetConfig.width || 3,
-                        height: widgetConfig.height || 1,
-                        order: widgetConfig.order || 0
+                        width: widgetConfig.width || 3, // default width of 3: this must match up with defaults in wysiwyg editing
+                        height: widgetConfig.height || 1, // default height of 1: this must match up with defaults in wysiwyg editing
+                        order: widgetConfig.order || 0 // default order of 0: this must match up with defaults in wysiwyg editing
                     },
                     state: statestore.getAll(widgetConfig.id),
                     hooks: widgetEvents,
