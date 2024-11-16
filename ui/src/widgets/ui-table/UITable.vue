@@ -173,6 +173,7 @@ export default {
             if (this.props.action === 'append') {
                 this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
             } else {
+                this.selected = null
                 this.localData = value
             }
 
