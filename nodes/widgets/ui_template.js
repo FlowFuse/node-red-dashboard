@@ -1,13 +1,11 @@
+const statestore = require('../store/state.js')
+
 module.exports = function (RED) {
     function TemplateNode (config) {
         const node = this
 
         // create node in Node-RED
         RED.nodes.createNode(this, config)
-
-        const evts = {
-            onAction: true // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
-        }
 
         if (config.templateScope === 'local') {
             config.page = ''
@@ -31,18 +29,38 @@ module.exports = function (RED) {
             config.passthru = true
         }
 
-        // which group are we rendering this widget
+        // determine which group/page/ui are we rendering this widget
+        let group, page, ui
         if (config.group) {
-            const group = RED.nodes.getNode(config.group)
-            // inform the dashboard UI that we are adding this node
-            group.register(node, config, evts)
+            group = RED.nodes.getNode(config.group)
         } else if (config.page) {
-            const page = RED.nodes.getNode(config.page)
-            // inform the dashboard UI that we are adding this node
-            page.register(null, node, config, evts)
+            page = RED.nodes.getNode(config.page)
         } else if (config.ui) {
-            const ui = RED.nodes.getNode(config.ui)
-            // inform the dashboard UI that we are adding this node
+            ui = RED.nodes.getNode(config.ui)
+        }
+
+        const evts = {
+            onAction: true, // TODO: think we need an onSend event for template nodes that matches up with a `widget-send` message
+            beforeSend: function (msg) {
+                if (msg.ui_update) {
+                    const update = msg.ui_update
+                    if (typeof update.format !== 'undefined') {
+                        // dynamically set "format" property
+                        const parent = group || page || ui
+                        statestore.set(parent.getBase(), node, msg, 'format', update.format)
+                    }
+                }
+                return msg
+            }
+        }
+
+
+        // inform the dashboard group/page/ui that we are adding this node
+        if (group) {
+            group.register(node, config, evts)
+        } else if (page) {
+            page.register(null, node, config, evts)
+        } else if (ui) {
             ui.register(null, null, node, config, evts)
         }
     }
