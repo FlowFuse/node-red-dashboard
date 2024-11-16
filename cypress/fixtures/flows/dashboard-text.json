@@ -404,6 +404,116 @@
         ]
     },
     {
+        "id": "button-dynamic-label-no-payload",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "Dynamic: No Payload",
+        "label": "Dynamic: No Payload",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 120,
+        "y": 320,
+        "wires": [
+            [
+                "df51827510c6dc80"
+            ]
+        ]
+    },
+    {
+        "id": "df51827510c6dc80",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "Dynamic Label-No Payload",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 320,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "button-inject-text-2",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "",
+        "label": "Inject Text 2",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "injected text",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 390,
+        "y": 360,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
         "id": "dashboard-test-text",
         "type": "ui-group",
         "name": "UI Text Tests",
