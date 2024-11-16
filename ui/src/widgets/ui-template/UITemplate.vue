@@ -27,8 +27,8 @@ export default {
             if (!updates) {
                 return
             }
+            // Updating the format will automatically trigger the rerendering (see render hook below)
             this.updateDynamicProperty('format', updates.format)
-            this.$forceUpdate()
         },
         send (component, msg) {
             if (typeof (msg) !== 'object') {
