@@ -20,7 +20,8 @@
             "default": "Default (48px)",
             "comfortable": "Comfortable (38px)",
             "compact": "Compact (32px)",
-            "density": "Row Height"
+            "density": "Row Height",
+            "preview": "Preview"
         }
     }
 }
