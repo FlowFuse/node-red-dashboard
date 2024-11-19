@@ -22,7 +22,7 @@
                         {{ g.name }}
                     </template>
                     <template #text>
-                        <widget-group :group="g" :index="$index" :widgets="groupWidgets(g.id)" :resizable="editMode" :group-dragging="groupDragging.active" @resize="onGroupResize" />
+                        <widget-group :group="g" :index="$index" :widgets="groupWidgets(g.id)" :resizable="editMode" :group-dragging="groupDragging.active" @resize="onGroupResize" @widget-added="updateEditStateObjects" @widget-removed="updateEditStateObjects" @refresh-state-from-store="updateEditStateObjects" />
                     </template>
                 </v-card>
             </div>
@@ -117,12 +117,7 @@ export default {
     mounted () {
         console.log('flex layout mounted')
         if (this.editMode) { // mixin property
-            this.pageGroups = this.getPageGroups()
-            const pageGroupWidgets = {}
-            for (const group of this.pageGroups) {
-                pageGroupWidgets[group.id] = this.getGroupWidgets(group.id)
-            }
-            this.pageGroupWidgets = pageGroupWidgets
+            this.updateEditStateObjects()
             this.initializeEditTracking() // Mixin method
         }
     },
@@ -225,7 +220,7 @@ export default {
         },
         discardEdits () {
             this.revertEdits() // Mixin method
-            this.pageGroups = this.getPageGroups()
+            this.updateEditStateObjects()
         },
         async leaveEditMode () {
             let leave = true
@@ -253,6 +248,15 @@ export default {
                 return
             }
             this.pageGroups[opts.index].width = opts.width
+        },
+        updateEditStateObjects () {
+            console.log('updateEditStateObjects')
+            this.pageGroups = this.getPageGroups()
+            const pageGroupWidgets = {}
+            for (const group of this.pageGroups) {
+                pageGroupWidgets[group.id] = this.getGroupWidgets(group.id)
+            }
+            this.pageGroupWidgets = pageGroupWidgets
         }
     }
 }

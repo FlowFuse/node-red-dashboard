@@ -7,6 +7,11 @@
     --handle-size: 12px;
     --handle-opacity: 0.1; // initially mostly transparent - updated in hover
     --handle-accent: transparent; // initially no accent color - updated in hover
+    /* transitions to match vuetify cards/buttons etc */ 
+    transition-property: box-shadow, transform, opacity, border;
+    transition-duration: 0.28s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    border-color: 0px dashed transparent;
     cursor: grab;
     &.resizing {
         z-index: 1000 !important;
@@ -25,6 +30,10 @@
     border: 1px solid black;
     border-radius: 6px;
     opacity: var(--handle-opacity);
+    /* transitions to match vuetify cards/buttons etc */ 
+    transition-property: box-shadow, transform, opacity, background;
+    transition-duration: 0.28s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     &:hover, &:active {
         background-color: #eee;
         --handle-opacity: 1;
@@ -71,3 +80,31 @@
     display: inline-block;
     background-color: var(--handle-accent);
 }
+
+.nrdb-resizable {
+    --toolbar-opacity: 0;
+    &:hover {
+        --toolbar-opacity: 1;
+    }
+    .nrdb-resizable--toolbar {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        z-index: 101;
+        opacity: var(--toolbar-opacity, 0);
+        &:hover {
+            --toolbar-opacity: 1;
+        }
+        > .nrdb-resizable--toolbar-button {
+            width: 20px; // override theme sizing
+            height: 20px;
+            min-height: 20px;
+            min-width: 20px;
+            cursor: pointer;
+            &:hover {
+                --toolbar-opacity: 1;
+            }
+        }
+    }
+}
+

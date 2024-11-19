@@ -722,7 +722,7 @@ module.exports = function (RED) {
             // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
             // Node-RED built nodes will be a random UUID
             if (!wNode && !id.startsWith('ui-')) {
-                console.log('widget does not exist any more')
+                console.log('widget does not exist in the runtime', id) // TODO: Handle this better for edit-time added nodes (e.g. ui-spacer)
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
@@ -1138,12 +1138,16 @@ module.exports = function (RED) {
         const changes = req.body.changes || {}
         const editKey = req.body.key
         const groups = changes.groups || []
-        const widgets = changes.widgets || []
+        const allWidgets = (changes.widgets || [])
+        const updatedWidgets = allWidgets.filter(w => !w.__DB2_ADD_WIDGET && !w.__DB2_REMOVE_WIDGET)
+        const addedWidgets = allWidgets.filter(w => !!w.__DB2_ADD_WIDGET).map(w => { delete w.__DB2_ADD_WIDGET; return w })
+        const removedWidgets = allWidgets.filter(w => !!w.__DB2_REMOVE_WIDGET).map(w => { delete w.__DB2_REMOVE_WIDGET; return w })
+
         console.log(changes, editKey, dashboardId)
         const baseNode = RED.nodes.getNode(dashboardId)
 
         // validity checks
-        if (groups.length === 0 && widgets.length === 0) {
+        if (groups.length === 0 && allWidgets.length === 0) {
             // this could be a 200 but since the group data might be missing due to
             // a bug or regression, we'll return a 400 and let the user know
             // there were no changes provided.
@@ -1166,14 +1170,30 @@ module.exports = function (RED) {
                 return res.status(400).json({ error: 'Invalid page id' })
             }
         }
-        for (const key in widgets) {
-            const groupWidgets = widgets[key]
-            for (const modified of groupWidgets) {
-                // ensure widget exists
-                const widget = baseNode.ui.widgets.get(modified.id)
-                if (!widget) {
-                    return res.status(400).json({ error: 'Widget not found' })
-                }
+
+        for (const widget of updatedWidgets) {
+            const existingWidget = baseNode.ui.widgets.get(widget.id)
+            if (!existingWidget) {
+                return res.status(400).json({ error: 'Widget not found' })
+            }
+        }
+
+        for (const added of addedWidgets) {
+            // for now, only ui-spacer is supported
+            if (added.type !== 'ui-spacer') {
+                return res.status(400).json({ error: 'Cannot add this kind of widget' })
+            }
+
+            // check if the widget is being added to a valid group
+            const group = baseNode.ui.groups.get(added.group)
+            if (!group) {
+                return res.status(400).json({ error: 'Invalid group id' })
+            }
+        }
+        for (const removed of removedWidgets) {
+            // for now, only ui-spacer is supported
+            if (removed.type !== 'ui-spacer') {
+                return res.status(400).json({ error: 'Cannot remove this kind of widget' })
             }
         }
 
@@ -1237,21 +1257,54 @@ module.exports = function (RED) {
                 changeResult.push(applyIfDifferent(current, modified, 'width'))
                 changeResult.push(applyIfDifferent(current, modified, 'order'))
             }
-            for (const widgetKey in widgets) {
-                const groupWidgets = widgets[widgetKey]
-                for (const modified of groupWidgets) {
-                    const current = flows.find(n => n.id === modified.id)
-                    if (!current) {
-                        // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
-                        return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
-                    }
-                    if (modified.group !== current.group) {
-                        // integrity of data suspect! Has flow changed on the server?
-                        return res.status(400).json({ error: 'Invalid group id', code: 'INVALID_GROUP_ID' })
-                    }
-                    changeResult.push(applyIfDifferent(current, modified, 'order'))
-                    changeResult.push(applyIfDifferent(current, modified, 'width'))
-                    changeResult.push(applyIfDifferent(current, modified, 'height'))
+            // scan through the widgets and apply changes (if any)
+            for (const modified of updatedWidgets) {
+                const current = flows.find(n => n.id === modified.id)
+                if (!current) {
+                    // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
+                }
+                if (modified.group !== current.group) {
+                    // integrity of data suspect! Has flow changed on the server?
+                    // Currently we dont support moving widgets between groups
+                    return res.status(400).json({ error: 'Invalid group id', code: 'INVALID_GROUP_ID' })
+                }
+                changeResult.push(applyIfDifferent(current, modified, 'order'))
+                changeResult.push(applyIfDifferent(current, modified, 'width'))
+                changeResult.push(applyIfDifferent(current, modified, 'height'))
+            }
+
+            // scan through the added widgets
+            for (const added of addedWidgets) {
+                const current = flows.find(n => n.id === added.id)
+                if (current) {
+                    // widget already exists in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget already exists', code: 'WIDGET_ALREADY_EXISTS' })
+                }
+                // sanitize the added widget (NOTE: only ui-spacer is supported for now & these are the only properties we care about)
+                const newWidget = {
+                    id: added.id,
+                    type: added.type,
+                    group: added.group,
+                    name: added.name || '',
+                    order: added.order ?? 0,
+                    width: added.width ?? 1,
+                    height: added.height ?? 1,
+                    className: added.className || ''
+                }
+                flows.push(newWidget)
+                changeResult.push(true)
+            }
+            for (const removed of removedWidgets) {
+                const current = flows.find(n => n.id === removed.id)
+                if (!current) {
+                    // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
+                }
+                const index = flows.indexOf(current)
+                if (index > -1) {
+                    flows.splice(index, 1)
+                    changeResult.push(true)
                 }
             }
             if (changeResult.length === 0 || !changeResult.includes(true)) {
