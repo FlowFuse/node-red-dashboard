@@ -1,3 +1,4 @@
+const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
 
 module.exports = function (RED) {
@@ -13,6 +14,11 @@ module.exports = function (RED) {
         const evts = {
             onAction: true,
             beforeSend: function (msg) {
+                if (msg?._event === 'submit') {
+                    if (config.topicType === 'msg') {
+                        msg.topic = datastore.get(node.id)?.[config.topic] || ''
+                    }
+                }
                 if (msg.ui_update) {
                     const update = msg.ui_update
                     if (typeof update.label !== 'undefined') {
