@@ -13,6 +13,10 @@
                 @dragend="onHandleDragEnd($event, index, 'group', group, 'top', 'right')"
                 @dragenter.prevent
             />
+            <!-- Add Spacer button -->
+            <div class="nrdb-resizable--toolbar">
+                <v-btn v-tooltip:bottom="'Add Spacer'" icon="mdi-card-plus-outline" size="small" variant="text" class="nrdb-resizable--toolbar-button" @click="addSpacer" />
+            </div>
         </div>
         <div
             v-for="(w, $index) in widgets"
@@ -38,6 +42,10 @@
                 style="z-index: 100; min-width: 28px; min-height: 28px;"
                 :style="widgetResizing.widgetId === w.id ? getWidgetEditingStyle(w) : null"
             >
+                <!-- Delete Spacer button -->
+                <div v-if="w.type === 'ui-spacer'" class="nrdb-resizable--toolbar">
+                    <v-btn v-tooltip:bottom="'Delete Spacer'" icon="mdi-card-minus-outline" size="small" variant="text" class="nrdb-resizable--toolbar-button" @click="removeWidget(w)" />
+                </div>
                 <div
                     draggable="true"
                     class="nrdb-resizable--handle nrdb-resizable--right"
@@ -96,7 +104,7 @@ export default {
             default: false
         }
     },
-    emits: ['resize'],
+    emits: ['resize', 'widget-added', 'widget-removed', 'refresh-state-from-store'],
     data () {
         return {
             localWidgets: null
@@ -119,7 +127,6 @@ export default {
                 if (width) {
                     styles['grid-column-end'] = `span min(${this.getWidgetWidth(width)}, var(--layout-columns))`
                 }
-                console.log('widgetStyles', styles)
                 return styles
             }
         }
@@ -169,6 +176,28 @@ export default {
             } else {
                 return this.columns
             }
+        },
+        addSpacer () {
+            this.$store.dispatch('wysiwyg/addSpacer', {
+                group: this.group.id,
+                name: 'spacer',
+                order: this.widgets.length + 1 || 0,
+                height: 1, // consider taking height and width of last widget or last spacer in group?
+                width: 1
+            }).then((newWidget) => {
+                console.log('New Widget:', newWidget)
+                this.$emit('widget-added', { widget: newWidget, group: this.group })
+            }).catch((error) => {
+                console.error('Error adding spacer:', error)
+            })
+        },
+        removeWidget (widget) {
+            this.$store.dispatch('wysiwyg/removeWidget', { id: widget.id }).then(() => {
+                console.log('Widget removed')
+                this.$emit('widget-removed', { widget })
+            }).catch((error) => {
+                console.error('Error deleting widget:', error)
+            })
         }
     }
 }
