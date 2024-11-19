@@ -1130,7 +1130,17 @@ module.exports = function (RED) {
         const host = RED.settings.uiHost
         const port = RED.settings.uiPort
         const httpAdminRoot = RED.settings.httpAdminRoot
-        const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        let scheme = 'http://'
+        let httpsAgent
+        if (RED.settings.requireHttps) {
+            if (RED.settings.https) {
+                httpsAgent = new Agent({
+                    rejectUnauthorized: false
+                })
+            }
+            scheme = 'https://'
+        }
+        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
