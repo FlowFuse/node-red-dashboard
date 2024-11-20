@@ -1134,12 +1134,21 @@ module.exports = function (RED) {
         let scheme = 'http://'
         let httpsAgent
         if (RED.settings.https) {
-            const https = (typeof RED.settings.https === 'function' ? RED.settings.https() : RED.settings.https) || {}
-            httpsAgent = new Agent({
-                rejectUnauthorized: false,
-                ...https
-            })
-            scheme = 'https://'
+            let https = RED.settings.https
+            try {
+                if (typeof https === 'function') {
+                    // since https() could return a promise / be async, we need to await it
+                    // if however the function is actually sync, JS will auto wrap it in a promise and await it
+                    https = await https()
+                }
+                httpsAgent = new Agent({
+                    rejectUnauthorized: false,
+                    ...(https || {})
+                })
+                scheme = 'https://'
+            } catch (error) {
+                return res.status(500).json({ error: 'Error processing https settings' })
+            }
         }
         const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
         console.log('url', url)
