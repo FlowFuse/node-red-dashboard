@@ -139,6 +139,11 @@ fetch('_setup')
 
         store.commit('setup/set', setup)
 
+        // retrieve the notification settings from localStorage
+        const showReconnectNotification = JSON.parse(localStorage.getItem('ndrb-show-reconnect-notification')) ?? true
+        const reconnectNotificationDelay = JSON.parse(localStorage.getItem('ndrb-reconnect-notification-delay')) ?? 1
+        const showDisconnectNotification = JSON.parse(localStorage.getItem('ndrb-show-disconnect-notification')) ?? true
+
         let disconnected = false
         let retryCount = 0 // number of reconnection attempts made
 
@@ -157,12 +162,15 @@ fetch('_setup')
                 retryCount = 0
                 disconnected = true
             }
-            // tell the user we're trying to connect
-            Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
-                displayTime: 0, // displayTime 0 persists notifications until another notification closes it
-                allowDismiss: false,
-                showCountdown: false
-            })
+
+            if (showDisconnectNotification) {
+                // tell the user we're trying to connect
+                Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
+                    displayTime: 0, // displayTime 0 persists notifications until another notification closes it
+                    allowDismiss: false,
+                    showCountdown: false
+                })
+            }
             // attempt to reconnect
             reconnect()
         })
@@ -171,12 +179,21 @@ fetch('_setup')
             console.log('SIO connected')
             // if we've just disconnected (i.e. aren't connecting for the first time)
             if (disconnected) {
+                if (showReconnectNotification) {
                 // send a notification/alert to the user to let them know the connection is live again
-                Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                    displayTime: 1,
-                    allowDismiss: true,
-                    showCountdown: true
-                })
+                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                        displayTime: reconnectNotificationDelay,
+                        allowDismiss: true,
+                        showCountdown: true
+                    })
+                } else {
+                    //, send a notification for 1 ms to close the disconnected notification
+                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                        displayTime: 0.001, // 1 ms
+                        allowDismiss: false,
+                        showCountdown: false
+                    })
+                }
             }
             disconnected = false
             clearTimeout(reconnectTO)
