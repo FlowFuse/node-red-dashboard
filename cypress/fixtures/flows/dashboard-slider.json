@@ -329,5 +329,81 @@
                 "dashboard-ui-slider"
             ]
         ]
+    },
+    {
+        "id": "dashboard-ui-button-dynamic-textfield",
+        "type": "ui-button",
+        "z": "node-red-tab-slider",
+        "group": "dashboard-ui-group",
+        "name": "Show Text Field",
+        "label": "Show Text Field",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-set-property-textfield"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-set-property-textfield",
+        "type": "change",
+        "z": "node-red-tab-slider",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.showTextField",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-slider"
+            ]
+        ]
     }
 ]
