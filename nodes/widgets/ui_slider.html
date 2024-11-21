@@ -38,7 +38,8 @@
                 iconAppend: { value: '' },
                 color: { value: '' },
                 colorTrack: { value: '' },
-                colorThumb: { value: '' }
+                colorThumb: { value: '' },
+                showTextField: { value: false }
             },
             inputs: 1,
             outputs: 1,
@@ -84,6 +85,12 @@
                 // handle no value for showTicks (from sliders created before this was a value)
                 if (!this.showTicks) {
                     $('#node-input-showTicks').val('false')
+                }
+
+                // handle no value for showTextField (from sliders created before this was a value)
+                if (!this.showTextField) {
+                    this.showTextField = false
+                    $('#node-input-showTextField').val(false)
                 }
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
@@ -224,6 +231,11 @@
         <div class="form-row">
             <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
             <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+        </div>
+
+        <div class="form-row form-row-flex" style="align-items: center;">
+            <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-input-showTextField">
+            <label style="width:auto" for="node-input-showTextField"><span data-i18n="ui-slider.label.showTextField"></span></label>
         </div>
         <div class="form-row">
             <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
