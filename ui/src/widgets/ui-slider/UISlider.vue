@@ -16,6 +16,19 @@
             <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="label" />
         </template>
+        <template v-if="showTextField" #append>
+            <v-text-field
+                v-model.number="value"
+                density="compact"
+                style="width: 80px"
+                type="number"
+                variant="outlined"
+                hide-details
+                :min="min"
+                :max="max"
+                @input="validateInput"
+            />
+        </template>
     </v-slider>
 </template>
 
@@ -93,6 +106,9 @@ export default {
         },
         colorThumb: function () {
             return this.getProperty('colorThumb')
+        },
+        showTextField: function () {
+            return this.getProperty('showTextField')
         }
     },
     watch: {
@@ -148,6 +164,15 @@ export default {
             this.updateDynamicProperty('color', updates.color)
             this.updateDynamicProperty('colorTrack', updates.colorTrack)
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
+            this.updateDynamicProperty('showTextField', updates.showTextField)
+        },
+        // validate the text field input
+        validateInput () {
+            if (this.value < this.min) {
+                this.value = this.min
+            } else if (this.value > this.max) {
+                this.value = this.max
+            }
         }
     }
 }
