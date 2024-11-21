@@ -47,4 +47,11 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
         // check the min value is updated
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemax', '50')
     })
+    it('include "showTextField"', () => {
+        // First, check that the text field does not exist
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').within(() => { cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('not.exist') })
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-textfield'))
+        // Check if the text field is present when showTextField is true
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').within(() => { cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('exist') })
+    })
 })

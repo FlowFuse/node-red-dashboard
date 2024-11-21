@@ -18,6 +18,7 @@
         </template>
         <template v-if="showTextField" #append>
             <v-text-field
+                id="nrdb-ui-widget-dashboard-ui-slider-text-field"
                 v-model.number="value"
                 density="compact"
                 style="width: 80px"
