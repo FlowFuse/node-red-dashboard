@@ -172,7 +172,7 @@ export default {
         onSync (msg) {
             if (msg) {
                 // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
+                if (typeof msg.payload !== 'undefined') {
                     this.selection = msg.payload
                 }
             }
