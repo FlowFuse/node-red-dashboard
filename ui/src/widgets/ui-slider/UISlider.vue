@@ -27,7 +27,7 @@
                 hide-details
                 :min="min"
                 :max="max"
-                @input="validateInput"
+                @blur="validateInput"
             />
         </template>
     </v-slider>
