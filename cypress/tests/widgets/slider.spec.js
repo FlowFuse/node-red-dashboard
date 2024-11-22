@@ -59,27 +59,23 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
         // eslint-disable-next-line promise/always-return, promise/catch-or-return
         cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'max').then((maxValue) => {
             const greaterThanMaxValue = parseInt(maxValue) + 10
-
-            // eslint-disable-next-line cypress/unsafe-to-chain-command
-            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field')
-                .clear() // Clear the existing value
-                .type(greaterThanMaxValue)
-                .blur()
-                .should('have.value', maxValue)
+            cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+            // then we can type into the input
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type(`{selectall}{del}${greaterThanMaxValue}`)
+            cy.focused().blur()
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('have.value', maxValue)
         })
     })
-
     it('text field validation for min value', () => {
         // Extract the min value from the slider thumb and store it in a variable
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'min').then((minValue) => {
             const lessThanMinValue = parseInt(minValue) - 20
-            // eslint-disable-next-line cypress/unsafe-to-chain-command
-            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field')
-                .clear() // Clear the existing value
-                .type(lessThanMinValue)
-                .blur()
-                .should('have.value', minValue)
+            cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+            // then we can type into the input
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type(`{selectall}{del}${lessThanMinValue}`)
+            cy.focused().blur()
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('have.value', minValue)
         })
     })
 })
