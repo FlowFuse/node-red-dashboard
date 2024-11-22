@@ -54,4 +54,32 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
         // Check if the text field is present when showTextField is true
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').within(() => { cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('exist') })
     })
+    it('text field validation for max value', () => {
+        // Extract the max value from the slider thumb and store it in a variable
+        // eslint-disable-next-line promise/always-return, promise/catch-or-return
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'max').then((maxValue) => {
+            const greaterThanMaxValue = parseInt(maxValue) + 10
+
+            // eslint-disable-next-line cypress/unsafe-to-chain-command
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field')
+                .clear() // Clear the existing value
+                .type(greaterThanMaxValue)
+                .blur()
+                .should('have.value', maxValue)
+        })
+    })
+
+    it('text field validation for min value', () => {
+        // Extract the min value from the slider thumb and store it in a variable
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'min').then((minValue) => {
+            const lessThanMinValue = parseInt(minValue) - 20
+            // eslint-disable-next-line cypress/unsafe-to-chain-command
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field')
+                .clear() // Clear the existing value
+                .type(lessThanMinValue)
+                .blur()
+                .should('have.value', minValue)
+        })
+    })
 })
