@@ -27,7 +27,8 @@ export default {
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value () {
-            return this.textValue
+            const msg = this.messages[this.id]
+            return DOMPurify.sanitize(msg?.payload)
         },
         label () {
             // Sanetize the html to avoid XSS attacks
@@ -51,7 +52,7 @@ export default {
         }
     },
     created () {
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         onDynamicProperties (msg) {
@@ -64,31 +65,6 @@ export default {
             this.updateDynamicProperty('font', updates.font)
             this.updateDynamicProperty('fontSize', updates.fontSize)
             this.updateDynamicProperty('color', updates.color)
-        },
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure our v-model is updated to reflect the value from Node-RED
-            if (Object.prototype.hasOwnProperty.call(msg, 'payload')) {
-                // Sanitize the HTML to avoid XSS attacks
-                this.textValue = DOMPurify.sanitize(msg.payload)
-            }
-        },
-        onLoad (msg) {
-            if (msg) {
-                // update vuex store to reflect server-state
-                this.$store.commit('data/bind', {
-                    widgetId: this.id,
-                    msg
-                })
-                if (Object.prototype.hasOwnProperty.call(msg, 'payload')) {
-                // Sanitize the HTML to avoid XSS attacks
-                    this.textValue = DOMPurify.sanitize(msg.payload)
-                }
-            }
         }
     }
 }

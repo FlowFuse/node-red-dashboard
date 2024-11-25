@@ -2,7 +2,7 @@
  * Vuex store for tracking data bound to each widget
  */
 
-import { getDeepValue, hasProperty } from '../util.mjs'
+import { getDeepValue } from '../util.mjs'
 
 // initial state is empty - we don't know if we have any widgets
 const state = () => ({
@@ -11,29 +11,16 @@ const state = () => ({
     properties: {}
 })
 
-// map of supported property messages
-// Any msg received with a topic matching a key in this object will be stored in the properties object under the value of the key
-// e.g. { topic: 'ui-property:class', payload: 'my-class' } will be stored as { class: 'my-class' }
-const supportedPropertyMessages = {
-    'ui-property:class': 'class'
-}
-
 const mutations = {
     bind (state, data) {
         const widgetId = data.widgetId
         // if packet contains a msg, then we process it
         if ('msg' in data) {
-            // first, if the msg.topic is a supported property message, then we store it in the properties object
-            // but do not store it in the messages object.
-            // This permits the widget to receive property messages without affecting the widget's value
-            if (data.msg?.topic && supportedPropertyMessages[data.msg.topic] && hasProperty(data.msg, 'payload')) {
-                const controlProperty = supportedPropertyMessages[data.msg.topic]
-                state.properties[widgetId] = state.properties[widgetId] || {}
-                state.properties[widgetId][controlProperty] = data.msg.payload
-                return // do not store in messages object
+            // merge with any existing data and override relevant properties
+            state.messages[widgetId] = {
+                ...state.messages[widgetId],
+                ...data.msg
             }
-            // if the msg was not a property message, then we store it in the messages object
-            state.messages[widgetId] = data.msg
         }
     },
     append (state, data) {

@@ -26,11 +26,6 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
-    data () {
-        return {
-            selection: null
-        }
-    },
     computed: {
         ...mapState('data', ['messages']),
         selectedColor: function () {
@@ -59,62 +54,42 @@ export default {
                 })
             }
             return options
+        },
+        selection: {
+            get () {
+                const msg = this.messages[this.id]
+                let selection = null
+                if (msg) {
+                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                        selection = null
+                    } else if (this.findOptionByValue(msg.payload) !== null) {
+                        selection = msg.payload
+                    }
+                }
+                return selection
+            },
+            set (value) {
+                if (!this.messages[this.id]) {
+                    this.messages[this.id] = {}
+                }
+                this.messages[this.id].payload = value
+            }
         }
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty, this.onSync)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperty, null)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
     },
     methods: {
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-
-            // make sure our v-model is updated to reflect the value from Node-RED
-            if (msg.payload !== undefined) {
-                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                    this.selection = null
-                } else {
-                    if (this.findOptionByValue(msg.payload) !== null) {
-                        this.selection = msg.payload
-                    }
-                }
-            }
-        },
-        onLoad (msg) {
-            if (msg) {
-                // update vuex store to reflect server-state
-                this.$store.commit('data/bind', {
-                    widgetId: this.id,
-                    msg
-                })
-                // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
-                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                        this.selection = null
-                    } else {
-                        if (this.findOptionByValue(msg.payload) !== null) {
-                            this.selection = msg.payload
-                        }
-                    }
-                }
-            }
-        },
         onDynamicProperty (msg) {
             const updates = msg.ui_update
             if (updates) {
                 this.updateDynamicProperty('label', updates.label)
                 this.updateDynamicProperty('options', updates.options)
             }
-        },
-        onSync (msg) {
-            this.selection = msg.payload
         },
         onChange (value) {
             if (value !== null && typeof value !== 'undefined') {
