@@ -13,7 +13,7 @@ props:
         description: Defined when the ticks will be visible on the track. Defaults to 'Always'.
         dynamic: true
     Range:
-        description: min - the minimum value the slider can be changed to; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
+        description: min - the minimum value the slider can be changed to.  When min > max then the slider will be reverted.; max - the maximum value the slider can be changed to; step - the increment/decrement value when the slider is moved.
         dynamic: true
     Color:
         description: main - color of the slider and thumb; track - color of the slider track; thumb - color of the handle. It could be the name of a color (red, green, blue, ...) or a Hex color code (#b5b5b5).
