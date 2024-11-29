@@ -1,3 +1,4 @@
+import UIAudio from './ui-audio/UIAudio.vue'
 import UIButton from './ui-button/UIButton.vue'
 import UIButtonGroup from './ui-button-group/UIButtonGroup.vue'
 import UIChart from './ui-chart/UIChart.vue'
@@ -21,6 +22,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 
 // Named exports for use in other components
 export {
+    UIAudio,
     UIButton,
     UIButtonGroup,
     UIChart,
@@ -48,6 +50,7 @@ export { useDataTracker } from './data-tracker.mjs'
 
 // Exported as an object for look up by widget name
 export default {
+    'ui-audio': UIAudio,
     'ui-button': UIButton,
     'ui-button-group': UIButtonGroup,
     'ui-chart': UIChart,
