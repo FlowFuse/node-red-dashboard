@@ -2,7 +2,7 @@
 import should from 'should'
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe.only('Node/-RED Dashboard 2.0 - Chart Widget', () => {
+describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-charts')
         cy.visit('/dashboard/page1')
