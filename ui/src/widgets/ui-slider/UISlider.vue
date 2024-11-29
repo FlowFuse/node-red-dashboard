@@ -7,6 +7,7 @@
         :thumb-label="thumbLabel"
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
         :min="min" :direction="direction"
+        :reverse="isReverse"
         :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
         :max="max" :step="step || 1" :show-ticks="showTicks"
@@ -61,13 +62,16 @@ export default {
             return this.getProperty('showTicks')
         },
         min: function () {
-            return this.getProperty('min')
+            return Math.min(this.getProperty('min'), this.getProperty('max'))
         },
         step: function () {
             return this.getProperty('step')
         },
         max: function () {
-            return this.getProperty('max')
+            return Math.max(this.getProperty('min'), this.getProperty('max'))
+        },
+        isReverse: function () {
+            return this.getProperty('min') > this.getProperty('max')
         },
         iconPrepend: function () {
             const icon = this.getProperty('iconPrepend')
