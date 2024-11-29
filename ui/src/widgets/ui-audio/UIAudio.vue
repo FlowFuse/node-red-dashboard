@@ -42,7 +42,7 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             // Get the value (i.e. the notification text content) from the last input msg
-            const value = this.messages[this.id]?.payload
+            const value = this.messages[this.id]?.payload || this.props.src
             return value
         },
         loop () {
