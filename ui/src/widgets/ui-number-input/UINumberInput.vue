@@ -197,7 +197,7 @@ export default {
             }
         },
         onSync (msg) {
-            if (msg?.payload !== undefined) {
+            if (typeof (msg?.payload) !== 'undefined') {
                 this.textValue = msg.payload
                 this.previousValue = msg.payload
             }

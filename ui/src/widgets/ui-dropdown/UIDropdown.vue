@@ -135,7 +135,9 @@ export default {
         },
         onSync (msg) {
             // update the UI with any changes
-            this.value = msg.payload
+            if (typeof msg?.payload !== 'undefined') {
+                this.value = msg.payload
+            }
         },
         onChange () {
             // ensure our data binding with vuex store is updated

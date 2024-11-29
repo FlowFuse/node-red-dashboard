@@ -155,7 +155,9 @@ export default {
             }
         },
         onSync (msg) {
-            this.textValue = msg.payload
+            if (typeof (msg.payload) !== 'undefined') {
+                this.textValue = msg.payload
+            }
         },
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
