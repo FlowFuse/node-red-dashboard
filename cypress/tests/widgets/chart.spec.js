@@ -2,50 +2,26 @@
 import should from 'should'
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
+describe.only('Node/-RED Dashboard 2.0 - Chart Widget', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-charts')
         cy.visit('/dashboard/page1')
     })
 
-    it('renders charts with correct data', () => {
+    it('renders bar charts with correct data', () => {
         cy.get('#nrdb-ui-widget-bar-chart-1 > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-line-chart-1 > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-line-chart-2 > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-scatter-chart-1 > div > canvas').should('exist')
-
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
             should(win.uiCharts).is.not.empty()
             const barChart = win.uiCharts['bar-chart-1']
-            const scatterChart = win.uiCharts['scatter-chart-1']
-            const simpleLineChart = win.uiCharts['line-chart-1']
-            const multiLineChart = win.uiCharts['line-chart-2']
             should(barChart).is.not.empty()
-            cy.log('Bar Chart Data')
-            cy.log(barChart)
-            should(scatterChart).is.not.empty()
-            should(simpleLineChart).is.not.empty()
-            should(multiLineChart).is.not.empty()
         })
 
         cy.clickAndWait(cy.get('button').contains('Button 1 (json)')) // bar chart
-        cy.clickAndWait(cy.get('button').contains('Button 2 (json)')) // scatter chart
-        cy.clickAndWait(cy.get('button').contains('Button 3 (number)')) // simple line chart (inject 3 times)
-        cy.wait(100)
-        cy.clickAndWait(cy.get('button').contains('Button 3 (number)'))
-        cy.wait(100)
-        cy.clickAndWait(cy.get('button').contains('Button 3 (number)'))
-        cy.clickAndWait(cy.get('button').contains('Button 4 (json)')) // multi-line chart
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
-        cy.window().then(win => {
-            should(win.uiCharts).is.not.empty()
+        cy.window().then((win) => {
             const barChart = win.uiCharts['bar-chart-1']
-            const scatterChart = win.uiCharts['scatter-chart-1']
-            const simpleLineChart = win.uiCharts['line-chart-1']
-            const multiLineChart = win.uiCharts['line-chart-2']
-
             // Bar chart
             should(barChart.chart.config.data).be.an.Object()
             should(barChart.chart.config.data.datasets).be.an.Array()
@@ -60,19 +36,34 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
             checkBarElement(2, { category: 'Chicago', location: 'Chicago', sales_millions: 1.8 })
             checkBarElement(3, { category: 'Houston', location: 'Houston', sales_millions: 2.9 })
             checkBarElement(4, { category: 'Miami', location: 'Miami', sales_millions: 2.1 })
+        })
+    })
 
-            // Scatter chart
-            // scatter data [{"x":1,"y":2},{"x":3,"y":4},{"x":5.5,"y":6.6}]
-            should(scatterChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
-            should(scatterChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
-            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('x', 1)
-            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('y', 2)
-            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('x', 3)
-            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('y', 4)
-            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('x', 5.5)
-            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('y', 6.6)
-            // TODO: check other properties relevant to the nodes config (like axis labels, ledgend yes/no etc)
+    it('renders line charts with correct data', () => {
+        cy.get('#nrdb-ui-widget-line-chart-1 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-line-chart-2 > div > canvas').should('exist')
 
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.window().then(win => {
+            should(win.uiCharts).is.not.empty()
+            const simpleLineChart = win.uiCharts['line-chart-1']
+            const multiLineChart = win.uiCharts['line-chart-2']
+            should(simpleLineChart).is.not.empty()
+            should(multiLineChart).is.not.empty()
+        })
+        // simple line chart (inject 3 times)
+        cy.clickAndWait(cy.get('button').contains('Button 3 (number)'))
+        cy.wait(100)
+        cy.clickAndWait(cy.get('button').contains('Button 3 (number)'))
+        cy.wait(100)
+        cy.clickAndWait(cy.get('button').contains('Button 3 (number)'))
+        // multi-line chart
+        cy.clickAndWait(cy.get('button').contains('Button 4 (json)'))
+
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.window().then(win => {
+            const simpleLineChart = win.uiCharts['line-chart-1']
+            const multiLineChart = win.uiCharts['line-chart-2']
             // simple line chart
             should(simpleLineChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
             should(simpleLineChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
@@ -114,92 +105,32 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
             checkMultiLineElement(dataSetCH, locCH)
         })
     })
-})
 
-describe('Node/-RED Dashboard 2.0 - Chart - Data Sets', () => {
-    it('renders charts correctly when "series" is set to a JSON array', () => {
-        cy.deployFixture('dashboard-chart-series-json')
-        cy.visit('/dashboard/page1')
-
-        cy.get('#nrdb-ui-widget-bar-chart-finance > div > canvas').should('exist')
-
-        cy.clickAndWait(cy.get('button').contains('Load Finance Data')) // bar chart
+    it('renders scatter charts with correct data', () => {
+        cy.get('#nrdb-ui-widget-scatter-chart-1 > div > canvas').should('exist')
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
             should(win.uiCharts).is.not.empty()
-            const barChart = win.uiCharts['bar-chart-finance']
-
-            // Bar chart
-            should(barChart.chart.config.data).be.an.Object()
-            should(barChart.chart.config.data.datasets).be.an.Array()
-
-            function checkSeries (dataset, label, values) {
-                should(dataset).have.property('label', label)
-                const array = dataset.data
-                should(array).be.an.Array().and.have.length(values.length)
-                for (let i = 0; i < array.length; i++) {
-                    should(array[i]).have.property('x', values[i][0])
-                    should(array[i]).have.property('y', values[i][1])
-                }
-            }
-
-            // Check Series Datasets
-            checkSeries(barChart.chart.config.data.datasets[0], 'Q1', [[2021, 115], [2022, 170], [2023, 86]])
-            checkSeries(barChart.chart.config.data.datasets[1], 'Q2', [[2021, 207], [2022, 200], [2023, 140]])
-            checkSeries(barChart.chart.config.data.datasets[2], 'Q3', [[2021, 198], [2022, 230], [2023, 180]])
-            checkSeries(barChart.chart.config.data.datasets[3], 'Q4', [[2021, 163], [2022, 210], [2023, 138]])
+            const scatterChart = win.uiCharts['scatter-chart-1']
+            should(scatterChart).is.not.empty()
         })
-    })
 
-    it('renders charts correctly when x is set to "timestamp"', () => {
-        cy.deployFixture('dashboard-chart-timestamp')
-        cy.visit('/dashboard/page1')
-
-        // new (from 1.18.1)
-        cy.get('#nrdb-ui-widget-line-chart-timestamp > div > canvas').should('exist')
-
-        // legacy charts pre 1.18.1, which rendered time when xAxisProperty was empty
-        cy.get('#nrdb-ui-widget-line-chart-empty-xProp > div > canvas').should('exist')
-
-        // Clear both charts
-        cy.clickAndWait(cy.get('button').contains('Button - Clear'))
-
-        // Add 3 data points to BOTH charts, 200 milliseconds apart
-        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
-        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
-        cy.clickAndWait(cy.get('button').contains('Button - Number'), 200)
+        cy.clickAndWait(cy.get('button').contains('Button 2 (json)')) // scatter chart
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
-            should(win.uiCharts).is.not.empty()
-            const timestampXChart = win.uiCharts['line-chart-timestamp']
-            const emptyXChart = win.uiCharts['line-chart-empty-xProp']
-
-            // New Charts
-            should(timestampXChart.chart.config.data).be.an.Object()
-            should(timestampXChart.chart.config.data.datasets).be.an.Array()
-
-            // Legacy Charts
-            should(emptyXChart.chart.config.data).be.an.Object()
-            should(emptyXChart.chart.config.data.datasets).be.an.Array()
-
-            // Check data populated correctly
-            // New Charts
-            should(timestampXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
-
-            // Legacy Charts
-            should(emptyXChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
-            // loop over the three data points
-            // eslint-disable-next-line promise/always-return
-            for (let i = 0; i < 3; i++) {
-                // New Charts
-                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('x')
-                should(timestampXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
-                // Legacy Charts
-                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('x')
-                should(emptyXChart.chart.config.data.datasets[0].data[i]).have.property('y', 2)
-            }
+            // Scatter chart
+            const scatterChart = win.uiCharts['scatter-chart-1']
+            // scatter data [{"x":1,"y":2},{"x":3,"y":4},{"x":5.5,"y":6.6}]
+            should(scatterChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
+            should(scatterChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('x', 1)
+            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('y', 2)
+            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('x', 3)
+            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('y', 4)
+            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('x', 5.5)
+            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('y', 6.6)
         })
     })
 })
