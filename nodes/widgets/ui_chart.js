@@ -36,6 +36,25 @@ module.exports = function (RED) {
             return value
         }
 
+        /**
+         * Given the config of the chart, clear "old" data points
+         */
+        function clearOldPoints () {
+            const removeOlder = parseFloat(config.removeOlder)
+            const removeOlderUnit = parseFloat(config.removeOlderUnit)
+            const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+            const cutoff = (new Date()).getTime() - ago
+            const _msg = datastore.get(node.id).filter((msg) => {
+                let timestamp = msg._datapoint.x
+                // is x already a millisecond timestamp?
+                if (typeof (msg._datapoint.x) === 'string') {
+                    timestamp = (new Date(msg._datapoint.x)).getTime()
+                }
+                return timestamp > cutoff
+            })
+            datastore.save(base, node, _msg)
+        }
+
         // ensure sane defaults
         if (!['msg', 'str', 'property', 'timestamp'].includes(config.xAxisPropertyType)) {
             config.xAxisPropertyType = 'timestamp' // default to 'timestamp'
@@ -205,22 +224,8 @@ module.exports = function (RED) {
 
                     if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
                         // remove any points older than the specified time
-                        const removeOlder = parseFloat(config.removeOlder)
-                        const removeOlderUnit = parseFloat(config.removeOlderUnit)
-                        const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                        const cutoff = (new Date()).getTime() - ago
-                        const _msg = datastore.get(node.id).filter((msg) => {
-                            let timestamp = msg._datapoint.x
-                            // is x already a millisecond timestamp?
-                            if (typeof (msg._datapoint.x) === 'string') {
-                                timestamp = (new Date(msg._datapoint.x)).getTime()
-                            }
-                            return timestamp > cutoff
-                        })
-                        datastore.save(base, node, _msg)
+                        clearOldPoints()
                     }
-
-                    // check sizing limits
                 }
 
                 send(msg)
