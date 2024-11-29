@@ -150,7 +150,7 @@ export default {
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
         },
         onSync (msg) {
-            if (msg?.payload !== undefined) {
+            if (typeof msg?.payload !== 'undefined') {
                 this.value = Number(msg.payload)
             }
         }
