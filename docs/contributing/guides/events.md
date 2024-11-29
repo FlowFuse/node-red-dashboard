@@ -56,7 +56,7 @@ Some examples of events that are emitted from the Dashboard to Node-RED include:
 
 #### Syncing Widgets
 
-The `widget-change` event is used to emit input from a ser, and represents a change of state for that widget, e.g. a switch can be on/off by a user clicking it. In this case, if you have multiple clients connected to the same Node-RED instance, Dashboard will ensure that clients are in-sync when values change. 
+The `widget-change` event is used to emit input from the server, and represents a change of state for that widget, e.g. a switch can be on/off by a user clicking it. In this case, if you have multiple clients connected to the same Node-RED instance, Dashboard will ensure that clients are in-sync when values change. 
 
 For Example if you move a slider on one instance of the Dashboard, all sliders connected will also auto-update.
 
