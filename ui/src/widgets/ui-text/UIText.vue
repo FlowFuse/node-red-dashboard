@@ -74,7 +74,11 @@ export default {
             // make sure our v-model is updated to reflect the value from Node-RED
             if (Object.prototype.hasOwnProperty.call(msg, 'payload')) {
                 // Sanitize the HTML to avoid XSS attacks
-                this.textValue = DOMPurify.sanitize(msg.payload)
+                if (typeof msg.payload === 'string') {
+                    this.textValue = DOMPurify.sanitize(msg.payload)
+                } else {
+                    this.textValue = msg.payload
+                }
             }
         },
         onLoad (msg) {
