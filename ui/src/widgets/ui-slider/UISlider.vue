@@ -2,15 +2,15 @@
 <!-- eslint-disable vuetify/no-deprecated-events -->
 <template>
     <v-slider
-        v-model="value" :disabled="!state.enabled" hide-details="auto"
+        v-model="sliderValue" :disabled="!state.enabled" hide-details="auto"
         :class="className" :style="`--nrdb-slider-track-color:${colorTrack};--nrdb-slider-tick-scaleY:${tickScaleY};--nrdb-slider-tick-scaleX:${tickScaleX};`"
         :thumb-label="thumbLabel"
         :append-icon="iconAppend" :prepend-icon="iconPrepend"
-        :min="min" :direction="direction"
+        :min="min" :max="max" :step="step || 1"
+        :direction="direction" :show-ticks="showTicks"
         :tick-size="4" :track-size="4"
         :color="color" :track-color="colorTrack" :thumb-color="colorThumb"
-        :max="max" :step="step || 1" :show-ticks="showTicks"
-        @update:model-value="onChange" @end="onBlur"
+        @update:model-value="onSliderChange" @end="onSliderBlur"
     >
         <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -19,15 +19,15 @@
         <template v-if="showTextField" #append>
             <v-text-field
                 id="nrdb-ui-widget-dashboard-ui-slider-text-field"
-                v-model.number="value"
+                v-model.number="textFieldValue"
                 density="compact"
                 style="width: 80px"
                 type="number"
                 variant="outlined"
                 hide-details
-                :min="min"
-                :max="max"
-                @blur="validateInput"
+                :min="min" :max="max"
+                @blur="onTextFieldBlur"
+                @keyup.enter="onEnter"
             />
         </template>
     </v-slider>
@@ -47,7 +47,8 @@ export default {
     },
     data () {
         return {
-            value: null
+            sliderValue: null,
+            textFieldValue: null
         }
     },
     computed: {
@@ -65,7 +66,7 @@ export default {
             return this.props.height > this.props.width ? 0.5 : 3
         },
         label: function () {
-            // Sanetize the html to avoid XSS attacks
+            // Sanitize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
         },
         thumbLabel: function () {
@@ -114,37 +115,61 @@ export default {
     },
     watch: {
         storeValue: function (val, oldVal) {
-            if (this.value === val) {
+            if (this.sliderValue === val && this.textFieldValue === val) {
                 return // no change
             }
             if (typeof val !== 'undefined') {
-                this.value = val
+                this.sliderValue = val
+                this.textFieldValue = val
             }
+        },
+        sliderValue: function (val) {
+            this.textFieldValue = val
         }
     },
     created () {
         this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
-        this.value = this.messages[this.id]?.payload
+        const val = this.messages[this.id]?.payload
+        if (typeof val !== 'undefined') {
+            this.sliderValue = val
+            this.textFieldValue = val
+        }
     },
     methods: {
-        onChange () {
+        onSliderChange (val) {
+            this.sliderValue = val
             if (!this.props.outs || this.props.outs === 'all') {
                 this.send()
             }
         },
-        onBlur () {
+        onSliderBlur () {
             if (this.props.outs === 'end') {
                 this.send()
             }
         },
+        onTextFieldBlur () {
+            this.validateInput()
+            if (this.sliderValue !== this.textFieldValue) {
+                this.sliderValue = this.textFieldValue
+                this.send()
+            }
+        },
+        onEnter: function () {
+            this.validateInput()
+            if (this.sliderValue !== this.textFieldValue) {
+                this.sliderValue = this.textFieldValue
+            }
+            // don't compare previous value, if user has pressed <enter> they want it submitted
+            this.send()
+        },
         send () {
-            this.value = Number(this.value)
+            const val = Number(this.sliderValue)
             const msg = this.messages[this.id] || {}
-            msg.payload = this.value
+            msg.payload = val
             this.$store.commit('data/bind', msg)
-            this.$socket.emit('widget-change', this.id, this.value)
+            this.$socket.emit('widget-change', this.id, val)
         },
         makeMdiIcon (icon) {
             return 'mdi-' + icon.replace(/^mdi-/, '')
@@ -167,17 +192,19 @@ export default {
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
             this.updateDynamicProperty('showTextField', updates.showTextField)
         },
-        // validate the text field input
+        // Validate the text field input
         validateInput () {
-            if (this.value < this.min) {
-                this.value = this.min
-            } else if (this.value > this.max) {
-                this.value = this.max
-            }
+            this.textFieldValue = this.roundToStep(this.textFieldValue)
+            if (this.textFieldValue < this.min) {
+                this.textFieldValue = this.min
+            } else if (this.textFieldValue > this.max) { this.textFieldValue = this.max }
+        },
+        roundToStep (value) {
+            const step = this.step || 1
+            return Math.round(value / step) * step
         }
     }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
