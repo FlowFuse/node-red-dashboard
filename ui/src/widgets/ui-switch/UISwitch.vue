@@ -18,10 +18,11 @@
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
             :class="{'active': status}"
+            :style="{cursor: switchClickable ? 'pointer' : 'inherit'}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
-            @click="toggle"
+            @click="switchClickable ? toggle() : null"
         />
         <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
         <v-progress-circular v-else indeterminate color="primary" />
@@ -86,6 +87,9 @@ export default {
         },
         lineClickable: function () {
             return this.getProperty('clickableArea') === 'line'
+        },
+        switchClickable: function () {
+            return this.getProperty('clickableArea') !== 'none'
         },
         textClickable: function () {
             return this.getProperty('clickableArea') === 'label' || this.getProperty('clickableArea') === 'line'
