@@ -18,7 +18,7 @@
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
             :class="{'active': status}"
-            :style="{cursor: switchClickable ? 'pointer' : 'inherit'}"
+            :style="{cursor: switchClickable ? 'pointer' : 'default'}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
