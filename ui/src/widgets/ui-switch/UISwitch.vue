@@ -1,10 +1,13 @@
 <template>
-    <div class="nrdb-switch" :class="computedClass">
+    <div
+        class="nrdb-switch"
+        :class="computedClass"
+        :style="{cursor: lineClickable ? 'pointer' : 'default'}"
+        @click="lineClickable ? toggle() : null"
+    >
         <label
             v-if="label"
             class="v-label"
-            :style="{cursor: lineClickable ? 'pointer' : 'default'}"
-            @click="lineClickable ? toggle() : null"
         >
             <!-- eslint-disable vue/no-v-html -->
             <span
@@ -17,12 +20,11 @@
         <v-switch
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
-            :class="{'active': status}"
-            :style="{cursor: switchClickable ? 'pointer' : 'default'}"
+            :class="{'active': status, 'nrdb-ui-switch-default-cursor': !switchClickable}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
-            @click="switchClickable ? toggle() : null"
+            @click.stop="switchClickable ? toggle() : null"
         />
         <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
         <v-progress-circular v-else indeterminate color="primary" />
@@ -238,5 +240,10 @@ export default {
         justify-content: space-between;
         flex-direction: row-reverse;
     }
+}
+
+/* Default cursor */
+.nrdb-ui-switch-default-cursor .v-selection-control__input input, .nrdb-ui-switch-default-cursor .v-switch__track {
+    cursor:default;
 }
 </style>
