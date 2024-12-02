@@ -275,31 +275,39 @@ fetch('_setup')
             location.reload()
         }
 
-        let error = {}
-        if (navigator.onLine) {
-            error = { error: err, type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
-            // Add timer to reload the page every 20 seconds
-            setInterval(() => {
-                location.reload()
-            }, 20000)
-        } else {
-            error = { error: err, type: 'no internet', message: 'Your device appears to be offline.' }
-            // Add event listener
-            window.addEventListener('online', handleOnline)
+        // loads minimal VueJS app to display error message and options to user
+        function loadFallback (error) {
+            // pass the error to the Vuex store
+            store.commit('setup/setError', error)
+            const app = Vue.createApp(App)
+                .use(store)
+                .use(vuetify)
+                .use(router)
+
+            const head = createHead()
+            app.use(head)
+            app.mixin(VueHeadMixin)
+
+            // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
+            app.mount('#app')
         }
 
-        store.commit('setup/setError', error) // pass the error to the Vuex store
-
-        // load minimal VueJS app to display error message and options to user
-        const app = Vue.createApp(App)
-            .use(store)
-            .use(vuetify)
-            .use(router)
-
-        const head = createHead()
-        app.use(head)
-        app.mixin(VueHeadMixin)
-
-        // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
-        app.mount('#app')
+        let error = {}
+        if (navigator.onLine) {
+            if (err instanceof TypeError && err.message === 'Failed to fetch') {
+                forcePageReload(err)
+            } else {
+                error = { error: err, type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
+                loadFallback(error)
+                // Add timer to reload the page every 20 seconds
+                setInterval(() => {
+                    location.reload()
+                }, 20000)
+            }
+        } else {
+            // Add event listener
+            window.addEventListener('online', handleOnline)
+            error = { error: err, type: 'no internet', message: 'Your device appears to be offline.' }
+            loadFallback(error)
+        }
     })
