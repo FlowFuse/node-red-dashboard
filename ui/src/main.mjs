@@ -158,9 +158,6 @@ fetch('_setup')
                 disconnected = true
             }
 
-            console.log(store)
-            console.log(store.getters['ui/dashboard'])
-
             const dashboard = store.getters['ui/dashboard']
             if (dashboard?.showDisconnectNotification) {
                 // tell the user we're trying to connect
