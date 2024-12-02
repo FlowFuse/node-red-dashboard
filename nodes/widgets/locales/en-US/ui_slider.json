@@ -15,7 +15,8 @@
             "icons": "Icons",
             "color": "Color",
             "outputs": "Output",
-            "showTextField": "Show Text Field"
+            "show": "Show",
+            "textField": "Text Field"
         }
     }
 }

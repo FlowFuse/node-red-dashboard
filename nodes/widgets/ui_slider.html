@@ -151,11 +151,16 @@
             </div>
         </div>
         <div class="form-row">
-            <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+            <label for="node-input-label"><i class="fa fa-font"></i> Label</label>
             <input type="text" id="node-input-label">
         </div>
+        <div class="form-row form-row-flex" style="align-items: center;">
+            <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-slider.label.textField"></span></label>
+            <input style="width:20px;" type="checkbox" id="node-input-showTextField">
+            <label style="width:auto" for="node-input-showTextField"><span data-i18n="ui-slider.label.show"></span></label>
+        </div>
         <div class="form-row">
-            <label for="node-input-thumbLabel"><i class="fa fa-i-cursor"></i> Thumb</label>
+            <label for="node-input-thumbLabel"><i class="fa fa-map-marker"></i> Thumb</label>
             <select id="node-input-thumbLabel">
                 <option value="false">Never</option>
                 <option value="true">On Drag</option>
@@ -163,7 +168,7 @@
             </select>
         </div>
         <div class="form-row">
-            <label for="node-input-showTicks"><i class="fa fa-i-cursor"></i> Ticks</label>
+            <label for="node-input-showTicks"><i class="fa fa-reorder fa-rotate-90"></i> Ticks</label>
             <select id="node-input-showTicks">
                 <option value="false">Never</option>
                 <option value="true">On Drag</option>
@@ -231,11 +236,6 @@
         <div class="form-row">
             <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
             <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>
-
-        <div class="form-row form-row-flex" style="align-items: center;">
-            <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-input-showTextField">
-            <label style="width:auto" for="node-input-showTextField"><span data-i18n="ui-slider.label.showTextField"></span></label>
         </div>
         <div class="form-row">
             <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
