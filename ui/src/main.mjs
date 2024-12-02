@@ -139,11 +139,6 @@ fetch('_setup')
 
         store.commit('setup/set', setup)
 
-        // retrieve the notification settings from localStorage
-        const showReconnectNotification = JSON.parse(localStorage.getItem('ndrb-show-reconnect-notification')) ?? true
-        const reconnectNotificationDelay = JSON.parse(localStorage.getItem('ndrb-reconnect-notification-delay')) ?? 1
-        const showDisconnectNotification = JSON.parse(localStorage.getItem('ndrb-show-disconnect-notification')) ?? true
-
         let disconnected = false
         let retryCount = 0 // number of reconnection attempts made
 
@@ -163,7 +158,11 @@ fetch('_setup')
                 disconnected = true
             }
 
-            if (showDisconnectNotification) {
+            console.log(store)
+            console.log(store.getters['ui/dashboard'])
+
+            const dashboard = store.getters['ui/dashboard']
+            if (dashboard?.showDisconnectNotification) {
                 // tell the user we're trying to connect
                 Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
                     displayTime: 0, // displayTime 0 persists notifications until another notification closes it
@@ -179,10 +178,12 @@ fetch('_setup')
             console.log('SIO connected')
             // if we've just disconnected (i.e. aren't connecting for the first time)
             if (disconnected) {
-                if (showReconnectNotification) {
+                // check vuex store here
+                const dashboard = store.getters['ui/dashboard']
+                if (dashboard?.showReconnectNotification) {
                 // send a notification/alert to the user to let them know the connection is live again
                     Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                        displayTime: reconnectNotificationDelay,
+                        displayTime: dashboard?.notificationDisplayTime || 5, // default: 5 seconds
                         allowDismiss: true,
                         showCountdown: true
                     })

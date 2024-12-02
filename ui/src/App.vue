@@ -254,15 +254,6 @@ export default {
                     break
                 }
             }
-            // store the notification settings in localStorage since we need to do apply them before ui-config is received
-            const dashboardKey = Object.keys(payload.dashboards)[0]
-            const dashboard = payload.dashboards && dashboardKey ? payload.dashboards[dashboardKey] : null
-
-            if (dashboard) {
-                localStorage.setItem('ndrb-show-reconnect-notification', JSON.stringify(dashboard.showReconnectNotification || true))
-                localStorage.setItem('ndrb-reconnect-notification-delay', JSON.stringify(dashboard.reconnectNotificationDelay || 1))
-                localStorage.setItem('ndrb-show-disconnect-notification', JSON.stringify(dashboard.showDisconnectNotification || true))
-            }
         })
     },
     methods: {

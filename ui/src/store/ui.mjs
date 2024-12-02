@@ -18,6 +18,13 @@ const getters = {
     dashboards (state) {
         return state.dashboards
     },
+    dashboard (state) {
+        const dashboards = Object.keys(state.dashboards)
+        console.log(dashboards)
+        const id = dashboards.length ? dashboards[0] : undefined
+        console.log(id)
+        return id ? state.dashboards[id] : undefined
+    },
     pages (state) {
         return state.pages
     },

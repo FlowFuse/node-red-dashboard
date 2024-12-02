@@ -32,10 +32,10 @@
             "navigationStyleIcon": "Collapse to icons",
             "navigationStyleTemporary": "Appear over content",
             "navigationStyleNone": "Always hide",
-            "notifications": "Notifications",
+            "connectionNotifications": "Connection Notifications",
             "showReconnect": "Show reconnect notification",
             "showDisconnect": "Show disconnect notification",
-            "reconnectNotificationDelay": "Reconnect notification delay (sec)"
+            "notificationDisplayTime": "notification display time (seconds)"
         },
         "layout": {
             "pages": "Pages",
