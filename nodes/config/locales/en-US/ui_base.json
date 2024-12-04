@@ -31,7 +31,11 @@
             "navigationStyleFixed": "Fixed",
             "navigationStyleIcon": "Collapse to icons",
             "navigationStyleTemporary": "Appear over content",
-            "navigationStyleNone": "Always hide"
+            "navigationStyleNone": "Always hide",
+            "connectionNotifications": "Connection Notifications",
+            "showReconnect": "Show reconnect notification",
+            "showDisconnect": "Show disconnect notification",
+            "notificationDisplayTime": "notification display time (seconds)"
         },
         "layout": {
             "pages": "Pages",

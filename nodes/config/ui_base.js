@@ -62,9 +62,21 @@ module.exports = function (RED) {
             config.acceptsClientConfig = ['ui-control', 'ui-notification']
         }
 
+        // for those upgrading, we need these for backwards compatibility
         if (!('includeClientData' in config)) {
-            // for those upgrading, we need this for backwards compatibility
             config.includeClientData = true
+        }
+
+        if (!('showReconnectNotification' in config)) {
+            config.showReconnectNotification = true
+        }
+
+        if (!('showDisconnectNotification' in config)) {
+            config.showDisconnectNotification = true
+        }
+
+        if (!('notificationDisplayTime' in config)) {
+            config.notificationDisplayTime = 5 // Show for 5 seconds
         }
 
         // expose these properties at runtime

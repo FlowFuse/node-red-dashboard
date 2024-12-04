@@ -26,6 +26,10 @@ module.exports = function (RED) {
                         // dynamically set "label" property
                         statestore.set(group.getBase(), node, msg, 'multiple', update.multiple)
                     }
+                    if (typeof update.msgTrigger !== 'undefined') {
+                        // dynamically set "msgTrigger" property
+                        statestore.set(group.getBase(), node, msg, 'msgTrigger', update.msgTrigger)
+                    }
                 }
                 if (msg.options) {
                     // backward compatibility support
