@@ -54,6 +54,14 @@ Some examples of events that are emitted from the Dashboard to Node-RED include:
 - `widget-action` - When a user interacts with a widget, and state of the widget is not important, e.g. a button click
 - `widget-send` - Used by `ui-template` to send a custom `msg` object, e.g. `send(msg)`, which will be stored in the server-side data store.
 
+#### Syncing Widgets
+
+The `widget-change` event is used to emit input from the server, and represents a change of state for that widget, e.g. a switch can be on/off by a user clicking it. In this case, if you have multiple clients connected to the same Node-RED instance, Dashboard will ensure that clients are in-sync when values change. 
+
+For Example if you move a slider on one instance of the Dashboard, all sliders connected will also auto-update.
+
+To disable this "single source of truth" design pattern, you can check the widget type in the ["Client Data"](../../user/multi-tenancy#configuring-client-data) tab of the Dashboard settings.
+
 ## Events List
 
 This is a comprehensive list of all events that are sent between Node-RED and the Dashboard via socket.io.
@@ -99,6 +107,11 @@ and the `widget-change` received a new value of `40`, then the newly emitted mes
 ```
 
 Any value received here will also be stored against the widget in the datastore.
+
+### `widget-sync`
+- Payload: `<msg>`
+
+Triggered from the server-side `onChange` handler. This send a message out to all connected clients and informs relevant widgets of state/value changes. For example, when a slider is moved, the `widget-sync` message will ensure all connected clients, and their respective slider, are updated with the new value.
 
 ### `widget-action`
 - ID: `<node-id>`

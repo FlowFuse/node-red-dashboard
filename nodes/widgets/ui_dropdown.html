@@ -40,7 +40,8 @@
                 topicType: { value: 'msg' },
                 className: { value: '' },
                 // This field controls if the used component is going to be a `v-combox` or a `v-select`, `v-combox` allows typing and filtering possible values
-                typeIsComboBox: { value: true }
+                typeIsComboBox: { value: true },
+                msgTrigger: { value: 'onChange' }
             },
             inputs: 1,
             outputs: 1,
@@ -60,6 +61,9 @@
                 }
                 if (this.typeIsComboBox === undefined) {
                     $('#node-input-typeIsComboBox').prop('checked', true)
+                }
+                if (this.msgTrigger === undefined) {
+                    $('#node-input-msgTrigger').val('onChange')
                 }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -221,6 +225,13 @@
     </div>
     <div class="form-row">
         <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>option</span></a>
+    </div>
+    <div class="form-row">
+        <label for="node-input-msgTrigger"><i class="fa fa-paper-plane"></i> Trigger On</label>
+        <select id="node-input-msgTrigger" style="width: 70%;">
+            <option value="onChange">Selection Changed</option>
+            <option value="onClose">Dropdown Closed</option>
+       </select>
     </div>
     <div class="form-row">
         <label style="width:auto" for="node-input-multiple"><i class="fa fa-th-list"></i> Allow multiple selections from list: </label>

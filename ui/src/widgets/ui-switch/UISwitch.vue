@@ -1,10 +1,13 @@
 <template>
-    <div class="nrdb-switch" :class="computedClass">
+    <div
+        class="nrdb-switch"
+        :class="computedClass"
+        :style="{cursor: lineClickable ? 'pointer' : 'default'}"
+        @click="lineClickable ? toggle() : null"
+    >
         <label
             v-if="label"
             class="v-label"
-            :style="{cursor: lineClickable ? 'pointer' : 'default'}"
-            @click="lineClickable ? toggle() : null"
         >
             <!-- eslint-disable vue/no-v-html -->
             <span
@@ -17,11 +20,11 @@
         <v-switch
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
-            :class="{'active': status}"
+            :class="{'active': status, 'nrdb-ui-switch-default-cursor': !switchClickable}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
-            @click="toggle"
+            @click.stop="switchClickable ? toggle() : null"
         />
         <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
         <v-progress-circular v-else indeterminate color="primary" />
@@ -87,6 +90,9 @@ export default {
         lineClickable: function () {
             return this.getProperty('clickableArea') === 'line'
         },
+        switchClickable: function () {
+            return this.getProperty('clickableArea') !== 'none'
+        },
         textClickable: function () {
             return this.getProperty('clickableArea') === 'label' || this.getProperty('clickableArea') === 'line'
         },
@@ -123,7 +129,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -167,6 +173,12 @@ export default {
                 if (msg.payload !== undefined) {
                     this.selection = msg.payload
                 }
+            }
+        },
+        onSync (msg) {
+            if (msg && typeof msg.payload !== 'undefined') {
+                // make sure we've got the relevant option selected on load of the page
+                this.selection = msg.payload
             }
         },
         toggle () {
@@ -234,5 +246,10 @@ export default {
         justify-content: space-between;
         flex-direction: row-reverse;
     }
+}
+
+/* Default cursor */
+.nrdb-ui-switch-default-cursor .v-selection-control__input input, .nrdb-ui-switch-default-cursor .v-switch__track {
+    cursor:default;
 }
 </style>

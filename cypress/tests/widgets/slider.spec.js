@@ -47,4 +47,63 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
         // check the min value is updated
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemax', '50')
     })
+    it('include "showTextField"', () => {
+        // First, check that the text field does not exist
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').within(() => { cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('not.exist') })
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-textfield'))
+        // Check if the text field is present when showTextField is true
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').within(() => { cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('exist') })
+    })
+})
+
+describe('Node-RED Dashboard 2.0 - Slider (Text Field Input)', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-slider')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('text field emits a value on blur', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+        // then we can type into the input
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type('{selectall}{del}40')
+        cy.focused().blur()
+        cy.checkOutput('msg.payload', 40)
+    })
+
+    it('text field validation for max value', () => {
+        // Extract the max value from the slider thumb and store it in a variable
+        // eslint-disable-next-line promise/always-return, promise/catch-or-return
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'max').then((maxValue) => {
+            const greaterThanMaxValue = parseInt(maxValue) + 10
+            cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+            // then we can type into the input
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type(`{selectall}{del}${greaterThanMaxValue}`)
+            cy.focused().blur()
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('have.value', maxValue)
+        })
+    })
+    it('text field validation for min value', () => {
+        // Extract the min value from the slider thumb and store it in a variable
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').invoke('attr', 'min').then((minValue) => {
+            const lessThanMinValue = parseInt(minValue) - 20
+            cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+            // then we can type into the input
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type(`{selectall}{del}${lessThanMinValue}`)
+            cy.focused().blur()
+            cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('have.value', minValue)
+        })
+    })
+
+    it('text field rounds input to nearest step', () => {
+        // eslint-disable-next-line promise/catch-or-return, promise/always-return
+
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-step'))
+
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field'), 200)
+        // then we can type into the input
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').type('{selectall}{del}27')
+        cy.focused().blur()
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider-text-field').should('have.value', 28)
+    })
 })

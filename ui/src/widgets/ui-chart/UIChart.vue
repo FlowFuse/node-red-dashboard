@@ -544,13 +544,13 @@ export default {
             }
 
             // apply data limitations to the chart
-            if (points && this.chart.data.datasets.length > 0) {
+            if ((cutoff || points) && this.chart.data.datasets.length > 0) {
                 for (let i = 0; i < this.chart.data.datasets.length; i++) {
                     const length = this.chart.data.datasets[i].data.length
                     this.chart.data.datasets[i].data = this.chart.data.datasets[i].data.filter((d, i) => {
                         if (cutoff && d.x < cutoff) {
                             return false
-                        } else if (i < length - points) {
+                        } else if (points && (i < length - points)) {
                             return false
                         }
                         return true

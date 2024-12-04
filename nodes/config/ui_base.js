@@ -62,9 +62,21 @@ module.exports = function (RED) {
             config.acceptsClientConfig = ['ui-control', 'ui-notification']
         }
 
+        // for those upgrading, we need these for backwards compatibility
         if (!('includeClientData' in config)) {
-            // for those upgrading, we need this for backwards compatibility
             config.includeClientData = true
+        }
+
+        if (!('showReconnectNotification' in config)) {
+            config.showReconnectNotification = true
+        }
+
+        if (!('showDisconnectNotification' in config)) {
+            config.showDisconnectNotification = true
+        }
+
+        if (!('notificationDisplayTime' in config)) {
+            config.notificationDisplayTime = 5 // Show for 5 seconds
         }
 
         // expose these properties at runtime
@@ -356,9 +368,9 @@ module.exports = function (RED) {
          * @param {Object} msg
          * @param {Object} wNode - the Node-RED node that is emitting the event
          */
-        function emit (event, msg, wNode) {
+        function emit (event, msg, wNode, exclude) {
             Object.values(uiShared.connections).forEach(conn => {
-                if (canSendTo(conn, wNode, msg)) {
+                if (canSendTo(conn, wNode, msg) && (!exclude || exclude.indexOf(conn.id) === -1)) {
                     conn.emit(event, msg)
                 }
             })
@@ -639,6 +651,8 @@ module.exports = function (RED) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
                 datastore.save(n, wNode, msg)
+                const exclude = [conn.id] // sync this change to all clients with the same widget
+                emit('widget-sync:' + id, msg, wNode, exclude) // let all other connect clients now about the value change
                 wNode.send(msg) // send the msg onwards
             }
 

@@ -2,7 +2,7 @@
     <div class="nrdb-ui-button-group-wrapper">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <label v-if="label" class="v-label" v-html="label" />
-        <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
+        <v-btn-toggle v-model="selection" class="d-flex flex-wrap" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
                 <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
@@ -63,7 +63,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -113,6 +113,9 @@ export default {
                 this.updateDynamicProperty('options', updates.options)
             }
         },
+        onSync (msg) {
+            this.selection = msg.payload
+        },
         onChange (value) {
             if (value !== null && typeof value !== 'undefined') {
                 // Tell Node-RED a new value has been selected
@@ -154,6 +157,7 @@ export default {
     width: max-content;
     border-width: thin;
     border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+    min-height: fit-content;
 }
 /* default styling for an unselected option */
 .nrdb-ui-button-group-wrapper .v-btn--variant-elevated {

@@ -26,18 +26,30 @@ import './stylesheets/common.css'
 import store from './store/index.mjs'
 import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
 
-// set a base theme on which we will add our custom NR-defined theme
+// Retrieve the "Default" theme from cache
+function retrieveDefaultThemeFromCache () {
+    const cachedTheme = localStorage.getItem('ndrb-theme-default')
+    if (cachedTheme) {
+        return JSON.parse(cachedTheme)
+    }
+    return null
+}
+
+const defaultTheme = retrieveDefaultThemeFromCache()
+
+// set a base theme on which we will add our custom NR-defined theme (initially set to the default theme if exists in cache)
 const theme = {
     dark: false,
     colors: {
-        background: '#fff',
-        'navigation-background': '#ffffff',
-        'group-background': '#ffffff',
-        primary: '#0000ff',
+        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
+        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
+        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
+        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
@@ -97,7 +109,7 @@ fetch('_setup')
             return
         case !response.ok:
             console.error('Failed to fetch setup data:', response)
-            return
+            throw new Error('Failed to fetch setup data:', response)
         case host.origin !== new URL(response.url).origin: {
             console.log('Following redirect:', response.url)
             const url = new URL(response.url)
@@ -145,12 +157,16 @@ fetch('_setup')
                 retryCount = 0
                 disconnected = true
             }
-            // tell the user we're trying to connect
-            Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
-                displayTime: 0, // displayTime 0 persists notifications until another notification closes it
-                allowDismiss: false,
-                showCountdown: false
-            })
+
+            const dashboard = store.getters['ui/dashboard']
+            if (dashboard?.showDisconnectNotification) {
+                // tell the user we're trying to connect
+                Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
+                    displayTime: 0, // displayTime 0 persists notifications until another notification closes it
+                    allowDismiss: false,
+                    showCountdown: false
+                })
+            }
             // attempt to reconnect
             reconnect()
         })
@@ -159,12 +175,23 @@ fetch('_setup')
             console.log('SIO connected')
             // if we've just disconnected (i.e. aren't connecting for the first time)
             if (disconnected) {
+                // check vuex store here
+                const dashboard = store.getters['ui/dashboard']
+                if (dashboard?.showReconnectNotification) {
                 // send a notification/alert to the user to let them know the connection is live again
-                Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                    displayTime: 1,
-                    allowDismiss: true,
-                    showCountdown: true
-                })
+                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                        displayTime: dashboard?.notificationDisplayTime || 5, // default: 5 seconds
+                        allowDismiss: true,
+                        showCountdown: true
+                    })
+                } else {
+                    //, send a notification for 1 ms to close the disconnected notification
+                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
+                        displayTime: 0.001, // 1 ms
+                        allowDismiss: false,
+                        showCountdown: false
+                    })
+                }
             }
             disconnected = false
             clearTimeout(reconnectTO)
@@ -257,10 +284,45 @@ fetch('_setup')
         app.mount('#app')
     })
     .catch((err) => {
-        if (err instanceof TypeError && err.message === 'Failed to fetch') {
-            forcePageReload(err)
+        function handleOnline () {
+            // remove the online event listener and reload the page
+            window.removeEventListener('online', handleOnline)
+            location.reload()
+        }
+
+        // loads minimal VueJS app to display error message and options to user
+        function loadFallback (error) {
+            // pass the error to the Vuex store
+            store.commit('setup/setError', error)
+            const app = Vue.createApp(App)
+                .use(store)
+                .use(vuetify)
+                .use(router)
+
+            const head = createHead()
+            app.use(head)
+            app.mixin(VueHeadMixin)
+
+            // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
+            app.mount('#app')
+        }
+
+        let error = {}
+        if (navigator.onLine) {
+            if (err instanceof TypeError && err.message === 'Failed to fetch') {
+                forcePageReload(err)
+            } else {
+                error = { error: err, type: 'server unreachable', message: 'There was an error loading the Dashboard.' }
+                loadFallback(error)
+                // Add timer to reload the page every 20 seconds
+                setInterval(() => {
+                    location.reload()
+                }, 20000)
+            }
         } else {
-            // handle general errors here
-            console.error('An error occurred:', err)
+            // Add event listener
+            window.addEventListener('online', handleOnline)
+            error = { error: err, type: 'no internet', message: 'Your device appears to be offline.' }
+            loadFallback(error)
         }
     })

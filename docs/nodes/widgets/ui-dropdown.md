@@ -20,6 +20,8 @@ props:
         dynamic: false
     Allow Search:
         description: Allows user to type a new value, filtering the list of possible values to choose.         
+    Msg trigger:
+        description: Specify when an output message should be send.  On every change or when the dropdown is closed.
 dynamic:
     Label:
         payload: msg.ui_update.label
@@ -32,6 +34,9 @@ dynamic:
         structure: ["Boolean"]
     Class:
         payload: msg.ui_update.class
+        structure: ["String"]
+    Msg trigger:
+        payload: msg.ui_update.msgTrigger
         structure: ["String"]
 ---
 
