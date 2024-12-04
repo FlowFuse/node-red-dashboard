@@ -26,11 +26,11 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages', 'properties']),
-        value () {
+        value: function () {
             return this.textValue
         },
         label () {
-            // Sanetize the html to avoid XSS attacks
+            // Sanitize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
@@ -74,11 +74,7 @@ export default {
             // make sure our v-model is updated to reflect the value from Node-RED
             if (Object.prototype.hasOwnProperty.call(msg, 'payload')) {
                 // Sanitize the HTML to avoid XSS attacks
-                if (typeof msg.payload === 'string') {
-                    this.textValue = DOMPurify.sanitize(msg.payload)
-                } else {
-                    this.textValue = msg.payload
-                }
+                this.textValue = this.purify(msg.payload)
             }
         },
         onLoad (msg) {
@@ -89,9 +85,16 @@ export default {
                     msg
                 })
                 if (Object.prototype.hasOwnProperty.call(msg, 'payload')) {
-                // Sanitize the HTML to avoid XSS attacks
-                    this.textValue = DOMPurify.sanitize(msg.payload)
+                    // Sanitize the HTML to avoid XSS attacks
+                    this.textValue = this.purify(msg.payload)
                 }
+            }
+        },
+        purify (payload) {
+            if (typeof payload === 'string') {
+                return DOMPurify.sanitize(payload, { ADD_ATTR: ['target'] })
+            } else {
+                return payload
             }
         }
     }
