@@ -1297,7 +1297,7 @@
     }
 
     function setStateClasses (item, row) {
-        if (!item.node.visible === 'true' || item.node.visible === false) {
+        if (item.node.visible === 'false' || item.node.visible === false) {
             row.addClass('nrdb2-sb-item-hidden')
         }
         if (item.node.disabled === 'true' || item.node.disabled === true) {
