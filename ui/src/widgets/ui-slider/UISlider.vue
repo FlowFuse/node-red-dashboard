@@ -198,7 +198,7 @@ export default {
         },
         onSync (msg) {
             if (typeof msg?.payload !== 'undefined') {
-                this.value = Number(msg.payload)
+                this.sliderValue = Number(msg.payload)
             }
         },
         // Validate the text field input
