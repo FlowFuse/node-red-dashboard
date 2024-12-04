@@ -59,6 +59,9 @@ dynamic:
     Class:
         payload: msg.ui_update.class
         structure: ["String"]
+    Show Text Field:
+        payload: msg.ui_update.showTextField
+        structure: ["true | false"]
 ---
 
 <script setup>
