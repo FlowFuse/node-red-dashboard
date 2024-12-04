@@ -170,7 +170,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
     },
     methods: {
         onInput (msg) {
@@ -192,6 +192,12 @@ export default {
             })
             // make sure we've got the relevant option selected on load of the page
             if (msg?.payload !== undefined) {
+                this.textValue = msg.payload
+                this.previousValue = msg.payload
+            }
+        },
+        onSync (msg) {
+            if (typeof (msg?.payload) !== 'undefined') {
                 this.textValue = msg.payload
                 this.previousValue = msg.payload
             }

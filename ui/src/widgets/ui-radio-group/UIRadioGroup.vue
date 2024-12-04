@@ -69,7 +69,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -123,7 +123,7 @@ export default {
         },
         select (value) {
             // An empty string value can be used to clear the current selection
-            if (value !== '') {
+            if (value !== '' && typeof (value) !== 'undefined') {
                 const option = this.options.find((o) => {
                     return o.value === value
                 })
@@ -145,6 +145,9 @@ export default {
             this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('columns', updates.columns)
             this.updateDynamicProperty('options', updates.options)
+        },
+        onSync (msg) {
+            this.select(msg.payload)
         }
     }
 }

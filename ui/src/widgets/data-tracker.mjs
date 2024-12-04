@@ -2,7 +2,7 @@ import { inject, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 
 // by convention, composable function names start with "use"
-export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) {
+export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties, onSync) {
     if (!widgetId) {
         throw new Error('widgetId is required')
     }
@@ -68,6 +68,21 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
         }
     }
 
+    function onWidgetSync (msg) {
+        // only care about msg.payload here as it's a change of value sync
+        if (onSync) {
+            onSync(msg)
+        } else {
+            // only need the msg.payload
+            store.commit('data/bind', {
+                widgetId,
+                msg: {
+                    payload: msg.payload
+                }
+            })
+        }
+    }
+
     function onMsgInput (msg) {
         // check for common dynamic properties cross all widget types
         checkDynamicProperties(msg)
@@ -106,6 +121,7 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
         socket?.off('disconnect', onDisconnect)
         socket?.off('msg-input:' + widgetId, onMsgInput)
         socket?.off('widget-load:' + widgetId, onWidgetLoad)
+        socket?.off('widget-sync:' + widgetId, onWidgetSync)
         socket?.off('connect', onConnect)
     }
 
@@ -118,6 +134,9 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties) 
             socket.on('disconnect', onDisconnect)
             socket.on('msg-input:' + widgetId, onMsgInput)
             socket.on('widget-load:' + widgetId, onWidgetLoad)
+            // when a widget in a different client has a value change
+            socket.on('widget-sync:' + widgetId, onWidgetSync)
+            // When SocketIO connects
             socket.on('connect', onConnect)
 
             // let Node-RED know that this widget has loaded
