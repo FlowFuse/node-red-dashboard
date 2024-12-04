@@ -96,13 +96,17 @@ export default {
 
             switch (msg.playback) {
             case 'play':
-                this.$refs.audio.play()
+                this.$refs.audio.play().catch((err) => {
+                    console.error('Error playing audio:', err)
+                })
                 break
             case 'stop':
                 this.$refs.audio.src = ''
                 break
             case 'pause':
-                this.$refs.audio.pause()
+                this.$refs.audio.pause().catch((err) => {
+                    console.error('Error pausing audio:', err)
+                })
                 break
             }
         },
