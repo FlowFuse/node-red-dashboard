@@ -194,12 +194,12 @@ export default {
             this.updateDynamicProperty('color', updates.color)
             this.updateDynamicProperty('colorTrack', updates.colorTrack)
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
+            this.updateDynamicProperty('showTextField', updates.showTextField)
         },
         onSync (msg) {
             if (typeof msg?.payload !== 'undefined') {
                 this.value = Number(msg.payload)
             }
-            this.updateDynamicProperty('showTextField', updates.showTextField)
         },
         // Validate the text field input
         validateInput () {
