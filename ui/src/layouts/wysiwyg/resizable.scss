@@ -4,14 +4,15 @@
     height: 100%;
     top: 0;
     left: 0;
-    --handle-size: 12px;
-    --handle-opacity: 0.1; // initially mostly transparent - updated in hover
+    --handle-size: 8px;
+    --handle-opacity: 0.25; // initially mostly transparent - updated in hover
     --handle-accent: transparent; // initially no accent color - updated in hover
     /* transitions to match vuetify cards/buttons etc */ 
     transition-property: box-shadow, transform, opacity, border;
-    transition-duration: 0.28s;
+    transition-duration: 0.15s;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     border-color: 0px dashed transparent;
+    border: 1px dashed #bcbcbc;
     cursor: grab;
     &.resizing {
         z-index: 1000 !important;
@@ -28,24 +29,24 @@
     position: absolute;
     background-color: white;
     border: 1px solid black;
-    border-radius: 6px;
-    opacity: var(--handle-opacity);
+    border-radius: 3px;
     /* transitions to match vuetify cards/buttons etc */ 
-    transition-property: box-shadow, transform, opacity, background;
-    transition-duration: 0.28s;
+    transition-property: box-shadow, transform, opacity, border-color, background-color;
+    transition-duration: 0.15s;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     &:hover, &:active {
-        background-color: #eee;
         --handle-opacity: 1;
         --handle-accent: red;
+        background-color: #eee;
+        border-color: var(--handle-accent);
     }
 }
 
 .nrdb-resizable--right {
-    height: calc(2 * var(--handle-size));
+    height: calc(3 * var(--handle-size));
     width: var(--handle-size);
     top: 50%;
-    margin-top: calc(-1 * var(--handle-size));
+    margin-top: calc(-1.5 * var(--handle-size));
     right: calc(-1 * var(--handle-size) / 2);
     display: flex;
     justify-content: center;
@@ -55,9 +56,9 @@
 
 .nrdb-resizable--bottom {
     height: var(--handle-size);
-    width: calc(2 * var(--handle-size));
+    width: calc(3 * var(--handle-size));
     left: 50%;
-    margin-left: calc(-1 * var(--handle-size));
+    margin-left: calc(-1.5 * var(--handle-size));
     bottom: calc(-1 * var(--handle-size) / 2);
     display: flex;
     justify-content: center;
