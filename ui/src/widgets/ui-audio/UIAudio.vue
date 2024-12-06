@@ -2,8 +2,6 @@
     <!-- if you remove the `controls` attribute, you MUST click something on the page before initiating play -->
     <audio
         ref="audio"
-        width="100%"
-        height="100%"
         controls
         :autoplay="autoplay"
         :loop="loop"
@@ -120,6 +118,10 @@ export default {
 </script>
 
 <style>
+.nrdb-ui-audio audio {
+    width: 100%;
+    height: 100%;
+}
 .hidden {
     display: none !important;
 }
