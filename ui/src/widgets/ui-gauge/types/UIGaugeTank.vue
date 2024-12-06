@@ -7,7 +7,7 @@
         >
             <div class="nrdb-ui-gauge-tank--center">
                 <div ref="fill" class="nrdb-ui-gauge-tank--fill" />
-                <svg class="WaveBG" :style="`bottom: 0;height: ${svgBottom}`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
+                <svg class="WaveBG" :style="`bottom: 0; height: ${svgBottom}px`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
                     <path :d="waves[0]">
                         <animate
                             dur="5s"
@@ -17,7 +17,7 @@
                         />
                     </path>
                 </svg>
-                <svg class="Wave" :style="`bottom: 0;height: ${svgBottom}`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
+                <svg class="Wave" :style="`bottom: 0; height: ${svgBottom}px;`" :viewBox="`0 ${amplitude} 1000 ${Math.min(100, svgScaleRatio * svgBottom)}`" preserveAspectRatio="xMinYMin meet">
                     <path :d="waves[0]">
                         <animate
                             dur="5s"
