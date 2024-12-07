@@ -26,7 +26,15 @@
             readonly
             @click.stop="switchClickable ? toggle() : null"
         />
-        <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
+        <v-btn
+            v-else-if="!loading"
+            variant="text"
+            :disabled="!state.enabled"
+            :style="{cursor: switchClickable ? 'pointer' : 'default'}"
+            :icon="icon"
+            :color="color"
+            @click.stop="switchClickable ? toggle() : null"
+        />
         <v-progress-circular v-else indeterminate color="primary" />
     </div>
 </template>
