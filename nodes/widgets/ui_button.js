@@ -27,6 +27,7 @@ module.exports = function (RED) {
                 payload = config.pointerupPayload
                 payloadType = config.pointerupPayloadType
                 break
+            case 'pointercancel':
             case 'pointerdown':
                 payload = config.pointerdownPayload
                 payloadType = config.pointerdownPayloadType
