@@ -4,7 +4,8 @@ const state = () => ({
     pages: null,
     groups: null,
     themes: null,
-    widgets: null
+    widgets: null,
+    darkMode: JSON.parse(localStorage.getItem('ndrb-theme-dark-mode')) || false
 })
 
 // getters
@@ -35,6 +36,11 @@ const getters = {
     widgets (state) {
         return state.widgets
     },
+
+    darkMode (state) {
+        return state.darkMode
+    },
+
     pageByName: (state) => (name) => {
         if (state.pages) {
             return Object.values(state.pages).filter((p) => {
@@ -189,6 +195,9 @@ const mutations = {
         for (const prop in config) {
             state[item + 's'][itemId][prop] = config[prop]
         }
+    },
+    setDarkMode (state, darkMode) {
+        state.darkMode = darkMode
     }
 }
 
