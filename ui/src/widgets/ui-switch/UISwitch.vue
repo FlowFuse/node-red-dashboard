@@ -21,6 +21,7 @@
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
             :class="{'active': status, 'nrdb-ui-switch-default-cursor': !switchClickable}"
+            :style="{'pointer-events': switchClickable ? 'inherit' : 'none'}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
@@ -30,7 +31,7 @@
             v-else-if="!loading"
             variant="text"
             :disabled="!state.enabled"
-            :style="{cursor: switchClickable ? 'pointer' : 'default'}"
+            :style="{'pointer-events': switchClickable ? 'inherit' : 'none', cursor: switchClickable ? 'pointer' : 'default'}"
             :icon="icon"
             :color="color"
             @click.stop="switchClickable ? toggle() : null"
