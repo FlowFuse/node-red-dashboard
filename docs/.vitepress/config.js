@@ -130,6 +130,7 @@ export default ({ mode }) => {
               text: 'Widgets',
               collapsed: false,
               items: [
+                { text: 'ui-audio', link: '/nodes/widgets/ui-audio' },
                 { text: 'ui-button', link: '/nodes/widgets/ui-button' },
                 { text: 'ui-button-group', link: '/nodes/widgets/ui-button-group' },
                 { text: 'ui-control', link: '/nodes/widgets/ui-control' },
