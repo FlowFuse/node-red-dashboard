@@ -2,10 +2,11 @@ export default {
     data () {
         return {
             pageGroups: [],
-            dragging: {
+            groupDragging: {
                 active: false,
                 index: -1,
-                dropIndex: -1
+                dropIndex: -1,
+                id: null
             }
         }
     },
@@ -16,10 +17,12 @@ export default {
          * @param {DragEvent} event - The drag event
          * @param {Number} index - The index of the group
          */
-        onDragStart (event, index) {
-            this.dragging.active = true
-            this.dragging.index = index
-            this.dragging.dropIndex = index
+        onGroupDragStart (event, index, item) {
+            console.log('onGroupDragStart', index)
+            this.groupDragging.active = true
+            this.groupDragging.id = item.id
+            this.groupDragging.index = index
+            this.groupDragging.dropIndex = index
             event.dataTransfer.effectAllowed = 'move'
             event.dataTransfer.dropEffect = 'move'
             event.stopPropagation()
@@ -30,22 +33,22 @@ export default {
          * @param {DragEvent} event - The drag event
          * @param {Number} index - The index of the group
          */
-        onDragOver (event, index, group) {
+        onGroupDragOver (event, index, item) {
             event.preventDefault()
-            if (this.dragging.active === false) { return }
+            if (this.groupDragging.active === false) { return }
             event.dataTransfer.dropEffect = 'move'
             // update drop index
-            if (index !== this.dragging.index) {
-                this.dragging.dropIndex = index
+            if (index !== this.groupDragging.index) {
+                this.groupDragging.dropIndex = index
             }
             // ensure the mouse is over a different group
-            if (this.dragging.index === index || this.dragging.index < 0) {
+            if (this.groupDragging.index === index || this.groupDragging.index < 0) {
                 return
             }
 
             // ensure the mouse is within the bounds of the source group size
             // to avoid flip-flop when the target group is larger than the source group
-            const sourceGroup = this.pageGroups[this.dragging.index]
+            const sourceGroup = this.pageGroups[this.groupDragging.index]
             const sourceId = `nrdb-ui-group-${sourceGroup.id}`
             const sourceEl = document.getElementById(sourceId)
             const sourceBounds = sourceEl.getBoundingClientRect()
@@ -61,17 +64,18 @@ export default {
                 return
             }
 
-            if (this.dragging.index >= 0) {
-                this.moveGroup(this.dragging.index, index)
+            if (this.groupDragging.index >= 0) {
+                this.moveGroup(this.groupDragging.index, index)
             }
         },
-        onDragLeave (event, index, group) {
-            this.dragging.dropIndex = -1
+        onGroupDragLeave (event, index, item) {
+            this.groupDragging.dropIndex = -1
         },
-        onDragEnd (event, index, group) {
-            this.dragging.active = false
-            this.dragging.index = -1
-            this.dragging.dropIndex = -1
+        onGroupDragEnd (event, index, item) {
+            this.groupDragging.active = false
+            this.groupDragging.id = null
+            this.groupDragging.index = -1
+            this.groupDragging.dropIndex = -1
         },
         moveGroup (fromIndex, toIndex) {
             const movedItem = this.pageGroups.splice(fromIndex, 1)[0]
@@ -80,19 +84,20 @@ export default {
             this.pageGroups.forEach((group, index) => {
                 group.order = index + 1
             })
-            this.dragging.index = toIndex
+            this.groupDragging.index = toIndex
         },
-        getDragDropClass (group) {
-            if (this.isDragging(group)) {
+        getGroupDragDropClass (group) {
+            if (this.isDraggingGroup(group)) {
                 return 'drag-start'
             }
             return ''
         },
-        isDragging (group) {
-            if (!this.dragging.active) {
+        isDraggingGroup (group) {
+            // TODO: simplify by checking item id instead
+            if (!this.groupDragging.active) {
                 return false
             }
-            const dragging = this.pageGroups[this.dragging.index]
+            const dragging = this.pageGroups[this.groupDragging.index]
             if (dragging?.id === group?.id) {
                 return true
             }
