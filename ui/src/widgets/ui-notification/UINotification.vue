@@ -64,7 +64,7 @@ export default {
             const value = this.messages[this.id]?.payload
 
             // Sanetize the html to avoid XSS attacks.
-            // Allow 'script' tags to allow styling of the notification content.
+            // Allow 'style' tags to allow styling of the notification content.
             // The FORCE_BODY is required to avoid 'style' tags (at the start of the value string) still being skipped.
             const sanetizedValue = DOMPurify.sanitize(value, { ADD_TAGS: ['style'], FORCE_BODY: true })
             return sanetizedValue
