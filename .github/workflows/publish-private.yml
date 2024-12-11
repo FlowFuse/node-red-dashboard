@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    uses: 'flowfuse/github-actions-workflows/.github/workflows/build_node_package.yml@v0.37.0'
+    uses: 'flowfuse/github-actions-workflows/.github/workflows/build_node_package.yml@v0.38.0'
     with:
       node: '[
               {"version": "18", "tests": true, "lint": true},
@@ -20,7 +20,7 @@ jobs:
     needs: build
     if: |
       github.ref == 'refs/heads/main'
-    uses: 'flowfuse/github-actions-workflows/.github/workflows/publish_node_package.yml@v0.37.0'
+    uses: 'flowfuse/github-actions-workflows/.github/workflows/publish_node_package.yml@v0.38.0'
     with:
       package_name: node-red-dashboard
       publish_package: true
