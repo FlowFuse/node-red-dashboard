@@ -50,10 +50,11 @@ export default {
      * @param {string} options.page - The page id
      * @param {string} options.key - The edit key for verification
      * @param {Array<Object>} options.groups - The updated group objects to apply
+     * @param {Array<Object>} options.widgets - The updated widget objects to apply
      * @returns the axios request
      */
-    deployChanges: async function deployChangesViaHttpAdminEndpoint ({ dashboard, page, groups, key, editorPath }) {
-        const changes = { groups }
+    deployChanges: async function deployChangesViaHttpAdminEndpoint ({ dashboard, page, groups, widgets, key, editorPath }) {
+        const changes = { groups, widgets }
         return axios.request({
             method: 'PATCH',
             url: getDashboardApiUrl(editorPath || '', dashboard, 'flows'),

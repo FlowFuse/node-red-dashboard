@@ -33,10 +33,12 @@ export default {
 .nrdb-edit-mode .nrdb-spacer:before {
     content: v-bind(placeholderText);
     font-style: italic;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;           /* Switch from flex to grid for wrapped text center aligned support */
+    place-items: center;     /* Centers content both horizontally and vertically */
     height: 100%;
     color: #0049ff75;
+    white-space: normal;     /* Allows wrapping */
+    text-align: center;      /* Ensures wrapped text is centered */
+    font-size: 0.8em
 }
 </style>
