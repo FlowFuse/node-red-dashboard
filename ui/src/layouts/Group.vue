@@ -116,17 +116,12 @@ export default {
         },
         widgetStyles () {
             return (widget) => {
-                // `grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(${w.props.height}, minmax(var(--widget-row-height), auto)); grid-row-end: span ${w.props.height}; grid-column-end: span min(${ getWidgetWidth(w.props.width) }, var(--layout-columns))`"
                 const styles = {}
                 const height = widget.props.height || widget.layout.height
                 const width = widget.props.width || widget.layout.width
-                if (height) {
-                    styles['grid-row-end'] = `span ${height}`
-                    styles['grid-template-rows'] = `repeat(${height}, minmax(var(--widget-row-height), auto))`
-                }
-                if (width) {
-                    styles['grid-column-end'] = `span min(${this.getWidgetWidth(width)}, var(--layout-columns))`
-                }
+                styles['grid-row-end'] = `span ${height}`
+                styles['grid-template-rows'] = `repeat(${height}, minmax(var(--widget-row-height), auto))`
+                styles['grid-column-end'] = `span min(${this.getWidgetWidth(+width)}, var(--layout-columns))`
                 return styles
             }
         }
@@ -171,11 +166,11 @@ export default {
             return style
         },
         getWidgetWidth (width) {
-            if (width) {
+            const w = +width // convert to number if it's a string
+            if (!isNaN(w) && w > 0) {
                 return Math.min(width, this.columns)
-            } else {
-                return this.columns
             }
+            return this.columns
         },
         addSpacer () {
             this.$store.dispatch('wysiwyg/addSpacer', {
