@@ -1,3 +1,4 @@
+const { Agent } = require('https')
 const path = require('path')
 
 const axios = require('axios')
@@ -1130,7 +1131,26 @@ module.exports = function (RED) {
         const host = RED.settings.uiHost
         const port = RED.settings.uiPort
         const httpAdminRoot = RED.settings.httpAdminRoot
-        const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        let scheme = 'http://'
+        let httpsAgent
+        if (RED.settings.https) {
+            let https = RED.settings.https
+            try {
+                if (typeof https === 'function') {
+                    // since https() could return a promise / be async, we need to await it
+                    // if however the function is actually sync, JS will auto wrap it in a promise and await it
+                    https = await https()
+                }
+                httpsAgent = new Agent({
+                    rejectUnauthorized: false,
+                    ...(https || {})
+                })
+                scheme = 'https://'
+            } catch (error) {
+                return res.status(500).json({ error: 'Error processing https settings' })
+            }
+        }
+        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
@@ -1234,6 +1254,7 @@ module.exports = function (RED) {
             const getResponse = await axios.request({
                 method: 'GET',
                 headers: getHeaders,
+                httpsAgent,
                 url
             })
 
@@ -1314,6 +1335,7 @@ module.exports = function (RED) {
             const postResponse = await axios.request({
                 method: 'POST',
                 headers: postHeaders,
+                httpsAgent,
                 url,
                 data: {
                     flows,
