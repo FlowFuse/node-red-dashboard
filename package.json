@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.19.1",
+    "version": "1.20.1",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -63,7 +63,7 @@
         "core-js": "^3.32.0",
         "d3": "^7.8.5",
         "escodegen": "^2.1.0",
-        "express": "^4.19.2",
+        "express": "^4.21.2",
         "socket.io": "^4.7.1",
         "vue": "^3.4.5"
     },
@@ -143,6 +143,7 @@
             "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-gauge": "nodes/widgets/ui_gauge.js",
             "ui-notification": "nodes/widgets/ui_notification.js",
+            "ui-audio": "nodes/widgets/ui_audio.js",
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",

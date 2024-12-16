@@ -28,10 +28,10 @@ export default {
         ...mapState('data', ['messages', 'properties']),
         value () {
             const msg = this.messages[this.id]
-            return DOMPurify.sanitize(msg?.payload)
+            return this.purify(msg?.payload)
         },
         label () {
-            // Sanetize the html to avoid XSS attacks
+            // Sanitize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
@@ -65,6 +65,13 @@ export default {
             this.updateDynamicProperty('font', updates.font)
             this.updateDynamicProperty('fontSize', updates.fontSize)
             this.updateDynamicProperty('color', updates.color)
+        },
+        purify (payload) {
+            if (typeof payload === 'string') {
+                return DOMPurify.sanitize(payload, { ADD_ATTR: ['target'] })
+            } else {
+                return payload
+            }
         }
     }
 }

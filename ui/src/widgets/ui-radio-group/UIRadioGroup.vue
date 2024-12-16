@@ -123,7 +123,7 @@ export default {
         },
         select (value) {
             // An empty string value can be used to clear the current selection
-            if (value !== '') {
+            if (value !== '' && typeof (value) !== 'undefined') {
                 const option = this.options.find((o) => {
                     return o.value === value
                 })

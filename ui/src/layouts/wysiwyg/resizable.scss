@@ -4,61 +4,108 @@
     height: 100%;
     top: 0;
     left: 0;
-    --handler-size: 12px;
+    --handle-size: 8px;
+    --handle-opacity: 0.25; // initially mostly transparent - updated in hover
+    --handle-accent: transparent; // initially no accent color - updated in hover
+    /* transitions to match vuetify cards/buttons etc */ 
+    transition-property: box-shadow, transform, opacity, border;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    border-color: 0px dashed transparent;
+    border: 1px dashed #bcbcbc;
     cursor: grab;
     &.resizing {
+        z-index: 1000 !important;
         background-color: #ff00001f;
         border: 1px dashed red;
+    }
+    &:hover, &:active {
+        border: 1px dashed red;
+        --handle-opacity: 1;
+        --handle-accent: red;
     }
 }
 .nrdb-resizable--handle {
     position: absolute;
-    width: var(--handler-size);
-    height: var(--handler-size);
     background-color: white;
     border: 1px solid black;
-    border-radius: 6px;
-    cursor: ew-resize;
-    &:active {
-        cursor: ew-resize !important;
+    border-radius: 3px;
+    /* transitions to match vuetify cards/buttons etc */ 
+    transition-property: box-shadow, transform, opacity, border-color, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    &:hover, &:active {
+        --handle-opacity: 1;
+        --handle-accent: red;
+        background-color: #eee;
+        border-color: var(--handle-accent);
     }
-}
-.nrdb-resizable--top-right {
-    top: calc(-1 * var(--handler-size) / 2);
-    right: calc(-1 * var(--handler-size) / 2);
 }
 
 .nrdb-resizable--right {
-    height: calc(2 * var(--handler-size));
+    height: calc(3 * var(--handle-size));
+    width: var(--handle-size);
     top: 50%;
-    margin-top: calc(-1 * var(--handler-size));
-    right: calc(-1 * var(--handler-size) / 2);
+    margin-top: calc(-1.5 * var(--handle-size));
+    right: calc(-1 * var(--handle-size) / 2);
     display: flex;
     justify-content: center;
     align-items: center;
-    &:hover {
-        cursor: ew-resize;
-        background-color: #eee;
-    }
-    &:active {
-        cursor: ew-resize !important;
-    }
+    cursor: ew-resize !important;
+}
+
+.nrdb-resizable--bottom {
+    height: var(--handle-size);
+    width: calc(3 * var(--handle-size));
+    left: 50%;
+    margin-left: calc(-1.5 * var(--handle-size));
+    bottom: calc(-1 * var(--handle-size) / 2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: ns-resize !important;
 }
 
 .nrdb-resizable--right:after {
     content: '';
-    height: calc(0.75 * var(--handler-size));
+    height: calc(0.75 * var(--handle-size));
     width: 1px;
     display: inline-block;
-    background-color: red;
+    background-color: var(--handle-accent);
 }
 
-.nrdb-resizable--bottom-left {
-    bottom: calc(-1 * var(--handler-size) / 2);
-    left: calc(-1 * var(--handler-size) / 2);
+.nrdb-resizable--bottom:after {
+    content: '';
+    height: 1px;
+    width: calc(0.75 * var(--handle-size));
+    display: inline-block;
+    background-color: var(--handle-accent);
 }
 
-.nrdb-resizable--top-left {
-    top: calc(-1 * var(--handler-size) / 2);
-    left: calc(-1 * var(--handler-size) / 2);
+.nrdb-resizable {
+    --toolbar-opacity: 0;
+    &:hover {
+        --toolbar-opacity: 1;
+    }
+    .nrdb-resizable--toolbar {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        z-index: 101;
+        opacity: var(--toolbar-opacity, 0);
+        &:hover {
+            --toolbar-opacity: 1;
+        }
+        > .nrdb-resizable--toolbar-button {
+            width: 20px; // override theme sizing
+            height: 20px;
+            min-height: 20px;
+            min-width: 20px;
+            cursor: pointer;
+            &:hover {
+                --toolbar-opacity: 1;
+            }
+        }
+    }
 }
+

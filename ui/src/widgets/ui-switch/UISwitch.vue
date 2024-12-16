@@ -1,10 +1,13 @@
 <template>
-    <div class="nrdb-switch" :class="computedClass">
+    <div
+        class="nrdb-switch"
+        :class="computedClass"
+        :style="{cursor: lineClickable ? 'pointer' : 'default'}"
+        @click="lineClickable ? toggle() : null"
+    >
         <label
             v-if="label"
             class="v-label"
-            :style="{cursor: lineClickable ? 'pointer' : 'default'}"
-            @click="lineClickable ? toggle() : null"
         >
             <!-- eslint-disable vue/no-v-html -->
             <span
@@ -17,13 +20,22 @@
         <v-switch
             v-if="!icon" v-model="status"
             :disabled="!state.enabled"
-            :class="{'active': status}"
+            :class="{'active': status, 'nrdb-ui-switch-default-cursor': !switchClickable}"
+            :style="{'pointer-events': switchClickable ? 'inherit' : 'none'}"
             hide-details="auto" color="primary"
             :loading="loading ? (status === true ? 'secondary' : 'primary') : null"
             readonly
-            @click="toggle"
+            @click.stop="switchClickable ? toggle() : null"
         />
-        <v-btn v-else-if="!loading" variant="text" :disabled="!state.enabled" :icon="icon" :color="color" @click="toggle" />
+        <v-btn
+            v-else-if="!loading"
+            variant="text"
+            :disabled="!state.enabled"
+            :style="{'pointer-events': switchClickable ? 'inherit' : 'none', cursor: switchClickable ? 'pointer' : 'default'}"
+            :icon="icon"
+            :color="color"
+            @click.stop="switchClickable ? toggle() : null"
+        />
         <v-progress-circular v-else indeterminate color="primary" />
     </div>
 </template>
@@ -86,6 +98,9 @@ export default {
         },
         lineClickable: function () {
             return this.getProperty('clickableArea') === 'line'
+        },
+        switchClickable: function () {
+            return this.getProperty('clickableArea') !== 'none'
         },
         textClickable: function () {
             return this.getProperty('clickableArea') === 'label' || this.getProperty('clickableArea') === 'line'
@@ -170,11 +185,9 @@ export default {
             }
         },
         onSync (msg) {
-            if (msg) {
+            if (msg && typeof msg.payload !== 'undefined') {
                 // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
-                    this.selection = msg.payload
-                }
+                this.selection = msg.payload
             }
         },
         toggle () {
@@ -242,5 +255,10 @@ export default {
         justify-content: space-between;
         flex-direction: row-reverse;
     }
+}
+
+/* Default cursor */
+.nrdb-ui-switch-default-cursor .v-selection-control__input input, .nrdb-ui-switch-default-cursor .v-switch__track {
+    cursor:default;
 }
 </style>

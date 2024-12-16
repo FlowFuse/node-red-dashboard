@@ -347,6 +347,15 @@
             },
             titleBarStyle: {
                 value: 'default'
+            },
+            showReconnectNotification: {
+                value: true
+            },
+            notificationDisplayTime: {
+                value: 1
+            },
+            showDisconnectNotification: {
+                value: true
             }
         },
         label: function () {
@@ -371,6 +380,24 @@
 
             if (this.appIcon) {
                 $('#node-config-input-appIcon').val(this.appIcon)
+            }
+
+            // backward compatibility for reconnect notification
+            if (!('showReconnectNotification' in this)) {
+                this.showReconnectNotification = true
+                $('#node-config-input-showReconnectNotification').prop('checked', true)
+            }
+
+            // backward compatibility for reconnect notification display time
+            if (!this.notificationDisplayTime) {
+                this.notificationDisplayTime = 5
+                $('#node-config-input-notificationDisplayTime').val(this.notificationDisplayTime)
+            }
+
+            // backward compatibility for disconnect notification
+            if (!('showDisconnectNotification' in this)) {
+                this.showDisconnectNotification = true
+                $('#node-config-input-showDisconnectNotification').prop('checked', true)
             }
         },
         onpaletteadd: function () {
@@ -1297,7 +1324,7 @@
     }
 
     function setStateClasses (item, row) {
-        if (!item.node.visible === 'true' || item.node.visible === false) {
+        if (item.node.visible === 'false' || item.node.visible === false) {
             row.addClass('nrdb2-sb-item-hidden')
         }
         if (item.node.disabled === 'true' || item.node.disabled === true) {
@@ -2430,5 +2457,21 @@
     <div class="form-row form-row-flex" style="align-items: center;">
         <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPathInSidebar">
         <label style="width:auto" for="node-config-input-showPathInSidebar"><span data-i18n="ui-base.label.showPath"></span></label>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.connectionNotifications"></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showReconnectNotification">
+        <label style="width:auto" for="node-config-input-showReconnectNotification"><span data-i18n="ui-base.label.showReconnect"></span></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">   
+        <input style="width: 50px; margin-left: 75px;" type="number" id="node-config-input-notificationDisplayTime">
+        <label style="width:auto" for="node-config-input-notificationDisplayTime"><span data-i18n="ui-base.label.notificationDisplayTime"></span></label>
+    </div>
+
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showDisconnectNotification">
+        <label style="width:auto" for="node-config-input-showDisconnectNotification"><span data-i18n="ui-base.label.showDisconnect"></span></label>
     </div>
 </script>
