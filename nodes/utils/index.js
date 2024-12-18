@@ -38,7 +38,6 @@ async function appendTopic (RED, config, wNode, msg) {
  */
 function addConnectionCredentials (RED, msg, conn, config) {
     if (config.includeClientData) {
-        
         // Add _client to each element
         const addClientData = (item) => {
             if (!item._client) {
@@ -46,32 +45,32 @@ function addConnectionCredentials (RED, msg, conn, config) {
             }
             RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                 if (plugin.hooks?.onAddConnectionCredentials && item) {
-                    item = plugin.hooks.onAddConnectionCredentials(conn, item);
+                    item = plugin.hooks.onAddConnectionCredentials(conn, item)
                 }
-            });
+            })
             item._client = {
                 ...item._client,
                 ...{
                     socketId: conn.id,
                     socketIp: conn.handshake?.address
                 }
-            };
-            return item;
-        };
+            }
+            return item
+        }
 
         // Handle arrays and nested arrays
         const processMsg = (data) => {
             if (Array.isArray(data)) {
-                return data.map(item => processMsg(item));
+                return data.map(item => processMsg(item))
             } else if (typeof data === 'object' && data !== null) {
                 return addClientData(data)
             }
-            return data;
-        };
+            return data
+        }
 
         msg = processMsg(msg)
     }
-    return msg;
+    return msg
 }
 
 function getThirdPartyWidgets (directory) {
