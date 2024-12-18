@@ -38,21 +38,37 @@ async function appendTopic (RED, config, wNode, msg) {
  */
 function addConnectionCredentials (RED, msg, conn, config) {
     if (config.includeClientData) {
-        if (!msg._client) {
-            msg._client = {}
-        }
-        RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
-            if (plugin.hooks?.onAddConnectionCredentials && msg) {
-                msg = plugin.hooks.onAddConnectionCredentials(conn, msg)
+        // Add _client to each element
+        const addClientData = (item) => {
+            if (!item._client) {
+                item._client = {}
             }
-        })
-        msg._client = {
-            ...msg._client,
-            ...{
-                socketId: conn.id,
-                socketIp: conn.handshake?.address
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onAddConnectionCredentials && item) {
+                    item = plugin.hooks.onAddConnectionCredentials(conn, item)
+                }
+            })
+            item._client = {
+                ...item._client,
+                ...{
+                    socketId: conn.id,
+                    socketIp: conn.handshake?.address
+                }
             }
+            return item
         }
+
+        // Handle arrays and nested arrays
+        const processMsg = (data) => {
+            if (Array.isArray(data)) {
+                return data.map(item => processMsg(item))
+            } else if (typeof data === 'object' && data !== null) {
+                return addClientData(data)
+            }
+            return data
+        }
+
+        msg = processMsg(msg)
     }
     return msg
 }
