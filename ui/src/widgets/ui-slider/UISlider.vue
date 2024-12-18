@@ -132,7 +132,7 @@ export default {
         }
     },
     created () {
-        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties, this.onSync)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     mounted () {
         const val = this.messages[this.id]?.payload
@@ -195,11 +195,6 @@ export default {
             this.updateDynamicProperty('colorTrack', updates.colorTrack)
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
             this.updateDynamicProperty('showTextField', updates.showTextField)
-        },
-        onSync (msg) {
-            if (typeof msg?.payload !== 'undefined') {
-                this.sliderValue = Number(msg.payload)
-            }
         },
         // Validate the text field input
         validateInput () {
