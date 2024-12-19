@@ -193,7 +193,7 @@ export default {
         calculatePaginatedRows () {
             if (this.itemsPerPage > 0) {
                 this.pagination.pages = Math.ceil(this.localData?.length / this.props.maxrows)
-                this.pagination.rows = this.localData.slice(
+                this.pagination.rows = (this.localData || []).slice(
                     (this.pagination.page - 1) * this.props.maxrows,
                     (this.pagination.page) * this.props.maxrows
                 )

@@ -117,8 +117,8 @@ export default {
         widgetStyles () {
             return (widget) => {
                 const styles = {}
-                const height = widget.props.height || widget.layout.height
-                const width = widget.props.width || widget.layout.width
+                const height = widget.props.height
+                const width = widget.props.width
                 styles['grid-row-end'] = `span ${height}`
                 styles['grid-template-rows'] = `repeat(${height}, minmax(var(--widget-row-height), auto))`
                 styles['grid-column-end'] = `span min(${this.getWidgetWidth(+width)}, var(--layout-columns))`
