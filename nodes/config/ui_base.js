@@ -80,6 +80,17 @@ module.exports = function (RED) {
             config.notificationDisplayTime = 5 // Show for 5 seconds
         }
 
+        // The headerContent replaces the old (boolean) showPageTitle
+        if (!('headerContent' in config)) {
+            const showPageTitle = ('showPageTitle' in config) ? config.showPageTitle : true
+
+            if (showPageTitle) {
+                config.headerContent = 'page'
+            } else {
+                config.headerContent = 'none'
+            }
+        }
+
         // expose these properties at runtime
         node.acceptsClientConfig = config.acceptsClientConfig // which node types can be scoped to a specific client
         node.includeClientData = config.includeClientData // whether to include client data in msg payloads

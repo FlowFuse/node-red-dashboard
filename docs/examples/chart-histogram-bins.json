@@ -131,7 +131,7 @@
             "ui-notification"
         ],
         "showPathInSidebar": false,
-        "showPageTitle": false,
+        "headerContent": "none",
         "navigationStyle": "icon",
         "titleBarStyle": "default"
     },
