@@ -54,7 +54,8 @@ dynamic:
 
 </TryDemo>
 
-Adds a clickable button to your dashboard.
+Adds an audio player to the dashboard.
+The audio player can be controlled by the user or by control messages.
 
 ## Properties
 
@@ -67,10 +68,3 @@ Adds a clickable button to your dashboard.
 ## Controls
 
 <ControlsTable/>
-
-## Example
-
-### Simple Button
-
-![Example of a Button](/images/node-examples/ui-button.png "Example of a Button"){data-zoomable}
-*Example of a rendered button in a Dashboard.*
