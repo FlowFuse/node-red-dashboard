@@ -1,5 +1,4 @@
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function FormNode (config) {
@@ -13,7 +12,7 @@ module.exports = function (RED) {
 
         const evts = {
             onAction: true,
-            beforeSend: async function (msg) {
+            beforeSend: function (msg) {
                 if (msg.ui_update) {
                     const update = msg.ui_update
                     if (typeof update.label !== 'undefined') {
@@ -33,8 +32,6 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'dropdownOptions', update.dropdownOptions)
                     }
                 }
-
-                msg = await appendTopic(RED, config, node, msg)
                 return msg
             }
         }
