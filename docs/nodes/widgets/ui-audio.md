@@ -37,18 +37,12 @@ dynamic:
 <script setup>
     import { ref } from 'vue'
 
-    import ExampleButtonHold from '../../examples/ui-button-hold.json'
-
     import TryDemo from "./../../components/TryDemo.vue"
-    import FlowViewer from '../../components/FlowViewer.vue'
     
-    const examples = ref({
-      'hold': ExampleButtonHold
-    })
 </script>
 
 
-<TryDemo href="button-example">
+<TryDemo href="audio-example">
 
 # Audio `ui-audio`
 
