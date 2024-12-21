@@ -26,6 +26,12 @@ module.exports = function (RED) {
             ui.emit('ui-control:' + node.id, msg, node)
         }
 
+        function splitUnEscapedColon (str) {
+            // Split only on colons (:) that ar not escaped, i.e. not  preceded by a backslash (\\).
+            // And for each part replace the escaped colons again by normal colons.
+            return str.split(/(?<!\\):/).map(part => part.replace(/\\:/g, ':'))
+        }
+
         const evts = {
             onInput: function (msg, send, done) {
                 const wNode = RED.nodes.getNode(node.id)
@@ -111,28 +117,28 @@ module.exports = function (RED) {
                     })
                     if ('show' in groups) {
                         const gs = groups.show.map((g) => {
-                            const levels = g.split(':')
+                            const levels = splitUnEscapedColon(g)
                             return levels.length > 1 ? levels[1] : g
                         })
                         updateStore(allGroups, gs, msg, 'visible', true)
                     }
                     if ('hide' in groups) {
                         const gh = groups.hide.map((g) => {
-                            const levels = g.split(':')
+                            const levels = splitUnEscapedColon(g)
                             return levels.length > 1 ? levels[1] : g
                         })
                         updateStore(allGroups, gh, msg, 'visible', false)
                     }
                     if ('enable' in groups) {
                         const ge = groups.enable.map((g) => {
-                            const levels = g.split(':')
+                            const levels = splitUnEscapedColon(g)
                             return levels.length > 1 ? levels[1] : g
                         })
                         updateStore(allGroups, ge, msg, 'disabled', false)
                     }
                     if ('disable' in groups) {
                         const gd = groups.disable.map((g) => {
-                            const levels = g.split(':')
+                            const levels = splitUnEscapedColon(g)
                             return levels.length > 1 ? levels[1] : g
                         })
                         updateStore(allGroups, gd, msg, 'disabled', true)

@@ -44,8 +44,14 @@ export default {
                 })
             }
 
+            function splitUnEscapedColon (str) {
+                // Split only on colons (:) that ar not escaped, i.e. not  preceded by a backslash (\\).
+                // And for each part replace the escaped colons again by normal colons.
+                return str.split(/(?<!\\):/).map(part => part.replace(/\\:/g, ':'))
+            }
+
             function setGroup (name, prop, value) {
-                const [pageName, groupName] = name.split(':')
+                const [pageName, groupName] = splitUnEscapedColon(name)
                 const groups = vue.findBy('group', 'name', groupName)
                 if (groups.length === 1) {
                     set('group', groupName, prop, value)
@@ -175,7 +181,7 @@ export default {
             if ('groups' in payload) {
                 if ('show' in payload.groups) {
                     payload.groups.show.forEach((name) => {
-                        const groupName = name.split(':')[1]
+                        const groupName = splitUnEscapedColon(name)[1]
                         const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
 
                         if (exactGroup?.groupType === 'dialog') {
@@ -189,7 +195,7 @@ export default {
                 }
                 if ('hide' in payload.groups) {
                     payload.groups.hide.forEach((name) => {
-                        const groupName = name.split(':')[1]
+                        const groupName = splitUnEscapedColon(name)[1]
                         const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
 
                         if (exactGroup?.groupType === 'dialog') {
