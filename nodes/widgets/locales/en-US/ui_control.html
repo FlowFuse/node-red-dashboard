@@ -33,7 +33,7 @@
     }
 }</pre>
     <h4>Enable/Disable Pages & Groups</h4>
-    <p>Dashboard pages & groups can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format
+    <p>Dashboard pages & groups can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format</p>
     <pre>msg.payload = {
     pages: {
         enable: ['&lt;Page Name&gt;', '&lt;Page Name&gt;'],
@@ -44,6 +44,7 @@
         disable: ['&lt;Group Name&gt;']
     }
 }</pre>
+    <p>When the group name contains a colon <code>:</code>, that needs to be escaped using a backslash <code>\</code>. </p>
     <h4>External URL</h4>
     <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
     <pre>msg.payload = {
