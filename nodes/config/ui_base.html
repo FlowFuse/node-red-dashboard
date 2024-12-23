@@ -1200,13 +1200,14 @@
                 }
                 return false // return false to click event to prevent default
             })
-            // add the "+ group" button
-            const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
-            groupEditButton.on('click', function (evt) {
-                list.editableList('addItem')
-                evt.preventDefault()
-            })
         }
+
+        // add the "+ group" button
+        const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
+        groupEditButton.on('click', function (evt) {
+            list.editableList('addItem')
+            evt.preventDefault()
+        })
 
         // if this is a group & it is not an unattached group, add the "_ spacer" button
         if (item.type === 'ui-group' && !!item.page) {
