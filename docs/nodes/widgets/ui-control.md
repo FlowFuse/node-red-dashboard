@@ -123,6 +123,7 @@ msg.payload = {
 ```
 
 _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+_Note:_ when the `group` name contains a colon `:`, then that should be escaped using a backslash `\`.
 
 ### Enable/Disable
 
