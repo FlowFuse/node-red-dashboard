@@ -5,14 +5,8 @@
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>
-                <template v-if="dashboard.headerContent === 'page'">
+                <template v-if="dashboard.headerContent !== 'none' && dashboard.headerContent !== false">
                     {{ pageTitle }}
-                </template>
-                <template v-else-if="dashboard.headerContent === 'dashboard'">
-                    {{ dashboard.name }}
-                </template>
-                <template v-else-if="dashboard.headerContent === 'dashpage'">
-                    {{ dashboard.name }} ({{ pageTitle }})
                 </template>
                 <div id="app-bar-title" />
             </v-app-bar-title>
