@@ -339,8 +339,8 @@
             showPathInSidebar: {
                 value: false
             },
-            showPageTitle: {
-                value: true
+            headerContent: {
+                value: 'page'
             },
             navigationStyle: {
                 value: 'default'
@@ -370,12 +370,19 @@
                 $('#node-config-input-titleBarStyle').val('default')
             }
 
-            // backward compatibility for including page name
-            if (this.showPageTitle === undefined) {
-                // set to true
-                this.showPageTitle = true
-                // update the jquery checkbox
-                $('#node-config-input-showPageTitle').prop('checked', true)
+            // backward compatibility for including header content
+            // The headerContent replaces the old (boolean) showPageTitle
+            if (this.headerContent === undefined) {
+                let showPageTitle = (this.showPageTitle === undefined) ? true : this.showPageTitle
+
+                if (showPageTitle) {
+                    this.headerContent = 'page'
+                    $('#node-config-input-headerContent').val('page')
+                }
+                else {
+                    this.headerContent = 'none'
+                    $('#node-config-input-headerContent').val('none')
+                }
             }
 
             if (this.appIcon) {
@@ -2438,9 +2445,14 @@
             <option value="fixed" data-i18n="ui-base.label.titleBarStyleFixed"></option>
         </select>
     </div>
-    <div class="form-row form-row-flex" style="align-items: center;">
-        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPageTitle">
-        <label style="width:auto" for="node-config-input-showPageTitle"><span data-i18n="ui-base.label.showPageTitle"></span></label>
+    <div class="form-row" style="align-items: center;">
+        <label style="margin-right: 5px; margin-bottom: 0px;" for="node-config-input-headerContent"><span data-i18n="ui-base.label.headerContent"></span></label>
+        <select id="node-config-input-headerContent">
+            <option value="page" data-i18n="ui-base.label.headerPage"></option>
+            <option value="dashboard" data-i18n="ui-base.label.headerDashboard"></option>
+            <option value="dashpage" data-i18n="ui-base.label.headerDashboardPage"></option>
+            <option value="none" data-i18n="ui-base.label.headerNone"></option>
+        </select>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>

@@ -185,12 +185,19 @@ export default {
                     const route = (this.setup.basePath + page.path).replace(/\/\//g, '/')
 
                     const routeName = 'Page:' + page.name
+                    let title = page.name
+                    const headerStyle = payload.dashboards[page.ui].headerContent
+                    if (headerStyle === 'dashboard') {
+                        title = payload.dashboards[page.ui].name
+                    } else if (headerStyle === 'dashpage') {
+                        title = `${payload.dashboards[page.ui].name} (${page.name})`
+                    }
                     this.$router?.addRoute({
                         path: route,
                         name: routeName,
                         component: layouts[page.layout],
                         meta: {
-                            title: page.name, // the page name
+                            title, // the page name
                             id: page.id, // the pages id
                             dashboard: page.ui // the dashboard id - to simplify determining which dashboard we're on
                         }
