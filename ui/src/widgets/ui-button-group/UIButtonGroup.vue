@@ -9,7 +9,7 @@
                 </template>
                 <v-icon v-if="option.icon && !option.label" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" size="x-large" />
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <span v-html="option.label"></span>
+                <span v-html="option.label" />
             </v-btn>
         </v-btn-toggle>
     </div>
@@ -50,7 +50,7 @@ export default {
                     if (typeof option === 'string') {
                         return { label: DOMPurify.sanitize(option), value: option }
                     } else {
-                        option.label ? DOMPurify.sanitize(option.label) : option.label
+                        option.label = DOMPurify.sanitize(option.label)
                         return option
                     }
                 })
