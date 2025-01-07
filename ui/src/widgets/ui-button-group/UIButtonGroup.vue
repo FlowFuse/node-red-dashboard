@@ -8,7 +8,8 @@
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
                 </template>
                 <v-icon v-if="option.icon && !option.label" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" size="x-large" />
-                {{ option.label }}
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <span v-html="option.label"></span>
             </v-btn>
         </v-btn-toggle>
     </div>
@@ -47,8 +48,9 @@ export default {
             if (options) {
                 return options.map(option => {
                     if (typeof option === 'string') {
-                        return { label: option, value: option }
+                        return { label: DOMPurify.sanitize(option), value: option }
                     } else {
+                        option.label ? DOMPurify.sanitize(option.label) : option.label
                         return option
                     }
                 })
