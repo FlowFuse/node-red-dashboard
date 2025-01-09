@@ -1127,9 +1127,9 @@
      * @param {Object} list - The editableList instance associated with this item
      */
     function addRowActions (parent, item, list) {
-        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
+        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme', 'ui-spacer']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
-        if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
+        if (!configNodes.includes(item.type)) {
             const focusButton = $(`<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.focus')}"><i class="fa fa-bullseye"></i></a>`).appendTo(btnGroup)
             focusButton.on('click', function (evt) {
                 RED.view.reveal(item.id)
