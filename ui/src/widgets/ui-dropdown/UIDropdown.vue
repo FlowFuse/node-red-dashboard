@@ -191,7 +191,7 @@ export default {
                 if (!Array.isArray(value)) {
                     value = [value]
                 }
-        
+
                 // value [] is used to clear the current selection
                 if (value.length > 0) {
                     // now if this is a single selection, we just need to find the option with the matching value
@@ -210,7 +210,7 @@ export default {
                         return
                     }
                 }
-        
+
                 // ensure we set our local "value" to match
                 this.value = value
             }
