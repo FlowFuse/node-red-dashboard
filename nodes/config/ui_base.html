@@ -287,6 +287,56 @@
 /** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
 // #endregion
 
+// Custom global sidebar function used in other nodes
+async function showDashboardWysiwygEditor(pageId, baseId) {
+    // call to httpadmin endpoint requesting layout editor mode for this group
+    const windowUrl = new URL(window.location.href)
+    const base = RED.nodes.node(baseId)
+    const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
+    const authTokens = RED.settings.get('auth-tokens') || {}
+    const headers = {}
+    if (authTokens.access_token) {
+        headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
+    }
+
+    // promisify the ajax call so we can await it & return false after opening the popup
+    const ajax = () => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
+                type: 'PATCH',
+                headers,
+                data: {
+                    mode: 'edit',
+                    dashboard: baseId,
+                    page: pageId
+                },
+                success: function (data) {
+                    // construct the url to open the layout editor
+                    const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                    _url.searchParams.set('edit-key', data.editKey)
+                    const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
+                    if (editorPath) {
+                        _url.searchParams.set('editor-path', editorPath)
+                    }
+                    resolve(_url)
+                },
+                error: function (err) {
+                    reject(err)
+                }
+            })
+        })
+    }
+    try {
+        const url = await ajax()
+        const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
+        window.open(url, target)
+    } catch (err) {
+        console.error('layout mode error', err)
+        RED.notify('Unable to begin layout editor', 'error')
+    }
+}
+
 (function () {
     const supportedEditableLayouts = ['grid', 'flex']
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
@@ -406,7 +456,7 @@
             addSidebar()
         }
     })
-
+    
     /**
      * Utility function to convert a dashboard node to a DashboardItem
      * Provides a better DX with type checking and intellisense
@@ -1146,60 +1196,17 @@
         if (item.type === 'ui-page' && supportedEditableLayouts.includes(item.node.layout)) {
             // button to edit group in wysiwyg layout editor
             const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
-            layoutButton.on('click', async function (evt) {
+            layoutButton.on('click', function (evt) {
                 evt.preventDefault()
                 evt.stopPropagation()
 
-                // call to httpadmin endpoint requesting layout editor mode for this group
-                const windowUrl = new URL(window.location.href)
                 const pageId = item.id
                 const baseId = item.node.ui
-                const base = RED.nodes.node(item.node.ui)
-                const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
-                const authTokens = RED.settings.get('auth-tokens') || {}
-                const headers = {}
-                if (authTokens.access_token) {
-                    headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
-                }
+                showDashboardWysiwygEditor(pageId, baseId)
 
-                // promisify the ajax call so we can await it & return false after opening the popup
-                const ajax = () => {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
-                            type: 'PATCH',
-                            headers,
-                            data: {
-                                mode: 'edit',
-                                dashboard: baseId,
-                                page: pageId
-                            },
-                            success: function (data) {
-                                // construct the url to open the layout editor
-                                const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
-                                _url.searchParams.set('edit-key', data.editKey)
-                                const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
-                                if (editorPath) {
-                                    _url.searchParams.set('editor-path', editorPath)
-                                }
-                                resolve(_url)
-                            },
-                            error: function (err) {
-                                reject(err)
-                            }
-                        })
-                    })
-                }
-                try {
-                    const url = await ajax()
-                    const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
-                    window.open(url, target)
-                } catch (err) {
-                    console.error('layout mode error', err)
-                    RED.notify('Unable to begin layout editor', 'error')
-                }
                 return false // return false to click event to prevent default
             })
+
             // add the "+ group" button
             const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
             groupEditButton.on('click', function (evt) {

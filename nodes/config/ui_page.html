@@ -82,6 +82,8 @@
                 disabled: { value: 'false' }
             },
             oneditprepare: function () {
+                const node = this
+
                 if (this.path === -1) {
                 // we have no path set yet
                     let pageCount = 0
@@ -113,6 +115,18 @@
                     } else {
                         $('#node-config-container-breakpoints').show()
                     }
+                })
+
+                // button to edit page layout in wysiwyg layout editor
+                $('#node-config-layout-edit').on('click', function (evt) {
+                    evt.preventDefault()
+                    evt.stopPropagation()
+
+                    const pageId = node.id
+                    const baseNode = RED.nodes.node(node.ui)
+                    showDashboardWysiwygEditor(pageId, baseNode.id)
+
+                    return false // return false to click event to prevent default
                 })
 
                 // Breakpoints Editable List
@@ -277,6 +291,9 @@
     <div class="form-row">
         <label for="node-config-input-layout"><i class="w-16 fa fa-th"></i> <span data-i18n="ui-page.label.layout"></label>
         <input type="text" id="node-config-input-layout">
+        <button id="node-config-layout-edit" type="button" class="red-ui-button" style="margin-top: 4px; margin-right: 5px;" title="Edit Layout">
+            <i class="fa fa-pencil-square-o"></i>
+        </button>
         <input type="hidden" id="node-config-input-layoutType">
     </div>
     <div class="form-row" id="text-row-class">
