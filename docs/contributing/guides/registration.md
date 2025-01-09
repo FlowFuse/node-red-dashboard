@@ -100,7 +100,8 @@ Similar to `onAction`, when used as a boolean, this flag will trigger the defaul
 2. Appends any `msg.topic` defined on the node config
 3. Runs `evts.beforeSend()` _(if provided)_
 4. Store the most recent message on the widget under the `._msg` property which will contain the latest state/value of the widget
-5. Sends the `msg` onwards to any connected nodes
+5. Pushes a `widget-sync` event to synchronize the widgets in all clients.
+6. Sends the `msg` onwards to any connected nodes
 
 #### Custom `onChange` Handler
 
@@ -111,8 +112,10 @@ Alternatively, you can override this default behaviour by providing a custom `on
  * Handle the input from the widget
  * @param {object} msg - the last known msg received (prior to this new value)
  * @param {boolean} value - the updated value sent by the widget
+ * @param {Socket} conn - socket.io socket connecting to the server
+ * @param {String} id - widget id sending the action
  */
-onChange: async function (msg, value) {
+onChange: async function (msg, value, conn, id) {
     // ensure we have latest instance of the widget's node
     const wNode = RED.nodes.getNode(node.id)
 
@@ -126,6 +129,10 @@ onChange: async function (msg, value) {
     const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, wNode)
     const off = RED.util.evaluateNodeProperty(config.offvalue, config.offvalueType, wNode)
     msg.payload = value ? on : off
+
+    // sync this change to all clients with the same widget
+    const exclude = [conn.id] 
+    base.emit('widget-sync:' + id, msg, node, exclude)
 
     // simulate Node-RED node receiving an input
     wNode.send(msg)
