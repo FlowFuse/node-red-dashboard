@@ -80,6 +80,17 @@ module.exports = function (RED) {
             config.notificationDisplayTime = 5 // Show for 5 seconds
         }
 
+        // The headerContent replaces the old (boolean) showPageTitle
+        if (!('headerContent' in config)) {
+            const showPageTitle = ('showPageTitle' in config) ? config.showPageTitle : true
+
+            if (showPageTitle) {
+                config.headerContent = 'page'
+            } else {
+                config.headerContent = 'none'
+            }
+        }
+
         // expose these properties at runtime
         node.acceptsClientConfig = config.acceptsClientConfig // which node types can be scoped to a specific client
         node.includeClientData = config.includeClientData // whether to include client data in msg payloads
@@ -639,7 +650,7 @@ module.exports = function (RED) {
 
             msg = addConnectionCredentials(RED, msg, conn, n)
 
-            async function defaultHandler (msg, value) {
+            async function defaultHandler (msg, value, conn, id) {
                 if (typeof (value) === 'object' && value !== null && hasProperty(value, 'payload')) {
                     msg.payload = value.payload
                 } else {
@@ -662,7 +673,7 @@ module.exports = function (RED) {
                 // Most of the time, we can just use this default handler,
                 // but sometimes a node needs to do something specific (e.g. ui-switch)
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
-                await handler(msg, value)
+                await handler(msg, value, conn, id)
             } catch (error) {
                 console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
