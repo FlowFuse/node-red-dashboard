@@ -124,7 +124,8 @@
 
                     const pageId = node.id
                     const baseNode = RED.nodes.node(node.ui)
-                    showDashboardWysiwygEditor(pageId, baseNode.id)
+                    // eslint-disable-next-line no-undef
+                    showDashboardWysiwygEditor(pageId, baseNode.id) // defined in UI Base as a Global
 
                     return false // return false to click event to prevent default
                 })
@@ -297,6 +298,7 @@
             </div>
             <button type="button" id="node-config-layout-edit" class="red-ui-button" style="margin-left: 10px;" title="Edit Layout">
                 <i class="fa fa-pencil-square-o"></i>
+                <span data-i18n="ui-page.label.editLayout"></span>
             </button>
         </div>
     </div>
