@@ -226,7 +226,7 @@ export default {
                             return true
                         },
                         filter: (tooltipItem, tooltipIndex) => {
-                            if (this.props.chartType === 'histogram') {
+                            if (this.props.chartType === 'histogram' || (this.props.chartType === 'bar' && this.props.stackSeries)) {
                                 // don't show tooltips for empty data points
                                 return tooltipItem.parsed.y !== undefined && tooltipItem.parsed.y > 0
                             } else if (this.props.chartType === 'line') {
