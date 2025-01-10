@@ -1236,7 +1236,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     evt.preventDefault()
                     const widget = toDashboardItem(spacerNode)
                     list.editableList('addItem', widget)
-                    RED.editor.edit(widget.node)
+                    RED.editor.editConfig('', spacerNode.type, spacerNode.id)
                 })
                 .appendTo(btnGroup)
         }
