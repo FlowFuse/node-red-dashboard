@@ -138,7 +138,11 @@ export default {
         onSync (msg) {
             // update the UI with any changes
             if (typeof msg?.payload !== 'undefined') {
-                this.value = msg.payload
+                if (this.typeIsComboBox) {
+                    this.value = this.options.find((o) => o.value === msg.payload)
+                } else {
+                    this.value = msg.payload
+                }
             }
         },
         onChange () {

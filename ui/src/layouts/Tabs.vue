@@ -70,6 +70,14 @@ export default {
         WidgetGroup
     },
     mixins: [Responsiveness],
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            // Select the first tabsheet every time the user arrives on this page
+            if (vm.orderedGroups && vm.orderedGroups.length > 0) {
+                vm.tab = 0
+            }
+        })
+    },
     data () {
         return {
             tab: 0

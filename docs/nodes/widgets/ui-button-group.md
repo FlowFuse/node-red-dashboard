@@ -9,7 +9,7 @@ props:
     Appearance: Specify whether the shape of the widget should be rectangular or have rounded corners.
     Use theme colors: Specify whether the theme colors should be used. If not active, custom colors can be specified for each option separately.
     Options:
-        description: Specify which options need to be displayed. Each option can specify a label, icon, value and color.
+        description: Specify which options need to be displayed. Each option can specify a label, icon, value and color.  Html content is allowed for the labels.
         dynamic: true
     Topic: The text that needs to be send in the msg.topic field.
     Passthrough: Specify whether input messages should be passed through as output messages.

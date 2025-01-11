@@ -14,6 +14,7 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
+        const base = group.getBase()
 
         // retrieve the assigned on/off values
         const on = RED.util.evaluateNodeProperty(config.onvalue, config.onvalueType, node)
@@ -27,7 +28,7 @@ module.exports = function (RED) {
         const evts = {
             // runs on UI interaction
             // value = true | false from the ui-switch
-            onChange: async function (msg, value) {
+            onChange: async function (msg, value, conn, id) {
                 msg.payload = value ? on : off
 
                 if (config.topic || config.topicType) {
@@ -42,7 +43,10 @@ module.exports = function (RED) {
                         shape: 'ring',
                         text: value ? states[1] : states[0]
                     })
-                    datastore.save(group.getBase(), node, msg)
+                    datastore.save(base, node, msg)
+
+                    const exclude = [conn.id] // sync this change to all clients with the same widget
+                    base.emit('widget-sync:' + id, msg, node, exclude) // let all other connect clients now about the value change
 
                     // simulate Node-RED node receiving an input
                     node.send(msg)

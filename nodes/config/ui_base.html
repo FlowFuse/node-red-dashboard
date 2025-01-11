@@ -287,6 +287,56 @@
 /** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
 // #endregion
 
+// Custom global sidebar function used in other nodes
+async function showDashboardWysiwygEditor (pageId, baseId) {
+    // call to httpadmin endpoint requesting layout editor mode for this group
+    const windowUrl = new URL(window.location.href)
+    const base = RED.nodes.node(baseId)
+    const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
+    const authTokens = RED.settings.get('auth-tokens') || {}
+    const headers = {}
+    if (authTokens.access_token) {
+        headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
+    }
+
+    // promisify the ajax call so we can await it & return false after opening the popup
+    const ajax = () => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
+                type: 'PATCH',
+                headers,
+                data: {
+                    mode: 'edit',
+                    dashboard: baseId,
+                    page: pageId
+                },
+                success: function (data) {
+                    // construct the url to open the layout editor
+                    const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                    _url.searchParams.set('edit-key', data.editKey)
+                    const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
+                    if (editorPath) {
+                        _url.searchParams.set('editor-path', editorPath)
+                    }
+                    resolve(_url)
+                },
+                error: function (err) {
+                    reject(err)
+                }
+            })
+        })
+    }
+    try {
+        const url = await ajax()
+        const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
+        window.open(url, target)
+    } catch (err) {
+        console.error('layout mode error', err)
+        RED.notify('Unable to begin layout editor', 'error')
+    }
+}
+
 (function () {
     const supportedEditableLayouts = ['grid', 'flex']
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
@@ -339,8 +389,8 @@
             showPathInSidebar: {
                 value: false
             },
-            showPageTitle: {
-                value: true
+            headerContent: {
+                value: 'page'
             },
             navigationStyle: {
                 value: 'default'
@@ -370,12 +420,18 @@
                 $('#node-config-input-titleBarStyle').val('default')
             }
 
-            // backward compatibility for including page name
-            if (this.showPageTitle === undefined) {
-                // set to true
-                this.showPageTitle = true
-                // update the jquery checkbox
-                $('#node-config-input-showPageTitle').prop('checked', true)
+            // backward compatibility for including header content
+            // The headerContent replaces the old (boolean) showPageTitle
+            if (this.headerContent === undefined) {
+                const showPageTitle = (this.showPageTitle === undefined) ? true : this.showPageTitle
+
+                if (showPageTitle) {
+                    this.headerContent = 'page'
+                    $('#node-config-input-headerContent').val('page')
+                } else {
+                    this.headerContent = 'none'
+                    $('#node-config-input-headerContent').val('none')
+                }
             }
 
             if (this.appIcon) {
@@ -1120,9 +1176,9 @@
      * @param {Object} list - The editableList instance associated with this item
      */
     function addRowActions (parent, item, list) {
-        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
+        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme', 'ui-spacer']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
-        if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
+        if (!configNodes.includes(item.type)) {
             const focusButton = $(`<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.focus')}"><i class="fa fa-bullseye"></i></a>`).appendTo(btnGroup)
             focusButton.on('click', function (evt) {
                 RED.view.reveal(item.id)
@@ -1143,69 +1199,28 @@
             evt.preventDefault()
         })
 
-        if (item.type === 'ui-page' && supportedEditableLayouts.includes(item.node.layout)) {
-            // button to edit group in wysiwyg layout editor
-            const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
-            layoutButton.on('click', async function (evt) {
-                evt.preventDefault()
-                evt.stopPropagation()
-
-                // call to httpadmin endpoint requesting layout editor mode for this group
-                const windowUrl = new URL(window.location.href)
-                const pageId = item.id
-                const baseId = item.node.ui
-                const base = RED.nodes.node(item.node.ui)
-                const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
-                const authTokens = RED.settings.get('auth-tokens') || {}
-                const headers = {}
-                if (authTokens.access_token) {
-                    headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
-                }
-
-                // promisify the ajax call so we can await it & return false after opening the popup
-                const ajax = () => {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
-                            type: 'PATCH',
-                            headers,
-                            data: {
-                                mode: 'edit',
-                                dashboard: baseId,
-                                page: pageId
-                            },
-                            success: function (data) {
-                                // construct the url to open the layout editor
-                                const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
-                                _url.searchParams.set('edit-key', data.editKey)
-                                const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
-                                if (editorPath) {
-                                    _url.searchParams.set('editor-path', editorPath)
-                                }
-                                resolve(_url)
-                            },
-                            error: function (err) {
-                                reject(err)
-                            }
-                        })
-                    })
-                }
-                try {
-                    const url = await ajax()
-                    const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
-                    window.open(url, target)
-                } catch (err) {
-                    console.error('layout mode error', err)
-                    RED.notify('Unable to begin layout editor', 'error')
-                }
-                return false // return false to click event to prevent default
-            })
+        if (item.type === 'ui-page') {
             // add the "+ group" button
             const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
             groupEditButton.on('click', function (evt) {
                 list.editableList('addItem')
                 evt.preventDefault()
             })
+
+            if (supportedEditableLayouts.includes(item.node.layout)) {
+                // button to edit group in wysiwyg layout editor
+                const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
+                layoutButton.on('click', function (evt) {
+                    evt.preventDefault()
+                    evt.stopPropagation()
+
+                    const pageId = item.id
+                    const baseId = item.node.ui
+                    showDashboardWysiwygEditor(pageId, baseId)
+
+                    return false // return false to click event to prevent default
+                })
+            }
         }
 
         // if this is a group & it is not an unattached group, add the "_ spacer" button
@@ -1221,7 +1236,7 @@
                     evt.preventDefault()
                     const widget = toDashboardItem(spacerNode)
                     list.editableList('addItem', widget)
-                    RED.editor.edit(widget.node)
+                    RED.editor.editConfig('', spacerNode.type, spacerNode.id)
                 })
                 .appendTo(btnGroup)
         }
@@ -2437,9 +2452,14 @@
             <option value="fixed" data-i18n="ui-base.label.titleBarStyleFixed"></option>
         </select>
     </div>
-    <div class="form-row form-row-flex" style="align-items: center;">
-        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPageTitle">
-        <label style="width:auto" for="node-config-input-showPageTitle"><span data-i18n="ui-base.label.showPageTitle"></span></label>
+    <div class="form-row" style="align-items: center;">
+        <label style="margin-right: 5px; margin-bottom: 0px;" for="node-config-input-headerContent"><span data-i18n="ui-base.label.headerContent"></span></label>
+        <select id="node-config-input-headerContent">
+            <option value="page" data-i18n="ui-base.label.headerPage"></option>
+            <option value="dashboard" data-i18n="ui-base.label.headerDashboard"></option>
+            <option value="dashpage" data-i18n="ui-base.label.headerDashboardPage"></option>
+            <option value="none" data-i18n="ui-base.label.headerNone"></option>
+        </select>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>

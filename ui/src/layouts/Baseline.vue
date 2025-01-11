@@ -5,7 +5,7 @@
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>
-                <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
+                <template v-if="dashboard.headerContent !== 'none' && dashboard.headerContent !== false">
                     {{ pageTitle }}
                 </template>
                 <div id="app-bar-title" />
