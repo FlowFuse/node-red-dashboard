@@ -6,14 +6,14 @@
                 <v-checkbox
                     v-if="row.type === 'checkbox'"
                     v-model="input[row.key]"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     hide-details="auto"
                 />
                 <v-select
                     v-else-if="row.type === 'dropdown'"
                     v-model="input[row.key]"
                     class="nrdb-ui-widget"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     :class="{'active': state}"
                     hide-details="auto" :rules="rules(row)"
                     color="primary" variant="outlined"
@@ -25,7 +25,7 @@
                     v-else-if="row.type === 'switch'"
                     v-model="input[row.key]"
                     class="nrdb-ui-widget"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     :class="{'active': state}"
                     hide-details="auto"
                     color="primary"
@@ -34,13 +34,13 @@
                     v-else-if="row.type === 'multiline'"
                     v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field" :rows="row.rows"
-                    :label="row.label" variant="outlined" hide-details="auto"
+                    :label="formattedLabel(row)" variant="outlined" hide-details="auto"
                 />
                 <v-text-field
                     v-else
                     v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field"
-                    :label="row.label" :type="row.type" variant="outlined" hide-details="auto"
+                    :label="formattedLabel(row)" :type="row.type" variant="outlined" hide-details="auto"
                 />
             </div>
         </div>
@@ -152,6 +152,9 @@ export default {
                 // no rules
                 return []
             }
+        },
+        formattedLabel(row) {
+            return row.required ? `${row.label} (*)` : row.label
         },
         onInput (msg) {
             if (msg.payload) {
