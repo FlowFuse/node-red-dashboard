@@ -153,7 +153,7 @@ export default {
                 return []
             }
         },
-        formattedLabel(row) {
+        formattedLabel (row) {
             return row.required ? `${row.label} (*)` : row.label
         },
         onInput (msg) {
