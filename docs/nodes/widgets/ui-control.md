@@ -112,16 +112,40 @@ You can programmatically show/hide groups and pages with the following payload i
 ```js
 msg.payload = {
     pages: {
-        show: ['<Page Name>', '<Page Name>'],
-        hide: ['<Page Name>']
-    }
+        show: ['<Page Name>',
+               '<Page Id>'
+               {page: '<Page Name>'},
+               {page: '<Page Id>'}],
+        hide: ['<Page Id>']
+    },
     groups: {
-        show: ['<Page Name>:<Group Name>', '<Page Name>:<Group Name>'],
-        hide: ['<Page Name>:<Group Name>']
+        show: ['<Group Name>',
+               '<Group Id>'
+               '<Page Name>:<Group Name>',
+               '<Page Id>:<Group Name>',
+               {group: '<Group Name>'},
+               {group: '<Group Id>'},
+               {page: '<Page Name>', group: '<Group Name>'},
+               {page: '<Page Id>', group: '<Group Name>'}],
+        hide: ['<Group Id>']
+    },
+    widgets: {
+        show: ['<Widget Name>',
+               '<Widget Id>',
+               '<Group Name>:<Widget Name>',
+               '<Group Id>:<Widget Name>',
+               '<Page Name>:<Group Name>:<Widget Name>',
+               '<Page Id>:<Group Name>:<Widget Name>',
+               {widget: '<Widget Name>'},
+               {widget: '<Widget Id>'},
+               {group: '<Group Name>', widget: '<Widget Name>'},
+               {group: '<Group Id>', widget: '<Widget Name>'},
+               {page: '<Page Name>', group: '<Group Name>', widget: '<Widget Name>'},
+               {page: '<Page Id>', group: '<Group Name>', widget: '<Widget Name>'}],
+        hide: ['<Widget Id>']
     }
 }
 ```
-
 _Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
 
 ### Enable/Disable
@@ -131,12 +155,16 @@ You can programmatically disable/enable groups and pages with the following payl
 ```js
 msg.payload = {
     pages: {
-        enable: ['<Page Name>', '<Page Name>'],
-        disable: ['<Page Name>']
-    }
+        enable: ['<Page Id>''],
+        disable: ['<Page Id>']
+    },
     groups: {
-        enable: ['<Page Name>:<Group Name>', '<Page Name>:<Group Name>'],
-        disable: ['<Page Name>:<Group Name>']
+        enable: ['<Group Id>'],
+        disable: ['<Group Id>']
+    },
+    widgets: {
+        enable: ['<Widget Id>'],
+        disable: ['<Widget Id>']
     }
 }
 ```
