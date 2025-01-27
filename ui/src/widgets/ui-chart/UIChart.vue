@@ -385,7 +385,9 @@ export default {
                     const p = m.payload
                     const d = m._datapoint // server-side we compute a chart friendly format
                     const label = d.category
-                    this.addPoints(p, d, label)
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(p, d, label)
+                    }
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
@@ -393,13 +395,17 @@ export default {
                 payload.forEach((p, i) => {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
                     const label = d.category
-                    this.addPoints(p, d, label)
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(p, d, label)
+                    }
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
                 const d = msg._datapoint // server-side we compute a chart friendly format
                 const label = d.category
-                this.addPoints(msg.payload, d, label)
+                if (label !== null && label !== undefined) {
+                    this.addPoints(msg.payload, d, label)
+                }
             } else {
                 // no payload
                 console.log('have no payload')
