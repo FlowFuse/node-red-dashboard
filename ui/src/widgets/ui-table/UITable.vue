@@ -173,7 +173,11 @@ export default {
             if (this.props.action === 'append') {
                 this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
             } else {
-                this.selected = null
+                // Deselect all selected rows when the table is filled with new rows, but only when
+                // that behaviour is explicit required (or when not specified for older nodes)
+                if (this.props.deselect === true || typeof this.props.deselect === 'undefined') {
+                    this.selected = null
+                }
                 this.localData = value
             }
 
