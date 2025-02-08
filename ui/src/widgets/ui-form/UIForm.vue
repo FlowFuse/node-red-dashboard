@@ -154,7 +154,7 @@ export default {
             }
         },
         formattedLabel (row) {
-            return row.required ? `${row.label} (*)` : row.label
+            return row.required ? `* ${row.label}` : row.label
         },
         onInput (msg) {
             if (msg.payload) {
