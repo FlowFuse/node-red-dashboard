@@ -23,7 +23,9 @@
             "mobileBreakpoint": "Breakpoint",
             "action": "Action",
             "append": "Append",
-            "replace": "Replace"
+            "replace": "Replace",
+            "deselect": "Deselect",
+            "deselectRows": "Deselect all rows when the table is filled"
         },
         "selection": {
             "none": "None",
