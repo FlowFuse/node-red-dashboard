@@ -1,7 +1,53 @@
 <script type="text/html" data-help-name="ui-base">
-    <p>UI Base</p>
+    <a href="https:/ddashboard.flowfuse.com/nodes/config/ui-base.html" target="_blank" style="display: block; margin-bottom: 6px;">Online Documentation</a>
     <p>This is the foundational element for a Dashboard in Node-RED Dashboard 2.0</p>
     <p>A Dashboard is driven by a baseline layout which can be modified with some of the following settings</p>
+    <dl class="message-properties">
+        <dt>
+            App Icon
+            <span class="property-type">strong</span>
+        </dt>
+        <dd>
+            You can provide a custom URL for your application's icon, which will be displayed as the app icon and in the browser tab.
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>
+            Allow App Installation
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>
+            <p>Permits a user to install the Dashboard as a Progressive Web Application on their mobile or desktop device. This will mimic the behaviour of a native application.</p>
+            <p>It is recommended to not use this option if you are </p>
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>
+            Header Style
+            <span class="property-type">option</span>
+        </dt>
+        <dd>
+            <ul>
+                <li><b>Default: </b>(default) The title bar will appear as the first element, and scroll with the content, meaning that on longer pages, the title bar will not be visible when the page is scrolled.</li>
+                <li><b>Hidden: </b>The title bar is not visible at all.</li>
+                <li><b>Fixed: </b>The title bar will always be visible, even when the page is scrolled. </li>
+            </ul>
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt>
+            Header Content
+            <span class="property-type">option</span>
+        </dt>
+        <dd>
+            <ul>
+                <li><b>Page Name: </b>(default) This open will shift the entire content of the Dashboard when opened, and not be visible at all when closed.</li>
+                <li><b>Dashboard Name: </b>Will always remain open. At our mobile breakpoint (768px), this value is overridden, and an "Appear Over" option is used.</li>
+                <li><b>Dashboard Name (Page Name): </b>Similar to "Collapsing" when opened, but when closed, the icons for each page still show.</li>
+                <li><b>None: </b>The title bar is not visible at all. </li>
+            </ul>
+        </dd>
+    </dl>
     <dl class="message-properties">
         <dt>
             Sidebar Style
@@ -9,19 +55,12 @@
         </dt>
         <dd>
             <ul>
-                <li><b>Collapsing: </b>(default) This open will shift the entire content of the Dashboard when opened, and not be visisble at all when closed.</li>
-                <li><b>Fixed: </b>Will always remain open. At our mobile breakdpoint (768px), this value is overriden, and an "Appear Over" option is used.</li>
+                <li><b>Collapsing: </b>(default) This open will shift the entire content of the Dashboard when opened, and not be visible at all when closed.</li>
+                <li><b>Fixed: </b>Will always remain open. At our mobile breakpoint (768px), this value is overridden, and an "Appear Over" option is used.</li>
                 <li><b>Collapse to icons: </b>Similar to "Collapsing" when opened, but when closed, the icons for each page still show.</li>
                 <li><b>Appear over content: </b>Not visible when closed, and when open, will appear over the Dashboard content, without shifting it.</li>
-                <li><b>Always hide: </b>The sidebar will not be visible under any circumstances. All pages are still accesible via their direct links or a <code>ui-control</code> node.</li>
+                <li><b>Always hide: </b>The sidebar will not be visible under any circumstances. All pages are still accessible via their direct links or a <code>ui-control</code> node.</li>
             </ul>
         </dd>
     </dl>
-    <dt>
-        App Icon
-        <span class="property-type">URL</span>
-    </dt>
-    <dd>
-        You can provide a custom URL for your application's icon, which will be displayed as the app icon and in the browser tab.
-    </dd>
 </script>
