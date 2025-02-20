@@ -38,7 +38,13 @@ _Example of how the 'App Icon' looks on a browser tab_
 ![Example of how the 'App Icon' looks](/images/node-examples/ui-base-app-icon-launcher.png "Example of how the 'App Icon' looks"){data-zoomable style="max-width: 200px; margin: auto"}
 _Example of how the 'App Icon' appears when installed onto an iPhone_
 
-## Title Bar Style Options <AddedIn version="1.10.0" />
+## Allow Install <AddedIn version="1.23.0" />
+
+It is possible to install any FlowFuse Dashboard applications as a Progressive Web App onto a desktop or mobile device, giving the appearance and user-experience of a native mobile application. You can read more about that functionality [here](../../user/pwa.md).
+
+The "Allow Install" option provides the capability to enable/disable the option to "Install" your Dashboard as an application. If you are using FlowFuse authentication, this is recommended, as the PWA workers cache content separate from authentication sessions.
+
+## Header Style Options <AddedIn version="1.10.0" />
 
 ### Title Bar - Default
 
@@ -61,6 +67,25 @@ The title bar is not visible at all. Note that it is still possible to see the n
 ![Example of how the 'Hidden' option looks](/images/node-examples/ui-base-appbar-hidden.png "Example of how the 'Hidden' option looks"){data-zoomable}
 _Example of how the 'Hidden' option looks_
 
+## Header Content Options <AddedIn version="1.10.0" />
+
+Defines the text that is shown in the main page title.
+
+### Page Name
+
+This will show the active page's name. Between each page change, this will be updated to reflect the new page's name.
+
+### Dashboard Name
+
+This will use the Dashboard's name, and be consistent across all pages in your application.
+
+### Dashboard Name (Page Name)
+
+This will combine the previous two options, and display both the Dashboard name and Page name, with the latter inside brackets.
+
+### None
+
+There will be no text-based title shown. Often used in partnership with [Teleports](../../nodes/widgets/ui-template.md#teleports) in order to customise the content in this section, e.g. including logos.
 
 
 ## Navigation Style Options <AddedIn version="1.2.0" />
