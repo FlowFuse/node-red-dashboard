@@ -16,7 +16,7 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         ...mapState('ui', ['pages', 'groups', 'widgets']),
-        ...mapGetters('ui', ['findBy', 'pageByName'])
+        ...mapGetters('ui', ['findBy', 'pageById'])
     },
     watch: {
         '$route.meta.id': {
@@ -34,41 +34,22 @@ export default {
         // listen for messages
         this.$socket.on('ui-control:' + this.id, (msg) => {
             const payload = msg.payload
-            function set (type, name, prop, value) {
-                const item = vue.findBy(type, 'name', name)[0]
-                vue.$store.commit('ui/setProperty', {
-                    item: type,
-                    itemId: item.id,
-                    property: prop,
-                    value
-                })
-            }
 
-            function setGroup (name, prop, value) {
-                const [pageName, groupName] = name.split(':')
-                const groups = vue.findBy('group', 'name', groupName)
-                if (groups.length === 1) {
-                    set('group', groupName, prop, value)
-                } else {
-                    const pages = vue.pageByName(pageName)
-                    if (!pages.length) {
-                        console.error('page not found')
-                    } else {
-                        const pageId = pages[0].id
-                        const g = groups.find((g) => {
-                            return g.page === pageId
-                        })
-                        if (!g) {
-                            console.error(`group "${groupName}" not found on page "${pageName}"`)
-                        } else {
-                            vue.$store.commit('ui/setProperty', {
-                                item: 'group',
-                                itemId: g.id,
-                                property: prop,
-                                value
-                            })
+            function set (type, id, prop, value) {
+                if (type === 'widget') {
+                    vue.$store.commit('ui/widgetState', {
+                        widgetId: id,
+                        config: {
+                            [prop]: value
                         }
-                    }
+                    })
+                } else {
+                    vue.$store.commit('ui/setProperty', {
+                        item: type,
+                        itemId: id,
+                        property: prop,
+                        value
+                    })
                 }
             }
 
@@ -145,75 +126,31 @@ export default {
                 }
             }
 
-            if ('pages' in payload) {
-                if ('show' in payload.pages) {
-                    // we are setting visibility: true
-                    payload.pages.show.forEach((pageName) => {
-                        set('page', pageName, 'visible', true)
-                    })
-                }
-                if ('hide' in payload.pages) {
-                    // we are setting visibility: false
-                    payload.pages.hide.forEach((pageName) => {
-                        set('page', pageName, 'visible', false)
-                    })
-                }
-                if ('disable' in payload.pages) {
-                    // we are setting visibility: true
-                    payload.pages.disable.forEach((pageName) => {
-                        set('page', pageName, 'disabled', true)
-                    })
-                }
-                if ('enable' in payload.pages) {
-                    // we are setting visibility: false
-                    payload.pages.enable.forEach((pageName) => {
-                        set('page', pageName, 'disabled', false)
-                    })
+            // Pages
+            payload.pages?.show?.forEach(pageId => set('page', pageId, 'visible', true))
+            payload.pages?.hide?.forEach(pageId => set('page', pageId, 'visible', false))
+            payload.pages?.disable?.forEach(pageId => set('page', pageId, 'disabled', true))
+            payload.pages?.enable?.forEach(pageId => set('page', pageId, 'disabled', false))
+
+            // Groups
+            const handleVisibility = (id, group, visibility) => {
+                if (group?.groupType === 'dialog') {
+                    set('group', id, 'showDialog', `${visibility}-${Date.now().toString()}`)
+                } else {
+                    set('group', id, 'visible', visibility === 'true')
                 }
             }
 
-            if ('groups' in payload) {
-                if ('show' in payload.groups) {
-                    payload.groups.show.forEach((name) => {
-                        const groupName = name.split(':')[1]
-                        const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
+            payload.groups?.show?.forEach(id => handleVisibility(id, vue.groups?.[id], 'true'))
+            payload.groups?.hide?.forEach(id => handleVisibility(id, vue.groups?.[id], 'false'))
+            payload.groups?.disable?.forEach(id => set('group', id, 'disabled', true))
+            payload.groups?.enable?.forEach(id => set('group', id, 'disabled', false))
 
-                        if (exactGroup?.groupType === 'dialog') {
-                            // we are setting dialog visibility: true
-                            setGroup(name, 'showDialog', `true-${Date.now().toString()}`)
-                        } else {
-                            // we are setting visibility: true
-                            setGroup(name, 'visible', true)
-                        }
-                    })
-                }
-                if ('hide' in payload.groups) {
-                    payload.groups.hide.forEach((name) => {
-                        const groupName = name.split(':')[1]
-                        const exactGroup = vue.groups ? Object.values(vue.groups).find(group => group.name === groupName) : null
-
-                        if (exactGroup?.groupType === 'dialog') {
-                            // we are setting dialog visibiliry: false
-                            setGroup(name, 'showDialog', `false-${Date.now().toString()}`)
-                        } else {
-                            // we are setting visibility: false
-                            setGroup(name, 'visible', false)
-                        }
-                    })
-                }
-                if ('disable' in payload.groups) {
-                    // we are setting visibility: true
-                    payload.groups.disable.forEach((name) => {
-                        setGroup(name, 'disabled', true)
-                    })
-                }
-                if ('enable' in payload.groups) {
-                    // we are setting visibility: false
-                    payload.groups.enable.forEach((name) => {
-                        setGroup(name, 'disabled', false)
-                    })
-                }
-            }
+            // Widgets
+            payload.widgets?.show?.forEach(id => set('widget', id, 'visible', true))
+            payload.widgets?.hide?.forEach(id => set('widget', id, 'visible', false))
+            payload.widgets?.disable?.forEach(id => set('widget', id, 'disabled', true))
+            payload.widgets?.enable?.forEach(id => set('widget', id, 'disabled', false))
 
             if ('url' in payload) {
                 if ('target' in payload) {
