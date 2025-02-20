@@ -127,7 +127,8 @@ export default {
             })
 
             this.$socket.emit('widget-action', this.id, {
-                payload: this.input
+                payload: this.input,
+                _event: 'submit'
             })
             if (this.props.resetOnSubmit) {
                 this.reset()
