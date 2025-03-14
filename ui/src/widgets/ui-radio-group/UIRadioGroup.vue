@@ -106,7 +106,7 @@ export default {
 
             // 2. update the selected value(s)
             const payload = msg.payload
-            if (payload || payload === '') {
+            if (payload !== undefined) {
                 this.select(payload)
             }
         },
