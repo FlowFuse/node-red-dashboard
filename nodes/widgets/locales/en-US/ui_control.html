@@ -49,6 +49,11 @@
     <pre>msg.payload = {
     url: 'https://url.goes.here'
 }</pre>
+    <p>You can also specify a target to open the link in a new browser window or tab.</p>
+    <pre>msg.payload = {
+    url: 'https://url.goes.here',
+    target: '_blank'
+}</pre>
     <h3>Events List</h3>
     <p>When any browser client connects or loses connection, changes tab, or expands or collapses a group this node will emit a <code>msg</code> containing:</p>
     <ul>

@@ -1,0 +1,98 @@
+<script type="text/javascript">
+    (function () {
+        RED.nodes.registerType('ui-spacer', {
+            category: 'config',
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: 'spacer' },
+                tooltip: { value: '' },
+                order: { value: 0 },
+                width: {
+                    value: 1,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-config-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width >= 0
+                        $('#node-config-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 1 },
+                className: { value: '' }
+            },
+            inputs: 0,
+            outputs: 0,
+            hasUsers: false,
+            icon: 'font-awesome/fa-arrows-h',
+            paletteLabel: 'spacer',
+            label: function () { return `${this.name || 'spacer'} (${this.width}x${this.height})` },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                if (RED.nodes.subflow(this.z)) {
+                    // change inputs from hidden to text & display them
+                    $('#node-config-input-width').attr('type', 'text')
+                    $('#node-config-input-height').attr('type', 'text')
+                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
+                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                } else {
+                    // not in a subflow, use the elementSizer
+                    $('div.form-row.nr-db-ui-element-sizer-row').show()
+                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('#node-config-input-size').elementSizer({
+                        width: '#node-config-input-width',
+                        height: '#node-config-input-height',
+                        group: '#node-config-input-group'
+                    })
+                }
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+            },
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-spacer">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+        <input type="hidden" id="node-config-input-topicType">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-config-input-group">
+    </div>
+    <div class="form-row nr-db-ui-element-sizer-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-spacer.label.size">Size</label>
+        <button class="editor-button" id="node-config-input-size"></button>
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-spacer.label.width">Width</label>
+        <input type="hidden" id="node-config-input-width">
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-spacer.label.height">Height</label>
+        <input type="hidden" id="node-config-input-height">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-config-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
+</script>

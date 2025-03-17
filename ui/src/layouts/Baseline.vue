@@ -5,10 +5,8 @@
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>
-                <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
-                    {{ pageTitle }}<v-chip v-if="showEditingIconInAppBar" v-tooltip="`${currentEditPage.name} is in edit mode`" color="warning" :to="currentEditPage.type === 'ui-page' ? { name: currentEditPage.route.name } : null">
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-chip>
+                <template v-if="dashboard.headerContent !== 'none' && dashboard.headerContent !== false">
+                    {{ pageTitle }}
                 </template>
                 <div id="app-bar-title" />
             </v-app-bar-title>
@@ -17,7 +15,7 @@
             </template>
         </v-app-bar>
 
-        <v-main>
+        <v-main :class="{'nrdb-edit-mode': editMode}">
             <v-navigation-drawer
                 v-if="navigationStyle !== 'hidden'"
                 v-model="drawer"
@@ -194,9 +192,8 @@ export default {
             }
             return null
         },
-        showEditingIconInAppBar: function () {
-            // show the edit icon in the app bar if the page is in edit mode and the drawer is closed
-            return !!(this.currentEditPage && (this.drawer === false || this.rail === true))
+        editMode: function () {
+            return editMode.value
         }
     },
     watch: {

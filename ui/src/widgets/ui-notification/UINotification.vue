@@ -61,9 +61,13 @@ export default {
         ...mapState('data', ['messages']),
         value: function () {
             // Get the value (i.e. the notification text content) from the last input msg
-            const value = this.getProperty('message') || ''
-            // Sanetize the html to avoid XSS attacks
-            return DOMPurify.sanitize(value)
+            const value = this.messages[this.id]?.payload
+
+            // Sanetize the html to avoid XSS attacks.
+            // Allow 'style' tags to allow styling of the notification content.
+            // The FORCE_BODY is required to avoid 'style' tags (at the start of the value string) still being skipped.
+            const sanetizedValue = DOMPurify.sanitize(value, { ADD_TAGS: ['style'], FORCE_BODY: true })
+            return sanetizedValue
         },
         allowConfirm () {
             return this.getProperty('allowConfirm')

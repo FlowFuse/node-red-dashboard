@@ -1,0 +1,113 @@
+<script type="text/javascript">
+    (function () {
+        RED.nodes.registerType('ui-audio', {
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
+            defaults: {
+                group: { type: 'ui-group', required: true },
+                name: { value: '' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width >= 0
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                src: { value: ''},
+                autoplay: { value: 'off' },
+                loop: { value: 'off' },
+                muted: { value: 'off' }
+            },
+            inputs: 1,
+            outputs: 1,
+            align: 'right',
+            icon: 'font-awesome/fa-volume-up',
+            paletteLabel: 'audio',
+            label: function () { return this.name },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                if (RED.nodes.subflow(this.z)) {
+                    // change inputs from hidden to text & display them
+                    $('#node-input-width').attr('type', 'text')
+                    $('#node-input-height').attr('type', 'text')
+                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
+                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                } else {
+                    // not in a subflow, use the elementSizer
+                    $('div.form-row.nr-db-ui-element-sizer-row').show()
+                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('#node-input-size').elementSizer({
+                        width: '#node-input-width',
+                        height: '#node-input-height',
+                        group: '#node-input-group'
+                    })
+                }
+
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-audio">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-audio.label.group"></label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row nr-db-ui-element-sizer-row">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-audio.label.size"></label>
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-audio.label.width">Width</label>
+        <input type="hidden" id="node-input-width">
+    </div>
+    <div class="form-row nr-db-ui-manual-size-row">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-audio.label.height">Height</label>
+        <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row">
+        <label for="node-input-src"><i class="fa fa-globe"></i> <span data-i18n="ui-audio.label.source"></label>
+        <input type="text" id="node-input-src">
+    </div>
+    <div class="form-row">
+        <label for="node-input-autoplay"><i class="fa fa-play-circle"></i> <span data-i18n="ui-audio.label.autoplay"></label>
+        <select id="node-input-autoplay" style="width:70%;">
+            <option value="on" data-i18n="ui-audio.option.on"></option>
+            <option value="off" data-i18n="ui-audio.option.off"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-loop"><i class="fa fa-retweet"></i> <span data-i18n="ui-audio.label.loop"></label>
+        <select id="node-input-loop" style="width:70%;">
+            <option value="on" data-i18n="ui-audio.option.on"></option>
+            <option value="off" data-i18n="ui-audio.option.off"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-muted"><i class="fa fa-volume-up"></i> <span data-i18n="ui-audio.label.muted"></label>
+        <select id="node-input-muted" style="width:70%;">
+            <option value="on" data-i18n="ui-audio.option.on"></option>
+            <option value="off" data-i18n="ui-audio.option.off"></option>
+        </select>
+    </div>
+    <div class="form-tips"><b>Note</b>: Autoplay will only work after a user gesture (e.g. click on the dashboard).</span></div>
+</script>

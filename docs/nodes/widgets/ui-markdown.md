@@ -106,7 +106,7 @@ graph TD;
 
 ### Dynamic Mermaid Charts
 
-It is also possible to inject `msg` values into the mermaid chart definition using mustache templating as with the standard Makrdown definition, e.g:
+It is also possible to inject `msg` values into the mermaid chart definition using mustache templating as with the standard Markdown definition, e.g:
 
 ````md
 # Here is some Markdown

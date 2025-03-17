@@ -130,6 +130,7 @@ export default ({ mode }) => {
               text: 'Widgets',
               collapsed: false,
               items: [
+                { text: 'ui-audio', link: '/nodes/widgets/ui-audio' },
                 { text: 'ui-button', link: '/nodes/widgets/ui-button' },
                 { text: 'ui-button-group', link: '/nodes/widgets/ui-button-group' },
                 { text: 'ui-control', link: '/nodes/widgets/ui-control' },
@@ -144,6 +145,7 @@ export default ({ mode }) => {
                 { text: 'ui-number-input', link: '/nodes/widgets/ui-number-input' },
                 { text: 'ui-radio-group', link: '/nodes/widgets/ui-radio-group' },
                 { text: 'ui-slider', link: '/nodes/widgets/ui-slider' },
+                { text: 'ui-spacer', link: '/nodes/widgets/ui-spacer' },
                 { text: 'ui-switch', link: '/nodes/widgets/ui-switch' },
                 { text: 'ui-table', link: '/nodes/widgets/ui-table' },
                 { text: 'ui-template', link: '/nodes/widgets/ui-template' },

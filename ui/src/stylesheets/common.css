@@ -83,7 +83,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #eee;
+    background-color: rgb(var(--v-theme-background, 238, 238, 238)); /* Fallback to light gray (#eee) */
 }
 
 .nrdb-placeholder {
@@ -92,12 +92,13 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #222;
     text-align: center;
     padding: 1.5rem 2rem;
-    border-radius: 6px;
-    border: 1px solid #d1d1d1;
-    background-color: #fff;
+    margin: 1rem;
+    border-radius: var(--group-border-radius, 6px);
+    border: 1px solid rgb(var(--v-theme-group-outline, 209, 209, 209)); /* Fallback to light gray (#d1d1d1) */
+    color: rgb(var(--v-theme-on-group-background, 34, 34, 34)); /* Fallback to dark gray (#222) */ 
+    background-color: rgb(var(--v-theme-group-background, 255, 255, 255)); /* Fallback to white (#fff) */
 }
 
 .nrdb-placeholder img {
@@ -119,7 +120,7 @@ main {
 
 .nrdb-placeholder .status-duplicates {
     font-weight: 400;
-    color: #222;
+    color: rgb(var(--v-theme-on-surface, 34, 34, 34)); /* Fallback to dark gray (#222) */
     margin-top: 0.5rem;
 }
 
@@ -490,11 +491,21 @@ NB! supresses the gridarea for messages, but those are not in use*/
 .nrdb-ui-group.dragging {
     border-style: dashed;
 }
+.nrdb-ui-widget.dragging {
+    border-style: dashed;
+}
 
 .nrdb-ui-group.drag-start {
     opacity: 0.8;
     outline: 2px dashed black;
 }
+
+.nrdb-resizable-widget.drag-start,
+.nrdb-ui-widget.drag-start {
+    opacity: 0.8;
+    outline: 2px dashed black;
+}
+
 
 .nrdb-ui-page > .nrdb-ui-group[draggable="true"] > .v-card.resize-active {
      /*

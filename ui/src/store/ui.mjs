@@ -1,9 +1,40 @@
+/**
+ * @typedef {Object} Group
+ * @property {string} id - the group ID
+ * @property {'ui-group'} type
+ * @property {string} page - owner page ID
+ * @property {*} [*] - Other group properties
+ */
+/**
+ * @typedef {Object} Widget
+ * @property {string} id - the widget ID
+ * @property {string} type - the widget type e.g. ui-button, ui-text, ui-template
+ * @property {Object} props - the widget properties (typically the node properties)
+ * @property {Object} layout - the widget layout properties
+ * @property {Number | String} layout.order - order of the widget in the group
+ * @property {Number | String} layout.width - width of the widget in the group
+ * @property {Number | String} layout.height - height of the widget in the group
+ * @property {Object} state
+ * @property {Object} component
+ */
+/**
+ * @typedef {Object.<string, Widget>} Widgets - Widget ID to Widget lookup as per ui store state format
+ */
+/**
+ * @typedef {Array<Group>} PageGroups - Array of Group on the current given page
+ */
+/**
+ * @typedef {Object.<string, Array<Widget>} PageGroupsWidgets - Look up of Group ID to Array of Widgets for the current page
+ */
+
 // initial state
 const state = () => ({
     dashboards: null,
     pages: null,
-    groups: null,
     themes: null,
+    /** @type {Widgets} */
+    groups: null,
+    /** @type {Widgets} */
     widgets: null
 })
 
@@ -17,6 +48,11 @@ const getters = {
     },
     dashboards (state) {
         return state.dashboards
+    },
+    dashboard (state) {
+        const dashboards = Object.keys(state.dashboards)
+        const id = dashboards.length ? dashboards[0] : undefined
+        return id ? state.dashboards[id] : undefined
     },
     pages (state) {
         return state.pages
@@ -107,7 +143,6 @@ const getters = {
 
             // 4. Flatten the grouped data back into a single array
             const sorted = sortedGroups.flatMap((e) => e[1])
-            // sortData2(widgetsInGroup).map(e=>{ return {widgetorder: e.layout.order, ...{ ...(e.props.subflow ||{})}}})
             return sorted
         }
     },

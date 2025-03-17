@@ -1,0 +1,31 @@
+<script type="text/html" data-help-name="ui-audio">
+    <p>
+        Plays an audio file in the dashboard.
+    </p>
+    <p>
+        Each received <code>msg.payload</code> will contain a new source, i.e. a new audio file url.
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Source <span class="property-type">string</span></dt>
+        <dd>The source is the url where the audio file can be fetched.</dd>
+        <dt>Autoplay <span class="property-type">list</span></dt>
+        <dd>Specify whether the audio file will start playing automatically.</dd>
+        <dt>Loop <span class="property-type">list</span></dt>
+        <dd>Specify whether the audio should be looping, i.e. start playing automatically again when ended.</dd>
+        <dt>Muted <span class="property-type">list</span></dt>
+        <dd>Specify whether the audio should be muted.</dd>
+    </dl>
+    <h3>Dynamic Properties (Inputs)</h3>
+    <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
+    <dl class="message-properties">
+        <dt class="optional">src<span class="property-type">string</span></dt>
+        <dd>Override the configured audio source.</dd>
+        <dt class="optional">autoplay<span class="property-type">'on' | 'off'</span></dt>
+        <dd>Override the configured autoplay setting .</dd>
+        <dt class="optional">loop<span class="property-type">'on' | 'off'</span></dt>
+        <dd>Override the configured looping behaviour.</dd>
+        <dt class="optional">muted<span class="property-type">'on' | 'off'</span></dt>
+        <dd>Override the configured muted setting.</dd>
+    </dl>
+</script>

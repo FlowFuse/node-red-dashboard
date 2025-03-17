@@ -46,12 +46,22 @@ export default {
     },
     data () {
         return {
-            delayTimer: null,
-            textValue: null
+            delayTimer: null
         }
     },
     computed: {
         ...mapState('data', ['messages']),
+        value: {
+            get () {
+                return this.messages[this.id]?.payload
+            },
+            set (val) {
+                if (!this.messages[this.id]) {
+                    this.messages[this.id] = {}
+                }
+                this.messages[this.id].payload = val
+            }
+        },
         label: function () {
             // Sanetize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
@@ -103,20 +113,6 @@ export default {
         iconInnerPosition () {
             return this.getProperty('iconInnerPosition')
         },
-        value: {
-            get () {
-                return this.textValue
-            },
-            set (val) {
-                if (this.value === val) {
-                    return // no change
-                }
-                const msg = this.messages[this.id] || {}
-                this.textValue = val
-                msg.payload = val
-                this.messages[this.id] = msg
-            }
-        },
         validation: function () {
             if (this.type === 'email') {
                 return [v => !v || /^[^\s@]+@[^\s@]+$/.test(v) || 'E-mail must be valid']
@@ -127,33 +123,9 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-            // make sure our v-model is updated to reflect the value from Node-RED
-            if (msg.payload !== undefined) {
-                this.textValue = msg.payload
-            }
-        },
-        onLoad (msg) {
-            if (msg) {
-                // update vuex store to reflect server-state
-                this.$store.commit('data/bind', {
-                    widgetId: this.id,
-                    msg
-                })
-                // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
-                    this.textValue = msg.payload
-                }
-            }
-        },
         send: function () {
             this.$socket.emit('widget-change', this.id, this.value)
         },

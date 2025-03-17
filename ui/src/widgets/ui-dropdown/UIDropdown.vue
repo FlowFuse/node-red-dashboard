@@ -4,6 +4,7 @@
         :multiple="multiple" :chips="chips" :clearable="clearable" :items="options" item-title="label"
         item-value="value" variant="outlined" hide-details="auto" auto-select-first
         :error-messages="options?.length ? '' : 'No options available'" @update:model-value="onChange"
+        @blur="onBlur"
     >
         <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -14,7 +15,7 @@
         v-else v-model="value" :disabled="!state.enabled" :class="className" :multiple="multiple"
         :chips="chips" :clearable="clearable" :items="options" item-title="label" item-value="value" variant="outlined"
         hide-details="auto" :error-messages="options?.length ? '' : 'No options available'"
-        @update:model-value="onChange"
+        @update:model-value="onChange" @blur="onBlur"
     >
         <template #label>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -85,7 +86,7 @@ export default {
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties)
+        this.$dataTracker(this.id, null, this.onLoad, this.onDynamicProperties, this.onSync)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
@@ -131,6 +132,17 @@ export default {
                 this.updateDynamicProperty('multiple', updates.multiple)
                 this.updateDynamicProperty('chips', updates.chips)
                 this.updateDynamicProperty('clearable', updates.clearable)
+                this.updateDynamicProperty('msgTrigger', updates.msgTrigger)
+            }
+        },
+        onSync (msg) {
+            // update the UI with any changes
+            if (typeof msg?.payload !== 'undefined') {
+                if (this.typeIsComboBox) {
+                    this.value = this.options.find((o) => o.value === msg.payload)
+                } else {
+                    this.value = msg.payload
+                }
             }
         },
         onChange () {
@@ -144,7 +156,7 @@ export default {
                     }
                     return option.value
                 })
-            } else if (this.value) {
+            } else if (typeof this.value !== 'undefined') {
                 // return a single value
                 if (this.props.typeIsComboBox === false) {
                     msg.payload = this.value
@@ -159,7 +171,19 @@ export default {
                 widgetId: this.id,
                 msg
             })
-            this.$socket.emit('widget-change', this.id, msg.payload)
+
+            const msgTrigger = this.getProperty('msgTrigger') || 'onChange'
+            if (msgTrigger === 'onChange') {
+                this.$socket.emit('widget-change', this.id, msg.payload)
+            }
+        },
+        onBlur () {
+            // The onBlur event is triggered when an element loses focus (e.g. when being closed),
+            // which can be used as an indicator that the user has finished interacting with the dropdown.
+            if (this.getProperty('msgTrigger') === 'onClose') {
+                const msg = this.messages[this.id] || {}
+                this.$socket.emit('widget-change', this.id, msg.payload)
+            }
         },
         select (value) {
             if (value !== undefined) {

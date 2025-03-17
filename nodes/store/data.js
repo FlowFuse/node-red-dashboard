@@ -38,6 +38,16 @@ function canSaveInStore (base, node, msg) {
     return checks.length === 0 || !checks.includes(false)
 }
 
+// Strip msg of properties that are not needed for storage
+function stripMsg (msg) {
+    const newMsg = config.RED.util.cloneMessage(msg)
+
+    // don't need to store ui_updates in the datastore, as this is handled in statestore
+    delete newMsg.ui_update
+
+    return newMsg
+}
+
 const getters = {
     RED () {
         return config.RED
@@ -75,7 +85,11 @@ const setters = {
             data[node.id] = filtered
         } else {
             if (canSaveInStore(base, node, msg)) {
-                data[node.id] = config.RED.util.cloneMessage(msg)
+                const newMsg = stripMsg(msg)
+                data[node.id] = {
+                    ...data[node.id],
+                    ...newMsg
+                }
             }
         }
     },

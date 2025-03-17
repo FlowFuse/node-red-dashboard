@@ -8,6 +8,11 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
     import WidgetGrid from '../components/WidgetGrid.vue'
 
     const general = [{
+        name: 'Audio',
+        widget: 'ui-audio',
+        image: '/images/node-examples/ui-audio.png',
+        description: 'Adds a audio player to your dashboard.'
+    }, {
         name: 'Button',
         widget: 'ui-button',
         image: '/images/node-examples/ui-button.png',
@@ -32,6 +37,10 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
         widget: 'ui-text',
         image: '/images/node-examples/ui-text.png',
         description: 'Displays a non-editable text field on your dashboard.'
+    }, {
+        name: 'Spacer',
+        widget: 'ui-spacer',
+        description: 'Adds a simple spacer to your group.'
     }]
 
     const form = [{

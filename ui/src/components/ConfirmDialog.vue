@@ -2,8 +2,8 @@
     <v-dialog v-model="visible" max-width="500">
         <v-card :title="title" :text="message" :prepend-icon="icon">
             <v-card-actions>
-                <v-btn v-if="cancelButton !== null" variant="flat" color="primary" @click="_cancel">{{ cancelButton }}</v-btn>
-                <v-btn v-if="okButton !== null" variant="flat" color="warning" @click="_confirm">{{ okButton }}</v-btn>
+                <v-btn v-if="cancelButton !== null" variant="outlined" color="red" @click="_cancel">{{ cancelButton }}</v-btn>
+                <v-btn v-if="okButton !== null" variant="outlined" color="green-darken-2" @click="_confirm">{{ okButton }}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

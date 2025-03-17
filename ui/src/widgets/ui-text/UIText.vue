@@ -19,18 +19,19 @@ export default {
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
+    data () {
+        return {
+            textValue: ''
+        }
+    },
     computed: {
         ...mapState('data', ['messages', 'properties']),
         value: function () {
-            const p = this.getProperty('payload') || ''
-            if (p) {
-                // Sanetize the html to avoid XSS attacks
-                return DOMPurify.sanitize(p)
-            }
-            return ''
+            const p = this.getProperty('payload')
+            return this.purify(p)
         },
         label () {
-            // Sanetize the html to avoid XSS attacks
+            // Sanitize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
@@ -65,6 +66,13 @@ export default {
             this.updateDynamicProperty('fontSize', updates.fontSize)
             this.updateDynamicProperty('color', updates.color)
             this.updateDynamicProperty('payload', updates.payload)
+        },
+        purify (payload) {
+            if (typeof payload === 'string') {
+                return DOMPurify.sanitize(payload, { ADD_ATTR: ['target'] })
+            } else {
+                return payload
+            }
         }
     }
 }

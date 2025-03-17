@@ -7,7 +7,7 @@
             "icon": "Icon",
             "theme": "Theme",
             "layout": "Layout",
-            "wysiwyg": "Editor",
+            "editLayout": "Edit Layout",
             "grid": "Grid",
             "fixed": "Fixed",
             "tabs": "Tabs",

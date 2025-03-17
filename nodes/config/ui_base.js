@@ -1,3 +1,4 @@
+const { Agent } = require('https')
 const path = require('path')
 
 const axios = require('axios')
@@ -62,9 +63,32 @@ module.exports = function (RED) {
             config.acceptsClientConfig = ['ui-control', 'ui-notification']
         }
 
+        // for those upgrading, we need these for backwards compatibility
         if (!('includeClientData' in config)) {
-            // for those upgrading, we need this for backwards compatibility
             config.includeClientData = true
+        }
+
+        if (!('showReconnectNotification' in config)) {
+            config.showReconnectNotification = true
+        }
+
+        if (!('showDisconnectNotification' in config)) {
+            config.showDisconnectNotification = true
+        }
+
+        if (!('notificationDisplayTime' in config)) {
+            config.notificationDisplayTime = 5 // Show for 5 seconds
+        }
+
+        // The headerContent replaces the old (boolean) showPageTitle
+        if (!('headerContent' in config)) {
+            const showPageTitle = ('showPageTitle' in config) ? config.showPageTitle : true
+
+            if (showPageTitle) {
+                config.headerContent = 'page'
+            } else {
+                config.headerContent = 'none'
+            }
         }
 
         // expose these properties at runtime
@@ -356,9 +380,9 @@ module.exports = function (RED) {
          * @param {Object} msg
          * @param {Object} wNode - the Node-RED node that is emitting the event
          */
-        function emit (event, msg, wNode) {
+        function emit (event, msg, wNode, exclude) {
             Object.values(uiShared.connections).forEach(conn => {
-                if (canSendTo(conn, wNode, msg)) {
+                if (canSendTo(conn, wNode, msg) && (!exclude || exclude.indexOf(conn.id) === -1)) {
                     conn.emit(event, msg)
                 }
             })
@@ -652,7 +676,7 @@ module.exports = function (RED) {
 
             msg = addConnectionCredentials(RED, msg, conn, n)
 
-            async function defaultHandler (msg, value) {
+            async function defaultHandler (msg, value, conn, id) {
                 if (typeof (value) === 'object' && value !== null && hasProperty(value, 'payload')) {
                     msg.payload = value.payload
                 } else {
@@ -665,6 +689,8 @@ module.exports = function (RED) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
                 datastore.save(n, wNode, msg)
+                const exclude = [conn.id] // sync this change to all clients with the same widget
+                emit('widget-sync:' + id, msg, wNode, exclude) // let all other connect clients now about the value change
                 wNode.send(msg) // send the msg onwards
             }
 
@@ -673,7 +699,7 @@ module.exports = function (RED) {
                 // Most of the time, we can just use this default handler,
                 // but sometimes a node needs to do something specific (e.g. ui-switch)
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
-                await handler(msg, value)
+                await handler(msg, value, conn, id)
             } catch (error) {
                 console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null
@@ -748,7 +774,7 @@ module.exports = function (RED) {
             // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
             // Node-RED built nodes will be a random UUID
             if (!wNode && !id.startsWith('ui-')) {
-                console.log('widget does not exist any more')
+                console.log('widget does not exist in the runtime', id) // TODO: Handle this better for edit-time added nodes (e.g. ui-spacer)
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
@@ -923,9 +949,9 @@ module.exports = function (RED) {
                     type: widgetConfig.type,
                     props: widgetConfig,
                     layout: {
-                        width: widgetConfig.width || 3,
-                        height: widgetConfig.height || 1,
-                        order: widgetConfig.order || 0
+                        width: widgetConfig.width || 3, // default width of 3: this must match up with defaults in wysiwyg editing
+                        height: widgetConfig.height || 1, // default height of 1: this must match up with defaults in wysiwyg editing
+                        order: widgetConfig.order || 0 // default order of 0: this must match up with defaults in wysiwyg editing
                     },
                     typedInputs: widgetOptions.typedInputs,
                     dynamicProperties: widgetOptions.dynamicProperties,
@@ -1088,9 +1114,6 @@ module.exports = function (RED) {
                         } else {
                             // msg could be null if the beforeSend errors and returns null
                             if (msg) {
-                                // store the latest msg passed to node
-                                datastore.save(n, widgetNode, msg)
-
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
@@ -1182,7 +1205,26 @@ module.exports = function (RED) {
         const host = RED.settings.uiHost
         const port = RED.settings.uiPort
         const httpAdminRoot = RED.settings.httpAdminRoot
-        const url = 'http://' + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        let scheme = 'http://'
+        let httpsAgent
+        if (RED.settings.https) {
+            let https = RED.settings.https
+            try {
+                if (typeof https === 'function') {
+                    // since https() could return a promise / be async, we need to await it
+                    // if however the function is actually sync, JS will auto wrap it in a promise and await it
+                    https = await https()
+                }
+                httpsAgent = new Agent({
+                    rejectUnauthorized: false,
+                    ...(https || {})
+                })
+                scheme = 'https://'
+            } catch (error) {
+                return res.status(500).json({ error: 'Error processing https settings' })
+            }
+        }
+        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
@@ -1190,11 +1232,16 @@ module.exports = function (RED) {
         const changes = req.body.changes || {}
         const editKey = req.body.key
         const groups = changes.groups || []
+        const allWidgets = (changes.widgets || [])
+        const updatedWidgets = allWidgets.filter(w => !w.__DB2_ADD_WIDGET && !w.__DB2_REMOVE_WIDGET)
+        const addedWidgets = allWidgets.filter(w => !!w.__DB2_ADD_WIDGET).map(w => { delete w.__DB2_ADD_WIDGET; return w })
+        const removedWidgets = allWidgets.filter(w => !!w.__DB2_REMOVE_WIDGET).map(w => { delete w.__DB2_REMOVE_WIDGET; return w })
+
         console.log(changes, editKey, dashboardId)
         const baseNode = RED.nodes.getNode(dashboardId)
 
         // validity checks
-        if (groups.length === 0) {
+        if (groups.length === 0 && allWidgets.length === 0) {
             // this could be a 200 but since the group data might be missing due to
             // a bug or regression, we'll return a 400 and let the user know
             // there were no changes provided.
@@ -1215,6 +1262,32 @@ module.exports = function (RED) {
         for (const modified of groups) {
             if (modified.page !== baseNode.ui.meta.wysiwyg.page) {
                 return res.status(400).json({ error: 'Invalid page id' })
+            }
+        }
+
+        for (const widget of updatedWidgets) {
+            const existingWidget = baseNode.ui.widgets.get(widget.id)
+            if (!existingWidget) {
+                return res.status(400).json({ error: 'Widget not found' })
+            }
+        }
+
+        for (const added of addedWidgets) {
+            // for now, only ui-spacer is supported
+            if (added.type !== 'ui-spacer') {
+                return res.status(400).json({ error: 'Cannot add this kind of widget' })
+            }
+
+            // check if the widget is being added to a valid group
+            const group = baseNode.ui.groups.get(added.group)
+            if (!group) {
+                return res.status(400).json({ error: 'Invalid group id' })
+            }
+        }
+        for (const removed of removedWidgets) {
+            // for now, only ui-spacer is supported
+            if (removed.type !== 'ui-spacer') {
+                return res.status(400).json({ error: 'Cannot remove this kind of widget' })
             }
         }
 
@@ -1251,14 +1324,20 @@ module.exports = function (RED) {
             }
             return false
         }
-        let rev = null
-        return axios.request({
-            method: 'GET',
-            headers: getHeaders,
-            url
-        }).then(response => {
-            const flows = response.data?.flows || []
-            rev = response.data?.rev
+        try {
+            const getResponse = await axios.request({
+                method: 'GET',
+                headers: getHeaders,
+                httpsAgent,
+                url
+            })
+
+            if (getResponse.status !== 200) {
+                return res.status(getResponse.status).json({ error: getResponse?.data?.message || 'An error occurred getting flows', code: 'GET_FAILED' })
+            }
+
+            const flows = getResponse.data?.flows || []
+            const rev = getResponse.data?.rev
             const changeResult = []
             for (const modified of groups) {
                 const current = flows.find(n => n.id === modified.id)
@@ -1273,28 +1352,81 @@ module.exports = function (RED) {
                 changeResult.push(applyIfDifferent(current, modified, 'width'))
                 changeResult.push(applyIfDifferent(current, modified, 'order'))
             }
-            if (changeResult.length === 0 || !changeResult.includes(true)) {
-                return res.status(200).json({ message: 'No changes were' })
+            // scan through the widgets and apply changes (if any)
+            for (const modified of updatedWidgets) {
+                const current = flows.find(n => n.id === modified.id)
+                if (!current) {
+                    // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
+                }
+                if (modified.group !== current.group) {
+                    // integrity of data suspect! Has flow changed on the server?
+                    // Currently we dont support moving widgets between groups
+                    return res.status(400).json({ error: 'Invalid group id', code: 'INVALID_GROUP_ID' })
+                }
+                changeResult.push(applyIfDifferent(current, modified, 'order'))
+                changeResult.push(applyIfDifferent(current, modified, 'width'))
+                changeResult.push(applyIfDifferent(current, modified, 'height'))
             }
-            return flows
-        }).then(flows => {
-            // update the flows with the new group order
-            return axios.request({
+
+            // scan through the added widgets
+            for (const added of addedWidgets) {
+                const current = flows.find(n => n.id === added.id)
+                if (current) {
+                    // widget already exists in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget already exists', code: 'WIDGET_ALREADY_EXISTS' })
+                }
+                // sanitize the added widget (NOTE: only ui-spacer is supported for now & these are the only properties we care about)
+                const newWidget = {
+                    id: added.id,
+                    type: added.type,
+                    group: added.group,
+                    name: added.name || '',
+                    order: added.order ?? 0,
+                    width: added.width ?? 1,
+                    height: added.height ?? 1,
+                    className: added.className || ''
+                }
+                flows.push(newWidget)
+                changeResult.push(true)
+            }
+            for (const removed of removedWidgets) {
+                const current = flows.find(n => n.id === removed.id)
+                if (!current) {
+                    // widget not found in current flows! integrity of data suspect! Has flows changed on the server?
+                    return res.status(400).json({ error: 'Widget not found', code: 'WIDGET_NOT_FOUND' })
+                }
+                const index = flows.indexOf(current)
+                if (index > -1) {
+                    flows.splice(index, 1)
+                    changeResult.push(true)
+                }
+            }
+            if (changeResult.length === 0 || !changeResult.includes(true)) {
+                return res.status(201).json({ message: 'No changes were found', code: 'NO_CHANGES' })
+            }
+
+            const postResponse = await axios.request({
                 method: 'POST',
                 headers: postHeaders,
+                httpsAgent,
                 url,
                 data: {
                     flows,
                     rev
                 }
             })
-        }).then(response => {
-            return res.status(200).json(response.data)
-        }).catch(error => {
+
+            if (postResponse.status !== 200) {
+                return res.status(postResponse.status).json({ error: postResponse?.data?.message || 'An error occurred deploying flows', code: 'POST_FAILED' })
+            }
+
+            return res.status(postResponse.status).json(postResponse.data)
+        } catch (error) {
             console.error(error)
             const status = error.response?.status || 500
-            return res.status(status).json({ error: error.message })
-        })
+            return res.status(status).json({ error: error.message || 'An error occurred' })
+        }
     })
 
     // PATCH: /dashboard/api/v1/:dashboardId/edit/:pageId - start editing a page

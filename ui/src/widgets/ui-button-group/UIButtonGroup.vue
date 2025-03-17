@@ -2,13 +2,14 @@
     <div class="nrdb-ui-button-group-wrapper">
         <!-- eslint-disable-next-line vue/no-v-html -->
         <label v-if="label" class="v-label" v-html="label" />
-        <v-btn-toggle v-model="selection" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
+        <v-btn-toggle v-model="selection" class="d-flex flex-wrap" mandatory divided :rounded="props.rounded ? 'xl' : ''" :color="selectedColor" :disabled="!state.enabled" @update:model-value="onChange(selection)">
             <v-btn v-for="option in options" :key="option.value" :value="option.value">
                 <template v-if="option.icon && option.label !== undefined && option.label !== ''" #prepend>
                     <v-icon size="x-large" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" />
                 </template>
                 <v-icon v-if="option.icon && !option.label" :icon="`mdi-${option.icon.replace(/^mdi-/, '')}`" size="x-large" />
-                {{ option.label }}
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <span v-html="option.label" />
             </v-btn>
         </v-btn-toggle>
     </div>
@@ -25,11 +26,6 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
-    },
-    data () {
-        return {
-            selection: null
-        }
     },
     computed: {
         ...mapState('data', ['messages']),
@@ -52,60 +48,44 @@ export default {
             if (options) {
                 return options.map(option => {
                     if (typeof option === 'string') {
-                        return { label: option, value: option }
+                        return { label: DOMPurify.sanitize(option), value: option }
                     } else {
+                        option.label = DOMPurify.sanitize(option.label)
                         return option
                     }
                 })
             }
             return options
+        },
+        selection: {
+            get () {
+                const msg = this.messages[this.id]
+                let selection = null
+                if (msg) {
+                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
+                        selection = null
+                    } else if (this.findOptionByValue(msg.payload) !== null) {
+                        selection = msg.payload
+                    }
+                }
+                return selection
+            },
+            set (value) {
+                if (!this.messages[this.id]) {
+                    this.messages[this.id] = {}
+                }
+                this.messages[this.id].payload = value
+            }
         }
     },
     created () {
         // can't do this in setup as we are using custom onInput function that needs access to 'this'
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperty)
+        this.$dataTracker(this.id, null, null, this.onDynamicProperty, null)
 
         // let Node-RED know that this widget has loaded
         this.$socket.emit('widget-load', this.id)
     },
     methods: {
-        onInput (msg) {
-            // update our vuex store with the value retrieved from Node-RED
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-
-            // make sure our v-model is updated to reflect the value from Node-RED
-            if (msg.payload !== undefined) {
-                if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                    this.selection = null
-                } else {
-                    if (this.findOptionByValue(msg.payload) !== null) {
-                        this.selection = msg.payload
-                    }
-                }
-            }
-        },
-        onLoad (msg) {
-            if (msg) {
-                // update vuex store to reflect server-state
-                this.$store.commit('data/bind', {
-                    widgetId: this.id,
-                    msg
-                })
-                // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
-                    if (Array.isArray(msg.payload) && msg.payload.length === 0) {
-                        this.selection = null
-                    } else {
-                        if (this.findOptionByValue(msg.payload) !== null) {
-                            this.selection = msg.payload
-                        }
-                    }
-                }
-            }
-        },
         onDynamicProperty (msg) {
             const updates = msg.ui_update
             if (updates) {
@@ -154,6 +134,7 @@ export default {
     width: max-content;
     border-width: thin;
     border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+    min-height: fit-content;
 }
 /* default styling for an unselected option */
 .nrdb-ui-button-group-wrapper .v-btn--variant-elevated {

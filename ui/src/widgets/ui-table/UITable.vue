@@ -1,4 +1,5 @@
 <template>
+    <label v-if="props.label" ref="title" class="nrdb-ui-table-title">{{ props.label }}</label>
     <v-text-field
         v-if="props.showSearch"
         v-model="search"
@@ -155,6 +156,9 @@ export default {
         this.updateIsMobile()
         window.addEventListener('resize', this.updateIsMobile)
     },
+    unmounted () {
+        window.removeEventListener('resize', this.updateIsMobile)
+    },
     methods: {
         formatPayload (value) {
             if (value !== null && typeof value !== 'undefined') {
@@ -169,6 +173,7 @@ export default {
             if (this.props.action === 'append') {
                 this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
             } else {
+                this.selected = null
                 this.localData = value
             }
 
@@ -188,7 +193,7 @@ export default {
         calculatePaginatedRows () {
             if (this.itemsPerPage > 0) {
                 this.pagination.pages = Math.ceil(this.localData?.length / this.props.maxrows)
-                this.pagination.rows = this.localData.slice(
+                this.pagination.rows = (this.localData || []).slice(
                     (this.pagination.page - 1) * this.props.maxrows,
                     (this.pagination.page) * this.props.maxrows
                 )
@@ -254,9 +259,6 @@ export default {
             }
             return true
         }
-    },
-    unounted () {
-        window.removeEventListener('resize', this.updateIsMobile)
     }
 }
 </script>
@@ -324,5 +326,12 @@ export default {
 .nrdb-table--mobile .v-data-table__tr--mobile>td:not(:last-child) {
     --mobile-border-opacity: calc(var(--v-border-opacity) * 0.5);
     border-bottom: thin solid rgba(var(--v-border-color), var(--mobile-border-opacity)) !important;
+}
+.nrdb-ui-table-title {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+    padding-bottom: 4px;
 }
 </style>

@@ -56,6 +56,8 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
     ```bash
     npm run build
     ```
+   Alternatively, use `npm run build:dev` to build a developer version or use `npm run dev` to build a developer version and watch for changes (hot reload)
+
 
 ### Install into Node-RED
 

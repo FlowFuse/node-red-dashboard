@@ -2,7 +2,7 @@
 description: Notify users of important updates and alerts with ui-notification in Node-RED Dashboard 2.0.
 props:
     UI: Unlike most widgets, notifications are owned by a "UI", not Group. This allows for notifications to be displayed across all pages.
-    Position: The position on the screen whethere the notification will appear.
+    Position: The position on the screen where the the notification will appear.
     Color: The color that should be used for the notification border.
     Timeout: Number of seconds before the notification will automatically close.
     Show Countdown Bar: Whether or not to show a reducing progress bar to indicate the time remaining before the notification will close.
@@ -43,12 +43,13 @@ dynamic:
     Accept raw html:
         payload: msg.ui_update.raw
         structure: ["Boolean"]
-    Show:
-        payload: msg.ui_update.show
-        structure: ["Boolean"]
     Show countdown bar:
         payload: msg.ui_update.showCountdown
         structure: ["Boolean"]
+controls:
+    show:
+        example: true | false
+        description: Allow control over whether or not the notification is visible.
 ---
 
 <script setup>
@@ -71,6 +72,10 @@ If you want to have the notification show indefinitely, you can set `timeout` to
 ## Dynamic Properties
 
 <DynamicPropsTable/>
+
+## Controls
+
+<ControlsTable/>
 
 ## Example
 

@@ -1,6 +1,27 @@
 <template>
     <v-app>
-        <div v-if="loading" class="nrdb-splash-loading">
+        <div v-if="error" class="nrdb-placeholder-container">
+            <div class="nrdb-placeholder">
+                <img src="./assets/logo.png">
+                <h1>Node-RED Dashboard 2.0</h1>
+                <img src="./assets/disconnected.png">
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p :class="'status-warning'" v-html="error.message" />
+                <br>
+                <h4>What you can try:</h4>
+                <div v-if="error.type === 'server unreachable'" style="border: none" class="nrdb-placeholder">
+                    <v-btn rounded @click="reloadApp">
+                        Reload App
+                    </v-btn>
+                </div>
+                <div v-else-if="error.type === 'no internet'" style="border: none" class="nrdb-placeholder">
+                    <v-btn rounded @click="reloadApp">
+                        Reload App
+                    </v-btn>
+                </div>
+            </div>
+        </div>
+        <div v-else-if="loading" class="nrdb-splash-loading">
             <DashboardLoading />
             Loading...
         </div>
@@ -43,7 +64,8 @@ export default {
     },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
-        ...mapState('setup', ['setup']),
+        ...mapState('setup', ['setup', 'error']),
+
         status: function () {
             if (this.dashboards) {
                 const dashboards = Object.keys(this.dashboards)
@@ -120,7 +142,7 @@ export default {
         }
     },
     created () {
-        this.$socket.on('ui-config', (topic, payload) => {
+        this.$socket?.on('ui-config', (topic, payload) => {
             this.loading = false
             console.log('ui-config received. topic:', topic, 'payload:', payload)
 
@@ -163,12 +185,19 @@ export default {
                     const route = (this.setup.basePath + page.path).replace(/\/\//g, '/')
 
                     const routeName = 'Page:' + page.name
+                    let title = page.name
+                    const headerStyle = payload.dashboards[page.ui].headerContent
+                    if (headerStyle === 'dashboard') {
+                        title = payload.dashboards[page.ui].name
+                    } else if (headerStyle === 'dashpage') {
+                        title = `${payload.dashboards[page.ui].name} (${page.name})`
+                    }
                     this.$router?.addRoute({
                         path: route,
                         name: routeName,
                         component: layouts[page.layout],
                         meta: {
-                            title: page.name, // the page name
+                            title, // the page name
                             id: page.id, // the pages id
                             dashboard: page.ui // the dashboard id - to simplify determining which dashboard we're on
                         }
@@ -223,6 +252,15 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
+
+            for (const key in payload.themes) {
+                // check if "Default Theme" theme exists
+                if (payload.themes[key].name === 'Default Theme') {
+                    // store the default theme in local storage for use when disconnected from Node-RED
+                    localStorage.setItem('ndrb-theme-default', JSON.stringify(payload.themes[key]))
+                    break
+                }
+            }
         })
     },
     methods: {
@@ -233,6 +271,9 @@ export default {
             this.$router.push({
                 name
             })
+        },
+        reloadApp () {
+            location.reload()
         }
     }
 }

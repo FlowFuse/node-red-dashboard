@@ -1,0 +1,22 @@
+{
+    "ui-slider": {
+        "label": {
+            "name": "Name",
+            "group": "Group",
+            "size": "Size",
+            "class": "Class",
+            "label": "Label",
+            "thumb": "Thumb",
+            "ticks": "Ticks",
+            "range": "Range",
+            "min": "min.",
+            "max": "max.",
+            "step": "step",
+            "icons": "Icons",
+            "color": "Color",
+            "outputs": "Output",
+            "show": "Show",
+            "textField": "Text Field"
+        }
+    }
+}

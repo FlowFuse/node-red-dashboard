@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.18.1",
+    "version": "1.22.1",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -19,6 +19,10 @@
         {
             "name": "Pez Cuckow",
             "url": "https://github.com/pezmc"
+        },
+        {
+            "name": "Steve McLaughlin",
+            "url": "https://github.com/Steve-Mcl"
         },
         {
             "name": "FlowFuse",
@@ -59,7 +63,7 @@
         "core-js": "^3.32.0",
         "d3": "^7.8.5",
         "escodegen": "^2.1.0",
-        "express": "^4.19.2",
+        "express": "^4.21.2",
         "socket.io": "^4.7.1",
         "vue": "^3.4.5"
     },
@@ -132,12 +136,14 @@
             "ui-dropdown": "nodes/widgets/ui_dropdown.js",
             "ui-radio-group": "nodes/widgets/ui_radio_group.js",
             "ui-slider": "nodes/widgets/ui_slider.js",
+            "ui-spacer": "nodes/widgets/ui_spacer.js",
             "ui-switch": "nodes/widgets/ui_switch.js",
             "ui-text": "nodes/widgets/ui_text.js",
             "ui-table": "nodes/widgets/ui_table.js",
             "ui-chart": "nodes/widgets/ui_chart.js",
             "ui-gauge": "nodes/widgets/ui_gauge.js",
             "ui-notification": "nodes/widgets/ui_notification.js",
+            "ui-audio": "nodes/widgets/ui_audio.js",
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
