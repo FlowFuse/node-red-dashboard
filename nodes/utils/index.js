@@ -175,7 +175,7 @@ async function evaluateTypedInputs (RED, config, wNode, msg, typedInputs) {
         nodePropertyType = typeof nodePropertyType !== 'string' ? `${nodeProperty}Type` : nodePropertyType
         if (name && config?.[nodeProperty]) {
             try {
-                result.updates[name] = await asyncEvaluateNodeProperty(RED, config[nodeProperty], (nodePropertyType && config[nodePropertyType]) || 'str', wNode, msg) || ''
+                result.updates[name] = await asyncEvaluateNodeProperty(RED, config[nodeProperty], (nodePropertyType && config[nodePropertyType]) || 'str', wNode, msg) ?? ''
                 result.count++
             } catch (_err) {
                 // property not found or error evaluating - do nothing!
