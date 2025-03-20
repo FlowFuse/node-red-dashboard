@@ -1,18 +1,20 @@
 const datastore = require('../store/data.js')
-const { applyUpdates } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function TextInputNode (config) {
         // In-place upgrades - ensure properties are set
         if (typeof config.label === 'undefined') { config.label = 'text' }
         if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
+        if (typeof config.property === 'undefined') { config.property = 'payload' }
+        if (typeof config.propertyType === 'undefined') { config.propertyType = 'msg' }
 
         const node = this
-
+        // register typed inputs
         const typedInputs = {
-            label: { nodeProperty: 'label', nodePropertyType: 'labelType' }
+            label: { nodeProperty: 'label', nodePropertyType: 'labelType' },
+            payload: { nodeProperty: 'property', nodePropertyType: 'propertyType' }
         }
-        // as part of registration instead
+        // register dynamic props (ui_base will take care of storing these)
         const dynamicProperties = {
             label: true,
             mode: true,
@@ -28,10 +30,6 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const evts = {
-            beforeSend: async function (msg) {
-                msg = await applyUpdates(RED, node, msg)
-                return msg
-            },
             onInput: function (msg, send) {
                 // store the latest msg passed to node
                 datastore.save(group.getBase(), node, msg)

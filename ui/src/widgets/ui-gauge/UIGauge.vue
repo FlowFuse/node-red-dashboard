@@ -28,7 +28,7 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         value: function () {
-            return this.messages[this.id]?.payload
+            return this.getProperty('value')
         },
         label () {
             return this.getProperty('label')
@@ -105,9 +105,11 @@ export default {
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
+            this.updateDynamicProperty('value', updates.value)
         },
         onInput (msg) {
-            if (typeof msg.payload !== 'undefined') {
+            const payload = this.getProperty('value')
+            if (typeof payload !== 'undefined') {
                 this.$store.commit('data/bind', {
                     widgetId: this.id,
                     msg

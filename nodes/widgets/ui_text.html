@@ -92,6 +92,8 @@
                 name: { value: '' },
                 label: { value: 'text' },
                 labelType: { value: 'str' },
+                property: { value: 'payload' },
+                propertyType: { value: 'msg' },
                 format: { value: '{{msg.payload}}' },
                 layout: { value: 'row-spread' },
                 style: { value: false },
@@ -99,24 +101,29 @@
                 fontSize: { value: 16 },
                 color: { value: '#717171' },
                 wrapText: { value: false },
-                className: { value: '' },
-                property: { value: 'payload' },
-                propertyType: { value: 'msg' }
+                className: { value: '' }
             },
             inputs: 1,
             outputs: 0,
             align: 'right',
             icon: 'font-awesome/fa-font',
             paletteLabel: 'text',
-            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'text' },
+            label: function () {
+                if (this.name) {
+                    return this.name
+                }
+                if (this.labelType === 'str' && this.label) {
+                    return this.label
+                }
+                return 'text'
+            },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 // In-place upgrades - ensure new properties are set to default values
-                if (!$('#node-input-label').val() && !$('#node-input-label').val()) {
-                    $('#node-input-label').val(this.label || 'text')
+                if (!$('#node-input-labelType').val()) {
                     $('#node-input-labelType').val(this.labelType || 'str')
                 }
-                if (!$('#node-input-property').val() && !$('#node-input-property').val()) {
+                if (!$('#node-input-property').val() && !$('#node-input-propertyType').val()) {
                     $('#node-input-property').val(this.property || 'payload')
                     $('#node-input-propertyType').val(this.propertyType || 'msg')
                 }
@@ -245,29 +252,29 @@
 
 <script type="text/html" data-template-name="ui-text">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-text.label.group"></label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-text.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row">
-        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.value">Value</label>
-        <input type="hidden" id="node-input-propertyType">
-        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
-    </div>
     <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-text.label.size"></label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-text.label.size"></span></label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-text.label.width">Width</label>
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-text.label.width">Width</span></label>
         <input type="hidden" id="node-input-width">
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-text.label.height">Height</label>
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-text.label.height">Height</span></label>
         <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row">
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.inputProperty"></span></label>
+        <input type="hidden" id="node-input-propertyType">
+        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-text.label.label"></label>
@@ -292,11 +299,11 @@
         <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
     </div>-->
     <div class="form-row">
-        <label for="node-input-wrapText"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.wrapText"></label>
+        <label for="node-input-wrapText"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.wrapText"></span></label>
         <input type="checkbox" id="node-input-wrapText" style="width: auto">
     </div>
     <div class="form-row">
-        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span data-i18n="ui-text.label.layout"></label>
+        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span data-i18n="ui-text.label.layout"></span></label>
         <div style="display:inline-block">
             <input type="hidden" id="node-input-layout">
             <input type="hidden" id="node-input-layoutAlign" >
@@ -340,17 +347,17 @@
 
     <div id="node-styles">
         <div class="form-row">
-            <label for="node-input-font"><i class="fa fa-font"></i> <span data-i18n="ui-text.label.font"></label>
+            <label for="node-input-font"><i class="fa fa-font"></i> <span data-i18n="ui-text.label.font"></span></label>
             <select id="node-select-font">
             </select>
             <input type="hidden" id="node-input-font"/>
         </div>
         <div class="form-row">
-            <label for="node-input-fontSize"><i class="fa fa-text-height"></i>  <span data-i18n="ui-text.label.textSize"></label>
+            <label for="node-input-fontSize"><i class="fa fa-text-height"></i>  <span data-i18n="ui-text.label.textSize"></span></label>
             <input id="node-input-fontSize" value="16" style="width: 50px;"/>
         </div>
         <div class="form-row">
-            <label for="node-input-color"><i class="fa fa-tint"></i> <span data-i18n="ui-text.label.textColor"></label>
+            <label for="node-input-color"><i class="fa fa-tint"></i> <span data-i18n="ui-text.label.textColor"></span></label>
             <input type="color" id="node-input-color" style="width: 50px;"/>
         </div>
         <div class="form-row">

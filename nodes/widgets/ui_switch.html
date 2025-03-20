@@ -9,6 +9,9 @@
             defaults: {
                 name: { value: '' },
                 label: { value: 'switch' },
+                labelType: { value: 'str' },
+                property: { value: 'payload' },
+                propertyType: { value: 'msg' },
                 // tooltip: {value: ''},
                 group: { type: 'ui-group', required: true },
                 order: { value: 0 },
@@ -47,14 +50,41 @@
             outputs: 1,
             icon: 'font-awesome/fa-toggle-on',
             paletteLabel: 'switch',
-            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'switch' },
+            label: function () {
+                if (this.name) {
+                    return this.name
+                }
+                if (this.labelType === 'str' && this.label) {
+                    return this.label
+                }
+                return 'switch'
+            },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 // Migration of older nodes without clickableArea
                 if (!this.clickableArea) {
                     $('#node-input-clickableArea').val('switch')
                 }
-
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-labelType').val()) {
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
+                if (!$('#node-input-property').val() && !$('#node-input-propertyType').val()) {
+                    $('#node-input-property').val(this.property || 'payload')
+                    $('#node-input-propertyType').val(this.propertyType || 'msg')
+                }
+                // label
+                $('#node-input-label').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-labelType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+                // input payload
+                $('#node-input-property').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-propertyType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -91,13 +121,13 @@
                 $('#node-input-onvalue').typedInput({
                     default: 'str',
                     typeField: $('#node-input-onvalueType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global', 'jsonata']
                 })
 
                 $('#node-input-offvalue').typedInput({
                     default: 'str',
                     typeField: $('#node-input-offvalueType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global', 'jsonata']
                 })
 
                 $('#node-input-topic').typedInput({
@@ -184,8 +214,14 @@
         <input type="hidden" id="node-input-height">
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
-        <input type="text" id="node-input-label">
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-switch.label.inputProperty">Input</label>
+        <input type="hidden" id="node-input-propertyType">
+        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-font"></i> <span data-i18n="ui-switch.label.label">Label</span></label>
+        <input type="hidden" id="node-input-labelType">
+        <input type="text" id="node-input-label" style="width: 70%;">
     </div>
     <div class="form-row">
         <label for="node-input-clickableArea"><i class="fa fa-hand-pointer-o"></i> Clickable</label>

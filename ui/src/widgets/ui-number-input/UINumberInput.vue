@@ -107,7 +107,7 @@ export default {
         },
         value: {
             get () {
-                const val = this.messages[this.id]?.payload
+                const val = this.getProperty('payload')
                 if (val === null || val === undefined || val === '') {
                     return val
                 } else {
@@ -118,6 +118,7 @@ export default {
                 if (this.value === val) {
                     return // no change
                 }
+                this.updateDynamicProperty('payload', val)
                 const msg = this.messages[this.id] || {}
                 msg.payload = val
                 this.messages[this.id] = msg
@@ -200,6 +201,7 @@ export default {
             if (!updates) {
                 return
             }
+            this.updateDynamicProperty('payload', updates.payload)
             this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('clearable', updates.clearable)
             this.updateDynamicProperty('icon', updates.icon)

@@ -41,7 +41,7 @@
             oneditprepare: function () {
                 console.log('ui-notification oneditprepare', this.message, this.messageType)
                 // In-place upgrades - ensure new properties are set to default values
-                if (!$('#node-input-message').val() && !$('#node-input-message').val()) {
+                if (!$('#node-input-message').val() && !$('#node-input-messageType').val()) {
                     $('#node-input-message').val(this.message || 'payload')
                     $('#node-input-messageType').val(this.messageType || 'msg')
                 }
