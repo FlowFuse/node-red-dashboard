@@ -55,7 +55,7 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         storeValue: function () {
-            return this.messages[this.id]?.payload
+            return this.getProperty('payload')
         },
         direction: function () {
             return this.props.height > this.props.width ? 'vertical' : 'horizontal'
@@ -135,7 +135,7 @@ export default {
         this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     mounted () {
-        const val = this.messages[this.id]?.payload
+        const val = this.getProperty('payload')
         if (typeof val !== 'undefined') {
             this.sliderValue = val
             this.textFieldValue = val
@@ -195,6 +195,7 @@ export default {
             this.updateDynamicProperty('colorTrack', updates.colorTrack)
             this.updateDynamicProperty('colorThumb', updates.colorThumb)
             this.updateDynamicProperty('showTextField', updates.showTextField)
+            this.updateDynamicProperty('payload', updates.payload)
         },
         // Validate the text field input
         validateInput () {

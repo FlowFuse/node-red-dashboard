@@ -28,17 +28,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex' // eslint-disable-line import/order
-
 import * as d3 from 'd3' // eslint-disable-line import/order
 
 export default {
     name: 'DBUIGaugeDial',
-    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
-        state: { type: Object, default: () => ({}) }
+        state: { type: Object, default: () => ({}) },
+        value: { type: Number, required: true }
     },
     data () {
         return {
@@ -63,10 +61,6 @@ export default {
         }
     },
     computed: {
-        ...mapState('data', ['messages']),
-        value: function () {
-            return this.messages[this.id]?.payload
-        },
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
         },

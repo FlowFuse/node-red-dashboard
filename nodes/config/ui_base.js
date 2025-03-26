@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, getThirdPartyWidgets, evaluateTypedInputs, applyUpdates } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -434,13 +434,34 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
+            const promises = []
             // loop over widgets - check statestore if we've had any dynamic properties set
             for (const [id, widget] of node.ui.widgets) {
                 const state = statestore.getAll(id)
                 if (state) {
-                    // merge the statestore with our props to account for dynamically set properties:
-                    widget.props = { ...widget.props, ...state }
+                    // merge the statestore:
                     widget.state = { ...widget.state, ...state }
+                }
+                // if we have typedInputs, evaluate them and update props.
+                // This is for initial evaluation e.g. for things set to use msg/flow/global/JSONata
+                try {
+                    const { typedInputs } = widget
+                    if (typedInputs) {
+                        const n = RED.nodes.getNode(id)
+                        const { config } = n.getWidgetRegistration && n.getWidgetRegistration()
+                        const msg = datastore.get(id) || {}
+                        const p = evaluateTypedInputs(RED, config, n, msg, typedInputs).then((result) => {
+                            if (result?.count > 0) {
+                                widget.props = { ...widget.props, ...result?.updates }
+                            }
+                            return result
+                        }).catch((_err) => {
+                            // do nothing
+                        })
+                        promises.push(p)
+                    }
+                } catch (_err) {
+                    // do nothing
                 }
             }
 
@@ -470,14 +491,19 @@ module.exports = function (RED) {
                 delete meta.wysiwyg
             }
             // pass the connected UI the UI config
-            socket.emit('ui-config', node.id, {
-                meta,
-                dashboards: Object.fromEntries(node.ui.dashboards),
-                heads: Object.fromEntries(node.ui.heads),
-                pages: Object.fromEntries(node.ui.pages),
-                themes: Object.fromEntries(node.ui.themes),
-                groups: Object.fromEntries(node.ui.groups),
-                widgets: Object.fromEntries(node.ui.widgets)
+            // eslint-disable-next-line promise/always-return
+            Promise.all(promises).then(() => {
+                socket.emit('ui-config', node.id, {
+                    meta,
+                    dashboards: Object.fromEntries(node.ui.dashboards),
+                    heads: Object.fromEntries(node.ui.heads),
+                    pages: Object.fromEntries(node.ui.pages),
+                    themes: Object.fromEntries(node.ui.themes),
+                    groups: Object.fromEntries(node.ui.groups),
+                    widgets: Object.fromEntries(node.ui.widgets)
+                })
+            }).catch((_err) => {
+                // do nothing
             })
         }
 
@@ -882,10 +908,16 @@ module.exports = function (RED) {
 
         /**
          * Register allows for pages, widgets, groups, etc. to register themselves with the Base UI Node
-         * @param {*} page
-         * @param {*} widget
+         * @param {*} page - the page node we are registering to
+         * @param {*} group - the group node we are registering to
+         * @param {*} widgetNode - the node we are registering
+         * @param {*} widgetConfig - the nodes' configuration object
+         * @param {*} widgetEvents - the widget event hooks
+         * @param {Object} [widgetOptions] - additional configuration options for dynamic features the widget
+         * @param {import('../utils/index.js').NodeDynamicProperties} [widgetOptions.dynamicProperties] - dynamic properties that the node will support
+         * @param {import('../utils/index.js').NodeTypedInputs} [widgetOptions.typedInputs] - typed inputs that the node will support
          */
-        node.register = function (page, group, widgetNode, widgetConfig, widgetEvents) {
+        node.register = function (page, group, widgetNode, widgetConfig, widgetEvents, widgetOptions) {
             // console.log('dashboard 2.0, UIBaseNode: node.register(...)', page, group, widgetNode, widgetConfig, widgetEvents)
             /**
              * Build UI Config
@@ -896,7 +928,9 @@ module.exports = function (RED) {
             // store our UI state properties under the .state key too
 
             let widget = null
-
+            if (!widgetOptions || typeof widgetOptions !== 'object') {
+                widgetOptions = {} // ensure we have an object to work with
+            }
             if (widgetNode && widgetConfig) {
                 // default states
                 if (statestore.getProperty(widgetConfig.id, 'enabled') === undefined) {
@@ -919,6 +953,8 @@ module.exports = function (RED) {
                         height: widgetConfig.height || 1, // default height of 1: this must match up with defaults in wysiwyg editing
                         order: widgetConfig.order || 0 // default order of 0: this must match up with defaults in wysiwyg editing
                     },
+                    typedInputs: widgetOptions.typedInputs,
+                    dynamicProperties: widgetOptions.dynamicProperties,
                     state: statestore.getAll(widgetConfig.id),
                     hooks: widgetEvents,
                     src: uiShared.contribs[widgetConfig.type]
@@ -1010,6 +1046,19 @@ module.exports = function (RED) {
                 widgetNode.getState = function () {
                     return datastore.get(widgetNode.id)
                 }
+                /** Helper function for accessing node setup */
+                widgetNode.getWidgetRegistration = function () {
+                    return {
+                        base: node,
+                        page,
+                        group,
+                        node: widgetNode,
+                        config: widgetConfig,
+                        events: widgetEvents,
+                        options: widgetOptions,
+                        statestore
+                    }
+                }
 
                 /**
                  * Event Handlers
@@ -1043,6 +1092,8 @@ module.exports = function (RED) {
                         // pre-process the msg before running our onInput function
                         if (widgetEvents?.beforeSend) {
                             msg = await widgetEvents.beforeSend(msg)
+                        } else {
+                            msg = await applyUpdates(RED, widgetNode, msg)
                         }
 
                         // standard dynamic property handlers
@@ -1066,9 +1117,6 @@ module.exports = function (RED) {
                                 if (widgetConfig.topic || widgetConfig.topicType) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
-
-                                // store the latest msg passed to node
-                                datastore.save(n, widgetNode, msg)
 
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {

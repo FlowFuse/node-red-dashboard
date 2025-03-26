@@ -53,13 +53,10 @@ export default {
         ...mapState('data', ['messages']),
         value: {
             get () {
-                return this.messages[this.id]?.payload
+                return this.getProperty('payload')
             },
             set (val) {
-                if (!this.messages[this.id]) {
-                    this.messages[this.id] = {}
-                }
-                this.messages[this.id].payload = val
+                this.updateDynamicProperty('payload', val)
             }
         },
         label: function () {
@@ -165,6 +162,7 @@ export default {
             if (!updates) {
                 return
             }
+            this.updateDynamicProperty('payload', updates.payload)
             this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('mode', updates.mode)
             this.updateDynamicProperty('clearable', updates.clearable)

@@ -3,6 +3,7 @@
         "label": {
             "group": "Group",
             "size": "Size",
+            "inputProperty": "Input",
             "label": "Label",
             "class": "Class",
             "optionalCssClassNames": "Optional CSS class name(s)",

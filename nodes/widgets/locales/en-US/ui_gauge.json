@@ -19,6 +19,7 @@
             "max": "max.",
             "segments": "Segments",
             "labelling": "Labelling",
+            "inputProperty": "Input",
             "label": "Label",
             "prefix": "Prefix",
             "suffix": "Suffix",

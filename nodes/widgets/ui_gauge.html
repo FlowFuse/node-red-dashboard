@@ -135,9 +135,13 @@
                     }
                 },
                 height: { value: 3 },
+                property: { value: 'payload' },
+                propertyType: { value: 'msg' },
                 gtype: { value: 'gauge-half' },
                 gstyle: { value: 'needle' },
-                title: { value: 'gauge' },
+                title: { value: 'gauge' }, // TODO: deprecated (remove in next major version)
+                label: { value: '' },
+                labelType: { value: 'str' },
                 units: { value: 'units' },
                 icon: { value: '' },
                 prefix: { value: '' },
@@ -164,11 +168,53 @@
             align: 'right',
             icon: 'ui-gauge.svg',
             paletteLabel: 'gauge',
-            label: function () { return this.name || this.title || this.gtype },
+            label: function () {
+                if (this.name) {
+                    return this.name
+                }
+                if (this.labelType === 'str' && this.label) {
+                    return this.label || this.title
+                }
+                if (this.title) {
+                    return this.title // TODO: deprecated (remove in next major version)
+                }
+                return this.gtype || 'gauge'
+            },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 let isInitialised = false
                 let currentType = this.gtype
+
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-property').val() && !$('#node-input-propertyType').val()) {
+                    $('#node-input-property').val(this.property || 'payload')
+                    $('#node-input-propertyType').val(this.propertyType || 'msg')
+                }
+                if (this.title && !$('#node-input-label').val()) {
+                    this.label = $('#node-input-title').val()
+                    $('#node-input-label').val(this.label)
+                    $('#node-input-title').val('')
+                    this.title = '' // TODO: deprecated (remove in next major version)
+                }
+                if (!$('#node-input-labelType').val()) {
+                    $('#node-input-label').val(this.label || 'gauge')
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
+
+                // value
+                $('#node-input-property').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-propertyType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+
+                // label (title)
+                $('#node-input-label').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-labelType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -340,6 +386,11 @@
         </select>
     </div>
     <div class="form-row">
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-gauge.label.inputProperty">Input</span></label>
+        <input type="hidden" id="node-input-propertyType">
+        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
+    </div>
+    <div class="form-row">
         <h3><span data-i18n="ui-gauge.label.limits"></span></h3>
     </div>
     <div class="form-row">
@@ -373,8 +424,9 @@
     </div>
     <div id="ui-gauge-labels">
         <div class="form-row">
-            <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
-            <input type="text" id="node-input-title">
+            <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
+            <input type="hidden" id="node-input-labelType">
+            <input type="text" id="node-input-label" style="width: 70%;">
         </div>
         <div id="node-input-container-label-extras">
             <div class="form-row form-row-flex">

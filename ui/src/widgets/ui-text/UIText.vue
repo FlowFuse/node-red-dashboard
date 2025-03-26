@@ -26,9 +26,9 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages', 'properties']),
-        value () {
-            const msg = this.messages[this.id]
-            return this.purify(msg?.payload)
+        value: function () {
+            const p = this.getProperty('payload')
+            return this.purify(p)
         },
         label () {
             // Sanitize the html to avoid XSS attacks
@@ -65,6 +65,7 @@ export default {
             this.updateDynamicProperty('font', updates.font)
             this.updateDynamicProperty('fontSize', updates.fontSize)
             this.updateDynamicProperty('color', updates.color)
+            this.updateDynamicProperty('payload', updates.payload)
         },
         purify (payload) {
             if (typeof payload === 'string') {

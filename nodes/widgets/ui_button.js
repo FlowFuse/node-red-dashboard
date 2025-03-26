@@ -1,5 +1,4 @@
-const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, applyUpdates } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function ButtonNode (config) {
@@ -13,6 +12,22 @@ module.exports = function (RED) {
         // backward compatability
         if (typeof config.enableClick === 'undefined') {
             config.enableClick = true
+        }
+
+        // In-place upgrades - ensure properties are set
+        if (typeof config.label === 'undefined') { config.label = config.title || 'gauge' }
+        if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
+
+        const typedInputs = {
+            label: { nodeProperty: 'label', nodePropertyType: 'labelType' }
+        }
+        const dynamicProperties = {
+            label: true,
+            icon: true,
+            iconPosition: true,
+            buttonColor: true,
+            textColor: true,
+            iconColor: true
         }
 
         const beforeSend = async function (msg) {
@@ -74,37 +89,7 @@ module.exports = function (RED) {
                 }
             }
             msg.payload = payload
-
-            const updates = msg.ui_update
-
-            if (updates) {
-                // dynamic properties
-                if (typeof updates.label !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'label', updates.label)
-                }
-                if (typeof updates.icon !== 'undefined') {
-                    // dynamically set "icon" property
-                    statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
-                }
-                if (typeof updates.iconPosition !== 'undefined') {
-                    // dynamically set "iconPosition" property
-                    statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
-                }
-                if (typeof updates.buttonColor !== 'undefined') {
-                    // dynamically set "buttonColor" property
-                    statestore.set(group.getBase(), node, msg, 'buttonColor', updates.buttonColor)
-                }
-                if (typeof updates.textColor !== 'undefined') {
-                    // dynamically set "textColor" property
-                    statestore.set(group.getBase(), node, msg, 'textColor', updates.textColor)
-                }
-                if (typeof updates.iconColor !== 'undefined') {
-                    // dynamically set "iconColor" property
-                    statestore.set(group.getBase(), node, msg, 'iconColor', updates.iconColor)
-                }
-            }
-
+            msg = await applyUpdates(RED, node, msg)
             if (!error) {
                 return msg
             } else {
@@ -131,7 +116,7 @@ module.exports = function (RED) {
 
         // inform the dashboard UI that we are adding this node
         if (group) {
-            group.register(node, config, evts)
+            group.register(node, config, evts, { dynamicProperties, typedInputs })
         } else {
             node.error('No group configured')
         }

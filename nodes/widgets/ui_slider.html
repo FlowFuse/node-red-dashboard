@@ -10,6 +10,9 @@
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
                 label: { value: 'slider' },
+                labelType: { value: 'str' },
+                property: { value: 'payload' },
+                propertyType: { value: 'msg' },
                 tooltip: { value: '' },
                 order: { value: 0 },
                 width: {
@@ -46,9 +49,37 @@
             outputLabels: function () { return this.min + ' - ' + this.max },
             icon: 'font-awesome/fa-sliders',
             paletteLabel: 'slider',
-            label: function () { return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || 'slider' },
+            label: function () {
+                if (this.name) {
+                    return this.name
+                }
+                if (this.labelType === 'str' && this.label) {
+                    return this.label
+                }
+                return 'slider'
+            },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-labelType').val()) {
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
+                if (!$('#node-input-property').val() && !$('#node-input-propertyType').val()) {
+                    $('#node-input-property').val(this.property || 'payload')
+                    $('#node-input-propertyType').val(this.propertyType || 'msg')
+                }
+                // label
+                $('#node-input-label').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-labelType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+                // value
+                $('#node-input-property').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-propertyType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -151,8 +182,14 @@
             </div>
         </div>
         <div class="form-row">
+            <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-slider.label.inputProperty">Input</label>
+            <input type="hidden" id="node-input-propertyType">
+            <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
+        </div>
+        <div class="form-row">
             <label for="node-input-label"><i class="fa fa-font"></i> Label</label>
-            <input type="text" id="node-input-label">
+            <input type="hidden" id="node-input-labelType">
+            <input type="text" id="node-input-label" style="width: 70%;">
         </div>
         <div class="form-row form-row-flex" style="align-items: center;">
             <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-slider.label.textField"></span></label>
