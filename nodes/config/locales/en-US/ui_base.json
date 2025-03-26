@@ -39,7 +39,9 @@
             "connectionNotifications": "Connection Notifications",
             "showReconnect": "Show reconnect notification",
             "showDisconnect": "Show disconnect notification",
-            "notificationDisplayTime": "notification display time (seconds)"
+            "notificationDisplayTime": "notification display time (seconds)",
+            "allowInstall": "Allow App Installation",
+            "installation": "Installation Options"
         },
         "layout": {
             "pages": "Pages",
