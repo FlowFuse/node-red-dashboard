@@ -8,6 +8,7 @@ const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, getThirdPartyWidgets, evaluateTypedInputs, applyUpdates, hasProperty } = require('../utils/index.js')
 
+const debugging = process.env.NODE_ENV === 'development'
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -643,7 +644,7 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onChange (conn, id, value) {
-            // console.log('conn:' + conn.id, 'on:widget-change:' + id, value)
+            if (debugging) { console.log('conn:' + conn.id, 'on:widget-change:' + id, value) }
 
             // get widget node and configuration
             const { wNode, widgetConfig, widgetEvents } = getWidgetAndConfig(id)
@@ -710,7 +711,7 @@ module.exports = function (RED) {
          * @returns void
          */
         async function onSend (conn, id, msg) {
-            // console.log('conn:' + conn.id, 'on:widget-send:' + id, msg)
+            if (debugging) { console.log('conn:' + conn.id, 'on:widget-send:' + id, msg) }
 
             // get widget node and configuration
             const { wNode, widgetEvents } = getWidgetAndConfig(id)
@@ -755,7 +756,7 @@ module.exports = function (RED) {
         }
 
         async function onLoad (conn, id, msg) {
-            // console.log('conn:' + conn.id, 'on:widget-load:' + id, msg)
+            if (debugging) { console.log('conn:' + conn.id, 'on:widget-load:' + id, msg) }
 
             if (!id) {
                 console.error('No widget id provided for widget-load event')
@@ -910,7 +911,7 @@ module.exports = function (RED) {
          * @param {import('../utils/index.js').NodeTypedInputs} [widgetOptions.typedInputs] - typed inputs that the node will support
          */
         node.register = function (page, group, widgetNode, widgetConfig, widgetEvents, widgetOptions) {
-            // console.log('dashboard 2.0, UIBaseNode: node.register(...)', page, group, widgetNode, widgetConfig, widgetEvents)
+            if (debugging) { console.log('dashboard 2.0, UIBaseNode: node.register(...)', page, group, widgetNode, widgetConfig, widgetEvents) }
             /**
              * Build UI Config
              */
@@ -1227,7 +1228,7 @@ module.exports = function (RED) {
             }
         }
         const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
-        console.log('url', url)
+        if (debugging) { console.log('patch flows. url:', url) }
         // get request body
         const dashboardId = req.params.dashboardId
         const pageId = req.body.page
@@ -1239,7 +1240,7 @@ module.exports = function (RED) {
         const addedWidgets = allWidgets.filter(w => !!w.__DB2_ADD_WIDGET).map(w => { delete w.__DB2_ADD_WIDGET; return w })
         const removedWidgets = allWidgets.filter(w => !!w.__DB2_REMOVE_WIDGET).map(w => { delete w.__DB2_REMOVE_WIDGET; return w })
 
-        console.log(changes, editKey, dashboardId)
+        if (debugging) { console.log('patch flows. changes, editKey, dashboardId:', changes, editKey, dashboardId) }
         const baseNode = RED.nodes.getNode(dashboardId)
 
         // validity checks
