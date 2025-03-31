@@ -39,4 +39,21 @@ describe('utils', function () {
             widgets['widget-b'].src.should.equal('ui-widget.js')
         })
     })
+    describe('hasProperty', function () {
+        it('should return true for a property that exists', function () {
+            const obj = { a: { b: { c: 1 } } }
+            const result = utils.hasProperty(obj, 'a.b.c')
+            result.should.equal(true)
+        })
+        it('should return false for a property that does not exist', function () {
+            const obj = { a: { b: { c: 1 } } }
+            const result = utils.hasProperty(obj, 'a.b.d')
+            result.should.equal(false)
+        })
+        it('should return false for an empty object', function () {
+            const obj = {}
+            const result = utils.hasProperty(obj, 'a.b.c')
+            result.should.equal(false)
+        })
+    })
 })
