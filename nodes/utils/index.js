@@ -267,6 +267,19 @@ function getThirdPartyWidgets (directory) {
     return contribs
 }
 
+/**
+ * Check if an object has a property
+ * @param {Object} obj - Object to check for property
+ * @param {String} prop - Property to check for
+ * @returns {boolean}
+ */
+function hasProperty (obj, prop) {
+    if (!obj || typeof obj !== 'object') {
+        return false
+    }
+    return Object.prototype.hasOwnProperty.call(obj, prop)
+}
+
 module.exports = {
     asyncEvaluateNodeProperty,
     appendTopic,
@@ -275,5 +288,6 @@ module.exports = {
     applyDynamicProperties,
     applyTypedInputs,
     applyUpdates,
-    getThirdPartyWidgets
+    getThirdPartyWidgets,
+    hasProperty
 }
