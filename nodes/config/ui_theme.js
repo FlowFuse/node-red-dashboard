@@ -1,13 +1,11 @@
+const { hasProperty } = require('../utils')
+
 module.exports = function (RED) {
     /**
      *
      * @param {*} config
      */
     function UIThemeNode (config) {
-        function hasProperty (obj, prop) {
-            return !!Object.prototype.hasOwnProperty.call(obj, prop)
-        }
-
         RED.nodes.createNode(this, config)
         const node = this
 
