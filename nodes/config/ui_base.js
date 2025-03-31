@@ -678,10 +678,12 @@ module.exports = function (RED) {
                 if (widgetEvents?.beforeSend) {
                     msg = await widgetEvents.beforeSend(msg)
                 }
-                datastore.save(n, wNode, msg)
                 const exclude = [conn.id] // sync this change to all clients with the same widget
-                emit('widget-sync:' + id, msg, wNode, exclude) // let all other connect clients now about the value change
                 wNode.send(msg) // send the msg onwards
+                await new Promise(resolve => setTimeout(resolve, 0)) // wait 1 tick to ensure the msg is sent before we adjust anything
+                msg = await applyUpdates(RED, wNode, msg)
+                datastore.save(n, wNode, msg)
+                emit('widget-sync:' + id, msg, wNode, exclude) // let all other connect clients now about the value change
             }
 
             // wrap execution in a try/catch to ensure we don't crash Node-RED
@@ -1060,6 +1062,16 @@ module.exports = function (RED) {
                     delete msg.res
                     delete msg.req
 
+                    // Wrap send in a function so we can await 1 tick. This avoids any changes
+                    // made to the msg AFTER being sent from propagating by ref
+                    const sendMessage = async (msg) => {
+                        if (send) {
+                            try {
+                                send(msg)
+                            } catch (_e) { /* do nothing */ }
+                            await new Promise(resolve => setTimeout(resolve, 0))
+                        }
+                    }
                     // ensure we have latest instance of the widget's node
                     const wNode = RED.nodes.getNode(widgetNode.id)
                     if (!wNode) {
@@ -1082,8 +1094,6 @@ module.exports = function (RED) {
                         // pre-process the msg before running our onInput function
                         if (widgetEvents?.beforeSend) {
                             msg = await widgetEvents.beforeSend(msg)
-                        } else {
-                            msg = await applyUpdates(RED, widgetNode, msg)
                         }
 
                         // standard dynamic property handlers
@@ -1110,13 +1120,15 @@ module.exports = function (RED) {
 
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {
-                                        send(msg)
+                                        await sendMessage(msg)
                                     }
                                 } else {
-                                    send(msg)
+                                    await sendMessage(msg)
                                 }
                             }
                         }
+                        // apply dynamic properties / typed inputs to the msg before emitting new state to the component
+                        msg = await applyUpdates(RED, widgetNode, msg)
 
                         // emit to all connected UIs
                         emit('msg-input:' + widget.id, msg, wNode)
