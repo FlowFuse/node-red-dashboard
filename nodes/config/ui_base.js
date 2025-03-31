@@ -6,24 +6,14 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, getThirdPartyWidgets, evaluateTypedInputs, applyUpdates } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, getThirdPartyWidgets, evaluateTypedInputs, applyUpdates, hasProperty } = require('../utils/index.js')
+
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
     return paths.map(function (element) {
         return element.replace(/^\/|\/$/g, '')
     }).join('/')
-}
-
-/**
- * Check if an object has a property
- * TODO: move to test-able utility lib
- * @param {Object} obj - Object to check for property
- * @param {String} prop - Property to check for
- * @returns {boolean}
- */
-function hasProperty (obj, prop) {
-    return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
 module.exports = function (RED) {
