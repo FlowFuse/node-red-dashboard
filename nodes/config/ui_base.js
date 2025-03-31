@@ -1119,6 +1119,9 @@ module.exports = function (RED) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
 
+                                // store the latest msg passed to node
+                                datastore.save(n, widgetNode, msg)
+
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {
                                         await sendMessage(msg)
