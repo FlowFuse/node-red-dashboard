@@ -1,4 +1,4 @@
-const { appendTopic, applyUpdates } = require('../utils/index.js')
+const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function ButtonNode (config) {
@@ -89,7 +89,6 @@ module.exports = function (RED) {
                 }
             }
             msg.payload = payload
-            msg = await applyUpdates(RED, node, msg)
             if (!error) {
                 return msg
             } else {

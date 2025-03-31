@@ -1,5 +1,5 @@
 const datastore = require('../store/data.js')
-const { appendTopic, asyncEvaluateNodeProperty } = require('../utils/index.js')
+const { appendTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function SwitchNode (config) {
@@ -65,9 +65,9 @@ module.exports = function (RED) {
             },
             onInput: async function (msg, send) {
                 let error = null
-                const payload = await asyncEvaluateNodeProperty(RED, typedInputs.payload.nodeProperty, typedInputs.payload.nodePropertyType, node, msg)
+                const payload = msg.ui_update?.payload // at this point, payload has been evaluated in the base onInput handler and if present, will be added to the msg.ui_update object
 
-                if (payload === undefined) {
+                if (typeof payload === 'undefined') {
                     // may be setting class dynamically or something else that doesn't require a payload
                     datastore.save(group.getBase(), node, msg)
                     if (config.passthru) {

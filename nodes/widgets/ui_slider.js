@@ -1,5 +1,3 @@
-const { applyUpdates } = require('../utils/index.js')
-
 module.exports = function (RED) {
     function SliderNode (config) {
         RED.nodes.createNode(this, config)
@@ -65,7 +63,6 @@ module.exports = function (RED) {
                         node.status({ shape: 'dot', fill: 'grey', text: msg.payload })
                     }
                 }
-                msg = await applyUpdates(RED, node, msg)
                 return msg
             }
         }

@@ -203,8 +203,12 @@ const mutations = {
 
         for (const prop in config) {
             if (state.widgets[wId]) {
-                console.log('setting', prop, 'to', config[prop])
-                state.widgets[wId].state[prop] = config[prop]
+                // console.log('setting', prop, 'to', config[prop]) // TODO: delete me
+                if (config[prop] === null) {
+                    delete state.widgets[wId].state[prop]
+                } else {
+                    state.widgets[wId].state[prop] = config[prop]
+                }
             }
         }
     },
