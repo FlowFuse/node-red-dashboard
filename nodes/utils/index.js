@@ -78,13 +78,34 @@ async function applyDynamicProperties (RED, wNode, msg) {
     if (!options.dynamicProperties || typeof options.dynamicProperties !== 'object') {
         return msg
     }
+    if (msg.ui_update === null) {
+        // deliberate reset of all dynamic properties
+        msg.ui_update = {}
+        const keys = Object.keys(options.dynamicProperties)
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            const prop = options.dynamicProperties[key]
+            if (prop === false || key === 'payload') {
+                continue // don't delete
+            }
+            statestore.deleteProperty(wNode.id, key)
+            msg.ui_update[key] = null // set to null to indicate reset
+        }
+        statestore.deleteProperty(wNode.id, 'visible')
+        statestore.deleteProperty(wNode.id, 'class')
+        statestore.deleteProperty(wNode.id, 'enabled')
+        msg.visible = true
+        msg.class = null
+        msg.enabled = true
+        return msg
+    }
     const updates = msg.ui_update || {}
     const keys = Object.keys(updates)
     if (keys.length > 0) {
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
             const prop = options.dynamicProperties[key]
-            if (prop === true) {
+            if (prop !== false) {
                 const value = updates[key]
                 if (value === null) {
                     statestore.deleteProperty(wNode.id, key)
@@ -118,21 +139,36 @@ async function applyTypedInputs (RED, wNode, msg) {
     if (definitions.length > 0) {
         const updates = msg.ui_update || {}
         let applyUpdates = false
-        const hasKey = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
         for (let i = 0; i < definitions.length; i++) {
-            let value
+            let value // undefined by default
             let { name, nodeProperty, nodePropertyType } = definitions[i]
-            if (hasKey(updates, name) && updates[name] !== null) {
+            if (hasProperty(updates, name) && updates[name] !== null) {
                 continue // skip if already overridden in ui_updates
             }
+            const storeValue = statestore.getProperty(wNode.id, name)
             nodeProperty = nodeProperty || name
             nodePropertyType = typeof nodePropertyType !== 'string' ? `${nodeProperty}Type` : nodePropertyType
-            try {
-                value = await asyncEvaluateNodeProperty(RED, config[nodeProperty], (nodePropertyType && config[nodePropertyType]) || 'str', wNode, msg)
-            } catch (error) {
-                continue // do nothing
+            const configProp = config[nodeProperty]
+            const configPropType = (nodePropertyType && config[nodePropertyType]) || 'str'
+            let evaluate = false
+            if (updates[name] === null) {
+                evaluate = true // user is attempting to reset the override
+            } else if (configPropType === 'str' || configPropType === 'env' || configPropType === 'json') {
+                // these are fixed value types
+                if (typeof storeValue === 'undefined') {
+                    // if the property is not set in the store, lets evaluate it
+                    evaluate = true
+                }
+            } else {
+                evaluate = true
             }
-            const storeValue = statestore.getProperty(wNode.id, name)
+            if (evaluate) {
+                try {
+                    value = await asyncEvaluateNodeProperty(RED, configProp, configPropType, wNode, msg)
+                } catch (error) {
+                    continue // do nothing
+                }
+            }
             if (typeof value !== 'undefined' && value !== storeValue) {
                 statestore.set(base, wNode, msg, name, value)
                 updates[name] = value
