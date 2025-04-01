@@ -544,7 +544,7 @@ module.exports = function (RED) {
                         // we only need add the listener for a given event type the once
                         if (eventName === 'connection') {
                             if (onConnection) {
-                                // these handlers are setup as part of an onConnection event, so trigegr these now
+                                // these handlers are setup as part of an onConnection event, so trigger these now
                                 handler(socket)
                             }
                         } else {
@@ -979,7 +979,7 @@ module.exports = function (RED) {
                     widget.props.height = null
                 }
 
-                // merge the statestore with our props toa ccount for dynamically set properties:
+                // merge the statestore with our props toa count for dynamically set properties:
 
                 // loop over props and check if we have any function definitions (e.g. onMounted, onInput)
                 // and stringify them for transport over SocketIO

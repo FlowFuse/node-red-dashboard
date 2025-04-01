@@ -13,7 +13,6 @@ export function useDataTracker (widgetId, onInput, onLoad, onDynamicProperties, 
     let emitWidgetLoadOnConnect = false
 
     function checkDynamicProperties (msg) {
-        console.log('checkDynamicProperties', msg)
         // set standard dynamic properties states if passed into msg
         if ('enabled' in msg) {
             store.commit('ui/widgetState', {

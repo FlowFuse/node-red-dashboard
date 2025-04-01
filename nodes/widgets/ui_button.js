@@ -9,7 +9,7 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
 
-        // backward compatability
+        // backward compatibility
         if (typeof config.enableClick === 'undefined') {
             config.enableClick = true
         }
