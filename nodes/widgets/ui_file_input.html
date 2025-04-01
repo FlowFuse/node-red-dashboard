@@ -3,6 +3,11 @@
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
+
+        // convert to i18n text
+        function c_ (x) {
+            return RED._('@flowfuse/node-red-dashboard/ui-file-input:ui-file-input.' + x)
+        }
         RED.nodes.registerType('ui-file-input', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
@@ -24,7 +29,7 @@
                 height: { value: 0 },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
-                label: { value: 'File Input' },
+                label: { value: c_('label.defaultLabel') },
                 icon: { value: 'paperclip' },
                 allowMultiple: { value: false },
                 accept: { value: '' },
@@ -70,42 +75,42 @@
 
 <script type="text/html" data-template-name="ui-file-input">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-file-input.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-file-input.label.size"></span></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-file-input.label.label"></span></label>
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-icon"><i class="fa fa-picture-o"></i> Icon</label>
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> <span data-i18n="ui-file-input.label.icon"></span></label>
         <input type="text" id="node-input-icon">
     </div>
     <div class="form-row">
-        <label for="node-input-accept"><i class="fa fa-paperclip"></i> Accept</label>
+        <label for="node-input-accept"><i class="fa fa-paperclip"></i> <span data-i18n="ui-file-input.label.accept"></span></label>
         <input type="text" id="node-input-accept">
     </div>
     <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-allowMultiple" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-allowMultiple"> Allow Multiple</label>
+        <label style="width:auto" for="node-input-allowMultiple"> <span data-i18n="ui-file-input.label.allowMultiple"></span></label>
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-file-input.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-file-input.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-file-input.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -113,7 +118,7 @@
         </div>
     </div>
     <div class="form-row" style="padding-left: 25px;">
-        <label for="node-input-topic" style="margin-right:-25px">Topic</label>
+        <label for="node-input-topic" style="margin-right:-25px"><span data-i18n="ui-file-input.label.topic"></span></label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
     </div>
