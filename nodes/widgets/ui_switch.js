@@ -1,5 +1,5 @@
 const datastore = require('../store/data.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, evaluateTypedInputs } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function SwitchNode (config) {
@@ -65,8 +65,18 @@ module.exports = function (RED) {
             },
             onInput: async function (msg, send) {
                 let error = null
-                const payload = msg.ui_update?.payload // at this point, payload has been evaluated in the base onInput handler and if present, will be added to the msg.ui_update object
-
+                // const payload = msg.ui_update?.payload // at this point, payload has been evaluated in the base onInput handler and if present, will be added to the msg.ui_update object
+                let payload
+                if (config.payloadType === 'msg' && config.property === 'payload') {
+                    // shortcut for the most common case
+                    payload = msg.payload
+                } else {
+                    // other case - evaluate the property
+                    const result = await evaluateTypedInputs(RED, config, node, msg, { payload: typedInputs.payload })
+                    if (result?.count > 0) {
+                        payload = result.updates?.payload
+                    }
+                }
                 if (typeof payload === 'undefined') {
                     // may be setting class dynamically or something else that doesn't require a payload
                     datastore.save(group.getBase(), node, msg)
