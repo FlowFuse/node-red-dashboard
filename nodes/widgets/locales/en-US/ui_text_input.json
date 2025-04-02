@@ -1,0 +1,47 @@
+{
+    "ui-text-input": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "icon": "Icon",
+            "label": "Label",
+            "tooltip": "Tooltip",
+            "class": "Class",
+            "mode": "Mode",
+            "passThrough": "If <code>msg</code> arrives on input, pass through to output:",
+            "clearable": "Clear text input with button",
+            "sendMessageOn": "Send message on:",
+            "delay": "Delay",
+            "focusLeave": "Focus Leave",
+            "pressEnter": "Press Enter",
+            "clearButton": "Clear Button",
+            "whenChanged": "When changed, send:",
+            "payload": "Payload",
+            "currentValue": "Current value",
+            "topic": "Topic",
+            "iconPlaceholder": "(optional) e.g. 'gesture-tap'",
+            "classNamePlaceholder": "Optional CSS class name(s)",
+            "delayUnit": "(ms)"
+        },
+        "option": {
+            "left": "Left",
+            "right": "Right",
+            "inside": "In",
+            "outside": "Out",
+            "textInput": "text input (single line)",
+            "textArea": "text area (multi-line)",
+            "email": "email address",
+            "password": "password",
+            "number": "number",
+            "color": "color picker",
+            "datetime": "datetime picker",
+            "date": "date picker",
+            "time": "time picker",
+            "week": "week picker",
+            "month": "month picker"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        }
+    }
+}
