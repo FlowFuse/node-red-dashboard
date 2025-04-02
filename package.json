@@ -153,6 +153,7 @@
     "overrides": {
         "node-red-node-test-helper": {
             "semver": "^7.5.4"
-        }
+        },
+        "esbuild": ">=0.25.0"
     }
 }
