@@ -12,6 +12,10 @@
             "interactivity": "Interactivity",
             "active": "Active",
             "disabled": "Disabled"
+        },
+        "error": {
+            "registeringConfig": "Error registering config. No parent ui-base node found for ui-link node: __linkName__",
+            "registeringWidget": "Error registering widget - __widgetName__. No parent ui-base node found for ui-link node: __linkName__"
         }
     }
 }
