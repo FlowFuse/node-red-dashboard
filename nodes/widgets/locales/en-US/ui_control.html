@@ -24,26 +24,56 @@
     <p>Dashboard pages & groups can be shown and hidden by sending a <code>msg.payload</code> object with the format
     <pre>msg.payload = {
     pages: {
-        show: ['&lt;Page Name&gt;', '&lt;Page Name&gt;'],
-        hide: ['&lt;Page Name&gt;']
-    }
+        show: ['&lt;Page Name&gt;',
+               '&lt;Page Id&gt;',
+               {page: '&lt;Page Name&gt;'},
+               {page: '&lt;Page Id&gt;'}],
+        hide: ['&lt;Page Id&gt;']
+    },
     groups: {
-        show: ['&lt;Page Name&gt;:&lt;Group Name&gt;', '&lt;Group Name&gt;'],
+        show: ['&lt;Group Name&gt;',
+               '&lt;Group Id&gt;',
+               '&lt;Page Name&gt;:&lt;Group Name&gt;',
+               '&lt;Page Id&gt;:&lt;Group Name&gt;',
+               {group: '&lt;Group Name&gt;'},
+               {group: '&lt;Group Id&gt;'},
+               {page: '&lt;Page Name&gt;', group: '&lt;Group Name&gt;'},
+               {page: '&lt;Page Id&gt;', group: '&lt;Group Name&gt;'}],
         hide: ['&lt;Group Name&gt;']
+    },
+    widgets: {
+        show: ['&lt;Widget Name&gt;',
+               '&lt;Widget Id&gt;',
+               '&lt;Group Name&gt;:&lt;Widget Name&gt;',
+               '&lt;Group Id&gt;:&lt;Widget Name&gt;',
+               '&lt;Page Name&gt;:&lt;Group Name&gt;:&lt;Widget Name&gt;',
+               '&lt;Page Id&gt;:&lt;Group Name&gt;:&lt;Widget Name&gt;',
+               {widget: '&lt;Widget Name&gt;'},
+               {widget: '&lt;Widget Id&gt;'},
+               {group: '&lt;Group Name&gt;', widget: '&lt;Widget Name&gt;'},
+               {group: '&lt;Group Id&gt;', widget: '&lt;Widget Name&gt;'},
+               {page: '&lt;Page Name&gt;', group: '&lt;Group Name&gt;', widget: '&lt;Widget Name&gt;'},
+               {page: '&lt;Page Id&gt;', group: '&lt;Group Name&gt;', widget: '&lt;Widget Name&gt;'}],
+        hide: ['&lt;Widget Name&gt;']
     }
 }</pre>
-    <h4>Enable/Disable Pages & Groups</h4>
-    <p>Dashboard pages & groups can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format
+    <h4>Enable/Disable Pages & Groups & Widgets</h4>
+    <p>Dashboard pages & groups & widgets can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format</p>
     <pre>msg.payload = {
     pages: {
-        enable: ['&lt;Page Name&gt;', '&lt;Page Name&gt;'],
+        enable: ['&lt;Page Name&gt;'],
         disable: ['&lt;Page Name&gt;']
-    }
+    },
     groups: {
-        enable: ['&lt;Group Name&gt;', '&lt;Group Name&gt;'],
+        enable: ['&lt;Group Name&gt;'],
         disable: ['&lt;Group Name&gt;']
+    },
+    widgets: {
+        enable: ['&lt;Widget Name&gt;'],
+        disable: ['&lt;Widget Name&gt;']
     }
 }</pre>
+    <p>When a (page, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
     <h4>External URL</h4>
     <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
     <pre>msg.payload = {
