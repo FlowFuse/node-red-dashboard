@@ -22,6 +22,10 @@ props:
         description: Add <a href="https://pictogrammers.com/library/mdi/">mdi icon</a> before and after the slider. For example, "minus". There is no need to include the "mdi-" prefix, just the name of the icon.
         dynamic: true    
     Output: Defines when a msg is emitted, either as the slider is moved, or as the slider is released.        
+controls:
+    enabled:
+        example: true | false
+        description: Allow control over whether or not the button is clickable.
 dynamic:
     Label:
         payload: msg.ui_update.class
@@ -88,6 +92,10 @@ Adds a slider to your dashboard that will emit values in Node-RED under `msg.pay
 
 You can set the value of the slider by passing in the respective value in `msg.payload`.
 
+## Controls
+
+<ControlsTable/>
+
 ## Example - Basic
 
 ![Example of a slider](/images/node-examples/ui-slider.png "Example of a slider"){data-zoomable}
@@ -136,8 +144,6 @@ Different styles can be applied to the ticks of the filled part of the slider.
     --tick-color:violet;
 }
 ```
-
-
 
 ## Example - Vertical Sliders
 
