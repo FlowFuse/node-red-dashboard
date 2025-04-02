@@ -1,0 +1,30 @@
+{
+    "ui-radio-group": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "width": "Width",
+            "height": "Height",
+            "label": "Label",
+            "defaultLabel": "Select Option:",
+            "class": "Class",
+            "options": "Options",
+            "addOption": "option",
+            "columns": "Columns",
+            "topic": "Topic",
+            "passThrough": "If <code>msg</code> arrives on input, pass through to output:",
+            "labelPlaceholder": "optional label",
+            "classNamePlaceholder": "Optional CSS class name(s)",
+            "topicPlaceholder": "optional msg.topic",
+            "optValuePlaceholder": "Value",
+            "optLabelPlaceholder": "Label"
+
+        },
+        "error": {
+            "uniqueValues": "All Values must be unique."
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        }
+    }
+}
