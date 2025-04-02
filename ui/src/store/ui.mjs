@@ -203,7 +203,12 @@ const mutations = {
 
         for (const prop in config) {
             if (state.widgets[wId]) {
-                state.widgets[wId].state[prop] = config[prop]
+                // console.log('setting', prop, 'to', config[prop]) // TODO: delete me
+                if (config[prop] === null) {
+                    delete state.widgets[wId].state[prop]
+                } else {
+                    state.widgets[wId].state[prop] = config[prop]
+                }
             }
         }
     },
@@ -213,10 +218,12 @@ const mutations = {
      * @returns
      */
     setProperty (state, { item, itemId, property, value }) {
+        console.log('setting', item, itemId, property, 'to', value)
         state[item + 's'][itemId][property] = value
     },
     setProperties (state, { item, itemId, config }) {
         for (const prop in config) {
+            console.log('setting', item, itemId, prop, 'to', config[prop])
             state[item + 's'][itemId][prop] = config[prop]
         }
     }

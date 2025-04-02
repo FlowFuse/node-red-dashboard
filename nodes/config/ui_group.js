@@ -31,11 +31,16 @@ module.exports = function (RED) {
          * Function for widgets to register themselves with this page
          * Calls the parent UI Base "register" function and registers this page,
          * along with the widget
-         * @param {*} widget
+         * @param {*} widgetNode - the node we are registering
+         * @param {*} widgetConfig - the nodes' configuration object
+         * @param {*} widgetEvents - the widget event hooks
+         * @param {Object} [widgetOptions] - additional configuration options for dynamic features the widget
+         * @param {Object} [widgetOptions.dynamicProperties] - dynamic properties that the node will support
+         * @param {import('../utils/index.js').NodeTypedInputs} [widgetOptions.typedInputs] - typed inputs that the node will support
          */
-        node.register = function (widgetNode, widgetConfig, widgetEvents) {
+        node.register = function (widgetNode, widgetConfig, widgetEvents, widgetOptions) {
             const group = config
-            page.register(group, widgetNode, widgetConfig, widgetEvents)
+            page.register(group, widgetNode, widgetConfig, widgetEvents, widgetOptions)
         }
 
         node.deregister = function (widgetNode) {

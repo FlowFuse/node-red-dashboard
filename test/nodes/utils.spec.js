@@ -39,4 +39,31 @@ describe('utils', function () {
             widgets['widget-b'].src.should.equal('ui-widget.js')
         })
     })
+    describe('hasProperty', function () {
+        it('should return true for a property that exists', function () {
+            const obj = { payload: 1 }
+            const result = utils.hasProperty(obj, 'payload')
+            result.should.equal(true)
+        })
+        it('should return false for a property that does not exist', function () {
+            const obj = { payload: 2 }
+            const result = utils.hasProperty(obj, 'topic')
+            result.should.equal(false)
+        })
+        it('should return false for an empty object', function () {
+            const obj = {}
+            const result = utils.hasProperty(obj, 'a')
+            result.should.equal(false)
+        })
+        it('should return false for a null object', function () {
+            const obj = null
+            const result = utils.hasProperty(obj, 'a')
+            result.should.equal(false)
+        })
+        it('should return false for an undefined object', function () {
+            const obj = undefined
+            const result = utils.hasProperty(obj, 'a')
+            result.should.equal(false)
+        })
+    })
 })

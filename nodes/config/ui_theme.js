@@ -1,13 +1,11 @@
+const { hasProperty } = require('../utils')
+
 module.exports = function (RED) {
     /**
      *
      * @param {*} config
      */
     function UIThemeNode (config) {
-        function hasProperty (obj, prop) {
-            return !!Object.prototype.hasOwnProperty.call(obj, prop)
-        }
-
         RED.nodes.createNode(this, config)
         const node = this
 
@@ -16,19 +14,19 @@ module.exports = function (RED) {
         const sizes = { ...rest.sizes }
 
         if (!hasProperty(sizes, 'pagePadding')) {
-            // set defaults at runtime if not set - for backward compatability
+            // set defaults at runtime if not set - for backward compatibility
             sizes.pagePadding = '12px'
         }
         if (!hasProperty(sizes, 'groupGap')) {
-            // set defaults at runtime if not set - for backward compatability
+            // set defaults at runtime if not set - for backward compatibility
             sizes.groupGap = '12px'
         }
         if (!hasProperty(sizes, 'groupBorderRadius')) {
-            // set defaults at runtime if not set - for backward compatability
+            // set defaults at runtime if not set - for backward compatibility
             sizes.groupBorderRadius = '4px'
         }
         if (!hasProperty(sizes, 'widgetGap')) {
-            // set defaults at runtime if not set - for backward compatability
+            // set defaults at runtime if not set - for backward compatibility
             sizes.widgetGap = '12px'
         }
 

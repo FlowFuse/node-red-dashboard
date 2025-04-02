@@ -82,12 +82,19 @@ const setters = {
     // remove data associated to a given widget
     reset (id) {
         delete state[id]
+    },
+    // delete property
+    deleteProperty (id, prop) {
+        if (state[id]) {
+            delete state[id][prop]
+        }
     }
 }
 
 module.exports = {
     getAll: getters.all,
     getProperty: getters.property,
+    deleteProperty: setters.deleteProperty,
     RED: getters.RED,
     setConfig: setters.setConfig,
     set: setters.set,

@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 describe('Node-RED Dashboard 2.0 - Text', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-text')
@@ -31,6 +32,7 @@ describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-text')
         cy.visit('/dashboard/page1')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-reset-ui-update'))
     })
 
     it('includes "label"', () => {
@@ -48,28 +50,35 @@ describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
     })
 
     it('includes "font"', () => {
+        // debugger // eslint-disable-line no-debugger
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').invoke('attr', 'style', 'font-family: auto;')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'font-family', 'Helvetica')
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-font'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'font-family', 'Helvetica')
     })
 
     it('includes "fontSize"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').invoke('attr', 'style', '')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'font-size', '28px')
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-fontSize'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'font-size', '28px')
     })
 
     it('includes "color"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').invoke('attr', 'style', '')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('not.have.css', 'color', 'rgb(255, 0, 0)')
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-color'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic .nrdb-ui-text').should('have.css', 'color', 'rgb(255, 0, 0)')
     })
 
     it('retains previous value on dynamic input without payload', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-text-left').should('not.contain', 'injected text')
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-inject-text-2'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-blank-text-label'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').should('not.contain', 'Dynamic Label')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').should('not.contain', 'injected text')
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-label'))
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-button-inject-value-only'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label')
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')
         cy.clickAndWait(cy.get('#nrdb-ui-widget-button-dynamic-label-no-payload'))
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('Dynamic Label-No Payload')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-dynamic').contains('injected text')

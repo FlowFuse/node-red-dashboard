@@ -61,11 +61,11 @@ export default {
     computed: {
         ...mapState('data', ['messages']),
         label () {
-            // Sanetize the html to avoid XSS attacks
+            // Sanitize the html to avoid XSS attacks
             return DOMPurify.sanitize(this.getProperty('label'))
         },
         layout () {
-            // This spreaded layout will be the default for the existing flows
+            // This layout will be the default for the existing flows
             // which doesn't have the layout property
             return this.getProperty('layout') || 'row-spread'
         },
@@ -149,6 +149,7 @@ export default {
             if (!updates) {
                 return
             }
+            this.updateDynamicProperty('payload', updates.payload)
             this.updateDynamicProperty('label', updates.label)
             this.updateDynamicProperty('layout', updates.layout)
             this.updateDynamicProperty('clickableArea', updates.clickableArea)
@@ -160,14 +161,15 @@ export default {
         },
         onInput (msg) {
             // Update our vuex store with the value (in the payload) retrieved from Node-RED.
-            if (msg.payload !== undefined) {
+            const payload = this.getProperty('payload')
+            if (typeof payload !== 'undefined') {
                 this.$store.commit('data/bind', {
                     widgetId: this.id,
                     msg
                 })
 
                 // make sure our v-model is updated to reflect the value from Node-RED
-                this.selection = msg.payload
+                this.selection = payload
                 this.loading = false
             }
         },
@@ -178,16 +180,19 @@ export default {
                     widgetId: this.id,
                     msg
                 })
+                const payload = this.getProperty('payload')
                 // make sure we've got the relevant option selected on load of the page
-                if (msg.payload !== undefined) {
-                    this.selection = msg.payload
+                if (typeof payload !== 'undefined') {
+                    this.selection = payload
                 }
             }
         },
         onSync (msg) {
-            if (msg && typeof msg.payload !== 'undefined') {
+            this.updateDynamicProperty('payload', msg.payload) // here we use msg not ui_update (because that is what is emitted in widget-change)
+            const payload = this.getProperty('payload')
+            if (typeof payload !== 'undefined') {
                 // make sure we've got the relevant option selected on load of the page
-                this.selection = msg.payload
+                this.selection = payload
             }
         },
         toggle () {

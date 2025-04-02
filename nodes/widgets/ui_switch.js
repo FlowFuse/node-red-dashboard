@@ -1,6 +1,5 @@
 const datastore = require('../store/data.js')
-const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, evaluateTypedInputs } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function SwitchNode (config) {
@@ -9,6 +8,18 @@ module.exports = function (RED) {
 
         const node = this
         node.status({})
+
+        // In-place upgrades - ensure properties are set
+        if (typeof config.label === 'undefined') { config.label = config.title || 'gauge' }
+        if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
+        if (typeof config.property === 'undefined') { config.property = 'payload' }
+        if (typeof config.propertyType === 'undefined') { config.propertyType = 'msg' }
+
+        const typedInputs = {
+            label: { nodeProperty: 'label', nodePropertyType: 'labelType' },
+            payload: { nodeProperty: 'property', nodePropertyType: 'propertyType' }
+        }
+        const dynamicProperties = { label: true, layout: true, font: true, fontSize: true, color: true }
 
         const states = ['off', 'on']
 
@@ -54,27 +65,38 @@ module.exports = function (RED) {
             },
             onInput: async function (msg, send) {
                 let error = null
-
-                if (msg.payload === undefined) {
+                // const payload = msg.ui_update?.payload // at this point, payload has been evaluated in the base onInput handler and if present, will be added to the msg.ui_update object
+                let payload
+                if (config.payloadType === 'msg' && config.property === 'payload') {
+                    // shortcut for the most common case
+                    payload = msg.payload
+                } else {
+                    // other case - evaluate the property
+                    const result = await evaluateTypedInputs(RED, config, node, msg, { payload: typedInputs.payload })
+                    if (result?.count > 0) {
+                        payload = result.updates?.payload
+                    }
+                }
+                if (typeof payload === 'undefined') {
                     // may be setting class dynamically or something else that doesn't require a payload
                     datastore.save(group.getBase(), node, msg)
                     if (config.passthru) {
                         send(msg)
                     }
                 } else {
-                    if (typeof msg.payload === 'object') {
-                        if (JSON.stringify(msg.payload) === JSON.stringify(on)) {
+                    if (typeof payload === 'object') {
+                        if (JSON.stringify(payload) === JSON.stringify(on)) {
                             msg.payload = on
-                        } else if (JSON.stringify(msg.payload) === JSON.stringify(off)) {
+                        } else if (JSON.stringify(payload) === JSON.stringify(off)) {
                             msg.payload = off
                         } else {
                             // throw Node-RED error
                             error = 'Invalid payload value'
                         }
                     } else {
-                        if (msg.payload === true || msg.payload === on) {
+                        if (payload === true || payload === on) {
                             msg.payload = on
-                        } else if (msg.payload === false || msg.payload === off) {
+                        } else if (payload === false || payload === off) {
                             msg.payload = off
                         } else {
                             // throw Node-RED error
@@ -86,9 +108,9 @@ module.exports = function (RED) {
                         datastore.save(group.getBase(), node, msg)
 
                         node.status({
-                            fill: (msg.payload === true || msg.payload === on) ? 'green' : 'red',
+                            fill: (payload === true || payload === on) ? 'green' : 'red',
                             shape: 'ring',
-                            text: (msg.payload === true || msg.payload === on) ? states[1] : states[0]
+                            text: (payload === true || payload === on) ? states[1] : states[0]
                         })
 
                         if (config.passthru) {
@@ -100,55 +122,11 @@ module.exports = function (RED) {
                         throw err
                     }
                 }
-            },
-            beforeSend: async function (msg) {
-                const updates = msg.ui_update
-                if (updates) {
-                    if (typeof updates.label !== 'undefined') {
-                        // dynamically set "label" property
-                        statestore.set(group.getBase(), node, msg, 'label', updates.label)
-                    }
-                    if (typeof updates.clickableArea !== 'undefined') {
-                        // dynamically set "clickableArea" property
-                        statestore.set(group.getBase(), node, msg, 'clickableArea', updates.clickableArea)
-                    }
-                    if (typeof updates.passthru !== 'undefined') {
-                        // dynamically set "passthru" property
-                        statestore.set(group.getBase(), node, msg, 'passthru', updates.passthru)
-                    }
-                    if (typeof updates.decouple !== 'undefined') {
-                        // dynamically set "decouple" property
-                        statestore.set(group.getBase(), node, msg, 'decouple', updates.decouple)
-                    }
-                    if (typeof updates.oncolor !== 'undefined') {
-                        // dynamically set "oncolor" property
-                        statestore.set(group.getBase(), node, msg, 'oncolor', updates.oncolor)
-                    }
-                    if (typeof updates.offcolor !== 'undefined') {
-                        // dynamically set "offcolor" property
-                        statestore.set(group.getBase(), node, msg, 'offcolor', updates.offcolor)
-                    }
-                    if (typeof updates.onicon !== 'undefined') {
-                        // dynamically set "onicon" property
-                        statestore.set(group.getBase(), node, msg, 'onicon', updates.onicon)
-                    }
-                    if (typeof updates.officon !== 'undefined') {
-                        // dynamically set "officon" property
-                        statestore.set(group.getBase(), node, msg, 'officon', updates.officon)
-                    }
-                    if (typeof updates.layout !== 'undefined') {
-                        // dynamically set "layout" property
-                        statestore.set(group.getBase(), node, msg, 'layout', updates.layout)
-                    }
-                }
-
-                msg = await appendTopic(RED, config, node, msg)
-                return msg
             }
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        group.register(node, config, evts, { dynamicProperties, typedInputs })
     }
 
     RED.nodes.registerType('ui-switch', SwitchNode)

@@ -25,20 +25,33 @@
         "group": "dashboard-test-text",
         "name": "",
         "label": "Inject Text",
+        "labelType": "str",
         "order": 3,
         "width": 0,
         "height": 0,
+        "emulateClick": false,
         "tooltip": "",
         "color": "",
         "bgcolor": "",
         "className": "",
         "icon": "",
+        "iconPosition": "left",
         "payload": "injected text",
         "payloadType": "str",
         "topic": "button-topic",
         "topicType": "str",
-        "x": 90,
-        "y": 80,
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
+        "y": 100,
         "wires": [
             [
                 "dashboard-ui-text-left"
@@ -62,8 +75,8 @@
         "fontSize": 16,
         "color": "#717171",
         "className": "",
-        "x": 260,
-        "y": 80,
+        "x": 300,
+        "y": 100,
         "wires": []
     },
     {
@@ -83,8 +96,8 @@
         "fontSize": "20",
         "color": "#ff0000",
         "className": "",
-        "x": 410,
-        "y": 80,
+        "x": 450,
+        "y": 100,
         "wires": []
     },
     {
@@ -111,8 +124,9 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 100,
-        "y": 120,
+        "enableClick": true,
+        "x": 140,
+        "y": 140,
         "wires": [
             [
                 "4f6d5859664febc6"
@@ -138,8 +152,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 330,
-        "y": 120,
+        "x": 370,
+        "y": 140,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -163,8 +177,8 @@
         "fontSize": 16,
         "color": "#717171",
         "className": "",
-        "x": 560,
-        "y": 120,
+        "x": 700,
+        "y": 280,
         "wires": []
     },
     {
@@ -174,6 +188,7 @@
         "group": "869909cd180dde02",
         "name": "Dynamic: Layout",
         "label": "Dynamic: Layout",
+        "labelType": "str",
         "order": 3,
         "width": 0,
         "height": 0,
@@ -191,8 +206,15 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 110,
-        "y": 160,
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 150,
+        "y": 180,
         "wires": [
             [
                 "491f94f116d68320"
@@ -218,8 +240,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 330,
-        "y": 160,
+        "x": 370,
+        "y": 180,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -245,8 +267,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 330,
-        "y": 200,
+        "x": 370,
+        "y": 220,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -277,8 +299,8 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 100,
-        "y": 200,
+        "x": 140,
+        "y": 220,
         "wires": [
             [
                 "fd61814fae69f03a"
@@ -304,8 +326,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 340,
-        "y": 240,
+        "x": 380,
+        "y": 260,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -336,8 +358,8 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 110,
-        "y": 240,
+        "x": 150,
+        "y": 260,
         "wires": [
             [
                 "b9b646d4c3863c66"
@@ -368,8 +390,8 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 100,
-        "y": 280,
+        "x": 140,
+        "y": 300,
         "wires": [
             [
                 "93e69c1e1ad41db5"
@@ -395,8 +417,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 330,
-        "y": 280,
+        "x": 370,
+        "y": 300,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -434,8 +456,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 120,
-        "y": 320,
+        "x": 160,
+        "y": 340,
         "wires": [
             [
                 "df51827510c6dc80"
@@ -466,8 +488,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 360,
-        "y": 320,
+        "x": 400,
+        "y": 340,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
@@ -475,13 +497,88 @@
         ]
     },
     {
-        "id": "button-inject-text-2",
+        "id": "button-blank-text-label",
         "type": "ui-button",
         "z": "node-red-tab-text",
         "group": "869909cd180dde02",
-        "name": "",
-        "label": "Inject Text 2",
+        "name": "blank text and label",
+        "label": "blank text and label",
+        "labelType": "str",
         "order": 8,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "button-topic",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 150,
+        "y": 380,
+        "wires": [
+            [
+                "eb6fd22686610fc0"
+            ]
+        ]
+    },
+    {
+        "id": "eb6fd22686610fc0",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.label",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 380,
+        "wires": [
+            [
+                "dashboard-ui-text-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "button-inject-value-only",
+        "type": "ui-button",
+        "z": "node-red-tab-text",
+        "group": "869909cd180dde02",
+        "name": "set value only",
+        "label": "set value only",
+        "labelType": "str",
+        "order": 9,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -505,14 +602,110 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 390,
-        "y": 360,
+        "x": 160,
+        "y": 420,
+        "wires": [
+            [
+                "7978d19beb050c5f"
+            ]
+        ]
+    },
+    {
+        "id": "7978d19beb050c5f",
+        "type": "change",
+        "z": "node-red-tab-text",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "injected text",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 420,
         "wires": [
             [
                 "dashboard-ui-text-dynamic"
             ]
         ]
     },
+
+        {
+            "id": "button-reset-ui-update",
+            "type": "ui-button",
+            "z": "node-red-tab-text",
+            "group": "869909cd180dde02",
+            "name": "reset ui_update",
+            "label": "reset ui_update",
+            "labelType": "str",
+            "order": 10,
+            "width": 0,
+            "height": 0,
+            "emulateClick": false,
+            "tooltip": "",
+            "color": "",
+            "bgcolor": "",
+            "className": "",
+            "icon": "",
+            "iconPosition": "left",
+            "payload": "null",
+            "payloadType": "json",
+            "topic": "button-topic",
+            "topicType": "str",
+            "buttonColor": "",
+            "textColor": "",
+            "iconColor": "",
+            "enableClick": true,
+            "enablePointerdown": false,
+            "pointerdownPayload": "",
+            "pointerdownPayloadType": "str",
+            "enablePointerup": false,
+            "pointerupPayload": "",
+            "pointerupPayloadType": "str",
+            "x": 160,
+            "y": 520,
+            "wires": [
+                [
+                    "455b29af62f52269"
+                ]
+            ]
+        },
+        {
+            "id": "455b29af62f52269",
+            "type": "change",
+            "z": "node-red-tab-text",
+            "name": "ui_update null",
+            "rules": [
+                {
+                    "t": "set",
+                    "p": "ui_update",
+                    "pt": "msg",
+                    "to": "null",
+                    "tot": "json"
+                }
+            ],
+            "action": "",
+            "property": "",
+            "from": "",
+            "to": "",
+            "reg": false,
+            "x": 380,
+            "y": 520,
+            "wires": [
+                [
+                    "dashboard-ui-text-dynamic"
+                ]
+            ]
+        },
+
     {
         "id": "dashboard-test-text",
         "type": "ui-group",
@@ -548,9 +741,31 @@
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": 1,
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 2,
         "className": "",
-        "visible": "true",
+        "visible": true,
         "disabled": false
     },
     {

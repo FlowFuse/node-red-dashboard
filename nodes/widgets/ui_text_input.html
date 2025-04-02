@@ -10,6 +10,9 @@
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
                 label: { value: 'text' },
+                labelType: { value: 'str' },
+                property: { value: 'payload' },
+                propertyType: { value: 'msg' },
                 order: { value: 0 },
                 width: {
                     value: 0,
@@ -50,6 +53,16 @@
             icon: 'font-awesome/fa-i-cursor',
             paletteLabel: 'text input',
             oneditprepare: function () {
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-label').val() && !$('#node-input-labelType').val()) {
+                    $('#node-input-label').val(this.label || 'text')
+                    $('#node-input-labelType').val(this.labelType || 'str')
+                }
+                if (!$('#node-input-property').val() && !$('#node-input-propertyType').val()) {
+                    $('#node-input-property').val(this.property || 'payload')
+                    $('#node-input-propertyType').val(this.propertyType || 'msg')
+                }
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -68,11 +81,24 @@
                         group: '#node-input-group'
                     })
                 }
+
                 // topic
                 $('#node-input-topic').typedInput({
                     default: 'str',
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
+                })
+                // label
+                $('#node-input-label').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-labelType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+                // value
+                $('#node-input-property').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-propertyType'),
+                    types: ['msg', 'jsonata']
                 })
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
@@ -109,7 +135,7 @@
                 }
             },
             label: function () {
-                return this.name || (~this.label.indexOf('{' + '{') ? null : this.label) || this.mode + ' input'
+                return this.name || ((this.labelType || 'str') === 'str' ? this.label : null) || this.mode + ' input'
             },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' }
         })
@@ -146,7 +172,13 @@
         </div>
     </div>
     <div class="form-row">
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> Input</label>
+        <input type="hidden" id="node-input-propertyType">
+        <input type="text" id="node-input-property" placeholder="payload" style="width: 70%;">
+    </div>
+    <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="hidden" id="node-input-labelType">
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">

@@ -1,8 +1,17 @@
-const statestore = require('../store/state.js')
-
 module.exports = function (RED) {
     function TextNode (config) {
         const node = this
+        // In-place upgrades - ensure properties are set
+        if (typeof config.property === 'undefined') { config.property = 'payload' }
+        if (typeof config.propertyType === 'undefined') { config.propertyType = 'msg' }
+        if (typeof config.label === 'undefined') { config.label = 'text' }
+        if (typeof config.labelType === 'undefined') { config.labelType = 'str' }
+
+        const typedInputs = {
+            payload: { nodeProperty: 'property', nodePropertyType: 'propertyType' },
+            label: { nodeProperty: 'label', nodePropertyType: 'labelType' }
+        }
+        const dynamicProperties = { label: true, layout: true, font: true, fontSize: true, color: true }
 
         RED.nodes.createNode(this, config)
 
@@ -21,39 +30,10 @@ module.exports = function (RED) {
             config.style = style
         }
 
-        const beforeSend = function (msg) {
-            const updates = msg.ui_update
-            if (updates) {
-                if (typeof updates.label !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'label', updates.label)
-                }
-                if (typeof updates.layout !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'layout', updates.layout)
-                }
-                if (typeof updates.font !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'font', updates.font)
-                }
-                if (typeof updates.fontSize !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'fontSize', updates.fontSize)
-                }
-                if (typeof updates.color !== 'undefined') {
-                    // dynamically set "label" property
-                    statestore.set(group.getBase(), node, msg, 'color', updates.color)
-                }
-            }
-            return msg
-        }
-
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, {
-            beforeSend
-        })
+        group.register(node, config, {}, { dynamicProperties, typedInputs })
     }
 
     RED.nodes.registerType('ui-text', TextNode)

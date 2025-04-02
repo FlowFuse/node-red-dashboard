@@ -11,7 +11,6 @@ lerna-debug.log*
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Custom
-node_modules
 dist
 dist-ssr
 *.local
@@ -44,9 +43,11 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directories
+# Ignore dependency directories
 node_modules/
 jspm_packages/
+# except for the test fixtures node_modules
+!test/**/fixtures/**/node_modules/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

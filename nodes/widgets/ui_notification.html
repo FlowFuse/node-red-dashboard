@@ -27,7 +27,9 @@
                 confirmText: { value: 'Confirm' },
                 raw: { value: false },
                 className: { value: '' },
-                name: { value: '' }
+                name: { value: '' },
+                message: { value: 'payload' },
+                messageType: { value: 'msg' }
             },
             inputs: 1,
             outputs: 1,
@@ -37,6 +39,19 @@
             label: function () { return this.name || (this.position === 'prompt' ? 'show dialog' : (this.position === 'dialog' ? 'show dialog' : 'show notification')) },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
+                console.log('ui-notification oneditprepare', this.message, this.messageType)
+                // In-place upgrades - ensure new properties are set to default values
+                if (!$('#node-input-message').val() && !$('#node-input-messageType').val()) {
+                    $('#node-input-message').val(this.message || 'payload')
+                    $('#node-input-messageType').val(this.messageType || 'msg')
+                }
+
+                $('#node-input-message').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-messageType'),
+                    types: ['str', 'msg', 'flow', 'global', 'jsonata', 'env']
+                })
+
                 $('#node-input-topic').typedInput({
                     default: 'str',
                     typeField: $('#node-input-topicType'),
@@ -86,6 +101,11 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-message"><i class="fa fa-ellipsis-h"></i> Message</label>
+        <input type="hidden" id="node-input-messageType">
+        <input type="text" id="node-input-message" placeholder="payload" style="width: 70%;">
     </div>
     <div class="form-row">
         <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
