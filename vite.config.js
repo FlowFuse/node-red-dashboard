@@ -24,7 +24,7 @@ export default defineConfig({
             manifest: false,
 
             injectManifest: {
-                maximumFileSizeToCacheInBytes: process.env.NODE_ENV === 'development' ? 6000000 : 3000000,
+                maximumFileSizeToCacheInBytes: process.env.NODE_ENV === 'development' ? 6000000 : 3300000,
                 globPatterns: ['**/*.{js,css,html,svg,png,ico,ttf,eot,woff,woff2}']
             },
 
