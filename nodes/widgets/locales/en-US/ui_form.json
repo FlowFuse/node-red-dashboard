@@ -4,13 +4,16 @@
             "dropdown": "Dropdown",
             "group": "Group",
             "size": "Size",
+            "width": "Width",
+            "height": "Height",
             "key": "Key",
             "label": "Label",
             "value": "Value",
-            "optionalLabel": "optional label",
+            "labelPlaceholder": "optional label",
             "className": "Class",
             "classNamePlaceholder": "Optional CSS class name(s)",
             "formElements": "Form elements",
+            "form": "Form",
             "dropdownOptions": "Dropdown options",
             "type": "Type",
             "required": "Required",
@@ -34,9 +37,12 @@
             "cancel": "clear",
             "cancelButtonText": "cancel button text",
             "topic": "Topic",
-            "optionalMsgTopic": "optional msg.topic",
+            "msgTopicPlaceholder": "optional msg.topic",
             "splitLayout": "Place the form elements in two columns",
             "resetOnSubmit": "Reset the form when submitted"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
         }
     }
 }

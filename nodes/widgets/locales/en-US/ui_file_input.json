@@ -1,0 +1,19 @@
+{
+    "ui-file-input": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "label": "Label",
+            "icon": "Icon",
+            "accept": "Accept",
+            "allowMultiple": "Allow Multiple",
+            "class": "Class",
+            "topic": "Topic",
+            "defaultLabel" : "File Input",
+            "classNamePlaceholder": "Optional CSS class name(s)"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        }
+    }
+}

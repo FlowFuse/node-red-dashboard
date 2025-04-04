@@ -1,6 +1,6 @@
 <script type="text/javascript">
     (function () {
-        // convert to i18 text
+        // convert to i18n text
         function c_ (x) {
             return RED._('@flowfuse/node-red-dashboard/ui-form:ui-form.' + x)
         }
@@ -347,11 +347,11 @@
                 })
                 node.tabs.addTab({
                     id: 'node-ui-form-tabsheet-form',
-                    label: 'Form'
+                    label: c_('label.form')
                 })
                 node.tabs.addTab({
                     id: 'node-ui-form-tabsheet-dropdown-options',
-                    label: 'Dropdown options'
+                    label: c_('label.dropdownOptions')
                 })
             },
             oneditsave: function () {
@@ -464,20 +464,20 @@
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-form.label.size">Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-form.label.size"></label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-form.label.width">Width</label>
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-form.label.width"></label>
         <input type="hidden" id="node-input-width">
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-form.label.height">Height</label>
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-form.label.height"></label>
         <input type="hidden" id="node-input-height">
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-form.label.label"></label>
-        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-form.label.optionalLabel">
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-form.label.labelPlaceholder">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-form.label.className"></label>
@@ -485,7 +485,7 @@
             <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-form.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-form.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -523,7 +523,7 @@
             </div>
             <div class="form-row">
                 <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-form.label.topic"></label>
-                <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-form.label.optionalMsgTopic">
+                <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-form.label.msgTopicPlaceholder">
                 <input type="hidden" id="node-input-topicType">
             </div>
         </div>

@@ -27,6 +27,10 @@
             "active": "Active",
             "disabled": "Disabled",
             "openDashboardSidebar": "Open Dashboard 2.0 Sidebar"
+        },
+        "error": {
+            "registeringConfig": "Error registering config. No parent ui-base node found for ui-page node: __pageName__",
+            "registeringWidget": "Error registering widget - __widgetName__. No parent ui-base node found for ui-page node: __pageName__"
         }
     }
 }

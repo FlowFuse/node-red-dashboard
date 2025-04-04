@@ -164,45 +164,45 @@
 
 <script type="text/html" data-template-name="ui-switch">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
 	<div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-switch.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-switch.label.size">Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-switch.label.size"></span></label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-switch.label.width">Width</label>
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-switch.label.width"></span></label>
         <input type="hidden" id="node-input-width">
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-switch.label.height">Height</label>
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-switch.label.height"></span></label>
         <input type="hidden" id="node-input-height">
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-switch.label.label"></span></label>
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-clickableArea"><i class="fa fa-hand-pointer-o"></i> Clickable</label>
+        <label for="node-input-clickableArea"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="ui-switch.label.clickable"></span></label>
         <select id="node-input-clickableArea" style="width:70%">
-            <option value="switch">Only switch</option>
-            <option value="label">Label and switch</option>
-            <option value="line">Entire line</option>
-            <option value="none">None</option>
+            <option value="switch" data-i18n="ui-switch.option.onlySwitch"></option>
+            <option value="label" data-i18n="ui-switch.option.labelAndSwitch"></option>
+            <option value="line" data-i18n="ui-switch.option.entireLine"></option>
+            <option value="none" data-i18n="ui-switch.option.none"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-switch.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-switch.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-switch.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -210,11 +210,12 @@
         </div>
     </div>
     <div class="form-row">
-        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span>Layout</span></label>
+        <label style="vertical-align: top"><i class="fa fa-th-large"></i> <span data-i18n="ui-switch.label.layout"></span></label>
         <div style="display:inline-block">
             <input type="hidden" id="node-input-layout">
             <input type="hidden" id="node-input-layoutAlign" >
             <div>
+                <!-- i18n doesn't look good here... -->
                 <a href="#" id="nr-db-switch-layout-row-left" class="nr-db-switch-layout nr-db-switch-layout-row nr-db-switch-layout-row-left">
                     <span class="nr-db-switch-layout-label">label</span>
                     <span class="nr-db-switch-layout-value">switch</span>
@@ -241,55 +242,55 @@
         </div>
     </div>
     <!--<div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> Tooltip</label>
-        <input type="text" id="node-input-tooltip" placeholder="optional tooltip">
+        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-switch.label.tooltip"></span></label>
+        <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-switch.label.tooltipPlaceholder">
     </div>-->
     <div class="form-row">
-        <label for="node-input-custom-icons"><i class="fa fa-picture-o"></i> Icon</label>
+        <label for="node-input-custom-icons"><i class="fa fa-picture-o"></i> <span data-i18n="ui-switch.label.icon"></span></label>
         <select id="node-input-custom-icons" style="width:70%">
-            <option value="default">Default</option>
-            <option value="custom">Custom</option>
+            <option value="default" data-i18n="ui-switch.option.default"></option>
+            <option value="custom" data-i18n="ui-switch.option.custom"></option>
         </select>
     </div>
     <div class="form-row form-row-custom-icons">
-        <label for="node-input-onicon" style="text-align:right;"><i class="fa fa-toggle-on"></i> On Icon</label>
+        <label for="node-input-onicon" style="text-align:right;"><i class="fa fa-toggle-on"></i> <span data-i18n="ui-switch.label.onIcon"></span></label>
         <input type="text" id="node-input-onicon" style="width:120px">
-        <label for="node-input-oncolor" style="width:50px; text-align:right;">Colour</label>
+        <label for="node-input-oncolor" style="width:50px; text-align:right;" data-i18n="ui-switch.label.colour"></label>
         <input type="text" id="node-input-oncolor" style="width:120px">
     </div>
     <div class="form-row form-row-custom-icons">
-        <label for="node-input-officon" style="text-align:right;"><i class="fa fa-toggle-off"></i> Off Icon</label>
+        <label for="node-input-officon" style="text-align:right;"><i class="fa fa-toggle-off"></i> <span data-i18n="ui-switch.label.offIcon"></span></label>
         <input type="text" id="node-input-officon" style="width:120px">
-        <label for="node-input-offcolor" style="width:50px; text-align:right;">Colour</label>
+        <label for="node-input-offcolor" style="width:50px; text-align:right;" data-i18n="ui-switch.label.colour"></label>
         <input type="text" id="node-input-offcolor" style="width:120px">
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="[html]ui-switch.label.passThrough"></span></label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     <div class="form-row form-row-decouple">
         <!-- do not us node-input-<property> so we can enforce boolean types -->
-        <label for="node-field-decouple"><i class="fa fa-toggle-on"></i> Indicator</label>
+        <label for="node-field-decouple"><i class="fa fa-toggle-on"></i> <span data-i18n="ui-switch.label.indicator"></span></label>
         <select id="node-field-decouple" style="display: inline-block; vertical-align: middle; width:70%;">
-            <option value="false">Switch icon shows state of the output</option>
-            <option value="true">Switch icon shows state of the input</option>
+            <option value="false" data-i18n="ui-switch.option.stateOutput"></option>
+            <option value="true" data-i18n="ui-switch.option.stateInput"></option>
         </select>
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-onvalue"><i class="fa fa-envelope-o"></i> When clicked, send:</label>
+        <label style="width:auto" for="node-input-onvalue"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-switch.label.whenClicked"></span></label>
     </div>
     <div class="form-row">
-        <label for="node-input-onvalue" style="padding-left:25px; margin-right:-25px">On Payload</label>
+        <label for="node-input-onvalue" style="padding-left:25px; margin-right:-25px" data-i18n="ui-switch.label.onPayload"></label>
         <input type="text" id="node-input-onvalue" style="width:70%">
         <input type="hidden" id="node-input-onvalueType">
     </div>
     <div class="form-row">
-        <label for="node-input-offvalue" style="padding-left:25px; margin-right:-25px">Off Payload</label>
+        <label for="node-input-offvalue" style="padding-left:25px; margin-right:-25px" data-i18n="ui-switch.label.offPayload"></label>
         <input type="text" id="node-input-offvalue" style="width:70%">
         <input type="hidden" id="node-input-offvalueType">
     </div>
     <div class="form-row">
-        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
+        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px" data-i18n="ui-switch.label.topic"></label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
     </div>

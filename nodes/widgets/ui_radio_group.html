@@ -3,13 +3,18 @@
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
+        // convert to i18n text
+        function c_ (x) {
+            return RED._('@flowfuse/node-red-dashboard/ui-radio-group:ui-radio-group.' + x)
+        }
+    
         RED.nodes.registerType('ui-radio-group', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
             defaults: {
                 group: { type: 'ui-group', required: true },
                 name: { value: '' },
-                label: { value: 'Select Option:' },
+                label: { value: c_('label.defaultLabel') },
                 order: { value: 0 },
                 width: {
                     value: 0,
@@ -76,8 +81,8 @@
 
                     $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-option-handle fa fa-bars"></i>').appendTo(row)
 
-                    $('<input/>', { class: 'node-input-option-value', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Value', value: option.value }).appendTo(row).typedInput({ default: option.type || 'str', types: ['str', 'num', 'bool'] })
-                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: 'Label', value: option.label }).appendTo(row)
+                    $('<input/>', { class: 'node-input-option-value', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: c_('label.optValuePlaceholder'), value: option.value }).appendTo(row).typedInput({ default: option.type || 'str', types: ['str', 'num', 'bool'] })
+                    $('<input/>', { class: 'node-input-option-label', type: 'text', style: 'margin-left:7px; width:calc(50% - 32px);', placeholder: c_('label.optLabelPlaceholder'), value: option.label }).appendTo(row)
 
                     const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
                     const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
@@ -149,36 +154,36 @@
 
 <script type="text/html" data-template-name="ui-radio-group">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-radio-group.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-radio-group.label.size">Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-radio-group.label.size"></span></label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-radio-group.label.width">Width</label>
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-radio-group.label.width"></span></label>
         <input type="hidden" id="node-input-width">
     </div>
     <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-radio-group.label.height">Height</label>
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-radio-group.label.height"></span></label>
         <input type="hidden" id="node-input-height">
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-tag"></i> Label</label>
-        <input type="text" id="node-input-label" placeholder="optional label">
+        <label for="node-input-label"><i class="fa fa-tag"></i> <span data-i18n="ui-radio-group.label.label"></span></label>
+        <input type="text" id="node-input-label" data-i18n="[placeholder]ui-radio-group.label.labelPlaceholder">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-radio-group.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-radio-group.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-radio-group.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -186,26 +191,26 @@
         </div>
     </div>
     <div class="form-row node-input-option-container-row" style="margin-bottom: 0px;width: 100%">
-        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> Options</label>
+        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-radio-group.label.options"></span></label>
         <div id="node-input-option-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width:calc(70% + 15px);">
-            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b>All Values must be unique.</b></span>
+            <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b data-i18n="ui-radio-group.error.uniqueValues"></b></span>
             <ol id="node-input-option-container" style="list-style-type:none; margin:0;"></ol>
         </div>
     </div>
     <div class="form-row">
-        <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span>option</span></a>
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-option" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-radio-group.label.addOption"></span></a>
     </div>
     <div class="form-row">
-        <label for="node-input-columns"><i class="fa fa-tag"></i> Columns</label>
+        <label for="node-input-columns"><i class="fa fa-tag"></i> <span data-i18n="ui-radio-group.label.columns"></span></label>
         <input type="number" id="node-input-columns" placeholder="columns" min="1" max="5">
     </div>
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" style="width:70%" placeholder="optional msg.topic">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ui-radio-group.label.topic"></span></label>
+        <input type="text" id="node-input-topic" style="width:70%" data-i18n="[placeholder]ui-radio-group.label.topicPlaceholder">
         <input type="hidden" id="node-input-topicType">
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="[html]ui-radio-group.label.passThrough"></span></label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 </script>

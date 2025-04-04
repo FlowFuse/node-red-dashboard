@@ -1,0 +1,43 @@
+{
+    "ui-switch": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "width": "Width",
+            "height": "Height",
+            "label": "Label",
+            "clickable": "Clickable",
+            "class": "Class",
+            "layout": "Layout",
+            "icon": "Icon",
+            "onIcon": "On Icon",
+            "offIcon": "Off Icon",
+            "colour": "Colour",
+            "passThrough": "If <code>msg</code> arrives on input, pass through to output:",
+            "indicator": "Indicator",
+            "whenClicked": "When clicked, send:",
+            "onPayload": "On Payload",
+            "offPayload": "Off Payload",
+            "topic": "Topic",
+            "classNamePlaceholder": "Optional CSS class name(s)",
+            "tooltipPlaceholder": "optional tooltip"
+        },
+        "option": {
+            "onlySwitch": "Only switch",
+            "labelAndSwitch": "Label and switch",
+            "entireLine": "Entire line",
+            "none": "None",
+            "default": "Default",
+            "custom": "Custom",
+            "stateOutput": "Switch icon shows state of the output",
+            "stateInput": "Switch icon shows state of the input"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        },
+        "layout": {
+            "label": "label",
+            "switch": "switch"
+        }
+    }
+}

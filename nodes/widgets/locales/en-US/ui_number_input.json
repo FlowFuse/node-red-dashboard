@@ -1,0 +1,39 @@
+{
+    "ui-number-input": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "icon": "Icon",
+            "label": "Label",
+            "tooltip": "Tooltip",
+            "range": "Range",
+            "min": "min",
+            "max": "max",
+            "step": "step",
+            "spinner": "Spinner",
+            "class": "Class",
+            "passThrough": "If <code>msg</code> arrives on input, pass through to output:",
+            "clearable": "Clear number input with button",
+            "sendMessageOn": "Send message on:",
+            "focusLeave": "Focus Leave",
+            "pressEnter": "Press Enter",
+            "whenChanged": "When changed, send:",
+            "payload": "Payload",
+            "currentValue": "Current value",
+            "topic": "Topic",
+            "iconPlaceholder": "(optional) e.g. 'gesture-tap'",
+            "classNamePlaceholder": "Optional CSS class name(s)"
+        },
+        "option": {
+            "left": "Left",
+            "right": "Right",
+            "inside": "In",
+            "outside": "Out",
+            "inline": "Inline",
+            "stacked": "Stacked"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        }
+    }
+}
