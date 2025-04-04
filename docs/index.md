@@ -53,7 +53,9 @@ hero:
   <code v-else>copied!</code>
 </div>
 
-## Example Dashboards
+## Dashboard Showcase
+
+This is a small collection of some example Dashboards, with links to more information about each one. If you have a Dashboard that you want to show off and to feature here, please get in touch!
 
 <DashboardExamples />
 
