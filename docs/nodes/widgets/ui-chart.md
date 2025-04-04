@@ -136,6 +136,8 @@ Then, the last piece of the puzzle would be to set the `y` property would be one
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1743608192522, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
 
+Note: Timestamps must be in milliseconds (ms). This follows the JavaScript standard for representing time as the number of milliseconds elapsed since the Unix epoch (January 1, 1970, 00:00:00 UTC).
+
 #### Interpolation Methods for Line Charts
 
 Interpolation defines how the line is drawn between data points on a line chart. In Dashboard, you can choose between several interpolation methods to suit your data visualization needs:
