@@ -34,6 +34,7 @@ hero:
     import RecommendedTutorials from './components/RecommendedTutorials.vue';
     import RecommendedReading from './components/RecommendedReading.vue';
     import FlowFuseAdvert from './components/FlowFuseAdvert.vue';
+    import DashboardExamples from './components/DashboardExamples.vue';
     import CopyIcon from './components/icons/CopyIcon.vue';
 
     const copied = ref(false); 
@@ -51,6 +52,10 @@ hero:
   <code v-if="!copied">@flowfuse/node-red-dashboard <CopyIcon @click="copy"/></code>
   <code v-else>copied!</code>
 </div>
+
+## Example Dashboards
+
+<DashboardExamples />
 
 ## Download our E-Book
 
