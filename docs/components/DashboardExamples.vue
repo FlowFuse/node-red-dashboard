@@ -99,6 +99,11 @@ export default {
                     url: '/images/dashboard-examples/oee-dashboard-2.png',
                     alt: 'OEE Performance Dashboard',
                     link: 'https://flowfuse.com/blog/2025/04/building-oee-dashboard-with-flowfuse-2/'
+                },
+                {
+                    url: '/images/dashboard-examples/scrolling-terminal.png',
+                    alt: 'Dashboard Scrolling Terminal',
+                    link: 'https://discourse.nodered.org/t/a-scrolling-terminal-display-in-dashboard-2/88423'
                 }
             ]
         }
