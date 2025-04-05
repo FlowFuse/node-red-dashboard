@@ -434,15 +434,45 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
-            // loop over widgets - check statestore if we've had any dynamic properties set
-            for (const [id, widget] of node.ui.widgets) {
-                const state = statestore.getAll(id)
-                if (state) {
-                    // merge the statestore with our props to account for dynamically set properties:
-                    widget.props = { ...widget.props, ...state }
-                    widget.state = { ...widget.state, ...state }
+            const enablePageFilter = node.context().global.get('store.enablePageFilter', 'file') ?? false
+            const zeroTrust = node.context().global.get('store.zeroTrust', 'file') ?? false
+            const testMode = node.context().global.get('store.testMode') ?? false
+
+            let allowedPages = null
+
+            if (enablePageFilter) {
+                // Determine userId based on testMode, use socket connection credentials or the test user
+                const userId = !testMode
+                    ? addConnectionCredentials(RED, {}, socket, n)?._client?.user?.email
+                    : node.context().global.get('store.testUser') ?? undefined
+
+                // Retrieve user allowed pages from the global store
+                const store = node.context().global.get('store')
+                const user = store?.[userId] ?? {}
+
+                // Assign allowed pages or null if not found
+                allowedPages = user?.allowedPages ?? null
+
+                // Add userId and last detected to global.store.detectedUsers
+                if (userId) {
+                    // eslint-disable-next-line prefer-const
+                    const currentTime = Math.floor(Date.now() / 1000)
+
+                    // get detectedUsers from store
+                    let detectedUsers = store?.detectedUsers || {}
+
+                    if (!detectedUsers) {
+                        detectedUsers = {}
+                    }
+                    detectedUsers[userId] = { userId, lastDetected: currentTime }
+
+                    // update the global store
+                    node.context().global.set('store.detectedUsers', detectedUsers)
                 }
             }
+
+            // Initialize userPages based on filter disabled or zeroTrust value - start with empty map for zero trust
+            const userPages = (!enablePageFilter || (enablePageFilter && zeroTrust)) ? new Map() : new Map(node.ui.pages)
 
             // loop over pages - check statestore if we've had any dynamic properties set
             for (const [id, page] of node.ui.pages) {
@@ -451,7 +481,32 @@ module.exports = function (RED) {
                     // merge the statestore with our props to account for dynamically set properties:
                     node.ui.pages.set(id, { ...page, ...state })
                 }
+                // filter pages
+                if (enablePageFilter) {
+                    let isAllowed = true
+
+                    if (allowedPages) {
+                        try {
+                            isAllowed = allowedPages.includes(id)
+                        } catch (error) {
+                            node.warn(error)
+                            isAllowed = !zeroTrust
+                        }
+                    // If no user allowed pages set and zero trust enabled then deny access to all pages
+                    } else if (zeroTrust) {
+                        isAllowed = false
+                    }
+
+                    if (isAllowed) {
+                        userPages.set(id, node.ui.pages.get(id))
+                    } else {
+                        userPages.delete(id)
+                    }
+                }
             }
+
+            // Initialize userGroups based on filter disabled or zeroTrust value - start with empty map for zero trust
+            const userGroups = (!enablePageFilter || (enablePageFilter && zeroTrust)) ? new Map() : new Map(node.ui.groups)
 
             // loop over groups - check statestore if we've had any dynamic properties set
             for (const [id, group] of node.ui.groups) {
@@ -459,6 +514,57 @@ module.exports = function (RED) {
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
                     node.ui.groups.set(id, { ...group, ...state })
+                }
+                // filter groups
+                if (enablePageFilter) {
+                    // check if group exists in allowed userPages
+                    const isAllowed = userPages.has(group.page)
+                    if (isAllowed) {
+                        userGroups.set(id, node.ui.groups.get(id))
+                    } else {
+                        userGroups.delete(id)
+                    }
+                }
+            }
+
+            // Initialize userWidgets based on filter disabled or zeroTrust value - start with empty map for zero trust
+            const userWidgets = (!enablePageFilter || (enablePageFilter && zeroTrust)) ? new Map() : new Map(node.ui.widgets)
+
+            // loop over widgets - check statestore if we've had any dynamic properties set
+            for (const [id, widget] of node.ui.widgets) {
+                const state = statestore.getAll(id)
+
+                if (state) {
+                    // merge the statestore with our props to account for dynamically set properties:
+                    widget.props = { ...widget.props, ...state }
+                    widget.state = { ...widget.state, ...state }
+                }
+
+                // widget filtering
+                if (enablePageFilter) {
+                    const props = widget.props
+                    const group = props.group
+
+                    // check if widget has a group defined, and that it exists in the allowed userPages,
+                    // or if widget is UI scoped in which case we allow
+                    const isAllowed =
+                    // widget is a ui-template
+                    widget.type === 'ui-template'
+                        // UI scoped?
+                        ? (props.ui !== '' ||
+                            // group scoped and is in allowed group
+                            userGroups.has(group) ||
+                            // page scoped and is in allowed page
+                            userPages.has(props.page)
+                        )
+                        // other widgets - allow UI scoped widgets like ui-event and ui-control
+                        : (!group || userGroups.has(group))
+
+                    if (isAllowed) {
+                        userWidgets.set(id, widget)
+                    } else {
+                        userWidgets.delete(id)
+                    }
                 }
             }
             // if the socket has an editKey & it matches the editKey in the meta, then we will
@@ -474,10 +580,10 @@ module.exports = function (RED) {
                 meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
-                pages: Object.fromEntries(node.ui.pages),
+                pages: Object.fromEntries(!enablePageFilter ? node.ui.pages : userPages),
                 themes: Object.fromEntries(node.ui.themes),
-                groups: Object.fromEntries(node.ui.groups),
-                widgets: Object.fromEntries(node.ui.widgets)
+                groups: Object.fromEntries(!enablePageFilter ? node.ui.groups : userGroups),
+                widgets: Object.fromEntries(!enablePageFilter ? node.ui.widgets : userWidgets)
             })
         }
 
@@ -989,6 +1095,18 @@ module.exports = function (RED) {
                 // ensure we have the latest instance of the page's node
                 const { _users, ...p } = page
                 node.ui.pages.set(page.id, p)
+
+                // get D2 pages from store
+                let pages = node.context().global.get('store.pages') || {}
+
+                if (!pages) {
+                    pages = {}
+                }
+                // save page.name and page.id to the pages map
+                pages[page.id] = { name: page.name, id: page.id }
+
+                // update the global store
+                node.context().global.set('store.pages', pages)
             }
 
             // map groups on a page-by-page basis
