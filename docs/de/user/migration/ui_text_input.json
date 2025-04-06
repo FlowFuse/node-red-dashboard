@@ -1,0 +1,76 @@
+{
+    "node": "ui_text",
+    "description": "Text Sachen",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": "<a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/393\" target=\"_blank\">Problem #393</a>"
+        },
+        {
+            "property": "mode",
+            "changes": null,
+            "notes": "Option für mehrzeilige Texteingabe ebenfalls hinzugefügt"
+        },
+        {
+            "property": "delay",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "passthru",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "send on blur",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "payload",
+            "changes": -3,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "send on delay",
+            "notes": "Dies überschreibt die 'Verzögerung'-Einstellung und bietet explizite Kontrolle darüber, wann die Nachricht gesendet wird."
+        },
+        {
+            "property": "send on enter",
+            "notes": "Dies sendet eine Nachricht, wenn der Benutzer <enter> in der Texteingabe drückt."
+        }
+    ]
+}

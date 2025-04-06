@@ -1,5 +1,6 @@
 import { loadEnv } from 'vite'
 
+import de from './de'
 import en from './en'
 import shared from './shared'
 
@@ -8,7 +9,8 @@ export default ({ mode }) => {
     return{
     ...shared,
     locales: {
-        root: { label: 'English', ...en }
+        root: { label: 'English', ...en },
+       de: { label: 'Deutsch', ...de }
     }
 }
 }
