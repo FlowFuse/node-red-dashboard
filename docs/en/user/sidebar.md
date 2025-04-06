@@ -1,6 +1,6 @@
 
 <script setup>
-    import AddedIn from '../components/AddedIn.vue';
+    import AddedIn from '../../components/AddedIn.vue';
 </script>
 
 # Dashboard 2.0 Sidebar

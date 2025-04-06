@@ -14,7 +14,7 @@ The groups themselves follow the same pattern as all other layouts whereby a gro
 
 It will automatically move widgets to the next row if they don't fit within a given screen width, and does not change size with the screen size, which often leaves a lot of empty screen real estate. The height of each row is determined by the tallest widget in that row.
 
-![Fixed Layout](../../assets/images/layout-eg-flex.png){data-zoomable}
+![Fixed Layout](../../../assets/images/layout-eg-flex.png){data-zoomable}
 *An example UI rendered using the "Fixed" Layout*
 
 ## Breakpoints

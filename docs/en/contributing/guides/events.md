@@ -20,7 +20,7 @@ We have broken the events architecture/traffic into three key groups:
 
 ### "Loading" Event Flow
 
-![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) at deploy and first-load](../../assets/images/events-arch-load.jpg){data-zoomable}
+![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) at deploy and first-load](../../../assets/images/events-arch-load.jpg){data-zoomable}
 *A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) at deploy and first-load*
 
 Here we detail the initial "Setup" HTTP request, consequent SocketIO traffic and appropriate handlers that are run when a Dashboard is deployed (via the Node-RED "Deploy" option), as well as when a Dashboard-client is first loaded.
@@ -29,7 +29,7 @@ Note the differentiation between a "Dashboard" loading, i.e. the full app and br
 
 ### "Input" Event Flow
 
-![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node](../../assets/images/events-arch-msg.jpg){data-zoomable}
+![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node](../../../assets/images/events-arch-msg.jpg){data-zoomable}
 *A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node*
 
 This flow details the functions, and SocketIO traffic that occurs when a message is received by a Dashboard node within Node-RED. Note that most core Dashboard 2.0 widgets use the default `onInput` handler, but in some cases, a custom `onInput` handler is used where we want different behaviour.
@@ -45,7 +45,7 @@ Our default server-side `onInput` handler handles the common use cases of:
 
 Different widgets trigger different events depending on the specific use-cases. The following diagram shows the three types of events that the client can emit to the server, and how these are handled separately.
 
-![A flow diagram depicting how events traverse from Dashboard (blue) to Node-RED (red) when a user interacts with Dashboard](../../assets/images/events-arch-client-events.jpg){data-zoomable}
+![A flow diagram depicting how events traverse from Dashboard (blue) to Node-RED (red) when a user interacts with Dashboard](../../../assets/images/events-arch-client-events.jpg){data-zoomable}
 *A flow diagram depicting how events traverse from Dashboard (blue) to Node-RED (red) when a user interacts with Dashboard*
 
 Some examples of events that are emitted from the Dashboard to Node-RED include:

@@ -1,9 +1,9 @@
 <script setup>
     import { ref } from 'vue'
-    import AuthProvider from '../components/AuthProvider.vue'
-    import FlowViewer from '../components/FlowViewer.vue'
-    import ExampleSlider from '../examples/multi-tenancy.json'
-    import ExampleForm from '../examples/multi-tenancy-form.json'
+    import AuthProvider from '../../components/AuthProvider.vue'
+    import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleSlider from '../../examples/multi-tenancy.json'
+    import ExampleForm from '../../examples/multi-tenancy-form.json'
 
     const examples = ref({
       'multi-tenant-slider': ExampleSlider,

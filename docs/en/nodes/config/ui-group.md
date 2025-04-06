@@ -12,8 +12,8 @@ props:
 <script setup>
     
     import { ref } from 'vue'
-    import FlowViewer from '../../components/FlowViewer.vue'
-    import ExampleGroupDialog from '../../examples/group-dialog-type.json'
+    import FlowViewer from '../../../components/FlowViewer.vue'
+    import ExampleGroupDialog from '../../../examples/group-dialog-type.json'
 
     const examples = ref({
       'group-dialog': ExampleGroupDialog
@@ -30,7 +30,7 @@ Each group is rendered within a `ui-page` as part of a [Layout](../../contributi
 
 ## Type
 
-Defines how the group will be displayed. Either as a regular (**Default**) group or as a **Dialog** group. A 'Default' group is visible by default, while a 'Dialog' group must be triggered manually using the `ui-control` node ([see documentation](/nodes/widgets/ui-control.html#show-hide)). You can choose between these two options based on your layout needs.
+Defines how the group will be displayed. Either as a regular (**Default**) group or as a **Dialog** group. A 'Default' group is visible by default, while a 'Dialog' group must be triggered manually using the `ui-control` node ([see documentation](/en/nodes/widgets/ui-control.html#show-hide)). You can choose between these two options based on your layout needs.
 
 ### Default Groups
 

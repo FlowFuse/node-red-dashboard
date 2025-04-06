@@ -2,7 +2,7 @@
 description: Utilize the notebook layout in Node-RED Dashboard 2.0 for sequential data presentation and logging
 ---
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue'
+    import AddedIn from '../../../components/AddedIn.vue'
 </script>
 
 # Layout: Notebook <AddedIn version="0.4.0" />
@@ -11,7 +11,7 @@ This layout mimics a traditional Jupyter Notebook, where the layout will stretch
 
 A common use case for this type of layout would be to inject dynamic Markdown, data tables and data visualisations.
 
-![Notebook Layout](../../assets/images/layout-eg-notebook.png){data-zoomable}
+![Notebook Layout](../../../assets/images/layout-eg-notebook.png){data-zoomable}
 *An example UI rendered using the "Notebook" Layout*
 
 ## Controlling Width & Columns
@@ -22,19 +22,19 @@ By increasing the "width" of a group, you're actually increasing the number of c
 
 A group has a default width of "6" columns, with the full Notebook also a width of "6". Here, we can see two charts, rendered side-by-side, with each chart having a width of "3" columns.
 
-![Notebook Layout](../../assets/images/layout-eg-notebook-width6.png){data-zoomable}
+![Notebook Layout](../../../assets/images/layout-eg-notebook-width6.png){data-zoomable}
 *An example UI rendered using the "Notebook" Layout*
 
 We can get finer grain width control within a group by increasing it's width. The Notebook itself will not render the group any wider, but the group itself will render with 12 columns internally. So, if we increase the "width" (number of columns) of the group to 12, then the two charts are then setup to only take up half of the width of the group (3 columns each).
 
-![Notebook Layout](../../assets/images/layout-eg-notebook-width12.png){data-zoomable}
+![Notebook Layout](../../../assets/images/layout-eg-notebook-width12.png){data-zoomable}
 *An example UI rendered using the "Notebook" Layout*
 
 ## Breakpoints
 
 Depending on the screen size, the number of default columns rendered can change. Here you can see examples of the columns rendered at three breakpoints:
 
-![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-columns.png){data-zoomable}
+![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../../assets/images/layout-grid-columns.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
 The exact breakpoints used can be configured in the [page's settings](../../nodes/config/ui-page.md#breakpoints).

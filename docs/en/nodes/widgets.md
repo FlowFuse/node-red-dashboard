@@ -4,8 +4,8 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
 
 <script setup>
     import { ref } from 'vue'
-    import WidgetCard from '../components/WidgetCard.vue'
-    import WidgetGrid from '../components/WidgetGrid.vue'
+    import WidgetCard from '../../components/WidgetCard.vue'
+    import WidgetGrid from '../../components/WidgetGrid.vue'
 
     const general = [{
         name: 'Audio',

@@ -21,8 +21,8 @@ On the left-side navigation you'll find a "Useful Guides" section, we recommend 
 
 In particular, the following are recommended:
 
-- [Events Architecture](/contributing/guides/state-management.html)
-- [State Management](/contributing/guides/state-management.html)
+- [Events Architecture](/en/contributing/guides/state-management.html)
+- [State Management](/en/contributing/guides/state-management.html)
 
 ## Checklist
 
@@ -270,4 +270,4 @@ Each node will have a corresponding `/locales/<locale>/<node>.html` file which s
 
 ### Debugging Dynamic Properties
 
-Dashboard 2.0 comes with as [Debug View](/contributing/widgets/debugging.html) that includes a [specialist panel](/contributing/widgets/debugging.html#dynamic-properties) to monitor any dynamic properties assigned to a widget. This can be a very useful tool when checking whether the client is aware of any dynamic properties that have been sent.
+Dashboard 2.0 comes with as [Debug View](/en/contributing/widgets/debugging.html) that includes a [specialist panel](/en/contributing/widgets/debugging.html#dynamic-properties) to monitor any dynamic properties assigned to a widget. This can be a very useful tool when checking whether the client is aware of any dynamic properties that have been sent.

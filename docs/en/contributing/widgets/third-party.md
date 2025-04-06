@@ -2,7 +2,7 @@
 description: Expand Node-RED Dashboard 2.0 with third-party widgets. Learn how to build and integrate them.
 ---
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue'
+    import AddedIn from '../../../components/AddedIn.vue'
 </script>
 
 # Building Third Party Widgets <AddedIn version="0.8.0" />
@@ -22,8 +22,8 @@ On the left-side navigation you'll find a "Useful Guides" section, we recommend 
 
 In particular, the following are recommended:
 
-- [Events Architecture](/contributing/guides/state-management.html)
-- [State Management](/contributing/guides/state-management.html)
+- [Events Architecture](/en/contributing/guides/state-management.html)
+- [State Management](/en/contributing/guides/state-management.html)
 
 ## How Widgets are Loaded
 

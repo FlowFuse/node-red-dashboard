@@ -41,7 +41,7 @@ dynamic:
 ---
 
 <script setup>
-    import TryDemo from "./../../components/TryDemo.vue";
+    import TryDemo from "./../../../components/TryDemo.vue";
 </script>
 
 <TryDemo href="dropdown">

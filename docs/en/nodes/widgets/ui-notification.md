@@ -53,8 +53,8 @@ controls:
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue';
-    import TryDemo from "./../../components/TryDemo.vue";
+    import AddedIn from '../../../components/AddedIn.vue';
+    import TryDemo from "./../../../components/TryDemo.vue";
 </script>
 
 # Notification `ui-notification` <AddedIn version="0.5.0" />

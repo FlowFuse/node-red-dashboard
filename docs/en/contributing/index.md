@@ -34,7 +34,7 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
 
 2. **Fork Repository:** Fork this repository to your own Github account:
 
-   ![image](../assets/images/github-pr.png){data-zoomable}
+   ![image](../../assets/images/github-pr.png){data-zoomable}
 
 3. **Clone Git Repo:** Clone the forked repository from your Github account. This can be anywhere appropriate on your machine (e.g. `/yourname/development/`):
    ```bash

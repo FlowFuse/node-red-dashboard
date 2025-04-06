@@ -4,9 +4,9 @@ description: Kickstart your Node-RED Dashboard 2.0 journey with this getting sta
 
 <script setup>
     import { ref } from 'vue'
-    import FlowViewer from './components/FlowViewer.vue'
-    import ExampleDesignPatterns from '../examples/design-patterns.json'
-    import RecommendedTutorials from './components/RecommendedTutorials.vue'
+    import FlowViewer from './../components/FlowViewer.vue'
+    import ExampleDesignPatterns from '../../examples/design-patterns.json'
+    import RecommendedTutorials from './../components/RecommendedTutorials.vue'
 
     const examples = ref({
       'design-patterns': ExampleDesignPatterns,
@@ -36,7 +36,7 @@ This project was formed by FlowFuse, as part of efforts to upgrade the original 
 - Search `node-red-dashboard`
 - Install the `@flowfuse/node-red-dashboard` package (not `node-red/node-red-dashboard`)
 
-![Install via "Manage Palette"](./assets/images/install-palette.png){data-zoomable}
+![Install via "Manage Palette"](./../assets/images/install-palette.png){data-zoomable}
 *Screenshot showing the nodes available in the Node-RED Palette Manager*
 
 The nodes will then be available in your editor for you to get started.
@@ -56,7 +56,7 @@ Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can
 
 With the nodes installed, getting started is as easy as choosing a node from the Palette (the left-hand side list of nodes) in Node-RED, and dropping it onto your canvas.
 
-![Screen recording to show how easy it is to deploy your first Dashboard 2.0 application.](./assets/images/getting-started.gif){data-zoomable}
+![Screen recording to show how easy it is to deploy your first Dashboard 2.0 application.](./../assets/images/getting-started.gif){data-zoomable}
 _Screen recording to show how easy it is to deploy your first Dashboard 2.0 application._
 
 In this case, we drop in a `ui-button`, click "Deploy" and then can see the button running live in our user interface.
@@ -67,7 +67,7 @@ Notice too that Dashboard will automatically create a new group, page, theme and
 
 Dashboard 2.0 adds a corresponding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
 
-![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./assets/images/getting-started-sidebar.png){data-zoomable}
+![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./../assets/images/getting-started-sidebar.png){data-zoomable}
 _Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
 
 Layout options in a Dashboard 2.0 user interface are controlled by two main settings:
@@ -75,7 +75,7 @@ Layout options in a Dashboard 2.0 user interface are controlled by two main sett
 - **Page Layout:** Controls how the `ui-groups`'s are presented on a given page in your application.
 - **Navigation Sidebar:** Defines the left-side navigation style, defined at the `ui-base` level.
 
-![Example of a "Grid" page layout, with a "Collapsing" sidebar navigation.](./assets/images/getting-started-layout.png){data-zoomable}
+![Example of a "Grid" page layout, with a "Collapsing" sidebar navigation.](./../assets/images/getting-started-layout.png){data-zoomable}
 _Example of the "Grid" page layout, with a "Collapsing" sidebar navigation._
 
 ### Default Page
@@ -84,7 +84,7 @@ Each page in Dashboard 2.0 has a unique URL. If a user navigates to an unrecogni
 
 Currently, in Dashboard 2.0, the default page is chosen as the page ordered first in the list of pages in the side navigation:
 
-![Screenshot of the pages list in the Dashboard 2.0 side panel](./assets/images/default-page-layout.png "Screenshot of the pages list in the Dashboard 2.0 side panel"){data-zoomable}
+![Screenshot of the pages list in the Dashboard 2.0 side panel](./../assets/images/default-page-layout.png "Screenshot of the pages list in the Dashboard 2.0 side panel"){data-zoomable}
 _Screenshot of the pages list in the Dashboard 2.0 side panel_
 
 In this example, the _"Third Party Widgets"_ page is the default page.
@@ -120,7 +120,7 @@ It's worth noting that these two patterns can be mixed and matched within a sing
 
 ### Single Source of Truth
 
-![Single Source of Truth](./assets/images/design-pattern-single.png){data-zoomable}
+![Single Source of Truth](./../assets/images/design-pattern-single.png){data-zoomable}
 _Example workflow to demonstrate the "Single Source of Truth" design pattern._
 
 This is the pattern that the original Node-RED Dashboard utilized. In this pattern, all users of the Dashboard will see the same data. Data that populates a widget is generally driven by a piece of hardware or general-purpose API call.
@@ -131,10 +131,10 @@ An example of this is that if you have interactive elements, e.g. a slider linke
 
 ### Multi Tenancy
 
-![Multi Tenancy](./assets/images/design-pattern-client.png){data-zoomable}
+![Multi Tenancy](./../assets/images/design-pattern-client.png){data-zoomable}
 _Example workflow to demonstrate the "Multi Tenancy" design pattern._
 
-In Dashboard 2.0 we can configure a given node type to ["Accept Client Data"](/user/sidebar.html#client-data) from the sidebar:
+In Dashboard 2.0 we can configure a given node type to ["Accept Client Data"](/en/user/sidebar.html#client-data) from the sidebar:
 
 <img data-zoomable style="max-width: 400px; margin: auto;" src="/images/dashboard-sidebar-clientdata.png" alt="Screenshot of an example 'Client Data' tab"/>
 <em>Screenshot of an example "Client Data" tab</em>
@@ -154,7 +154,7 @@ An easy example of this design pattern in Dashboard 2.0 is to utilise the [UI Ev
 Here we have a flow that will produce some client-defined data, and some shared data. When importing, be sure to check that in the Dashboard 2.0 sidebar, both `ui-text` and `ui-template` are checked in the "Accepts Client Data" table.
 
 <video controls>
-    <source src="./assets/videos/demo-design-patterns.mp4" type="video/mp4">
+    <source src="./../assets/videos/demo-design-patterns.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 

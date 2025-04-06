@@ -33,23 +33,23 @@ dynamic:
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue';
-    import TryDemo from "./../../components/TryDemo.vue"
+    import AddedIn from '../../../components/AddedIn.vue';
+    import TryDemo from "./../../../components/TryDemo.vue"
     
     import { ref } from 'vue'
-    import FlowViewer from '../../components/FlowViewer.vue'
-    import ExampleChartLineTimestamp from '../../examples/chart-line-timestamp.json'
-    import ExampleChartLineMultiple from '../../examples/chart-line-multiple.json'
-    import ExampleChartBarSWCharacters from '../../examples/chart-bar-sw-characters.json'
-    import ExampleChartBarFinance from '../../examples/chart-bar-finance-grouped.json'
-    import ExampleChartBarElection from '../../examples/chart-bar-election-grouped.json'
-    import ExampleChartPieDoughnut from '../../examples/chart-pie-doughnut.json'
-    import ExampleChartHistogramBins from '../../examples/chart-histogram-bins.json'
-    import ExampleChartHistogramCategories from '../../examples/chart-histogram-categories.json'
-    import ExampleChartHistogramSeries from '../../examples/chart-histogram-series.json'
-    import ExampleChartScatter from '../../examples/chart-scatter-grouped.json'
-    import ExampleCustomChartLine from '../../examples/custom-chart-slider-line.json'
-    import ExampleCustomChartPolar from '../../examples/custom-chart-slider-polar.json'
+    import FlowViewer from '../../../components/FlowViewer.vue'
+    import ExampleChartLineTimestamp from '../../../examples/chart-line-timestamp.json'
+    import ExampleChartLineMultiple from '../../../examples/chart-line-multiple.json'
+    import ExampleChartBarSWCharacters from '../../../examples/chart-bar-sw-characters.json'
+    import ExampleChartBarFinance from '../../../examples/chart-bar-finance-grouped.json'
+    import ExampleChartBarElection from '../../../examples/chart-bar-election-grouped.json'
+    import ExampleChartPieDoughnut from '../../../examples/chart-pie-doughnut.json'
+    import ExampleChartHistogramBins from '../../../examples/chart-histogram-bins.json'
+    import ExampleChartHistogramCategories from '../../../examples/chart-histogram-categories.json'
+    import ExampleChartHistogramSeries from '../../../examples/chart-histogram-series.json'
+    import ExampleChartScatter from '../../../examples/chart-scatter-grouped.json'
+    import ExampleCustomChartLine from '../../../examples/custom-chart-slider-line.json'
+    import ExampleCustomChartPolar from '../../../examples/custom-chart-slider-polar.json'
 
     const examples = ref({
       'chart-line-timestamp': ExampleChartLineTimestamp,
@@ -428,7 +428,7 @@ Where you could set the `y` property to `key:value`. The `x` value, if left blan
 
 ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
 
-Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
+Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/en/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
 
 ### Example: Static Data
 

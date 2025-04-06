@@ -19,11 +19,11 @@ dynamic:
 <script setup>
     import { ref } from 'vue'
 
-    import ExampleCellTypes from '../../examples/ui-table-cell-types.json'
+    import ExampleCellTypes from '../../../examples/ui-table-cell-types.json'
 
-    import FlowViewer from '../../components/FlowViewer.vue'
-    import AddedIn from '../../components/AddedIn.vue'
-    import TryDemo from "./../../components/TryDemo.vue";
+    import FlowViewer from '../../../components/FlowViewer.vue'
+    import AddedIn from '../../../components/AddedIn.vue'
+    import TryDemo from "./../../../components/TryDemo.vue";
 
     const examples = ref({
       'cellTypes': ExampleCellTypes

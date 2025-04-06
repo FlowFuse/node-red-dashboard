@@ -32,10 +32,10 @@ dynamic:
 
 <script setup>
     import { ref } from 'vue'
-    import FlowViewer from '../../components/FlowViewer.vue'
-    import ExampleSuffix from '../../examples/ui-text-suffix.json'
-    import ExampleHTMLInjection from '../../examples/ui-text-html-injection.json'
-    import TryDemo from "./../../components/TryDemo.vue"
+    import FlowViewer from '../../../components/FlowViewer.vue'
+    import ExampleSuffix from '../../../examples/ui-text-suffix.json'
+    import ExampleHTMLInjection from '../../../examples/ui-text-html-injection.json'
+    import TryDemo from "./../../../components/TryDemo.vue"
 
     const examples = ref({
       'suffix': ExampleSuffix,

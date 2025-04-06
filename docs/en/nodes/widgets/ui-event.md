@@ -17,8 +17,8 @@
 ---
 
 <script setup>
-    import EventsList from '../../components/EventsList.vue'
-    import AddedIn from '../../components/AddedIn.vue'
+    import EventsList from '../../../components/EventsList.vue'
+    import AddedIn from '../../../components/AddedIn.vue'
 </script>
 
 # Event `ui-event` <AddedIn version="0.9.0" />

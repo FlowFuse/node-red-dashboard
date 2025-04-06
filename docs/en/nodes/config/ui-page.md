@@ -23,7 +23,7 @@ Each page will be rendered in a navigation drawer within the UI, and can be acce
 
 ### Breakpoints
 
-![Breakpoints](../../assets/images/breakpoints-config.png)
+![Breakpoints](../../../assets/images/breakpoints-config.png)
 _Screenshot showing the default breakpoints configuration_
 
 As detailed in the Layouts section of the documentation, most layout types in Dashboard utilise "breakpoints". Each breakpoint defines:

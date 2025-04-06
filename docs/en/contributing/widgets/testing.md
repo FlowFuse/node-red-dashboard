@@ -47,7 +47,7 @@ npm run cy:open
 
 Select "E2E Testing, and then the browser of your choice. Following this, you'll see a list of the available tests, which you can then run individually.
 
-![Screenshot showing the UI Button tests running in the Cypress Test Runner](../../assets/images/cypress-ui.png)
+![Screenshot showing the UI Button tests running in the Cypress Test Runner](../../../assets/images/cypress-ui.png)
 _Screenshot showing the UI Button tests running in the Cypress Test Runner_
 
 

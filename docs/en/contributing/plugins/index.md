@@ -3,7 +3,7 @@ description: Guide to building custom plugins for Node-RED Dashboard 2.0, enhanc
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue';
+    import AddedIn from '../../../components/AddedIn.vue';
 </script>
 
 # Building Dashboard Plugins <AddedIn version="0.11.0"/>

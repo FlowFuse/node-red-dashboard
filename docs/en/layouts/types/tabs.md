@@ -2,14 +2,14 @@
 description:Render each group as a standalone Tab in a tabbed view for the page
 ---
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue'
+    import AddedIn from '../../../components/AddedIn.vue'
 </script>
 
 # Layout: Tabs <AddedIn version="1.15.0" />
 
 Rather than rendering each group side-by-side (as per Fixed and Grid layouts) or above and below each other (as per Notebook layout), the Tabs layout will render each group as a standalone Tab in a tabbed view for the page. You can then switch between the tabs to view the different groups.
 
-![Tabs Layout](../../assets/images/layout-tabs.gif){data-zoomable}
+![Tabs Layout](../../../assets/images/layout-tabs.gif){data-zoomable}
 *An example UI rendered using the "Tabs" Layout, showing each "Group" as a Tab.*
 
 Note that it's not currently possible to navigate to a page with a a particular tab open. The page will always open with the first tab selected.
@@ -24,7 +24,7 @@ For example, if you have a group with a width of 6, and two charts, each with a 
 
 Depending on the screen size, the number of default columns rendered will change. Here you can see examples of the columns rendered at three breakpoints:
 
-![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-columns.png){data-zoomable}
+![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../../assets/images/layout-grid-columns.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
 The exact breakpoints used can be configured in the [page's settings](../../nodes/config/ui-page.md#breakpoints).

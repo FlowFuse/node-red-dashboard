@@ -3,8 +3,8 @@ description: Maximize efficiency in Node-RED Dashboard 2.0 by leveraging subflow
 ---
 
 <script setup>
-    import ComingSoon from '../components/ComingSoon.vue';
-    import NodeREDVersion from '../components/NodeRedVersion.vue';
+    import ComingSoon from '../../components/ComingSoon.vue';
+    import NodeREDVersion from '../../components/NodeRedVersion.vue';
 </script>
 
 # Subflows
@@ -63,12 +63,12 @@ In total, Dashboard 2.0 has 4 types of config nodes:
 
 Any of the first three here can be utilise within a subflow. It is not possible to use `ui-theme` as that's only a configuration option on _another_ config node, `ui-page`.
 
-![Screenshot of Node-RED, showing how to assign a ui-group type to a subflow property](../assets/images/subflow-config-group.png){data-zoomable}
+![Screenshot of Node-RED, showing how to assign a ui-group type to a subflow property](../../assets/images/subflow-config-group.png){data-zoomable}
 *Screenshot of Node-RED, showing how to assign a ui-group type to a subflow property*
 
 Then, for each instance of our subflow, we can now define a `ui-group` to render the subflow's nodes in:
 
-![Screenshot of Node-RED, showing the group option on a subflow instance](../assets/images/subflow-config-group-option.png){data-zoomable}
+![Screenshot of Node-RED, showing the group option on a subflow instance](../../assets/images/subflow-config-group-option.png){data-zoomable}
 *Screenshot of Node-RED, showing the group option on a subflow instance*
 
 #### Surfacing Node Properties
@@ -79,14 +79,14 @@ Under the covers, subflows work by setting scoped Node-RED environment variables
 
 Let's say we want to set the `label` of a `ui-slider` within a subflow through a property on the subflow itself. First we have a new property (Environment Variable) on the subflow:
 
-![Screenshot of Node-RED, showing a "label" option defined on a subflow](../assets/images/subflow-config-label.png){data-zoomable}
+![Screenshot of Node-RED, showing a "label" option defined on a subflow](../../assets/images/subflow-config-label.png){data-zoomable}
 *Screenshot of Node-RED, showing a "label" option defined on a subflow*
 
 Note here that our environment variable here is `label`.
 
 To then access this in the child nodes, in our case the `ui-slider`, we can set the slider's label property to `${label}`. Node-RED will then automatically replace this with the value of the `label` property on each of the subflow instances. 
 
-![Screenshot of Node-RED, showing how to use the environment variable to dynamically set a property on a subflow's child node](../assets/images/subflow-config-label-slider.png){data-zoomable}
+![Screenshot of Node-RED, showing how to use the environment variable to dynamically set a property on a subflow's child node](../../assets/images/subflow-config-label-slider.png){data-zoomable}
 *Screenshot of Node-RED, showing how to use the environment variable to dynamically set a property on a subflow's child node*
 
 ##### Sizing
@@ -98,7 +98,7 @@ NOTE: You can still set the widget width and height to `0` to make the it perfor
 
 ## Customising Appearance
 
-![Screenshot of Node-RED, highlighting where the "Appearance" button is](../assets/images/subflow-appearance.png){data-zoomable}
+![Screenshot of Node-RED, highlighting where the "Appearance" button is](../../assets/images/subflow-appearance.png){data-zoomable}
 *Screenshot of Node-RED, highlighting where the "Appearance" button is*
 
 When editing a subflow's properties, you can click the "Appearance" tab in order to customise it's appearance when the subflow is rendered in the workspace flows.
@@ -110,5 +110,5 @@ You can control:
 - **Icon**: Which icon will show on your subflow node when used in hte workspace.
 - **Port Labels**: If you have input or output for your subflow, here you can define appropriate labels for them.
 
-![Screenshot of a customised subflow copy+pasted multiple times in a Node-RED workspace](../assets/images/subflow-appearance-example.png){data-zoomable}
+![Screenshot of a customised subflow copy+pasted multiple times in a Node-RED workspace](../../assets/images/subflow-appearance-example.png){data-zoomable}
 *Screenshot of a customised subflow copy+pasted multiple times in a Node-RED workspace*

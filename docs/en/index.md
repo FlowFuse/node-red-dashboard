@@ -30,11 +30,11 @@ hero:
 <script setup>
     import { ref } from 'vue';
 
-    import HomeExtension from './components/HomeExtension.vue';
-    import RecommendedTutorials from './components/RecommendedTutorials.vue';
-    import RecommendedReading from './components/RecommendedReading.vue';
-    import FlowFuseAdvert from './components/FlowFuseAdvert.vue';
-    import CopyIcon from './components/icons/CopyIcon.vue';
+    import HomeExtension from './../components/HomeExtension.vue';
+    import RecommendedTutorials from './../components/RecommendedTutorials.vue';
+    import RecommendedReading from './../components/RecommendedReading.vue';
+    import FlowFuseAdvert from './../components/FlowFuseAdvert.vue';
+    import CopyIcon from './../components/icons/CopyIcon.vue';
 
     const copied = ref(false); 
 
@@ -55,7 +55,7 @@ hero:
 ## Download our E-Book
 
 <div class="ebook-advert">
-    <img style="max-height: 300px;" src="./assets/images/ebook-dashboard-render.png" />
+    <img style="max-height: 300px;" src="./../assets/images/ebook-dashboard-render.png" />
     <div id="ebook-form"></div>
 </div>
 

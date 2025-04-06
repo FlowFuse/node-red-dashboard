@@ -8,8 +8,8 @@ props:
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue';
-    import SideBySideImages from '../../components/SideBySideImages.vue';
+    import AddedIn from '../../../components/AddedIn.vue';
+    import SideBySideImages from '../../../components/SideBySideImages.vue';
 </script>
 
 # Config: UI Base `ui-base`

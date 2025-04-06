@@ -3,7 +3,7 @@ description: Easily migrate from Dashboard 1.0 to 2.0 with this comprehensive gu
 ---
 <script setup>
     import { ref } from 'vue'
-    import MigrationWidgetProfile from '../components/MigrationWidgetProfile.vue'
+    import MigrationWidgetProfile from '../../components/MigrationWidgetProfile.vue'
 
     import uiButton from './migration/ui_button.json'
     import uiChart from './migration/ui_chart.json'
@@ -159,7 +159,7 @@ Whilst there is currently not an explicit `ui_colour_picker` widget, the `ui_tex
 
 All Dashboard 1.0 controls are supported in Dashboard 2.0, with the exception of the `open/close` control for a group, which is currently not supported.
 
-You can see detailed documentation of the available controls, and emitted events [here](/nodes/widgets/ui-control.html).
+You can see detailed documentation of the available controls, and emitted events [here](/en/nodes/widgets/ui-control.html).
 
 ### `ui_date_picker`
 
@@ -248,4 +248,4 @@ We also have future plans to support injection of third-party layouts, and even 
 
 Any addons that were built for Dashboard 1.0 (e.g. `ui-svg`, `ui-worldmap`) are not supported in Dashboard 2.0.
 
-We do need community contributions to re-build them the "Dashboard 2.0 way". If you're interested in helping us with this exercise, we have a [guide on how to build custom widgets](/contributing/widgets/third-party.md) to help you get started.
+We do need community contributions to re-build them the "Dashboard 2.0 way". If you're interested in helping us with this exercise, we have a [guide on how to build custom widgets](/en/contributing/widgets/third-party.md) to help you get started.

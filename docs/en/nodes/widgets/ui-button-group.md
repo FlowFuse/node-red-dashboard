@@ -33,8 +33,8 @@ dynamic:
 ---
 
 <script setup>
-    import AddedIn from '../../components/AddedIn.vue';
-    import TryDemo from "./../../components/TryDemo.vue"
+    import AddedIn from '../../../components/AddedIn.vue';
+    import TryDemo from "./../../../components/TryDemo.vue"
 </script>
 
 <TryDemo href="button-group">

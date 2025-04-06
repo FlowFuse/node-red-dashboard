@@ -37,7 +37,7 @@ dynamic:
 <script setup>
     import { ref } from 'vue'
 
-    import TryDemo from "./../../components/TryDemo.vue"
+    import TryDemo from "./../../../components/TryDemo.vue"
     
 </script>
 

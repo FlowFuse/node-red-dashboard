@@ -5,10 +5,10 @@ description: Get inspired with a variety of UI template examples in Node-RED Das
 
 <script setup>
     import { ref } from 'vue'
-    import FlowViewer from '../components/FlowViewer.vue'
-    import ExampleFlowWorldmap from '../examples/template-worldmap.json'
-    import ExampleDataTable from '../examples/template-data-table.json'
-    import ExampleFileUpload from '../examples/file-upload.json'
+    import FlowViewer from '../../components/FlowViewer.vue'
+    import ExampleFlowWorldmap from '../../examples/template-worldmap.json'
+    import ExampleDataTable from '../../examples/template-data-table.json'
+    import ExampleFileUpload from '../../examples/file-upload.json'
 
     const examples = ref({
       'worldmap': ExampleFlowWorldmap,
@@ -277,7 +277,7 @@ dashboard: {
 
 Node-RED has a very popular [worldmap node](https://flows.nodered.org/node/node-red-contrib-web-worldmap) which allows for intricate plotting of data on a globe. The node creates a new endpoint onto your web server at `/worldmap` (or whichever path you override the default with).
 
-![Example of a World Map](../assets/images/template-example-worldmap.png "Example of a World Map rendered in Dashboard 2.0"){data-zoomable}
+![Example of a World Map](../../assets/images/template-example-worldmap.png "Example of a World Map rendered in Dashboard 2.0"){data-zoomable}
 _Example of a World Map rendered in Dashboard 2.0_
 
 In order to display a worldmap into Dashboard 2.0, currently, the best way to do this is with a `ui-template` node:

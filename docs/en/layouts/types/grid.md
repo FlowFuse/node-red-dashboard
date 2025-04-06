@@ -14,7 +14,7 @@ The layout will automatically move widgets to the next row if they don't fit wit
 
 Depending on the screen size, the number of default columns rendered can change. Here you can see examples of the columns rendered at three breakpoints:
 
-![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-columns.png){data-zoomable}
+![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../../assets/images/layout-grid-columns.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
 The exact breakpoints used can be configured in the [page's settings](../../nodes/config/ui-page.md#breakpoints).
@@ -23,7 +23,7 @@ The exact breakpoints used can be configured in the [page's settings](../../node
 
 Groups will populate the width as defined, and then they create their own grid layout internally where the number of columns in that group is equal to the width of the group. The groups can have their own internal paddings and pages that can be customized.
 
-![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../assets/images/layout-grid-example.png){data-zoomable}
+![Guidelines demonstrating the columns rendered in the "Grid" Layout](../../../assets/images/layout-grid-example.png){data-zoomable}
 _Guidelines demonstrating the columns rendered in the "Grid" Layout at different screen sizes_
 
 You can read more about these customizations to the theme and layout [here](../index.md).
@@ -38,5 +38,5 @@ Most widgets will strictly abide by their widget and height specified, however, 
 
 Here, we can see an example of a rendered Grid layout in Dashboard 2.0:
 
-![Grid Layout](../../assets/images/layout-eg-grid.png){data-zoomable}
+![Grid Layout](../../../assets/images/layout-eg-grid.png){data-zoomable}
 *An example UI rendered using the "Grid" Layout*
