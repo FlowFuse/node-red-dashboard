@@ -156,7 +156,7 @@ export default {
                     }
                     return option.value
                 })
-            } else if (this.value) {
+            } else if (typeof this.value !== 'undefined') {
                 // return a single value
                 if (this.props.typeIsComboBox === false) {
                     msg.payload = this.value

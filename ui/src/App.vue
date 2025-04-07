@@ -142,7 +142,7 @@ export default {
         }
     },
     created () {
-        this.$socket.on('ui-config', (topic, payload) => {
+        this.$socket?.on('ui-config', (topic, payload) => {
             this.loading = false
             console.log('ui-config received. topic:', topic, 'payload:', payload)
 

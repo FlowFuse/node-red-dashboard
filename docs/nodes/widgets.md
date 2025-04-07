@@ -148,6 +148,7 @@ Here is a list of the third-party widgets we're aware of to make it easier to fi
 - [@fullmetal-fred/cloudflare-auth](https://flows.nodered.org/node/@fullmetal-fred/node-red-dashboard-2-cloudflare-auth): Adds user data to all Dashboard events under `msg._client.user` if Node-RED is configured with Cloudflare authentication.
 - [@omrid01/table-tabulator](https://flows.nodered.org/node/@omrid01/node-red-dashboard-2-table-tabulator): Provides a rich table widget for Dashboard that extends the popular [Tabulator](http://tabulator.info/) JavaScript library.
 - [@revolutionpi/hmi](https://flows.nodered.org/node/@revolutionpi/node-red-dashboard-2-hmi): A customisable round button designed after industrial HMI Push-buttons.
+- [@cgjgh/ui-scheduler](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-scheduler): A scheduler widget for UI-based schedule management.
 
 ### In-Development
 
