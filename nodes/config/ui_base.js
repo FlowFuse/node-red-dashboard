@@ -81,7 +81,7 @@ module.exports = function (RED) {
         }
 
         if (!('allowInstall' in config)) {
-            config.allowInstall = true // Show for 5 seconds
+            config.allowInstall = true
         }
 
         // The headerContent replaces the old (boolean) showPageTitle
