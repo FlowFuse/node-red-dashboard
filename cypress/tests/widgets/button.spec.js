@@ -1,23 +1,6 @@
 /// <reference types="cypress" />
 describe('Node-RED Dashboard 2.0 - Buttons', () => {
     beforeEach(() => {
-        //   example overrides:
-        //     [
-        //       { mode: 'merge', id: 'node-id-1', data: { name: 'new name', method: 'GET' } },
-        //       { mode: 'replace', id: 'node-id-2', data: { id: 'new-id', type: 'new-type', ... } }
-        //       { mode: 'append', data: [{node1}, {node2}, ...] }
-        //     ]
-        // const overrides = [
-        //     {
-        //         mode: 'append',
-        //         data: [
-        //             // eslint-disable-next-line
-        //             {"id":"03831223eea492b2","type":"inject","z":"node-red-tab-buttons","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":true,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":260,"y":460,"wires":[["fb61b81a39cf56f6"]]},
-        //             // eslint-disable-next-line
-        //             {"id":"fb61b81a39cf56f6","type":"function","z":"node-red-tab-buttons","name":"setup flow and global","func":"flow.set('f1', 'f1-value')\nflow.set('f2', 'f2-value')\nflow.set('f3', 'f3-value')\nglobal.set('g1', 'g1-value')\nglobal.set('g2', 'g2-value')\nglobal.set('g3', 'g3-value')\nreturn msg;","outputs":1,"timeout":0,"noerr":0,"initialize":"","finalize":"","libs":[],"x":510,"y":460,"wires":[[]]}
-        //         ]
-        //     }
-        // ]
         cy.deployFixture('dashboard-buttons')
         cy.visit('/dashboard/page1')
     })
