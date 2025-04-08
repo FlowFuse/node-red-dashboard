@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, getThirdPartyWidgets, getTopic } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, getThirdPartyWidgets } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -603,11 +603,7 @@ module.exports = function (RED) {
 
             // Wrap execution in a try/catch to ensure we don't crash Node-RED
             try {
-                if (widgetConfig.topic || widgetConfig.topicType) {
-                    const dsMsg = datastore.get(id)
-                    const topic = dsMsg && await getTopic(RED, widgetConfig, wNode, dsMsg)
-                    msg.topic = topic ?? '' // ensure we have a topic property in the msg, even if it's an empty string
-                }
+                msg = await appendTopic(RED, widgetConfig, wNode, msg)
 
                 // pre-process the msg before send on the msg (if beforeSend is defined)
                 if (widgetEvents?.beforeSend && typeof widgetEvents.beforeSend === 'function') {

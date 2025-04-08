@@ -124,8 +124,8 @@ function getThirdPartyWidgets (directory) {
 
 module.exports = {
     asyncEvaluateNodeProperty,
-    getTopic,
     appendTopic,
+    getTopic,
     addConnectionCredentials,
     getThirdPartyWidgets
 }
