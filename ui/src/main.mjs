@@ -18,7 +18,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // Labs Imports
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
 import { VTreeview } from 'vuetify/labs/VTreeview'
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 
