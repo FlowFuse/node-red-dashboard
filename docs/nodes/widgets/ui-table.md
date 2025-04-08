@@ -9,6 +9,7 @@ props:
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
     Show Search: Defines whether or not to show a search bar above the table. Will permit searching and filtering across all columns.
     Auto Columns: If checked, then the columns are calculated automatically based on the contents of received messages.
+    Deselect: If checked, then the selected rows will be deselected automatically when the rows are replaced by other rows.
     Columns: If "Auto Columns" is false, then these columns are used when rendering the table instead.
 dynamic:
     Class:
