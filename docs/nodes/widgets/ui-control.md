@@ -128,21 +128,6 @@ msg.payload = {
                {page: '<Page Name>', group: '<Group Name>'},
                {page: '<Page Id>', group: '<Group Name>'}],
         hide: ['<Group Id>']
-    },
-    widgets: {
-        show: ['<Widget Name>',
-               '<Widget Id>',
-               '<Group Name>:<Widget Name>',
-               '<Group Id>:<Widget Name>',
-               '<Page Name>:<Group Name>:<Widget Name>',
-               '<Page Id>:<Group Name>:<Widget Name>',
-               {widget: '<Widget Name>'},
-               {widget: '<Widget Id>'},
-               {group: '<Group Name>', widget: '<Widget Name>'},
-               {group: '<Group Id>', widget: '<Widget Name>'},
-               {page: '<Page Name>', group: '<Group Name>', widget: '<Widget Name>'},
-               {page: '<Page Id>', group: '<Group Name>', widget: '<Widget Name>'}],
-        hide: ['<Widget Id>']
     }
 }
 ```
