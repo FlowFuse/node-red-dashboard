@@ -42,7 +42,7 @@ _Example of how the 'App Icon' appears when installed onto an iPhone_
 
 It is possible to install any FlowFuse Dashboard applications as a Progressive Web App onto a desktop or mobile device, giving the appearance and user-experience of a native mobile application. You can read more about that functionality [here](../../user/pwa.md).
 
-The "Allow Install" option provides the capability to enable/disable the option to "Install" your Dashboard as an application. If you are using FlowFuse authentication, this is recommended, as the PWA workers cache content separate from authentication sessions.
+The "Allow Install" option provides the capability to enable/disable the option to "Install" your Dashboard as an application. If you are using FlowFuse authentication, this is not recommended, as the PWA workers cache content separate from authentication sessions.
 
 ## Header Style Options <AddedIn version="1.10.0" />
 
