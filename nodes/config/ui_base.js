@@ -126,6 +126,23 @@ module.exports = function (RED) {
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
+            // Redirect any requests with a trailing slash to the same path without the trailing slash
+            uiShared.app.use((req, res, next) => {
+                // Skip if not a GET or HEAD request
+                if (!(req.method === 'GET' || req.method === 'HEAD')) {
+                    next()
+                    return
+                }
+
+                if (req.path.slice(-1) === '/' && req.path.length > 1) {
+                    const query = req.url.slice(req.path.length)
+                    const safePath = req.path.slice(0, -1).replace(/\/+/g, '/')
+                    res.redirect(301, safePath + query)
+                } else {
+                    next()
+                }
+            })
+
             uiShared.app.get(config.path + '/_setup', uiShared.httpMiddleware, (req, res) => {
                 let socketPath = join(RED.settings.httpNodeRoot, config.path, 'socket.io')
                 // if no leading /, add one (happens sometimes depending on httpNodeRoot in settings.js)
