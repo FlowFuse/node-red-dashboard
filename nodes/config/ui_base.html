@@ -439,7 +439,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             }
 
             // backward compatibility for reconnect notification
-            if (!('showReconnectNotification' in this)) {
+            if (typeof this.showReconnectNotification === 'undefined') {
                 this.showReconnectNotification = true
                 $('#node-config-input-showReconnectNotification').prop('checked', true)
             }
@@ -451,7 +451,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             }
 
             // backward compatibility for disconnect notification
-            if (!('showDisconnectNotification' in this)) {
+            if (typeof this.showDisconnectNotification === 'undefined') {
                 this.showDisconnectNotification = true
                 $('#node-config-input-showDisconnectNotification').prop('checked', true)
             }
