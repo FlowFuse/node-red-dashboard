@@ -459,7 +459,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 $('#node-config-input-showDisconnectNotification').prop('checked', true)
             }
             // backward compatibility for allowing PWA install
-            if (!('allowInstall' in this)) {
+            if (typeof this.allowInstall === 'undefined') {
                 this.allowInstall = true
                 $('#node-config-input-allowInstall').prop('checked', true)
             }
