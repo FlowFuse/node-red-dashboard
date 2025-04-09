@@ -66,8 +66,9 @@ Cypress.Commands.add('deployFixture', (fixture, overrides) => {
     //   * mode 'append': will add nodes to the flow i.e. the `data` should be a well formed node JSON
     //   example overrides:
     //     [
-    //       { id: 'node-id-1', type: 'node-type', mode: 'merge', data: { name: 'new name', method: 'GET' } },
-    //       { id: 'node-id-2', type: 'node-type', mode: 'replace', data: { id: 'new-id', type: 'new-type', ... } }
+    //       { mode: 'merge', id: 'node-id-1', data: { name: 'new name', method: 'GET' } },
+    //       { mode: 'replace', id: 'node-id-2', data: { id: 'new-id', type: 'new-type', ... } }
+    //       { mode: 'append', data: [{node1}, {node2}, ...] }
     //     ]
 
     cy.intercept('/dashboard/sw.js', {
@@ -89,19 +90,21 @@ Cypress.Commands.add('deployFixture', (fixture, overrides) => {
             const flows = [...flow, ...helperApi]
             if (overrides) {
                 overrides.forEach((override) => {
-                    const index = flows.findIndex((node) => node.id === override.id)
-                    if (index >= 0) {
-                        const node = flows[index]
-                        switch (override.mode) {
-                        case 'merge':
-                            Object.assign(node, override.data)
-                            break
-                        case 'replace':
-                            flows[index] = override.data
-                            break
-                        case 'append':
-                            flows.push(override.data)
-                            break
+                    if (override.mode === 'append') {
+                        const nodes = Array.isArray(override.data) ? override.data : [override.data]
+                        flows.push(...nodes)
+                    } else {
+                        const index = flows.findIndex((node) => node.id === override.id)
+                        if (index >= 0) {
+                            const node = flows[index]
+                            switch (override.mode) {
+                            case 'merge':
+                                Object.assign(node, override.data)
+                                break
+                            case 'replace':
+                                flows[index] = override.data
+                                break
+                            }
                         }
                     }
                 })

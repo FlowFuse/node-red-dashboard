@@ -32,31 +32,35 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, {
-            onAction: true,
-            onInput: function (msg) {
-                const existingData = datastore.get(node.id) || []
-                const formatPayload = (value) => {
-                    if (value !== null && typeof value !== 'undefined') {
-                        // push object into array if user sends object instead of array
-                        if (typeof value === 'object' && !Array.isArray(value)) {
-                            return [value]
+        if (group) {
+            group.register(node, config, {
+                onAction: true,
+                onInput: function (msg) {
+                    const existingData = datastore.get(node.id) || []
+                    const formatPayload = (value) => {
+                        if (value !== null && typeof value !== 'undefined') {
+                            // push object into array if user sends object instead of array
+                            if (typeof value === 'object' && !Array.isArray(value)) {
+                                return [value]
+                            }
                         }
+                        return value
                     }
-                    return value
-                }
-                let payload = formatPayload(msg?.payload)
-                // check if the action is to append records
-                if (config.action === 'append') {
-                    payload = payload && payload.length > 0 ? [...existingData.payload || [], ...payload || []] : payload
-                }
+                    let payload = formatPayload(msg?.payload)
+                    // check if the action is to append records
+                    if (config.action === 'append') {
+                        payload = payload && payload.length > 0 ? [...existingData.payload || [], ...payload || []] : payload
+                    }
 
-                datastore.save(base, node, {
-                    ...msg,
-                    payload
-                })
-            }
-        })
+                    datastore.save(base, node, {
+                        ...msg,
+                        payload
+                    })
+                }
+            })
+        } else {
+            node.error('No group configured')
+        }
     }
 
     RED.nodes.registerType('ui-table', TableNode)

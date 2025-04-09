@@ -129,12 +129,14 @@ A very common use case of Node-RED is to process timeseries data, such as sensor
 The value for the `x` property would then be one of two things:
 
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the current date/time.
-- If your data is an object, you can provide the key of the timestamp in your data, e.g. `{"myTime": 1234567890}` would set the "X" property to the type `key` and the value `myTime`.
+- If your data is an object, you can provide the key of the timestamp in your data, e.g. `{"myTime": 1743608192522}` would set the "X" property to the type `key` and the value `myTime`.
 
 Then, the last piece of the puzzle would be to set the `y` property would be one of two options:
 
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
-- If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1234567890, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
+- If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1743608192522, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
+
+Note: Timestamps must be in milliseconds (ms). This follows the JavaScript standard for representing time as the number of milliseconds elapsed since the Unix epoch (January 1, 1970, 00:00:00 UTC).
 
 #### Interpolation Methods for Line Charts
 

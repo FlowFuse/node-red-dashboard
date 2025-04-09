@@ -83,6 +83,7 @@
                 passthru: { value: false },
                 autocols: { value: true },
                 showSearch: { value: true },
+                deselect : { value: true },
                 selectionType: { value: 'none' },
                 columns: {
                     value: null
@@ -108,6 +109,10 @@
                 const validActionTypes = ['append', 'replace']
                 if (!validActionTypes.includes(this.action)) {
                     $('#node-input-action').val('append')
+                }
+                if (typeof this.deselect === 'undefined') {
+                    // The behaviour in existing nodes was to deselect all items
+                    $('#node-input-deselect').prop('checked', true)
                 }
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -367,11 +372,18 @@
             <label  for="node-input-showSearch" data-i18n="ui-table.label.showSearch"></label>
         </div>
     </div>
+    <div class="form-row form-row-flex">
+        <label for="node-input-autocols"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>
+        <div style="margin-bottom: 0px; width:calc(70% + 15px);">
+            <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto;">
+            <label for="node-input-autocols" data-i18n="ui-table.label.autoCalculateColumns"></label>
+        </div>
+    </div>
     <div class="form-row" style="display:flex; margin-bottom: 3px;">
-        <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-table.label.columns"></label>
+        <label for="node-input-deselect" style="vertical-align:top"><i class="fa fa-mouse-pointer"></i> <span data-i18n="ui-table.label.deselect"></label>
         <div>
-            <input type="checkbox" checked id="node-input-autocols" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
-            <label style="width:auto" for="node-input-autocols" data-i18n="ui-table.label.autoCalculateColumns"></label>
+            <input type="checkbox" checked id="node-input-deselect" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+            <label style="width:auto" for="node-input-deselect" data-i18n="ui-table.label.deselectRows"></label>
         </div>
     </div>
     <div class="form-row">

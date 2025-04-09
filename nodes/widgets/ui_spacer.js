@@ -7,7 +7,11 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config)
+        if (group) {
+            group.register(node, config)
+        } else {
+            node.error('No group configured')
+        }
     }
     RED.nodes.registerType('ui-spacer', SpacerNode)
 }
