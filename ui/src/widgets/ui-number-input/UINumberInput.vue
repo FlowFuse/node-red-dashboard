@@ -22,8 +22,8 @@
 
 <script>
 import DOMPurify from 'dompurify'
-// eslint-disable-next-line import/no-unresolved
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
+
+import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
