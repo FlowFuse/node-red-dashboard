@@ -406,6 +406,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             },
             showDisconnectNotification: {
                 value: true
+            },
+            allowInstall: {
+                value: true
             }
         },
         label: function () {
@@ -454,6 +457,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             if (!('showDisconnectNotification' in this)) {
                 this.showDisconnectNotification = true
                 $('#node-config-input-showDisconnectNotification').prop('checked', true)
+            }
+            // backward compatibility for allowing PWA install
+            if (typeof this.allowInstall === 'undefined') {
+                this.allowInstall = true
+                $('#node-config-input-allowInstall').prop('checked', true)
             }
         },
         onpaletteadd: function () {
@@ -2440,6 +2448,13 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></label>
         <input type="text" id="node-config-input-appIcon">
         <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">Enter the url of your app icon here</span>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.installation"></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-allowInstall">
+        <label style="width:auto" for="node-config-input-allowInstall"><span data-i18n="ui-base.label.allowInstall"></span></label>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.header"></label>
