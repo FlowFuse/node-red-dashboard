@@ -199,5 +199,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import './wysiwyg/resizable.scss';
+@use './wysiwyg/resizable.scss' as *;
 </style>

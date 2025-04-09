@@ -62,6 +62,25 @@ export default {
             loading: true
         }
     },
+    head () {
+        const links = []
+        // get default dashboard
+        if (this.dashboards) {
+            const dashboards = Object.keys(this.dashboards)
+            const id = dashboards.length ? dashboards[0] : undefined
+            const dashboard = this.dashboards[id]
+            if (dashboard.allowInstall) {
+                links.push({
+                    rel: 'manifest',
+                    crossorigin: 'use-credentials',
+                    href: './manifest.webmanifest'
+                })
+            }
+        }
+        return {
+            link: links
+        }
+    },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'widgets']),
         ...mapState('setup', ['setup', 'error']),

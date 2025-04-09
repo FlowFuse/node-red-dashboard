@@ -15,14 +15,7 @@ function asyncEvaluateNodeProperty (RED, value, type, node, msg) {
 
 async function appendTopic (RED, config, wNode, msg) {
     // populate topic if the node specifies one
-    if (config.topic || config.topicType) {
-        try {
-            msg.topic = await asyncEvaluateNodeProperty(RED, config.topic, config.topicType || 'str', wNode, msg) || ''
-        } catch (_err) {
-            // do nothing
-            console.error(_err)
-        }
-    }
+    msg.topic = await getTopic(RED, config, wNode, msg)
 
     // ensure we have a topic property in the msg, even if it's an empty string
     if (!('topic' in msg)) {
@@ -30,6 +23,21 @@ async function appendTopic (RED, config, wNode, msg) {
     }
 
     return msg
+}
+
+async function getTopic (RED, config, wNode, msg) {
+    // populate topic if the node specifies one
+    let topic
+    if (config.topic || config.topicType) {
+        try {
+            topic = await asyncEvaluateNodeProperty(RED, config.topic, config.topicType || 'str', wNode, msg) || ''
+        } catch (_err) {
+            // do nothing
+            console.error(_err)
+        }
+    }
+
+    return topic
 }
 
 /**
@@ -117,6 +125,7 @@ function getThirdPartyWidgets (directory) {
 module.exports = {
     asyncEvaluateNodeProperty,
     appendTopic,
+    getTopic,
     addConnectionCredentials,
     getThirdPartyWidgets
 }
