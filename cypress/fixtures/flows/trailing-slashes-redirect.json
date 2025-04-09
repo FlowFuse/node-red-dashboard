@@ -1,0 +1,86 @@
+[
+    {
+        "id": "tab-1",
+        "type": "tab",
+        "label": "UI",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group-widgets",
+        "type": "ui-group",
+        "name": "just a group",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d506363d3f2c88cd",
+        "type": "ui-button",
+        "z": "3069e2ce342ccdc8",
+        "group": "dashboard-ui-group-widgets",
+        "name": "",
+        "label": "Just a button",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 580,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    }
+]
