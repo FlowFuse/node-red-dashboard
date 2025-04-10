@@ -1,0 +1,87 @@
+{
+    "node": "ui_button",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "icon",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/374' target='_blank'>Problem #374</a>"
+        },
+        {
+            "property": "color",
+            "changes": "verbessert",
+            "notes": "Getrennte Eigenschaft für Textfarbe und Symbolfarbe"
+        },
+        {
+            "property": "background",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "payload",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "emulate click",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "msgs": [
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "icon",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "enabled/disabled",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "visible/hidden",
+            "changes": null,
+            "notes": null
+        }
+    ]
+}

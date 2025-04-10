@@ -1,0 +1,69 @@
+{
+    "node": "ui_dropdown",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/385' target='_blank'>Problem #385</a>"
+        },
+        {
+            "property": "placeholder",
+            "changes": "zusammengeführt",
+            "notes": "Kombiniert mit der 'Label'-Eigenschaft im neuen Design"
+        },
+        {
+            "property": "options",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "multiselect",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "passthru",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "msgs": [{
+        "property": "msg.payload",
+        "changes": null,
+        "notes": "Ermöglicht die dynamische Auswahl einer Option (<a href='/nodes/widgets/ui-dropdown.html#programmatic-selections'>Dokumentation</a>)"
+    }, {
+        "property": "msg.options",
+        "changes": null,
+        "notes": "Ermöglicht die dynamische Definition einer Option (<a href='/nodes/widgets/ui-dropdown.html#dynamic-properties'>Dokumentation</a>)"
+    }]
+}
