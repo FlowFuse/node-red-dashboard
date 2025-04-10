@@ -53,6 +53,87 @@
         ]
     },
     {
+        "id": "2a624e92dc5a1115",
+        "type": "ui-control",
+        "z": "node-red-tab-buttons",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 80,
+        "y": 20,
+        "wires": [
+            [
+                "change-1"
+            ]
+        ]
+    },
+    {
+        "id": "change-1",
+        "type": "change",
+        "z": "node-red-tab-buttons",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "msg.topic from inject-1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 80,
+        "y": 60,
+        "wires": [
+            [
+                "dashboard-ui-button-bool"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-bool",
+        "type": "ui-button",
+        "z": "node-red-tab-buttons",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Button 1 (bool)",
+        "order": 12,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 280,
+        "y": 20,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
         "id": "dashboard-ui-button-json",
         "type": "ui-button",
         "z": "node-red-tab-buttons",
@@ -69,8 +150,8 @@
         "icon": "",
         "payload": "{\"hello\": \"world\"}",
         "payloadType": "json",
-        "topic": "button-json-topic",
-        "topicType": "str",
+        "topic": "f1",
+        "topicType": "flow",
         "x": 310,
         "y": 80,
         "wires": [
@@ -94,10 +175,10 @@
         "bgcolor": "",
         "className": "",
         "icon": "",
-        "payload": "test",
+        "payload": "button_global_payload",
         "payloadType": "global",
-        "topic": "button-global-topic",
-        "topicType": "str",
+        "topic": "button_global_topic",
+        "topicType": "global",
         "x": 310,
         "y": 120,
         "wires": [
@@ -466,5 +547,7 @@
             "groupBg": "#ffffff",
             "groupOutline": "#cccccc"
         }
-    }
+    },
+    {"id":"03831223eea492b2","type":"inject","z":"node-red-tab-buttons","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":true,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":260,"y":460,"wires":[["fb61b81a39cf56f6"]]},
+    {"id":"fb61b81a39cf56f6","type":"function","z":"node-red-tab-buttons","name":"setup flow and global","func":"flow.set('f1', 'f1-value')\nflow.set('f2', 'f2-value')\nflow.set('f3', 'f3-value')\nglobal.set('g1', 'g1-value')\nglobal.set('g2', 'g2-value')\nglobal.set('g3', 'g3-value')\nreturn msg;","outputs":1,"timeout":0,"noerr":0,"initialize":"","finalize":"","libs":[],"x":510,"y":460,"wires":[[]]}
 ]
