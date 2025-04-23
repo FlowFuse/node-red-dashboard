@@ -1,4 +1,4 @@
-describe('FlowFuse Dashboard - Can enable/disable widgets with msg.enabled for', () => {
+describe('Node-RED Dashboard 2.0 - Can enable/disable widgets with msg.enabled for', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-dynamic-enabled')
         cy.visit('/dashboard/page1')

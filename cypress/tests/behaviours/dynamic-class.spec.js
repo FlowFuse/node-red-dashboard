@@ -1,4 +1,4 @@
-describe('FlowFuse Dashboard - Allow for dynamic class assignments through msg.class for', () => {
+describe('Node-RED Dashboard 2.0 - Allow for dynamic class assignments through msg.class for', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-dynamic-class')
         cy.visit('/dashboard/page1')

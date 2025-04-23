@@ -2,7 +2,7 @@
 import should from 'should'
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe('FlowFuse Dashboard - Chart - Type: Histogram', () => {
+describe('Node-RED Dashboard 2.0 - Chart - Type: Histogram', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-chart-histogram')
         cy.visit('/dashboard/page1')

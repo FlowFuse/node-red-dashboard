@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-describe('FlowFuse Dashboard - Buttons', () => {
+describe('Node-RED Dashboard 2.0 - Buttons', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-buttons')
         cy.visit('/dashboard/page1')
@@ -52,7 +52,7 @@ describe('FlowFuse Dashboard - Buttons', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Buttons (Dynamic Properties)', () => {
+describe('Node-RED Dashboard 2.0 - Buttons (Dynamic Properties)', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-buttons')
         cy.visit('/dashboard/page1')

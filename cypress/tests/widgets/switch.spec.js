@@ -1,4 +1,4 @@
-describe('FlowFuse Dashboard - Switches', () => {
+describe('Node-RED Dashboard 2.0 - Switches', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
         cy.visit('/dashboard/page1')
@@ -50,7 +50,7 @@ describe('FlowFuse Dashboard - Switches', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Switches with Icons', () => {
+describe('Node-RED Dashboard 2.0 - Switches with Icons', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
         cy.visit('/dashboard/page1')
@@ -90,7 +90,7 @@ describe('FlowFuse Dashboard - Switches with Icons', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Switches in "Show Input" mode', () => {
+describe('Node-RED Dashboard 2.0 - Switches in "Show Input" mode', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
         cy.visit('/dashboard/page1')
@@ -127,7 +127,7 @@ describe('FlowFuse Dashboard - Switches in "Show Input" mode', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Change the layout', () => {
+describe('Node-RED Dashboard 2.0 - Change the layout', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-switches')
         cy.visit('/dashboard/page1')

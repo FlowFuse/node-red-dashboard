@@ -1,4 +1,4 @@
-describe('FlowFuse Dashboard - Templates', () => {
+describe('Node-RED Dashboard 2.0 - Templates', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-templates')
         cy.visit('/dashboard/page1')
@@ -26,7 +26,7 @@ describe('FlowFuse Dashboard - Templates', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Templates (Single Page CSS)', () => {
+describe('Node-RED Dashboard 2.0 - Templates (Single Page CSS)', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-templates')
     })

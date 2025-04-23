@@ -1,4 +1,4 @@
-describe('FlowFuse Dashboard - Slider', () => {
+describe('Node-RED Dashboard 2.0 - Slider', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-slider')
         cy.visit('/dashboard/page1')
@@ -22,7 +22,7 @@ describe('FlowFuse Dashboard - Slider', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Slider (Dynamic Properties)', () => {
+describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-slider')
         cy.visit('/dashboard/page1')
@@ -56,7 +56,7 @@ describe('FlowFuse Dashboard - Slider (Dynamic Properties)', () => {
     })
 })
 
-describe('FlowFuse Dashboard - Slider (Text Field Input)', () => {
+describe('Node-RED Dashboard 2.0 - Slider (Text Field Input)', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-slider')
         cy.visit('/dashboard/page1')
