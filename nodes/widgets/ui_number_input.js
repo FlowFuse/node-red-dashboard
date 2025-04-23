@@ -59,7 +59,11 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
 
         node.on('close', async function (done) {
             done()

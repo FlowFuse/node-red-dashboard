@@ -51,9 +51,13 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, {
-            beforeSend
-        })
+        if (group) {
+            group.register(node, config, {
+                beforeSend
+            })
+        } else {
+            node.error('No group configured')
+        }
     }
 
     RED.nodes.registerType('ui-text', TextNode)

@@ -1,4 +1,6 @@
+const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
+const { getTopic } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function FormNode (config) {
@@ -12,7 +14,14 @@ module.exports = function (RED) {
 
         const evts = {
             onAction: true,
-            beforeSend: function (msg) {
+            beforeSend: async function (msg) {
+                if (msg?._event === 'submit') {
+                    if (config.topic || config.topicType) {
+                        const dsMsg = datastore.get(node.id)
+                        const topic = await getTopic(RED, config, node, dsMsg)
+                        msg.topic = topic ?? ''
+                    }
+                }
                 if (msg.ui_update) {
                     const update = msg.ui_update
                     if (typeof update.label !== 'undefined') {
@@ -37,7 +46,11 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
     }
     RED.nodes.registerType('ui-form', FormNode)
 }

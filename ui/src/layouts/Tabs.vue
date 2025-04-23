@@ -74,7 +74,10 @@ export default {
         next(vm => {
             // Select the first tabsheet every time the user arrives on this page
             if (vm.orderedGroups && vm.orderedGroups.length > 0) {
-                vm.tab = 0
+                // Check if origin and destination pages are unique
+                if (to?.name !== from?.name) {
+                    vm.tab = 0
+                }
             }
         })
     },

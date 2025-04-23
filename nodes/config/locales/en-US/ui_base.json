@@ -43,7 +43,10 @@
             "notificationDisplayTime": "notification display time (seconds)",
             "myDashboard": "My Dashboard",
             "myGroup": "My Group",
-            "empty": "empty"
+            "empty": "empty",
+            "allowInstall": "Allow App Installation",
+            "installation": "Installation Options"
+
         },
         "layout": {
             "pages": "Pages",
