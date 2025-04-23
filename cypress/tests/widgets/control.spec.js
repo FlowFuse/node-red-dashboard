@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
+describe('FlowFuse Dashboard - Control - Navigation', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
         cy.visit('/dashboard/controls')
@@ -57,7 +57,7 @@ describe('Node-RED Dashboard 2.0 - Control - Navigation', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
+describe('FlowFuse Dashboard - Control - Show/Hide', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
         cy.visit('/dashboard/controls')
@@ -102,7 +102,7 @@ describe('Node-RED Dashboard 2.0 - Control - Show/Hide', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Control - Enable/Disable', () => {
+describe('FlowFuse Dashboard - Control - Enable/Disable', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-controls')
         cy.visit('/dashboard/controls')

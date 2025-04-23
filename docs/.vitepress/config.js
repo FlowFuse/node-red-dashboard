@@ -1,5 +1,5 @@
 import { loadEnv } from 'vite';
-const defaultMetaDescription = "Discover the features and benefits of Node-RED Dashboard 2.0, designed to streamline and enhance your Node-RED experience."
+const defaultMetaDescription = "Discover the features and benefits of FlowFuse Dashboard, designed to streamline and enhance your Node-RED experience."
 
 export default ({ mode }) => {
   process.env = {...process.env, ...loadEnv(mode, process.cwd())};
@@ -9,7 +9,7 @@ export default ({ mode }) => {
       root: {
         lang: 'en',
         label: 'English',
-        title: 'Node-RED Dashboard 2.0',
+        title: 'FlowFuse Dashboard',
         description: defaultMetaDescription
       }
     },
@@ -68,7 +68,7 @@ export default ({ mode }) => {
       ])
     },
     themeConfig: {
-      logo: { src: '/logo.png', alt: 'Node-RED Dashboard 2.0 Logo' },
+      logo: { src: '/logo.png', alt: 'FlowFuse Dashboard Logo' },
       nav: [
         { text: 'Docs', link: '/getting-started.html' },
         { text: 'Widgets', link: '/nodes/widgets.html' },

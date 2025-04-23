@@ -1,5 +1,5 @@
 ---
-description: Kickstart your Node-RED Dashboard 2.0 journey with this getting started guide. Perfect for beginners.
+description: Kickstart your FlowFuse Dashboard journey with this getting started guide. Perfect for beginners.
 ---
 
 <script setup>
@@ -18,9 +18,9 @@ description: Kickstart your Node-RED Dashboard 2.0 journey with this getting sta
 
 ## About
 
-Welcome to the documentation for the Node-RED Dashboard 2.0, the successor to the original, and very popular, Node-RED Dashboard.
+Welcome to the documentation for the FlowFuse Dashboard (also known as Node-RED Dashboard 2.0), the successor to the original, and very popular, Node-RED Dashboard.
 
-This project was formed by FlowFuse, as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has been [officially deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). You can read our full statement about _why_ we're building Dashboard 2.0 [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/?_gl=1*cckr5u*_gcl_au*MTAzMTA0MzY1Ni4xNzE2MzY2NTAz).
+This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has been [officially deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). You can read our full statement about _why_ we're building FlowFuse Dashboard [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/?_gl=1*cckr5u*_gcl_au*MTAzMTA0MzY1Ni4xNzE2MzY2NTAz).
 
 ## Recommended Tutorials
 
@@ -28,7 +28,7 @@ This project was formed by FlowFuse, as part of efforts to upgrade the original 
 
 ## Installation
 
-[FlowFuse](https://flowfuse.com)'s Node-RED Dashboard 2.0 is available in the Node-RED Palette Manager. To install it:
+[FlowFuse](https://flowfuse.com) Dashboard is available in the Node-RED Palette Manager. To install it:
 
 - Open the menu in the top-right of Node-RED
 - Click "Manage Palette"
@@ -56,8 +56,8 @@ Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can
 
 With the nodes installed, getting started is as easy as choosing a node from the Palette (the left-hand side list of nodes) in Node-RED, and dropping it onto your canvas.
 
-![Screen recording to show how easy it is to deploy your first Dashboard 2.0 application.](./assets/images/getting-started.gif){data-zoomable}
-_Screen recording to show how easy it is to deploy your first Dashboard 2.0 application._
+![Screen recording to show how easy it is to deploy your first FlowFuse Dashboard application.](./assets/images/getting-started.gif){data-zoomable}
+_Screen recording to show how easy it is to deploy your first FlowFuse Dashboard application._
 
 In this case, we drop in a `ui-button`, click "Deploy" and then can see the button running live in our user interface.
 
@@ -65,7 +65,7 @@ Notice too that Dashboard will automatically create a new group, page, theme and
 
 ## Configuring your layout
 
-Dashboard 2.0 adds a corresponding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
+FlowFuse Dashboard adds a corresponding "Dashboard 2.0" sidebar to the Node-RED editor . This sidebar provides an interface by which to view of your pages, themes, groups and widgets. From here you can add new pages and groups, modify existing settings, and re-order content to your liking.
 
 ![Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor.](./assets/images/getting-started-sidebar.png){data-zoomable}
 _Screenshot showing the Dashboard 2.0 sidebar in the Node-RED Editor._
@@ -80,12 +80,12 @@ _Example of the "Grid" page layout, with a "Collapsing" sidebar navigation._
 
 ### Default Page
 
-Each page in Dashboard 2.0 has a unique URL. If a user navigates to an unrecognised path, underneath the `/dashboard/` path, then a default page is used to fall back to. 
+Each page in FlowFuse Dashboard has a unique URL. If a user navigates to an unrecognised path, underneath the `/dashboard/` path, then a default page is used to fall back to. 
 
-Currently, in Dashboard 2.0, the default page is chosen as the page ordered first in the list of pages in the side navigation:
+Currently, in FlowFuse Dashboard, the default page is chosen as the page ordered first in the list of pages in the side navigation:
 
-![Screenshot of the pages list in the Dashboard 2.0 side panel](./assets/images/default-page-layout.png "Screenshot of the pages list in the Dashboard 2.0 side panel"){data-zoomable}
-_Screenshot of the pages list in the Dashboard 2.0 side panel_
+![Screenshot of the pages list in the FlowFuse Dashboard side panel](./assets/images/default-page-layout.png "Screenshot of the pages list in the FlowFuse Dashboard side panel"){data-zoomable}
+_Screenshot of the pages list in the FlowFuse Dashboard side panel_
 
 In this example, the _"Third Party Widgets"_ page is the default page.
 
@@ -111,12 +111,12 @@ Built into the framework of the UI is a side navigation bar, along with the top,
 
 ## Design Patterns
 
-There are two core Design Patterns that are possible when building with Dashboard 2.0:
+There are two core Design Patterns that are possible when building with FlowFuse Dashboard:
 
 - **Single Source of Truth:** All users of your Dashboard will see the same data. This is useful for industrial IoT or Home Automation applications.
 - **Multi Tenancy:** Data shown in a particular widget is unique to a given client/session/user. This represents a more traditional web application, where each user has their own session and associated data.
 
-It's worth noting that these two patterns can be mixed and matched within a single Dashboard 2.0 application, shown [later](#example).
+It's worth noting that these two patterns can be mixed and matched within a single FlowFuse Dashboard application, shown [later](#example).
 
 ### Single Source of Truth
 
@@ -134,7 +134,7 @@ An example of this is that if you have interactive elements, e.g. a slider linke
 ![Multi Tenancy](./assets/images/design-pattern-client.png){data-zoomable}
 _Example workflow to demonstrate the "Multi Tenancy" design pattern._
 
-In Dashboard 2.0 we can configure a given node type to ["Accept Client Data"](/user/sidebar.html#client-data) from the sidebar:
+In FlowFuse Dashboard we can configure a given node type to ["Accept Client Data"](/user/sidebar.html#client-data) from the sidebar:
 
 <img data-zoomable style="max-width: 400px; margin: auto;" src="/images/dashboard-sidebar-clientdata.png" alt="Screenshot of an example 'Client Data' tab"/>
 <em>Screenshot of an example "Client Data" tab</em>
@@ -143,11 +143,11 @@ If "Include Client Data" is toggled on, then _all_ `msg` objects emitted from _a
 
 The "Accept Client Data" table allow configuration over which node types will pay attention to any provided `msg._client` information. Any `msg` sent _to_ one of these nodes can include a `msg._client` value to specify a particular connection (e.g. username, socket ID) that the data should be sent to, rather than to all clients.
 
-For users familiar with the original Node-RED Dashboard, you'll recognise this pattern from what you could do with `ui-notification` and `ui-control`, now, in Dashboard 2.0, it's possible for _all_ widgets.
+For users familiar with the original Node-RED Dashboard, you'll recognise this pattern from what you could do with `ui-notification` and `ui-control`, now, in FlowFuse Dashboard, it's possible for _all_ widgets.
 
 The key here is that data is generally injected into a node as a consequence of a user action, e.g. clicking a button, viewing a page, or submitting a form, and the responding data is sent _only_ back to that user.
 
-An easy example of this design pattern in Dashboard 2.0 is to utilise the [UI Event](./nodes/widgets/ui-event.md) node. The `ui-event` node emits a `msg` when a user loads a page. Within the `msg` is a full `msg._client` data object available for that client's connection. If this message is then sent onto another node that accept client data, then that full `msg` will _only_ be sent to that specified client.
+An easy example of this design pattern in FlowFuse Dashboard is to utilise the [UI Event](./nodes/widgets/ui-event.md) node. The `ui-event` node emits a `msg` when a user loads a page. Within the `msg` is a full `msg._client` data object available for that client's connection. If this message is then sent onto another node that accept client data, then that full `msg` will _only_ be sent to that specified client.
 
 ### Example
 
@@ -185,4 +185,4 @@ We also connect the `ui-slider` to two `ui-template` nodes. Given that `ui-templ
 
 If you would like to run this set of nodes locally, and specifically to help contribute to the development efforts, you can read the [Contributing](./contributing/index.md) documentation.
 
-If you'd like to build your own standalone nodes & widgets that integrate seamlessly with Dashboard 2.0, you can read our guide on that [here](./contributing/widgets/third-party.md).
+If you'd like to build your own standalone nodes & widgets that integrate seamlessly with FlowFuse Dashboard, you can read our guide on that [here](./contributing/widgets/third-party.md).

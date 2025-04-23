@@ -1,5 +1,5 @@
 ---
-description: Explore how layout managers in Node-RED Dashboard 2.0 can help organize your dashboard's appearance effectively.
+description: Explore how layout managers in FlowFuse Dashboard can help organize your dashboard's appearance effectively.
 ---
 
 # Layout Managers

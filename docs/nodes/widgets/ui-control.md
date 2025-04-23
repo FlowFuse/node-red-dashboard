@@ -1,6 +1,6 @@
 ---
 {
-    "description": "Dynamically control elements on your dashboard through ui-control for Node-RED Dashboard 2.0.",
+    "description": "Dynamically control elements on your dashboard through ui-control for FlowFuse Dashboard.",
     "events": [
         {
             "event": "$pageview",
@@ -131,7 +131,7 @@ msg.payload = {
     }
 }
 ```
-_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+_Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups` can also be subbed with `group` as per Node-RED Dashboard.
 
 ### Enable/Disable
 
@@ -154,15 +154,15 @@ msg.payload = {
 }
 ```
 
-_Note:_ `pages` can be subbed with `tabs` as per Dashboard 1.0 and `groups` can also be subbed with `group` as per Dashboard 1.0.
+_Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups` can also be subbed with `group` as per Node-RED Dashboard.
 
 ## Events List
 
-In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Dashboard 1.0 here too.
+In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Node-RED Dashboard here too.
 
 ### Connection Status
 
-We follow the Dashboard 1.0 convention for emitting socket-based events from the `ui-control` node.
+We follow the Node-RED Dashboard convention for emitting socket-based events from the `ui-control` node.
 
 #### .on('connection')
 

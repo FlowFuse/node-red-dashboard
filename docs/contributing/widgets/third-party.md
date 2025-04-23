@@ -1,5 +1,5 @@
 ---
-description: Expand Node-RED Dashboard 2.0 with third-party widgets. Learn how to build and integrate them.
+description: Expand FlowFuse Dashboard with third-party widgets. Learn how to build and integrate them.
 ---
 <script setup>
     import AddedIn from '../../components/AddedIn.vue'
@@ -12,13 +12,13 @@ A single widget consist of two key parts:
 1. A Node-RED node that will appear in the palette of the Node-RED Editor
 2. `.vue` and client-side code that renders the widget into a dashboard
  
-You can explore our collection of core widgets [here](../../nodes/widgets.md). If you have an idea for a widget that you'd like to build in Dashboard 2.0 we are open to Pull Requests and you can read more in our [Adding Core Widgets](./core-widgets.md) guide.
+You can explore our collection of core widgets [here](../../nodes/widgets.md). If you have an idea for a widget that you'd like to build in FlowFuse Dashboard we are open to Pull Requests and you can read more in our [Adding Core Widgets](./core-widgets.md) guide.
 
-We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Dashboard 1.0.
+We do also realise though that there are many occasions where a standalone repository/package works better as was very popular in Node-RED Dashboard.
 
 ## Recommended Reading
 
-On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the Dashboard 2.0 codebase and some of the underlying architectural principles it is built upon.
+On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the FlowFuse Dashboard codebase and some of the underlying architectural principles it is built upon.
 
 In particular, the following are recommended:
 
@@ -27,14 +27,14 @@ In particular, the following are recommended:
 
 ## How Widgets are Loaded
 
-Dashboard 2.0 is built on top of [VueJS](https://vuejs.org/), and as such, all widgets needs to be mapped to a Vue component. The process works as follows:
+FlowFuse Dashboard is built on top of [VueJS](https://vuejs.org/), and as such, all widgets needs to be mapped to a Vue component. The process works as follows:
 
-1. Dashboard 2.0 client connects to Node-RED
+1. FlowFuse Dashboard client connects to Node-RED
 2. Node-RED sends `ui-config` object contianing details of all pages, themes, groups & widgets
 3. In the event handler, we loop over all widget's found in the `ui-config`:
     - If the widget `type` matches a core component, we map it to that component
     - If the widget is a third-party widget, we load the relevant `.umd.js` file, exposed by the widget's `/resources` folder.
-3. Dashboard 2.0 loads the relevant Layout (e.g. Grid, Fixed or Notebook) depending on the active URL/page.
+3. FlowFuse Dashboard loads the relevant Layout (e.g. Grid, Fixed or Notebook) depending on the active URL/page.
 4. Within that layout manager, we loop over the widgets, and render their respective Vue components.
     - Every component is passed `id`, `props` and `state` of the widget.
 
@@ -161,13 +161,13 @@ module.exports = function(RED) {
 
 ## Guides
 
-The below are guides and examples on building third-party widgets. We also have the "Useful Guides" Section in the left navigation which provide more generalized development guides when contributing to Dashboard 2.0.
+The below are guides and examples on building third-party widgets. We also have the "Useful Guides" Section in the left navigation which provide more generalized development guides when contributing to FlowFuse Dashboard.
 
 ### The Basics of VueJS
 
-Aware that a lot of developers that may want to contribute to Dashboard 2.0, may be new to VueJS, so we've detailed a few fundamentals here.
+Aware that a lot of developers that may want to contribute to FlowFuse Dashboard, may be new to VueJS, so we've detailed a few fundamentals here.
 
-It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across Dashboard 2.0 and in our examples for readability.
+It is very common place since VueJS to see Vue applications using the "Composition API", whilst this is lighter weight way of building your applications, it isn't the most intuitive for those unfamiliar with VueJS, as such, we're mostly using the "Options API" structure across FlowFuse Dashboard and in our examples for readability.
 
 With the Options API, a Vue component has the following structure:
 
@@ -256,11 +256,11 @@ export default {
 
 ### Communicating with Node-RED
 
-Events are sent back and forth between Node-RED and Dashboard 2.0 with SocketIO. You can see a full breakdown of these events in our [Events Architecture](../guides/events.md) guide.
+Events are sent back and forth between Node-RED and FlowFuse Dashboard with SocketIO. You can see a full breakdown of these events in our [Events Architecture](../guides/events.md) guide.
 
 #### Receiving Node-RED Messages
 
-When your node receives a `msg` in Node-RED, the Dashboard 2.0 client will receive a `msg-input` event via SocketIO. You can subscribe to this event within your own widget's Vue component with:
+When your node receives a `msg` in Node-RED, the FlowFuse Dashboard client will receive a `msg-input` event via SocketIO. You can subscribe to this event within your own widget's Vue component with:
 
 ```js
 export default {
@@ -328,7 +328,7 @@ group.register(node, config, evts)
 
 ### Data Retention & Data Stores
 
-We use the concept of data stores on both the client and server side of Dashboard 2.0. These are used to centralise storage of the latest state and data associated to a widget.
+We use the concept of data stores on both the client and server side of FlowFuse Dashboard. These are used to centralise storage of the latest state and data associated to a widget.
 
 Data stores are a mapping of the widget/node's ID to the latest data received into that widget. This is most commonly used to restore state when the Dashboard is refreshed.
 
@@ -360,7 +360,7 @@ For example, the `ui-dropdown` can have it's `options` overriden with a `msg.opt
 
 #### Client-Side Data Store
 
-In Dashboard 2.0's client-side, we use VueX to manage the centralised state of a UI.
+In FlowFuse Dashboard's client-side, we use VueX to manage the centralised state of a UI.
 
 With VueX you can call `mapState` which will automatically bind the store to your Vue component, e.g:
 
@@ -398,7 +398,7 @@ this.$store.commit('data/bind', {
 
 #### Loading State
 
-When Dashboard 2.0 loads, it will send a `widget-load` event to all widgets in the Dashboard. This will contain the latest value from the Node-RED datastore. You can subscribe to this event in your widget with:
+When FlowFuse Dashboard loads, it will send a `widget-load` event to all widgets in the Dashboard. This will contain the latest value from the Node-RED datastore. You can subscribe to this event in your widget with:
 
 ```js
 export default {

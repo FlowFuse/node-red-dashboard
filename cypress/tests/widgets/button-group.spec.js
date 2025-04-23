@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0 - Button Groups', () => {
+describe('FlowFuse Dashboard - Button Groups', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-button-groups')
         cy.visit('/dashboard/page1')
@@ -49,7 +49,7 @@ describe('Node-RED Dashboard 2.0 - Button Groups', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Button Groups', () => {
+describe('FlowFuse Dashboard - Button Groups', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-button-groups')
         cy.visit('/dashboard/page1')

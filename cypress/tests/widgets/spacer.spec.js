@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0 - Spacer', () => {
+describe('FlowFuse Dashboard - Spacer', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-spacer')
         cy.visit('/dashboard/page1')

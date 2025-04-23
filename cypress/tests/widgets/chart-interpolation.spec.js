@@ -2,7 +2,7 @@
 import should from 'should'
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe('Node-RED Dashboard 2.0 - Chart - Type: Interpolation', () => {
+describe('FlowFuse Dashboard - Chart - Type: Interpolation', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-chart-interpolation')
         cy.visit('/dashboard/page1')

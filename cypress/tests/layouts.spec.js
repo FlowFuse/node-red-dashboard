@@ -1,6 +1,6 @@
 // test admin rights & access in FlowForge
 
-describe('Node-RED Dashboard 2.0 - Layout: Grid', () => {
+describe('FlowFuse Dashboard - Layout: Grid', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')
         cy.visit('/dashboard/grid')
@@ -14,7 +14,7 @@ describe('Node-RED Dashboard 2.0 - Layout: Grid', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Layout: Fixed', () => {
+describe('FlowFuse Dashboard - Layout: Fixed', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')
         cy.visit('/dashboard/fixed')
@@ -28,7 +28,7 @@ describe('Node-RED Dashboard 2.0 - Layout: Fixed', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Layout: Notebook', () => {
+describe('FlowFuse Dashboard - Layout: Notebook', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')
         cy.visit('/dashboard/notebook')
@@ -42,7 +42,7 @@ describe('Node-RED Dashboard 2.0 - Layout: Notebook', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Groups', () => {
+describe('FlowFuse Dashboard - Groups', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')
         cy.visit('/dashboard/grid')

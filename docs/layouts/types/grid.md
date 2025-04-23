@@ -1,5 +1,5 @@
 ---
-description: Create flexible and responsive layouts using a grid system for Node-RED Dashboard 2.0.
+description: Create flexible and responsive layouts using a grid system for FlowFuse Dashboard.
 ---
 
 # Layout: Grid
@@ -36,7 +36,7 @@ As such, the height of a given "row" of widgets is determined by the tallest wid
 
 Most widgets will strictly abide by their widget and height specified, however, some (e.g. `ui-template` or `ui-markdown`) will grow with their content, even if that means surpassing the height specified in the widget's config.
 
-Here, we can see an example of a rendered Grid layout in Dashboard 2.0:
+Here, we can see an example of a rendered Grid layout in FlowFuse Dashboard:
 
 ![Grid Layout](../../assets/images/layout-eg-grid.png){data-zoomable}
 *An example UI rendered using the "Grid" Layout*

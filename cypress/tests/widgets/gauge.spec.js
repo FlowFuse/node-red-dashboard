@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0 - Gauges', () => {
+describe('FlowFuse Dashboard - Gauges', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-gauges')
         cy.visit('/dashboard/page1')

@@ -1,6 +1,6 @@
 // test admin rights & access in FlowForge
 
-describe('Node-RED Dashboard 2.0', () => {
+describe('FlowFuse Dashboard', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-pages')
         cy.visit('/dashboard')

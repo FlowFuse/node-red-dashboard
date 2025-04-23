@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0', () => {
+describe('FlowFuse Dashboard', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-basic')
         cy.visit('/dashboard')

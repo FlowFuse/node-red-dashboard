@@ -1,4 +1,4 @@
-describe('Node-RED Dashboard 2.0 - Text', () => {
+describe('FlowFuse Dashboard - Text', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-text')
         cy.visit('/dashboard/page1')
@@ -27,7 +27,7 @@ describe('Node-RED Dashboard 2.0 - Text', () => {
     })
 })
 
-describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
+describe('FlowFuse Dashboard - Text - Dynamic Properties', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-text')
         cy.visit('/dashboard/page1')

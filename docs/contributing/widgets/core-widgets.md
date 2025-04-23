@@ -1,5 +1,5 @@
 ---
-description: Step-by-step guide on adding new core widgets to Node-RED Dashboard 2.0 to expand its interactive features.
+description: Step-by-step guide on adding new core widgets to FlowFuse Dashboard to expand its interactive features.
 ---
 
 # Adding New Core Widgets
@@ -17,7 +17,7 @@ When adding a new widget to the core collection, you will need to follow the ste
 
 ## Recommended Reading
 
-On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the Dashboard 2.0 codebase and some of the underlying architectural principles it is built upon.
+On the left-side navigation you'll find a "Useful Guides" section, we recommend taking a look through these as they give a good overview of the structure of the FlowFuse Dashboard codebase and some of the underlying architectural principles it is built upon.
 
 In particular, the following are recommended:
 
@@ -26,7 +26,7 @@ In particular, the following are recommended:
 
 ## Checklist
 
-When adding a new widget to Dashboard 2.0, you'll need to ensure that the following steps have been followed for that new widget to be recognised and included in a Dashboard 2.0 build:
+When adding a new widget to FlowFuse Dashboard, you'll need to ensure that the following steps have been followed for that new widget to be recognised and included in a FlowFuse Dashboard build:
 
 1. In `/nodes/`:
     - Add `<widget>.html`
@@ -123,7 +123,7 @@ The inputs for the `this.$dataTracker(widgetId, onInput, onLoad, onDynamicProper
 
 Node-RED allows for definition of the underlying configuration for a node. For example, a `ui-button` would have properties such as `label`, `color`, `icon`, etc. It is often desired to have these properties be dynamic, meaning that they can be changed at runtime. 
 
-It is a standard practice within Dashboard 2.0 to support these property updates via a nested `msg.ui_update` object. As such, users can expect to be able to control these generally by passing in `msg.ui_update.<property-name>` to the node, which in turn, should update the appropriate property.
+It is a standard practice within FlowFuse Dashboard to support these property updates via a nested `msg.ui_update` object. As such, users can expect to be able to control these generally by passing in `msg.ui_update.<property-name>` to the node, which in turn, should update the appropriate property.
 
 ### Design Pattern
 
@@ -270,4 +270,4 @@ Each node will have a corresponding `/locales/<locale>/<node>.html` file which s
 
 ### Debugging Dynamic Properties
 
-Dashboard 2.0 comes with as [Debug View](/contributing/widgets/debugging.html) that includes a [specialist panel](/contributing/widgets/debugging.html#dynamic-properties) to monitor any dynamic properties assigned to a widget. This can be a very useful tool when checking whether the client is aware of any dynamic properties that have been sent.
+FlowFuse Dashboard comes with as [Debug View](/contributing/widgets/debugging.html) that includes a [specialist panel](/contributing/widgets/debugging.html#dynamic-properties) to monitor any dynamic properties assigned to a widget. This can be a very useful tool when checking whether the client is aware of any dynamic properties that have been sent.
