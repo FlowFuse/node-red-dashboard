@@ -144,7 +144,9 @@ main {
 .nrdb-ui-widget {
     min-height: var(--widget-row-height);
     position: relative;
+    overflow-y: auto;
 }
+
 /* to make input type widgets repect row heights */
 .nrdb-app .v-input--density-default {
     --v-input-control-height: var(--widget-row-height);
