@@ -126,18 +126,30 @@ module.exports = function (RED) {
 
             uiShared.app.use(config.path, uiShared.httpMiddleware, express.static(path.join(__dirname, '../../dist')))
 
-            // Redirect any requests with a trailing slash to the same path without the trailing slash
+            // Middleware to enforce canonical URLs without trailing slashes.
+            //
+            // In some configurations (e.g., with NGINX), requests might include
+            // a trailing slash. For consistency, SEO benefits, and to reduce duplicate
+            // content issues, we redirect such URLs to their non-trailing version.
+            //
+            // This middleware:
+            // - Applies only to GET and HEAD requests.
+            // - Ignores the root path ("/").
+            // - Redirects (301) URLs ending with a trailing slash to their non-trailing equivalent.
+            // - Preserves the query string.
+            // - Collapses any redundant slashes (e.g., "//" becomes "/").
             uiShared.app.use((req, res, next) => {
                 // Skip if not a GET or HEAD request
                 if (!(req.method === 'GET' || req.method === 'HEAD')) {
                     next()
                     return
                 }
-
+                // Check if someone is trying to open a page with with a / at the end
+                // If yes, redirect (with a 301 status) to the correct page without the trailing slash.
                 if (req.path.slice(-1) === '/' && req.path.length > 1) {
-                    const query = req.url.slice(req.path.length)
-                    const safePath = req.path.slice(0, -1).replace(/\/+/g, '/')
-                    res.redirect(301, safePath + query)
+                    const query = req.url.slice(req.path.length) // get the query string (if any)
+                    const safePath = req.path.slice(0, -1).replace(/\/+/g, '/') // remove trailing slash and make any double slashes single slashes
+                    res.redirect(301, safePath + query) // redirect to the safe path
                 } else {
                     next()
                 }
