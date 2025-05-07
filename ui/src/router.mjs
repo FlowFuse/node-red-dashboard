@@ -16,7 +16,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.title) {
         document.title = to.meta.title
     } else {
-        document.title = 'Node-RED Dashboard 2.0'
+        document.title = 'FlowFuse Dashboard'
     }
     next()
 })

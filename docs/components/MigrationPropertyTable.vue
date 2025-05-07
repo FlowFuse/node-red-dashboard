@@ -4,9 +4,9 @@
     </slot>
     <slot name="description">
         <p>
-            The following table lists the Dashboard 1.0 properties,
+            The following table lists the Node-RED Dashboard properties,
             and details any changes, or whether that property has not
-            yet been migrated, into Dashboard 2.0.
+            yet been migrated, into FlowFuse Dashboard.
         </p>
     </slot>
     <table class="migration-properties">

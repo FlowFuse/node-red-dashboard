@@ -1,5 +1,5 @@
 ---
-description: Employ the ui-text widget in Node-RED Dashboard 2.0 to display static or dynamic text content elegantly on your dashboard.
+description: Employ the ui-text widget in FlowFuse Dashboard to display static or dynamic text content elegantly on your dashboard.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
@@ -58,7 +58,7 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 ## Adding Prefixes & Suffixes
 
-In Dashboard 1.0 an option existed called `valueFormat` which allowed you to add a prefix or suffix to a `ui-text` widget within the node's configuration. Whilst valuable, this had a lot of security vulnerabilities, so with Dashboard 2.0 we made the decision to remove it..
+In Node-RED Dashboard an option existed called `valueFormat` which allowed you to add a prefix or suffix to a `ui-text` widget within the node's configuration. Whilst valuable, this had a lot of security vulnerabilities, so with FlowFuse Dashboard we made the decision to remove it..
 
 Instead, we take a different approach, and use Node-RED's built-in "template" node:
 

@@ -1,5 +1,5 @@
 ---
-description: Manage your dashboard pages with ease in Node-RED Dashboard 2.0 for a streamlined user experience.
+description: Manage your dashboard pages with ease in FlowFuse Dashboard for a streamlined user experience.
 props:
     UI: The UI (<code>ui-base</code>) that this page will be added to. 
     Path: The URL to navigate to when a user selects this link
@@ -12,7 +12,7 @@ props:
 
 # Config: UI Link `ui-link`
 
-If you want to link to external resources from your Dashboard, you can do so with the `ui-link` config node. This will render a link in the side navigation menu, just like your Dashboard [Pages](./ui-page.md), but will navigate directly to the URL you specify, even if out of the scope of Dashboard 2.0.
+If you want to link to external resources from your Dashboard, you can do so with the `ui-link` config node. This will render a link in the side navigation menu, just like your Dashboard [Pages](./ui-page.md), but will navigate directly to the URL you specify, even if out of the scope of FlowFuse Dashboard.
 
 ## Properties
 

@@ -1,10 +1,10 @@
 ---
-description: Learn how to use dynamic properties in Node-RED Dashboard 2.0 to create flexible and responsive dashboard interfaces.
+description: Learn how to use dynamic properties in FlowFuse Dashboard to create flexible and responsive dashboard interfaces.
 ---
 
 # Dynamic Properties
 
-Node-RED offers functionality to set properties of a node at runtime. This can be useful to generate dynamic functionality and behaviour, and in Node-RED Dashboard 2.0, this is possible on most fields too.
+Node-RED offers functionality to set properties of a node at runtime. This can be useful to generate dynamic functionality and behaviour, and in FlowFuse Dashboard, this is possible on most fields too.
 
 For each node, you can look in the in-Editor help to see which properties can be set dynamically, or checkout the relevant documentation page for that node in this online documentation. 
 

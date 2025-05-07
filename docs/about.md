@@ -1,12 +1,12 @@
 ---
-description: "Learn about Dashboard 2.0 technology choices"
+description: "Learn about FlowFuse Dashboard technology choices"
 ---
 
-# About Node-RED Dashboard 2.0
+# About FlowFuse Dashboard
 
-Welcome to the documentation for the Node-RED Dashboard 2.0, the successor to the original, and very popular, [Node-RED Dashboard](https://flows.nodered.org/node/node-red-dashboard).
+Welcome to the documentation for the FlowFuse Dashboard (also known as Node-RED Dashboard 2.0), the successor to the original, and very popular,  [Node-RED Dashboard](https://flows.nodered.org/node/node-red-dashboard).
 
-This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has long been deprecated. You can read our full statement about _why_ we're building Dashboard 2.0 [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/).
+This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has long been deprecated. You can read our full statement about _why_ we're building FlowFuse Dashboard [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/).
 
 ## Technologies
 
@@ -26,4 +26,4 @@ We also utilise the [Vuetify component library](https://vuetifyjs.com/en/compone
 
 [Socket.IO](https://socket.io/) enables real-time, bidirectional and event-based communication. It works on every platform, browser or device, focusing equally on reliability and speed.
 
-In Dashboard 2.0 we use Socket IO to communicate between Node-RED and the Dashboard UI.
+In FlowFuse Dashboard we use Socket IO to communicate between Node-RED and the Dashboard UI.

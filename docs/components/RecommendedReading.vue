@@ -14,12 +14,12 @@ const articles = [
         image: 'https://flowfuse.com/img/getting-started-with-dashboard-2-XtCp3zOvCC-1120.avif'
     },
     {
-        title: 'Personalised Multi-user Dashboards with Node-RED Dashboard 2.0',
+        title: 'Personalised Multi-user Dashboards with FlowFuse Dashboard',
         url: 'https://flowfuse.com/blog/2024/01/dashboard-2-multi-user/',
         image: 'https://flowfuse.com/img/tile-dashboard-2-multi-user-UrjNxC416v-1120.avif'
     },
     {
-        title: 'Building a Custom Video Player in Dashboard 2.0',
+        title: 'Building a Custom Video Player in FlowFuse Dashboard',
         url: 'https://flowfuse.com/blog/2023/12/dashboard-0-10-0/',
         image: 'https://flowfuse.com/img/tile-dashboard-0-10-0-g--bJXNlBL-1120.avif'
     }

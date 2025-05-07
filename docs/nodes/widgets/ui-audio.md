@@ -1,5 +1,5 @@
 ---
-description: "Play dynamically audio files with ui-audio in Node-RED Dashboard 2.0."
+description: "Play dynamically audio files with ui-audio in FlowFuse Dashboard."
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

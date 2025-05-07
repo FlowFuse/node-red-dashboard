@@ -18,7 +18,7 @@ We currently offer four different layout options:
 
 ## Sizing Groups & Widgets
 
-A fundamental component of building out layouts in Dashboard 2.0 (which follows the Dashboard 1.0 principle) is the ability to control the size of each group and widget with the size selection widget:
+A fundamental component of building out layouts in FlowFuse Dashboard (which follows the Node-RED Dashboard principle) is the ability to control the size of each group and widget with the size selection widget:
 
 ![Screenshot of the size selection widget for a ui-gauge](../assets/images/layouts-sizing-options.png){data-zoomable}
 _Screenshot of the size selection widget for a ui-gauge_

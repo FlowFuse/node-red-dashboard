@@ -1,5 +1,5 @@
 ---
-description: Visualize your data beautifully with ui-chart in Node-RED Dashboard 2.0 for insightful analytics.
+description: Visualize your data beautifully with ui-chart in FlowFuse Dashboard for insightful analytics.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
@@ -91,7 +91,7 @@ Provides configuration options to create the following chart types:
 
 ## Building Charts
 
-In Node-RED Dashboard 2.0, the `ui-chart` offers a simple way to render data in a variety of chart types. The chart is configurable to tailor to your data. 
+In FlowFuse Dashboard, the `ui-chart` offers a simple way to render data in a variety of chart types. The chart is configurable to tailor to your data. 
 
 To map your data to the chart, the most important properties to configure are:
 

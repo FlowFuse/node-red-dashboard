@@ -1,7 +1,7 @@
 {
-  "name": "Node-RED Dashboard 2.0",
+  "name": "FlowFuse Dashboard",
   "short_name": "Dashboard",
-  "description": "Node-RED Dashboard 2.0",
+  "description": "FlowFuse Dashboard For Node-RED",
   "theme_color": "#ffffff",
 
   "icons": [

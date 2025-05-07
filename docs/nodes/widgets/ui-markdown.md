@@ -1,5 +1,5 @@
 ---
-description: Present text and documentation elegantly with ui-markdown viewer in Node-RED Dashboard 2.0.
+description: Present text and documentation elegantly with ui-markdown viewer in FlowFuse Dashboard.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Content: The markdown to be passed to the UI and rendered

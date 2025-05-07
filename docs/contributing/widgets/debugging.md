@@ -1,15 +1,15 @@
 ---
-description: Efficient strategies and tips for debugging your Node-RED Dashboard 2.0 setups to ensure smooth operation.
+description: Efficient strategies and tips for debugging your FlowFuse Dashboard setups to ensure smooth operation.
 ---
 
-# Debugging Dashboard 2.0
+# Debugging FlowFuse Dashboard
 
-Dashboard 2.0 comes with a built-in debugging tool to understand the data being configured for each dashboard, page, theme, group and widget.
+FlowFuse Dashboard comes with a built-in debugging tool to understand the data being configured for each dashboard, page, theme, group and widget.
 
 To navigate to the tooling, head to `<your-host>:<your-port>/dashboard/_debug`.
 
 ![Debugging tool](/images/debug-example.png "Debugging tool"){data-zoomable}
-_Screenshot of the Dashboard 2.0 Debugging Tool_
+_Screenshot of the FlowFuse Dashboard Debugging Tool_
 
 This tooling is particularly useful when you're building your own custom integrations, and developing on core Dashboard widgets too.
 

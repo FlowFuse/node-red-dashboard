@@ -1,5 +1,5 @@
 ---
-description: Facilitate easy option selection with ui-radio-group in Node-RED Dashboard 2.0 for streamlined user choices.
+description: Facilitate easy option selection with ui-radio-group in FlowFuse Dashboard for streamlined user choices.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Label:

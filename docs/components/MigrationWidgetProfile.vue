@@ -11,7 +11,7 @@
             <template #description>
                 <p>
                     The following details newly implemented properties
-                    and features in Dashboard 2.0 for this node.
+                    and features in FlowFuse Dashboard for this node.
                 </p>
             </template>
         </PropertyMigrationTable>
@@ -22,13 +22,13 @@
             </template>
             <template #description>
                 <p>
-                    The following are Dashboard 1.0 <code>msg.&lt;property&gt;</code> values that could be sent to the node to affect functionality & contents of the node.
+                    The following are Node-RED Dashboard <code>msg.&lt;property&gt;</code> values that could be sent to the node to affect functionality & contents of the node.
                 </p>
             </template>
         </PropertyMigrationTable>
     </template>
     <template v-else>
-        <p><i>This node has not yet been migrated to Dashboard 2.0</i></p>
+        <p><i>This node has not yet been migrated to FlowFuse Dashboard</i></p>
     </template>
 </template>
 

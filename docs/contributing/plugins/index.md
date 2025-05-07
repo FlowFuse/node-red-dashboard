@@ -1,5 +1,5 @@
 ---
-description: Guide to building custom plugins for Node-RED Dashboard 2.0, enhancing its capabilities with your functionality.
+description: Guide to building custom plugins for FlowFuse Dashboard, enhancing its capabilities with your functionality.
 ---
 
 <script setup>
@@ -10,9 +10,9 @@ description: Guide to building custom plugins for Node-RED Dashboard 2.0, enhanc
 
 Node-RED supports the development of custom plugins that add behaviour and functionality to the Node-RED runtime. A really common use case of plugins is [custom Node-RED Themes](https://nodered.org/docs/api/ui/themes/), which modify the overall CSS/appearance of the underlying Node-RED Editor.
 
-Node-RED Dashboard 2.0 also supports plugins. This allows you to define custom behaviour for the Dashboard runtime, independent of particular nodes and widgets. Currently, we provide a collection of [API hooks](#index-js) that allow the injection of code at various points in the Dashboard instantiation and runtime.
+FlowFuse Dashboard also supports plugins. This allows you to define custom behaviour for the Dashboard runtime, independent of particular nodes and widgets. Currently, we provide a collection of [API hooks](#index-js) that allow the injection of code at various points in the Dashboard instantiation and runtime.
 
-To integrate, make sure your Node-RED plugin is registered with `"type": "node-red-dashboard-2"` in the `package.json` file. This will tell Node-RED that this is a Dashboard 2.0 plugin.
+To integrate, make sure your Node-RED plugin is registered with `"type": "node-red-dashboard-2"` in the `package.json` file. This will tell Node-RED that this is a FlowFuse Dashboard plugin.
 
 _Note: Plugins differ from [Third Party Widgets](../widgets/third-party.md). Third Party Widgets are built as nodes that become available in the Node-RED Editor, and can be dragged onto the Dashboard. Plugins are built to modify the behaviour of the Dashboard runtime itself._
 
@@ -87,19 +87,19 @@ This defines any client/editor plugins. This allows for definition of Node-RED E
 
 ### index.js
 
-A plugin's `js` file will define runtime behaviours for the Dashboard 2.0. This is where you will define your hooks, and any other code that you want to run when the Dashboard 2.0 is instantiated, or messages are sent back and forth between the Dashboard and Node-RED.
+A plugin's `js` file will define runtime behaviours for the FlowFuse Dashboard. This is where you will define your hooks, and any other code that you want to run when the FlowFuse Dashboard is instantiated, or messages are sent back and forth between the Dashboard and Node-RED.
 
 ```js
 module.exports = function(RED) {
     RED.plugins.registerPlugin("node-red-dashboard-2-<plugin-name>", {
 
-        // Tells Node-RED this is a Node-RED Dashboard 2.0 plugin
+        // Tells Node-RED this is a FlowFuse Dashboard plugin
         type: "node-red-dashboard-2",
 
-        // hooks - a collection of functions that will inject into Dashboard 2.0
+        // hooks - a collection of functions that will inject into FlowFuse Dashboard
         hooks: {
             /**
-             * onSetup - called when the Dashboard 2.0 is instantiated
+             * onSetup - called when the FlowFuse Dashboard is instantiated
              * @param {object} RED - Node-RED runtime
              * @param {object} config - UI Base Node Configuration
              * @param {object} req - ExpressJS request object

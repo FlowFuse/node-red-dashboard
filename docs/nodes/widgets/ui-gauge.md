@@ -1,5 +1,5 @@
 ---
-description: Display real-time metrics with ui-gauge in Node-RED Dashboard 2.0 for immediate data visualization.
+description: Display real-time metrics with ui-gauge in FlowFuse Dashboard for immediate data visualization.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the dropdown with respect to the parent group. Maximum value is the width of the group.

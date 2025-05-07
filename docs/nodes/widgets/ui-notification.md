@@ -1,5 +1,5 @@
 ---
-description: Notify users of important updates and alerts with ui-notification in Node-RED Dashboard 2.0.
+description: Notify users of important updates and alerts with ui-notification in FlowFuse Dashboard.
 props:
     UI: Unlike most widgets, notifications are owned by a "UI", not Group. This allows for notifications to be displayed across all pages.
     Position: The position on the screen where the the notification will appear.
@@ -61,7 +61,7 @@ controls:
 
 <TryDemo href="notification" />
 
-Known in Dashboard 1.0 as a "Toast", this widget displays text/HTML in a small window that will appear on the screen for a defined duration of time (`timeout`) and at a defined location on the screen (`position`).
+Known in Node-RED Dashboard as a "Toast", this widget displays text/HTML in a small window that will appear on the screen for a defined duration of time (`timeout`) and at a defined location on the screen (`position`).
 
 If you want to have the notification show indefinitely, you can set `timeout` to `0`. It will not be possible to close the notification manually unless you also set `allowDismiss` or `allowConfirm` to `true`.
 
@@ -90,6 +90,6 @@ This notification was created using a `msg.payload` of:
 
 ### Sending to all clients
 
-Notifications are, by default, constrained to send to a single user/client. In Dashboard 2.0 this constraint is defined by `msg._client`. You can read more about this [here](../../user/multi-tenancy.md#configuring-client-data).
+Notifications are, by default, constrained to send to a single user/client. In FlowFuse Dashboard this constraint is defined by `msg._client`. You can read more about this [here](../../user/multi-tenancy.md#configuring-client-data).
 
 If you want to send a notification to _all_ connected clients, you can remove the `msg._client` value using a "change" node, configured to "Delete" the `_client` property.

@@ -1,24 +1,24 @@
 ---
-description: Join the development of Node-RED Dashboard 2.0. Learn how you can contribute to making it better for everyone.
+description: Join the development of FlowFuse Dashboard. Learn how you can contribute to making it better for everyone.
 ---
 
 # Contributing
 
-Contributions are always welcome for Dashboard 2.0. We have a lot of great ideas we want to get built, and we'd love to have your help!
+Contributions are always welcome for FlowFuse Dashboard. We have a lot of great ideas we want to get built, and we'd love to have your help!
 
 ## Project Structure
 
 ### `/nodes` 
 
-Contains the files that define each of the Node-RED nodes that make up the Dashboard 2.0 node set. You can read more about writing nodes for Node-RED [here](https://nodered.org/docs/creating-nodes/first-node).
+Contains the files that define each of the Node-RED nodes that make up the FlowFuse Dashboard node set. You can read more about writing nodes for Node-RED [here](https://nodered.org/docs/creating-nodes/first-node).
 
 ### `/ui`
 
-Contains our VueJS app that forms the core of Dashboard 2.0. Inside `/ui/src/widgets`, you will find a set of subdirectories, each containing a `.vue` file. It is these files that define the appearance and functionality a users sees when viewing the Dashboard. 
+Contains our VueJS app that forms the core of FlowFuse Dashboard. Inside `/ui/src/widgets`, you will find a set of subdirectories, each containing a `.vue` file. It is these files that define the appearance and functionality a users sees when viewing the Dashboard. 
 
 ### `/docs`
 
-A [VitePress](https://vitepress.dev/) documentation site that is used to generate the documentation for Dashboard 2.0 (what you're reading now).
+A [VitePress](https://vitepress.dev/) documentation site that is used to generate the documentation for FlowFuse Dashboard (what you're reading now).
 
 ## Installing Locally
 
@@ -68,12 +68,12 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
    ```
 
 
-3. **Remove existing Dashboard 2.0:** Note - if you have already installed this dashboard via your palette, you will need to uninstall it first. This can be done from the Palette Manager in Node-RED, or via `npm` on the terminal:
+3. **Remove existing FlowFuse Dashboard:** Note - if you have already installed this dashboard via your palette, you will need to uninstall it first. This can be done from the Palette Manager in Node-RED, or via `npm` on the terminal:
    ```bash
    npm uninstall @flowfuse/node-red-dashboard
    ```
 
-3. **Install Dashboard 2.0:** Install the forked dashboard into your Node-RED system from inside the `.node-red` folder:
+3. **Install FlowFuse Dashboard:** Install the forked dashboard into your Node-RED system from inside the `.node-red` folder:
    ```bash
    npm install <path_to_your_forked_dashboard>
    ```

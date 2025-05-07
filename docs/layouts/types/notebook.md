@@ -1,5 +1,5 @@
 ---
-description: Utilize the notebook layout in Node-RED Dashboard 2.0 for sequential data presentation and logging
+description: Utilize the notebook layout in FlowFuse Dashboard for sequential data presentation and logging
 ---
 <script setup>
     import AddedIn from '../../components/AddedIn.vue'

@@ -1,10 +1,10 @@
 ---
-description: Understand the repository structure of Node-RED Dashboard 2.0 for better code management and contribution.
+description: Understand the repository structure of FlowFuse Dashboard for better code management and contribution.
 ---
 
 # Repository Structure
 
-The purpose of this page is to give an overview how of Dashboard 2.0 is structured so that you can better navigate around the repository and contribute effectively.
+The purpose of this page is to give an overview how of FlowFuse Dashboard is structured so that you can better navigate around the repository and contribute effectively.
 
 ## Core Folders
 

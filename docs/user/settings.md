@@ -1,5 +1,5 @@
 ---
-description: Customize your Node-RED Dashboard 2.0 experience with detailed settings for optimal dashboard performance and appearance.
+description: Customize your FlowFuse Dashboard experience with detailed settings for optimal dashboard performance and appearance.
 ---
 
 # Settings
@@ -23,7 +23,7 @@ module.exports = {
 }
 ```
 
-Node-RED Dashboard 2.0 looks for a property called `dashboard` within the settings object.
+FlowFuse Dashboard looks for a property called `dashboard` within the settings object.
 If it doesn't find one, it looks for a property called `ui` - this is the settings object
 used by the original Node-RED Dashboard. This eases the migration between the two dashboard
 versions.

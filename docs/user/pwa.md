@@ -5,7 +5,7 @@
 
 # Installing Dashboards on Mobile <AddedIn version="1.9.0" />
 
-Node-RED Dashboard 2.0 is built and deployed as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps). This means whilst it's built as a web application, it can be installed on your mobile device and run as a standalone application, behaving as if it was a native app.
+FlowFuse Dashboard is built and deployed as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps). This means whilst it's built as a web application, it can be installed on your mobile device and run as a standalone application, behaving as if it was a native app.
 
 ## Installing on Android
 

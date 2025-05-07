@@ -1,12 +1,12 @@
 ---
-description: Learn how to use the fixed layout in Node-RED Dashboard 2.0 for static, stable dashboard designs.
+description: Learn how to use the fixed layout in FlowFuse Dashboard for static, stable dashboard designs.
 ---
 
 # Layout: Fixed
 
 _Note: This layout still needs work to make it more flexible and practical, it is advised to use another layout for now._
 
-Each "unit" is a fixed width, which was the only layout available in Dashboard 1.0. 
+Each "unit" is a fixed width, which was the only layout available in Node-RED Dashboard. 
 
 It is built as a flexbox layout, with a single row of widgets. Width of each group is a fixed pixel size, calculated as the "width" property of a group, multiplied by 90px (where our default row height is 45px).
 

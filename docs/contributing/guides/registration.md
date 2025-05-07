@@ -1,5 +1,5 @@
 ---
-description: Learn the process of widget registration in Node-RED Dashboard 2.0 to enhance your dashboard's functionality.
+description: Learn the process of widget registration in FlowFuse Dashboard to enhance your dashboard's functionality.
 ---
 
 # Widget Registration
