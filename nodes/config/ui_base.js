@@ -473,8 +473,9 @@ module.exports = function (RED) {
             if (!handshakeEditKey || !meta?.wysiwyg?.editKey || handshakeEditKey !== meta.wysiwyg.editKey) {
                 delete meta.wysiwyg
             }
-            // pass the connected UI the UI config
-            socket.emit('ui-config', node.id, {
+
+            // Prepare the UI configuration
+            const uiConfig = {
                 meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
@@ -482,7 +483,21 @@ module.exports = function (RED) {
                 themes: Object.fromEntries(node.ui.themes),
                 groups: Object.fromEntries(node.ui.groups),
                 widgets: Object.fromEntries(node.ui.widgets)
+            }
+
+            // Apply plugin modifications
+            let finalConfig = uiConfig
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onEmitConfig) {
+                    const modifiedConfig = plugin.hooks.onEmitConfig(socket, finalConfig)
+                    if (modifiedConfig) {
+                        finalConfig = modifiedConfig
+                    }
+                }
             })
+
+            // Pass the connected UI the UI config
+            socket.emit('ui-config', node.id, finalConfig)
         }
 
         // remove event handler socket listeners for a given socket connection
