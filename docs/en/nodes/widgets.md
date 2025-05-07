@@ -149,6 +149,9 @@ Here is a list of the third-party widgets we're aware of to make it easier to fi
 - [@omrid01/table-tabulator](https://flows.nodered.org/node/@omrid01/node-red-dashboard-2-table-tabulator): Provides a rich table widget for Dashboard that extends the popular [Tabulator](http://tabulator.info/) JavaScript library.
 - [@revolutionpi/hmi](https://flows.nodered.org/node/@revolutionpi/node-red-dashboard-2-hmi): A customisable round button designed after industrial HMI Push-buttons.
 - [@cgjgh/ui-scheduler](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-scheduler): A scheduler widget for UI-based schedule management.
+- [@cgjgh/ui-state-timeline](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-state-timeline): A State Timeline node to visualize the history of state changes over time, making it easy to track and analyze how a device, process, or variable has changed states throughout a given period.
+- [@cgjgh/ui-slide-confirm](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-slide-confirm): A Slide to Confirm widget for preventing accidental user actions.
+- 
 
 ### In-Development
 

@@ -124,72 +124,72 @@
 
 <script type="text/html" data-template-name="ui-number-input">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-number-input.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-number-input.label.size"></span></label>
         <input type="hidden" id="node-input-width">
         <input type="hidden" id="node-input-height">
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row form-row-flex">
-        <label for="node-input-icon"><i class="fa fa-picture-o"></i> Icon</label>
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> <span data-i18n="ui-number-input.label.icon"></span></label>
         <div style="display: flex; align-items: center; flex-grow: 1; padding-right: calc(30% - 104px); gap: 12px;">
-            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" placeholder="(optional) e.g. 'gesture-tap'">
+            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" data-i18n="[placeholder]ui-number-input.label.iconPlaceholder">
             <select id="node-input-iconPosition" style="width: 75px;">
-                <option value="left"> Left</option>
-                <option value="right"> Right</option>
+                <option value="left" data-i18n="ui-number-input.option.left"></option>
+                <option value="right" data-i18n="ui-number-input.option.right"></option>
             </select>
             <select id="node-input-iconInnerPosition" style="width: 75px;">
-                <option value="inside"> In</option>
-                <option value="outside"> Out</option>
+                <option value="inside" data-i18n="ui-number-input.option.inside"></option>
+                <option value="outside" data-i18n="ui-number-input.option.outside"></option>
             </select>
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-number-input.label.label"></span></label>
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info"></i> Tooltip</label>
+        <label for="node-input-tooltip"><i class="fa fa-info"></i> <span data-i18n="ui-number-input.label.tooltip"></span></label>
         <input type="text" id="node-input-tooltip">
     </div>
     <div class="form-row" style="display: flex;">
-        <label for="node-input-min"><i class="fa fa-arrows-h"></i> Range</label>
+        <label for="node-input-min"><i class="fa fa-arrows-h"></i> <span data-i18n="ui-number-input.label.range"></span></label>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); width: 70%">
             <div>
-                <span for="node-input-min">min</span>
+                <span for="node-input-min" data-i18n="ui-number-input.label.min"></span>
                 <input type="text" id="node-input-min" style="width:60px">
             </div>
             <div>
-                <span for="not-input-max">max</span>
+                <span for="not-input-max" data-i18n="ui-number-input.label.max"></span>
                 <input type="text" id="node-input-max" style="width:60px">
             </div>
             <div>
-                <span for="not-input-step">step</span>
+                <span for="not-input-step" data-i18n="ui-number-input.label.step"></span>
                 <input type="text" id="node-input-step" style="width:60px">
             </div>
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-spinner">Spinner</label>
+        <label for="node-input-spinner"><span data-i18n="ui-number-input.label.spinner"></span></label>
         <select id="node-input-spinner">
-            <option value="default">Inline</option>
-            <option value="stacked">Stacked</option>
+            <option value="default" data-i18n="ui-number-input.option.inline"></option>
+            <option value="stacked" data-i18n="ui-number-input.option.stacked"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-number-input.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-number-input.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-number-input.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -197,33 +197,33 @@
         </div>
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="[html]ui-number-input.label.passThrough"></span></label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear number input with button </label>
+        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> <span data-i18n="ui-number-input.label.clearable"></span></label>
         <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>    
     <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> <span data-i18n="ui-number-input.label.sendMessageOn"></span></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnBlur"> Focus Leave</label>
+        <label style="width:auto" for="node-input-sendOnBlur" data-i18n="ui-number-input.label.focusLeave"></label>
     </div>
     <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
+        <label style="width:auto" for="node-input-sendOnEnter" data-i18n="ui-number-input.label.pressEnter"></label>
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-number-input.label.whenChanged"></span></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
-        <label style="margin-right: -25px">Payload</label>
-        <label style="width:auto">Current value</label>
+        <label style="margin-right: -25px" data-i18n="ui-number-input.label.payload"></label>
+        <label style="width:auto" data-i18n="ui-number-input.label.currentValue"></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
-        <label for="node-input-topic" style="margin-right:-25px">Topic</label>
+        <label for="node-input-topic" style="margin-right:-25px" data-i18n="ui-number-input.label.topic"></label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
     </div>
