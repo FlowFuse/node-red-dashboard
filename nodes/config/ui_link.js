@@ -31,7 +31,11 @@ module.exports = function (RED) {
         const ui = RED.nodes.getNode(config.ui)
 
         // register self
-        ui.register(config)
+        if (ui) {
+            ui.register(config)
+        } else {
+            node.error(RED._('ui-link.error.registeringConfig', { linkName: node.name || node.id }))
+        }
 
         /**
          * Function for widgets to register themselves with this page
@@ -44,7 +48,7 @@ module.exports = function (RED) {
             if (ui) {
                 ui.register(link, group, widgetNode, widgetConfig, widgetEvents)
             } else {
-                node.error(`Error registering Widget - ${widgetNode.name || widgetNode.id}. No parent ui-base node found for ui-link node: ${(link.name || link.id)}`)
+                node.error(RED._('ui-link.error.registeringWidget', { widgetName: widgetNode.name || widgetNode.id, linkName: link.name || link.id }))
             }
         }
         node.deregister = function (group, widgetNode) {

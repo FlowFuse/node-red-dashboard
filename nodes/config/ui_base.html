@@ -253,7 +253,7 @@
     }
     div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
-        content: "empty";
+       /* content: "empty";  TODO: localized properly? */
         color: #d2d2d2;
         font-style: italic;
     }
@@ -286,6 +286,11 @@
 
 /** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
 // #endregion
+
+// convert to i18 text
+function c_ (x) {
+    return RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.' + x)
+}
 
 // Custom global sidebar function used in other nodes
 async function showDashboardWysiwygEditor (pageId, baseId) {
@@ -333,7 +338,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         window.open(url, target)
     } catch (err) {
         console.error('layout mode error', err)
-        RED.notify('Unable to begin layout editor', 'error')
+        RED.notify(c_('error.layoutEditor'), 'error')
     }
 }
 
@@ -342,11 +347,6 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
-
-    // convert to i18 text
-    function c_ (x) {
-        return RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.' + x)
-    }
 
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
@@ -765,7 +765,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         return nodes
     }
 
-    function createBaseNode ({ name = 'My Dashboard' } = {}) {
+    function createBaseNode ({ name = c_('label.myDashboard') } = {}) {
         if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createBaseNode', name) }
         const base = RED.nodes.getType('ui-base')
         const baseNode = {
@@ -773,7 +773,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             id: RED.nodes.id(),
             type: 'ui-base',
             ...mapDefaults(base.defaults),
-            name: name || 'My Dashboard'
+            name: name || c_('label.myDashboard')
         }
         return baseNode
     }
@@ -785,10 +785,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         const existingGroups = getConfigNodesByType(['ui-group']) || []
         let counter = existingGroups.length + 1
         if (!groupName) {
-            groupName = `Group ${counter}`
+            groupName = c_('layout.group') + ` ${counter}`
             while (existingGroups.find(e => e.name === groupName)) {
                 counter++
-                groupName = `Group ${counter}`
+                groupName = c_('layout.group') + ` ${counter}`
             }
         }
         const groupNode = {
@@ -796,7 +796,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             id: RED.nodes.id(),
             type: 'ui-group',
             ...mapDefaults(group.defaults),
-            name: groupName || 'My Group',
+            name: groupName || c_('label.myGroup'),
             page: null
         }
         if (order) {
@@ -815,10 +815,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // get all links and determine the next link number
             const existingLinks = getConfigNodesByType(['ui-link']) || []
             let counter = existingLinks.length + 1
-            linkName = `Link ${counter}`
+            linkName = c_('layout.link') + ` ${counter}`
             while (existingLinks.find(e => e.name === linkName)) {
                 counter++
-                linkName = `Link ${counter}`
+                linkName = c_('layout.link') + ` ${counter}`
             }
         }
         const nextOrder = order ?? ((getConfigNodesByType(['ui-page', 'ui-link']) || []).length || 0) + 1
@@ -845,7 +845,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             type: 'ui-spacer',
             ...mapDefaults(spacer.defaults),
             users: [],
-            name: name ?? 'spacer',
+            name: name ?? c_('label.spacer'),
             group: group || null,
             order: order ?? 0,
             hasUsers: false,
@@ -863,11 +863,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // get all pages & links and determine the next page number
             const existingPages = getConfigNodesByType(['ui-page']) || []
             let counter = existingPages.length + 1
-            pageName = `Page ${counter}`
+            pageName = c_('layout.page') + ` ${counter}`
             pagePath = `/page${counter}`
             while (existingPages.find(e => e.path === pagePath)) {
                 counter++
-                pageName = `Page ${counter}`
+                pageName = c_('layout.page') + ` ${counter}`
                 pagePath = `/page${counter}`
             }
         }
@@ -895,10 +895,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // get all themes and determine the next theme number
             const entries = getConfigNodesByType(['ui-theme']) || []
             let counter = entries.length + 1
-            themeName = counter === 1 ? 'Default Theme' : `Theme ${counter}`
+            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('label.theme') + ` ${counter}`
             while (entries.find(e => e.name === themeName)) {
                 counter++
-                themeName = `Theme ${counter}`
+                themeName = c_('label.theme') + ` ${counter}`
             }
         }
         const themeNode = {
@@ -906,7 +906,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             id: RED.nodes.id(),
             type: 'ui-theme',
             ...mapDefaults(theme.defaults),
-            name: themeName || 'Default Theme'
+            name: themeName || c_('themes.defaultTheme')
         }
         return themeNode
     }
@@ -1236,7 +1236,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // add the "+ spacer" button
             $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.spacer')}"><i class="fa fa-plus"></i></a>`)
                 .on('click', function (evt) {
-                    const spacerNode = createSpacerNode({ name: 'spacer', group: item.id, order: list.editableList('items').length + 1 })
+                    const spacerNode = createSpacerNode({ name: c_('label.spacer'), group: item.id, order: list.editableList('items').length + 1 })
                     const history = []
                     addNode(spacerNode, history)
                     assignGroup(spacerNode, item.node, history)
@@ -1262,7 +1262,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
         if (nodes.includes(item.type)) {
             const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
-            const visibleBtn = $('<a href="#" title="Hide" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
+            const visibleBtn = $('<a href="#" title="' + c_('action.hide') + '" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
             visibleBtn.on('click', function (evt) {
                 const events = []
 
@@ -1273,7 +1273,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     // toggle to hidden
                     item.visible = false
                     titleRow.addClass('nrdb2-sb-item-hidden')
-                    $(this).prop('title', 'Show')
+                    $(this).prop('title', c_('action.show'))
                     $(this).find('i').addClass('fa-eye-slash').removeClass('fa-eye')
                     events.push({
                         t: 'edit',
@@ -1288,7 +1288,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     // toggle to shown
                     item.visible = true
                     titleRow.removeClass('nrdb2-sb-item-hidden')
-                    $(this).prop('title', 'Hide')
+                    $(this).prop('title', c_('action.hide'))
                     $(this).find('i').addClass('fa-eye').removeClass('fa-eye-slash')
                     events.push({
                         t: 'edit',
@@ -1314,7 +1314,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     // toggle to hidden
                     item.disabled = false
                     titleRow.removeClass('nrdb2-sb-item-disabled')
-                    $(this).prop('title', 'Disable')
+                    $(this).prop('title', c_('action.disable'))
                     $(this).find('i').addClass('fa-unlock').removeClass('fa-lock')
                     events.push({
                         t: 'edit',
@@ -1329,7 +1329,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     // toggle to shown
                     item.disabled = true
                     titleRow.addClass('nrdb2-sb-item-disabled')
-                    $(this).prop('title', 'Enable')
+                    $(this).prop('title', c_('action.enable'))
                     $(this).find('i').addClass('fa-lock').removeClass('fa-unlock')
                     events.push({
                         t: 'edit',
@@ -1458,6 +1458,19 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             if (RED._db2debug) { if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addGroupOrderingList: adding group', group) } }
             groupsOL.editableList('addItem', group)
         })
+
+        // Set localized content for empty lists -- TODO: localized properly?
+        const localizedEmptyText = c_('label.empty')
+        const styleSheet = document.styleSheets[0]
+        const rule = `
+        div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
+        div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
+            content: "${localizedEmptyText}";
+            color: #d2d2d2;
+            font-style: italic;
+        }
+    `
+        styleSheet.insertRule(rule, styleSheet.cssRules.length)
 
         return groupsOL
     }
@@ -1811,8 +1824,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     const tabicon = 'fa-object-group'
                     $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                     $('<span>', { class: 'nrdb2-sb-title' }).text(item.name || item.id).appendTo(titleRow)
-                    $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} Groups`).appendTo(titleRow)
-
+                    $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} ${c_('layout.groups')}`).appendTo(titleRow)
                     // adds groups within this page
                     titleRow.click(titleToggle(item.id, groupsList, chevron))
                     const groupsOL = addGroupOrderingList(item.id, groupsList, groups, widgetsByGroup)
@@ -1943,7 +1955,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 const tabicon = 'fa-paint-brush'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(theme.name || theme.id).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('label.pages') : c_('label.page'))).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('layout.pages') : c_('layout.page'))).appendTo(titleRow)
 
                 const palette = $('<div>', { class: 'nrdb2-sb-palette' }).appendTo(titleRow)
                 const colors = theme.colors
@@ -1974,30 +1986,26 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         const html = `<div class="nrdb2-sidebar-tab-content">
         <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
             <p>
-                This tab allows you to control whether or not client-specific data is included in messages,
-                and which nodes accept it in order to constrain communication to specific clients.
-                You can read more about it <a href="https://dashboard.flowfuse.com/user/sidebar.html#client-data" target="_blank">here</a>.
-                This is also used to disable syncing between clients, meaning that widgets will automatically update
-                their values across multiple client connections, e.g. toggling a switch in one client, will update all other clients too.
+                ${c_('clientConstraints.description')}
+                <a href="https://dashboard.flowfuse.com/user/sidebar.html#client-data" target="_blank">${c_('clientConstraints.readMore')}</a>.
+                ${c_('clientConstraints.syncDescription')}
             </p>
         </div>
         <div class="form-row form-row-flex">
             <input type="checkbox" id="node-config-input-includeClientData">
-            <label style="width:auto" for="node-config-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Include Client Data</label>
+            <label style="width:auto" for="node-config-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>${c_('clientConstraints.includeClientData')}</label>
         </div>
         <p class="nrdb2-helptext" style="margin-top: -12px;">
-            <i class="fa fa-info-circle"></i> This option includes client data in all messages transmitted
-            by Dashboard 2.0 (e.g. Socket ID and information about any logged in user)
+            <i class="fa fa-info-circle"></i> ${c_('clientConstraints.includeClientDataHelp')}
         </p>
         <div id="nrdb2-sb-client-data-providers">
-            <label>Client Data Providers:</label>
+            <label>${c_('clientConstraints.clientDataProviders')}</label>
             <ul id="nrdb2-sb-client-data-providers-list"></ul>
         </div>
         <div id="node-config-client-constraints-nodes-container" class="form-row">
-            <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Accept Client Data</label>
+            <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>${c_('clientConstraints.acceptClientData')}</label>
             <p class="nrdb2-helptext" style="margin-top: -4px;">
-                <i class="fa fa-info-circle"></i> Defines whether the respective node type will use client data
-                (e.g. socketid), and constrain communications to just that client.
+                <i class="fa fa-info-circle"></i> ${c_('clientConstraints.acceptClientDataHelp')}
             </p>
             <div id="node-config-client-constraints-nodes"></div>
         </div></div>`
@@ -2044,7 +2052,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         // add core as a data provider as it provides socketId
         const coreLi = $('<li>').appendTo('#nrdb2-sb-client-data-providers-list')
         $('<i class="fa fa-bar-chart"></i>').appendTo(coreLi)
-        $('<label></label>').text('Socket ID').appendTo(coreLi)
+        $('<label></label>').text(c_('clientConstraints.socketId')).appendTo(coreLi)
         $('<span class="nrdb2-sb-client-data-provider-package"></span>').text('@flowfuse/node-red-dashboard').appendTo(coreLi)
 
         // detail any auth providers we have
@@ -2144,8 +2152,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     }
 
     function addSidebarTab (label, id, tabs, sidebar) {
-        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
-
+        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="${c_('label.layout')}"><span>${label}</span></a></li>`).appendTo(tabs)
         // Add in Tab Content
         const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 88px);"></div>`).appendTo(sidebar)
         return content
@@ -2440,14 +2447,14 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></span></label>
         <input type="text" id="node-config-input-path" disabled>
-        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;" data-i18n="ui-base.label.pathDisabledNote"></span>
     </div>
     <div class="form-row">
-        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></label>
+        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></span></label>
         <input type="text" id="node-config-input-appIcon">
-        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">Enter the url of your app icon here</span>
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;" data-i18n="ui-base.label.appIconNote"></span>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.installation"></label>

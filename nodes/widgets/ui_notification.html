@@ -10,6 +10,11 @@
 
 <script type="text/javascript">
     (function () {
+        // convert to i18n text
+        function c_ (x) {
+            return RED._('@flowfuse/node-red-dashboard/ui-notification:ui-notification.' + x)
+        }
+    
         RED.nodes.registerType('ui-notification', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -22,9 +27,9 @@
                 showCountdown: { value: true },
                 outputs: { value: 1 },
                 allowDismiss: { value: true },
-                dismissText: { value: 'Close' },
+                dismissText: { value: c_('label.defaultDismissText') },
                 allowConfirm: { value: false },
-                confirmText: { value: 'Confirm' },
+                confirmText: { value: c_('label.defaultConfirmText') },
                 raw: { value: false },
                 className: { value: '' },
                 name: { value: '' }
@@ -34,7 +39,7 @@
             align: 'right',
             icon: 'font-awesome/fa-envelope-o',
             paletteLabel: 'notification',
-            label: function () { return this.name || (this.position === 'prompt' ? 'show dialog' : (this.position === 'dialog' ? 'show dialog' : 'show notification')) },
+            label: function () { return this.name || (this.position === 'prompt' ? c_('label.showDialog') : (this.position === 'dialog' ? c_('label.showDialog') : c_('label.showNotification'))) },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 $('#node-input-topic').typedInput({
@@ -84,74 +89,73 @@
 
 <script type="text/html" data-template-name="ui-notification">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-ui"><i class="fa fa-bookmark"></i> UI</label>
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> <span data-i18n="ui-notification.label.ui"></span></label>
         <input type="text" id="node-input-ui">
     </div>
     <div class="form-row">
-        <label for="node-input-position"><i class="fa fa-th-large"></i> Position</label>
+        <label for="node-input-position"><i class="fa fa-th-large"></i> <span data-i18n="ui-notification.label.position"></span></label>
         <select type="text" id="node-input-position" style="display:inline-block; width:70%; vertical-align:baseline;">
-            <option value="top right">Top Right</option>
-            <option value="top center">Top Center</option>
-            <option value="top left">Top Left</option>
-            <option value="bottom right">Bottom Right</option>
-            <option value="bottom center">Bottom Center</option>
-            <option value="bottom left">Bottom Left</option>
-            <option value="center center">Center</option>
+            <option value="top right" data-i18n="ui-notification.option.topRight"></option>
+            <option value="top center" data-i18n="ui-notification.option.topCenter"></option>
+            <option value="top left" data-i18n="ui-notification.option.topLeft"></option>
+            <option value="bottom right" data-i18n="ui-notification.option.bottomRight"></option>
+            <option value="bottom center" data-i18n="ui-notification.option.bottomCenter"></option>
+            <option value="bottom left" data-i18n="ui-notification.option.bottomLeft"></option>
+            <option value="center center" data-i18n="ui-notification.option.center"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-color"><i class="fa fa-paint-brush"></i> Color</label>
+        <label for="node-input-color"><i class="fa fa-paint-brush"></i> <span data-i18n="ui-notification.label.color"></span></label>
         <div style="display: inline-flex; gap: 8px; align-items: center;">
             <input type="checkbox" id="node-input-colorDefault" style="width: auto; margin: 0;">
-            <label for="node-input-colorDefault" style="margin: 0; line-height: 34px;">Default</label>
+            <label for="node-input-colorDefault" style="margin: 0; line-height: 34px;" data-i18n="ui-notification.label.default"></label>
             <input type="color" id="node-input-color" placeholder="#FFFFFF">
         </div>
     </div>
     <div class="form-row" id="node-toast-displaytime">
-        <label for="node-input-displayTime"><i class="fa fa-clock-o"></i> Timeout (S)</label>
+        <label for="node-input-displayTime"><i class="fa fa-clock-o"></i> <span data-i18n="ui-notification.label.timeout"></span></label>
         <input type="text" id="node-input-displayTime" placeholder="[msg.timeout]">
     </div>
     <div class="form-row form-row-flex" id="node-notification-showCountdown">
         <input type="checkbox" id="node-input-showCountdown">
-        <label for="node-input-showCountdown">Show timeout countdown bar on notification</label>
+        <label for="node-input-showCountdown" data-i18n="ui-notification.label.showCountdown"></label>
     </div>
     <div class="form-row form-row-flex" id="node-notification-allowDismiss">
         <input type="checkbox" id="node-input-allowDismiss">
-        <label for="node-input-allowDismiss"> Allow Manual Dismissal</label>
+        <label for="node-input-allowDismiss" data-i18n="ui-notification.label.allowDismiss"></label>
     </div>
     <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-dismissText">
-        <label for="node-input-dismissText"><i class="fa fa-check"></i> Button Label</label>
-        <input type="text" id="node-input-dismissText" placeholder="Close">
+        <label for="node-input-dismissText"><i class="fa fa-check"></i> <span data-i18n="ui-notification.label.dismissText"></span></label>
+        <input type="text" id="node-input-dismissText" data-i18n="[placeholder]ui-notification.label.defaultDismissText">
     </div>
     <div class="form-row form-row-flex" id="node-notification-allowConfirm">
         <input type="checkbox" id="node-input-allowConfirm">
-        <label for="node-input-allowConfirm"> Allow Manual Confirmation</label>
+        <label for="node-input-allowConfirm" data-i18n="ui-notification.label.allowConfirm"></label>
     </div>
     <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-confirmText">
-        <label for="node-input-confirmText"><i class="fa fa-check"></i> Button Label</label>
-        <input type="text" id="node-input-confirmText" placeholder="Confirm">
+        <label for="node-input-confirmText"><i class="fa fa-check"></i> <span data-i18n="ui-notification.label.confirmText"></span></label>
+        <input type="text" id="node-input-confirmText" data-i18n="[placeholder]ui-notification.label.defaultConfirmText">
     </div>
     <div class="form-row form-row-flex" id="node-toast-raw">
         <input type="checkbox" id="node-input-raw" style="display:inline-block; width:auto; vertical-align:baseline;">
-        <label style="width:auto" for="node-input-raw"> Accept raw HTML/JavaScript input in msg.payload to format popup.</label>
+        <label style="width:auto" for="node-input-raw" data-i18n="ui-notification.label.raw"></label>
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-notification.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-notification.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-notification.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
             </a>
         </div>
     </div>
-    <div class="form-tips"><b>Note</b>: checking <i>Accept raw HTML/JavaScript</i> can allow injection of code.
-    Ensure the input comes from trusted sources.</span></div>
+    <div class="form-tips"><b data-i18n="ui-notification.note"></b></div>
 </script>

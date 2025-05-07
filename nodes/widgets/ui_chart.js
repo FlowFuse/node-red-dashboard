@@ -26,6 +26,16 @@ module.exports = function (RED) {
             base.emit('msg-input:' + node.id, { payload: empty }, node)
         }
 
+        function hasProperty (value, property) {
+            const props = property.split('.')
+            props.forEach((prop) => {
+                if (value) {
+                    value = value[prop]
+                }
+            })
+            return typeof value !== 'undefined'
+        }
+
         function getProperty (value, property) {
             const props = property.split('.')
             props.forEach((prop) => {
@@ -103,7 +113,7 @@ module.exports = function (RED) {
                         // we can produce multiple datapoints from a single object/value here
                         const points = []
                         series.forEach((s) => {
-                            if (s in p) {
+                            if (hasProperty(p, s)) {
                                 const datapoint = addToChart(p, s)
                                 points.push(datapoint)
                             }
@@ -158,7 +168,12 @@ module.exports = function (RED) {
                                 y = getProperty(payload, series[0])
                             }
                         } else {
-                            y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            if (config.categoryType === 'json') {
+                                // we are using the "series" as a key to get the y value from the payload
+                                y = getProperty(payload, series)
+                            } else {
+                                y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            }
                         }
                         datapoint.x = x
                         datapoint.y = y
