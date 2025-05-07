@@ -1,0 +1,87 @@
+{
+    "node": "ui_dropdown",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "title",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "gtype",
+            "changes": -2,
+            "notes": "Halb- und 3/4-Anzeigen werden unterstützt, derzeit keine Unterstützung für 'Kompass', 'Levels' und 'Donut'"
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": "Geändert zu 'Einheiten'"
+        },
+        {
+            "property": "format",
+            "changes": -3,
+            "notes": "Ersetzt durch 'Präfix'- und 'Suffix'-Optionen"
+        },
+        {
+            "property": "seg1",
+            "changes": -3,
+            "notes": "Ersetzt durch flexiblere Segmentierungssysteme"
+        },
+        {
+            "property": "seg2",
+            "changes": -3,
+            "notes": "Ersetzt durch flexiblere Segmentierungssysteme"
+        },
+        {
+            "property": "colors",
+            "changes": -3,
+            "notes": "Ersetzt durch flexiblere Segmentierungssysteme"
+        },
+        {
+            "property": "diff",
+            "changes": -3,
+            "notes": ""
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "gstyle",
+            "notes": "Ermöglicht die Kontrolle darüber, ob der Bogen abgerundet oder im 'Nadel'-Stil ist"
+        },
+        {
+            "property": "prefix",
+            "notes": "Text, der vor dem Wert in der Mitte der Anzeige angezeigt wird"
+        },
+        {
+            "property": "suffix",
+            "notes": "Text, der nach dem Wert in der Mitte der Anzeige angezeigt wird"
+        },
+        {
+            "property": "segments",
+            "notes": "Array von Objekten, die die Segmente der Anzeige definieren"
+        },
+        {
+            "property": "icon",
+            "notes": "Symbol, das unter der Anzeige angezeigt wird (von MDI)"
+        }        
+    ]
+}

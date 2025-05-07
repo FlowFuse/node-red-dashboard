@@ -1,0 +1,51 @@
+{
+    "node": "ui_toast",
+    "description": "'UI Toast' wurde in Dashboard 2.0 in 'UI Notification' umbenannt, aber die meisten Funktionen sind identisch.",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "position",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "timeout",
+            "changes": null,
+            "notes": "Der Countdown-Timer wird jetzt auch als Teil des oberen Randes der Benachrichtigung angezeigt."
+        },
+        {
+            "property": "highlight",
+            "changes": "color",
+            "notes": "Anstatt nur eine einzelne 'Rand'-Farbe zu definieren, wird das 'Highlight' jetzt auf der linken Seite der Benachrichtigung verwendet."
+        },
+        {
+            "property": "raw injection",
+            "changes": null,
+            "notes": "Erlaubt das Einfügen von rohem HTML- und JS-Inhalt in die Widgets."
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "allow manual",
+            "notes": "Definiert, ob die Benachrichtigung manuell geschlossen werden kann oder nicht."
+        },
+        {
+            "property": "show countdown",
+            "notes": "Wenn ein Timer bereitgestellt wird, zeigt er, wenn dies wahr ist, einen abnehmenden farbigen Balken über dem oberen Rand des Dashboards-Modals an."
+        }
+    ]
+}
