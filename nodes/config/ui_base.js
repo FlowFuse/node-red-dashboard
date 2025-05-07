@@ -485,11 +485,13 @@ module.exports = function (RED) {
                 widgets: Object.fromEntries(node.ui.widgets)
             }
 
-            // Apply plugin modifications
+            // Apply plugin modifications with connection credentials
             let finalConfig = uiConfig
+            let msg = {}
+            msg = addConnectionCredentials(RED, msg, socket, node)
             RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
                 if (plugin.hooks?.onEmitConfig) {
-                    const modifiedConfig = plugin.hooks.onEmitConfig(socket, finalConfig)
+                    const modifiedConfig = plugin.hooks.onEmitConfig(socket, finalConfig, msg)
                     if (modifiedConfig) {
                         finalConfig = modifiedConfig
                     }
