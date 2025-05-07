@@ -1,0 +1,38 @@
+{
+    "ui-gauge": {
+        "label": {
+            "name": "Name",
+            "group": "Gruppe",
+            "size": "Größe",
+            "type": "Typ",
+            "style": "Stil",
+            "gaugeTile": "Kachel",
+            "gaugeHalf": "Halb-Messgerät",
+            "gauge34": "3/4-Messgerät",
+            "gaugeBattery": "Batteriestand",
+            "gaugeTank": "Tankstand",
+            "needle": "Nadel",
+            "rounded": "Abgerundet",
+            "limits": "Grenzen",
+            "range": "Bereich",
+            "min": "min.",
+            "max": "max.",
+            "segments": "Segmente",
+            "labelling": "Beschriftung",
+            "label": "Beschriftung",
+            "prefix": "Präfix",
+            "suffix": "Suffix",
+            "sizes": "Größen",
+            "gauge": "Messgerät",
+            "gap": "Lücke",
+            "styling": "Stil",
+            "class": "Klasse",
+            "units": "Einheiten",
+            "icon": "Symbol",
+            "defaults": "Standards"
+        },
+        "errors": {
+            "unique": "Alle 'from'-Werte müssen eindeutig sein."
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "ui-audio": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "icon": "Symbol",
+            "source": "Quelle",
+            "autoplay": "Automatisch abspielen",
+            "loop": "Schleife",
+            "muted": "Stumm",
+            "note": "<b>Hinweis</b>: Die automatische Wiedergabe funktioniert nur, nachdem eine Benutzergeste (z.B. Klick auf das Dashboard) vorgenommen wurde."
+        },
+        "option": {
+            "on": "Ein",
+            "off": "Aus"
+       }
+    }
+}

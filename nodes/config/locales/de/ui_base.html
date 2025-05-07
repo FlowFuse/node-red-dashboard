@@ -1,0 +1,27 @@
+<script type="text/html" data-help-name="ui-base">
+    <p>UI-Basis</p>
+    <p>Dies ist das grundlegende Element für ein Dashboard in Node-RED Dashboard 2.0</p>
+    <p>Ein Dashboard wird von einem Basislayout gesteuert, das mit einigen der folgenden Einstellungen modifiziert werden kann</p>
+    <dl class="message-properties">
+        <dt>
+            Seitenleistenstil
+            <span class="property-type">Option</span>
+        </dt>
+        <dd>
+            <ul>
+                <li><b>Einklappen: </b>(Standard) Diese Option verschiebt den gesamten Inhalt des Dashboards, wenn sie geöffnet ist, und ist überhaupt nicht sichtbar, wenn sie geschlossen ist.</li>
+                <li><b>Fest: </b>Bleibt immer geöffnet. An unserem mobilen Breakpoint (768px) wird dieser Wert überschrieben und eine "Über Inhalt erscheinen"-Option verwendet.</li>
+                <li><b>Zu Icons einklappen: </b>Ähnlich wie "Einklappen" beim Öffnen, aber beim Schließen werden die Symbole für jede Seite weiterhin angezeigt.</li>
+                <li><b>Über Inhalt erscheinen: </b>Nicht sichtbar, wenn geschlossen, und wenn geöffnet, erscheint es über dem Dashboard-Inhalt, ohne ihn zu verschieben.</li>
+                <li><b>Immer verstecken: </b>Die Seitenleiste wird unter keinen Umständen sichtbar sein. Alle Seiten sind weiterhin über ihre direkten Links oder einen <code>ui-control</code>-Knoten zugänglich.</li>
+            </ul>
+        </dd>
+    </dl>
+    <dt>
+        App-Symbol
+        <span class="property-type">URL</span>
+    </dt>
+    <dd>
+        Sie können eine benutzerdefinierte URL für das Symbol Ihrer Anwendung angeben, das als App-Symbol und im Browser-Tab angezeigt wird.
+    </dd>
+</script>

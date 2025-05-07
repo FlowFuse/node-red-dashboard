@@ -1,0 +1,19 @@
+{
+    "ui-file-input": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "label": "Beschriftung",
+            "icon": "Symbol",
+            "accept": "Akzeptieren",
+            "allowMultiple": "Mehrfachauswahl zulassen",
+            "class": "Klasse",
+            "topic": "Thema",
+            "defaultLabel": "Dateieingabe",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        }
+    }
+}

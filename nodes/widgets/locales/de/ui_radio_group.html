@@ -1,0 +1,44 @@
+<script type="text/html" data-help-name="ui-radio-group">
+    <p>
+        Fügt Ihrem Dashboard eine Radiogruppe hinzu, die Werte in Node-RED unter `msg.payload` ausgibt, sobald ein Wert ausgewählt wird.
+    </p>
+    <p>
+        Im Falle einer Auswahl wird das Objekt zurückgegeben, das diese Auswahl beschreibt.
+    </p>
+    <h3>Optionen über <code>msg.</code> auswählen</h3>
+    <p>
+        Sie können dynamisch Auswahlen für dieses Dropdown-Menü treffen, indem Sie den jeweiligen <code>value</code> an <code>msg.payload</code> übergeben.
+    </p>
+    <p>
+        Um eine Auswahl zu treffen, übergeben Sie den <code>value</code> der Option als <code>msg.payload</code>, z.B. <code>msg.payload = "option1"</code>.
+    </p>
+    <p>
+        Um eine Auswahl für ein Dropdown-Menü zu löschen, übergeben Sie einen leeren String <code>""</code> als <code>msg.payload</code>.
+    </p>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Aktualisieren Sie die Beschriftung, die mit der Radiogruppe gerendert wird. HTML-Inhalt ist erlaubt.</dd>
+        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dd>
+            Ändern Sie die zur Verfügung stehenden Optionen im Dropdown-Menü zur Laufzeit
+            <ul>
+                <li><code>Array&lt;string&gt;</code></li>
+                <li><code>Array&lt;{value: String}&gt;</code></li>
+                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">columns <span class="property-type">array</span></dt>
+        <dd>
+            Ändern Sie die zur Verfügung stehenden Optionen im Dropdown-Menü zur Laufzeit
+            <ul>
+                <li><code>Array&lt;string&gt;</code></li>
+                <li><code>Array&lt;{value: String}&gt;</code></li>
+                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+    </dl>
+</script>
