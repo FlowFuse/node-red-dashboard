@@ -26,11 +26,11 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
             should(barChart.chart.config.data).be.an.Object()
             should(barChart.chart.config.data.datasets).be.an.Array()
             const checkBarElement = (index, data) => {
-                should(barChart.chart.config.data.datasets[index].data[0]).have.property('x')
-                should(barChart.chart.config.data.datasets[index].data[0]).have.property('location', data.location)
-                should(barChart.chart.config.data.datasets[index].data[0]).have.property('sales_millions', data.sales_millions)
+                should(barChart.chart.config.data.datasets[0].data[index]).have.property('x')
+                should(barChart.chart.config.data.datasets[0].data[index]).have.property('location', data.location)
+                should(barChart.chart.config.data.datasets[0].data[index]).have.property('sales_millions', data.sales_millions)
             }
-            should(barChart.chart.config.data.datasets).be.an.Array().and.have.length(5)
+            should(barChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
             checkBarElement(0, { category: 'New York', location: 'New York', sales_millions: 3.2 })
             checkBarElement(1, { category: 'Los Angeles', location: 'Los Angeles', sales_millions: 2.5 })
             checkBarElement(2, { category: 'Chicago', location: 'Chicago', sales_millions: 1.8 })
