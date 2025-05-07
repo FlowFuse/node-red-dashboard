@@ -1,0 +1,23 @@
+{
+    "ui-group": {
+        "label": {
+            "groupName": "Gruppenname",
+            "page": "Seite",
+            "size": "Größe",
+            "display-name": "Gruppenname anzeigen",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionaler CSS-Klassenname(n) für die Gruppe",
+            "defaultState": "Standardzustand",
+            "visibility": "Sichtbarkeit",
+            "visible": "Sichtbar",
+            "hidden": "Versteckt",
+            "interactivity": "Interaktivität",
+            "active": "Aktiv",
+            "disabled": "Deaktiviert",
+            "openDashboardSidebar": "Dashboard 2.0 Seitenleiste öffnen",
+            "type": "Typ",
+            "typeDefault": "Standard",
+            "typeDialog": "Dialog"
+        }
+    }
+}

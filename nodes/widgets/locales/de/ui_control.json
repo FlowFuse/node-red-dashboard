@@ -1,0 +1,13 @@
+{
+    "ui-control": {
+        "label": {
+            "name": "Name",
+            "output": "Ausgabe"
+        },
+        "events": {
+            "all": "Alle Ereignisse",
+            "change": "Nur Seiten-/Tab-Wechselereignisse",
+            "connect": "Nur Verbindungsereignisse"
+        }
+    }
+}

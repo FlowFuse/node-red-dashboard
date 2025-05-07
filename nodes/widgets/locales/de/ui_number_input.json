@@ -1,0 +1,39 @@
+{
+    "ui-number-input": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "icon": "Symbol",
+            "label": "Beschriftung",
+            "tooltip": "Tooltip",
+            "range": "Bereich",
+            "min": "min",
+            "max": "max",
+            "step": "Schritt",
+            "spinner": "Spinner",
+            "class": "Klasse",
+            "passThrough": "Wenn <code>msg</code> am Eingang ankommt, an den Ausgang weiterleiten:",
+            "clearable": "Zahleneingabe mit Schaltfläche löschen",
+            "sendMessageOn": "Nachricht senden bei:",
+            "focusLeave": "Fokus verlassen",
+            "pressEnter": "Enter drücken",
+            "whenChanged": "Bei Änderung senden:",
+            "payload": "Nutzlast",
+            "currentValue": "Aktueller Wert",
+            "topic": "Thema",
+            "iconPlaceholder": "(optional) z.B. 'gesture-tap'",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)"
+        },
+        "option": {
+            "left": "Links",
+            "right": "Rechts",
+            "inside": "Innen",
+            "outside": "Außen",
+            "inline": "Inline",
+            "stacked": "Gestapelt"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        }
+    }
+}
