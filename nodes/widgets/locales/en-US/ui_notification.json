@@ -1,0 +1,36 @@
+{
+    "ui-notification": {
+        "label": {
+            "ui": "UI",
+            "position": "Position",
+            "color": "Color",
+            "default": "Default",
+            "timeout": "Timeout (S)",
+            "showCountdown": "Show timeout countdown bar on notification",
+            "allowDismiss": "Allow Manual Dismissal",
+            "dismissText": "Button Label",
+            "allowConfirm": "Allow Manual Confirmation",
+            "confirmText": "Button Label",
+            "raw": "Accept raw HTML/JavaScript input in msg.payload to format popup.",
+            "class": "Class",
+            "defaultDismissText": "Close",
+            "defaultConfirmText": "Confirm",
+            "showNotification": "show notification",
+            "showDialog": "show dialog",
+            "classNamePlaceholder": "Optional CSS class name(s)"
+        },
+        "option": {
+            "topRight": "Top Right",
+            "topCenter": "Top Center",
+            "topLeft": "Top Left",
+            "bottomRight": "Bottom Right",
+            "bottomCenter": "Bottom Center",
+            "bottomLeft": "Bottom Left",
+            "center": "Center"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+        },
+        "note": "Note: checking Accept raw HTML/JavaScript can allow injection of code. Ensure the input comes from trusted sources."
+    }
+}
