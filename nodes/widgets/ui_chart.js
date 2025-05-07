@@ -33,7 +33,7 @@ module.exports = function (RED) {
                     value = value[prop]
                 }
             })
-            return value !== undefined
+            return typeof value !== 'undefined'
         }
 
         function getProperty (value, property) {
