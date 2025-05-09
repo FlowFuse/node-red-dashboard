@@ -835,10 +835,10 @@ module.exports = function (RED) {
                 cleanupEventHandlers(conn)
             }
 
-            for (const [id, socket] of uiShared.ioServer.sockets.sockets) {
-                socket.disconnect();
-            }            
-            
+            for (const socket of uiShared.ioServer.sockets.sockets.values()) {
+                socket.disconnect()
+            }
+
             close(node, function (err) {
                 if (err) {
                     node.error(`Error closing socket.io server for ${node.id}`, err)
