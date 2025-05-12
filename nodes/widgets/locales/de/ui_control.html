@@ -1,0 +1,66 @@
+<script type="text/html" data-help-name="ui-control">
+    <p>Ermöglicht die dynamische Steuerung des Dashboards.</p>
+    <h3>Steuerungsliste</h3>
+    <h4>Navigation</h4>
+    <p>Steuern Sie, welche Seite einem Benutzer angezeigt wird, indem Sie die Seite programmgesteuert ändern.</p>
+    <p><b>Seite ändern:</b> Die Standardfunktion besteht darin, die aktuell angezeigte Seite zu ändern. Die folgenden Optionen werden für das <code>msg.payload</code> unterstützt:</p>
+    <ul>
+        <li><code>"Seitenname"</code> - String</li>
+        <li><code>{"page":"Seitenname"}</code> - Objekt</li>
+        <li><code>2</code> - Der numerische Index (ab 0) der anzuzeigenden Seite</li>
+    </ul>
+    <p><b>Nächste/Vorherige:</b> Sie können auch einen String im Format senden:</p>
+    <ul>
+        <li><code>"+1"</code> - Nächste Seite</li>
+        <li><code>"-1"</code> - Vorherige Seite</li>
+    </ul>
+    <p><b>Aktualisieren:</b> Das Senden eines leeren Tab-Namens <code>""</code> aktualisiert die aktuelle Seite.</p>
+    <ul>
+        <li><code>""</code></li>
+        <li><code>{"page":""}</code></li>
+    </ul>
+    <h4>Seiten & Gruppen anzeigen/verbergen</h4>
+    <p>Dashboard-Seiten & Gruppen können angezeigt und verborgen werden, indem ein <code>msg.payload</code>-Objekt mit dem Format gesendet wird:
+    <pre>msg.payload = {
+    pages: {
+        show: ['&lt;Seitenname&gt;', '&lt;Seitenname&gt;'],
+        hide: ['&lt;Seitenname&gt;']
+    }
+    groups: {
+        show: ['&lt;Seitenname&gt;:&lt;Gruppenname&gt;', '&lt;Gruppenname&gt;'],
+        hide: ['&lt;Gruppenname&gt;']
+    }
+}</pre>
+    <h4>Seiten & Gruppen aktivieren/deaktivieren</h4>
+    <p>Dashboard-Seiten & Gruppen können deaktiviert & wieder aktiviert werden, indem ein <code>msg.payload</code>-Objekt mit dem Format gesendet wird:
+    <pre>msg.payload = {
+    pages: {
+        enable: ['&lt;Seitenname&gt;', '&lt;Seitenname&gt;'],
+        disable: ['&lt;Seitenname&gt;']
+    }
+    groups: {
+        enable: ['&lt;Gruppenname&gt;', '&lt;Gruppenname&gt;'],
+        disable: ['&lt;Gruppenname&gt;']
+    }
+}</pre>
+    <h4>Externe URL</h4>
+    <p>Es ist möglich, die Navigation zu einer externen Seite, weg von Ihrem Dashboard, auszulösen, indem Sie eine URL-Zeichenkette übergeben.</p>
+    <pre>msg.payload = {
+    url: 'https://url.goes.here'
+}</pre>
+    <p>Sie können auch ein Ziel angeben, um den Link in einem neuen Browserfenster oder Tab zu öffnen.</p>
+    <pre>msg.payload = {
+    url: 'https://url.goes.here',
+    target: '_blank'
+}</pre>
+    <h3>Ereignisliste</h3>
+    <p>Wenn ein Browser-Client eine Verbindung herstellt oder die Verbindung verliert, den Tab wechselt oder eine Gruppe erweitert oder reduziert, gibt dieser Knoten eine <code>msg</code> aus, die Folgendes enthält:</p>
+    <ul>
+    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i> oder <i>group</i>.
+    <li><code>socketid</code> - die ID des Sockets (dies ändert sich jedes Mal, wenn der Browser die Seite neu lädt).
+    <li><code>socketip</code> - die IP-Adresse, von der die Verbindung stammt.
+    <li><code>tab</code> - die Nummer des Tabs. (nur für 'change'-Ereignis).
+    <li><code>name</code> - der Name des Tabs. (nur für 'change'-Ereignis).
+    </ul>
+    <p>Optional - nur Verbindungsereignisse melden - nützlich, um das erneute Senden von Daten an einen neuen Client auszulösen, ohne andere Ereignisse filtern zu müssen.</p>
+</script>
