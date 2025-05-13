@@ -144,6 +144,10 @@ main {
 .nrdb-ui-widget {
     min-height: var(--widget-row-height);
     position: relative;
+}
+
+/* Ensure we overflow if template extends beyond widget's defined height */
+.nrdb-ui-widget.nrdb-ui-template {
     overflow-y: auto;
 }
 
