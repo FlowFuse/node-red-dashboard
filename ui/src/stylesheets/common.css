@@ -147,6 +147,7 @@ main {
 }
 
 /* Ensure we overflow if template extends beyond widget's defined height */
+.nrdb-ui-widget.nrdb-ui-markdown,
 .nrdb-ui-widget.nrdb-ui-template {
     overflow-y: auto;
 }
