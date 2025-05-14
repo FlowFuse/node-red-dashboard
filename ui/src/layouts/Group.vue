@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-layout-group--grid" :style="`grid-template-columns: repeat(min(${ columns }, var(--layout-columns)), 1fr); grid-template-rows: repeat(${group.height}, minmax(var(--widget-row-height), auto)); `">
+    <div class="nrdb-layout-group--grid" :style="`grid-template-columns: repeat(min(${ columns }, var(--layout-columns)), 1fr); `">
         <div
             v-if="resizable" ref="group-resize-view" class="nrdb-resizable" :class="{'resizing': groupResizing.active}"
             :style="{ 'width': groupResizing.current.width ? `${groupResizing.current.width}px` : null, 'z-index': 99 }"
@@ -25,7 +25,7 @@
             :draggable="resizable"
             class="nrdb-ui-widget"
             :class="getWidgetClass(w)"
-            :style="[{display: 'grid', 'grid-template-columns': 'minmax(0, 1fr)'}, widgetStyles(w)]"
+            :style="[{display: 'grid', 'grid-template-columns': 'minmax(0, 1fr)', 'gap': 'var(--widget-gap)'}, widgetStyles(w)]"
             @dragstart="!resizable ? null : onWidgetDragStart($event, $index, w)"
             @dragover="!resizable ? null : onWidgetDragOver($event, $index, w)"
             @dragend="!resizable ? null : onWidgetDragEnd($event, $index, w)"
@@ -34,7 +34,7 @@
             @dragenter.prevent
         >
             <!-- <div style="font-size: small; background-color: aquamarine;">w.props.height: {{ w.props.height }}</div> -->
-            <component :is="w.component" :id="w.id" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
+            <component :is="w.component" :id="w.id" ref="widget-content" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
             <div
                 v-if="resizable && !groupDragging" ref="widget-resize-view"
                 class="nrdb-resizable nrdb-resizable-widget"
@@ -117,10 +117,17 @@ export default {
         widgetStyles () {
             return (widget) => {
                 const styles = {}
-                const height = widget.props.height
+                let height = widget.props.height
                 const width = widget.props.width
+                if (widget.type === 'ui-form') {
+                    // form is unique in that height is defined by the number of fields
+                    // so, if the size is set to "auto", we need to set the height/rows to the number of fields, +2 for label and submission buttons
+                    if (height === null || height === 0) {
+                        height = (widget.props.options.length / (widget.props.splitLayout ? 2 : 1)) + 2
+                    }
+                }
                 styles['grid-row-end'] = `span ${height}`
-                styles['grid-template-rows'] = `repeat(${height}, minmax(var(--widget-row-height), auto))`
+                styles['grid-template-rows'] = `repeat(${height}, var(--widget-row-height))`
                 styles['grid-column-end'] = `span min(${this.getWidgetWidth(+width)}, var(--layout-columns))`
                 return styles
             }

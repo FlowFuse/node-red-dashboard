@@ -115,7 +115,6 @@ export default {
         }
     },
     mounted () {
-        console.log('grid layout mounted')
         if (this.editMode) { // mixin property
             this.updateEditStateObjects()
             this.initializeEditTracking() // Mixin method
