@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-layout-group--grid" :style="`grid-template-columns: repeat(min(${ columns }, var(--layout-columns)), 1fr); grid-template-rows: repeat(${group.height}, var(--widget-row-height)); `">
+    <div class="nrdb-layout-group--grid" :style="`grid-template-columns: repeat(min(${ columns }, var(--layout-columns)), 1fr); `">
         <div
             v-if="resizable" ref="group-resize-view" class="nrdb-resizable" :class="{'resizing': groupResizing.active}"
             :style="{ 'width': groupResizing.current.width ? `${groupResizing.current.width}px` : null, 'z-index': 99 }"
