@@ -1,0 +1,16 @@
+{
+    "node": "ui_button",
+    "description": "Senden Sie Ereignisse an das Dashboard, um Inhalte anzuzeigen/auszublenden, Inhalte zu deaktivieren/aktivieren und zwischen Seiten zu navigieren",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "events",
+            "changes": null,
+            "notes": "Alle Ereignisse werden unterstützt, außer den Gruppen öffnen/schließen Ereignissen. Verfolgen Sie den <a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/406\" target=\"blank\">#406 Fortschritt hier</a>."
+        }
+    ]
+}
