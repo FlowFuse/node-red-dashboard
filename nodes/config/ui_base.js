@@ -331,6 +331,18 @@ module.exports = function (RED) {
             return
         }
 
+        // disconnect all existing sockets (without force, and before removing all event handlers)
+        const sockets = uiShared.ioServer.sockets?.sockets
+        if (sockets && typeof sockets.values === 'function') {
+            for (const socket of sockets.values()) {
+                try {
+                    socket.disconnect()
+                } catch {
+                    // ignore error
+                }
+            }
+        }
+
         // determine if any ui-pages are left, if so, don't close the server
         const baseNodes = []
         const pageNodes = []
@@ -834,6 +846,7 @@ module.exports = function (RED) {
             for (const conn of Object.values(uiShared.connections)) {
                 cleanupEventHandlers(conn)
             }
+
             close(node, function (err) {
                 if (err) {
                     node.error(`Error closing socket.io server for ${node.id}`, err)
