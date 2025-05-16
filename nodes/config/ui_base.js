@@ -332,11 +332,14 @@ module.exports = function (RED) {
         }
 
         // disconnect all existing sockets (without force, and before removing all event handlers)
-        for (const socket of uiShared.ioServer.sockets?.sockets?.values()) {
-            try {
-                socket.disconnect()
-            } catch (_e) {
-                // ignore error  
+        const sockets = uiShared.ioServer.sockets?.sockets
+        if (sockets && typeof sockets.values === 'function') {
+            for (const socket of sockets.values()) {
+                try {
+                    socket.disconnect()
+                } catch {
+                    // ignore error
+                }
             }
         }
 
