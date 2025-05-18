@@ -18,10 +18,10 @@ if (import.meta.env.DEV) {
     console.log('Development mode, not pre-caching anything')
     denylist.push(/.*/)
 } else {
-    // don't precache anything where the urls pathname ends with a slash (including when the url has a query string)
-    // this permits the request to be handled by the server which will do a redirect as appropriate
-    // NOTE: dashboard is hardcoded for now (we only support one dashboard at this time)
-    denylist.push(/\/dashboard\/[^?]*\/(\?.*)*$/)
+    // don't precache anything where the urls pathname ends with a slash (including times when the url has a query string)
+    // this permits the request to be handled by the server which will do a redirect as required
+    const configPath = self.location.pathname.split('/')[1]
+    denylist.push(new RegExp(`/${configPath}/[^?]*/(\\?.*)*$`))
 }
 
 // to allow work offline for allowed routes only
