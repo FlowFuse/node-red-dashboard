@@ -1,0 +1,20 @@
+{
+    "node": "ui_button",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "path",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "icon",
+            "changes": null,
+            "notes": null
+        }
+    ]
+}
