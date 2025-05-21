@@ -142,7 +142,7 @@ module.exports = function (RED) {
             // - Redirects (301) URLs ending with a trailing slash to their non-trailing equivalent.
             // - Preserves the query string.
             // - Collapses any redundant slashes (e.g., "//" becomes "/").
-            uiShared.app.use((req, res, next) => {
+            uiShared.app.use(config.path + '/', (req, res, next) => {
                 // Skip if not a GET or HEAD request
                 if (!(req.method === 'GET' || req.method === 'HEAD')) {
                     next()
@@ -153,7 +153,8 @@ module.exports = function (RED) {
                 if (req.path.slice(-1) === '/' && req.path.length > 1) {
                     const query = req.url.slice(req.path.length) // get the query string (if any)
                     const safePath = req.path.slice(0, -1).replace(/\/+/g, '/') // remove trailing slash and make any double slashes single slashes
-                    res.redirect(301, safePath + query) // redirect to the safe path
+                    const redirectUrl = config.path + safePath + query // construct the new URL
+                    res.redirect(301, redirectUrl) // redirect to the new URL
                 } else {
                     next()
                 }
