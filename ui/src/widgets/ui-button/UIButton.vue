@@ -5,6 +5,7 @@
         @click="action"
         @pointerdown="pointerdown"
         @pointerup="pointerup"
+        @pointercancel="pointerup"
         @pointermove="checkIsPointerOverButton"
     >
         <template v-if="prependIcon" #prepend>
