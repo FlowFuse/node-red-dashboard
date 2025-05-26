@@ -10,14 +10,24 @@ precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
 
 /** @type {RegExp[] | undefined} */
-let allowlist
-// in dev mode, we disable precaching to avoid caching issues
-if (import.meta.env.DEV) { allowlist = [/^\/$/] }
+const denylist = []
 
-// to allow work offline
+// in dev mode, do not precache anything
+if (import.meta.env.DEV) {
+    // don't precache anything
+    console.log('Development mode, not pre-caching anything')
+    denylist.push(/.*/)
+} else {
+    // don't precache anything where the urls pathname ends with a slash (including times when the url has a query string)
+    // this permits the request to be handled by the server which will do a redirect as required
+    const configPath = self.location.pathname.split('/')[1]
+    denylist.push(new RegExp(`/${configPath}/[^?]*/(\\?.*)*$`))
+}
+
+// to allow work offline for allowed routes only
 registerRoute(new NavigationRoute(
     createHandlerBoundToURL('index.html'),
-    { allowlist }
+    { denylist }
 ))
 
 self.skipWaiting()
