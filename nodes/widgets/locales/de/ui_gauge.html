@@ -1,0 +1,76 @@
+<script type="text/html" data-help-name="ui-gauge">
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Typ <span class="property-type">halb | 3/4</span></dt>
+        <dd>Definiert die Form des Messgeräts, <i>"Kachel"</i>, <i>"Batterie"</i>, <i>"Wassertank"</i>, <i>"Halb-Messgerät"</i> oder <i>"3/4-Messgerät"</i>.</dd>
+        <dt>Stil <span class="property-type">abgerundet | Nadel</span></dt>
+        <dd>Definiert den Stil des gerenderten Bogens, "Nadel" oder "Abgerundet". Nicht verfügbar für "Kachel".</dd>
+        <dt>Bereich <span class="property-type">Zahl</span></dt>
+        <dd>Die kleinsten und größten Werte, die auf dem Messgerät gerendert werden können</dd>
+        <dt>Segmente <span class="property-type">Liste</span></dt>
+        <dd>Sammlung von Objekten, die die relevante Farbe für einen bestimmten Wert definieren</dd>
+        <dt>Beschriftung <span class="property-type">Liste</span></dt>
+        <dd>Der über dem Messgerät angezeigte Beschriftungstext</dd>
+        <dt>Standardeinstellungen <span class="property-type">Liste</span></dt>
+        <dd>Zurücksetzen auf Standard-Min/Max und Segmente basierend auf dem ausgewählten Messgerätetyp</dd>
+    </dl>
+    <h3>Eigenschaften (Nur Halb- &amp; 3/4-Messgeräte)</h3>
+    <dl class="message-properties">
+        <dt>Präfix <span class="property-type">str</span></dt>
+        <dd>Text, der <i>vor</i> dem Wert in der Mitte des Messgeräts hinzugefügt wird.</dd>
+        <dt>Suffix <span class="property-type">str</span></dt>
+        <dd>Text, der <i>nach</i> dem Wert in der Mitte des Messgeräts hinzugefügt wird.</dd>
+        <dt>Einheiten <span class="property-type">str</span></dt>
+        <dd>Kleiner Text, der unter dem Wert in der Mitte des Messgeräts angezeigt wird.</dd>
+        <dt>Größen (Messgerät) <span class="property-type">Zahl</span></dt>
+        <dd>Ein numerischer Wert in Pixeln, der die Dicke des gerenderten Bogens und der Hintergrundkulisse definiert.</dd>
+        <dt>Größen (Lücke) <span class="property-type">Zahl</span></dt>
+        <dd>Ein numerischer Wert in Pixeln, der die Lücke zwischen dem Bogen und den Segmenten definiert.</dd>
+        <dt>Größen (Segmente) <span class="property-type">Zahl</span></dt>
+        <dd>Ein numerischer Wert in Pixeln, der die Dicke der im Messgerät gerenderten Segmente definiert.</dd>
+    </dl>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Aktualisieren Sie die über dem Messgerät gerenderte Beschriftung</dd>
+        <dt class="optional">segments <span class="property-type">array</span></dt>
+        <dd>
+            Ändern Sie die zur Verfügung stehenden Optionen im Dropdown zur Laufzeit
+            <ul>
+                <li><code>Array&lt;{color: String, from: Number}&gt;</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">gtype <span class="property-type">siehe Detail</span></dt>
+        <dd>Ändern Sie den Typ des gerenderten Messgeräts mit den folgenden Optionen:
+            <ul>
+                <li><code>gauge-battery</code></li>
+                <li><code>gauge-34</code></li>
+                <li><code>gauge-half</code></li>
+                <li><code>gauge-tile</code></li>
+                <li><code>gauge-tank</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">gstyle <span class="property-type">siehe Detail</span></dt>
+        <dd>Ändern Sie den Stil des gerenderten 3/4- und Halb-Messgeräts mit den folgenden Optionen: (nur anwendbar für 3/4- und Halb-Messgeräte)
+            <ul>
+                <li><code>needle</code></li>
+                <li><code>rounded</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">min <span class="property-type">number</span></dt>
+        <dd>Ändern Sie den minimalen Wert, den das Messgerät unterstützt</dd>
+        <dt class="optional">max <span class="property-type">number</span></dt>
+        <dd>Ändern Sie den maximalen Wert, den das Messgerät unterstützt</dd>
+        <dt class="optional">prefix <span class="property-type">string</span></dt>
+        <dd>Ändern Sie den Text, der vor dem Wert des Messgeräts gerendert wird (nur anwendbar für 3/4- und Halb-Messgeräte)</dd>
+        <dt class="optional">suffix <span class="property-type">string</span></dt>
+        <dd>Ändern Sie den Text, der nach dem Wert des Messgeräts gerendert wird (nur anwendbar für 3/4- und Halb-Messgeräte)</dd>
+        <dt class="optional">units <span class="property-type">array</span></dt>
+        <dd>Steuert die "Einheit"-Anzeige unter dem Wert des Messgeräts für 3/4- und Halb-Messgeräte (nur anwendbar für 3/4- und Halb-Messgeräte)</dd>
+        <dt class="optional">icon <span class="property-type">string</span></dt>
+        <dd>Ändern Sie, welches Symbol im Messgerät gerendert wird (muss ein Material Design-Symbol sein und nur anwendbar für 3/4- und Halb-Messgeräte)</dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+    </dl>
+</script>

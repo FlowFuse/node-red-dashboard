@@ -1,0 +1,36 @@
+{
+    "ui-page": {
+        "label": {
+            "pageName": "Seitenname",
+            "ui": "UI",
+            "path": "Pfad",
+            "icon": "Symbol",
+            "theme": "Thema",
+            "layout": "Layout",
+            "editLayout": "Layout bearbeiten",
+            "grid": "Raster",
+            "fixed": "Fest",
+            "tabs": "Tabs",
+            "notebook": "Notizbuch",
+            "class": "Klasse",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n) für Seite",
+            "responsiveness": "Responsive Layouts",
+            "reset": "Auf Standard zurücksetzen",
+            "name": "Name",
+            "breakpoint": "Breakpoint (px)",
+            "columns": "Spalten",
+            "defaultState": "Standardzustand",
+            "visibility": "Sichtbarkeit",
+            "visible": "Sichtbar",
+            "hidden": "Versteckt",
+            "interactivity": "Interaktivität",
+            "active": "Aktiv",
+            "disabled": "Deaktiviert",
+            "openDashboardSidebar": "Dashboard 2.0 Seitenleiste öffnen"
+        },
+        "error": {
+            "registeringConfig": "Fehler beim Registrieren der Konfiguration. Kein übergeordneter ui-base-Knoten für ui-page-Knoten gefunden: __pageName__",
+            "registeringWidget": "Fehler beim Registrieren des Widgets - __widgetName__. Kein übergeordneter ui-base-Knoten für ui-page-Knoten gefunden: __pageName__"
+        }
+    }
+}
