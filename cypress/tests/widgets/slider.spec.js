@@ -4,6 +4,17 @@ describe('Node-RED Dashboard 2.0 - Slider', () => {
         cy.visit('/dashboard/page1')
     })
 
+    it('is loaded correctly', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').contains('My Slider')
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemin', '20')
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuemax', '100')
+        // upon first load, the slider should be at its minimum value
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', '20')
+        // to verify the slider orientation, with the slider being horizontal, the thumb should be on the left side
+        // which is denoted by style="--v-slider-thumb-position: 0%""
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'style', '--v-slider-thumb-position: 0%; --v-slider-thumb-size: 20px;')
+    })
+
     it('is labelled correctly', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').contains('My Slider')
     })
@@ -17,8 +28,8 @@ describe('Node-RED Dashboard 2.0 - Slider', () => {
     it('emits a value, and updates, when clicked', () => {
         cy.resetContext()
         cy.clickAndWait(cy.get('.v-slider__container'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 50)
-        cy.checkOutput('msg.payload', 50)
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 60) // halfway between 20 and 100
+        cy.checkOutput('msg.payload', 60)
     })
 })
 
@@ -29,11 +40,16 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
     })
 
     it('include "labels"', () => {
+        // first set the slider to a known value
+        cy.clickAndWait(cy.get('.v-slider__container'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 60) // halfway between 20 and 100
+        cy.checkOutput('msg.payload', 60)
+        // now change the label only
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-dynamic-label'))
         // check the label is updated
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').contains('Dynamic Slider Label')
-        // shouldn't have changed hte value as we're only setting label
-        cy.checkOutput('msg.payload', 50)
+        // shouldn't have changed the value as we're only setting label
+        cy.checkOutput('msg.payload', 60)
     })
 
     it('include "min"', () => {
