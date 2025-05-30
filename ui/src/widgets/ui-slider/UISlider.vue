@@ -77,16 +77,16 @@ export default {
             return this.getProperty('showTicks')
         },
         min: function () {
-            return Math.min(this.getProperty('min'), this.getProperty('max'))
+            return Math.min(+this.getProperty('min'), +this.getProperty('max'))
         },
         step: function () {
-            return this.getProperty('step')
+            return +this.getProperty('step')
         },
         max: function () {
-            return Math.max(this.getProperty('min'), this.getProperty('max'))
+            return Math.max(+this.getProperty('min'), +this.getProperty('max'))
         },
         isReverse: function () {
-            return this.getProperty('min') > this.getProperty('max')
+            return +this.getProperty('min') > +this.getProperty('max')
         },
         iconPrepend: function () {
             const icon = this.getProperty('iconPrepend')
