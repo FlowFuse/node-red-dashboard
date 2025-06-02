@@ -1,0 +1,61 @@
+{
+    "node": "ui_slider",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "tooltip",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/388' target='_blank'>Problem #388</a>"
+        },
+        {
+            "property": "range",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "output",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "passthru",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "show thumb",
+            "notes": "Definiert, ob das Tooltip/der Daumen auf dem Schieberegler angezeigt wird, wenn der Wert geändert wird."
+        }
+    ]
+}
