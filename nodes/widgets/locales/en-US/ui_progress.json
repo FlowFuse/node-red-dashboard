@@ -1,0 +1,12 @@
+{
+    "ui-progress": {
+        "label": {
+            "progress": "Progress",
+            "group": "Group",
+            "name": "Name",
+            "label": "Label",
+            "color": "Color",
+            "className": "Class"
+        }
+    }
+}
