@@ -145,6 +145,15 @@ main {
     min-height: var(--widget-row-height);
     position: relative;
 }
+
+/* Ensure we overflow if template extends beyond widget's defined height */
+.nrdb-ui-widget.nrdb-ui-markdown,
+.nrdb-ui-widget.nrdb-ui-form,
+.nrdb-ui-widget.nrdb-ui-button-group,
+.nrdb-ui-widget.nrdb-ui-template {
+    overflow-y: auto;
+}
+
 /* to make input type widgets repect row heights */
 .nrdb-app .v-input--density-default {
     --v-input-control-height: var(--widget-row-height);
