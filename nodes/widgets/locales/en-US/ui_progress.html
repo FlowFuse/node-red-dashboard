@@ -1,0 +1,30 @@
+<script type="text/html" data-help-name="ui-progress">
+    <p>Displays a progress bar in the user interface.</p>
+    <p>
+        The progress bar shows completion percentage based on the numeric value 
+        provided in <code>msg.payload</code>. The value should be between 0 and 100,
+        representing the percentage of completion.
+    </p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Label <span class="property-type">string</span></dt>
+        <dd>The text shown alongside the progress percentage. If provided, displays as "Label: XX%" within the progress bar.</dd>
+        <dt>Color <span class="property-type">string</span></dt>
+        <dd>Color for the progress bar, valid values as <b>primary</b>/<b>secondary</b>/<b>success</b>/<b>error</b>/<b>warning</b>/<b>info</b> or custom colors like <b>green</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>green-darken-2</b>. Check <a href="https://vuetifyjs.com/en/styles/colors/#material-colors">Vuetify Colors</a> for help. Defaults to "primary" if not specified.</dd>
+        <dt>Class <span class="property-type">string</span></dt>
+        <dd>Optional CSS class names to apply to the progress bar for custom styling.</dd>
+    </dl>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd>A numeric value between 0 and 100 representing the completion percentage. Values outside this range will be clamped to the valid range.</dd>
+    </dl>
+    <h3>Dynamic Properties (Inputs)</h3>
+    <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Override the label displayed within the progress bar</dd>
+        <dt class="optional">color <span class="property-type">string</span></dt>
+        <dd>Override the progress bar color</dd>
+    </dl>
+</script>
