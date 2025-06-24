@@ -11,7 +11,7 @@ head:
 hero:
   name: FlowFuse Dashboard
   text: Build your own UI using Node-RED
-  tagline: An easy to use collection of nodes for Node-RED that allows you to create data-driven dashboards & data visualisations.
+  tagline: An easy-to-use collection of nodes for Node-RED that provides tools to create data-driven applications, dashboards & data visualisations.
   image:
     src: /logo.png
     alt: FlowFuse Dashboard

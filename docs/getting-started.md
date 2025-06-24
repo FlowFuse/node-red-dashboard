@@ -18,7 +18,7 @@ description: Kickstart your FlowFuse Dashboard journey with this getting started
 
 ## About
 
-Welcome to the documentation for the FlowFuse Dashboard (also known as Node-RED Dashboard 2.0), the successor to the original, and very popular, Node-RED Dashboard.
+Welcome to the documentation for the FlowFuse Dashboard (also known as Node-RED Dashboard 2.0), the modern successor to the deprecated, but very popular, [Node-RED Dashboard](https://flows.nodered.org/node/node-red-dashboard).
 
 This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts to upgrade the original Dashboard to steer away from Angular v1.0 which has been [officially deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). You can read our full statement about _why_ we're building FlowFuse Dashboard [here](https://flowfuse.com/blog/2023/06/dashboard-announcement/?_gl=1*cckr5u*_gcl_au*MTAzMTA0MzY1Ni4xNzE2MzY2NTAz).
 
