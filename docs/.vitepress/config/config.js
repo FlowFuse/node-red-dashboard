@@ -5,7 +5,6 @@ export default {
     lang (lang) {
         // load the relevant local json file
         const locale = require(`./locales/${lang}.json`);
-        console.log(lang);
         return {
             lang: lang,
             description: locale.description || en.description,
