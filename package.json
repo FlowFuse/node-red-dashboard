@@ -11,6 +11,7 @@
         "url": "https://github.com/FlowFuse/node-red-dashboard.git"
     },
     "license": "Apache-2.0",
+    "type": "module",
     "author": {
         "name": "Joe Pavitt",
         "url": "https://github.com/joepavitt"
