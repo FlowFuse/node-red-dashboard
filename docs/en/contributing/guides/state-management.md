@@ -1,10 +1,10 @@
 ---
-description: Master state management in Node-RED Dashboard 2.0 for maintaining a responsive and dynamic user interface.
+description: Master state management in FlowFuse Dashboard for maintaining a responsive and dynamic user interface.
 ---
 
 # State Management
 
-Dashboard 2.0 provides a data store within Node-RED such that it's possible to refresh your Dashboard clients and data is retained. This is particularly useful for widgets like `ui-chart` where you may want to retain a history of data points, or for widgets like `ui-text` where you want to retain the last value displayed.
+FlowFuse Dashboard provides a data store within Node-RED such that it's possible to refresh your Dashboard clients and data is retained. This is particularly useful for widgets like `ui-chart` where you may want to retain a history of data points, or for widgets like `ui-text` where you want to retain the last value displayed.
 
 This page details the different "stores" we have in place and what they're used for.
 
@@ -12,8 +12,8 @@ You can also check out the [Events Architecture](./events.md) for a more detaile
 
 ## Client-Side (Dashboard)
 
-![An image depicting the three client-side vuex stores we have in Dashboard 2.0](../../../assets/images/stores-client-side.jpg){data-zoomable}
-*An image depicting the three client-side vuex stores we have in Dashboard 2.0*
+![An image depicting the three client-side vuex stores we have in FlowFuse Dashboard](../../assets/images/stores-client-side.jpg){data-zoomable}
+*An image depicting the three client-side vuex stores we have in FlowFuse Dashboard*
 
 Our client-side stores are built using [VueX](https://vuex.vuejs.org/). These stores lose their data on a client refresh (but are re-populated by the server-side stores), and are just used to maintain a centralised, consistent view of the data across the entire Vue application as the user navigates around the Dashboard.
 
@@ -59,8 +59,8 @@ This value is also updated automatically when a new message is received, as long
 
 ## Server-Side (Node-RED)
 
-![An image depicting the two server-side vuex stores we have in Dashboard 2.0](../../../assets/images/stores-server-side.jpg){data-zoomable}
-*An image depicting the two server-side stores we have in Dashboard 2.0*
+![An image depicting the two server-side vuex stores we have in FlowFuse Dashboard](../../assets/images/stores-server-side.jpg){data-zoomable}
+*An image depicting the two server-side stores we have in FlowFuse Dashboard*
 
 Our server-side stores maintain the "single source of truth". When any Dashboard client connects, the centralised data is sent to each client, and the client-side stores are populated with the relevant parts of this centralised store.
 

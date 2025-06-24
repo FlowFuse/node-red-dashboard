@@ -1,5 +1,5 @@
 ---
-description: Configure the base UI settings of Node-RED Dashboard 2.0 to tailor the dashboard environment to your needs.
+description: Configure the base UI settings of FlowFuse Dashboard to tailor the dashboard environment to your needs.
 props:
     Path: The endpoint proceeding the host of Node-RED where your UI will be accessible
     App Icon: Allows you to set a custom icon for your application. Provide the URL to the App Icon, which will be displayed as the app icon and in the browser tab.
@@ -20,9 +20,9 @@ props:
 
 ## Application Icon <AddedIn version="1.18.0" />
 
-The **Application Icon** feature allows you to set a custom icon for your Node-RED Dashboard. This icon is used in the browser tab and when installing the dashboard as a Progressive Web Application (PWA). The image provided should be a square with dimensions between **192px and 512px**. To set it up, provide a URL to an image in the App Icon field, enhancing branding and user recognition.
+The **Application Icon** feature allows you to set a custom icon for your FlowFuse Dashboard. This icon is used in the browser tab and when installing the dashboard as a Progressive Web Application (PWA). The image provided should be a square with dimensions between **192px and 512px**. To set it up, provide a URL to an image in the App Icon field, enhancing branding and user recognition.
 
-#### To configure the Application Icon feature in Node-RED Dashboard 2.0, follow these steps:
+#### To configure the Application Icon feature in FlowFuse Dashboard, follow these steps:
 
 1. Open the Edit ui-base node settings.
 2. In the App Icon field, enter the URL of the image you want to use as your app icon. Ensure the image is square, with dimensions between 192px and 512px.

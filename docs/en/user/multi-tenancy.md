@@ -70,7 +70,7 @@ The plugins will append additional information to the `_client` object, such as 
 
   This plugin assumes that you have a running Authentik instance and that you have configured it to use a forward auth Proxy Provider as an authentication provider for Node-RED.
 
-  The proxy provider will set the appropriate headers necessary for Dashboard 2.0 to receive the user info from Authentik.
+  The proxy provider will set the appropriate headers necessary for FlowFuse Dashboard to receive the user info from Authentik.
 </AuthProvider>
 
 ## Configuring Client Data

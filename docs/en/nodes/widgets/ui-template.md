@@ -1,5 +1,5 @@
 ---
-description: Harness the power of ui-template in Node-RED Dashboard 2.0 to design custom widgets and unique dashboard layouts.
+description: Harness the power of ui-template in FlowFuse Dashboard to design custom widgets and unique dashboard layouts.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Scope: "Template nodes can be used  for 3 purposes/scopes: <ul><li><b>Widget (Group-Scoped):</b>A standard HTML/Vue widget rendered in a group in the Dashboard.</li><li><b>Widget (Page-Scoped):</b>A HTML/Vue widget that will render on a page, outside of any existing groups. Note that these widgets will render after any Groups. An example use case for this would be if you wanted to have a fixed footer on a given page.</li><li><b>Widget (UI-Scoped):</b>A HTML/Vue widget rendered on every page of the Dashboard. Most commonly used in conjunction with <a href=\"#teleports\">Teleports</a></li><li><b>CSS (All Pages):</b>Define custom CSS classes/styling that applies to the entire Dashboard.</li><li><b>CSS (Single Page):</b>Define custom CSS classes/styling that applies just a single page of your Dashboard.</li></ul>"
@@ -185,7 +185,7 @@ Putting this together, here is a simple starter widget that will alert the user 
 
 ### Loading External Dependencies
 
-It is possible to load external dependencies into your `ui-template` node. This is useful if you want to use a library that isn't included in the core Node-RED Dashboard 2.0 nodes.
+It is possible to load external dependencies into your `ui-template` node. This is useful if you want to use a library that isn't included in the core FlowFuse Dashboard nodes.
 
 To do this, you'll need to load the dependency in the `<script>` section of your template. For example, to load the [Babylon.js](https://www.babylonjs.com/) library, you would do the following:
 
@@ -473,7 +473,7 @@ When changed, if wired to a "Debug" node, then we can see the resulting outcome 
 
 The `ui-template` node also has access to the [Vuetify component library](https://vuetifyjs.com/en/components/all/) by default. The library provides a large number of pre-built widgets that you can use in your Dashboard.
 
-These are particularly useful as they provide easy access to a large number of pre-built widgets that aren't necessarily included in the core nodes of Node-RED Dashboard 2.0.
+These are particularly useful as they provide easy access to a large number of pre-built widgets that aren't necessarily included in the core nodes of FlowFuse Dashboard.
 
 Some example widgets that you may find useful are:
 

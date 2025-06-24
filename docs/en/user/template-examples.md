@@ -1,5 +1,5 @@
 ---
-description: Get inspired with a variety of UI template examples in Node-RED Dashboard 2.0, enhancing your dashboard design process.
+description: Get inspired with a variety of UI template examples in FlowFuse Dashboard, enhancing your dashboard design process.
 ---
 
 
@@ -33,7 +33,7 @@ You can find a collection of example of how to use Chart.js within the `ui-templ
 
 Whilst we do offer the [`ui-table`](../nodes/widgets/ui-table.md) widget out of the box, it's fairly basic in it's functionality, and doesn't allow for much customization of cells and styling. 
 
-In Dashboard 1.0, there was a popular third-party `ui-table` widget, which offered wider customisation, but for Dashboard 2.0, we've taken a slightly different approach. Rather than defining a spec that you must put your data into, in order to utilise a set number of features in a library, with Dashboard 2.0, you can use the `ui-template` to customise a data table in anyway you like, and with any data format.
+In Node-RED Dashboard, there was a popular third-party `ui-table` widget, which offered wider customisation, but for FlowFuse Dashboard, we've taken a slightly different approach. Rather than defining a spec that you must put your data into, in order to utilise a set number of features in a library, with FlowFuse Dashboard, you can use the `ui-template` to customise a data table in anyway you like, and with any data format.
 
 ![Example of a Data Table](/images/template-examples/custom-data-table.png "Example of a Data Table"){data-zoomable}
 _Example of a custom header and cell content using ui-template and Vuetify's Data Table_
@@ -277,10 +277,10 @@ dashboard: {
 
 Node-RED has a very popular [worldmap node](https://flows.nodered.org/node/node-red-contrib-web-worldmap) which allows for intricate plotting of data on a globe. The node creates a new endpoint onto your web server at `/worldmap` (or whichever path you override the default with).
 
-![Example of a World Map](../../assets/images/template-example-worldmap.png "Example of a World Map rendered in Dashboard 2.0"){data-zoomable}
-_Example of a World Map rendered in Dashboard 2.0_
+![Example of a World Map](../assets/images/template-example-worldmap.png "Example of a World Map rendered in FlowFuse Dashboard"){data-zoomable}
+_Example of a World Map rendered in FlowFuse Dashboard_
 
-In order to display a worldmap into Dashboard 2.0, currently, the best way to do this is with a `ui-template` node:
+In order to display a worldmap into FlowFuse Dashboard, currently, the best way to do this is with a `ui-template` node:
 
 ```vue
 <template>
@@ -300,7 +300,7 @@ In order to display a worldmap into Dashboard 2.0, currently, the best way to do
 
 ## Custom Styling
 
-A lot of the styling for Node-RED Dashboard 2.0 is driven by the underlying [Vuetify](https://vuetifyjs.com/en/) library, which we use to render many of the widgets. This often means that, when defining your own CSS, we need to override the underlying Vuetify classes.
+A lot of the styling for FlowFuse Dashboard is driven by the underlying [Vuetify](https://vuetifyjs.com/en/) library, which we use to render many of the widgets. This often means that, when defining your own CSS, we need to override the underlying Vuetify classes.
 
 To add your own CSS you can add a `ui-template` node and select one of the following "Type" options:
 
@@ -340,8 +340,8 @@ You can use the following CSS:
 
 ### Group Styling
 
-![Example of styling applied to the Groups rendered in Dashboard 2.0](/images/template-examples/style-group.png "Example of styling applied to the Groups rendered in Dashboard 2.0"){data-zoomable}
-_Example of styling applied to the Groups rendered in Dashboard 2.0_
+![Example of styling applied to the Groups rendered in FlowFuse Dashboard](/images/template-examples/style-group.png "Example of styling applied to the Groups rendered in FlowFuse Dashboard"){data-zoomable}
+_Example of styling applied to the Groups rendered in FlowFuse Dashboard_
 
 Groups in Node-RED Dashboard are made of a wrapping container with a class of `nrdb-ui-group`, and then a block within that which you see visually as the group, which is a Vuetify Card widget, and so has the class `v-card`.
 
@@ -356,8 +356,8 @@ We can use these classes to style the groups in our Dashboard, for example, to m
 
 ### Navigation Styling
 
-![Example of how to override the \"navigation drawer\" styling in Dashboard 2.0](/images/template-examples/style-side-nav.png "Example of how to override the \"navigation drawer\" styling in Dashboard 2.0"){data-zoomable}
-_Example of how to override the \"navigation drawer\" styling in Dashboard 2.0_
+![Example of how to override the \"navigation drawer\" styling in FlowFuse Dashboard](/images/template-examples/style-side-nav.png "Example of how to override the \"navigation drawer\" styling in FlowFuse Dashboard"){data-zoomable}
+_Example of how to override the \"navigation drawer\" styling in FlowFuse Dashboard_
 
 By default, the side navigation drawer that lists all of the pages in your Dashboard is styled in accordance with the "Header" colour in your Theme. This means that its `background-color` will match the header of the Dashboard too. If you'd like to override this, you can do so by using the `.v-navigation-drawer` class:
 

@@ -1,14 +1,14 @@
 ---
-description: Comprehensive guide on end-to-end testing for Node-RED Dashboard 2.0, ensuring reliability and performance.
+description: Comprehensive guide on end-to-end testing for FlowFuse Dashboard, ensuring reliability and performance.
 ---
 
 # E2E Testing
 
 E2E Testing consists of runnig a local environment, and automating interaction with the browser to test the widgets behaviour.
 
-With Dashboard 2.0, we have the following commands which are used for testing:
+With FlowFuse Dashboard, we have the following commands which are used for testing:
 
-- `npm run cy:server` - Runs an instance of Node-RED with Dashboard 2.0 installed.
+- `npm run cy:server` - Runs an instance of Node-RED with FlowFuse Dashboard installed.
 - `npm run cy:run` - Runs all of the Cypress tests in headless mode.
 - `npm run cy:open` - Opens the Cypress test runner, whereby you can explicitly choose which tests to run locally.
 
@@ -20,7 +20,7 @@ For our E2E testing we use [Cypress](https://www.cypress.io/). This provides a f
 
 ### Install Node-RED Testing Instance
 
-Cypress has been configured to run a local instance of Node-RED with the Dashboard 2.0 installed. You will need to install the dependencies for this instance:
+Cypress has been configured to run a local instance of Node-RED with the FlowFuse Dashboard installed. You will need to install the dependencies for this instance:
 
 ```bash
 cd ./cypress/fixtures/user-dir/
@@ -53,7 +53,7 @@ _Screenshot showing the UI Button tests running in the Cypress Test Runner_
 
 ## Writing Tests
 
-With Node-RED and Dashboard 2.0, we want to be able to provide a complete `flow.json`, and then test the behaviour of the Dashboard that is deployed as a result of that flow.
+With Node-RED and FlowFuse Dashboard, we want to be able to provide a complete `flow.json`, and then test the behaviour of the Dashboard that is deployed as a result of that flow.
 
 As such, each set of tests contains two key parts:
 
@@ -77,7 +77,7 @@ You may also want to make the most of the [Cypress Test Helpers](#cypress-test-h
 To reference your relevant `flow.json`, you can use the `cy.deployFixture` helper function which will load the flow into the local Node-RED instance.
 
 ```js
-describe('Node-RED Dashboard 2.0 - Button Groups', () => {
+describe('FlowFuse Dashboard - Button Groups', () => {
     // anything here will run before all of the indivudal tests below
     beforeEach(() => {
         // here we can use our helper command to load a flow.json
@@ -145,7 +145,7 @@ This helper flow is automatically deployed to the Node-RED instance when using t
 For example, from our button tests:
 
 ```js
-describe('Node-RED Dashboard 2.0 - Buttons', () => {
+describe('FlowFuse Dashboard - Buttons', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-buttons') // reads in a flow.json and deploys it to the local Node-RED instance
         cy.visit('/dashboard/page1')

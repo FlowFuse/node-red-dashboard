@@ -1,5 +1,5 @@
 ---
-description: Maximize efficiency in Node-RED Dashboard 2.0 by leveraging subflows for reusable logic and streamlined development.
+description: Maximize efficiency in FlowFuse Dashboard by leveraging subflows for reusable logic and streamlined development.
 ---
 
 <script setup>
@@ -18,16 +18,16 @@ Subflows remove the need to write any code, publish to npm, or maintain a separa
 1. **Reusability:** You can use the same subflow in multiple places in your workspace, without having to copy and paste the same nodes over and over again. All subflows will read from the same configuration, and any changes to the subflow will be reflected in all instances of the subflow.
 2. **Readability:** You can collapse a complex set of nodes into a single node, making your workspace easier to read and understand.
 
-Subflows are not particular to Node-RED Dashboard 2.0, but are a core feature of Node-RED, and can be used on any set of nodes in your workspace.
+Subflows are not particular to FlowFuse Dashboard, but are a core feature of Node-RED, and can be used on any set of nodes in your workspace.
 
-## Subflows in Dashboard 2.0 <NodeREDVersion version="4.0.0" />
+## Subflows in FlowFuse Dashboard <NodeREDVersion version="4.0.0" />
 
 ### Simple Example
 
-Here, we demonstrate a quick example of creating a Dashboard 2.0 subflow. The subflow will consist of two nodes:
+Here, we demonstrate a quick example of creating a FlowFuse Dashboard subflow. The subflow will consist of two nodes:
 
-- `ui-slider` - A Dashboard 2.0 slider input node
-- `ui-chart` - A Dashboard 2.0 chart output node to visualise the slider input value.
+- `ui-slider` - A FlowFuse Dashboard slider input node
+- `ui-chart` - A FlowFuse Dashboard chart output node to visualise the slider input value.
 
 The output of the `ui-slider` will directly drive the values rendered on the chart.
 
@@ -46,15 +46,15 @@ The subflow itself will then permit two properties:
 
 Note how, with the subflow, we can copy and paste it as many times as we like, assign the subflows to different groups, and they will always render independently from each other.
 
-### Configuring Subflows for Dashboard 2.0
+### Configuring Subflows for FlowFuse Dashboard
 
 #### Config Nodes
 
-Dashboard 2.0 utilises Node-RED [config nodes](https://nodered.org/docs/creating-nodes/config-nodes) to manage the overall configuration/layout of the dashboard.
+FlowFuse Dashboard utilises Node-RED [config nodes](https://nodered.org/docs/creating-nodes/config-nodes) to manage the overall configuration/layout of the dashboard.
 
-It's worth stressing that support for config nodes within a subflow (and consequently support for Dashboard 2.0 in subflows) is only available in Node-RED `v4.0.0` and above.
+It's worth stressing that support for config nodes within a subflow (and consequently support for FlowFuse Dashboard in subflows) is only available in Node-RED `v4.0.0` and above.
 
-In total, Dashboard 2.0 has 4 types of config nodes:
+In total, FlowFuse Dashboard has 4 types of config nodes:
 
 - `ui-base` - Stores configuration for the full dashboard
 - `ui-page` - Stores configuration for a single page, there can be multiple pages within a single `ui-base`.
@@ -73,7 +73,7 @@ Then, for each instance of our subflow, we can now define a `ui-group` to render
 
 #### Surfacing Node Properties
 
-If you have a Dashboard 2.0 node within a subflow, you can configure your nodes such that their properties can instead be defined at the subflow-level, and so be unique for each instance of that subflow, e.g. a `ui-slider`'s label could be unique every time you use the subflow. 
+If you have a FlowFuse Dashboard node within a subflow, you can configure your nodes such that their properties can instead be defined at the subflow-level, and so be unique for each instance of that subflow, e.g. a `ui-slider`'s label could be unique every time you use the subflow. 
 
 Under the covers, subflows work by setting scoped Node-RED environment variables. These can then be utilised by the nodes within the subflow.
 

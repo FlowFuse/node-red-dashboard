@@ -68,7 +68,7 @@ export default ({ mode }) => {
       ])
     },
     themeConfig: {
-      logo: { src: '/logo.png', alt: 'Node-RED Dashboard 2.0 Logo' },
+      logo: { src: '/logo.png', alt: 'FlowFuse Dashboard Logo' },
       nav: [
         { text: en['nav']['docs'], link: '/getting-started.html' },
         { text: en['nav']['widgets'], link: '/nodes/widgets.html' },

@@ -1,5 +1,5 @@
 ---
-description: Dive deep into the events architecture of Node-RED Dashboard 2.0 for efficient data handling and UI interaction.
+description: Dive deep into the events architecture of FlowFuse Dashboard for efficient data handling and UI interaction.
 ---
 
 # Events Architecture
@@ -32,7 +32,7 @@ Note the differentiation between a "Dashboard" loading, i.e. the full app and br
 ![A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node](../../../assets/images/events-arch-msg.jpg){data-zoomable}
 *A flow diagram depicting how events traverse between Node-RED (red) and the Dashboard (blue) when messages are received by a Dashboard node*
 
-This flow details the functions, and SocketIO traffic that occurs when a message is received by a Dashboard node within Node-RED. Note that most core Dashboard 2.0 widgets use the default `onInput` handler, but in some cases, a custom `onInput` handler is used where we want different behaviour.
+This flow details the functions, and SocketIO traffic that occurs when a message is received by a Dashboard node within Node-RED. Note that most core FlowFuse Dashboard widgets use the default `onInput` handler, but in some cases, a custom `onInput` handler is used where we want different behaviour.
 
 Our default server-side `onInput` handler handles the common use cases of:
 
