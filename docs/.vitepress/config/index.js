@@ -1,16 +1,15 @@
 import { loadEnv } from 'vite'
 
-import de from './de'
-import en from './en'
 import shared from './shared'
+import config from './config'
 
 export default ({ mode }) => {
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
     return{
     ...shared,
     locales: {
-        root: { label: 'English', ...en },
-       de: { label: 'Deutsch', ...de }
+        root: { label: 'English', ...config.lang('en-US') },
+        de: { label: 'Deutsch', ...config.lang('de-DE') }
     }
 }
 }
