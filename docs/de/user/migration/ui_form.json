@@ -1,0 +1,73 @@
+{
+    "node": "ui_form",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "elements",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "submit text",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "clear text",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "two-columns",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "topic",
+            "changes": null,
+            "notes": null
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "reset",
+            "notes": "Bei 'Absenden' definiert diese Eigenschaft, ob das Formular seine Daten im Dashboard löscht oder nicht."
+        }
+    ],
+    "msgs": [
+        {
+            "property": "msg.properties",
+            "changes": "geändert",
+            "notes": "Jetzt <code>msg.ui_update.options</code>."
+        },
+        {
+            "property": "msg.payload",
+            "changes": null,
+            "notes": null
+        }
+    ]
+}
