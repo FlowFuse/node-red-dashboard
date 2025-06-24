@@ -277,7 +277,7 @@ dashboard: {
 
 Node-RED has a very popular [worldmap node](https://flows.nodered.org/node/node-red-contrib-web-worldmap) which allows for intricate plotting of data on a globe. The node creates a new endpoint onto your web server at `/worldmap` (or whichever path you override the default with).
 
-![Example of a World Map](../assets/images/template-example-worldmap.png "Example of a World Map rendered in FlowFuse Dashboard"){data-zoomable}
+![Example of a World Map](../../assets/images/template-example-worldmap.png "Example of a World Map rendered in FlowFuse Dashboard"){data-zoomable}
 _Example of a World Map rendered in FlowFuse Dashboard_
 
 In order to display a worldmap into FlowFuse Dashboard, currently, the best way to do this is with a `ui-template` node:
