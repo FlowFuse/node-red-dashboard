@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.23.0",
+    "version": "1.24.2",
     "description": "Dashboard 2.0 - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -147,7 +147,8 @@
             "ui-markdown": "nodes/widgets/ui_markdown.js",
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
-            "ui-control": "nodes/widgets/ui_control.js"
+            "ui-control": "nodes/widgets/ui_control.js",
+            "ui-progress": "nodes/widgets/ui_progress.js"
         }
     },
     "overrides": {
