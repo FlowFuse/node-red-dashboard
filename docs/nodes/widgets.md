@@ -81,6 +81,11 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
         image: '/images/node-examples/ui-chart-line.png',
         description: 'Adds a chart to your dashboard.'
     }, {
+        name: 'Progress',
+        widget: 'ui-progress',
+        image: '/images/node-examples/ui-progress.png',
+        description: 'Displays a progress bar to show completion status.'
+    }, {
         name: 'Table',
         widget: 'ui-table',
         image: '/images/node-examples/ui-table.png',

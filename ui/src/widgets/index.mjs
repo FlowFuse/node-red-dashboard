@@ -11,6 +11,7 @@ import UIGauge from './ui-gauge/UIGauge.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UINumberInput from './ui-number-input/UINumberInput.vue'
+import UIProgress from './ui-progress/UIProgress.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
 import UISlider from './ui-slider/UISlider.vue'
 import UISpacer from './ui-spacer/UISpacer.vue'
@@ -35,6 +36,7 @@ export {
     UIMarkdown,
     UINotification,
     UINumberInput,
+    UIProgress,
     UIRadioGroup,
     UISlider,
     UISpacer,
@@ -63,6 +65,7 @@ export default {
     'ui-markdown': UIMarkdown,
     'ui-notification': UINotification,
     'ui-number-input': UINumberInput,
+    'ui-progress': UIProgress,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-spacer': UISpacer,
