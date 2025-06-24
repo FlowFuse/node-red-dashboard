@@ -1,5 +1,5 @@
 ---
-description: Display and manage complex datasets with ease using the ui-table widget in Node-RED Dashboard 2.0.
+description: Display and manage complex datasets with ease using the ui-table widget in FlowFuse Dashboard.
 props:
     Group: Defines which group of the UI Dashboard this widget will render in.
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.

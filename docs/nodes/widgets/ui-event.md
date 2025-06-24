@@ -1,6 +1,6 @@
 ---
 {
-    "description": "Utilize ui-event in Node-RED Dashboard 2.0 to handle real-time events and user interactions effectively.",
+    "description": "Utilize ui-event in FlowFuse Dashboard to handle real-time events and user interactions effectively.",
     "events": [
         {
             "event": "$pageview",

@@ -3,7 +3,7 @@
         <div v-if="error" class="nrdb-placeholder-container">
             <div class="nrdb-placeholder">
                 <img src="./assets/logo.png">
-                <h1>Node-RED Dashboard 2.0</h1>
+                <h1>FlowFuse Dashboard</h1>
                 <img src="./assets/disconnected.png">
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <p :class="'status-warning'" v-html="error.message" />
@@ -29,7 +29,7 @@
         <div v-else class="nrdb-placeholder-container">
             <div class="nrdb-placeholder">
                 <img src="./assets/logo.png">
-                <h1>Node-RED Dashboard 2.0</h1>
+                <h1>FlowFuse Dashboard</h1>
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <p :class="'status-' + status.type" v-html="status.msg" />
             </div>

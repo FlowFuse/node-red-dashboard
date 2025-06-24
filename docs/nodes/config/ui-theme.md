@@ -1,5 +1,5 @@
 ---
-description: Customize the look and feel of your dashboard with UI themes in Node-RED Dashboard 2.0.
+description: Customize the look and feel of your dashboard with UI themes in FlowFuse Dashboard.
 colors:
     Surface: Controls the color of the header and navigation side menus
     Primary: Any interactive element is styled with this color, including buttons, sliders and focus state of input fields.

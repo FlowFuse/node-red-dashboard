@@ -1,5 +1,5 @@
 ---
-description: Explore the wide range of widgets available in Node-RED Dashboard 2.0 to enhance your dashboard's interactivity.
+description: Explore the wide range of widgets available in FlowFuse Dashboard to enhance your dashboard's interactivity.
 ---
 
 <script setup>
@@ -110,7 +110,7 @@ description: Explore the wide range of widgets available in Node-RED Dashboard 2
 
 Dashboard widgets are the building blocks of your dashboard. Wire them together however you like to build out your custom data visualisations and user interfaces.
 
-The following widgets are packaged with Node-RED Dashboard 2.0:
+The following widgets are packaged with FlowFuse Dashboard:
 
 ### General
 
@@ -144,7 +144,7 @@ In addition to the core widgets, we have the architecture to support third-party
 
 Here is a list of the third-party widgets we're aware of to make it easier to find what you might be after. These widgets are created by us and the community and can be installed via the Node-RED Palette Manager.
 
-- [@sumit_shinde_84/ui-webcam](https://flows.nodered.org/node/@sumit_shinde_84/node-red-dashboard-2-ui-webcam): Enables users to integrate webcam functionality into Node-RED Dashboard 2.0, allowing users to capture images and stream video through different cameras.
+- [@sumit_shinde_84/ui-webcam](https://flows.nodered.org/node/@sumit_shinde_84/node-red-dashboard-2-ui-webcam): Enables users to integrate webcam functionality into FlowFuse Dashboard, allowing users to capture images and stream video through different cameras.
 - [@flowfuse/ui-iframe](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-iframe): Embed an external webpage into your Dashboard using an iframe.
 - [@flowfuse/ui-led](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-led): Adds an LED status indicator to your Dashboard.
 - [@flowfuse/ui-flowviewer](https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-ui-flowviewer): Visualises valid Node-RED `flow.json` into a static flow viewer.
