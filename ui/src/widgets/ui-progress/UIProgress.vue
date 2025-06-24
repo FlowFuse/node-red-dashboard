@@ -52,4 +52,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss">
+// class auto-added by the layout engine
+.nrdb-ui-progress {
+    display: flex;
+    align-items: center;
+}
+</style>
