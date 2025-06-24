@@ -56,7 +56,7 @@ Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can
 
 With the nodes installed, getting started is as easy as choosing a node from the Palette (the left-hand side list of nodes) in Node-RED, and dropping it onto your canvas.
 
-![Screen recording to show how easy it is to deploy your first FlowFuse Dashboard application.](./assets/images/getting-started.gif){data-zoomable}
+![Screen recording to show how easy it is to deploy your first FlowFuse Dashboard application.](../assets/images/getting-started.gif){data-zoomable}
 _Screen recording to show how easy it is to deploy your first FlowFuse Dashboard application._
 
 In this case, we drop in a `ui-button`, click "Deploy" and then can see the button running live in our user interface.
@@ -84,7 +84,7 @@ Each page in FlowFuse Dashboard has a unique URL. If a user navigates to an unre
 
 Currently, in FlowFuse Dashboard, the default page is chosen as the page ordered first in the list of pages in the side navigation:
 
-![Screenshot of the pages list in the FlowFuse Dashboard side panel](./assets/images/default-page-layout.png "Screenshot of the pages list in the FlowFuse Dashboard side panel"){data-zoomable}
+![Screenshot of the pages list in the FlowFuse Dashboard side panel](../assets/images/default-page-layout.png "Screenshot of the pages list in the FlowFuse Dashboard side panel"){data-zoomable}
 _Screenshot of the pages list in the FlowFuse Dashboard side panel_
 
 In this example, the _"Third Party Widgets"_ page is the default page.
