@@ -12,6 +12,8 @@
         <dd>Collection of objects that define the relevant color for a given value</dd>
         <dt>Label <span class="property-type">list</span></dt>
         <dd>The label text shown above the gauge</dd>
+        <dt>Value <span class="property-type">typed input</span></dt>
+        <dd>Configure how the gauge value is determined. Can be set to use <code>msg.payload</code>, a specific message property (using JSONata), a flow/global context variable, or a static value. If not configured, defaults to <code>msg.payload</code>. Example: Use JSONata expression <code>$round(payload, 1)</code> to round the payload value to 1 decimal place.</dd>
         <dt>Defaults <span class="property-type">list</span></dt>
         <dd>Reset to default min/max and segments based on the selected gauge type</dd>
     </dl>

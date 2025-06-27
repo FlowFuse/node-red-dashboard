@@ -42,6 +42,10 @@
             return minCovered && !extras && this.segments.length === unique.size
         }
 
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
+
         const DEFAULTS = {
             'gauge-tank': {
                 min: 0,
@@ -123,6 +127,8 @@
                 name: { value: '' },
                 group: { type: 'ui-group', required: true },
                 order: { value: 0 },
+                value: { value: 'payloads', required: false},
+                valueType: { value: 'msg' },
                 width: {
                     value: 3,
                     validate: function (v) {
@@ -268,6 +274,20 @@
                     showTypeOptions(gType)
                 })
 
+                // Setup TypedInput for value processing
+                $('#node-input-value').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-valueType'),
+                    types: ['msg', 'str', 'num', 'jsonata', 'flow', 'global']
+                })
+
+                // if there is no config.value, then set it to payload
+                console.log('this.value', this.value)
+                if (!this.value) {
+                    // set the TypedInput value to msg
+                    $("#node-input-value").typedInput('value', 'payload');
+                }
+
                 // now event handlers are set up, set the initial state of the form
                 setup(this.segments, this.min, this.max)
 
@@ -338,6 +358,14 @@
             <option value="rounded" data-i18n="ui-gauge.label.rounded"></option>
             <!-- <option value=rounded">Rounded</option> -->
         </select>
+    </div>
+    <div class="form-row">
+        <h3><span data-i18n="ui-gauge.label.value"></span></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.value"></span></label>
+        <input type="text" id="node-input-value" style="width:70%">
+        <input type="hidden" id="node-input-valueType">
     </div>
     <div class="form-row">
         <h3><span data-i18n="ui-gauge.label.limits"></span></h3>
