@@ -61,6 +61,32 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
                     }
                 }
+
+                // Process the value using TypedInput configuration
+                const processValue = async () => {
+                    let value = msg.payload // default to payload if evaluation fails
+
+                    if (config.valueType && config.value) {
+                        RED.util.evaluateNodeProperty(config.value, config.valueType, node, msg, (err, result) => {
+                            if (err) {
+                                node.error(err, msg)
+                                return
+                            }
+                            value = result
+                            msg.payload = value
+                        })
+                    } else {
+                        msg.payload = value
+                    }
+                }
+
+                try {
+                    await processValue()
+                } catch (err) {
+                    node.warn('Error evaluating value property: ' + err.message)
+                    // msg.payload remains unchanged on error
+                }
+
                 msg = await appendTopic(RED, config, node, msg)
                 return msg
             }

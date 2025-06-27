@@ -9,6 +9,9 @@ props:
     Style:
         description: Defines the style of arc rendered, "Needle" or "Rounded". (only applicable to for 3/4 and Half gauges)
         dynamic: true
+    Value:
+        description: The value to be shown on the gauge. Can be a property of the message, e.g. `msg.payload` or `msg.myProperty`, a flow/global context variable, or a static value. You can also use the type "JSONata" to evaluate a JSONata expression and perform computations on the value, e.g. <code>$round(payload, 1)</code> to round to 1 decimal place.
+        dynamic: true
     Range (min):
         description: The smallest value that can be shown on the gauge
         dynamic: true
@@ -106,6 +109,21 @@ Values for the gauges can be set by sending a numerical value in `msg.payload`. 
 ## Controls
 
 <ControlsTable/>
+
+## Formatting Value
+
+![Example of a Gauge with a formatted value](/images/node-examples/ui-gauge-jsonata-value.png "Example of a Gauge with a formatted value"){data-zoomable}
+_Example of a Gauge with a formatted value, using JSONata to round the value to 1 decimal place._
+
+If you're passing in a `msg` that needs formatting, before being displayed on the gauge, you can use the `Value` property to format the value.
+
+For example, if you want to round the value to 1 decimal place, you can set the type of Value to "JSONata" and use the following:
+
+```js
+$round(payload, 1) // round to 1 decimal place
+```
+
+You can read more about the JSONata expression language and in particular, it's numeric functions, [here](https://docs.jsonata.org/numeric-functions).
 
 ## Examples
 
