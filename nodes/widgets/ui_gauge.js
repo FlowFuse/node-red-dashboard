@@ -1,5 +1,5 @@
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, asyncEvaluateNodeProperty } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function GaugeNode (config) {
@@ -64,17 +64,11 @@ module.exports = function (RED) {
 
                 // Process the value using TypedInput configuration
                 const processValue = async () => {
-                    let value = msg.payload // default to payload if evaluation fails
+                    const value = msg.payload // default to payload if evaluation fails
 
                     if (config.valueType && config.value) {
-                        RED.util.evaluateNodeProperty(config.value, config.valueType, node, msg, (err, result) => {
-                            if (err) {
-                                node.error(err, msg)
-                                return
-                            }
-                            value = result
-                            msg.payload = value
-                        })
+                        const results = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
+                        msg.payload = results
                     } else {
                         msg.payload = value
                     }
