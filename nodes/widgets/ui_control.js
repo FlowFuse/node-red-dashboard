@@ -364,21 +364,25 @@ module.exports = function (RED) {
                 connection: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
                         const wNode = RED.nodes.getNode(node.id)
-                        let msg = {
-                            payload: 'connect'
+                        if (wNode && typeof wNode.send === 'function') {
+                            let msg = {
+                                payload: 'connect'
+                            }
+                            msg = addConnectionCredentials(RED, msg, conn, ui)
+                            wNode.send(msg)
                         }
-                        msg = addConnectionCredentials(RED, msg, conn, ui)
-                        wNode.send(msg)
                     }
                 },
                 disconnect: function (conn) {
                     if (config.events === 'all' || config.events === 'connect') {
                         const wNode = RED.nodes.getNode(node.id)
-                        let msg = {
-                            payload: 'lost'
+                        if (wNode && typeof wNode.send === 'function') {
+                            let msg = {
+                                payload: 'lost'
+                            }
+                            msg = addConnectionCredentials(RED, msg, conn, ui)
+                            wNode.send(msg)
                         }
-                        msg = addConnectionCredentials(RED, msg, conn, ui)
-                        wNode.send(msg)
                     }
                 },
                 'ui-control': function (conn, id, evt, payload) {
