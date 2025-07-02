@@ -1,0 +1,58 @@
+<script type="text/html" data-help-name="ui-button">
+    <p>Fügt der Benutzeroberfläche eine Schaltfläche hinzu.</p>
+    <p>
+        Das Klicken auf die Schaltfläche erzeugt eine Nachricht mit <code>msg.payload</code>,
+        die auf das <b>Payload</b>-Feld gesetzt ist, und <code>msg.topic</code> auf das <b>Topic</b>-Feld.
+    </p>
+    <h3>HTML-Inhalt</h3>
+    <p>
+        Das Textfeld kann auch verwendet werden, um HTML-Inhalt in der Benutzeroberfläche festzulegen.
+        Dies kann durch Setzen von <code>msg.ui_update.label</code> auf eine HTML-Zeichenkette erfolgen.
+        Dies kann nützlich sein, um Bilder, Links oder andere HTML-Elemente anzuzeigen.
+    </p>
+    <p>
+        Sie können auch den eingebauten "Template"-Knoten von Node-RED verwenden, um das HTML zu generieren, das Sie anzeigen möchten, wenn
+        Sie <code>msg</code>, <code>flow</code> oder <code>global</code> Inhalte rendern möchten.
+    </p>
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Symbol <span class="property-type">string</span></dt>
+        <dd>Rendert ein Material Design-Symbol innerhalb der Schaltfläche. Wir verwenden die Material Design Icons, eine vollständige Liste der verfügbaren Symbole finden Sie <a href="https://pictogrammers.com/library/mdi/">hier</a>. Es ist nicht erforderlich, das "mdi-" Präfix einzuschließen, nur der Name des Symbols.</dd>
+        <dt>Symbolposition<span class="property-type">links | rechts</span></dt>
+        <dd>Wenn "Symbol" definiert ist, steuert diese Eigenschaft, auf welcher Seite des "Labels" das Symbol gerendert wird</dd>
+        <dt>Beschriftung <span class="property-type">string</span></dt>
+        <dd>Der Text, der innerhalb der Schaltfläche angezeigt wird. Wenn nicht angegeben, wird die Schaltfläche nur das Symbol rendern. Es unterstützt HTML-Inhalt</dd>
+        <dt>Zeiger-Down-Ereignis aktivieren <span class="property-type">bool</span></dt>
+        <dd>Wenn aktiviert, sendet die Schaltfläche eine Nachricht beim Zeiger-Down-Ereignis mit der angegebenen Nutzlast. Die Ausgabe enthält <code>msg._event</code>, das den <i>Typ</i> der Interaktion beschreibt, die das Ereignis verursacht.</dd>
+        <dt>Zeiger-Up-Ereignis aktivieren <span class="property-type">bool</span></dt>
+        <dd>Wenn aktiviert, sendet die Schaltfläche eine Nachricht beim Zeiger-Up-Ereignis mit der angegebenen Nutzlast. Die Ausgabe enthält <code>msg._event</code>, das den <i>Typ</i> der Interaktion beschreibt, die das Ereignis verursacht.</dd>
+        <dt>Klick-Ereignis aktivieren <span class="property-type">bool</span></dt>
+        <dd>Wenn aktiviert, sendet die Schaltfläche ein Klick-Ereignis, das ausgelöst wird, wenn sowohl das Up- als auch das Down-Ereignis über der Schaltfläche auftreten. Die Ausgabe enthält <code>msg._event</code>, das den <i>Typ</i> der Interaktion beschreibt, die das Ereignis verursacht.</dd>
+        <dt>Schaltflächenklick emulieren <span class="property-type">bool</span></dt>
+        <dd>Wenn aktiviert, löst jede empfangene Nachricht einen Schaltflächenklick aus, der die entsprechende Nutzlast und das Thema sendet. Beachten Sie, dass das "Klick-Ereignis aktivieren" aktiviert sein muss</dd>
+        <dt>Hintergrundfarbe<span class="property-type">string</span></dt>
+        <dd>Hintergrundfarbe für die Schaltfläche, gültige Werte wie <b>grün</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>grün-dunkler-2</b>, überprüfen Sie <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> für Hilfe, senden Sie einen leeren String, um die Standard-Designfarbe zu verwenden</dd>
+        <dt>Textfarbe<span class="property-type">string</span></dt>
+        <dd>Färben Sie den Text auf der Schaltfläche, gültige Werte wie <b>grün</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>, senden Sie einen leeren String, um die Standard-Designfarbe zu verwenden.
+        <dt>Symbolfarbe<span class="property-type">string</span></dt>
+        <dd>Farbe für das Symbol auf der Schaltfläche (wenn Symbol konfiguriert), gültige Werte wie <b>grün</b>/<b>#a5a5a5</b>/<b>rgb(165,165,165)</b>/<b>grün-dunkler-2</b>, überprüfen Sie <a href="https://vuetifyjs.com/en/styles/colors/#material-colors"> Vuetify Colors</a> für Hilfe, senden Sie einen leeren String, um die Standard-Designfarbe zu verwenden</dd>
+    </dl>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Überschreibt die auf der Schaltfläche angezeigte Beschriftung</dd>
+        <dt class="optional">icon <span class="property-type">string</span></dt>
+        <dd>Überschreibt das in der ursprünglichen Konfiguration definierte Symbol</dd>
+        <dt class="optional">iconPosition <span class="property-type">'links' | 'rechts'</span></dt>
+        <dd>Ändert, auf welcher Seite der Beschriftung das Symbol gerendert wird</dd>
+        <dt class="optional">buttonColor <span class="property-type">string</span></dt>
+        <dd>Überschreibt die Standard-Schaltflächenfarbe</dd>
+        <dt class="optional">textColor <span class="property-type">string</span></dt>
+        <dd>Überschreibt die Standardfarbe des Schaltflächentextes</dd>
+        <dt class="optional">iconColor <span class="property-type">string</span></dt>
+        <dd>Überschreibt die Standardfarbe des Symbols (falls vorhanden)</dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügt zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+    </dl>
+</script>
