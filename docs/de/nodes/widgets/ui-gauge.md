@@ -9,6 +9,9 @@ props:
     Stil:
         description: Definiert den Stil des gerenderten Bogens, "Nadel" oder "Abgerundet". (nur anwendbar für 3/4 und Halb-Messgeräte)
         dynamic: true
+    Wert:
+        description: Der Wert, der auf dem Messgerät angezeigt werden soll. Kann eine Eigenschaft der Nachricht sein, z.B. `msg.payload` oder `msg.meinProperty`, eine Flow/Global-Kontextvariable oder ein statischer Wert. Sie können auch den Typ "JSONata" verwenden, um einen JSONata-Ausdruck auszuwerten und Berechnungen am Wert durchzuführen, z.B. <code>$round(payload, 1)</code> zum Runden auf 1 Dezimalstelle.
+        dynamic: true
     Bereich (min):
         description: Der kleinste Wert, der auf dem Messgerät angezeigt werden kann
         dynamic: true

@@ -1,5 +1,5 @@
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, asyncEvaluateNodeProperty } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function GaugeNode (config) {
@@ -61,6 +61,26 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
                     }
                 }
+
+                // Process the value using TypedInput configuration
+                const processValue = async () => {
+                    const value = msg.payload // default to payload if evaluation fails
+
+                    if (config.valueType && config.value) {
+                        const results = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
+                        msg.payload = results
+                    } else {
+                        msg.payload = value
+                    }
+                }
+
+                try {
+                    await processValue()
+                } catch (err) {
+                    node.warn('Error evaluating value property: ' + err.message)
+                    // msg.payload remains unchanged on error
+                }
+
                 msg = await appendTopic(RED, config, node, msg)
                 return msg
             }
