@@ -1,0 +1,23 @@
+{
+    "ui-template": {
+        "label": {
+            "scope": "Typ",
+            "widget-group": "Widget (Gruppenbereich)",
+            "widget-page": "Widget (Seitenbereich)",
+            "widget-ui": "Widget (UI-Bereich)",
+            "site-style": "CSS (Alle Seiten)",
+            "page-style": "CSS (Einzelseite)",
+            "ui": "UI",
+            "page": "Seite",
+            "group": "Gruppe",
+            "size": "Größe",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)",
+            "pass-through": "Nachrichten vom Eingang durchleiten.",
+            "store-state": "Ausgabemeldungen zum gespeicherten Zustand hinzufügen.",
+            "template": "Vorlage",
+            "expand": "Erweitern",
+            "resend": "Letzten Wert bei Aktualisierung neu laden."
+        }
+    }
+}

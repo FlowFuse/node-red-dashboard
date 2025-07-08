@@ -1,0 +1,71 @@
+<script type="text/html" data-help-name="ui-table">
+    <p>
+        Zeigen Sie komplexe Datensätze einfach an und verwalten Sie sie mit dem ui-table-Widget.
+    </p>
+    <h3>Eingabe</h3>
+    <p>
+        Das ui-table-Widget erfordert ein Array oder ein Objekt von Daten, die über <code>msg.payload</code> gesendet werden.
+        Wenn ein Array bereitgestellt wird, rendert die Tabelle eine Zeile für jedes Objekt innerhalb des Arrays und standardmäßig eine Spalte für jede Eigenschaft in den Objekten.
+        Wenn ein Objekt bereitgestellt wird, rendert die Tabelle eine einzelne Zeile mit Spalten für jede Eigenschaft im Objekt.
+        Der für eine Zeile angezeigte Text kann entweder ein Schlüssel oder eine Zeichenfolge sein. Die Auswahl von <code>key</code> sucht den Wert des benannten Schlüssels im Objekt, während eine Zeichenfolge die Zeichenfolge so anzeigt, wie sie ist.
+    </p>
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Maximale Zeilen <span class="property-type">num</span></dt>
+        <dd>
+            Definiert die maximale Anzahl von Datenzeilen, die in der Tabelle gerendert werden sollen.
+            Überschüssige Zeilen sind über die Paginierungssteuerung verfügbar. Auf "0" setzen, um keine Paginierung zu verwenden.
+        </dd>
+        <dt>Aktion <span class="property-type">anhängen | ersetzen</span></dt>
+        <dd>
+            Bestimmt die Aktion, die ausgeführt wird, wenn neue Daten eintreffen, und ob die neuen Daten an das Diagramm angehängt oder die vorhandenen Inhalte ersetzt werden.
+        </dd>
+        <dt>Breakpoint <span class="property-type">str | num</span></dt>
+        <dd>
+            Steuert, wann eine Tabelle stattdessen als Karte gerendert wird, wobei jede Spalte aus einer Zeile als Zeile in einer größeren, eine Zeile enthaltenden Karte für einen einzelnen Eintrag gerendert wird. Der Breakpoint wird basierend auf der <b>Breite der Tabelle</b> gemessen, nicht auf der Breite des Bildschirms.
+        </dd>
+        <dt>Auswahl <span class="property-type">keine | klicken | Kontrollkästchen</span></dt>
+        <dd>
+            Definiert jede Interaktion, die in der Tabelle verfügbar ist. Dies wird Ereignisse mit den jeweiligen Auswahlvorgängen auslösen.
+        </dd>
+        <dt>Suche anzeigen <span class="property-type">boolean</span></dt>
+        <dd>Zeigt eine Suchleiste über der Tabelle an, die eine textbasierte Filterung der Daten ermöglicht.</dd>
+        <dt>Automatische Spalten <span class="property-type">boolean</span></dt>
+        <dd>
+            Wenn wahr, zeigt die Tabelle automatisch alle bereitgestellten Daten an.
+            Wenn falsch, haben Sie viel mehr Kontrolle über das Rendering jeder Spalte.
+        </dd>
+        <dt>Spalten <span class="property-type">array</span></dt>
+        <dd>Eine Liste der Spalten, die in der Tabelle gerendert werden sollen. Nur eine verfügbare Option, wenn "Automatische Spalten" auf "false" gesetzt ist.</dd>
+    </dl>
+    <h3>Zelltypen</h3>
+    <p>Die folgenden Details beschreiben die verfügbaren Zelltypen, die in Ihren Tabellen verwendet werden können</p>
+    <dl class="message-properties">
+        <dt>Text <span class="property-type">any</span></dt>
+        <dd>Rendert den bereitgestellten Rohwert ohne jegliche Modifikation oder Formatierung</dd>
+        <dt>HTML <span class="property-type">string</span></dt>
+        <dd>Respektiert Zeilenumbrüche (z.B. <code>\n</code>) und grundlegende HTML-Tags.</dd>
+        <dt>Link <span class="property-type">url</span></dt>
+        <dd>Rendert die Zelle als Hyperlink. Der bereitgestellte "Link"-Wert sollte eine gültige URL sein.</dd>
+        <dt>Farbe <span class="property-type">color</span></dt>
+        <dd>Rendert die Zelle als farbiges Feld. Das "Farbe"-Feld sollte eine gültige CSS-Farbe enthalten.</dd>
+        <dt>Haken/Kreuz <span class="property-type">boolean</span></dt>
+        <dd>Rendert die Zelle als Haken oder Kreuz. Das "Wert"-Feld sollte einen booleschen Wert enthalten.</dd>
+        <dt>Fortschritt <span class="property-type">number</span></dt>
+        <dd>Rendert die Zelle als Fortschrittsbalken. Das `Wert`-Feld sollte eine Zahl zwischen 0 und 100 enthalten.</dd>
+        <dt>Sparkline - Trend <span class="property-type">array</span></dt>
+        <dd>Rendert die Zelle als kleines Liniendiagramm ohne Achsen. Der Wert sollte ein Array von Zahlen sein, die geplottet werden sollen.</dd>
+        <dt>Sparkline - Balken <span class="property-type">array</span></dt>
+        <dd>Rendert die Zelle als kleines Balkendiagramm ohne Achsen. Der Wert sollte ein Array von Zahlen sein, die geplottet werden sollen.</dd>
+        <dt>Schaltfläche <span class="property-type">string</span></dt>
+        <dd>Rendert eine interaktive Schaltfläche in der Zelle. Wird ein <code>msg.action</code> von "button_click" und <code>msg.column</code> des entsprechenden Schlüssels auslösen.</dd>
+        <dt>Zeilennummer <span class="property-type">number</span></dt>
+        <dd>Erfordert keinen "Schlüssel", da dies nur die Zeilennummer (1 -> n) rendert.</dd>
+        <dt>Bild <span class="property-type">url</span></dt>
+        <dd>
+            Rendert die Zelle als Bild. Der bereitgestellte "Bild"-Wert sollte eine gültige URL sein.
+            Eine Daten-URL wird auch für base64-kodierte Bilder unterstützt.
+            Wenn eine ungültige URL angegeben wird, erscheint ein leerer Raum.
+        </dd>
+    </dl>
+</script>

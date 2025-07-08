@@ -1,0 +1,59 @@
+<script type="text/html" data-help-name="ui-chart">
+    <p>Weitere Details und Beispiele finden Sie in der <a href="https://dashboard.flowfuse.com" target="_blank">Online-Dokumentation</a> für das Dashboard.</p>
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Beschriftung <span class="property-type">string</span></dt>
+        <dd>Text, der über dem gerenderten Diagramm im Dashboard angezeigt wird.</dd>
+        <dt>Typ <span class="property-type">Linie | Balken | Streuung | Kreis | Donut | Histogramm</span></dt>
+        <dt>Interpolation <span class="property-type">Linear | Schritt | Bezier | Kubisch | Kubisch Mono</span></dt>
+        <ul>
+            <li> <b>linear</b> : Erstellt gerade Linien zwischen Datenpunkten und erzeugt ein Standard-Liniendiagramm.</li>
+            <li> <b>schritt</b> : Erstellt stufenartige Übergänge zwischen Punkten, nützlich zur Darstellung von Änderungen, die in Stufen erfolgen.</li>
+            <li> <b>bezier</b> : Zeichnet eine glatte, geschwungene Linie mit subtiler Spannung und bietet einen fließenden Übergang zwischen Punkten.</li>
+            <li> <b>kubisch</b> : Zeichnet ein geschwungenes kubisches Liniendiagramm mit Spannung.</li>
+            <li> <b>kubisch-mono</b> : Ähnlich wie kubisch, stellt jedoch monotones Verhalten sicher.</li>
+        </ul>
+        <dd>Wählen Sie den Diagrammtyp, mit dem Sie Daten rendern möchten. Beachten Sie, dass für verschiedene Diagrammtypen unterschiedliche Datenstrukturen akzeptiert werden.</dd>
+        <dt>Legende anzeigen <span class="property-type">boolean</span></dt>
+        <dd>Definiert, ob eine Legende zwischen dem Titel und dem Diagramm angezeigt wird. Jedes Label wird von <code>msg.topic</code> gesteuert.</dd>
+        <dt>Aktion <span class="property-type">Anhängen | Ersetzen</span></dt>
+        <dd>
+            Definieren Sie, wie neue Daten zum Diagramm hinzugefügt werden. "Anhängen" behält vorhandene Daten bei, "Ersetzen" entfernt alle vorhandenen Daten.
+        </dd>
+        <dt>X-Achsen-Typ <span class="property-type">Linear | Kategorisch | Zeitachse | Radial | Bins</span></dt>
+        <dd>
+            Für Diagramme mit einer X-Achse ermöglicht diese Option die Anpassung des Achsentyps.
+        </dd>
+        <dt>X-Achsen-Format <span class="property-type">HH:mm:ss | HH:mm | YYYY-MM-DD | DD/MM | dd HH:mm | benutzerdefiniert | automatisch</span></dt>
+        <dd>Definiert, wie die Werte auf der Achse angezeigt werden, wenn der X-Achsen-Typ <code>'zeitachse'</code> ist.
+            Siehe <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">hier</a> für eine Übersicht über alle verfügbaren Luxon-Token.  
+        </dd>
+        <dt>Eigenschaften <span class="property-type">string</span></dt>
+        <dd>
+            <p><b>Serien:</b> Steuert, wie Sie die Datenstromserien in dieses Widget einfügen möchten. Der Standard ist <code>msg.topic</code>, wobei separate Themen in ihren jeweiligen Diagrammen zu einer neuen Linie/Balken gerendert werden. Sie können auch ein JSON-Array bereitstellen, das mehrere Datenpunkte aus einem einzelnen msg-Objekt darstellt.</p>
+            <p><b>X:</b> Definiert, welche Daten beim Rendern des x-Werts eines Datenpunkts verwendet werden sollen.</p>
+            <p><b>Y:</b> Definiert, wie der y-Wert eines Datenpunkts gerendert werden soll.</p>
+        </dd>
+    </dl>
+    <h3>Eingabe</h3>
+    <p>Daten können in den Diagrammknoten in verschiedenen Formaten eingegeben werden,
+    abhängig vom "X-Achsen-Typ" (z.B. Linear, Kategorisch, Zeitachse).</p>
+    <dl class="message-properties">
+        <dt>Numerisch <span class="property-type">Linear | Kategorisch | Zeitachse</span></dt>
+        <dd><pre>msg.payload = 5</pre> Ein einzelner Wert, der auf der Y-Achse geplottet wird, und die aktuelle Einspeisezeit als X-Wert.</dd>
+        <dt>Serien <span class="property-type">Linear | Kategorisch | Zeitachse</span></dt>
+        <dd><pre>msg.topic = 'Serie 1'</pre> Mehrere Serien können
+            im selben Diagramm angezeigt werden, indem für jede Eingabenachricht ein anderer <code>msg.topic</code>-Wert verwendet wird.</dd>
+        <dt>Objekt <span class="property-type">Linear</span></dt>
+        <dd><pre>msg.payload = {x: 10, y: 15}</pre>Dieser Datentyp wird nur
+            bei linearen Diagrammen unterstützt, z.B. "Linien-" oder "Streuungs-" Diagramme.</dd>
+    </dl>
+    <h3>Dynamische Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>msg.action <span class="property-type">anhängen | ersetzen</span></dt>
+        <dd>
+            Kann verwendet werden, um die in der Knoten-Konfiguration festgelegte Standardaktions-Eigenschaft zu überschreiben.
+            Verwenden Sie dies, wenn Sie manchmal Daten "anhängen" und manchmal "ersetzen" möchten.
+        </dd>
+    </dl>
+</script>
