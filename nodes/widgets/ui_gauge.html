@@ -122,6 +122,10 @@
             return true
         }
 
+        function c_ (path, scope = 'ui-gauge') {
+            return RED._(`@flowfuse/node-red-dashboard/${scope}:${path}`)
+        }
+
         RED.nodes.registerType('ui-gauge', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
