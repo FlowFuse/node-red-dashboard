@@ -42,10 +42,6 @@
             return minCovered && !extras && this.segments.length === unique.size
         }
 
-        function hasProperty (obj, prop) {
-            return Object.prototype.hasOwnProperty.call(obj, prop)
-        }
-
         const DEFAULTS = {
             'gauge-tank': {
                 min: 0,
@@ -127,7 +123,7 @@
                 name: { value: '' },
                 group: { type: 'ui-group', required: true },
                 order: { value: 0 },
-                value: { value: 'payloads', required: false},
+                value: { value: 'payloads', required: false },
                 valueType: { value: 'msg' },
                 width: {
                     value: 3,
@@ -285,7 +281,7 @@
                 console.log('this.value', this.value)
                 if (!this.value) {
                     // set the TypedInput value to msg
-                    $("#node-input-value").typedInput('value', 'payload');
+                    $('#node-input-value').typedInput('value', 'payload')
                 }
 
                 // now event handlers are set up, set the initial state of the form
