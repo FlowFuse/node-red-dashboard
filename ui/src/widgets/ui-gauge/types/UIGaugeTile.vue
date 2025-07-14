@@ -1,5 +1,5 @@
 <template>
-    <div class="nrdb-ui-gauge-tile" :style="{'background-color': segment.color, 'color': segment.textColor}">
+    <div class="nrdb-ui-gauge-tile" :style="{'background-color': segment.color, 'color': segment.textColor}" @click="onClick">
         <label>{{ segment.text }}</label>
     </div>
 </template>
@@ -8,8 +8,11 @@
 
 import UIGaugeMethods from '../ui-gauge.js'
 
+import { mapState } from 'vuex' // eslint-disable-line import/order
+
 export default {
     name: 'DBUIGaugeTile',
+    inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
@@ -17,6 +20,7 @@ export default {
         value: { type: Number, default: 0 }
     },
     computed: {
+        ...mapState('data', ['messages']),
         segment () {
             console.log('DBUIGaugeTile segment', this.props.segments, this.value)
             const segment = UIGaugeMethods.getSegment(this.props.segments, this.value)
@@ -35,6 +39,24 @@ export default {
                 textColor: segment?.textColor ?? 'var(--v-theme-on-primary)',
                 from: segment?.from ?? 0
             }
+        }
+    },
+    methods: {
+        onClick (evt) {
+            const payload = {
+                id: this.id,
+                value: this.value,
+                segment: this.segment
+            }
+            const msg = this.messages[this.id] || {}
+            this.send({
+                ...msg,
+                payload,
+                action: 'click'
+            })
+        },
+        send (msg) {
+            this.$socket.emit('widget-send', this.id, msg)
         }
     }
 }
