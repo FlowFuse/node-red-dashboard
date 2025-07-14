@@ -6,6 +6,12 @@
     input.gauge-color::-webkit-color-swatch {
         border: none;
     }
+    #node-input-segments-container-div {
+        min-height: 120px;
+        resize: vertical;
+        display: block;
+        width: calc(100% - 30px)
+    }
 </style>
 
 <script type="text/javascript">
@@ -390,7 +396,7 @@
     <span id="node-input-validation-segments" style="color: var(--red-ui-text-color-error, #910000)"></span>
     <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
-        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
+        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll;">
             <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b data-i18n="ui-gauge.errors.unique"></b></span>
             <ol id="node-input-segments-container" style="list-style-type:none; margin:0;"></ol>
         </div>
@@ -403,7 +409,7 @@
         </a> -->
     </div>
     <div class="form-row">
-        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:3px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
         <a href="#" class="editor-button editor-button-small" id="node-input-get-defaults" style="margin-top:4px;"><span data-i18n="ui-gauge.label.defaults"></span></a>
     </div>
     <div class="form-row">
