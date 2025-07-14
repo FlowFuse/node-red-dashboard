@@ -264,7 +264,17 @@
                 }
 
                 $('#node-input-add-segment').click(function () {
-                    generateSegment($('#node-input-segments-container').children().length + 1, {})
+                    const priorSegment = $('#node-input-segments-container').children().last()
+                    const priorSegmentFrom = priorSegment.find('.node-input-segment-from').val() || 0
+                    const priorSegmentColor = priorSegment.find('.node-input-segment-color').val() || '#000000'
+                    const priorSegmentText = priorSegment.find('.node-input-segment-text').val() || ''
+                    const priorSegmentTextType = priorSegment.find('.node-input-segment-text-type').val() || 'label'
+                    generateSegment($('#node-input-segments-container').children().length + 1, {
+                        from: +priorSegmentFrom + 1,
+                        color: priorSegmentColor,
+                        text: priorSegmentText,
+                        textType: priorSegmentTextType
+                    })
                     $('#node-input-segments-container-div').scrollTop($('#node-input-segments-container-div').get(0).scrollHeight)
                 })
 
