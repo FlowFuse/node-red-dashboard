@@ -1,15 +1,17 @@
 <template>
-    <v-progress-linear
-        v-model="value"
-        :disabled="!state.enabled"
-        :class="className"
-        :color="color || 'primary'"
-        height="20"
-    >
-        <template v-if="label" #default="{ value: progressValue }">
-            <strong>{{ label }}: {{ Math.ceil(progressValue) }}%</strong>
-        </template>
-    </v-progress-linear>
+    <div class="nrdb-ui-progress-wrapper" :style="{ 'border-color': color ? color : 'rgb(var(--v-theme-primary))' }">
+        <v-progress-linear
+            v-model="value"
+            :disabled="!state.enabled"
+            :class="className"
+            :color="color || 'primary'"
+            :height="'100%'"
+        >
+            <template v-if="label" #default="{ value: progressValue }">
+                <strong>{{ label }}: {{ Math.ceil(progressValue) }}%</strong>
+            </template>
+        </v-progress-linear>
+    </div>
 </template>
 
 <script>
@@ -53,9 +55,19 @@ export default {
 </script>
 
 <style lang="scss">
+.nrdb-ui-progress-wrapper {
+    height: 100%;
+    padding: 3px;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+}
 // class auto-added by the layout engine
 .nrdb-ui-progress {
     display: flex;
     align-items: center;
+}
+.nrdb-ui-progress .v-progress-linear {
+    height: 100% !important;
 }
 </style>
