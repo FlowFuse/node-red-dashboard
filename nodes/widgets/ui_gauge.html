@@ -12,6 +12,13 @@
         display: block;
         width: calc(100% - 30px)
     }
+    #node-input-container-tile-options {
+        margin-left: 100px;
+        padding-left: 6px;
+    }
+    #node-input-container-floating-title-position {
+        margin-left: 24px;
+    }
 </style>
 
 <script type="text/javascript">
@@ -150,6 +157,8 @@
                 gtype: { value: 'gauge-half' },
                 gstyle: { value: 'needle' },
                 title: { value: 'gauge' },
+                alwaysShowTitle: { value: false },
+                floatingTitlePosition: { value: 'top-left' },
                 units: { value: 'units' },
                 icon: { value: '' },
                 prefix: { value: '' },
@@ -245,10 +254,16 @@
                         $('#node-input-container-sizes').hide()
                         $('#node-input-container-gstyle').hide()
                         $('#node-input-container-label-extras').hide()
+                        if (type === 'gauge-tile') {
+                            $('#node-input-container-tile-options').show()
+                        } else {
+                            $('#node-input-container-tile-options').hide()
+                        }
                     } else {
                         $('#node-input-container-sizes').show()
                         $('#node-input-container-gstyle').show()
                         $('#node-input-container-label-extras').show()
+                        $('#node-input-container-tile-options').hide()
                     }
 
                     if (isInitialised && isChanging && isDefault(oldType)) {
@@ -342,6 +357,7 @@
                     }
                     node.segments.push(s)
                 })
+                this.alwaysShowTitle = $('#node-input-alwaysShowTitle').is(':checked')
             }
         })
     })()
@@ -433,6 +449,20 @@
         <div class="form-row">
             <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
             <input type="text" id="node-input-title">
+        </div>
+        <div class="form-row" id="node-input-container-tile-options">
+            <label for="node-input-alwaysShowTitle" style="display:flex; align-items: center; gap: 6px; width:auto;">
+                <input type="checkbox" id="node-input-alwaysShowTitle" style="width:auto; margin: 0; vertical-align: middle;" />
+                <span data-i18n="ui-gauge.label.alwaysShowTitle">Always Show Label</span>
+                <div id="node-input-container-floating-title-position">
+                    <select id="node-input-floatingTitlePosition" style="width:150px">
+                        <option value="top-left" data-i18n="ui-gauge.label.positionTopLeft">Top Left</option>
+                        <option value="top-right" data-i18n="ui-gauge.label.positionTopRight">Top Right</option>
+                        <option value="bottom-left" data-i18n="ui-gauge.label.positionBottomLeft">Bottom Left</option>
+                        <option value="bottom-right" data-i18n="ui-gauge.label.positionBottomRight">Bottom Right</option>
+                    </select>
+                </div>
+            </label>
         </div>
         <div id="node-input-container-label-extras">
             <div class="form-row form-row-flex">

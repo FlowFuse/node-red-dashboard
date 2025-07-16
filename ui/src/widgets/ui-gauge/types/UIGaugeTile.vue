@@ -1,6 +1,7 @@
 <template>
     <div class="nrdb-ui-gauge-tile" :style="{'background-color': segment.color, 'color': segment.textColor}" @click="onClick">
         <label>{{ segment.text }}</label>
+        <span v-if="props.alwaysShowTitle" class="nrdb-ui-gauge-tile-floating-label" :style="floatingPosition">{{ props.label }}</span>
     </div>
 </template>
 
@@ -39,6 +40,31 @@ export default {
                 textColor: segment?.textColor ?? 'var(--v-theme-on-primary)',
                 from: segment?.from ?? 0
             }
+        },
+        floatingPosition () {
+            const pos = this.props.floatingTitlePosition
+            const padding = '12px'
+            if (pos === 'top-right') {
+                return {
+                    top: padding,
+                    right: padding
+                }
+            } else if (pos === 'bottom-left') {
+                return {
+                    bottom: padding,
+                    left: padding
+                }
+            } else if (pos === 'bottom-right') {
+                return {
+                    bottom: padding,
+                    right: padding
+                }
+            }
+            // default top-left
+            return {
+                top: padding,
+                left: padding
+            }
         }
     },
     methods: {
@@ -75,8 +101,15 @@ export default {
         text-align: center;
         font-size: 16px; // fallback for browsers that do not support cqw
         // font-size: 12cqw;
-        font-size: min(11cqw, max(40cqmin, .5rem));
+        font-size: min(16cqw, max(40cqmin, .5rem));
         line-height: normal;
     }
+}
+
+.nrdb-ui-gauge-tile-floating-label {
+    position: absolute;
+    opacity: 0.6;
+    font-size: min(5cqw, max(25cqmin, .4rem));
+    line-height: min(5cqw, max(25cqmin, .4rem));
 }
 </style>
