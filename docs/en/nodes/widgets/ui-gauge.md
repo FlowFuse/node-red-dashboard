@@ -24,6 +24,12 @@ props:
     Label:
         description: Text shown above the gauge, labelling what the gauge is showing.
         dynamic: true
+    Always Show Label:
+        description: (only applicable to Tile gauges) If true, the label will be shown at all times.
+        dynamic: false
+    Floating Label Position:
+        description: (only applicable to Tile gauges) The position of the label within the tile. Can be "top-left", "top-right", "bottom-left", or "bottom-right".
+        dynamic: false
     Prefix:
         description: Text to be added _before_ the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
         dynamic: true
@@ -171,6 +177,9 @@ You can read more about the JSONata expression language and in particular, it's 
 
 ![Examples of some Tile Gauges](/images/node-examples/ui-gauge-tiles.png "Examples of some Tile Gauges"){data-zoomable}
 *Examples of some Tile Gauges*
+
+![Examples of Tile gauges with the 'Always Show Label' option enabled](/images/node-examples/ui-gauge-tile-labels.png "Examples of Tile gauges with the 'Always Show Label' option enabled"){data-zoomable}
+*Examples of Tile gauges with the 'Always Show Label' option enabled*
 
 ### Battery <AddedIn version="1.15.0" />
 

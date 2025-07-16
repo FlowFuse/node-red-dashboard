@@ -93,8 +93,14 @@ module.exports = function (RED) {
         config.sizeGap = Number(config.sizeGap)
         config.sizeKeyThickness = Number(config.sizeKeyThickness)
 
-        config.segments.forEach(segment => {
+        config.segments.forEach(async segment => {
             segment.from = Number(segment.from)
+            // evaluate the text and textType properties
+            segment.text = segment.text || ''
+            segment.textType = segment.textType || 'label'
+            if (segment.textType === 'env' || segment.textType === 'str') {
+                segment.text = await asyncEvaluateNodeProperty(RED, segment.text, segment.textType, node, {})
+            }
         })
 
         // inform the dashboard UI that we are adding this node
