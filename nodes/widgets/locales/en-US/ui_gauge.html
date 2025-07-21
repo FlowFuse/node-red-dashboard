@@ -32,6 +32,13 @@
         <dt>Sizes (Segments) <span class="property-type">number</span></dt>
         <dd>A numerical value, in pixels, that defines the thickness of the segments rendered in the gauge.</dd>
     </dl>
+    <h3>Properties (Tile Gauge Only)</h3>
+    <dl class="message-properties">
+        <dt>Always Show Label <span class="property-type">boolean</span></dt>
+        <dd>If true, the label will be shown at all times.</dd>
+        <dt>Floating Label Position <span class="property-type">str</span></dt>
+        <dd>The position of the label within the tile. Can be <i>"top-left"</i>, <i>"top-right"</i>, <i>"bottom-left"</i>, or <i>"bottom-right"</i>.</dd>
+    </dl>
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">
