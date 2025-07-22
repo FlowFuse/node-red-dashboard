@@ -406,7 +406,7 @@ export default {
                     msg._datapoint.forEach((d) => {
                         const label = d.category
                         if (label !== null && label !== undefined) {
-                          this.addPoints(msg.payload, d, label)
+                            this.addPoints(msg.payload, d, label)
                         }
                     })
                 } else {
