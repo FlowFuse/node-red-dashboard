@@ -188,7 +188,7 @@ export default {
         }
         // Do we show the legend?
         let showLegend = this.props.showLegend
-        if (this.props.categoryType === 'none') {
+        if (this.props.categoryType === 'none' || this.props.category === '') {
             // no category, so no legend
             showLegend = false
         }
