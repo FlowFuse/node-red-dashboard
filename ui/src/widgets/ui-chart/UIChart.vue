@@ -188,7 +188,7 @@ export default {
         }
         // Do we show the legend?
         let showLegend = this.props.showLegend
-        if (this.props.categoryType === 'none') {
+        if (this.props.categoryType === 'none' || this.props.category === '') {
             // no category, so no legend
             showLegend = false
         }
@@ -385,7 +385,9 @@ export default {
                     const p = m.payload
                     const d = m._datapoint // server-side we compute a chart friendly format
                     const label = d.category
-                    this.addPoints(p, d, label)
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(p, d, label)
+                    }
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
@@ -393,7 +395,9 @@ export default {
                 payload.forEach((p, i) => {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
                     const label = d.category
-                    this.addPoints(p, d, label)
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(p, d, label)
+                    }
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
@@ -401,12 +405,16 @@ export default {
                     // single message has multiple datapoints to render (e.g. when Series is set to JSON)
                     msg._datapoint.forEach((d) => {
                         const label = d.category
-                        this.addPoints(msg.payload, d, label)
+                        if (label !== null && label !== undefined) {
+                            this.addPoints(msg.payload, d, label)
+                        }
                     })
                 } else {
                     const d = msg._datapoint // server-side we compute a chart friendly format
                     const label = d.category
-                    this.addPoints(msg.payload, d, label)
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(msg.payload, d, label)
+                    }
                 }
             } else {
                 // no payload

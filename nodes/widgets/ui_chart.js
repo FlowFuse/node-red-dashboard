@@ -93,7 +93,7 @@ module.exports = function (RED) {
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
-                if (config.categoryType === 'property') {
+                if (config.categoryType === 'property' && config.category !== '') {
                     series = getProperty(p, config.category)
                 }
 

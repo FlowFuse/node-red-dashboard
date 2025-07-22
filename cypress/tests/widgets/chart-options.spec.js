@@ -127,7 +127,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - chart options', () => {
         })
     })
 
-    it('hides legend when option is unchecked', () => {
+    it('hides legend when option is unchecked, and there is a category', () => {
         const overrides = [
             {
                 id: 'chart-1', // the ID in the base flow fixture (required)
