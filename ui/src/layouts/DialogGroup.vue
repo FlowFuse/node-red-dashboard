@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
     <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
-        <v-card title="Dialog">
+        <v-card>
             <template v-if="group.showTitle" #title>
                 {{ group.name }}
             </template>

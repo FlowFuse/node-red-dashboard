@@ -102,7 +102,7 @@
         "topic": "topic",
         "topicType": "str",
         "thumbLabel": true,
-        "min": 0,
+        "min": "20",
         "max": "100",
         "step": 1,
         "className": "",

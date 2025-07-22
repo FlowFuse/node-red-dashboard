@@ -13,6 +13,13 @@ export default defineConfig({
             vue: 'vue/dist/vue.esm-bundler.js'
         }
     },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler'
+            }
+        }
+    },
     plugins: [vue(),
         VitePWA({
             strategies: 'injectManifest',
@@ -24,7 +31,7 @@ export default defineConfig({
             manifest: false,
 
             injectManifest: {
-                maximumFileSizeToCacheInBytes: 3000000,
+                maximumFileSizeToCacheInBytes: process.env.NODE_ENV === 'development' ? 6000000 : 3350000,
                 globPatterns: ['**/*.{js,css,html,svg,png,ico,ttf,eot,woff,woff2}']
             },
 

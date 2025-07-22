@@ -64,7 +64,11 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        ui.register(null, null, node, config, evts)
+        if (ui) {
+            ui?.register(null, null, node, config, evts)
+        } else {
+            node.error('No UI configured')
+        }
     }
     RED.nodes.registerType('ui-notification', NotificationNode)
 }

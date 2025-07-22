@@ -9,8 +9,8 @@ const { Layout } = DefaultTheme
   <Layout>
     <!-- <template #layout-top>
         <AdvertBanner href="https://flowfuse.com/webinars/2024/workshop-dashboard/">
-            <b>Dashboard 2.0 Workshop: </b> Join us for a free workshop
-            on how to use Dashboard 2.0 in Node-RED on July 2nd - <span class="underline">Register Now</span>
+            <b>FlowFuse Dashboard Workshop: </b> Join us for a free workshop
+            on how to use FlowFuse Dashboard in Node-RED on July 2nd - <span class="underline">Register Now</span>
         </AdvertBanner>
     </template> -->
   </Layout>

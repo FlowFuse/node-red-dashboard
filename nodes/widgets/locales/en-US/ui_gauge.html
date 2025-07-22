@@ -12,6 +12,8 @@
         <dd>Collection of objects that define the relevant color for a given value</dd>
         <dt>Label <span class="property-type">list</span></dt>
         <dd>The label text shown above the gauge</dd>
+        <dt>Value <span class="property-type">typed input</span></dt>
+        <dd>Configure how the gauge value is determined. Can be set to use <code>msg.payload</code>, a specific message property (using JSONata), a flow/global context variable, or a static value. If not configured, defaults to <code>msg.payload</code>. Example: Use JSONata expression <code>$round(payload, 1)</code> to round the payload value to 1 decimal place.</dd>
         <dt>Defaults <span class="property-type">list</span></dt>
         <dd>Reset to default min/max and segments based on the selected gauge type</dd>
     </dl>
@@ -29,6 +31,13 @@
         <dd>A numerical value, in pixels, that defines the gap between the arc and the segments.</dd>
         <dt>Sizes (Segments) <span class="property-type">number</span></dt>
         <dd>A numerical value, in pixels, that defines the thickness of the segments rendered in the gauge.</dd>
+    </dl>
+    <h3>Properties (Tile Gauge Only)</h3>
+    <dl class="message-properties">
+        <dt>Always Show Label <span class="property-type">boolean</span></dt>
+        <dd>If true, the label will be shown at all times.</dd>
+        <dt>Floating Label Position <span class="property-type">str</span></dt>
+        <dd>The position of the label within the tile. Can be <i>"top-left"</i>, <i>"top-right"</i>, <i>"bottom-left"</i>, or <i>"bottom-right"</i>.</dd>
     </dl>
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>

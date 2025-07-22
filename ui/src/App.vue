@@ -3,7 +3,7 @@
         <div v-if="error" class="nrdb-placeholder-container">
             <div class="nrdb-placeholder">
                 <img src="./assets/logo.png">
-                <h1>Node-RED Dashboard 2.0</h1>
+                <h1>FlowFuse Dashboard</h1>
                 <img src="./assets/disconnected.png">
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <p :class="'status-warning'" v-html="error.message" />
@@ -29,7 +29,7 @@
         <div v-else class="nrdb-placeholder-container">
             <div class="nrdb-placeholder">
                 <img src="./assets/logo.png">
-                <h1>Node-RED Dashboard 2.0</h1>
+                <h1>FlowFuse Dashboard</h1>
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <p :class="'status-' + status.type" v-html="status.msg" />
             </div>
@@ -60,6 +60,25 @@ export default {
     data () {
         return {
             loading: true
+        }
+    },
+    head () {
+        const links = []
+        // get default dashboard
+        if (this.dashboards) {
+            const dashboards = Object.keys(this.dashboards)
+            const id = dashboards.length ? dashboards[0] : undefined
+            const dashboard = this.dashboards[id]
+            if (dashboard.allowInstall) {
+                links.push({
+                    rel: 'manifest',
+                    crossorigin: 'use-credentials',
+                    href: './manifest.webmanifest'
+                })
+            }
+        }
+        return {
+            link: links
         }
     },
     computed: {
@@ -142,7 +161,7 @@ export default {
         }
     },
     created () {
-        this.$socket.on('ui-config', (topic, payload) => {
+        this.$socket?.on('ui-config', (topic, payload) => {
             this.loading = false
             console.log('ui-config received. topic:', topic, 'payload:', payload)
 

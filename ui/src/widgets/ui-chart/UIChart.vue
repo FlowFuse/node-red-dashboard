@@ -401,10 +401,20 @@ export default {
                 })
             } else if (payload !== null && payload !== undefined) {
                 // we have a single payload value and should append it to the chart
-                const d = msg._datapoint // server-side we compute a chart friendly format
-                const label = d.category
-                if (label !== null && label !== undefined) {
-                    this.addPoints(msg.payload, d, label)
+                if (Array.isArray(msg._datapoint)) {
+                    // single message has multiple datapoints to render (e.g. when Series is set to JSON)
+                    msg._datapoint.forEach((d) => {
+                        const label = d.category
+                        if (label !== null && label !== undefined) {
+                          this.addPoints(msg.payload, d, label)
+                        }
+                    })
+                } else {
+                    const d = msg._datapoint // server-side we compute a chart friendly format
+                    const label = d.category
+                    if (label !== null && label !== undefined) {
+                        this.addPoints(msg.payload, d, label)
+                    }
                 }
             } else {
                 // no payload

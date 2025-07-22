@@ -1,5 +1,5 @@
 const statestore = require('../store/state.js')
-const { appendTopic } = require('../utils/index.js')
+const { appendTopic, asyncEvaluateNodeProperty } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function GaugeNode (config) {
@@ -61,6 +61,26 @@ module.exports = function (RED) {
                         statestore.set(group.getBase(), node, msg, 'max', updates.max)
                     }
                 }
+
+                // Process the value using TypedInput configuration
+                const processValue = async () => {
+                    const value = msg.payload // default to payload if evaluation fails
+
+                    if (config.valueType && config.value) {
+                        const results = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
+                        msg.payload = results
+                    } else {
+                        msg.payload = value
+                    }
+                }
+
+                try {
+                    await processValue()
+                } catch (err) {
+                    node.warn('Error evaluating value property: ' + err.message)
+                    // msg.payload remains unchanged on error
+                }
+
                 msg = await appendTopic(RED, config, node, msg)
                 return msg
             }
@@ -73,12 +93,22 @@ module.exports = function (RED) {
         config.sizeGap = Number(config.sizeGap)
         config.sizeKeyThickness = Number(config.sizeKeyThickness)
 
-        config.segments.forEach(segment => {
+        config.segments.forEach(async segment => {
             segment.from = Number(segment.from)
+            // evaluate the text and textType properties
+            segment.text = segment.text || ''
+            segment.textType = segment.textType || 'label'
+            if (segment.textType === 'env' || segment.textType === 'str') {
+                segment.text = await asyncEvaluateNodeProperty(RED, segment.text, segment.textType, node, {})
+            }
         })
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
     }
     RED.nodes.registerType('ui-gauge', GaugeNode)
 }

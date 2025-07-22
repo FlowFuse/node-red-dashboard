@@ -1,19 +1,19 @@
 <template>
     <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
-    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" @submit.prevent="onSubmit">
+    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" :style="{'margin-top': label ? 0 : '0.5rem'}" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox
                     v-if="row.type === 'checkbox'"
                     v-model="input[row.key]"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     hide-details="auto"
                 />
                 <v-select
                     v-else-if="row.type === 'dropdown'"
                     v-model="input[row.key]"
                     class="nrdb-ui-widget"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     :class="{'active': state}"
                     hide-details="auto" :rules="rules(row)"
                     color="primary" variant="outlined"
@@ -25,7 +25,7 @@
                     v-else-if="row.type === 'switch'"
                     v-model="input[row.key]"
                     class="nrdb-ui-widget"
-                    :label="row.label"
+                    :label="formattedLabel(row)"
                     :class="{'active': state}"
                     hide-details="auto"
                     color="primary"
@@ -34,13 +34,13 @@
                     v-else-if="row.type === 'multiline'"
                     v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field" :rows="row.rows"
-                    :label="row.label" variant="outlined" hide-details="auto"
+                    :label="formattedLabel(row)" variant="outlined" hide-details="auto"
                 />
                 <v-text-field
                     v-else
                     v-model="input[row.key]" :rules="rules(row)"
                     class="nrdb-ui-widget nrdb-ui-text-field"
-                    :label="row.label" :type="row.type" variant="outlined" hide-details="auto"
+                    :label="formattedLabel(row)" :type="row.type" variant="outlined" hide-details="auto"
                 />
             </div>
         </div>
@@ -127,7 +127,8 @@ export default {
             })
 
             this.$socket.emit('widget-action', this.id, {
-                payload: this.input
+                payload: this.input,
+                _event: 'submit'
             })
             if (this.props.resetOnSubmit) {
                 this.reset()
@@ -152,6 +153,9 @@ export default {
                 // no rules
                 return []
             }
+        },
+        formattedLabel (row) {
+            return row.required ? `* ${row.label}` : row.label
         },
         onInput (msg) {
             if (msg.payload) {

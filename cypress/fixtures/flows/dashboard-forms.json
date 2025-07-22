@@ -8,6 +8,14 @@
         "env": []
     },
     {
+        "id": "node-red-tab-helper-api",
+        "type": "tab",
+        "label": "Helper API",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    { 
         "id": "dashboard-ui-base",
         "type": "ui-base",
         "name": "UI Name",
@@ -27,10 +35,32 @@
         "icon": "",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": -1,
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "6"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "6"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "6"
+            }
+        ],
+        "order": 1,
         "className": "",
         "visible": "true",
-        "disabled": false
+        "disabled": "false"
     },
     {
         "id": "dashboard-ui-theme",
@@ -43,6 +73,33 @@
             "groupBg": "#ffffff",
             "groupOutline": "#cccccc"
         }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "bab1dddbce88e07a",
+        "type": "ui-group",
+        "name": "Dynamic Property Tests",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
     },
     {
         "id": "test-helper",
@@ -63,19 +120,6 @@
         ]
     },
     {
-        "id": "dashboard-ui-group",
-        "type": "ui-group",
-        "name": "Group 1",
-        "page": "dashboard-ui-page-1",
-        "width": "6",
-        "height": "1",
-        "order": -1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
         "id": "dashboard-ui-form",
         "type": "ui-form",
         "z": "node-red-tab-forms",
@@ -83,8 +127,8 @@
         "group": "dashboard-ui-group",
         "label": "",
         "order": 1,
-        "width": 0,
-        "height": 0,
+        "width": "3",
+        "height": "2",
         "options": [
             {
                 "label": "Name",
@@ -121,8 +165,9 @@
         "topicType": "str",
         "splitLayout": "",
         "className": "",
+        "dropdownOptions": [],
         "x": 120,
-        "y": 60,
+        "y": 80,
         "wires": [
             []
         ]
@@ -134,9 +179,9 @@
         "name": "Dynamic Form",
         "group": "bab1dddbce88e07a",
         "label": "Dynamic Form",
-        "order": 2,
-        "width": 0,
-        "height": 0,
+        "order": 8,
+        "width": "0",
+        "height": "0",
         "options": [
             {
                 "label": "Name",
@@ -147,7 +192,7 @@
             }
         ],
         "formValue": {
-            "name": ""
+            "name0": ""
         },
         "payload": "",
         "submit": "submit",
@@ -157,6 +202,7 @@
         "topicType": "str",
         "splitLayout": "",
         "className": "",
+        "dropdownOptions": [],
         "x": 520,
         "y": 160,
         "wires": [
@@ -170,9 +216,9 @@
         "group": "bab1dddbce88e07a",
         "name": "",
         "label": "Override Form Options",
-        "order": 1,
-        "width": 0,
-        "height": 0,
+        "order": 4,
+        "width": "3",
+        "height": "1",
         "emulateClick": false,
         "tooltip": "",
         "color": "",
@@ -184,6 +230,16 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
         "x": 160,
         "y": 160,
         "wires": [
@@ -199,9 +255,9 @@
         "group": "bab1dddbce88e07a",
         "name": "",
         "label": "Set Defaults",
-        "order": 1,
-        "width": 0,
-        "height": 0,
+        "order": 3,
+        "width": "3",
+        "height": "1",
         "emulateClick": false,
         "tooltip": "",
         "color": "",
@@ -213,11 +269,22 @@
         "payloadType": "json",
         "topic": "topic",
         "topicType": "msg",
-        "x": 160,
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 130,
         "y": 200,
         "wires": [
             [
-                "dashboard-ui-form-dynamic"
+                "68ecd321adc91b99",
+                "bcf9325de95813c3"
             ]
         ]
     },
@@ -254,16 +321,607 @@
         ]
     },
     {
-        "id": "bab1dddbce88e07a",
-        "type": "ui-group",
-        "name": "Dynamic Property Tests",
-        "page": "dashboard-ui-page-1",
-        "width": "6",
+        "id": "3cd8df20415c4c04",
+        "type": "ui-form",
+        "z": "node-red-tab-forms",
+        "name": "form1 topic from msg",
+        "group": "bab1dddbce88e07a",
+        "label": "form1 topic from msg",
+        "order": 5,
+        "width": "3",
         "height": "1",
-        "order": 1,
-        "showTitle": true,
+        "options": [
+            {
+                "label": "Name",
+                "key": "name1",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name1": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": false,
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
         "className": "",
-        "visible": "true",
-        "disabled": "false"
+        "dropdownOptions": [],
+        "x": 520,
+        "y": 300,
+        "wires": [
+            [
+                "875b5b2718df9bcc"
+            ]
+        ]
+    },
+    {
+        "id": "c5421eef4f6989ee",
+        "type": "ui-control",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 120,
+        "y": 640,
+        "wires": [
+            [
+                "00c8611a88e1c108"
+            ]
+        ]
+    },
+    {
+        "id": "2ef2b0e5846b5fd1",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "topic from msg.topic",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 290,
+        "y": 300,
+        "wires": [
+            [
+                "3cd8df20415c4c04"
+            ]
+        ]
+    },
+    {
+        "id": "ddb5a30c677e5e0b",
+        "type": "ui-form",
+        "z": "node-red-tab-forms",
+        "name": "form2 topic from flow.f1",
+        "group": "bab1dddbce88e07a",
+        "label": "form2 topic from flow.f1",
+        "order": 6,
+        "width": "3",
+        "height": "1",
+        "options": [
+            {
+                "label": "Name",
+                "key": "name2",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name2": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": false,
+        "topic": "f1",
+        "topicType": "flow",
+        "splitLayout": "",
+        "className": "",
+        "dropdownOptions": [],
+        "x": 530,
+        "y": 360,
+        "wires": [
+            [
+                "875b5b2718df9bcc"
+            ]
+        ]
+    },
+    {
+        "id": "74cbdedad6183c40",
+        "type": "ui-text",
+        "z": "node-red-tab-forms",
+        "group": "bab1dddbce88e07a",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "name": "",
+        "label": "p",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "x": 530,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "d31f09b33f18c5db",
+        "type": "ui-text",
+        "z": "node-red-tab-forms",
+        "group": "bab1dddbce88e07a",
+        "order": 1,
+        "width": "3",
+        "height": "1",
+        "name": "",
+        "label": "t",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "x": 530,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "c1c196433b465461",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "topic",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 560,
+        "wires": [
+            [
+                "d31f09b33f18c5db"
+            ]
+        ]
+    },
+    {
+        "id": "c00221dce7398311",
+        "type": "link in",
+        "z": "node-red-tab-forms",
+        "name": "link in 1",
+        "links": [
+            "875b5b2718df9bcc"
+        ],
+        "x": 75,
+        "y": 520,
+        "wires": [
+            [
+                "ff60bc2e32956a98",
+                "3b53a4b34217c716"
+            ]
+        ]
+    },
+    {
+        "id": "cf0774a3c2e9edd4",
+        "type": "ui-form",
+        "z": "node-red-tab-forms",
+        "name": "form3 topic from global.g1",
+        "group": "bab1dddbce88e07a",
+        "label": "form3 topic from global.g1",
+        "order": 7,
+        "width": "3",
+        "height": "1",
+        "options": [
+            {
+                "label": "Name",
+                "key": "name3",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "name3": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "clear",
+        "resetOnSubmit": false,
+        "topic": "g1",
+        "topicType": "global",
+        "splitLayout": "",
+        "className": "",
+        "dropdownOptions": [],
+        "x": 530,
+        "y": 420,
+        "wires": [
+            [
+                "875b5b2718df9bcc"
+            ]
+        ]
+    },
+    {
+        "id": "875b5b2718df9bcc",
+        "type": "link out",
+        "z": "node-red-tab-forms",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "c00221dce7398311"
+        ],
+        "x": 715,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "31287d1f6fa8a0b7",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "f1",
+                "pt": "flow",
+                "to": "topic from flow.f1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 280,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8b65025e51d65400",
+        "type": "inject",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 680,
+        "wires": [
+            [
+                "00c8611a88e1c108"
+            ]
+        ]
+    },
+    {
+        "id": "ff60bc2e32956a98",
+        "type": "json",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 170,
+        "y": 520,
+        "wires": [
+            [
+                "74cbdedad6183c40"
+            ]
+        ]
+    },
+    {
+        "id": "3b53a4b34217c716",
+        "type": "delay",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "20",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 190,
+        "y": 560,
+        "wires": [
+            [
+                "c1c196433b465461"
+            ]
+        ]
+    },
+    {
+        "id": "f79478230b25922a",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "g1",
+                "pt": "global",
+                "to": "topic from global.g1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 290,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "68ecd321adc91b99",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "minimal Options",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "ui_update.options",
+                "pt": "msg",
+                "to": "[{\"type\":\"text\",\"label\":\"Name\",\"key\":\"name0\",\"required\":false}]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 300,
+        "y": 260,
+        "wires": [
+            [
+                "dashboard-ui-form-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "00c8611a88e1c108",
+        "type": "link out",
+        "z": "node-red-tab-forms",
+        "name": "link out 2",
+        "mode": "link",
+        "links": [
+            "50758e9837bdde76",
+            "805de0c1a3c1a925"
+        ],
+        "x": 265,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "50758e9837bdde76",
+        "type": "link in",
+        "z": "node-red-tab-forms",
+        "name": "link in 2",
+        "links": [
+            "00c8611a88e1c108"
+        ],
+        "x": 75,
+        "y": 300,
+        "wires": [
+            [
+                "2ef2b0e5846b5fd1",
+                "31287d1f6fa8a0b7",
+                "f79478230b25922a",
+                "68ecd321adc91b99"
+            ]
+        ]
+    },
+    {
+        "id": "bcf9325de95813c3",
+        "type": "delay",
+        "z": "node-red-tab-forms",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "20",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 320,
+        "y": 200,
+        "wires": [
+            [
+                "dashboard-ui-form-dynamic"
+            ]
+        ]
+    },
+    {
+        "id": "node-red-http-in-store-context",
+        "type": "http in",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "url": "/context/flow",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 50,
+        "wires": [
+            [
+                "fcn-store-context"
+            ]
+        ]
+    },
+    {
+        "id": "fcn-store-context",
+        "type": "function",
+        "z": "node-red-tab-helper-api",
+        "name": "function 1",
+        "func": "msg.payload = {} \n\nconst key = msg.req.query?.key || 'msg'\n\nconst body = {}\nbody[key] = global.get(key)\n\nmsg.payload = body\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 50,
+        "wires": [
+            [
+                "node-red-http-out-store-context"
+            ]
+        ]
+    },
+    {
+        "id": "node-red-http-out-store-context",
+        "type": "http response",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 430,
+        "y": 50,
+        "wires": []
+    },
+    {
+        "id": "node-red-http-in-reset-context",
+        "type": "http in",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "url": "/context/reset",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "fcn-reset-context"
+            ]
+        ]
+    },
+    {
+        "id": "fcn-reset-context",
+        "type": "function",
+        "z": "node-red-tab-helper-api",
+        "name": "function 2",
+        "func": "global.set('msg', undefined)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "node-red-http-out-reset-context"
+            ]
+        ]
+    },
+    {
+        "id": "node-red-http-out-reset-context",
+        "type": "http response",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 430,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "http-in-store-global",
+        "type": "http in",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "url": "/context/global",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "fcn-store-global"
+            ]
+        ]
+    },
+    {
+        "id": "fcn-store-global",
+        "type": "function",
+        "z": "node-red-tab-helper-api",
+        "name": "Set Global Var",
+        "func": "function createNestedObject(keys, value) {\n    const keyParts = keys.split('.');\n    const result = {};\n    let current = result;\n\n    for (let i = 0; i < keyParts.length; i++) {\n        const key = keyParts[i];\n        if (i === keyParts.length - 1) {\n            current[key] = value;\n        } else {\n            current[key] = {};\n            current = current[key];\n        }\n    }\n\n    return result;\n}\n\nconst keys = msg.payload.key.split('.')\n\nif (keys.length > 1) {\n    const nested = createNestedObject(msg.payload.key, msg.payload.value)\n    global.set(keys[0], nested[keys[0]])\n} else {\n    global.set(msg.payload.key, msg.payload.value)\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 160,
+        "wires": [
+            [
+                "http-out-store-global"
+            ]
+        ]
+    },
+    {
+        "id": "http-out-store-global",
+        "type": "http response",
+        "z": "node-red-tab-helper-api",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 490,
+        "y": 160,
+        "wires": []
     }
 ]
