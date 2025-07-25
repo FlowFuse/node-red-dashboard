@@ -47,7 +47,17 @@ export default defineConfig({
     build: {
         minify: process.env.NODE_ENV === 'development' ? false : undefined,
         outDir: '../dist',
-        emptyOutDir: true
+        emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Create a separate chunk the following libraries to reduce .index.js size
+                    mermaid: ['mermaid'],
+                    'vue-vendor': ['vue', 'vuex', 'vue-router'],
+                    chartjs: ['chart.js']
+                }
+            }
+        }
     },
     base: './'
 })

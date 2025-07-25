@@ -19,8 +19,6 @@ import * as directives from 'vuetify/directives'
 
 // Labs Imports
 import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
-import { VTreeview } from 'vuetify/labs/VTreeview'
-import { VTimePicker } from 'vuetify/labs/VTimePicker'
 
 import './stylesheets/common.css'
 
@@ -60,9 +58,7 @@ const theme = {
 const vuetify = createVuetify({
     components: {
         ...components,
-        VNumberInput,
-        VTreeview,
-        VTimePicker
+        VNumberInput
     },
     directives: {
         ...directives,
