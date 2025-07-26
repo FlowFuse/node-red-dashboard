@@ -1,7 +1,7 @@
 <template>
     <!-- <div ref="markdown" class="nrdb-ui-markdown-content" v-html="content" /> -->
     <div ref="markdown" class="nrdb-ui-markdown-content">
-        <component :is="content" v-if="content" :id="id" :props="props" :msg="msg" />
+        <component :is="content" v-if="content" :id="id" :props="props" :msg="msg" :key="componentKey" />
     </div>
 </template>
 
@@ -52,15 +52,18 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
-            content: null
+            content: null,
+            componentKey: 0
         }
     },
     computed: {
         ...mapState('data', ['messages']),
+        ...mapState('i18n', ['locale']),
         msg () {
             return this.messages[this.id] || {}
         }
@@ -68,6 +71,11 @@ export default {
     watch: {
         'props.content': function () {
             // when the node's config changes, re-render the content
+            this.update()
+        },
+        '$store.state.i18n.locale': function () {
+            // when the language changes, re-render the content
+            this.componentKey++ // Force Vue to recreate the component
             this.update()
         }
     },
@@ -126,8 +134,24 @@ export default {
             }
         },
         parseContent () {
+            // Get translated content with fallback to original
+            let rawContent = ''
+            
+            try {
+                const translatedContent = this.getTranslatedProperty('content')
+                const originalContent = this.props?.content || ''
+                rawContent = translatedContent || originalContent
+                
+            } catch (e) {
+                rawContent = this.props?.content || ''
+            }
+            
+            if (!rawContent) {
+                rawContent = ''
+            }
+            
             // handle {{ variable || 'placeholder' }} case where || is parsed as a table
-            const content = this.props.content.replace(/\|\|/g, 'mdORmd')
+            const content = rawContent.replace(/\|\|/g, 'mdORmd')
             // convert to markdown
             let md = marked.parse(content)
             // re-inject our || into the {{ }} where appropriate

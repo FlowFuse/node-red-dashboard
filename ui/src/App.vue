@@ -203,13 +203,21 @@ export default {
                     // re-write base path in case of proxy & httpNodeRoot
                     const route = (this.setup.basePath + page.path).replace(/\/\//g, '/')
 
-                    const routeName = 'Page:' + page.name
-                    let title = page.name
+                    // Handle page name translations
+                    let pageName = page.name
+                    if (page.name && typeof page.name === 'object') {
+                        // Page name is a translation object
+                        const locale = this.$store.state.i18n?.locale || 'en'
+                        pageName = page.name[locale] || page.name.en || page.name[Object.keys(page.name)[0]] || 'Untitled'
+                    }
+                    
+                    const routeName = 'Page:' + (typeof page.name === 'string' ? page.name : pageName)
+                    let title = pageName
                     const headerStyle = payload.dashboards[page.ui].headerContent
                     if (headerStyle === 'dashboard') {
                         title = payload.dashboards[page.ui].name
                     } else if (headerStyle === 'dashpage') {
-                        title = `${payload.dashboards[page.ui].name} (${page.name})`
+                        title = `${payload.dashboards[page.ui].name} (${pageName})`
                     }
                     this.$router?.addRoute({
                         path: route,
@@ -271,6 +279,17 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
+            
+            // Store language configuration
+            if (payload.languages) {
+                this.$store.commit('i18n/SET_LANGUAGES', payload.languages)
+            }
+            if (payload.defaultLanguage) {
+                this.$store.commit('i18n/SET_DEFAULT_LANGUAGE', payload.defaultLanguage)
+            }
+            if (payload.autoDetectLanguage !== undefined) {
+                this.$store.commit('i18n/SET_AUTO_DETECT', payload.autoDetectLanguage)
+            }
 
             for (const key in payload.themes) {
                 // check if "Default Theme" theme exists

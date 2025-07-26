@@ -366,6 +366,88 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         }
     }
 
+    
+    // Function to apply translations to widget properties
+    function applyTranslationsToWidgets() {
+        const enabledLanguages = [];
+        let baseNode = null;
+        
+        RED.nodes.eachConfig(function(n) {
+            if (n.type === 'ui-base') {
+                baseNode = n;
+                if (n.languages) {
+                    n.languages.forEach(lang => {
+                        if (lang.enabled && lang.code) {
+                            enabledLanguages.push(lang.code);
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Apply translations to all widgets
+        RED.nodes.eachNode(function(n) {
+            // Check if node has translations
+            const hasTranslations = n.translations && Object.keys(n.translations).length > 0;
+            
+            if (hasTranslations) {
+                // Widget types that support translations
+                const translatableProperties = {
+                    'ui-button': ['label', 'tooltip'],
+                    'ui-text': ['label'],
+                    'ui-dropdown': ['label'],
+                    'ui-text-input': ['label', 'tooltip'],
+                    'ui-number-input': ['label', 'tooltip'],
+                    'ui-switch': ['label'],
+                    'ui-slider': ['label'],
+                    'ui-chart': ['label'],
+                    'ui-gauge': ['label', 'title'],
+                    'ui-markdown': ['content'],
+                    'ui-page': ['name'],
+                    'ui-group': ['name']
+                };
+                
+                const propsToTranslate = translatableProperties[n.type];
+                if (propsToTranslate) {
+                    propsToTranslate.forEach(prop => {
+                        const translations = {};
+                        let hasTranslations = false;
+                        
+                        // Build translation object for this property
+                        enabledLanguages.forEach(lang => {
+                            // Check node translations
+                            const value = n.translations?.[lang]?.[prop];
+                            
+                            if (value) {
+                                translations[lang] = value;
+                                hasTranslations = true;
+                            }
+                        });
+                        
+                        // Include original value as 'en' if not already translated
+                        if (n[prop] && !translations.en) {
+                            const value = n[prop];
+                            
+                            if (typeof value === 'object' && value.en) {
+                                // If it's already a translation object, use the English value
+                                translations.en = value.en;
+                            } else if (typeof value === 'string') {
+                                // If it's a plain string, use it as English
+                                translations.en = value;
+                            }
+                            
+                            if (translations.en) {
+                                hasTranslations = true;
+                            }
+                        }
+                        
+                        // Don't modify widget properties - translations are stored in widget.translations
+                    });
+                }
+            }
+        });
+    }
+
     RED.nodes.registerType('ui-base', {
         category: 'config',
         defaults: {
@@ -397,6 +479,17 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             },
             titleBarStyle: {
                 value: 'default'
+            },
+            languages: {
+                value: [
+                    { code: 'en', name: 'English', enabled: true }
+                ]
+            },
+            defaultLanguage: {
+                value: 'en'
+            },
+            autoDetectLanguage: {
+                value: true
             },
             showReconnectNotification: {
                 value: true
@@ -463,6 +556,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 this.allowInstall = true
                 $('#node-config-input-allowInstall').prop('checked', true)
             }
+        },
+        oneditsave: function () {
+            // Apply translations to all widgets before saving
+            applyTranslationsToWidgets();
         },
         onpaletteadd: function () {
             // add the Dashboard 2.0 sidebar
@@ -1206,6 +1303,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             evt.stopPropagation()
             evt.preventDefault()
         })
+        
 
         if (item.type === 'ui-page') {
             // add the "+ group" button
@@ -2125,6 +2223,700 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             })
     }
 
+    
+
+    /**
+     * Build the Languages Editor within the Dashboard 2.0 sidebar
+     * @param {Object} base - The base configuration node
+     * @param {Object} parent - The parent element to append the languages editor to
+     */
+    function buildLanguagesEditor(base, parent) {
+        const html = `<div class="nrdb2-sidebar-tab-content">
+            <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
+                <p>
+                    Configure available languages for your dashboard. You can add, remove and set the default language.
+                </p>
+            </div>
+            <div class="form-row" style="margin-bottom: 12px;">
+                <label style="width: 120px;">Default Language</label>
+                <select id="node-config-input-defaultLanguage" style="width: 200px;">
+                    <option value="en">English (en)</option>
+                </select>
+            </div>
+            <div class="form-row" style="margin-bottom: 12px;">
+                <label style="width: 120px;">Auto-detect</label>
+                <input type="checkbox" id="node-config-input-autoDetect" style="width: auto;">
+                <span style="margin-left: 10px; font-size: 0.9em; color: #666;">Automatically detect user's browser language</span>
+            </div>
+            <div class="form-row">
+                <div style="width: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                        <label style="margin: 0;"><b>Languages</b></label>
+                        <button id="add-language-btn" class="red-ui-button red-ui-button-small">
+                            <i class="fa fa-plus"></i> Add Language
+                        </button>
+                    </div>
+                    <div id="languages-list" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>`
+        
+        const container = $(html).appendTo(parent)
+        
+        // Initialize with current values
+        const languages = base.languages || [
+            { code: 'en', name: 'English', enabled: true },
+            { code: 'fr', name: 'Français', enabled: false }
+        ]
+        
+        // Function to render language list
+        function renderLanguagesList() {
+            const listContainer = $('#languages-list')
+            listContainer.empty()
+            
+            languages.forEach((lang, index) => {
+                const langRow = $(`
+                    <div class="language-row" data-index="${index}" style="margin-bottom: 8px; padding: 8px; background: #f8f8f8; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                            <i class="fa fa-bars language-handle" style="cursor: move; color: #999;"></i>
+                            <input type="checkbox" class="lang-enabled" data-index="${index}" ${lang.enabled ? 'checked' : ''}>
+                            <input type="text" class="lang-code" data-index="${index}" value="${lang.code}" style="width: 80px;" placeholder="Code">
+                            <input type="text" class="lang-name" data-index="${index}" value="${lang.name}" style="width: 200px;" placeholder="Name">
+                        </div>
+                        <button class="red-ui-button red-ui-button-small remove-lang-btn" data-index="${index}" style="margin-left: 10px;">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                `).appendTo(listContainer)
+                
+                // Update language in array when inputs change
+                langRow.find('.lang-code').on('change', function() {
+                    languages[index].code = $(this).val()
+                    updateDefaultLanguageOptions()
+                })
+                
+                langRow.find('.lang-name').on('change', function() {
+                    languages[index].name = $(this).val()
+                    updateDefaultLanguageOptions()
+                })
+                
+                langRow.find('.lang-enabled').on('change', function() {
+                    languages[index].enabled = $(this).prop('checked')
+                })
+                
+                langRow.find('.remove-lang-btn').on('click', function() {
+                    languages.splice(index, 1)
+                    renderLanguagesList()
+                    updateDefaultLanguageOptions()
+                })
+            })
+        }
+        
+        // Function to update default language options
+        function updateDefaultLanguageOptions() {
+            const select = $('#node-config-input-defaultLanguage')
+            const currentValue = select.val()
+            select.empty()
+            
+            languages.forEach(lang => {
+                if (lang.code && lang.name) {
+                    select.append(`<option value="${lang.code}">${lang.name} (${lang.code})</option>`)
+                }
+            })
+            
+            // Restore previous selection if it still exists
+            if (select.find(`option[value="${currentValue}"]`).length > 0) {
+                select.val(currentValue)
+            }
+        }
+        
+        // Add language button handler
+        $('#add-language-btn').on('click', function() {
+            languages.push({ code: '', name: '', enabled: false })
+            renderLanguagesList()
+        })
+        
+        // Initialize
+        renderLanguagesList()
+        updateDefaultLanguageOptions()
+        
+        // Make the language list sortable
+        $('#languages-list').sortable({
+            handle: '.language-handle',
+            update: function(event, ui) {
+                // Get new order
+                const newOrder = []
+                $('#languages-list .language-row').each(function() {
+                    const index = parseInt($(this).data('index'))
+                    newOrder.push(languages[index])
+                })
+                
+                // Update languages array with new order
+                languages.length = 0
+                newOrder.forEach(lang => languages.push(lang))
+                
+                // Re-render to update indices
+                renderLanguagesList()
+                saveLanguages()
+                
+                // Re-apply sortable after re-render
+                $('#languages-list').sortable({
+                    handle: '.language-handle',
+                    update: function(event, ui) {
+                        // This will be called again if needed
+                    }
+                })
+            }
+        })
+        
+        // Set current values
+        $('#node-config-input-defaultLanguage').val(base.defaultLanguage || 'en')
+        $('#node-config-input-autoDetect').prop('checked', base.autoDetectLanguage !== false)
+        
+        // Update base configuration when values change
+        $('#node-config-input-defaultLanguage').on('change', function() {
+            base.defaultLanguage = $(this).val()
+            // Mark as dirty
+            RED.nodes.dirty(true)
+        })
+        
+        $('#node-config-input-autoDetect').on('change', function() {
+            base.autoDetectLanguage = $(this).prop('checked')
+            // Mark as dirty
+            RED.nodes.dirty(true)
+        })
+        
+        // Save languages configuration
+        function saveLanguages() {
+            base.languages = languages.filter(lang => lang.code && lang.name)
+            // Mark as dirty
+            RED.nodes.dirty(true)
+        }
+        
+        // Update languages whenever they change
+        container.on('change', '.lang-code, .lang-name, .lang-enabled', saveLanguages)
+        container.on('click', '.remove-lang-btn', function() {
+            setTimeout(saveLanguages, 100)
+        })
+        container.on('click', '#add-language-btn', function() {
+            setTimeout(saveLanguages, 100)
+        })
+    }
+    
+    /**
+     * Build the Translations Editor within the Dashboard 2.0 sidebar
+     * @param {Object} base - The base configuration node
+     * @param {Object} parent - The parent element to append the translations editor to
+     */
+    function buildTranslationsEditor(base, parent) {
+        const html = `<div class="nrdb2-sidebar-tab-content">
+            <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
+                <p>
+                    Manage all translations for your dashboard widgets, groups, and pages in one place.
+                </p>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="translation-search" placeholder="Search..." style="width: 200px;">
+                    <button id="expand-all-btn" class="red-ui-button red-ui-button-small" title="Expand All">
+                        <i class="fa fa-plus-square-o"></i>
+                    </button>
+                    <button id="collapse-all-btn" class="red-ui-button red-ui-button-small" title="Collapse All">
+                        <i class="fa fa-minus-square-o"></i>
+                    </button>
+                </div>
+                <div>
+                    <button id="refresh-translations-btn" class="red-ui-button red-ui-button-small">
+                        <i class="fa fa-refresh"></i> Refresh
+                    </button>
+                    <button id="apply-translations-btn" class="red-ui-button red-ui-button-small" style="margin-left: 5px;">
+                        <i class="fa fa-check"></i> Apply
+                    </button>
+                </div>
+            </div>
+            <div id="translations-list" style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px;">
+                <div style="text-align: center; color: #999; padding: 20px;">
+                    <i class="fa fa-spinner fa-spin"></i> Loading translations...
+                </div>
+            </div>
+        </div>`
+        
+        const container = $(html).appendTo(parent)
+        
+        // Load and manage translations
+        function loadTranslations() {
+            const translationsList = $('#translations-list')
+            translationsList.html('<div style="text-align: center; color: #999; padding: 20px;"><i class="fa fa-spinner fa-spin"></i> Loading translations...</div>')
+            
+            // Get languages from base configuration
+            const languages = base.languages || [
+                { code: 'en', name: 'English', enabled: true }
+            ]
+            const enabledLanguages = languages.filter(lang => lang.enabled && lang.code && lang.name)
+            if (enabledLanguages.length === 0) {
+                translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No languages enabled. Enable at least one language above to manage translations.</div>')
+                return
+            }
+            
+            // Widget types configuration
+            const widgetTypes = {
+                'ui-button': [
+                    { key: 'label', label: 'Button Text', type: 'text' },
+                    { key: 'tooltip', label: 'Tooltip', type: 'text' }
+                ],
+                'ui-text': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-dropdown': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-text-input': [
+                    { key: 'label', label: 'Label', type: 'text' },
+                    { key: 'tooltip', label: 'Tooltip', type: 'text' }
+                ],
+                'ui-number-input': [
+                    { key: 'label', label: 'Label', type: 'text' },
+                    { key: 'tooltip', label: 'Tooltip', type: 'text' }
+                ],
+                'ui-switch': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-slider': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-chart': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-gauge': [
+                    { key: 'label', label: 'Label', type: 'text' },
+                    { key: 'title', label: 'Title', type: 'text' }
+                ],
+                'ui-notification': [
+                    { key: 'dismissText', label: 'Dismiss Text', type: 'text' },
+                    { key: 'confirmText', label: 'Confirm Text', type: 'text' }
+                ],
+                'ui-markdown': [
+                    { key: 'content', label: 'Content', type: 'textarea' }
+                ],
+                'ui-form': [
+                    { key: 'label', label: 'Label', type: 'text' },
+                    { key: 'submit', label: 'Submit Button', type: 'text' },
+                    { key: 'cancel', label: 'Cancel Button', type: 'text' }
+                ],
+                'ui-button-group': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-radio-group': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-progress': [
+                    { key: 'label', label: 'Label', type: 'text' }
+                ],
+                'ui-spacer': [
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'tooltip', label: 'Tooltip', type: 'text' }
+                ]
+            }
+            
+            // Collect and organize data hierarchically
+            const pages = []
+            
+            // Get all pages sorted by order
+            RED.nodes.eachConfig(function(n) {
+                if (n.type === 'ui-page') {
+                    pages.push({
+                        id: n.id,
+                        node: n,
+                        name: n.name || 'Unnamed Page',
+                        order: n.order || 0,
+                        groups: []
+                    })
+                }
+            })
+            
+            // Sort pages by order
+            pages.sort((a, b) => a.order - b.order)
+            
+            // For each page, get its groups
+            pages.forEach(page => {
+                RED.nodes.eachConfig(function(n) {
+                    if (n.type === 'ui-group' && n.page === page.id) {
+                        const group = {
+                            id: n.id,
+                            node: n,
+                            name: n.name || 'Unnamed Group',
+                            order: n.order || 0,
+                            widgets: []
+                        }
+                        
+                        // Get widgets for this group
+                        RED.nodes.eachNode(function(w) {
+                            if (widgetTypes[w.type] && w.group === group.id) {
+                                group.widgets.push({
+                                    id: w.id,
+                                    node: w,
+                                    type: w.type,
+                                    name: w.name || w.label || w.type,
+                                    order: w.order || 0,
+                                    properties: widgetTypes[w.type]
+                                })
+                            }
+                        })
+                        
+                        // Sort widgets by order
+                        group.widgets.sort((a, b) => a.order - b.order)
+                        
+                        page.groups.push(group)
+                    }
+                })
+                
+                // Sort groups by order
+                page.groups.sort((a, b) => a.order - b.order)
+            })
+            
+            // Build the translations UI
+            translationsList.empty()
+            
+            if (pages.length === 0) {
+                translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No pages found in your dashboard.</div>')
+                return
+            }
+            
+            // Add CSS classes for the tree view
+            if (!$('#nrdb2-translations-styles').length) {
+                $(`<style id="nrdb2-translations-styles">
+                    .nrdb2-translations-page {
+                        margin-bottom: 0;
+                        border-bottom: 1px solid var(--red-ui-form-input-border-color, #ccc);
+                    }
+                    .nrdb2-translations-page:last-child {
+                        border-bottom: none;
+                    }
+                    .nrdb2-translations-page-header {
+                        display: flex;
+                        align-items: center;
+                        padding: 8px;
+                        cursor: pointer;
+                        background: var(--red-ui-secondary-background, #fff);
+                        transition: background-color 0.2s;
+                    }
+                    .nrdb2-translations-page-header:hover {
+                        background: var(--red-ui-secondary-background-hover, #f0f0f0);
+                    }
+                    .nrdb2-translations-page-content {
+                        padding-left: 20px;
+                        border-left: 2px solid var(--red-ui-form-input-border-color, #ccc);
+                        margin-left: 10px;
+                    }
+                    .nrdb2-translations-group {
+                        margin: 0;
+                        border-bottom: 1px solid var(--red-ui-form-input-border-color, #eee);
+                    }
+                    .nrdb2-translations-group:last-child {
+                        border-bottom: none;
+                    }
+                    .nrdb2-translations-group-header {
+                        display: flex;
+                        align-items: center;
+                        padding: 6px 8px;
+                        cursor: pointer;
+                        background: var(--red-ui-secondary-background, #fff);
+                        transition: background-color 0.2s;
+                    }
+                    .nrdb2-translations-group-header:hover {
+                        background: var(--red-ui-secondary-background-hover, #f0f0f0);
+                    }
+                    .nrdb2-translations-group-content {
+                        padding-left: 20px;
+                        border-left: 2px solid var(--red-ui-form-input-border-color, #eee);
+                        margin-left: 10px;
+                    }
+                    .nrdb2-translations-widget {
+                        margin: 8px 0;
+                        padding: 10px;
+                        background: var(--red-ui-secondary-background-inactive, #f8f8f8);
+                        border-radius: 4px;
+                    }
+                    .nrdb2-translations-chevron {
+                        margin-right: 8px;
+                        transition: transform 0.2s;
+                        color: var(--red-ui-secondary-text-color, #666);
+                    }
+                    .nrdb2-translations-chevron.collapsed {
+                        transform: rotate(-90deg);
+                    }
+                    .nrdb2-translations-icon {
+                        margin-right: 8px;
+                        color: var(--red-ui-secondary-text-color, #666);
+                    }
+                    .nrdb2-translations-title {
+                        margin: 0;
+                        flex-grow: 1;
+                        font-weight: normal;
+                        color: var(--red-ui-primary-text-color, #333);
+                    }
+                    .nrdb2-translations-count {
+                        color: var(--red-ui-secondary-text-color, #999);
+                        font-size: 0.9em;
+                        margin-left: 10px;
+                    }
+                </style>`).appendTo('head')
+            }
+            
+            // Create translation UI following the hierarchy
+            pages.forEach(page => {
+                const pageContainer = $('<div class="nrdb2-translations-page">').appendTo(translationsList)
+                
+                // Page header with collapsible chevron
+                const pageHeader = $('<div class="nrdb2-translations-page-header">').appendTo(pageContainer)
+                const pageChevron = $('<i class="fa fa-angle-down nrdb2-translations-chevron"></i>').appendTo(pageHeader)
+                $('<i class="fa fa-file-o nrdb2-translations-icon"></i>').appendTo(pageHeader)
+                $(`<h4 class="nrdb2-translations-title">${page.name}</h4>`).appendTo(pageHeader)
+                $(`<span class="nrdb2-translations-count">${page.groups.length} groups</span>`).appendTo(pageHeader)
+                
+                const pageContent = $('<div class="nrdb2-translations-page-content">').appendTo(pageContainer)
+                
+                // Page name translation
+                const pageTranslation = createTranslationField(page.node, 'name', 'Page Name', 'text', enabledLanguages)
+                pageTranslation.css('margin-bottom', '15px').appendTo(pageContent)
+                
+                // Groups for this page
+                page.groups.forEach(group => {
+                    const groupContainer = $('<div class="nrdb2-translations-group">').appendTo(pageContent)
+                    
+                    // Group header
+                    const groupHeader = $('<div class="nrdb2-translations-group-header">').appendTo(groupContainer)
+                    const groupChevron = $('<i class="fa fa-angle-down nrdb2-translations-chevron"></i>').appendTo(groupHeader)
+                    $('<i class="fa fa-th-large nrdb2-translations-icon"></i>').appendTo(groupHeader)
+                    $(`<h5 class="nrdb2-translations-title">${group.name}</h5>`).appendTo(groupHeader)
+                    $(`<span class="nrdb2-translations-count">${group.widgets.length} widgets</span>`).appendTo(groupHeader)
+                    
+                    const groupContent = $('<div class="nrdb2-translations-group-content">').appendTo(groupContainer)
+                    
+                    // Group name translation
+                    const groupTranslation = createTranslationField(group.node, 'name', 'Group Name', 'text', enabledLanguages)
+                    groupTranslation.css('margin-bottom', '10px').appendTo(groupContent)
+                    
+                    // Widgets for this group
+                    group.widgets.forEach(widget => {
+                        const widgetContainer = $('<div class="nrdb2-translations-widget">').appendTo(groupContent)
+                        widgetContainer.addClass('translation-item')
+                        widgetContainer.attr('data-search-text', `${page.name} ${group.name} ${widget.name}`.toLowerCase())
+                        
+                        // Widget header
+                        $(`<div style="margin-bottom: 8px; font-weight: 600; color: var(--red-ui-primary-text-color, #333);"><i class="fa fa-cube" style="margin-right: 8px; color: var(--red-ui-secondary-text-color, #666);"></i>${widget.name}</div>`).appendTo(widgetContainer)
+                        
+                        // Widget properties
+                        widget.properties.forEach(prop => {
+                            const propField = createTranslationField(widget.node, prop.key, prop.label, prop.type, enabledLanguages)
+                            propField.appendTo(widgetContainer)
+                        })
+                    })
+                    
+                    // Toggle group visibility
+                    groupHeader.on('click', function(e) {
+                        e.stopPropagation()
+                        groupContent.slideToggle(200)
+                        groupChevron.toggleClass('collapsed')
+                    })
+                })
+                
+                // Toggle page visibility
+                pageHeader.on('click', function(e) {
+                    e.stopPropagation()
+                    pageContent.slideToggle(200)
+                    pageChevron.toggleClass('collapsed')
+                })
+            })
+            
+            // Search functionality
+            $('#translation-search').off('input').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase()
+                if (searchTerm === '') {
+                    // Show all and restore collapsed state
+                    $('.translation-item').show()
+                    translationsList.find('> div').show()
+                } else {
+                    // Hide all containers first
+                    translationsList.find('> div').hide()
+                    
+                    // Show only matching items and their parents
+                    $('.translation-item').each(function() {
+                        const text = $(this).attr('data-search-text')
+                        if (text && text.includes(searchTerm)) {
+                            $(this).show()
+                            // Show all parent containers
+                            $(this).parents().show()
+                        } else {
+                            $(this).hide()
+                        }
+                    })
+                }
+            })
+            
+            // Helper function to create translation fields
+            function createTranslationField(node, key, label, type, languages) {
+                const container = $('<div style="margin-bottom: 10px;">')
+                $(`<div style="margin-bottom: 5px; font-weight: bold;">${label}:</div>`).appendTo(container)
+                
+                // Original value
+                let originalValue = node[key] || ''
+                
+                // Check if the value is already a translation object
+                if (typeof originalValue === 'object' && !Array.isArray(originalValue)) {
+                    // It's a translation object, try to get the default language or English value
+                    originalValue = originalValue[base.defaultLanguage] || originalValue.en || originalValue[Object.keys(originalValue)[0]] || ''
+                }
+                
+                // Don't show JSON strings as original values
+                if (typeof originalValue === 'string' && originalValue.startsWith('{') && originalValue.endsWith('}')) {
+                    try {
+                        const parsed = JSON.parse(originalValue)
+                        if (typeof parsed === 'object') {
+                            originalValue = parsed[base.defaultLanguage] || parsed.en || parsed[Object.keys(parsed)[0]] || ''
+                        }
+                    } catch (e) {
+                        // Not valid JSON, keep as is
+                    }
+                }
+                
+                const originalDiv = $('<div style="margin-bottom: 5px;">').appendTo(container)
+                $('<label style="display: inline-block; width: 100px; color: #666;">Original:</label>').appendTo(originalDiv)
+                
+                // Show original value in readonly input/textarea
+                if (type === 'textarea') {
+                    $('<textarea>')
+                        .css({ 
+                            width: 'calc(100% - 110px)', 
+                            minHeight: '50px', 
+                            verticalAlign: 'top',
+                            backgroundColor: '#f5f5f5',
+                            border: '1px solid #ddd',
+                            resize: 'vertical'
+                        })
+                        .val(originalValue || '')
+                        .prop('readonly', true)
+                        .appendTo(originalDiv)
+                } else {
+                    $('<input type="text">')
+                        .css({
+                            width: 'calc(100% - 110px)',
+                            backgroundColor: '#f5f5f5',
+                            border: '1px solid #ddd'
+                        })
+                        .val(originalValue || '')
+                        .prop('readonly', true)
+                        .appendTo(originalDiv)
+                }
+                
+                // Translation inputs for each enabled language
+                languages.forEach(lang => {
+                    const langDiv = $('<div style="margin-bottom: 3px;">').appendTo(container)
+                    $(`<label style="display: inline-block; width: 100px;">${lang.name}:</label>`).appendTo(langDiv)
+                    
+                    // Initialize translations object if it doesn't exist
+                    if (!node.translations) {
+                        node.translations = {}
+                    }
+                    
+                    // Load from node.translations
+                    const currentValue = node.translations[lang.code]?.[key] || ''
+                    
+                    if (type === 'textarea') {
+                        const textarea = $('<textarea>')
+                            .css({ width: 'calc(100% - 110px)', minHeight: '50px', verticalAlign: 'top' })
+                            .val(currentValue)
+                            .appendTo(langDiv)
+                        
+                        textarea.on('change', function() {
+                            // Store translations directly in the widget
+                            if (!node.translations) {
+                                node.translations = {}
+                            }
+                            if (!node.translations[lang.code]) {
+                                node.translations[lang.code] = {}
+                            }
+                            const value = $(this).val()
+                            const oldValue = node.translations[lang.code]?.[key]
+                            node.translations[lang.code][key] = value
+                            
+                            // Record the change in Node-RED history
+                            if (oldValue !== value) {
+                                const event = createEditHistoryEvent(node, {
+                                    translations: {
+                                        [lang.code]: {
+                                            [key]: { oldValue, newValue: value }
+                                        }
+                                    }
+                                })
+                                recordEvents([event])
+                            }
+                        })
+                    } else {
+                        const input = $('<input type="text">')
+                            .css('width', 'calc(100% - 110px)')
+                            .val(currentValue)
+                            .appendTo(langDiv)
+                        
+                        input.on('change', function() {
+                            // Store translations directly in the widget
+                            if (!node.translations) {
+                                node.translations = {}
+                            }
+                            if (!node.translations[lang.code]) {
+                                node.translations[lang.code] = {}
+                            }
+                            const value = $(this).val()
+                            const oldValue = node.translations[lang.code]?.[key]
+                            node.translations[lang.code][key] = value
+                            
+                            // Record the change in Node-RED history
+                            if (oldValue !== value) {
+                                const event = createEditHistoryEvent(node, {
+                                    translations: {
+                                        [lang.code]: {
+                                            [key]: { oldValue, newValue: value }
+                                        }
+                                    }
+                                })
+                                recordEvents([event])
+                            }
+                        })
+                    }
+                })
+                
+                return container
+            }
+        }
+        
+        // Refresh button handler
+        $('#refresh-translations-btn').on('click', function() {
+            loadTranslations()
+        })
+        
+        // Apply translations button handler
+        $('#apply-translations-btn').on('click', function() {
+            applyTranslationsToWidgets()
+            RED.notify('Translations applied to widgets', 'success')
+            // Mark as dirty to enable deploy
+            RED.nodes.dirty(true)
+        })
+        
+        // Expand/Collapse all buttons
+        $('#expand-all-btn').on('click', function() {
+            $('.nrdb2-translations-page-content, .nrdb2-translations-group-content').slideDown(200)
+            $('.nrdb2-translations-chevron').removeClass('collapsed')
+        })
+        
+        $('#collapse-all-btn').on('click', function() {
+            $('.nrdb2-translations-page-content, .nrdb2-translations-group-content').slideUp(200)
+            $('.nrdb2-translations-chevron').addClass('collapsed')
+        })
+        
+        // Initial load
+        setTimeout(loadTranslations, 100)
+    }
+
     function refreshSidebarEditors () {
         try {
             refreshBusy = true
@@ -2200,6 +2992,8 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 const pagesContent = addSidebarTab(c_('label.layout'), 'pages', ulDashboardTabs, sidebar)
                 const themesContent = addSidebarTab(c_('label.theming'), 'themes', ulDashboardTabs, sidebar)
                 const cConstraintsContent = addSidebarTab(c_('label.constraints'), 'client-constraints', ulDashboardTabs, sidebar)
+                const languagesContent = addSidebarTab('Languages', 'languages', ulDashboardTabs, sidebar)
+                const translationsContent = addSidebarTab('Translations', 'translations', ulDashboardTabs, sidebar)
 
                 // check for any third-party tab definitions
                 RED.plugins.getPluginsByType('node-red-dashboard-2').forEach(plugin => {
@@ -2231,8 +3025,12 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 buildLayoutOrderEditor(pagesContent)
                 // add Themes View
                 buildThemesEditor(themesContent)
-                // add Themes View
+                // add Client Constraints View
                 buildClientConstraintsEditor(base, cConstraintsContent)
+                // add Languages View
+                buildLanguagesEditor(base, languagesContent)
+                // add Translations View
+                buildTranslationsEditor(base, translationsContent)
             }
         })
     }

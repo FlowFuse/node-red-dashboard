@@ -386,6 +386,11 @@ module.exports = function (RED) {
         const node = this
 
         node._created = Date.now()
+        
+        // Copy languages settings from config
+        node.languages = n.languages || [{ code: 'en', name: 'English', enabled: true }]
+        node.defaultLanguage = n.defaultLanguage || 'en'
+        node.autoDetectLanguage = n.autoDetectLanguage !== false
 
         n.root = RED.settings.httpNodeRoot || '/'
 
@@ -468,14 +473,63 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
+            
             // loop over widgets - check statestore if we've had any dynamic properties set
+            const widgetsWithTranslations = {}
             for (const [id, widget] of node.ui.widgets) {
                 const state = statestore.getAll(id)
+                // Create a copy of the widget
+                const widgetCopy = {
+                    ...widget,
+                    props: { ...widget.props },
+                    state: { ...widget.state }
+                }
+                
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
-                    widget.props = { ...widget.props, ...state }
-                    widget.state = { ...widget.state, ...state }
+                    widgetCopy.props = { ...widgetCopy.props, ...state }
+                    widgetCopy.state = { ...widgetCopy.state, ...state }
                 }
+                
+                // Apply translations to widget properties
+                if (widget.translations) {
+                    const translatableProps = ['label', 'content', 'tooltip', 'name', 'title']
+                    
+                    translatableProps.forEach(prop => {
+                        if (widgetCopy.props[prop]) {
+                            // Build translation object for this property
+                            const translations = {}
+                            let hasTranslations = false
+                            
+                            // Add translations from widget.translations
+                            Object.keys(widget.translations).forEach(lang => {
+                                if (widget.translations[lang] && widget.translations[lang][prop]) {
+                                    translations[lang] = widget.translations[lang][prop]
+                                    hasTranslations = true
+                                }
+                            })
+                            
+                            // Always include original value as fallback
+                            const originalValue = widgetCopy.props[prop]
+                            if (originalValue && typeof originalValue === 'string' && !originalValue.startsWith('{')) {
+                                // Store original value
+                                translations.original = originalValue
+                                // Also set as English if not already set
+                                if (!translations.en) {
+                                    translations.en = originalValue
+                                }
+                                hasTranslations = true
+                            }
+                            
+                            // Apply translations as object (not JSON string) to widget props
+                            if (hasTranslations && Object.keys(translations).length > 0) {
+                                widgetCopy.props[prop] = translations
+                            }
+                        }
+                    })
+                }
+                
+                widgetsWithTranslations[id] = widgetCopy
             }
 
             // loop over pages - check statestore if we've had any dynamic properties set
@@ -503,15 +557,68 @@ module.exports = function (RED) {
             if (!handshakeEditKey || !meta?.wysiwyg?.editKey || handshakeEditKey !== meta.wysiwyg.editKey) {
                 delete meta.wysiwyg
             }
+            // Create config objects with translations applied
+            const pagesWithTranslations = {}
+            for (const [id, page] of node.ui.pages) {
+                const pageCopy = { ...page }
+                
+                // Apply translations if page has translations property
+                if (page.translations && pageCopy.name) {
+                    const translations = {}
+                    Object.keys(page.translations).forEach(lang => {
+                        if (page.translations[lang] && page.translations[lang].name) {
+                            translations[lang] = page.translations[lang].name
+                        }
+                    })
+                    // Always include original value
+                    translations.original = pageCopy.name
+                    if (!translations.en) {
+                        translations.en = pageCopy.name
+                    }
+                    if (Object.keys(translations).length > 0) {
+                        pageCopy.name = translations
+                    }
+                }
+                pagesWithTranslations[id] = pageCopy
+            }
+            
+            const groupsWithTranslations = {}
+            for (const [id, group] of node.ui.groups) {
+                const groupCopy = { ...group }
+                
+                // Apply translations if group has translations property
+                if (group.translations && groupCopy.name) {
+                    const translations = {}
+                    Object.keys(group.translations).forEach(lang => {
+                        if (group.translations[lang] && group.translations[lang].name) {
+                            translations[lang] = group.translations[lang].name
+                        }
+                    })
+                    // Always include original value
+                    translations.original = groupCopy.name
+                    if (!translations.en) {
+                        translations.en = groupCopy.name
+                    }
+                    if (Object.keys(translations).length > 0) {
+                        groupCopy.name = translations
+                    }
+                }
+                groupsWithTranslations[id] = groupCopy
+            }
+            
             // pass the connected UI the UI config
+            const configLanguages = node.languages || [{ code: 'en', name: 'English', enabled: true }]
             socket.emit('ui-config', node.id, {
                 meta,
                 dashboards: Object.fromEntries(node.ui.dashboards),
                 heads: Object.fromEntries(node.ui.heads),
-                pages: Object.fromEntries(node.ui.pages),
+                pages: pagesWithTranslations,
                 themes: Object.fromEntries(node.ui.themes),
-                groups: Object.fromEntries(node.ui.groups),
-                widgets: Object.fromEntries(node.ui.widgets)
+                groups: groupsWithTranslations,
+                widgets: widgetsWithTranslations,
+                languages: configLanguages,
+                defaultLanguage: node.defaultLanguage || 'en',
+                autoDetectLanguage: node.autoDetectLanguage !== false
             })
         }
 
@@ -782,7 +889,7 @@ module.exports = function (RED) {
             // any widgets we hard-code into our front end (e.g ui-notification for connection alerts) will start with ui-
             // Node-RED built nodes will be a random UUID
             if (!wNode && !id.startsWith('ui-')) {
-                console.log('widget does not exist in the runtime', id) // TODO: Handle this better for edit-time added nodes (e.g. ui-spacer)
+                // TODO: Handle this better for edit-time added nodes (e.g. ui-spacer)
                 return // widget does not exist any more (e.g. deleted from NR and deployed BUT the ui page was not refreshed)
             }
             async function handler () {
@@ -955,8 +1062,10 @@ module.exports = function (RED) {
                     },
                     state: statestore.getAll(widgetConfig.id),
                     hooks: widgetEvents,
-                    src: uiShared.contribs[widgetConfig.type]
+                    src: uiShared.contribs[widgetConfig.type],
+                    translations: widgetConfig.translations // Preserve translations
                 }
+                
                 const parent = RED.nodes.getNode(widgetConfig.z)
                 if (parent && parent.TYPE === 'subflow') {
                     const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')
@@ -1022,17 +1131,32 @@ module.exports = function (RED) {
             if (page) {
                 // ensure we have the latest instance of the page's node
                 const { _users, ...p } = page
+                // Ensure page name is always a string, not an object
+                if (p.name && typeof p.name === 'object') {
+                    p.name = p.name.en || p.name[Object.keys(p.name)[0]] || 'Untitled'
+                }
                 node.ui.pages.set(page.id, p)
             }
 
             // map groups on a page-by-page basis
             if (group) {
                 const { _user, type, ...g } = group
+                // Ensure group name is always a string, not an object
+                if (g.name && typeof g.name === 'object') {
+                    g.name = g.name.en || g.name[Object.keys(g.name)[0]] || 'Untitled'
+                }
                 node.ui.groups.set(group.id, g)
             }
 
             // map widgets on a group-by-group basis
             if (widgetNode && widgetConfig && !node.ui.widgets.has(widget.id)) {
+                // Ensure widget properties are strings, not objects
+                const translatableProps = ['label', 'content', 'tooltip', 'name', 'title']
+                translatableProps.forEach(prop => {
+                    if (widgetConfig[prop] && typeof widgetConfig[prop] === 'object') {
+                        widgetConfig[prop] = widgetConfig[prop].en || widgetConfig[prop][Object.keys(widgetConfig[prop])[0]] || ''
+                    }
+                })
                 node.ui.widgets.set(widget.id, widget)
             }
 

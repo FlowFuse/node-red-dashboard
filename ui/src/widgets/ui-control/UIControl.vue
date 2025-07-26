@@ -68,9 +68,14 @@ export default {
                     } else {
                         // navigate to the tab/page
                         try {
-                            this.$router.push({ name: `Page:${pages[page].name}` })
+                            const targetPage = pages[page]
+                            if (targetPage && targetPage.name) {
+                                this.$router.push({ name: `Page:${targetPage.name}` })
+                            } else {
+                                console.error('ui-control: Invalid page at index', page)
+                            }
                         } catch (err) {
-                            console.error(err)
+                            console.error('ui-control: Navigation error', err)
                         }
                     }
                 } else if (typeof page === 'string') {
@@ -107,7 +112,7 @@ export default {
                         try {
                             this.$router.push({ name: `Page:${page}` })
                         } catch (err) {
-                            console.error(err)
+                            console.error('ui-control: Navigation error', err)
                         }
                     }
                 } else {
@@ -115,15 +120,16 @@ export default {
                     console.error('ui-control: page must be a string or number')
                     return
                 }
-                // navigate to the tab/page
-                try {
-                    this.$router.push({
-                        name: `Page:${page}`,
-                        query
-                    })
-                } catch (err) {
-                    console.error(err)
-                }
+                // This block seems unreachable due to earlier returns
+                // Commenting out to avoid confusion
+                // try {
+                //     this.$router.push({
+                //         name: `Page:${page}`,
+                //         query
+                //     })
+                // } catch (err) {
+                //     console.error(err)
+                // }
             }
 
             // Pages
@@ -161,6 +167,12 @@ export default {
                     window.location.href = payload.url
                 }
             }
+            
+            // Language change
+            if ('language' in payload) {
+                // Change the display language
+                this.$store.dispatch('i18n/setLocale', payload.language)
+            }
         })
     },
     unmounted () {
@@ -168,6 +180,11 @@ export default {
     },
     methods: {
         routeChanged () {
+            // Check if we have a valid route with meta.id
+            if (!this.$route.meta?.id || !this.pages[this.$route.meta.id]) {
+                return
+            }
+            
             const pages = Object.values(this.pages).sort((a, b) => {
                 return a.order - b.order
             })
