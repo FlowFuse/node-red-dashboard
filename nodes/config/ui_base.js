@@ -33,6 +33,9 @@ module.exports = function (RED) {
     datastore.setConfig(RED)
     statestore.setConfig(RED)
 
+    // Load translation endpoint
+    require('./ui_base_translate.js')(RED)
+
     /**
      * @typedef {import('socket.io').Socket} Socket
      * @typedef {import('socket.io').Server} Server
