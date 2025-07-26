@@ -8,6 +8,7 @@ import UIEvent from './ui-event/UIEvent.vue'
 import UIFileInput from './ui-file-input/UIFileInput.vue'
 import UIForm from './ui-form/UIForm.vue'
 import UIGauge from './ui-gauge/UIGauge.vue'
+import UILanguageSelector from './ui-language-selector/UILanguageSelector.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UINumberInput from './ui-number-input/UINumberInput.vue'
@@ -20,7 +21,6 @@ import UITable from './ui-table/UITable.vue'
 import UITemplate from './ui-template/UITemplate.vue'
 import UIText from './ui-text/UIText.vue'
 import UITextInput from './ui-text-input/UITextInput.vue'
-import UILanguageSelector from './ui-language-selector/UILanguageSelector.vue'
 
 // Named exports for use in other components
 export {

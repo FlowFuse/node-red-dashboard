@@ -55,7 +55,6 @@ export default {
 
             if ('page' in payload) {
                 let page = payload.tab || payload.page
-                const query = payload.query
                 const pages = Object.values(this.pages).sort((a, b) => {
                     return a.order - b.order
                 })
@@ -167,7 +166,7 @@ export default {
                     window.location.href = payload.url
                 }
             }
-            
+
             // Language change
             if ('language' in payload) {
                 // Change the display language
@@ -184,7 +183,7 @@ export default {
             if (!this.$route.meta?.id || !this.pages[this.$route.meta.id]) {
                 return
             }
-            
+
             const pages = Object.values(this.pages).sort((a, b) => {
                 return a.order - b.order
             })

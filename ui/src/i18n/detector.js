@@ -10,10 +10,10 @@ export function detectUserLanguage () {
 
     // Get from browser
     const browserLang = navigator.language || navigator.userLanguage
-    
+
     // Extract base language code (e.g., 'en' from 'en-US')
     const baseLang = browserLang.split('-')[0]
-    
+
     // Return base language, defaulting to 'en' if not set
     return baseLang || 'en'
 }

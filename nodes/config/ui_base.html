@@ -366,30 +366,27 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         }
     }
 
-    
     // Function to apply translations to widget properties
-    function applyTranslationsToWidgets() {
-        const enabledLanguages = [];
-        let baseNode = null;
-        
-        RED.nodes.eachConfig(function(n) {
+    function applyTranslationsToWidgets () {
+        const enabledLanguages = []
+
+        RED.nodes.eachConfig(function (n) {
             if (n.type === 'ui-base') {
-                baseNode = n;
                 if (n.languages) {
                     n.languages.forEach(lang => {
                         if (lang.enabled && lang.code) {
-                            enabledLanguages.push(lang.code);
+                            enabledLanguages.push(lang.code)
                         }
-                    });
+                    })
                 }
             }
-        });
-        
+        })
+
         // Apply translations to all widgets
-        RED.nodes.eachNode(function(n) {
+        RED.nodes.eachNode(function (n) {
             // Check if node has translations
-            const hasTranslations = n.translations && Object.keys(n.translations).length > 0;
-            
+            const hasTranslations = n.translations && Object.keys(n.translations).length > 0
+
             if (hasTranslations) {
                 // Widget types that support translations
                 const translatableProperties = {
@@ -405,47 +402,40 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     'ui-markdown': ['content'],
                     'ui-page': ['name'],
                     'ui-group': ['name']
-                };
-                
-                const propsToTranslate = translatableProperties[n.type];
+                }
+
+                const propsToTranslate = translatableProperties[n.type]
                 if (propsToTranslate) {
                     propsToTranslate.forEach(prop => {
-                        const translations = {};
-                        let hasTranslations = false;
-                        
+                        const translations = {}
+
                         // Build translation object for this property
                         enabledLanguages.forEach(lang => {
                             // Check node translations
-                            const value = n.translations?.[lang]?.[prop];
-                            
+                            const value = n.translations?.[lang]?.[prop]
+
                             if (value) {
-                                translations[lang] = value;
-                                hasTranslations = true;
+                                translations[lang] = value
                             }
-                        });
-                        
+                        })
+
                         // Include original value as 'en' if not already translated
                         if (n[prop] && !translations.en) {
-                            const value = n[prop];
-                            
+                            const value = n[prop]
+
                             if (typeof value === 'object' && value.en) {
                                 // If it's already a translation object, use the English value
-                                translations.en = value.en;
+                                translations.en = value.en
                             } else if (typeof value === 'string') {
                                 // If it's a plain string, use it as English
-                                translations.en = value;
-                            }
-                            
-                            if (translations.en) {
-                                hasTranslations = true;
+                                translations.en = value
                             }
                         }
-                        
                         // Don't modify widget properties - translations are stored in widget.translations
-                    });
+                    })
                 }
             }
-        });
+        })
     }
 
     RED.nodes.registerType('ui-base', {
@@ -559,7 +549,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         },
         oneditsave: function () {
             // Apply translations to all widgets before saving
-            applyTranslationsToWidgets();
+            applyTranslationsToWidgets()
         },
         onpaletteadd: function () {
             // add the Dashboard 2.0 sidebar
@@ -1303,7 +1293,6 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             evt.stopPropagation()
             evt.preventDefault()
         })
-        
 
         if (item.type === 'ui-page') {
             // add the "+ group" button
@@ -2223,14 +2212,12 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             })
     }
 
-    
-
     /**
      * Build the Languages Editor within the Dashboard 2.0 sidebar
      * @param {Object} base - The base configuration node
      * @param {Object} parent - The parent element to append the languages editor to
      */
-    function buildLanguagesEditor(base, parent) {
+    function buildLanguagesEditor (base, parent) {
         const html = `<div class="nrdb2-sidebar-tab-content">
             <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
                 <p>
@@ -2260,20 +2247,20 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 </div>
             </div>
         </div>`
-        
+
         const container = $(html).appendTo(parent)
-        
+
         // Initialize with current values
         const languages = base.languages || [
             { code: 'en', name: 'English', enabled: true },
             { code: 'fr', name: 'Français', enabled: false }
         ]
-        
+
         // Function to render language list
-        function renderLanguagesList() {
+        function renderLanguagesList () {
             const listContainer = $('#languages-list')
             listContainer.empty()
-            
+
             languages.forEach((lang, index) => {
                 const langRow = $(`
                     <div class="language-row" data-index="${index}" style="margin-bottom: 8px; padding: 8px; background: #f8f8f8; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; width: 100%;">
@@ -2288,127 +2275,127 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         </button>
                     </div>
                 `).appendTo(listContainer)
-                
+
                 // Update language in array when inputs change
-                langRow.find('.lang-code').on('change', function() {
+                langRow.find('.lang-code').on('change', function () {
                     languages[index].code = $(this).val()
                     updateDefaultLanguageOptions()
                 })
-                
-                langRow.find('.lang-name').on('change', function() {
+
+                langRow.find('.lang-name').on('change', function () {
                     languages[index].name = $(this).val()
                     updateDefaultLanguageOptions()
                 })
-                
-                langRow.find('.lang-enabled').on('change', function() {
+
+                langRow.find('.lang-enabled').on('change', function () {
                     languages[index].enabled = $(this).prop('checked')
                 })
-                
-                langRow.find('.remove-lang-btn').on('click', function() {
+
+                langRow.find('.remove-lang-btn').on('click', function () {
                     languages.splice(index, 1)
                     renderLanguagesList()
                     updateDefaultLanguageOptions()
                 })
             })
         }
-        
+
         // Function to update default language options
-        function updateDefaultLanguageOptions() {
+        function updateDefaultLanguageOptions () {
             const select = $('#node-config-input-defaultLanguage')
             const currentValue = select.val()
             select.empty()
-            
+
             languages.forEach(lang => {
                 if (lang.code && lang.name) {
                     select.append(`<option value="${lang.code}">${lang.name} (${lang.code})</option>`)
                 }
             })
-            
+
             // Restore previous selection if it still exists
             if (select.find(`option[value="${currentValue}"]`).length > 0) {
                 select.val(currentValue)
             }
         }
-        
+
         // Add language button handler
-        $('#add-language-btn').on('click', function() {
+        $('#add-language-btn').on('click', function () {
             languages.push({ code: '', name: '', enabled: false })
             renderLanguagesList()
         })
-        
+
         // Initialize
         renderLanguagesList()
         updateDefaultLanguageOptions()
-        
+
         // Make the language list sortable
         $('#languages-list').sortable({
             handle: '.language-handle',
-            update: function(event, ui) {
+            update: function (event, ui) {
                 // Get new order
                 const newOrder = []
-                $('#languages-list .language-row').each(function() {
+                $('#languages-list .language-row').each(function () {
                     const index = parseInt($(this).data('index'))
                     newOrder.push(languages[index])
                 })
-                
+
                 // Update languages array with new order
                 languages.length = 0
                 newOrder.forEach(lang => languages.push(lang))
-                
+
                 // Re-render to update indices
                 renderLanguagesList()
                 saveLanguages()
-                
+
                 // Re-apply sortable after re-render
                 $('#languages-list').sortable({
                     handle: '.language-handle',
-                    update: function(event, ui) {
+                    update: function (event, ui) {
                         // This will be called again if needed
                     }
                 })
             }
         })
-        
+
         // Set current values
         $('#node-config-input-defaultLanguage').val(base.defaultLanguage || 'en')
         $('#node-config-input-autoDetect').prop('checked', base.autoDetectLanguage !== false)
-        
+
         // Update base configuration when values change
-        $('#node-config-input-defaultLanguage').on('change', function() {
+        $('#node-config-input-defaultLanguage').on('change', function () {
             base.defaultLanguage = $(this).val()
             // Mark as dirty
             RED.nodes.dirty(true)
         })
-        
-        $('#node-config-input-autoDetect').on('change', function() {
+
+        $('#node-config-input-autoDetect').on('change', function () {
             base.autoDetectLanguage = $(this).prop('checked')
             // Mark as dirty
             RED.nodes.dirty(true)
         })
-        
+
         // Save languages configuration
-        function saveLanguages() {
+        function saveLanguages () {
             base.languages = languages.filter(lang => lang.code && lang.name)
             // Mark as dirty
             RED.nodes.dirty(true)
         }
-        
+
         // Update languages whenever they change
         container.on('change', '.lang-code, .lang-name, .lang-enabled', saveLanguages)
-        container.on('click', '.remove-lang-btn', function() {
+        container.on('click', '.remove-lang-btn', function () {
             setTimeout(saveLanguages, 100)
         })
-        container.on('click', '#add-language-btn', function() {
+        container.on('click', '#add-language-btn', function () {
             setTimeout(saveLanguages, 100)
         })
     }
-    
+
     /**
      * Build the Translations Editor within the Dashboard 2.0 sidebar
      * @param {Object} base - The base configuration node
      * @param {Object} parent - The parent element to append the translations editor to
      */
-    function buildTranslationsEditor(base, parent) {
+    function buildTranslationsEditor (base, parent) {
         const html = `<div class="nrdb2-sidebar-tab-content">
             <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
                 <p>
@@ -2440,14 +2427,14 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 </div>
             </div>
         </div>`
-        
-        const container = $(html).appendTo(parent)
-        
+
+        $(html).appendTo(parent)
+
         // Load and manage translations
-        function loadTranslations() {
+        function loadTranslations () {
             const translationsList = $('#translations-list')
             translationsList.html('<div style="text-align: center; color: #999; padding: 20px;"><i class="fa fa-spinner fa-spin"></i> Loading translations...</div>')
-            
+
             // Get languages from base configuration
             const languages = base.languages || [
                 { code: 'en', name: 'English', enabled: true }
@@ -2457,7 +2444,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No languages enabled. Enable at least one language above to manage translations.</div>')
                 return
             }
-            
+
             // Widget types configuration
             const widgetTypes = {
                 'ui-button': [
@@ -2517,12 +2504,12 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     { key: 'tooltip', label: 'Tooltip', type: 'text' }
                 ]
             }
-            
+
             // Collect and organize data hierarchically
             const pages = []
-            
+
             // Get all pages sorted by order
-            RED.nodes.eachConfig(function(n) {
+            RED.nodes.eachConfig(function (n) {
                 if (n.type === 'ui-page') {
                     pages.push({
                         id: n.id,
@@ -2533,13 +2520,13 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     })
                 }
             })
-            
+
             // Sort pages by order
             pages.sort((a, b) => a.order - b.order)
-            
+
             // For each page, get its groups
             pages.forEach(page => {
-                RED.nodes.eachConfig(function(n) {
+                RED.nodes.eachConfig(function (n) {
                     if (n.type === 'ui-group' && n.page === page.id) {
                         const group = {
                             id: n.id,
@@ -2548,9 +2535,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                             order: n.order || 0,
                             widgets: []
                         }
-                        
+
                         // Get widgets for this group
-                        RED.nodes.eachNode(function(w) {
+                        RED.nodes.eachNode(function (w) {
                             if (widgetTypes[w.type] && w.group === group.id) {
                                 group.widgets.push({
                                     id: w.id,
@@ -2562,26 +2549,26 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                                 })
                             }
                         })
-                        
+
                         // Sort widgets by order
                         group.widgets.sort((a, b) => a.order - b.order)
-                        
+
                         page.groups.push(group)
                     }
                 })
-                
+
                 // Sort groups by order
                 page.groups.sort((a, b) => a.order - b.order)
             })
-            
+
             // Build the translations UI
             translationsList.empty()
-            
+
             if (pages.length === 0) {
                 translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No pages found in your dashboard.</div>')
                 return
             }
-            
+
             // Add CSS classes for the tree view
             if (!$('#nrdb2-translations-styles').length) {
                 $(`<style id="nrdb2-translations-styles">
@@ -2662,75 +2649,75 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     }
                 </style>`).appendTo('head')
             }
-            
+
             // Create translation UI following the hierarchy
             pages.forEach(page => {
                 const pageContainer = $('<div class="nrdb2-translations-page">').appendTo(translationsList)
-                
+
                 // Page header with collapsible chevron
                 const pageHeader = $('<div class="nrdb2-translations-page-header">').appendTo(pageContainer)
                 const pageChevron = $('<i class="fa fa-angle-down nrdb2-translations-chevron"></i>').appendTo(pageHeader)
                 $('<i class="fa fa-file-o nrdb2-translations-icon"></i>').appendTo(pageHeader)
                 $(`<h4 class="nrdb2-translations-title">${page.name}</h4>`).appendTo(pageHeader)
                 $(`<span class="nrdb2-translations-count">${page.groups.length} groups</span>`).appendTo(pageHeader)
-                
+
                 const pageContent = $('<div class="nrdb2-translations-page-content">').appendTo(pageContainer)
-                
+
                 // Page name translation
                 const pageTranslation = createTranslationField(page.node, 'name', 'Page Name', 'text', enabledLanguages)
                 pageTranslation.css('margin-bottom', '15px').appendTo(pageContent)
-                
+
                 // Groups for this page
                 page.groups.forEach(group => {
                     const groupContainer = $('<div class="nrdb2-translations-group">').appendTo(pageContent)
-                    
+
                     // Group header
                     const groupHeader = $('<div class="nrdb2-translations-group-header">').appendTo(groupContainer)
                     const groupChevron = $('<i class="fa fa-angle-down nrdb2-translations-chevron"></i>').appendTo(groupHeader)
                     $('<i class="fa fa-th-large nrdb2-translations-icon"></i>').appendTo(groupHeader)
                     $(`<h5 class="nrdb2-translations-title">${group.name}</h5>`).appendTo(groupHeader)
                     $(`<span class="nrdb2-translations-count">${group.widgets.length} widgets</span>`).appendTo(groupHeader)
-                    
+
                     const groupContent = $('<div class="nrdb2-translations-group-content">').appendTo(groupContainer)
-                    
+
                     // Group name translation
                     const groupTranslation = createTranslationField(group.node, 'name', 'Group Name', 'text', enabledLanguages)
                     groupTranslation.css('margin-bottom', '10px').appendTo(groupContent)
-                    
+
                     // Widgets for this group
                     group.widgets.forEach(widget => {
                         const widgetContainer = $('<div class="nrdb2-translations-widget">').appendTo(groupContent)
                         widgetContainer.addClass('translation-item')
                         widgetContainer.attr('data-search-text', `${page.name} ${group.name} ${widget.name}`.toLowerCase())
-                        
+
                         // Widget header
                         $(`<div style="margin-bottom: 8px; font-weight: 600; color: var(--red-ui-primary-text-color, #333);"><i class="fa fa-cube" style="margin-right: 8px; color: var(--red-ui-secondary-text-color, #666);"></i>${widget.name}</div>`).appendTo(widgetContainer)
-                        
+
                         // Widget properties
                         widget.properties.forEach(prop => {
                             const propField = createTranslationField(widget.node, prop.key, prop.label, prop.type, enabledLanguages)
                             propField.appendTo(widgetContainer)
                         })
                     })
-                    
+
                     // Toggle group visibility
-                    groupHeader.on('click', function(e) {
+                    groupHeader.on('click', function (e) {
                         e.stopPropagation()
                         groupContent.slideToggle(200)
                         groupChevron.toggleClass('collapsed')
                     })
                 })
-                
+
                 // Toggle page visibility
-                pageHeader.on('click', function(e) {
+                pageHeader.on('click', function (e) {
                     e.stopPropagation()
                     pageContent.slideToggle(200)
                     pageChevron.toggleClass('collapsed')
                 })
             })
-            
+
             // Search functionality
-            $('#translation-search').off('input').on('input', function() {
+            $('#translation-search').off('input').on('input', function () {
                 const searchTerm = $(this).val().toLowerCase()
                 if (searchTerm === '') {
                     // Show all and restore collapsed state
@@ -2739,9 +2726,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 } else {
                     // Hide all containers first
                     translationsList.find('> div').hide()
-                    
+
                     // Show only matching items and their parents
-                    $('.translation-item').each(function() {
+                    $('.translation-item').each(function () {
                         const text = $(this).attr('data-search-text')
                         if (text && text.includes(searchTerm)) {
                             $(this).show()
@@ -2753,21 +2740,21 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     })
                 }
             })
-            
+
             // Helper function to create translation fields
-            function createTranslationField(node, key, label, type, languages) {
+            function createTranslationField (node, key, label, type, languages) {
                 const container = $('<div style="margin-bottom: 10px;">')
                 $(`<div style="margin-bottom: 5px; font-weight: bold;">${label}:</div>`).appendTo(container)
-                
+
                 // Original value
                 let originalValue = node[key] || ''
-                
+
                 // Check if the value is already a translation object
                 if (typeof originalValue === 'object' && !Array.isArray(originalValue)) {
                     // It's a translation object, try to get the default language or English value
                     originalValue = originalValue[base.defaultLanguage] || originalValue.en || originalValue[Object.keys(originalValue)[0]] || ''
                 }
-                
+
                 // Don't show JSON strings as original values
                 if (typeof originalValue === 'string' && originalValue.startsWith('{') && originalValue.endsWith('}')) {
                     try {
@@ -2779,16 +2766,16 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         // Not valid JSON, keep as is
                     }
                 }
-                
+
                 const originalDiv = $('<div style="margin-bottom: 5px;">').appendTo(container)
                 $('<label style="display: inline-block; width: 100px; color: #666;">Original:</label>').appendTo(originalDiv)
-                
+
                 // Show original value in readonly input/textarea
                 if (type === 'textarea') {
                     $('<textarea>')
-                        .css({ 
-                            width: 'calc(100% - 110px)', 
-                            minHeight: '50px', 
+                        .css({
+                            width: 'calc(100% - 110px)',
+                            minHeight: '50px',
                             verticalAlign: 'top',
                             backgroundColor: '#f5f5f5',
                             border: '1px solid #ddd',
@@ -2808,27 +2795,27 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         .prop('readonly', true)
                         .appendTo(originalDiv)
                 }
-                
+
                 // Translation inputs for each enabled language
                 languages.forEach(lang => {
                     const langDiv = $('<div style="margin-bottom: 3px;">').appendTo(container)
                     $(`<label style="display: inline-block; width: 100px;">${lang.name}:</label>`).appendTo(langDiv)
-                    
+
                     // Initialize translations object if it doesn't exist
                     if (!node.translations) {
                         node.translations = {}
                     }
-                    
+
                     // Load from node.translations
                     const currentValue = node.translations[lang.code]?.[key] || ''
-                    
+
                     if (type === 'textarea') {
                         const textarea = $('<textarea>')
                             .css({ width: 'calc(100% - 110px)', minHeight: '50px', verticalAlign: 'top' })
                             .val(currentValue)
                             .appendTo(langDiv)
-                        
-                        textarea.on('change', function() {
+
+                        textarea.on('change', function () {
                             // Store translations directly in the widget
                             if (!node.translations) {
                                 node.translations = {}
@@ -2839,7 +2826,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                             const value = $(this).val()
                             const oldValue = node.translations[lang.code]?.[key]
                             node.translations[lang.code][key] = value
-                            
+
                             // Record the change in Node-RED history
                             if (oldValue !== value) {
                                 const event = createEditHistoryEvent(node, {
@@ -2857,8 +2844,8 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                             .css('width', 'calc(100% - 110px)')
                             .val(currentValue)
                             .appendTo(langDiv)
-                        
-                        input.on('change', function() {
+
+                        input.on('change', function () {
                             // Store translations directly in the widget
                             if (!node.translations) {
                                 node.translations = {}
@@ -2869,7 +2856,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                             const value = $(this).val()
                             const oldValue = node.translations[lang.code]?.[key]
                             node.translations[lang.code][key] = value
-                            
+
                             // Record the change in Node-RED history
                             if (oldValue !== value) {
                                 const event = createEditHistoryEvent(node, {
@@ -2884,35 +2871,35 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         })
                     }
                 })
-                
+
                 return container
             }
         }
-        
+
         // Refresh button handler
-        $('#refresh-translations-btn').on('click', function() {
+        $('#refresh-translations-btn').on('click', function () {
             loadTranslations()
         })
-        
+
         // Apply translations button handler
-        $('#apply-translations-btn').on('click', function() {
+        $('#apply-translations-btn').on('click', function () {
             applyTranslationsToWidgets()
             RED.notify('Translations applied to widgets', 'success')
             // Mark as dirty to enable deploy
             RED.nodes.dirty(true)
         })
-        
+
         // Expand/Collapse all buttons
-        $('#expand-all-btn').on('click', function() {
+        $('#expand-all-btn').on('click', function () {
             $('.nrdb2-translations-page-content, .nrdb2-translations-group-content').slideDown(200)
             $('.nrdb2-translations-chevron').removeClass('collapsed')
         })
-        
-        $('#collapse-all-btn').on('click', function() {
+
+        $('#collapse-all-btn').on('click', function () {
             $('.nrdb2-translations-page-content, .nrdb2-translations-group-content').slideUp(200)
             $('.nrdb2-translations-chevron').addClass('collapsed')
         })
-        
+
         // Initial load
         setTimeout(loadTranslations, 100)
     }

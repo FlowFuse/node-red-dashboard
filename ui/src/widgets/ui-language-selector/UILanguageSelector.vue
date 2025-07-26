@@ -80,7 +80,7 @@ export default {
     },
     mounted () {
         this.mounted = true
-        
+
         // Check for teleport target availability
         if (this.widgetType === 'ui') {
             this.checkTeleportTarget()
@@ -121,13 +121,13 @@ export default {
         onChange (value) {
             // Change the application language
             this.$store.commit('i18n/setLocale', value)
-            
+
             // Emit to server
             this.$socket.emit('widget-action', this.id, {
                 payload: value,
                 topic: this.props.topic || 'language'
             })
-            
+
             // Notify other widgets about language change through store
             // Don't use ui-control as it's meant for navigation
         },
@@ -135,11 +135,11 @@ export default {
             // Helper to get translated property
             const propValue = this.props[prop]
             if (!propValue) return ''
-            
+
             if (typeof propValue === 'object' && !Array.isArray(propValue)) {
                 return propValue[this.locale] || propValue.en || Object.values(propValue)[0] || ''
             }
-            
+
             return propValue
         },
         checkTeleportTarget () {
@@ -150,7 +150,7 @@ export default {
                     clearInterval(checkInterval)
                 }
             }, 100)
-            
+
             // Stop checking after 5 seconds
             setTimeout(() => {
                 if (!this.targetReady) {

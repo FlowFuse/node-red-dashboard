@@ -386,7 +386,7 @@ module.exports = function (RED) {
         const node = this
 
         node._created = Date.now()
-        
+
         // Copy languages settings from config
         node.languages = n.languages || [{ code: 'en', name: 'English', enabled: true }]
         node.defaultLanguage = n.defaultLanguage || 'en'
@@ -473,7 +473,6 @@ module.exports = function (RED) {
          * @param {Socket} socket - socket.io socket connecting to the server
          */
         function emitConfig (socket) {
-            
             // loop over widgets - check statestore if we've had any dynamic properties set
             const widgetsWithTranslations = {}
             for (const [id, widget] of node.ui.widgets) {
@@ -484,23 +483,23 @@ module.exports = function (RED) {
                     props: { ...widget.props },
                     state: { ...widget.state }
                 }
-                
+
                 if (state) {
                     // merge the statestore with our props to account for dynamically set properties:
                     widgetCopy.props = { ...widgetCopy.props, ...state }
                     widgetCopy.state = { ...widgetCopy.state, ...state }
                 }
-                
+
                 // Apply translations to widget properties
                 if (widget.translations) {
                     const translatableProps = ['label', 'content', 'tooltip', 'name', 'title']
-                    
+
                     translatableProps.forEach(prop => {
                         if (widgetCopy.props[prop]) {
                             // Build translation object for this property
                             const translations = {}
                             let hasTranslations = false
-                            
+
                             // Add translations from widget.translations
                             Object.keys(widget.translations).forEach(lang => {
                                 if (widget.translations[lang] && widget.translations[lang][prop]) {
@@ -508,7 +507,7 @@ module.exports = function (RED) {
                                     hasTranslations = true
                                 }
                             })
-                            
+
                             // Always include original value as fallback
                             const originalValue = widgetCopy.props[prop]
                             if (originalValue && typeof originalValue === 'string' && !originalValue.startsWith('{')) {
@@ -520,7 +519,7 @@ module.exports = function (RED) {
                                 }
                                 hasTranslations = true
                             }
-                            
+
                             // Apply translations as object (not JSON string) to widget props
                             if (hasTranslations && Object.keys(translations).length > 0) {
                                 widgetCopy.props[prop] = translations
@@ -528,7 +527,7 @@ module.exports = function (RED) {
                         }
                     })
                 }
-                
+
                 widgetsWithTranslations[id] = widgetCopy
             }
 
@@ -561,7 +560,7 @@ module.exports = function (RED) {
             const pagesWithTranslations = {}
             for (const [id, page] of node.ui.pages) {
                 const pageCopy = { ...page }
-                
+
                 // Apply translations if page has translations property
                 if (page.translations && pageCopy.name) {
                     const translations = {}
@@ -581,11 +580,11 @@ module.exports = function (RED) {
                 }
                 pagesWithTranslations[id] = pageCopy
             }
-            
+
             const groupsWithTranslations = {}
             for (const [id, group] of node.ui.groups) {
                 const groupCopy = { ...group }
-                
+
                 // Apply translations if group has translations property
                 if (group.translations && groupCopy.name) {
                     const translations = {}
@@ -605,7 +604,7 @@ module.exports = function (RED) {
                 }
                 groupsWithTranslations[id] = groupCopy
             }
-            
+
             // pass the connected UI the UI config
             const configLanguages = node.languages || [{ code: 'en', name: 'English', enabled: true }]
             socket.emit('ui-config', node.id, {
@@ -1065,7 +1064,7 @@ module.exports = function (RED) {
                     src: uiShared.contribs[widgetConfig.type],
                     translations: widgetConfig.translations // Preserve translations
                 }
-                
+
                 const parent = RED.nodes.getNode(widgetConfig.z)
                 if (parent && parent.TYPE === 'subflow') {
                     const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')

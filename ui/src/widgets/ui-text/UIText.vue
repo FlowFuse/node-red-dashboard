@@ -52,13 +52,13 @@ export default {
             return null
         }
     },
-    created () {
-        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
-    },
     watch: {
         locale () {
             this.$forceUpdate()
         }
+    },
+    created () {
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         onDynamicProperties (msg) {

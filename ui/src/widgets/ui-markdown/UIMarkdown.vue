@@ -1,7 +1,7 @@
 <template>
     <!-- <div ref="markdown" class="nrdb-ui-markdown-content" v-html="content" /> -->
     <div ref="markdown" class="nrdb-ui-markdown-content">
-        <component :is="content" v-if="content" :id="id" :props="props" :msg="msg" :key="componentKey" />
+        <component :is="content" v-if="content" :id="id" :key="componentKey" :props="props" :msg="msg" />
     </div>
 </template>
 
@@ -136,20 +136,19 @@ export default {
         parseContent () {
             // Get translated content with fallback to original
             let rawContent = ''
-            
+
             try {
                 const translatedContent = this.getTranslatedProperty('content')
                 const originalContent = this.props?.content || ''
                 rawContent = translatedContent || originalContent
-                
             } catch (e) {
                 rawContent = this.props?.content || ''
             }
-            
+
             if (!rawContent) {
                 rawContent = ''
             }
-            
+
             // handle {{ variable || 'placeholder' }} case where || is parsed as a table
             const content = rawContent.replace(/\|\|/g, 'mdORmd')
             // convert to markdown

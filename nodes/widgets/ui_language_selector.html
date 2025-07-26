@@ -42,11 +42,11 @@
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
                 const node = this
-                
+    
                 // Set ui if not already set and widget type is ui
                 if (this.widgetType === 'ui' && !this.ui) {
                     // Find the first ui-base node
-                    RED.nodes.eachConfig(function(n) {
+                    RED.nodes.eachConfig(function (n) {
                         if (n.type === 'ui-base') {
                             node.ui = n.id
                             $('#node-input-ui').val(n.id)
@@ -54,9 +54,9 @@
                         }
                     })
                 }
-                
+    
                 // Handle widget type change
-                $('#node-input-widgetType').on('change', function() {
+                $('#node-input-widgetType').on('change', function () {
                     const widgetType = $(this).val()
                     if (widgetType === 'ui') {
                         $('#group-row').hide()
@@ -64,10 +64,10 @@
                         $('.nr-db-ui-element-hide-in-subflow').hide()
                         // Make group optional for UI type
                         $('#node-input-group').removeAttr('required')
-                        
+    
                         // Set ui if not already set
                         if (!node.ui) {
-                            RED.nodes.eachConfig(function(n) {
+                            RED.nodes.eachConfig(function (n) {
                                 if (n.type === 'ui-base') {
                                     node.ui = n.id
                                     $('#node-input-ui').val(n.id)
@@ -84,21 +84,21 @@
                         $('#node-input-group').attr('required', true)
                     }
                 })
-                
+    
                 // Handle teleport target change
-                $('#node-input-teleportTarget').on('change', function() {
+                $('#node-input-teleportTarget').on('change', function () {
                     if ($(this).val() === 'custom') {
                         $('#teleport-custom-row').show()
                     } else {
                         $('#teleport-custom-row').hide()
                     }
                 })
-                
+    
                 // Initialize values
                 if (!node.teleportCustom) {
                     node.teleportCustom = ''
                 }
-                
+    
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z) && this.widgetType !== 'ui') {
@@ -117,13 +117,13 @@
                         group: '#node-input-group'
                     })
                 }
-                
+    
                 $('#node-input-topic').typedInput({
                     default: 'str',
                     typeField: $('#node-input-topicType'),
                     types: ['str', 'msg', 'flow', 'global']
                 })
-                
+    
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
                 $('.ui-node-popover-title').tooltip({
                     show: {
@@ -131,23 +131,23 @@
                         delay: 150
                     }
                 })
-                
+    
                 // Trigger initial state
                 $('#node-input-widgetType').trigger('change')
                 $('#node-input-teleportTarget').trigger('change')
             },
-            oneditsave: function() {
+            oneditsave: function () {
                 // Save custom teleport value
                 if ($('#node-input-teleportTarget').val() === 'custom') {
                     this.teleportTarget = $('#node-input-teleportCustom').val() || '#app-bar-actions'
                 }
-                
+    
                 // Handle widget type
                 if (this.widgetType === 'ui') {
                     // Clear group and set ui
                     this.group = null
                     // Find the first ui-base node
-                    RED.nodes.eachConfig(function(n) {
+                    RED.nodes.eachConfig(function (n) {
                         if (n.type === 'ui-base') {
                             $('#node-input-ui').val(n.id)
                             return false // stop iteration

@@ -359,7 +359,7 @@ module.exports = function (RED) {
                 if ('url' in msg.payload) {
                     emit(msg)
                 }
-                
+
                 // change display language
                 if ('language' in msg.payload) {
                     node.log('Language change requested: ' + msg.payload.language)

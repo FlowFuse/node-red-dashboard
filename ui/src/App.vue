@@ -210,7 +210,7 @@ export default {
                         const locale = this.$store.state.i18n?.locale || 'en'
                         pageName = page.name[locale] || page.name.en || page.name[Object.keys(page.name)[0]] || 'Untitled'
                     }
-                    
+
                     const routeName = 'Page:' + (typeof page.name === 'string' ? page.name : pageName)
                     let title = pageName
                     const headerStyle = payload.dashboards[page.ui].headerContent
@@ -279,7 +279,7 @@ export default {
             this.$store.commit('ui/groups', payload.groups)
             this.$store.commit('ui/widgets', payload.widgets)
             this.$store.commit('ui/themes', payload.themes)
-            
+
             // Store language configuration
             if (payload.languages) {
                 this.$store.commit('i18n/SET_LANGUAGES', payload.languages)

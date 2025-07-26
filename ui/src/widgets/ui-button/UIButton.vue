@@ -70,9 +70,6 @@ export default {
             return this.getProperty('textColor')
         }
     },
-    created () {
-        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
-    },
     watch: {
         locale () {
             this.$forceUpdate()
@@ -83,6 +80,9 @@ export default {
                 this.$forceUpdate()
             }
         }
+    },
+    created () {
+        this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     methods: {
         action ($evt) {

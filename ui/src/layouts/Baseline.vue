@@ -159,7 +159,7 @@ export default {
         uiWidgets: function () {
             // get widgets scoped to the UI, not a group/page
             const allWidgets = Object.values(this.widgets)
-            
+
             const widgets = allWidgets.filter(w => {
                 const hasUi = Object.hasOwn(w.props, 'ui') && !!w.props.ui && !w.props.group && !w.props.page
                 return hasUi
@@ -203,14 +203,14 @@ export default {
             // Get current page
             const page = this.pages[this.$route.meta.id]
             if (!page) return this.pageTitle
-            
+
             // Handle page name translations
             let pageName = page.name
             if (page.name && typeof page.name === 'object') {
                 const locale = this.locale || 'en'
                 pageName = page.name[locale] || page.name.en || page.name[Object.keys(page.name)[0]] || 'Untitled'
             }
-            
+
             // Apply header content style
             const headerStyle = this.dashboard.headerContent
             if (headerStyle === 'dashboard') {
