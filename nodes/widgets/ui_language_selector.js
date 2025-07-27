@@ -150,7 +150,7 @@ module.exports = function (RED) {
                         payload,
                         topic: config.topic || 'language'
                     }
-                    
+
                     // Add language object only for auto mode
                     if (config.outputFormat === 'auto' && langObj) {
                         msg.languageObject = langObj

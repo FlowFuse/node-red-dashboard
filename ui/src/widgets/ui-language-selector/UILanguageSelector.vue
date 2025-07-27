@@ -124,7 +124,7 @@ export default {
 
             // Find the language object
             const langObj = this.options.find(opt => opt.value === value)
-            
+
             // Prepare payload based on output format
             let payload = value
             if (this.props.outputFormat === 'object' && langObj) {
@@ -133,15 +133,15 @@ export default {
 
             // Emit to server
             const msg = {
-                payload: payload,
+                payload,
                 topic: this.props.topic || 'language'
             }
-            
+
             // Add language object for auto mode
             if (this.props.outputFormat === 'auto' && langObj) {
                 msg.languageObject = { code: value, name: langObj.label }
             }
-            
+
             this.$socket.emit('widget-action', this.id, msg)
 
             // Notify other widgets about language change through store
