@@ -122,11 +122,27 @@ export default {
             // Change the application language
             this.$store.commit('i18n/setLocale', value)
 
+            // Find the language object
+            const langObj = this.options.find(opt => opt.value === value)
+            
+            // Prepare payload based on output format
+            let payload = value
+            if (this.props.outputFormat === 'object' && langObj) {
+                payload = { code: value, name: langObj.label }
+            }
+
             // Emit to server
-            this.$socket.emit('widget-action', this.id, {
-                payload: value,
+            const msg = {
+                payload: payload,
                 topic: this.props.topic || 'language'
-            })
+            }
+            
+            // Add language object for auto mode
+            if (this.props.outputFormat === 'auto' && langObj) {
+                msg.languageObject = { code: value, name: langObj.label }
+            }
+            
+            this.$socket.emit('widget-action', this.id, msg)
 
             // Notify other widgets about language change through store
             // Don't use ui-control as it's meant for navigation

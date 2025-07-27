@@ -19,35 +19,32 @@ module.exports = function (RED) {
         // server-side event handlers
         const evts = {
             onAction: function (msg) {
-                // When user selects a language in the dropdown
-                const languages = base.languages || []
-                const langObj = languages.find(l => l.code === msg.payload)
-
-                let payload
-                if (config.outputFormat === 'code') {
-                    payload = msg.payload
-                } else if (config.outputFormat === 'object') {
-                    payload = langObj || { code: msg.payload, name: msg.payload }
-                } else {
-                    // Auto mode - send code by default
-                    payload = msg.payload
-                }
-
+                // The frontend already sends the correctly formatted payload
                 const outMsg = {
-                    payload,
-                    topic: config.topic || msg.topic || 'language'
+                    payload: msg.payload,
+                    topic: msg.topic || config.topic || 'language'
                 }
 
-                // Add language object for auto mode
-                if (config.outputFormat === 'auto' && langObj) {
-                    outMsg.languageObject = langObj
+                // Copy languageObject if present (for auto mode)
+                if (msg.languageObject) {
+                    outMsg.languageObject = msg.languageObject
                 }
 
                 // Send the message
                 node.send(outMsg)
 
-                // Also emit language change event
-                base.emit('language-changed', msg.payload)
+                // Extract language code for the language-changed event
+                let langCode
+                if (typeof msg.payload === 'string') {
+                    langCode = msg.payload
+                } else if (msg.payload && msg.payload.code) {
+                    langCode = msg.payload.code
+                }
+
+                // Emit language change event with the language code
+                if (langCode) {
+                    base.emit('language-changed', langCode)
+                }
             },
             onInput: function (msg, send) {
                 // Pass through if enabled and send is available
@@ -132,27 +129,36 @@ module.exports = function (RED) {
                 // Update current selection
                 node.emit('widget-change', node.id, { currentLanguage: newLanguage })
 
-                // Emit message with new language
-                const languages = base.languages || []
-                const langObj = languages.find(l => l.code === newLanguage)
+                // Only emit if this change is from another widget
+                // to avoid duplicate messages
+                if (node._lastEmittedLanguage !== newLanguage) {
+                    // Emit message with new language
+                    const languages = base.languages || []
+                    const langObj = languages.find(l => l.code === newLanguage)
 
-                let payload
-                if (config.outputFormat === 'code') {
-                    payload = newLanguage
-                } else if (config.outputFormat === 'object') {
-                    payload = langObj || { code: newLanguage, name: newLanguage }
-                } else {
-                    // Auto mode - send both
-                    payload = newLanguage
+                    let payload
+                    if (config.outputFormat === 'code') {
+                        payload = newLanguage
+                    } else if (config.outputFormat === 'object') {
+                        payload = langObj || { code: newLanguage, name: newLanguage }
+                    } else {
+                        // Auto mode - send code as payload
+                        payload = newLanguage
+                    }
+
+                    const msg = {
+                        payload,
+                        topic: config.topic || 'language'
+                    }
+                    
+                    // Add language object only for auto mode
+                    if (config.outputFormat === 'auto' && langObj) {
+                        msg.languageObject = langObj
+                    }
+
+                    node.send(msg)
                 }
-
-                const msg = {
-                    payload,
-                    topic: config.topic || 'language',
-                    languageObject: langObj
-                }
-
-                node.send(msg)
+                node._lastEmittedLanguage = newLanguage
             })
 
             // Initial load - get current languages
