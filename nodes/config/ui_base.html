@@ -383,7 +383,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             if (n.type === 'ui-base') {
                 if (n.languages) {
                     n.languages.forEach(lang => {
-                        if (lang.enabled && lang.code) {
+                        if (lang.code) {
                             enabledLanguages.push(lang.code)
                         }
                     })
@@ -2538,9 +2538,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             const languages = base.languages || [
                 { code: 'en', name: 'English', enabled: true }
             ]
-            const enabledLanguages = languages.filter(lang => lang.enabled && lang.code && lang.name)
+            const enabledLanguages = languages.filter(lang => lang.code && lang.name)
             if (enabledLanguages.length === 0) {
-                translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No languages enabled. Enable at least one language above to manage translations.</div>')
+                translationsList.html('<div style="text-align: center; color: #999; padding: 20px;">No languages configured. Add at least one language in the Languages tab to manage translations.</div>')
                 return
             }
 
