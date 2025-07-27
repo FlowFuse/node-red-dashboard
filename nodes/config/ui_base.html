@@ -2744,6 +2744,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // Helper function to create translation fields
             function createTranslationField (node, key, label, type, languages) {
                 const container = $('<div style="margin-bottom: 10px;">')
+                    .attr('data-item-id', node.id)
+                    .attr('data-key', key)
+                    .attr('data-type', node.type)
                 $(`<div style="margin-bottom: 5px; font-weight: bold;">${label}:</div>`).appendTo(container)
 
                 // Original value
@@ -2767,7 +2770,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     }
                 }
 
-                const originalDiv = $('<div style="margin-bottom: 5px;">').appendTo(container)
+                const originalDiv = $('<div style="margin-bottom: 5px;">')
+                    .attr('data-lang', 'original')
+                    .appendTo(container)
                 $('<label style="display: inline-block; width: 100px; color: #666;">Original:</label>').appendTo(originalDiv)
 
                 // Show original value in readonly input/textarea
@@ -2783,6 +2788,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         })
                         .val(originalValue || '')
                         .prop('readonly', true)
+                        .attr('data-lang', 'original')
+                        .attr('data-item-id', node.id)
+                        .attr('data-key', key)
                         .appendTo(originalDiv)
                 } else {
                     $('<input type="text">')
@@ -2793,12 +2801,17 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         })
                         .val(originalValue || '')
                         .prop('readonly', true)
+                        .attr('data-lang', 'original')
+                        .attr('data-item-id', node.id)
+                        .attr('data-key', key)
                         .appendTo(originalDiv)
                 }
 
                 // Translation inputs for each enabled language
                 languages.forEach(lang => {
-                    const langDiv = $('<div style="margin-bottom: 3px;">').appendTo(container)
+                    const langDiv = $('<div style="margin-bottom: 3px;">')
+                        .attr('data-lang', lang.code)
+                        .appendTo(container)
                     $(`<label style="display: inline-block; width: 100px;">${lang.name}:</label>`).appendTo(langDiv)
 
                     // Initialize translations object if it doesn't exist
@@ -2813,6 +2826,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         const textarea = $('<textarea>')
                             .css({ width: 'calc(100% - 110px)', minHeight: '50px', verticalAlign: 'top' })
                             .val(currentValue)
+                            .attr('data-lang', lang.code)
+                            .attr('data-item-id', node.id)
+                            .attr('data-key', key)
                             .appendTo(langDiv)
 
                         textarea.on('change', function () {
@@ -2843,6 +2859,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                         const input = $('<input type="text">')
                             .css('width', 'calc(100% - 110px)')
                             .val(currentValue)
+                            .attr('data-lang', lang.code)
+                            .attr('data-item-id', node.id)
+                            .attr('data-key', key)
                             .appendTo(langDiv)
 
                         input.on('change', function () {
