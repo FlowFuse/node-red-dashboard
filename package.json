@@ -98,7 +98,7 @@
         "mermaid": "^11.6.0",
         "mocha": "^10.2.0",
         "node-red": "^4.1.0",
-        "node-red-node-test-helper": "^0.3.4",
+        "node-red-node-test-helper": "^0.3.5",
         "npm-run-all": "^4.1.5",
         "sass": "^1.86.3",
         "should": "^13.2.3",
