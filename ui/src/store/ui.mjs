@@ -213,11 +213,15 @@ const mutations = {
      * @returns
      */
     setProperty (state, { item, itemId, property, value }) {
-        state[item + 's'][itemId][property] = value
+        if (state[item + 's'] && state[item + 's'][itemId]) {
+            state[item + 's'][itemId][property] = value
+        }
     },
     setProperties (state, { item, itemId, config }) {
-        for (const prop in config) {
-            state[item + 's'][itemId][prop] = config[prop]
+        if (state[item + 's'] && state[item + 's'][itemId]) {
+            for (const prop in config) {
+                state[item + 's'][itemId][prop] = config[prop]
+            }
         }
     }
 }
