@@ -1,0 +1,39 @@
+{
+    "ui-dropdown": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "width": "Breite",
+            "height": "Höhe",
+            "label": "Beschriftung",
+            "class": "Klasse",
+            "options": "Optionen",
+            "triggerOn": "Auslösen bei",
+            "allowMultiple": "Mehrfachauswahl aus der Liste zulassen:",
+            "showChips": "Ausgewählte Elemente in Chips anzeigen",
+            "clearable": "Auswahl mit Schaltfläche löschen",
+            "allowSearch": "Suche erlauben",
+            "passThrough": "Wenn <code>msg</code> am Eingang ankommt, an den Ausgang weiterleiten:",
+            "topic": "Thema",
+            "addOption": "Option",
+            "selectOption": "Option auswählen:",
+            "valuePlaceholder": "Wert",
+            "msgTopicPlaceholder": "optional msg.thema",
+            "labelPlaceholder": "optionale Beschriftung",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)",
+            "tooltip": "Tooltip",
+            "tooltipPlaceholder": "optionaler Tooltip"
+        },
+        "option": {
+            "selectionChanged": "Auswahl geändert",
+            "dropdownClosed": "Dropdown geschlossen"
+        },
+        "errors": {
+            "uniqueValues": "Alle Werte müssen eindeutig sein."
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet.",
+            "overrideProperty": "Dynamische Eigenschaft: Senden Sie 'msg.ui_update.options', um diese Eigenschaft zu überschreiben."
+        }
+    }
+}

@@ -1,0 +1,52 @@
+<script type="text/html" data-help-name="ui-dropdown">
+    <p>
+        Fügt Ihrem Dashboard ein Dropdown-Menü hinzu, das Werte in Node-RED unter `msg.payload` ausgibt, sobald sich der Wert ändert.
+    </p>
+    <p>
+        Wenn eine einzelne Option ausgewählt ist, wird das Objekt zurückgegeben, das diese Auswahl beschreibt.
+        Wenn "Mehrfachauswahl zulassen" aktiviert ist, wird ein Array von Objekten zurückgegeben, die die Auswahlen beschreiben.
+    </p>
+    <p>
+        Wenn der Benutzer die Möglichkeit verhindern möchte, falsche Werte einzugeben, deaktivieren Sie die Option "Suche zulassen".
+        Dadurch wird das Auswahlfeld nicht bearbeitbar / beschreibbar. Das bedeutet, dass der Benutzer keinen neuen Wert eingeben kann. Es können nur bereits in der Liste vorhandene Werte ausgewählt werden.
+    </p>
+    <h3>Optionen über <code>msg.</code> auswählen</h3>
+    <p>
+        Sie können dynamisch Auswahlen für dieses Dropdown-Menü treffen, indem Sie den jeweiligen <code>value</code> an <code>msg.payload</code> übergeben.
+    </p>
+    <p>
+        Um eine einzelne Auswahl zu treffen, übergeben Sie den <code>value</code> der Option als <code>msg.payload</code>, z.B. <code>msg.payload = "option1"</code>.
+    </p>
+    <p>
+        Um eine Mehrfachauswahl zu treffen, müssen Sie zuerst "Mehrfachauswahl zulassen" im Knoten aktiviert haben, dann können Sie
+        ein Array von <code>value</code> der jeweiligen Optionen als <code>msg.payload</code> übergeben, z.B. <code>msg.payload = ["option1", "option2"]</code>.
+    </p>
+    <p>
+        Um eine Auswahl für ein Dropdown-Menü zu löschen, übergeben Sie ein leeres Array <code>[]</code> als <code>msg.payload</code>.
+    </p>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Die Beschriftung, die den Zweck des Dropdown-Menüs erklärt. HTML-Inhalt ist erlaubt.</dd>
+        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dd>
+            Ändern Sie die zur Verfügung stehenden Optionen im Dropdown-Menü zur Laufzeit
+            <ul>
+                <li><code>Array&lt;string&gt;</code></li>
+                <li><code>Array&lt;{value: String}&gt;</code></li>
+                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+        <dt class="optional">msgTrigger <span class="property-type">string</span></dt>
+        <dd>
+            Geben Sie an, wann eine Ausgabenachricht ausgelöst werden soll (besonders nützlich für Dropdown-Menüs mit Mehrfachauswahl):
+            <ul>
+                <li><code>onChange</code>: Jedes Mal, wenn sich die Auswahl ändert (d.h. wenn Optionen ausgewählt oder abgewählt werden).</li>
+                <li><code>onClose</code>: Nur wenn das Dropdown-Menü geschlossen wird.</li>
+            </ul>
+        </dd>
+    </dl>
+</script>

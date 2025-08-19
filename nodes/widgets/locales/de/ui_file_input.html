@@ -1,0 +1,18 @@
+<script type="text/html" data-help-name="ui-file-input">
+    <p>
+        Der Dateieingabeknoten bietet ein Dateiauswahl-Widget, mit dem Benutzer Dateien in Node-RED hochladen können.
+    </p>
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Beschriftung <span class="property-type">string</span></dt>
+        <dd>Der Text, der dem Benutzer angezeigt wird und erklärt, was der Benutzer hochladen soll.</dd>
+        <dt>Symbol <span class="property-type">string</span></dt>
+        <dd>Standardmäßig "Büroklammer". Das Symbol wird links vom Eingabefeld angezeigt. Die vollständige Liste der Symbole finden Sie <a href="https://pictogrammers.com/library/mdi/" target="_blank">hier</a>.</dd>
+        <dt>Akzeptieren <span class="property-type">string</span></dt>
+        <dd>Zeichenfolgenrepräsentation der "erlauben" Dateityp-Selektoren. Die vollständige Liste der Optionen finden Sie <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers" target="_blank">hier</a>.</dd>
+        <dt>Mehrfach <span class="property-type">boolean</span></dt>
+        <dd>Erlauben Sie Endbenutzern, mehrere Dateien gleichzeitig hochzuladen. Jede Datei wird als eindeutige Nachricht gesendet.</dd>        
+    </dl>
+    <h3>Ausgabe</h3>
+    <p><code>msg.payload</code> enthält einen Datei-Puffer, und <code>msg.file</code> liefert Metadaten über die Datei selbst.</p>
+</script>

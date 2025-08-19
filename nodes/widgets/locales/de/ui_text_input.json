@@ -1,0 +1,47 @@
+{
+    "ui-text-input": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "icon": "Symbol",
+            "label": "Beschriftung",
+            "tooltip": "Tooltip",
+            "class": "Klasse",
+            "mode": "Modus",
+            "passThrough": "Wenn <code>msg</code> am Eingang ankommt, an den Ausgang weiterleiten:",
+            "clearable": "Texteingabe mit Schaltfläche löschen",
+            "sendMessageOn": "Nachricht senden bei:",
+            "delay": "Verzögerung",
+            "focusLeave": "Fokus verlassen",
+            "pressEnter": "Enter drücken",
+            "clearButton": "Löschen-Schaltfläche",
+            "whenChanged": "Bei Änderung senden:",
+            "payload": "Nutzlast",
+            "currentValue": "Aktueller Wert",
+            "topic": "Thema",
+            "iconPlaceholder": "(optional) z.B. 'gesture-tap'",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)",
+            "delayUnit": "(ms)"
+        },
+        "option": {
+            "left": "Links",
+            "right": "Rechts",
+            "inside": "Innen",
+            "outside": "Außen",
+            "textInput": "Texteingabe (einzeilig)",
+            "textArea": "Textbereich (mehrzeilig)",
+            "email": "E-Mail-Adresse",
+            "password": "Passwort",
+            "number": "Nummer",
+            "color": "Farbwähler",
+            "datetime": "Datum/Uhrzeit-Wähler",
+            "date": "Datum-Wähler",
+            "time": "Uhrzeit-Wähler",
+            "week": "Wochen-Wähler",
+            "month": "Monats-Wähler"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        }
+    }
+}

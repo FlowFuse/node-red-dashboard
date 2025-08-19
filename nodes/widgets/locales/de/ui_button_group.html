@@ -1,0 +1,45 @@
+<script type="text/html" data-help-name="ui-button-group">
+    <p>Ein Node-RED-Knoten, um einen Schalter mit mehreren Tasten im Node-RED-Dashboard anzuzeigen.</p>
+    <p>Die aktive Auswahl kann dynamisch gesetzt werden, indem ein <code>msg.payload</code> gesendet wird, das mit dem Wert einer entsprechenden Option übereinstimmt.</p>
+    <p>Um eine Auswahl zu löschen, übergeben Sie ein leeres Array <code>[]</code> als <code>msg.payload</code>.</p>
+    <h3>Eigenschaften</h3>
+    <p><strong>Beschriftung:</strong><br/>
+    Die Beschriftung, die auf der linken Seite der Schaltflächengruppe angezeigt wird. HTML-Inhalt ist erlaubt.</p>
+    <p><strong>Erscheinungsbild:</strong><br/>
+    Geben Sie an, ob die Form des Widgets rechteckig oder mit abgerundeten Ecken sein soll.</p>
+    <p><strong>Themenfarben verwenden:</strong><br/>
+    Geben Sie an, ob die Themenfarben verwendet werden sollen. Wenn nicht aktiv, können für jede Option separat benutzerdefinierte Farben angegeben werden.</p>
+    <p><strong>Durchreichen:</strong><br/>
+    Geben Sie an, ob Eingabenachrichten als Ausgabenachrichten durchgereicht werden sollen.
+    </p>
+    <p><strong>Optionen:</strong><br/>
+    Geben Sie an, welche Optionen angezeigt werden sollen:
+        <ul>
+            <li><i>Beschriftung: </i>(optional) Die Beschreibung, die angezeigt wird. HTML-Inhalt ist erlaubt</li>
+            <li><i>Symbol: </i>(optional) Das Symbol, das für die gegebene Option angezeigt werden soll. Wir verwenden die Material Design Icons, eine vollständige Liste der verfügbaren Symbole finden Sie <a href="https://pictogrammers.com/library/mdi/">hier</a>. Es ist nicht erforderlich, das "mdi-" Präfix einzuschließen, nur der Name des Symbols.</li>
+            <li><i>Wert: </i>Der Wert, der in Eingabe- und Ausgabenachrichten gesendet wird.</li>
+            <li><i>Farbe: </i>Die Farbe der Option im Schalter.</li>
+        </ul>
+    </p>
+    <p><strong>Thema:</strong><br/>
+    Der Text, der im <code>msg.topic</code> Feld gesendet werden muss.</p>
+
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Die Beschriftung, die auf der linken Seite der Schaltflächengruppe angezeigt wird. HTML-Inhalt ist erlaubt.</dd>
+        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dd>
+            Ändern Sie die zur Verfügung stehenden Optionen in der Schaltflächengruppe zur Laufzeit
+            <ul>
+                <li><code>Array&lt;string&gt;</code></li>
+                <li><code>Array&lt;{value: String}&gt;</code></li>
+                <li><code>Array&lt;{value: String, label: String}&gt;</code></li>
+                <li><code>Array&lt;{value: String, icon: String}&gt;</code></li>
+            </ul>
+        </dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltflächengruppe hinzu.</dd>
+    </dl>
+</script>
