@@ -302,6 +302,10 @@ export default {
             }
         },
         getPageLabel (page) {
+            if (this.dashboard.navigationStyle === 'icon' && this.rail) {
+                return ''
+            }
+
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         },
         handleNavigationClick () {
