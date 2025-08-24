@@ -32,7 +32,9 @@ export default {
                             { text: locale.sidebar['ui-template-examples'] || en.sidebar['ui-template-examples'], link: '/user/template-examples' },
                             { text: locale.sidebar['multi-tenancy'] || en.sidebar['multi-tenancy'], link: '/user/multi-tenancy' },
                             { text: locale.sidebar['subflows'] || en.sidebar['subflows'], link: '/user/subflows' },
-                            { text: locale.sidebar['installing-on-mobile'] || en.sidebar['installing-on-mobile'], link: '/user/pwa' }
+                            { text: locale.sidebar['installing-on-mobile'] || en.sidebar['installing-on-mobile'], link: '/user/pwa' },
+                            { text: locale.sidebar['installing-on-home-assistant'] || en.sidebar['installing-on-home-assistant'], link: '/user/home-assistant' }
+
                         ]
                     },
                     {
