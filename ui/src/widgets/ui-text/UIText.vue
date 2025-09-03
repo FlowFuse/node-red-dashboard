@@ -26,13 +26,14 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages', 'properties']),
+        ...mapState('i18n', ['locale']),
         value () {
             const msg = this.messages[this.id]
             return this.purify(msg?.payload)
         },
         label () {
             // Sanitize the html to avoid XSS attacks
-            return DOMPurify.sanitize(this.getProperty('label'))
+            return DOMPurify.sanitize(this.getTranslatedProperty('label'))
         },
         layout () {
             return this.getProperty('layout')
@@ -49,6 +50,11 @@ export default {
                 }
             }
             return null
+        }
+    },
+    watch: {
+        locale () {
+            this.$forceUpdate()
         }
     },
     created () {
