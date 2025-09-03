@@ -84,11 +84,13 @@ function forcePageReload (err) {
     console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
+    const currentParams = new URLSearchParams(window.location.search)
     const url = new URL(window.location.origin + '/dashboard')
-    url.searchParams.set('reloadTime', Date.now().toString() + Math.random())
+    currentParams.set('reloadTime', Date.now().toString() + Math.random())
     if (host.searchParams.has('edit-key')) {
-        url.searchParams.set('edit-key', host.searchParams.get('edit-key'))
+        currentParams.set('edit-key', host.searchParams.get('edit-key'))
     }
+    url.search = currentParams.toString()
     window.location.replace(url)
 }
 
