@@ -107,7 +107,7 @@ export default {
         }
     },
     created () {
-        // can't do this in setup as we have custom onInput function
+        // Setup custom onMsgInput Handler & onLoad Handler
         this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
     },
     mounted () {
@@ -120,49 +120,17 @@ export default {
         // get a reference to the div element
         const el = this.$refs.chart
 
-        // do we need the "stacked" property?
-        let stacked = false
-        if (this.props.stackSeries === true && this.chartType === 'bar') {
-            stacked = true
-        }
-
-        // color options for text and grid
-        let textColor = '#666'
-        let gridColor = '#e0e0e0'
-
-        if (this.props?.textColor) {
-            if (this.props.textColorDefault !== undefined) {
-                if (this.props.textColorDefault === false) {
-                    textColor = this.props.textColor[0]
-                }
-            }
-        }
-        if (this.props?.gridColor) {
-            if (this.props.gridColorDefault !== undefined) {
-                if (this.props.gridColorDefault === false) {
-                    gridColor = this.props.gridColor[0]
-                }
-            }
-        }
-
-        // Do we show the legend?
-        let showLegend = this.props.showLegend
-        if (this.props.categoryType === 'none' || this.props.category === '') {
-            // no category, so no legend
-            showLegend = false
-        }
-
         // create our eCharts object
         const chart = echarts.init(el)
 
         // Initialize with basic option structure
-        const option = this.getEChartsOption(textColor, gridColor, showLegend, stacked)
-        chart.setOption(option)
+        const options = this.generateChartOptions()
+        chart.setOption(options)
 
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
 
-        // Ensure chart resizes properly
+        // Ensure chart resizes properly on first load
         this.$nextTick(() => {
             chart.resize()
         })
@@ -176,16 +144,43 @@ export default {
         // Store resize observer for cleanup
         this.resizeObserver = resizeObserver
 
-        // Add click event to log series data
+        // Temp: Add click event to log rendered chart options
         chart.on('click', () => {
-            const option = this.chart.getOption()
-            console.log('Chart series:', option.series)
+            const options = this.chart.getOption()
+            console.log('Chart Options:', options)
         })
     },
     methods: {
-        getEChartsOption (textColor, gridColor, showLegend, stacked) {
+        generateChartOptions () {
             const isRadial = this.props.xAxisType === 'radial'
 
+            // Common Properties
+            let showLegend = this.props.showLegend
+            if (this.props.categoryType === 'none' || this.props.category === '') {
+                // no category, so no legend
+                showLegend = false
+            }
+
+            // Color Options
+            let textColor = '#666'
+            let gridColor = '#e0e0e0'
+
+            if (this.props?.textColor) {
+                if (this.props.textColorDefault !== undefined) {
+                    if (this.props.textColorDefault === false) {
+                        textColor = this.props.textColor[0]
+                    }
+                }
+            }
+            if (this.props?.gridColor) {
+                if (this.props.gridColorDefault !== undefined) {
+                    if (this.props.gridColorDefault === false) {
+                        gridColor = this.props.gridColor[0]
+                    }
+                }
+            }  
+
+            // Generate the options config
             if (isRadial) {
                 // Pie/Doughnut chart
                 return {
@@ -209,12 +204,16 @@ export default {
                         name: this.props.label,
                         type: 'pie',
                         radius: this.chartType === 'doughnut' ? ['40%', '70%'] : '70%',
-                        data: []
+                        data: [],
+                        itemStyle: {
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }
                     }]
                 }
             } else {
                 // Regular charts (line, bar, scatter)
-                const option = {
+                const options = {
                     title: {
                         text: this.props.label,
                         textStyle: {
@@ -244,6 +243,7 @@ export default {
                             color: textColor   // label color
                         },
                         splitLine: {
+                            show: true,
                             lineStyle: {
                                 color: gridColor
                             }
@@ -279,20 +279,13 @@ export default {
 
                 // Apply y-axis limits
                 if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
-                    option.yAxis.min = parseFloat(this.props.ymin)
+                    options.yAxis.min = parseFloat(this.props.ymin)
                 }
                 if (Object.hasOwn(this.props, 'ymax') && this.props.ymax !== '') {
-                    option.yAxis.max = parseFloat(this.props.ymax)
+                    options.yAxis.max = parseFloat(this.props.ymax)
                 }
 
-                // Handle stacked bars
-                if (stacked && this.chartType === 'bar') {
-                    option.series.forEach(series => {
-                        series.stack = 'total'
-                    })
-                }
-
-                return option
+                return options
             }
         },
         getEChartsAxisType (axisType) {
@@ -310,19 +303,19 @@ export default {
         },
         updateInteraction () {
             // eCharts handles interaction through tooltip configuration
-            const option = this.chart.getOption()
+            const options = this.chart.getOption()
             switch (this.chartType) {
             case 'line':
-                option.tooltip.trigger = 'axis'
+                options.tooltip.trigger = 'axis'
                 break
             case 'scatter':
-                option.tooltip.trigger = 'item'
+                options.tooltip.trigger = 'item'
                 break
             default:
-                option.tooltip.trigger = 'item'
+                options.tooltip.trigger = 'item'
                 break
             }
-            this.chart.setOption(option)
+            this.chart.setOption(options)
         },
         update (immediate = true) {
             // for data adding, we want to update immediately
@@ -367,7 +360,7 @@ export default {
                 // we have received a history of data points
                 // we need to add them to the chart
                 // clear the chart first, onload is considered to provide all data into a chart
-                this.clear()
+                this.clearChart()
                 // adding is then just the same process as receiving a new msg
                 this.onMsgInput(history)
             }
@@ -375,11 +368,11 @@ export default {
         onMsgInput (msg) {
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received
-                this.clear()
+                this.clearChart()
             } else {
                 if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
                     // clear the chart
-                    this.clear()
+                    this.clearChart()
                 }
                 // update the chart
                 this.add(msg)
@@ -415,7 +408,7 @@ export default {
             }
             return xDisplayFormats
         },
-        clear () {
+        clearChart () {
             const option = this.chart.getOption()
             if (this.props.xAxisType === 'radial') {
                 option.series[0].data = []
@@ -426,7 +419,7 @@ export default {
                 }
             }
             this.histogram = []
-            this.chart.setOption(option)
+            this.chart.setOption(option, true)
             this.hasData = false
         },
         /**
@@ -434,6 +427,7 @@ export default {
          * @param {*} msg
          */
         add (msg) {
+            console.log('add', msg)
             const payload = msg.payload
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
@@ -477,9 +471,9 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            if (this.chartType === 'line' || this.chartType === 'scatter') {
-                this.limitDataSize()
-            }
+            // if (this.chartType === 'line' || this.chartType === 'scatter') {
+            //     this.limitDataSize()
+            // }
             this.update()
         },
         /**
@@ -546,38 +540,42 @@ export default {
                 return
             }
 
-            const option = this.chart.getOption()
+            const options = this.chart.getOption()
 
             if (this.props.xAxisType === 'radial') {
+                // label defines which pie layer to update
+                // const series = label // TODO: Support in eCharts
+                // datapoint.x defines which slice of the pie to update
+                const name = datapoint.x
                 // Handle pie/doughnut charts
-                const existingData = option.series[0].data || []
-                const existingIndex = existingData.findIndex(item => item.name === label)
+                const existingData = options.series[0].data || []
+                const existingIndex = existingData.findIndex(item => item.name === name)
 
                 if (existingIndex >= 0) {
                     existingData[existingIndex].value = datapoint.y
                 } else {
                     existingData.push({
-                        name: label,
+                        name: name,
                         value: datapoint.y
                     })
                 }
-                option.series[0].data = existingData
+                options.series[0].data = existingData
             } else {
                 // Handle regular charts (line, bar, scatter)
-                const sLabels = option.series.map(s => s.name)
+                const sLabels = options.series.map(s => s.name)
                 let sIndex = sLabels.indexOf(label)
 
                 // Handle category axis data
-                if (option.xAxis.type === 'category') {
-                    option.xAxis.data = option.xAxis.data || []
-                    if (!option.xAxis.data.includes(datapoint.x)) {
-                        option.xAxis.data.push(datapoint.x)
+                if (options.xAxis.type === 'category') {
+                    options.xAxis.data = options.xAxis.data || []
+                    if (!options.xAxis.data.includes(datapoint.x)) {
+                        options.xAxis.data.push(datapoint.x)
                     }
                 }
 
                 // Create new series if it doesn't exist
                 if (sIndex === -1) {
-                    const colorIndex = option.series.length
+                    const colorIndex = options.series.length
                     const series = {
                         name: label,
                         type: this.getEChartsSeriesType(),
@@ -593,22 +591,22 @@ export default {
                         series.symbol = this.getEChartsSymbol()
                     }
 
-                    option.series.push(series)
-                    sIndex = option.series.length - 1
+                    options.series.push(series)
+                    sIndex = options.series.length - 1
                 }
 
                 // Add data point
-                if (option.xAxis.type === 'category') {
-                    const xIndex = option.xAxis.data.indexOf(datapoint.x)
-                    option.series[sIndex].data[xIndex] = datapoint.y
+                if (options.xAxis.type === 'category') {
+                    const xIndex = options.xAxis.data.indexOf(datapoint.x)
+                    options.series[sIndex].data[xIndex] = datapoint.y
                 } else {
-                    option.series[sIndex].data.push([datapoint.x, datapoint.y])
+                    options.series[sIndex].data.push([datapoint.x, datapoint.y])
                 }
             }
 
-            this.chart.setOption(option)
+            this.chart.setOption(options)
 
-            console.log(this.chart)
+            console.log(this.chart.getOption())
 
             if (this.chartType === 'line') {
                 this.setInterpolation(this.interpolation)
@@ -718,8 +716,8 @@ export default {
         },
         addToHistogram (datapoint, label) {
             // handle multi-series in the histogram
-            const option = this.chart.getOption()
-            const sLabels = option.series.map(s => s.name)
+            const options = this.chart.getOption()
+            const sLabels = options.series.map(s => s.name)
             const seriesLabel = datapoint.category
             const sIndex = sLabels.indexOf(seriesLabel)
 
@@ -727,9 +725,9 @@ export default {
 
             if (this.props.xAxisType === 'category') {
                 // make sure we have the relevant (x-axis) labels added to the chart
-                option.xAxis.data = option.xAxis.data || []
-                if (!option.xAxis.data.includes(datapoint.x)) {
-                    option.xAxis.data.push(datapoint.x)
+                options.xAxis.data = options.xAxis.data || []
+                if (!options.xAxis.data.includes(datapoint.x)) {
+                    options.xAxis.data.push(datapoint.x)
                 }
             }
 
@@ -750,16 +748,16 @@ export default {
                 } else {
                     // we will have one "bin" per category
                     this.histogram.push({
-                        bins: option.xAxis.data.map((label, index) => ({
+                        bins: options.xAxis.data.map((label, index) => ({
                             label,
                             count: 0
                         }))
                     })
                 }
                 bins = this.histogram[this.histogram.length - 1].bins
-                option.series.push(series)
+                options.series.push(series)
             } else {
-                series = option.series[sIndex]
+                series = options.series[sIndex]
                 bins = this.histogram[sIndex].bins
             }
 
@@ -776,11 +774,11 @@ export default {
             const values = bins.map((b) => b.count)
             series.data = values
 
-            this.chart.setOption(option)
+            this.chart.setOption(options)
         },
         setInterpolation (interpolationType) {
             // eCharts interpolation mapping
-            const option = this.chart.getOption()
+            const options = this.chart.getOption()
             const getEChartsSmooth = (type) => {
                 switch (type) {
                 case 'cubic':
@@ -799,7 +797,7 @@ export default {
             const smooth = getEChartsSmooth(interpolationType)
             const step = interpolationType === 'step'
 
-            option.series.forEach(series => {
+            options.series.forEach(series => {
                 if (series.type === 'line') {
                     series.smooth = smooth
                     if (step) {
@@ -810,7 +808,7 @@ export default {
                 }
             })
 
-            this.chart.setOption(option)
+            this.chart.setOption(options)
         }
     }
 }
