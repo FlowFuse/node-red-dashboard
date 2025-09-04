@@ -200,6 +200,7 @@ export default {
                             color: textColor
                         }
                     },
+                    color: this.props.colors,
                     series: [{
                         name: this.props.label,
                         type: 'pie',
@@ -235,6 +236,7 @@ export default {
                             color: textColor
                         }
                     },
+                    color: this.props.colors,
                     xAxis: {
                         type: this.getEChartsAxisType(this.xAxisType),
                         name: this.props.xAxisLabel,
@@ -274,7 +276,9 @@ export default {
                             }
                         }
                     },
-                    series: []
+                    series: [],
+                    animationDuration: 300, // minimal animation on inital data load
+                    animationDurationUpdate: 150 // minimal animation on data update
                 }
 
                 // Apply y-axis limits
@@ -575,15 +579,11 @@ export default {
 
                 // Create new series if it doesn't exist
                 if (sIndex === -1) {
-                    const colorIndex = options.series.length
                     const series = {
                         name: label,
                         type: this.getEChartsSeriesType(),
                         stack: this.props.stackSeries ? 'total' : null,
-                        data: [],
-                        itemStyle: {
-                            color: this.props.colors[colorIndex % this.props.colors.length]
-                        }
+                        data: []
                     }
 
                     if (this.chartType === 'line') {
