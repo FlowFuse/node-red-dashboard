@@ -569,14 +569,6 @@ export default {
                 const sLabels = options.series.map(s => s.name)
                 let sIndex = sLabels.indexOf(label)
 
-                // Handle category axis data
-                if (options.xAxis.type === 'category') {
-                    options.xAxis.data = options.xAxis.data || []
-                    if (!options.xAxis.data.includes(datapoint.x)) {
-                        options.xAxis.data.push(datapoint.x)
-                    }
-                }
-
                 // Create new series if it doesn't exist
                 if (sIndex === -1) {
                     const series = {
@@ -596,10 +588,16 @@ export default {
                 }
 
                 // Add data point
-                if (options.xAxis.type === 'category') {
-                    const xIndex = options.xAxis.data.indexOf(datapoint.x)
-                    options.series[sIndex].data[xIndex] = datapoint.y
+                if (this.props.xAxisType === 'category') {
+                    // for categories, we need to update the existing data point for this x-value
+                    const xIndex = options.series[sIndex].data.findIndex(d => d[0] === datapoint.x)
+                    if (xIndex !== -1) {
+                        options.series[sIndex].data[xIndex] = [datapoint.x, datapoint.y]
+                    } else {
+                        options.series[sIndex].data.push([datapoint.x, datapoint.y])
+                    }
                 } else {
+                    // for other axes, we can just add the data point
                     options.series[sIndex].data.push([datapoint.x, datapoint.y])
                 }
             }
