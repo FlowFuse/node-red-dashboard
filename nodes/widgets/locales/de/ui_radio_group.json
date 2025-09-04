@@ -1,0 +1,29 @@
+{
+    "ui-radio-group": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "width": "Breite",
+            "height": "Höhe",
+            "label": "Beschriftung",
+            "defaultLabel": "Option auswählen:",
+            "class": "Klasse",
+            "options": "Optionen",
+            "addOption": "Option",
+            "columns": "Spalten",
+            "topic": "Thema",
+            "passThrough": "Wenn <code>msg</code> am Eingang ankommt, an den Ausgang weiterleiten:",
+            "labelPlaceholder": "optionale Beschriftung",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)",
+            "topicPlaceholder": "optional msg.thema",
+            "optValuePlaceholder": "Wert",
+            "optLabelPlaceholder": "Beschriftung"
+        },
+        "error": {
+            "uniqueValues": "Alle Werte müssen eindeutig sein."
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        }
+    }
+}

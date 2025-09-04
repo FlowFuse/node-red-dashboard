@@ -1,0 +1,35 @@
+<script type="text/html" data-help-name="ui-event">
+    <p>
+        Verfolgt clientseitige Ereignisse im Node-RED-Dashboard und meldet sie im Node-RED-Editor.
+    </p>
+    <p>
+        Dieses Widget rendert keine Inhalte in Ihrem Dashboard. Stattdessen hört es auf benutzergesteuertes Verhalten und Ereignisse in Ihrem Dashboard und sendet entsprechend in den Node-RED-Editor, wenn diese Ereignisse stattgefunden haben.
+    </p>
+    <p>
+        Derzeit unterstützte Ereignisse sind:
+    </p>
+    <ul>
+        <li>
+            <b>$pageview</b> - Wird ausgelöst, wenn ein Benutzer eine Seite ansieht.
+        </li>
+        <li>
+            <b>$pageleave</b> - Wird ausgelöst, wenn ein Benutzer eine Seite verlässt.
+        </li>
+    </ul>
+    <p>Ein Beispiel für eine Ausgabe-<code>msg</code> ist wie folgt:</p>
+        <pre>msg = {
+    topic: '$pageview',
+    socketId: '1234',
+    socketIp: '127.0.0.1'
+    payload: {
+        page: {
+            name: 'Seitenname',
+            path: '/seiten/pfad'
+            id: '1234',
+            theme: 'dunkel',
+            layout: 'standard',
+            _groups: []
+        }
+    }
+}</pre>
+</script>

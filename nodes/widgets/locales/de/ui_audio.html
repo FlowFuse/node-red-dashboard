@@ -1,0 +1,31 @@
+<script type="text/html" data-help-name="ui-audio">
+    <p>
+        Spielt eine Audiodatei im Dashboard ab.
+    </p>
+    <p>
+        Jedes empfangene <code>msg.payload</code> enthält eine neue Quelle, d.h. eine neue Audio-Datei-URL.
+    </p>
+    <h3>Eigenschaften</h3>
+    <dl class="message-properties">
+        <dt>Quelle <span class="property-type">string</span></dt>
+        <dd>Die Quelle ist die URL, unter der die Audiodatei abgerufen werden kann.</dd>
+        <dt>Autoplay <span class="property-type">Liste</span></dt>
+        <dd>Geben Sie an, ob die Audiodatei automatisch abgespielt werden soll.</dd>
+        <dt>Schleife <span class="property-type">Liste</span></dt>
+        <dd>Geben Sie an, ob die Audiodatei in einer Schleife abgespielt werden soll, d.h. automatisch erneut abgespielt wird, wenn sie endet.</dd>
+        <dt>Stumm <span class="property-type">Liste</span></dt>
+        <dd>Geben Sie an, ob die Audiodatei stummgeschaltet werden soll.</dd>
+    </dl>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">src<span class="property-type">string</span></dt>
+        <dd>Überschreibt die konfigurierte Audioquelle.</dd>
+        <dt class="optional">autoplay<span class="property-type">'ein' | 'aus'</span></dt>
+        <dd>Überschreibt die konfigurierte Autoplay-Einstellung.</dd>
+        <dt class="optional">loop<span class="property-type">'ein' | 'aus'</span></dt>
+        <dd>Überschreibt das konfigurierte Schleifenverhalten.</dd>
+        <dt class="optional">muted<span class="property-type">'ein' | 'aus'</span></dt>
+        <dd>Überschreibt die konfigurierte Stummschaltung.</dd>
+    </dl>
+</script>

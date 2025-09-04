@@ -1,0 +1,37 @@
+{
+    "ui-button": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "icon": "Symbol",
+            "iconPosition": "Symbolposition",
+            "left": "Links",
+            "right": "Rechts",
+            "optionalIcon": "(optional) z.B. 'gesture-tap'",
+            "label": "Beschriftung",
+            "optionalLabel": "optionale Beschriftung",
+            "button": "Schaltfläche",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionaler CSS-Klassenname(n)",
+            "tooltip": "Tooltip",
+            "optionalTooltip": "optional Tooltip",
+            "color": "Farbe",
+            "optionalColor": "optionale Text-/Symbolfarbe",
+            "background": "Hintergrund",
+            "optionalBackgroundColor": "optionale Hintergrundfarbe",
+            "alwaysSend": "Immer senden:",
+            "payload": "Nutzlast",
+            "topic": "Thema",
+            "emulateClick": "Wenn eine Nachricht am Eingang ankommt, einen Schaltflächenklick emulieren:",
+            "enableClick": "Klick-Ereignis aktivieren",
+            "enablePointerup": "Pointerup-Ereignis aktivieren",
+            "enablePointerdown": "Pointerdown-Ereignis aktivieren",
+            "buttonColor": "Hintergrund",
+            "optionalButtonColor": "(Optional) z.B. 'grün'/'#a5a5a5'",
+            "textColor": "Text",
+            "optionalTextColor": "(Optional) z.B. 'grün'/'#a5a5a5'",
+            "iconColor": "Symbol",
+            "optionalIconColor": "(Optional) z.B. 'grün'/'#a5a5a5'"
+        }
+    }
+}
