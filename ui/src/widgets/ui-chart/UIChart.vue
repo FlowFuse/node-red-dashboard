@@ -148,12 +148,6 @@ export default {
 
         // Store resize observer for cleanup
         this.resizeObserver = resizeObserver
-
-        // Temp: Add click event to log rendered chart options
-        chart.on('click', () => {
-            const options = this.chart.getOption()
-            console.log('Chart Options:', options)
-        })
     },
     methods: {
         generateChartOptions () {
