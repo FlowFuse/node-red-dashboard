@@ -11,6 +11,8 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import * as pieCharts from './helpers/pie.helper'
+
 export default {
     name: 'DBUIChart',
     inject: ['$socket', '$dataTracker'],
@@ -186,7 +188,7 @@ export default {
             // Generate the options config
             if (isRadial) {
                 // Pie/Doughnut chart
-                return {
+                const options = {
                     title: {
                         text: this.props.label,
                         textStyle: {
@@ -204,17 +206,9 @@ export default {
                         }
                     },
                     color: this.props.colors,
-                    series: [{
-                        name: this.props.label,
-                        type: 'pie',
-                        radius: this.chartType === 'doughnut' ? ['40%', '70%'] : '70%',
-                        data: [],
-                        itemStyle: {
-                            borderWidth: 2,
-                            borderColor: '#fff'
-                        }
-                    }]
+                    series: []
                 }
+                return options
             } else {
                 // Regular charts (line, bar, scatter)
                 const options = {
@@ -418,7 +412,9 @@ export default {
         clearChart () {
             const option = this.chart.getOption()
             if (this.props.xAxisType === 'radial') {
-                option.series[0].data = []
+                option.series.forEach(s => {
+                    s.data = []
+                })
             } else {
                 option.series = []
                 if (option.xAxis.type === 'category') {
@@ -553,11 +549,35 @@ export default {
 
             if (this.props.xAxisType === 'radial') {
                 // label defines which pie layer to update
-                // const series = label // TODO: Support in eCharts
+                const sLabels = options.series.map(s => s.name)
+                let sIndex = sLabels.indexOf(label)
+
+                let series = null
+
+                if (sIndex === -1) {
+                    series = {
+                        name: label,
+                        type: 'pie',
+                        radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
+                        data: [],
+                        top: 40, // account for the title
+                        itemStyle: {
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }
+                    }
+                    if (this.props.showLegend) {
+                        series.top = 70 // accounts for the legend and the title
+                    }
+                    sIndex = options.series.length
+                    options.series.push(series)
+                } else {
+                    series = options.series[sIndex]
+                }
                 // datapoint.x defines which slice of the pie to update
                 const name = datapoint.x
                 // Handle pie/doughnut charts
-                const existingData = options.series[0].data || []
+                const existingData = series.data || []
                 const existingIndex = existingData.findIndex(item => item.name === name)
 
                 if (existingIndex >= 0) {
@@ -568,7 +588,34 @@ export default {
                         value: datapoint.y
                     })
                 }
-                options.series[0].data = existingData
+                options.series[sIndex].data = existingData
+
+                // update the radius for each series depending on the number of series
+                options.series.forEach((s, i) => {
+                    s.radius = pieCharts.getRadius(this.props.chartType, i, options.series.length)
+                    // only show the label on the outer series
+                    if (i !== options.series.length - 1) {
+                        // don't show the label on the inner series as they overlap with the outer series
+                        s.label = {
+                            show: false
+                        }
+                        s.emphasis = {
+                            label: {
+                                show: false
+                            }
+                        }
+                    } else {
+                        // make sure we're updating in case we have a new series, and now there is a new outer series
+                        s.label = {
+                            show: true
+                        }
+                        s.emphasis = {
+                            label: {
+                                show: true
+                            }
+                        }
+                    }
+                })
             } else {
                 // Handle regular charts (line, bar, scatter)
                 const sLabels = options.series.map(s => s.name)
