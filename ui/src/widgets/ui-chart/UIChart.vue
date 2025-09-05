@@ -12,6 +12,7 @@ import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
 import * as pieCharts from './helpers/pie.helper'
+import chartJStoECharts from './helpers/chartJStoECharts'
 
 export default {
     name: 'DBUIChart',
@@ -63,33 +64,29 @@ export default {
         chartType: function (value) {
             const option = this.chart.getOption()
             option.series.forEach(series => {
-                series.type = this.getEChartsSeriesType()
+                series.type = chartJStoECharts.seriesType(this.chartType)
             })
             this.chart.setOption(option)
-            this.update(false)
         },
         'props.label': function (value) {
             const option = this.chart.getOption()
             option.title.text = value
             this.chart.setOption(option)
-            this.update(false)
         },
         'props.chartType': function (value) {
             const option = this.chart.getOption()
             option.series.forEach(series => {
-                series.type = this.getEChartsSeriesType()
+                series.type = chartJStoECharts.seriesType(this.chartType)
             })
             this.chart.setOption(option)
             this.updateInteraction()
-            this.update(false)
         },
         'props.xAxisType': function (value) {
             const option = this.chart.getOption()
             if (option.xAxis) {
-                option.xAxis.type = this.getEChartsAxisType(value)
+                option.xAxis.type = chartJStoECharts.axisType(value)
             }
             this.chart.setOption(option)
-            this.update(false)
         },
         'props.xAxisFormatType': function (value) {
             // eCharts handles time formatting differently
@@ -97,8 +94,13 @@ export default {
             this.update(false)
         },
         interpolation (value) {
-            this.setInterpolation(value)
-            this.update(false)
+            const options = this.chart.getOption()
+            
+            options.series.forEach(series => {
+                chartJStoECharts.setSmooth(series, value)
+            })
+
+            this.chart.setOption(options)
         }
     },
     beforeUnmount () {
@@ -229,7 +231,7 @@ export default {
                     },
                     color: this.props.colors,
                     xAxis: {
-                        type: this.getEChartsAxisType(this.xAxisType),
+                        type: chartJStoECharts.axisType(this.xAxisType),
                         name: this.props.xAxisLabel,
                         nameLocation: 'middle', // label position
                         nameTextStyle: {
@@ -281,19 +283,6 @@ export default {
                 }
 
                 return options
-            }
-        },
-        getEChartsAxisType (axisType) {
-            switch (axisType) {
-            case 'linear':
-                return 'value'
-            case 'time':
-                return 'time'
-            case 'category':
-            case 'bins':
-                return 'category'
-            default:
-                return 'category'
             }
         },
         updateInteraction () {
@@ -412,6 +401,7 @@ export default {
             } else {
                 option.series = []
                 if (option.xAxis.type === 'category') {
+                    // clear the x-axis labels
                     option.xAxis.data = []
                 }
             }
@@ -473,7 +463,6 @@ export default {
             if (this.chartType === 'line' || this.chartType === 'scatter') {
                 this.limitDataSize()
             }
-            this.update()
         },
         /**
          * Add points to the chart
@@ -619,14 +608,15 @@ export default {
                 if (sIndex === -1) {
                     const series = {
                         name: label,
-                        type: this.getEChartsSeriesType(),
+                        type: chartJStoECharts.seriesType(this.chartType),
                         stack: this.props.stackSeries ? 'total' : null,
                         data: []
                     }
 
                     if (this.chartType === 'line') {
                         series.symbolSize = this.props.pointRadius || 4
-                        series.symbol = this.getEChartsSymbol()
+                        series.symbol = chartJStoECharts.symbol(this.props.pointShape)
+                        chartJStoECharts.setSmooth(series, this.interpolation)
                     }
 
                     options.series.push(series)
@@ -649,42 +639,8 @@ export default {
             }
 
             this.chart.setOption(options)
-
-            if (this.chartType === 'line') {
-                this.setInterpolation(this.interpolation)
-            }
         },
-        getEChartsSeriesType () {
-            switch (this.chartType) {
-            case 'line':
-                return 'line'
-            case 'bar':
-            case 'histogram':
-                return 'bar'
-            case 'scatter':
-                return 'scatter'
-            default:
-                return 'line'
-            }
-        },
-        getEChartsSymbol () {
-            if (this.props.pointShape === 'false') {
-                return 'none'
-            }
-            switch (this.props.pointShape) {
-            case 'circle':
-                return 'circle'
-            case 'rect':
-            case 'rectangle':
-                return 'rect'
-            case 'triangle':
-                return 'triangle'
-            case 'diamond':
-                return 'diamond'
-            default:
-                return 'circle'
-            }
-        },
+        
         limitDataSize () {
             let cutoff = null
             let points = null
@@ -820,40 +776,6 @@ export default {
 
             // make sure we have the relevant (x-axis) labels added to the chart
             options.xAxis[0].data = this.histogram.labels
-
-            this.chart.setOption(options)
-        },
-        setInterpolation (interpolationType) {
-            // eCharts interpolation mapping
-            const options = this.chart.getOption()
-            const getEChartsSmooth = (type) => {
-                switch (type) {
-                case 'cubic':
-                case 'cubicMono':
-                case 'bezier':
-                    return true
-                case 'linear':
-                    return false
-                case 'step':
-                    return false // eCharts uses step: true for stepped lines
-                default:
-                    return false
-                }
-            }
-
-            const smooth = getEChartsSmooth(interpolationType)
-            const step = interpolationType === 'step'
-
-            options.series.forEach(series => {
-                if (series.type === 'line') {
-                    series.smooth = smooth
-                    if (step) {
-                        series.step = 'end'
-                    } else {
-                        delete series.step
-                    }
-                }
-            })
 
             this.chart.setOption(options)
         }

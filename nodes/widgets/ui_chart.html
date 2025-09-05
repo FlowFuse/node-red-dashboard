@@ -205,7 +205,7 @@
                 })
 
                 // Allowable "X-Axis Type" choices for chart type
-                // line     : time, linear
+                // line     : time, linear, categorical
                 // bar      : categorical (or just hide)
                 // scatter  : time, linear
                 // pie      : radial
@@ -320,7 +320,8 @@
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
-                        updateXAxisTypeOptions(['time', 'linear'], 'time')
+                        const xAxisTypeOptions = value === 'line' ? ['time', 'linear', 'category'] : ['time', 'linear']
+                        updateXAxisTypeOptions(xAxisTypeOptions, 'time')
                         // no concept of stacking in line/scatter charts
                         $('#config-stackSeries').hide()
                         // show x-axis limit options & points sizing

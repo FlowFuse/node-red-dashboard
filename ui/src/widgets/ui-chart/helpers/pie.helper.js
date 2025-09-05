@@ -9,7 +9,5 @@ export function getRadius (chartType, sIndex, seriesLength) {
     const minRadius = min + (bandWidth * sIndex)
     const maxRadius = min + (bandWidth * (sIndex + 1))
 
-    console.log(chartType, sIndex, seriesLength)
-    console.log(minRadius, maxRadius)
     return [`${minRadius}%`, `${maxRadius}%`]
 }
