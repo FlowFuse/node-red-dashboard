@@ -292,9 +292,15 @@ export default {
                 // Apply y-axis limits
                 if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
                     options.yAxis.min = parseFloat(this.props.ymin)
+                } else if (!this.hasData) {
+                    // Default y-min when no data is present
+                    options.yAxis.min = 0
                 }
                 if (Object.hasOwn(this.props, 'ymax') && this.props.ymax !== '') {
                     options.yAxis.max = parseFloat(this.props.ymax)
+                } else if (!this.hasData) {
+                    // Default y-max when no data is present
+                    options.yAxis.max = 1
                 }
 
                 return options
@@ -537,13 +543,13 @@ export default {
         addToChart (datapoint, label) {
             // record we've added data
             this.hasData = true
+            const options = this.chart.getOption()
 
             if (this.props.chartType === 'histogram') {
-                this.addToHistogram(datapoint)
+                this.updateYAxisLimits(options)
+                this.addToHistogram(datapoint, options)
                 return
             }
-
-            const options = this.chart.getOption()
 
             if (this.props.xAxisType === 'radial') {
                 // label defines which pie layer to update
@@ -653,9 +659,21 @@ export default {
                 }
             }
 
+            // Remove default y-axis limits when data is added
+            this.updateYAxisLimits(options)
+
             this.chart.setOption(options)
         },
-        
+        updateYAxisLimits (options) {
+            if (this.hasData && this.props.xAxisType !== 'radial') {
+                if (!Object.hasOwn(this.props, 'ymin') || this.props.ymin === '' || typeof(this.props.ymin) === 'undefined') {
+                    options.yAxis[0].min = null
+                }
+                if (!Object.hasOwn(this.props, 'ymax') || this.props.ymax === '' || typeof(this.props.ymax) === 'undefined') {
+                    options.yAxis[0].max = null
+                }
+            }
+        },
         limitDataSize () {
             let cutoff = null
             let points = null
@@ -737,9 +755,8 @@ export default {
                 return xIndex
             }
         },
-        addToHistogram (datapoint) {
+        addToHistogram (datapoint, options) {
             // handle multi-series in the histogram
-            const options = this.chart.getOption()
             const sLabels = options.series.map(s => s.name)
             const seriesLabel = datapoint.category
             const sIndex = sLabels.indexOf(seriesLabel)
