@@ -23,7 +23,10 @@ export default {
             /** @type {echarts.ECharts} */
             chart: null,
             hasData: false,
-            histogram: [], // populate later for bins per series
+            histogram: {
+                labels: [], // populate later for x-values
+                bins: [], // populate later for bins per series
+            },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
             resizeObserver: null
@@ -422,7 +425,10 @@ export default {
                     option.xAxis.data = []
                 }
             }
-            this.histogram = []
+            this.histogram = {
+                labels: [],
+                bins: []
+            }
             this.chart.setOption(option, true)
             this.hasData = false
         },
@@ -431,7 +437,6 @@ export default {
          * @param {*} msg
          */
         add (msg) {
-            console.log('add', msg)
             const payload = msg.payload
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
@@ -540,7 +545,7 @@ export default {
             this.hasData = true
 
             if (this.props.chartType === 'histogram') {
-                this.addToHistogram(datapoint, label)
+                this.addToHistogram(datapoint)
                 return
             }
 
@@ -603,8 +608,6 @@ export default {
             }
 
             this.chart.setOption(options)
-
-            console.log(this.chart.getOption())
 
             if (this.chartType === 'line') {
                 this.setInterpolation(this.interpolation)
@@ -701,18 +704,22 @@ export default {
                     })
                 }
             }
+            this.histogram.labels = bins.map(b => b.label)
             return bins
         },
+        /**
+         * Given the bins, datapoint and series index, return the x-index of the bin
+         */
         getBinIndex (bins, datapoint) {
             if (this.props.xAxisType === 'bins') {
                 const binSize = Math.floor((this.props.xmax - this.props.xmin) / this.props.bins)
                 return Math.min(Math.floor((datapoint.x - this.props.xmin) / binSize), bins.length - 1)
             } else {
-                // categorical
-                return this.chart.data.labels.indexOf(datapoint.x)
+                const xIndex = this.histogram.labels.indexOf(datapoint.x)
+                return xIndex
             }
         },
-        addToHistogram (datapoint, label) {
+        addToHistogram (datapoint) {
             // handle multi-series in the histogram
             const options = this.chart.getOption()
             const sLabels = options.series.map(s => s.name)
@@ -722,10 +729,8 @@ export default {
             let bins = []
 
             if (this.props.xAxisType === 'category') {
-                // make sure we have the relevant (x-axis) labels added to the chart
-                options.xAxis.data = options.xAxis.data || []
-                if (!options.xAxis.data.includes(datapoint.x)) {
-                    options.xAxis.data.push(datapoint.x)
+                if (this.histogram.labels.indexOf(datapoint.x) === -1) {
+                    this.histogram.labels.push(datapoint.x)
                 }
             }
 
@@ -734,32 +739,26 @@ export default {
                 series = {
                     name: seriesLabel,
                     type: 'bar',
-                    data: [],
-                    itemStyle: {
-                        color: this.props.colors[sLabels.length % this.props.colors.length]
-                    }
+                    stack: this.props.stackSeries ? 'total' : null,
+                    data: []
                 }
                 if (this.props.xAxisType === 'bins') {
-                    this.histogram.push({
-                        bins: this.calculateBins()
-                    })
+                    this.histogram.bins.push(this.calculateBins())
                 } else {
                     // we will have one "bin" per category
-                    this.histogram.push({
-                        bins: options.xAxis.data.map((label, index) => ({
-                            label,
-                            count: 0
-                        }))
-                    })
+                    this.histogram.bins.push(this.histogram.labels.map(label => ({
+                        label: label,
+                        count: 0
+                    })))
                 }
-                bins = this.histogram[this.histogram.length - 1].bins
+                bins = this.histogram.bins[this.histogram.bins.length - 1] // get newly calculated bins
                 options.series.push(series)
             } else {
                 series = options.series[sIndex]
-                bins = this.histogram[sIndex].bins
+                bins = this.histogram.bins[sIndex]
             }
 
-            const binIndex = this.getBinIndex(bins, datapoint)
+            const binIndex = this.getBinIndex(bins, datapoint, sIndex)
             if (this.props.xAxisType === 'category' && !bins[binIndex]) {
                 bins[binIndex] = {
                     label: datapoint.x,
@@ -771,6 +770,9 @@ export default {
             // update series data
             const values = bins.map((b) => b.count)
             series.data = values
+
+            // make sure we have the relevant (x-axis) labels added to the chart
+            options.xAxis[0].data = this.histogram.labels
 
             this.chart.setOption(options)
         },
