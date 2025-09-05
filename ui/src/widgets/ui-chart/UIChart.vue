@@ -476,9 +476,9 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            // if (this.chartType === 'line' || this.chartType === 'scatter') {
-            //     this.limitDataSize()
-            // }
+            if (this.chartType === 'line' || this.chartType === 'scatter') {
+                this.limitDataSize()
+            }
             this.update()
         },
         /**
@@ -707,10 +707,14 @@ export default {
             }
 
             // apply data limitations to the chart
-            if ((cutoff || points) && this.chart.data.datasets.length > 0) {
-                for (let i = 0; i < this.chart.data.datasets.length; i++) {
-                    const length = this.chart.data.datasets[i].data.length
-                    this.chart.data.datasets[i].data = this.chart.data.datasets[i].data.filter((d, i) => {
+            // get options
+            const options = this.chart.getOption()
+            const series = options.series
+            if ((cutoff || points) && series.length > 0) {
+                // loop over each series
+                for (let i = 0; i < series.length; i++) {
+                    const length = series[i].data.length // check how much data there is in this series
+                    series[i].data = series[i].data.filter((d, i) => {
                         if (cutoff && d.x < cutoff) {
                             return false
                         } else if (points && (i < length - points)) {
@@ -720,6 +724,8 @@ export default {
                     })
                 }
             }
+            // update the chart
+            this.chart.setOption(options)
 
             // apply data limtations to the vuex store
             this.$store.commit('data/restrict', {
