@@ -69,9 +69,9 @@ export default {
             this.chart.setOption(option)
         },
         'props.label': function (value) {
-            const option = this.chart.getOption()
-            option.title.text = value
-            this.chart.setOption(option)
+            const options = this.chart.getOption()
+            options.title[0].text = value
+            this.chart.setOption(options)
         },
         'props.chartType': function (value) {
             const option = this.chart.getOption()
@@ -81,10 +81,15 @@ export default {
             this.chart.setOption(option)
             this.updateInteraction()
         },
+        'props.xAxisLabel': function (value) {
+            const options = this.chart.getOption()
+            options.xAxis[0].name = value
+            this.chart.setOption(options)
+        },
         'props.xAxisType': function (value) {
             const option = this.chart.getOption()
             if (option.xAxis) {
-                option.xAxis.type = chartJStoECharts.axisType(value)
+                option.xAxis[0].type = chartJStoECharts.axisType(value)
             }
             this.chart.setOption(option)
         },
@@ -93,13 +98,23 @@ export default {
             // This would need more complex implementation for time axes
             this.update(false)
         },
-        interpolation (value) {
+        'props.yAxisLabel': function (value) {
             const options = this.chart.getOption()
-            
+            options.yAxis[0].name = value
+            this.chart.setOption(options)
+        },
+        'props.stackSeries': function (value) {
+            const options = this.chart.getOption()
+            options.series.forEach(series => {
+                series.stack = value ? 'total' : null
+            })
+            this.chart.setOption(options)
+        },
+        interpolation (value) {
+            const options = this.chart.getOption()            
             options.series.forEach(series => {
                 chartJStoECharts.setSmooth(series, value)
             })
-
             this.chart.setOption(options)
         }
     },
