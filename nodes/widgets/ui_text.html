@@ -98,7 +98,9 @@
                 fontSize: { value: 16 },
                 color: { value: '#717171' },
                 wrapText: { value: false },
-                className: { value: '' }
+                className: { value: '' },
+                value: { value: 'payloads', required: false },
+                valueType: { value: 'msg' }
             },
             inputs: 1,
             outputs: 0,
@@ -194,6 +196,20 @@
                 })
                 $('#node-input-style').change()
 
+                // Setup TypedInput for value processing
+                $('#node-input-value').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-valueType'),
+                    types: ['msg', 'str', 'num', 'jsonata', 'flow', 'global']
+                })
+
+                // if there is no config.value, then set it to payload
+                console.log('this.value', this.value)
+                if (!this.value) {
+                    // set the TypedInput value to msg
+                    $('#node-input-value').typedInput('value', 'payload')
+                }
+
                 // when opening the config, make sure the test text is updated
                 if (this.fontSize) {
                     $('#node-test-text').css({
@@ -246,6 +262,14 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-text.label.label"></label>
         <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <h3><span data-i18n="ui-text.label.value"></span></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-calculator"></i> <span data-i18n="ui-text.label.value"></span></label>
+        <input type="text" id="node-input-value" style="width:70%">
+        <input type="hidden" id="node-input-valueType">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-text.label.class"></label>

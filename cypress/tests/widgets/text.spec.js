@@ -25,6 +25,16 @@ describe('Node-RED Dashboard 2.0 - Text', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-text-center').children().eq(0).should('have.css', 'line-height')
         cy.get('#nrdb-ui-widget-dashboard-ui-text-center').children().eq(0).should('have.css', 'font-family', 'Courier, monospace')
     })
+
+    it('modifies the ouput based on the value parameter using a msg attribute', () => {
+        cy.get('button').contains('Inject Text 3').click()
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-msg-attribute-value').contains('INJECTED TEXT')
+    })
+
+    it('modifies the ouput based on the value parameter using an expression attribute', () => {
+        cy.get('button').contains('Inject Text 3').click()
+        cy.get('#nrdb-ui-widget-dashboard-ui-text-expression-value').contains('injected-text')
+    })
 })
 
 describe('Node-RED Dashboard 2.0 - Text - Dynamic Properties', () => {
