@@ -11,8 +11,8 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import chartJStoECharts from './helpers/chartJsToECharts.js'
 import * as pieCharts from './helpers/pie.helper'
-import chartJStoECharts from './helpers/chartJStoECharts'
 
 export default {
     name: 'DBUIChart',
@@ -28,7 +28,7 @@ export default {
             hasData: false,
             histogram: {
                 labels: [], // populate later for x-values
-                bins: [], // populate later for bins per series
+                bins: [] // populate later for bins per series
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
@@ -111,7 +111,7 @@ export default {
             this.chart.setOption(options)
         },
         interpolation (value) {
-            const options = this.chart.getOption()            
+            const options = this.chart.getOption()
             options.series.forEach(series => {
                 chartJStoECharts.setSmooth(series, value)
             })
@@ -194,7 +194,7 @@ export default {
                         gridColor = this.props.gridColor[0]
                     }
                 }
-            }  
+            }
 
             // Generate the options config
             if (isRadial) {
@@ -250,7 +250,7 @@ export default {
                         name: this.props.xAxisLabel,
                         nameLocation: 'middle', // label position
                         nameTextStyle: {
-                            color: textColor   // label color
+                            color: textColor // label color
                         },
                         splitLine: {
                             show: true,
@@ -273,7 +273,7 @@ export default {
                             color: textColor
                         },
                         axisLine: {
-                            show: true,
+                            show: true
                         },
                         axisLabel: {
                             color: textColor
@@ -588,7 +588,7 @@ export default {
                     existingData[existingIndex].value = datapoint.y
                 } else {
                     existingData.push({
-                        name: name,
+                        name,
                         value: datapoint.y
                     })
                 }
@@ -666,10 +666,10 @@ export default {
         },
         updateYAxisLimits (options) {
             if (this.hasData && this.props.xAxisType !== 'radial') {
-                if (!Object.hasOwn(this.props, 'ymin') || this.props.ymin === '' || typeof(this.props.ymin) === 'undefined') {
+                if (!Object.hasOwn(this.props, 'ymin') || this.props.ymin === '' || typeof this.props.ymin === 'undefined') {
                     options.yAxis[0].min = null
                 }
-                if (!Object.hasOwn(this.props, 'ymax') || this.props.ymax === '' || typeof(this.props.ymax) === 'undefined') {
+                if (!Object.hasOwn(this.props, 'ymax') || this.props.ymax === '' || typeof this.props.ymax === 'undefined') {
                     options.yAxis[0].max = null
                 }
             }
@@ -782,7 +782,7 @@ export default {
                 } else {
                     // we will have one "bin" per category
                     this.histogram.bins.push(this.histogram.labels.map(label => ({
-                        label: label,
+                        label,
                         count: 0
                     })))
                 }
