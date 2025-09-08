@@ -9,7 +9,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
     })
 
     it('renders bar charts with correct data', () => {
-        cy.get('#nrdb-ui-widget-bar-chart-1 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-bar-chart-1 > div > div').should('exist')
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
             should(win.uiCharts).is.not.empty()
@@ -22,15 +22,16 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then((win) => {
             const barChart = win.uiCharts['bar-chart-1']
-            // Bar chart
-            should(barChart.chart.config.data).be.an.Object()
-            should(barChart.chart.config.data.datasets).be.an.Array()
+            // Bar chart - eCharts structure
+            const options = barChart.chart.getOption()
+            should(options.series).be.an.Array()
             const checkBarElement = (index, data) => {
-                should(barChart.chart.config.data.datasets[0].data[index]).have.property('x')
-                should(barChart.chart.config.data.datasets[0].data[index]).have.property('location', data.location)
-                should(barChart.chart.config.data.datasets[0].data[index]).have.property('sales_millions', data.sales_millions)
+                const seriesData = options.series[0].data[index]
+                should(seriesData).be.an.Array().and.have.length(2) // [x, y] format
+                should(seriesData[0]).equal(data.location) // x value is location
+                should(seriesData[1]).equal(data.sales_millions) // y value is sales_millions
             }
-            should(barChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
+            should(options.series).be.an.Array().and.have.length(1)
             checkBarElement(0, { category: 'New York', location: 'New York', sales_millions: 3.2 })
             checkBarElement(1, { category: 'Los Angeles', location: 'Los Angeles', sales_millions: 2.5 })
             checkBarElement(2, { category: 'Chicago', location: 'Chicago', sales_millions: 1.8 })
@@ -40,8 +41,8 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
     })
 
     it('renders line charts with correct data', () => {
-        cy.get('#nrdb-ui-widget-line-chart-1 > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-line-chart-2 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-line-chart-1 > div > div').should('exist')
+        cy.get('#nrdb-ui-widget-line-chart-2 > div > div').should('exist')
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
@@ -64,16 +65,17 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
         cy.window().then(win => {
             const simpleLineChart = win.uiCharts['line-chart-1']
             const multiLineChart = win.uiCharts['line-chart-2']
-            // simple line chart
-            should(simpleLineChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
-            should(simpleLineChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
-            should(simpleLineChart.chart.config.data.datasets[0].data[0]).have.property('x')
-            should(simpleLineChart.chart.config.data.datasets[0].data[0].x).be.approximately(Date.now(), 5000) // x is a timestamp. following should be greater than previous
-            should(simpleLineChart.chart.config.data.datasets[0].data[0]).have.property('y', 3)
-            should(simpleLineChart.chart.config.data.datasets[0].data[1].x).be.greaterThan(simpleLineChart.chart.config.data.datasets[0].data[0].x)
-            should(simpleLineChart.chart.config.data.datasets[0].data[1]).have.property('y', 3)
-            should(simpleLineChart.chart.config.data.datasets[0].data[2].x).be.greaterThan(simpleLineChart.chart.config.data.datasets[0].data[1].x)
-            should(simpleLineChart.chart.config.data.datasets[0].data[2]).have.property('y', 3)
+            // simple line chart - eCharts structure
+            const simpleOptions = simpleLineChart.chart.getOption()
+            should(simpleOptions.series).be.an.Array().and.have.length(1)
+            should(simpleOptions.series[0].data).be.an.Array().and.have.length(3)
+            should(simpleOptions.series[0].data[0]).be.an.Array().and.have.length(2) // [x, y] format
+            should(simpleOptions.series[0].data[0][0]).be.approximately(Date.now(), 5000) // x is a timestamp
+            should(simpleOptions.series[0].data[0][1]).equal(3) // y value
+            should(simpleOptions.series[0].data[1][0]).be.greaterThan(simpleOptions.series[0].data[0][0])
+            should(simpleOptions.series[0].data[1][1]).equal(3)
+            should(simpleOptions.series[0].data[2][0]).be.greaterThan(simpleOptions.series[0].data[1][0])
+            should(simpleOptions.series[0].data[2][1]).equal(3)
 
             // multi line chart: uses a copy of the data from the chart fixture for the test
             // eslint-disable-next-line comma-spacing, quote-props, key-spacing, quotes, object-curly-spacing
@@ -81,23 +83,24 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
             const locNY = data.filter((d) => d.location === 'New York')
             const locLA = data.filter((d) => d.location === 'Los Angeles')
             const locCH = data.filter((d) => d.location === 'Chicago')
-            should(multiLineChart.chart.config.data.datasets).be.an.Array().and.have.length(3) // 3 locations
-            const dataSetNY = multiLineChart.chart.config.data.datasets.find((d) => d.label === 'New York')
-            const dataSetLA = multiLineChart.chart.config.data.datasets.find((d) => d.label === 'Los Angeles')
-            const dataSetCH = multiLineChart.chart.config.data.datasets.find((d) => d.label === 'Chicago')
+            // multi line chart - eCharts structure
+            const multiOptions = multiLineChart.chart.getOption()
+            should(multiOptions.series).be.an.Array().and.have.length(3) // 3 locations
+            const dataSetNY = multiOptions.series.find((d) => d.name === 'New York')
+            const dataSetLA = multiOptions.series.find((d) => d.name === 'Los Angeles')
+            const dataSetCH = multiOptions.series.find((d) => d.name === 'Chicago')
             should(dataSetNY).be.an.Object()
             should(dataSetLA).be.an.Object()
             should(dataSetCH).be.an.Object()
             should(dataSetNY.data).be.an.Array().and.have.length(locNY.length)
             should(dataSetLA.data).be.an.Array().and.have.length(locLA.length)
             should(dataSetCH.data).be.an.Array().and.have.length(locCH.length)
-            // check data
+            // check data - eCharts uses [x, y] format
             const checkMultiLineElement = (dataSet, locationData) => {
                 locationData.forEach((d, i) => {
-                    should(dataSet.data[i]).have.property('category', d.location) // as the chart is configured to use category as location
-                    should(dataSet.data[i]).have.property('location', d.location)
-                    should(dataSet.data[i]).have.property('temp', d.temp)
-                    should(dataSet.data[i]).have.property('x', d.datestamp)
+                    should(dataSet.data[i]).be.an.Array().and.have.length(2) // [x, y] format
+                    should(dataSet.data[i][0]).equal(d.datestamp) // x value is datestamp
+                    should(dataSet.data[i][1]).equal(d.temp) // y value is temp
                 })
             }
             checkMultiLineElement(dataSetNY, locNY)
@@ -107,7 +110,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
     })
 
     it('renders scatter charts with correct data', () => {
-        cy.get('#nrdb-ui-widget-scatter-chart-1 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-scatter-chart-1 > div > div').should('exist')
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
@@ -120,17 +123,21 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget', () => {
 
         // eslint-disable-next-line promise/catch-or-return, promise/always-return
         cy.window().then(win => {
-            // Scatter chart
+            // Scatter chart - eCharts structure
             const scatterChart = win.uiCharts['scatter-chart-1']
             // scatter data [{"x":1,"y":2},{"x":3,"y":4},{"x":5.5,"y":6.6}]
-            should(scatterChart.chart.config.data.datasets).be.an.Array().and.have.length(1)
-            should(scatterChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
-            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('x', 1)
-            should(scatterChart.chart.config.data.datasets[0].data[0]).have.property('y', 2)
-            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('x', 3)
-            should(scatterChart.chart.config.data.datasets[0].data[1]).have.property('y', 4)
-            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('x', 5.5)
-            should(scatterChart.chart.config.data.datasets[0].data[2]).have.property('y', 6.6)
+            const options = scatterChart.chart.getOption()
+            should(options.series).be.an.Array().and.have.length(1)
+            should(options.series[0].data).be.an.Array().and.have.length(3)
+            should(options.series[0].data[0]).be.an.Array().and.have.length(2) // [x, y] format
+            should(options.series[0].data[0][0]).equal(1) // x value
+            should(options.series[0].data[0][1]).equal(2) // y value
+            should(options.series[0].data[1]).be.an.Array().and.have.length(2)
+            should(options.series[0].data[1][0]).equal(3)
+            should(options.series[0].data[1][1]).equal(4)
+            should(options.series[0].data[2]).be.an.Array().and.have.length(2)
+            should(options.series[0].data[2][0]).equal(5.5)
+            should(options.series[0].data[2][1]).equal(6.6)
         })
     })
 })
