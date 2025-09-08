@@ -54,7 +54,7 @@ export default defineConfig({
                     // Create a separate chunk the following libraries to reduce .index.js size
                     mermaid: ['mermaid'],
                     'vue-vendor': ['vue', 'vuex', 'vue-router'],
-                    chartjs: ['chart.js']
+                    echarts: ['echarts']
                 }
             }
         }

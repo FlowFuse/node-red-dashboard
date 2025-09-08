@@ -9,7 +9,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - bar - stacked', () => {
     })
 
     it('renders charts with correct data', () => {
-        cy.get('#nrdb-ui-widget-stacked-bar-chart > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-stacked-bar-chart > div > div').should('exist')
         cy.clickAndWait(cy.get('button').contains('stack 2023'))
         cy.wait(10)
         cy.clickAndWait(cy.get('button').contains('stack 2024'))
@@ -20,40 +20,33 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - bar - stacked', () => {
             should(win.uiCharts).is.not.empty()
             const barChart = win.uiCharts['stacked-bar-chart']
             should(barChart).is.not.empty()
-            should(barChart.chart.config.data).be.an.Object()
-            should(barChart.chart.config.data.datasets).be.an.Array()
+            const options = barChart.chart.getOption()
+            should(options.series).be.an.Array()
 
-            should(barChart.chart.config.data.datasets).be.an.Array().and.have.length(2)
-            should(barChart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(2)
-            should(barChart.chart.config.data.datasets[1].data).be.an.Array().and.have.length(2)
+            should(options.series).be.an.Array().and.have.length(2)
+            should(options.series[0].data).be.an.Array().and.have.length(2)
+            should(options.series[1].data).be.an.Array().and.have.length(2)
 
-            should(barChart.chart.config.data.datasets[0].data[0]).be.an.Object()
-            should(barChart.chart.config.data.datasets[0].data[0].x).equal(2023)
-            should(barChart.chart.config.data.datasets[0].data[0].year).equal(2023)
-            should(barChart.chart.config.data.datasets[0].data[0].sales_millions).equal(2.31)
-            should(barChart.chart.config.data.datasets[0].data[0].category).equal('New York')
-            should(barChart.chart.config.data.datasets[0].data[0].location).equal('New York')
+            // eCharts uses [x, y] format for data points
+            should(options.series[0].data[0]).be.an.Array().and.have.length(2)
+            should(options.series[0].data[0][0]).equal(2023) // x value
+            should(options.series[0].data[0][1]).equal(2.31) // y value
+            should(options.series[0].name).equal('New York')
+            should(options.series[0].stack).equal('total') // stacked series should have stack property
 
-            should(barChart.chart.config.data.datasets[0].data[1]).be.an.Object()
-            should(barChart.chart.config.data.datasets[0].data[1].x).equal(2024)
-            should(barChart.chart.config.data.datasets[0].data[1].year).equal(2024)
-            should(barChart.chart.config.data.datasets[0].data[1].sales_millions).equal(2.41)
-            should(barChart.chart.config.data.datasets[0].data[1].category).equal('New York')
-            should(barChart.chart.config.data.datasets[0].data[1].location).equal('New York')
+            should(options.series[0].data[1]).be.an.Array().and.have.length(2)
+            should(options.series[0].data[1][0]).equal(2024)
+            should(options.series[0].data[1][1]).equal(2.41)
 
-            should(barChart.chart.config.data.datasets[1].data[0]).be.an.Object()
-            should(barChart.chart.config.data.datasets[1].data[0].x).equal(2023)
-            should(barChart.chart.config.data.datasets[1].data[0].year).equal(2023)
-            should(barChart.chart.config.data.datasets[1].data[0].sales_millions).equal(2.32)
-            should(barChart.chart.config.data.datasets[1].data[0].category).equal('Los Angeles')
-            should(barChart.chart.config.data.datasets[1].data[0].location).equal('Los Angeles')
+            should(options.series[1].data[0]).be.an.Array().and.have.length(2)
+            should(options.series[1].data[0][0]).equal(2023)
+            should(options.series[1].data[0][1]).equal(2.32)
+            should(options.series[1].name).equal('Los Angeles')
+            should(options.series[1].stack).equal('total') // stacked series should have stack property
 
-            should(barChart.chart.config.data.datasets[1].data[1]).be.an.Object()
-            should(barChart.chart.config.data.datasets[1].data[1].x).equal(2024)
-            should(barChart.chart.config.data.datasets[1].data[1].year).equal(2024)
-            should(barChart.chart.config.data.datasets[1].data[1].sales_millions).equal(2.42)
-            should(barChart.chart.config.data.datasets[1].data[1].category).equal('Los Angeles')
-            should(barChart.chart.config.data.datasets[1].data[1].location).equal('Los Angeles')
+            should(options.series[1].data[1]).be.an.Array().and.have.length(2)
+            should(options.series[1].data[1][0]).equal(2024)
+            should(options.series[1].data[1][1]).equal(2.42)
         })
     })
 })
