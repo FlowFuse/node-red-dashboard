@@ -81,8 +81,8 @@ module.exports = function (RED) {
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
-        if (!config.interporlation || typeof config.interporlation === 'undefined') {
-            config.interporlation = 'linear'
+        if (!config.interpolation || typeof config.interpolation === 'undefined') {
+            config.interpolation = 'linear'
         }
 
         const evts = {

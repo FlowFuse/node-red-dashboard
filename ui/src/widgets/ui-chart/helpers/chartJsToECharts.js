@@ -4,6 +4,7 @@ const interpolation = (type) => {
     case 'cubic':
     case 'cubicMono':
     case 'bezier':
+    case 'smooth':
         return true
     case 'linear':
         return false

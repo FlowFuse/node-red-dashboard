@@ -438,6 +438,11 @@
                 }
 
                 if (this.interpolation) {
+                    // migrate old (ChartJS) interpolations to eCharts
+                    const oldInterpolations = ['bezier', 'cubic', 'cubicMono']
+                    if (oldInterpolations.includes(this.interpolation)) {
+                        this.interpolation = 'smooth'
+                    }
                     $('#node-input-interpolation').val(this.interpolation)
                 } else {
                     $('#node-input-interpolation').val('linear')
@@ -540,9 +545,7 @@
         <select id="node-input-interpolation">
             <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
             <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
-            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
-            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
-            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+            <option value="smooth" data-i18n="ui-chart.label.smoothInterpolation"></option>
         </select>
     </div>
     <div class="form-row" id="config-stackSeries">
