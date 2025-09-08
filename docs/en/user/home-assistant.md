@@ -24,6 +24,6 @@ Following are instructions for installing & configuring FlowFuse Dashboard into 
 
 ![Image](https://github.com/user-attachments/assets/38428345-cac0-4be7-b1fc-33c741c2db95)
 
-- You can now open the NR dashboard 2.0 from the HA sidebar, or directly via the endpoint URL defined above
+- You can now open the FlowFuse Dashboard from the HA sidebar, or directly via the endpoint URL defined above
 
 ![Image](https://github.com/user-attachments/assets/45beadf3-bfe1-45da-83c8-561191387d2e)
