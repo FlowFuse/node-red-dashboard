@@ -31,7 +31,7 @@ describe('Node-RED Dashboard 2.0 - Text', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-text-msg-attribute-value').contains('INJECTED TEXT')
     })
 
-    it('modifies the ouput based on the value parameter using an expression attribute', () => {
+    it('modifies the output based on the value parameter using an expression attribute', () => {
         cy.get('button').contains('Inject Text 3').click()
         cy.get('#nrdb-ui-widget-dashboard-ui-text-expression-value').contains('injected-text')
     })
