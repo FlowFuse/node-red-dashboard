@@ -104,7 +104,7 @@ export default {
         },
         precision () {
             const s = Math.abs(this.getProperty('step')) || 1
-            return s.toString().split('.')[1].length || 0
+            return s.toString().split('.')[1]?.length || 0
         },
         spinner () {
             return this.getProperty('spinner')
