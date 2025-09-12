@@ -252,6 +252,7 @@ export default {
                         nameTextStyle: {
                             color: textColor // label color
                         },
+                        min: 'dataMin',
                         splitLine: {
                             show: true,
                             lineStyle: {
