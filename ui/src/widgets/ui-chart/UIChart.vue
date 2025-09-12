@@ -252,6 +252,7 @@ export default {
                         nameTextStyle: {
                             color: textColor // label color
                         },
+
                         splitLine: {
                             show: true,
                             lineStyle: {
@@ -301,6 +302,10 @@ export default {
                 } else if (!this.hasData) {
                     // Default y-max when no data is present
                     options.yAxis.max = 1
+                }
+                // ensure that vertical grid lines correspond to data points in a line chart of type category
+                if (this.chartType === 'line' && this.props.xAxisType === 'category') {
+                    options.xAxis.boundaryGap = false
                 }
 
                 return options
