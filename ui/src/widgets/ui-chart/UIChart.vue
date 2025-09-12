@@ -252,7 +252,6 @@ export default {
                         nameTextStyle: {
                             color: textColor // label color
                         },
-
                         splitLine: {
                             show: true,
                             lineStyle: {
