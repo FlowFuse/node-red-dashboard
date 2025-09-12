@@ -1,0 +1,41 @@
+<script type="text/html" data-help-name="ui-text-input">
+    <p>
+        Fügt Ihrem Dashboard eine einzelne Texteingabezeile hinzu, mit einem konfigurierbaren "Typ" (Text, Passwort, etc.).
+    </p>
+    <p>
+      Verfügbare Modi umfassen:
+      <ul>
+        <li><b>Texteingabe:</b> Standard-Text-Eingabefeld</li>
+        <li><b>E-Mail-Adresse:</b> Bietet Validierung für jede Eingabe, um sicherzustellen, dass es sich um eine gültige E-Mail-Adresse handelt.</li>
+        <li><b>Passwort:</b> Verbirgt die Eingabe vor dem Benutzer, um geschützte Eingaben zu ermöglichen.</li>
+        <li><b>Zahl:</b> Fügt einen Auf-/Abwähler hinzu, um eine ganze Zahl auszuwählen.</li>
+        <li><b>Farbwähler:</b> Zeigt einen einzelnen Blockfarbwähler an</li>
+        <li><b>Zeitwähler:</b> HH:mm formatierter Zeitwähler</li>
+        <li><b>Wochenwähler:</b> Ein Kalender-Widget zur Auswahl einer bestimmten vollen Woche, gibt YYYY-W&lt;WW&gt; zurück</li>
+        <li><b>Monatswähler:</b> Ein Kalender-Widget zur Auswahl eines bestimmten Monats, gibt YYYY-MM zurück</li>
+        <li><b>Datum-Zeit-Wähler:</b> Ein Kalender-Widget zur Auswahl eines vollständigen Datumswerts. Gibt YYY-MM-DDTHH:mm zurück</li>
+      </ul>
+    </p>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">mode <span class="property-type">string</span></dt>
+        <dd>Ändern Sie die Texteingabe in ein "Passwort", "Farbe" oder einen der anderen verfügbaren "Modi".</dd>
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Überschreiben Sie die Beschriftung, die mit der Texteingabe angezeigt wird. HTML-Inhalt ist erlaubt.</dd>
+        <dt class="optional">icon <span class="property-type">string</span></dt>
+        <dd>Überschreiben Sie das in der ursprünglichen Konfiguration definierte Symbol.</dd>
+        <dt class="optional">iconPosition <span class="property-type">'links' | 'rechts'</span></dt>
+        <dd>Ändern Sie, auf welcher Seite der Texteingabe das Symbol gerendert wird.</dd>
+        <dt class="optional">iconInnerPosition <span class="property-type">'innen' | 'außen'</span></dt>
+        <dd>Definiert, ob das Symbol innerhalb des Rahmens der Texteingabe gerendert wird oder nicht.</dd>
+        <dt class="optional">clearable <span class="property-type">boolean</span></dt>
+        <dd>Steuert, ob ein "x"-Button erscheint, während ein Benutzer tippt, um schnell alle geschriebenen Inhalte zu löschen.</dd>
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zur Schaltfläche hinzu.</dd>
+    </dl>
+  </script>
