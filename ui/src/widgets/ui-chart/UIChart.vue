@@ -37,6 +37,9 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
+        hasTitle () {
+            return this.props.label !== ''
+        },
         chartType () {
             // eCharts supports histograms natively, but we still map for compatibility
             if (this.props.chartType === 'histogram') {
@@ -211,7 +214,7 @@ export default {
                     },
                     legend: {
                         show: showLegend,
-                        top: 40,
+                        top: this.hasTitle ? 40 : 0,
                         textStyle: {
                             color: textColor
                         }
@@ -235,11 +238,13 @@ export default {
                     },
                     grid: {
                         left: '3%',
-                        right: '4%'
+                        right: '4%',
+                        bottom: '0%',
+                        top: this.hasTitle ? (this.props.showLegend ? 70 : 40) : (this.props.showLegend ? 30 : 0)
                     },
                     legend: {
                         show: showLegend,
-                        top: 40,
+                        top: this.hasTitle ? 40 : 0,
                         textStyle: {
                             color: textColor
                         }
@@ -272,6 +277,7 @@ export default {
                         nameTextStyle: {
                             color: textColor
                         },
+                        min: 'dataMin',
                         axisLine: {
                             show: true
                         },
@@ -564,14 +570,14 @@ export default {
                         type: 'pie',
                         radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
                         data: [],
-                        top: 40, // account for the title
+                        top: this.hasTitle ? 40 : 0, // account for the title
                         itemStyle: {
                             borderWidth: 2,
                             borderColor: '#fff'
                         }
                     }
                     if (this.props.showLegend) {
-                        series.top = 70 // accounts for the legend and the title
+                        series.top = this.hasTitle ? 70 : 30 // accounts for the legend and the title
                     }
                     sIndex = options.series.length
                     options.series.push(series)
