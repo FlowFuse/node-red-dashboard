@@ -9,11 +9,11 @@ describe('Node-RED Dashboard 2.0 - Chart - Type: Interpolation', () => {
     })
 
     it('renders charts with correct data', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-chart-linear > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-chart-step > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-chart-bezier > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-chart-cubic > div > canvas').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-chart-mono > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-chart-linear > div > div').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-chart-step > div > div').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-chart-bezier > div > div').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-chart-cubic > div > div').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-chart-mono > div > div').should('exist')
 
         // Add data points 4, 8, 3 and 1
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-clear'))
@@ -31,33 +31,31 @@ describe('Node-RED Dashboard 2.0 - Chart - Type: Interpolation', () => {
             const cubic = win.uiCharts['dashboard-ui-chart-cubic']
             const mono = win.uiCharts['dashboard-ui-chart-mono']
 
-            // Check Data for Interpolation
-            should(linear.chart.config.data).be.an.Object()
-            should(linear.chart.config.data.datasets).be.an.Array()
+            // Check Data for Interpolation - eCharts structure
+            const linearOptions = linear.chart.getOption()
+            should(linearOptions.series).be.an.Array()
 
-            // // Check data point values
-            should(linear.chart.config.data.datasets[0].data).be.an.Array().and.have.length(4)
-            should(step.chart.config.data.datasets[0].data).be.an.Array().and.have.length(4)
-            should(bezier.chart.config.data.datasets[0].data).be.an.Array().and.have.length(4)
-            should(cubic.chart.config.data.datasets[0].data).be.an.Array().and.have.length(4)
-            should(mono.chart.config.data.datasets[0].data).be.an.Array().and.have.length(4)
+            // Check data point values
+            should(linearOptions.series[0].data).be.an.Array().and.have.length(4)
+            should(step.chart.getOption().series[0].data).be.an.Array().and.have.length(4)
+            should(bezier.chart.getOption().series[0].data).be.an.Array().and.have.length(4)
+            should(cubic.chart.getOption().series[0].data).be.an.Array().and.have.length(4)
+            should(mono.chart.getOption().series[0].data).be.an.Array().and.have.length(4)
 
-            // Check interpolation config for linear
-            should(linear.chart.config.data.datasets[0].tension).be.equal(0)
+            // Check interpolation config for linear (smooth: false)
+            should(linearOptions.series[0].smooth).be.equal(false)
 
             // Check interpolation config for step
-            should(step.chart.config.data.datasets[0].stepped).be.equal(true)
+            should(step.chart.getOption().series[0].step).be.equal('end')
 
-            // Check interpolation config for bezier
-            should(bezier.chart.config.data.datasets[0].tension).be.equal(0.4)
+            // eCharts only supports setting a "smooth" variable
 
-            // Check interpolation config for cubic
-            should(cubic.chart.config.data.datasets[0].cubicInterpolationMode).be.equal('default')
-            should(cubic.chart.config.data.datasets[0].tension).be.equal(0.4)
-
-            // Check interpolation config for monotone
-            should(mono.chart.config.data.datasets[0].cubicInterpolationMode).be.equal('monotone')
-            should(mono.chart.config.data.datasets[0].tension).be.equal(0.4)
+            // Check interpolation config for bezier (smooth: true)
+            should(bezier.chart.getOption().series[0].smooth).be.equal(true)
+            // Check interpolation config for cubic (smooth: true)
+            should(cubic.chart.getOption().series[0].smooth).be.equal(true)
+            // Check interpolation config for monotone (smooth: true)
+            should(mono.chart.getOption().series[0].smooth).be.equal(true)
         })
     })
 })

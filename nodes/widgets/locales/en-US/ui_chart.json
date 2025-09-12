@@ -80,7 +80,8 @@
             "stepInterpolation": "Step",
             "bezierInterpolation": "Bezier",
             "cubicInterpolation": "Cubic",
-            "cubicMonoInterpolation": "Cubic-Mono"
+            "cubicMonoInterpolation": "Cubic-Mono",
+            "smoothInterpolation": "Smooth"
         },
         "notifications": {
             "clearSuccess": "Chart data cleared successfully",

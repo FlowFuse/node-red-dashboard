@@ -90,7 +90,8 @@
                 },
                 mobileBreakpoint: { value: 'sm' },
                 mobileBreakpointType: { value: 'defaults' },
-                action: { value: 'append' }
+                action: { value: 'append' },
+                className: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -344,6 +345,10 @@
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-table.label.label"></span></label>
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-table.label.optionalTableTitle">
+    </div>
+    <div class="form-row" id="text-row-class">
+        <label for="node-config-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-table.label.className"></span></label>
+        <input type="text" id="node-config-input-className" data-i18n="[placeholder]ui-table.label.classNamePlaceholder"/>
     </div>
     <div class="form-row">
         <label for="node-input-maxrows"><i class="fa fa-tag"></i> <span data-i18n="ui-table.label.maxRows"></label>
