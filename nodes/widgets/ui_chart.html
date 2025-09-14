@@ -247,15 +247,29 @@
                     default: 'auto',
                     typeField: $('#node-input-xAxisFormatType'),
                     types: [
-                        { value: 'HH:mm:ss', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false },
-                        { value: 'HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false },
-                        { value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
-                        { value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
-                        { value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
+                        { value: '{HH}:{mm}:{ss}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false },
+                        { value: '{HH}:{mm}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false },
+                        { value: '{yyyy}-{M}-{d}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
+                        { value: '{d}/{M}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
+                        { value: '{ee} {HH}:{mm}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
                         { value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: 'fa fa-font' },
                         { value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false }
                     ]
                 })
+
+                // auto migrate/select the eCharts equivalent if still using ChartJS format
+                const eChartsFormat = {
+                    'HH:mm:ss': '{HH}:{mm}:{ss}',
+                    'HH:mm': '{HH}:{mm}',
+                    'y-L-d': '{yyyy}-{M}-{d}',
+                    'd/L': '{d}/{M}',
+                    'ccc HH:mm': '{ee} {HH}:{mm}'
+                }
+                console.log('node.xAxisFormatType', node.xAxisFormatType)
+                if (eChartsFormat[node.xAxisFormatType]) {
+                    console.log('migrating xAxisFormatType', node.xAxisFormatType, eChartsFormat[node.xAxisFormatType])
+                    $('#node-input-xAxisFormat').typedInput('type', eChartsFormat[node.xAxisFormatType])
+                }
 
                 $('#node-input-category').typedInput({
                     default: 'msg',

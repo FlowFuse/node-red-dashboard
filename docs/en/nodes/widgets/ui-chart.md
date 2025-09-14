@@ -13,9 +13,9 @@ props:
     Point Shape: Define the shape of the point shown in Scatter & Line charts.
     Point Radius: Define the radius (in pixels) of each point rendered onto a Scatter or Line chart.
     X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
-    X-Axis Format: <code>HH:mm:ss</code> | <code>HH:mm</code> | <code>YYYY-MM-DD</code> | <code>DD/MM</code> | <code>dd HH:mm</code> | <code>Custom</code> | <code>Auto</code>
+    X-Axis Format: <code>{HH}:{mm}:{ss}</code> | <code>{HH}:{mm}</code> | <code>{yyyy}-{M}-{d}</code> | <code>{d}/{M}</code> | <code>{ee} {HH}:{mm}</code> | <code>Custom</code> | <code>Auto</code>
         Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
-        See <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">here</a> for an overview of all available Luxon tokens.
+        See <a target="_blank" href="https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter">here</a> for an overview of the available format types.
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>

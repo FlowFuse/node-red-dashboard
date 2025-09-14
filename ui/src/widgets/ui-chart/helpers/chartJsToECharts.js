@@ -72,5 +72,25 @@ export default {
         default:
             return 'circle'
         }
+    },
+    /**
+     * Convert from ChartJS (Luxon) to Apache eCharts (DayJS)
+     * @param {*} value
+     */
+    timeFormatter (value) {
+        switch (value) {
+        case 'HH:mm:ss':
+            return '{HH}:{mm}:{ss}'
+        case 'HH:mm':
+            return '{HH}:{mm}'
+        case 'ccc HH:mm':
+            return '{ee} {HH}:{mm}'
+        case 'y-L-d':
+            return '{yyyy}-{M}-{d}'
+        case 'd/L':
+            return '{d}/{M}'
+        default:
+            return value
+        }
     }
 }
