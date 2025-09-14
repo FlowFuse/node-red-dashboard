@@ -632,6 +632,7 @@ export default {
                         name: label,
                         type: chartJStoECharts.seriesType(this.chartType),
                         stack: this.props.stackSeries ? 'total' : null,
+                        colorBy: this.props.categoryType === 'none' ? 'data' : 'series',
                         data: []
                     }
 
@@ -776,6 +777,7 @@ export default {
                     name: seriesLabel,
                     type: 'bar',
                     stack: this.props.stackSeries ? 'total' : null,
+                    colorBy: this.props.categoryType === 'none' ? 'data' : 'series',
                     data: []
                 }
                 if (this.props.xAxisType === 'bins') {
