@@ -646,7 +646,7 @@ export default {
         },
         /**
          * Update the chart given a set of eCharts Options
-         * @param options 
+         * @param options
          */
         updateChart (options) {
             this.updateYAxisLimits(options)
