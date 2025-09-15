@@ -266,6 +266,9 @@ export default {
                                 color: gridColor
                             }
                         },
+                        axisLabel: {
+                            color: textColor
+                        },
                         minorSplitLine: {
                             show: true,
                             lineStyle: {
