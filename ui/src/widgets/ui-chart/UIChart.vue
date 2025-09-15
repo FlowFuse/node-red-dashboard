@@ -11,6 +11,7 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import axisHelper from './helpers/axis.helper'
 import chartJStoECharts from './helpers/chartJsToECharts.js'
 import * as pieCharts from './helpers/pie.helper'
 
@@ -668,10 +669,10 @@ export default {
         updateYAxisLimits (options) {
             if (this.hasData && this.props.xAxisType !== 'radial') {
                 if (!Object.hasOwn(this.props, 'ymin') || this.props.ymin === '' || typeof this.props.ymin === 'undefined') {
-                    options.yAxis[0].min = null
+                    options.yAxis[0].min = axisHelper.getAxisMin // set sensible y-limits
                 }
                 if (!Object.hasOwn(this.props, 'ymax') || this.props.ymax === '' || typeof this.props.ymax === 'undefined') {
-                    options.yAxis[0].max = null
+                    options.yAxis[0].max = axisHelper.getAxisMax // set sensible y-limits
                 }
             }
         },
