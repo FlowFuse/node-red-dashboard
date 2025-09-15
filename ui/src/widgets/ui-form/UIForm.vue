@@ -147,7 +147,7 @@ export default {
             if (row.required) {
                 // is required
                 return [(v) => {
-                    return !!v || row.label + ' is required'
+                    return (v !== null && v !== undefined && v !== '' && (row.type === 'number' ? !Number.isNaN(v) : true)) || row.label + ' is required'
                 }]
             } else {
                 // no rules
