@@ -303,7 +303,6 @@ export default {
                 if (this.xAxisType === 'time' && this.props.xAxisFormatType !== 'auto') {
                     const format = this.props.xAxisFormatType === 'custom' ? this.props.xAxisFormat : this.props.xAxisFormatType
                     options.xAxis.axisLabel.formatter = chartJStoECharts.timeFormatter(format)
-                    console.log('xAxis.axisLabel.formatter', options.xAxis.axisLabel.formatter)
                 }
 
                 // Apply y-axis limits
