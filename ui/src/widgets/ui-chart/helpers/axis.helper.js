@@ -1,6 +1,6 @@
 const getAxisMinMax = (value) => {
-    const min = value.min
-    const max = value.max
+    const min = typeof value?.min === 'number' ? value?.min : 0
+    const max = typeof value?.max === 'number' ? value?.max : 1
 
     const range = max - min
 
