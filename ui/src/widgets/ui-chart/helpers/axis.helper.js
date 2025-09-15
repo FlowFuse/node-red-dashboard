@@ -53,12 +53,22 @@ const getAxisMax = (value) => {
     return getAxisMinMax(value).max
 }
 
-// CommonJS export
-module.exports = {
+// ES6 export (primary)
+export default {
     getAxisMinMax,
     getAxisMin,
     getAxisMax
 }
 
-// ES6 export for VueJS compatibility
-module.exports.default = module.exports
+// Named exports
+export { getAxisMinMax, getAxisMin, getAxisMax }
+
+// CommonJS compatibility
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        getAxisMinMax,
+        getAxisMin,
+        getAxisMax
+    }
+    module.exports.default = module.exports
+}
