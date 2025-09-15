@@ -26,17 +26,16 @@ const getAxisMinMax = (value) => {
     }
 
     // Round min down to nearest appropriate unit
-    const minRoundingUnit = getRoundingUnit(range)
+    const roundingUnit = getRoundingUnit(range)
     let axisMin = 0
-    if (minRoundingUnit > 0) {
-        axisMin = Math.floor(min / minRoundingUnit) * minRoundingUnit
+    if (roundingUnit > 0) {
+        axisMin = Math.floor(min / roundingUnit) * roundingUnit
     }
 
     // Round max up to nearest appropriate unit
-    const maxRoundingUnit = getRoundingUnit(range)
     let axisMax = 10
-    if (maxRoundingUnit > 0) {
-        axisMax = Math.ceil(max / maxRoundingUnit) * maxRoundingUnit
+    if (roundingUnit > 0) {
+        axisMax = Math.ceil(max / roundingUnit) * roundingUnit
     }
 
     return {
