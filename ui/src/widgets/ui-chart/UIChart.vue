@@ -301,6 +301,12 @@ export default {
                     animationDurationUpdate: 50 // minimal animation on data update
                 }
 
+                // set timeseries formatting
+                if (this.xAxisType === 'time' && this.props.xAxisFormatType !== 'auto') {
+                    const format = this.props.xAxisFormatType === 'custom' ? this.props.xAxisFormat : this.props.xAxisFormatType
+                    options.xAxis.axisLabel.formatter = chartJStoECharts.timeFormatter(format)
+                }
+
                 // Apply y-axis limits
                 if (Object.hasOwn(this.props, 'ymin') && this.props.ymin !== '') {
                     options.yAxis.min = parseFloat(this.props.ymin)
