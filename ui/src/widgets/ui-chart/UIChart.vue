@@ -99,7 +99,7 @@ export default {
         'props.xAxisFormatType': function (value) {
             // eCharts handles time formatting differently
             // This would need more complex implementation for time axes
-            this.update(false)
+            // this.update(false)
         },
         'props.yAxisLabel': function (value) {
             const options = this.chart.getOption()
@@ -220,7 +220,9 @@ export default {
                         }
                     },
                     color: this.props.colors,
-                    series: []
+                    series: [],
+                    animationDuration: 300, // minimal animation on inital data load
+                    animationDurationUpdate: 50 // minimal animation on data update
                 }
                 return options
             } else {
@@ -264,6 +266,9 @@ export default {
                                 color: gridColor
                             }
                         },
+                        axisLabel: {
+                            color: textColor
+                        },
                         minorSplitLine: {
                             show: true,
                             lineStyle: {
@@ -293,7 +298,13 @@ export default {
                     },
                     series: [],
                     animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 150 // minimal animation on data update
+                    animationDurationUpdate: 50 // minimal animation on data update
+                }
+
+                // set timeseries formatting
+                if (this.xAxisType === 'time' && this.props.xAxisFormatType !== 'auto') {
+                    const format = this.props.xAxisFormatType === 'custom' ? this.props.xAxisFormat : this.props.xAxisFormatType
+                    options.xAxis.axisLabel.formatter = chartJStoECharts.timeFormatter(format)
                 }
 
                 // Apply y-axis limits
@@ -308,6 +319,10 @@ export default {
                 } else if (!this.hasData) {
                     // Default y-max when no data is present
                     options.yAxis.max = 1
+                }
+                // ensure that vertical grid lines correspond to data points in a line chart of type category
+                if (this.chartType === 'line' && this.props.xAxisType === 'category') {
+                    options.xAxis.boundaryGap = false
                 }
 
                 return options
@@ -328,28 +343,6 @@ export default {
                 break
             }
             this.chart.setOption(options)
-        },
-        update (immediate = true) {
-            // for data adding, we want to update immediately
-            // but in some cases, like updating multiple props, we want to debounce
-            if (immediate) {
-                if (this.chartUpdateDebounceTimeout) {
-                    clearTimeout(this.chartUpdateDebounceTimeout)
-                    this.chartUpdateDebounceTimeout = null
-                }
-                this.chart.setOption(this.chart.getOption(), true)
-                return
-            }
-            if (this.chartUpdateDebounceTimeout) {
-                return
-            }
-            this.chartUpdateDebounceTimeout = setTimeout(() => {
-                try {
-                    this.chart.setOption(this.chart.getOption(), true)
-                } finally {
-                    this.chartUpdateDebounceTimeout = null
-                }
-            }, 30)
         },
         // given an object, return the value of the category property (which can be nested)
         getLabel (value, category) {
@@ -446,6 +439,8 @@ export default {
          */
         add (msg) {
             const payload = msg.payload
+
+            const options = this.chart.getOption()
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
@@ -454,7 +449,7 @@ export default {
                     const d = m._datapoint // server-side we compute a chart friendly format
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label)
+                        this.addPoints(p, d, label, options)
                     }
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
@@ -464,7 +459,7 @@ export default {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label)
+                        this.addPoints(p, d, label, options)
                     }
                 })
             } else if (payload !== null && payload !== undefined) {
@@ -474,14 +469,14 @@ export default {
                     msg._datapoint.forEach((d) => {
                         const label = d.category
                         if (label !== null && label !== undefined) {
-                            this.addPoints(msg.payload, d, label)
+                            this.addPoints(msg.payload, d, label, options)
                         }
                     })
                 } else {
                     const d = msg._datapoint // server-side we compute a chart friendly format
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(msg.payload, d, label)
+                        this.addPoints(msg.payload, d, label, options)
                     }
                 }
             } else {
@@ -489,16 +484,18 @@ export default {
                 console.log('have no payload')
             }
             if (this.chartType === 'line' || this.chartType === 'scatter') {
-                this.limitDataSize()
+                this.limitDataSize(options)
             }
+            this.updateChart(options)
         },
         /**
          * Add points to the chart
          * @param {*} payload
          * @param {*} datapoint
          * @param {*} label
+         * @param {*} options - existing eChart options object
          */
-        addPoints (payload, datapoint, label) {
+        addPoints (payload, datapoint, label, options) {
             const d = { ...datapoint, ...payload }
             if (!this.chart.config?.options?.parsing?.xAxisKey) {
                 d.x = datapoint.x // if there is no mapping key, ensure server side computed datapoint.x is used
@@ -515,22 +512,13 @@ export default {
                     }
                     dd.category = d.category[i]
                     dd.y = d.y[i]
-                    this.addToChart(dd, label[i])
+                    options = this.addToChart(dd, label[i], options)
                     this.commit(payload, dd, label[i])
                 }
             } else {
-                this.addToChart(d, label)
+                options = this.addToChart(d, label, options)
                 this.commit(payload, datapoint, label)
             }
-        },
-        addPoint (payload, datapoint, label) {
-            // merge the calculated (server-side) datapoint with the msg payload
-            const d = {
-                ...datapoint,
-                ...payload
-            }
-            // add it to the chart
-            this.addToChart(d, label)
         },
         commit (payload, datapoint, label) {
             // APPEND our latest data point to the store
@@ -547,10 +535,9 @@ export default {
          * Function to handle adding a datapoint (generated NR-side) to eCharts
          * @param {*} datapoint
          */
-        addToChart (datapoint, label) {
+        addToChart (datapoint, label, options) {
             // record we've added data
             this.hasData = true
-            const options = this.chart.getOption()
 
             if (this.props.chartType === 'histogram') {
                 this.updateYAxisLimits(options)
@@ -668,8 +655,14 @@ export default {
             }
 
             // Remove default y-axis limits when data is added
+            return options
+        },
+        /**
+         * Update the chart given a set of eCharts Options
+         * @param options
+         */
+        updateChart (options) {
             this.updateYAxisLimits(options)
-
             this.chart.setOption(options)
         },
         updateYAxisLimits (options) {
@@ -682,7 +675,7 @@ export default {
                 }
             }
         },
-        limitDataSize () {
+        limitDataSize (options) {
             let cutoff = null
             let points = null
             if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
@@ -698,8 +691,6 @@ export default {
             }
 
             // apply data limitations to the chart
-            // get options
-            const options = this.chart.getOption()
             const series = options.series
             if ((cutoff || points) && series.length > 0) {
                 // loop over each series
@@ -715,8 +706,6 @@ export default {
                     })
                 }
             }
-            // update the chart
-            this.chart.setOption(options)
 
             // apply data limtations to the vuex store
             this.$store.commit('data/restrict', {
