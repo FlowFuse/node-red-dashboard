@@ -11,9 +11,9 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import axisHelper from './helpers/axis.helper'
 import chartJStoECharts from './helpers/chartJsToECharts.js'
 import * as pieCharts from './helpers/pie.helper'
-import axisHelper from './helpers/axis.helper'
 
 export default {
     name: 'DBUIChart',
