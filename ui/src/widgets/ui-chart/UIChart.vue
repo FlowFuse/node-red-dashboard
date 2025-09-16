@@ -268,6 +268,7 @@ export default {
                             }
                         },
                         axisLabel: {
+                            hideOverlap: true, // hide labels that would overlap adjacent label
                             color: textColor
                         },
                         minorSplitLine: {
