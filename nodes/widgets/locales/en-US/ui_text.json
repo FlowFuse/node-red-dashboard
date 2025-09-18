@@ -9,6 +9,7 @@
             "layout": "Layout",
             "label2": "label",
             "value": "value",
+            "Value": "Value",
             "style": "Style",
             "applyStyle": "Apply Style",
             "font": "Font",

@@ -13,9 +13,9 @@ props:
     Point Shape: Define the shape of the point shown in Scatter & Line charts.
     Point Radius: Define the radius (in pixels) of each point rendered onto a Scatter or Line chart.
     X-Axis Type: <code>Timescale</code> | <code>Linear</code> | <code>Categorical</code>
-    X-Axis Format: <code>HH:mm:ss</code> | <code>HH:mm</code> | <code>YYYY-MM-DD</code> | <code>DD/MM</code> | <code>dd HH:mm</code> | <code>Custom</code> | <code>Auto</code>
+    X-Axis Format: <code>{HH}:{mm}:{ss}</code> | <code>{HH}:{mm}</code> | <code>{yyyy}-{M}-{d}</code> | <code>{d}/{M}</code> | <code>{ee} {HH}:{mm}</code> | <code>Custom</code> | <code>Auto</code>
         Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
-        See <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">here</a> for an overview of all available Luxon tokens.
+        See <a target="_blank" href="https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter">here</a> for an overview of the available format types.
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
@@ -137,6 +137,47 @@ Then, the last piece of the puzzle would be to set the `y` property would be one
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1743608192522, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
 
 Note: Timestamps must be in milliseconds (ms). This follows the JavaScript standard for representing time as the number of milliseconds elapsed since the Unix epoch (January 1, 1970, 00:00:00 UTC).
+
+##### Formatting Timestamps
+
+You can set a formatting option on the x-axis when using timeseries data. Included, as defaults, are:
+
+- `{HH}:{mm}:{ss}`: e.g. 12:00:00
+- `{HH}:{mm}`: e.g. 12:00
+- `{yyyy}-{M}-{d}`: e.g. 2020-01-01
+- `{d}/{M}`: e.g. 01/01
+- `{ee} {HH}:{mm}`: e.g. Sun 12:00
+
+You can also choose "Custom" option and provide your own formatting string, using the following tokens:
+
+| Group | Template | Value (EN) |
+|-------|----------|------------|
+| Year | `{yyyy}` | e.g. 2020, 2021, ... |
+| | `{yy}` | 00-99 |
+| Quarter | `{Q}` | 1, 2, 3, 4 |
+| Month | `{MMMM}` | e.g. January, February, ... |
+| | `{MMM}` | e.g. Jan, Feb, ... |
+| | `{MM}` | 01-12 |
+| | `{M}` | 1-12 |
+| Day of Month | `{dd}` | 01-31 |
+| | `{d}` | 1-31 |
+| Day of Week | `{eeee}` | Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday |
+| | `{ee}` | Sun, Mon, Tues, Wed, Thu, Fri, Sat |
+| | `{e}` | 1-54 |
+| Hour | `{HH}` | 00-23 |
+| | `{H}` | 0-23 |
+| | `{hh}` | 01-12 |
+| | `{h}` | 1-12 |
+| Minute | `{mm}` | 00-59 |
+| | `{m}` | 0-59 |
+| Second | `{ss}` | 00-59 |
+| | `{s}` | 0-59 |
+| Millisecond | `{SSS}` | 000-999 |
+| | `{S}` | 0-999 |
+
+The above table is taken from the [eCharts documentation](https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter).
+
+For any versions below, and including, `1.26.0`, FlowFuse Dashboard used ChartJS for formatting timestamps. This has been migrated to eCharts in `1.27.0`. For documentation on ChartJS timestamps, see the [ChartJS documentation](https://www.chartjs.org/docs/latest/axes/cartesian/time.html#time-axis-specific-options).
 
 #### Interpolation Methods for Line Charts
 

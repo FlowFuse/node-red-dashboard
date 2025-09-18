@@ -206,7 +206,7 @@
                 })
 
                 // Allowable "X-Axis Type" choices for chart type
-                // line     : time, linear
+                // line     : time, linear, categorical
                 // bar      : categorical (or just hide)
                 // scatter  : time, linear
                 // pie      : radial
@@ -248,22 +248,34 @@
                     default: 'auto',
                     typeField: $('#node-input-xAxisFormatType'),
                     types: [
-                        { value: 'HH:mm:ss', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false },
-                        { value: 'HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false },
-                        { value: 'y-L-d', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
-                        { value: 'd/L', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
-                        { value: 'ccc HH:mm', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
+                        { value: '{HH}:{mm}:{ss}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmmss'), hasValue: false },
+                        { value: '{HH}:{mm}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.HHmm'), hasValue: false },
+                        { value: '{yyyy}-{M}-{d}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.yLd'), hasValue: false },
+                        { value: '{d}/{M}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.dL'), hasValue: false },
+                        { value: '{ee} {HH}:{mm}', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.cccHHmm'), hasValue: false },
                         { value: 'custom', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.custom'), icon: 'fa fa-font' },
                         { value: 'auto', label: RED._('@flowfuse/node-red-dashboard/ui-chart:ui-chart.label.auto'), hasValue: false }
                     ]
                 })
+
+                // auto migrate/select the eCharts equivalent if still using ChartJS format
+                const eChartsFormat = {
+                    'HH:mm:ss': '{HH}:{mm}:{ss}',
+                    'HH:mm': '{HH}:{mm}',
+                    'y-L-d': '{yyyy}-{M}-{d}',
+                    'd/L': '{d}/{M}',
+                    'ccc HH:mm': '{ee} {HH}:{mm}'
+                }
+                if (eChartsFormat[node.xAxisFormatType]) {
+                    $('#node-input-xAxisFormat').typedInput('type', eChartsFormat[node.xAxisFormatType])
+                }
 
                 $('#node-input-category').typedInput({
                     default: 'msg',
                     typeField: $('#node-input-categoryType'),
                     types: getSeriesTypes($('#node-input-xAxisType').val())
                 })
-    
+
                 $('#node-input-xAxisProperty').typedInput({
                     default: timestampType.value,
                     typeField: $('#node-input-xAxisPropertyType'),
@@ -321,7 +333,8 @@
                     if (value === 'line' || value === 'scatter') {
                         // for line and scatter
                         // types - time, linear
-                        updateXAxisTypeOptions(['time', 'linear'], 'time')
+                        const xAxisTypeOptions = value === 'line' ? ['time', 'linear', 'category'] : ['time', 'linear']
+                        updateXAxisTypeOptions(xAxisTypeOptions, 'time')
                         // no concept of stacking in line/scatter charts
                         $('#config-stackSeries').hide()
                         // show x-axis limit options & points sizing
@@ -438,6 +451,11 @@
                 }
 
                 if (this.interpolation) {
+                    // migrate old (ChartJS) interpolations to eCharts
+                    const oldInterpolations = ['bezier', 'cubic', 'cubicMono']
+                    if (oldInterpolations.includes(this.interpolation)) {
+                        this.interpolation = 'smooth'
+                    }
                     $('#node-input-interpolation').val(this.interpolation)
                 } else {
                     $('#node-input-interpolation').val('linear')
@@ -540,9 +558,7 @@
         <select id="node-input-interpolation">
             <option value="linear" data-i18n="ui-chart.label.linearInterpolation"></option>
             <option value="step" data-i18n="ui-chart.label.stepInterpolation"></option>
-            <option value="bezier" data-i18n="ui-chart.label.bezierInterpolation"></option>
-            <option value="cubic" data-i18n="ui-chart.label.cubicInterpolation"></option>
-            <option value="cubicMono" data-i18n="ui-chart.label.cubicMonoInterpolation"></option>
+            <option value="smooth" data-i18n="ui-chart.label.smoothInterpolation"></option>
         </select>
     </div>
     <div class="form-row" id="config-stackSeries">

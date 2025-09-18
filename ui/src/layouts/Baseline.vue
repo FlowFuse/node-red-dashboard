@@ -28,20 +28,31 @@
                 :style="{'position': navPosition}"
             >
                 <v-list nav>
-                    <v-list-item
-                        v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
-                        :disabled="page.disabled || undefined"
-                        :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
-                        :title="getPageLabel(page)"
-                        :href="page.type === 'ui-link' ? page.path : null"
-                        :to="page.type === 'ui-page' ? { name: page.route.name } : null"
-                        :data-nav="page.id"
-                        @click="closeNavigationDrawer()"
+                    <v-tooltip
+                        v-for="page in orderedPages"
+                        :key="page.id"
+                        :disabled="!showOnlyIcons"
+                        :text="page.name + (dashboard.showPathInSidebar ? ` (${page.path})` : '')"
+                        location="end"
                     >
-                        <template #append>
-                            <v-icon v-if="page.editMode" class="mdi-pencil mdi item-edit-mode-icon" />
+                        <template #activator="{ props }">
+                            <v-list-item
+                                v-bind="showOnlyIcons ? props : {}"
+                                active-class="v-list-item--active"
+                                :disabled="page.disabled || undefined"
+                                :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
+                                :title="getPageLabel(page)"
+                                :href="page.type === 'ui-link' ? page.path : null"
+                                :to="page.type === 'ui-page' ? { name: page.route.name } : null"
+                                :data-nav="page.id"
+                                @click="closeNavigationDrawer()"
+                            >
+                                <template #append>
+                                    <v-icon v-if="page.editMode" class="mdi-pencil mdi item-edit-mode-icon" />
+                                </template>
+                            </v-list-item>
                         </template>
-                    </v-list-item>
+                    </v-tooltip>
                 </v-list>
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
@@ -219,6 +230,9 @@ export default {
                 return `${this.dashboard.name} (${pageName})`
             }
             return pageName
+        },
+        showOnlyIcons: function () {
+            return this.navigationStyle === 'icon' && this.rail
         }
     },
     watch: {
@@ -331,6 +345,11 @@ export default {
             }
         },
         getPageLabel (page) {
+	
+            if (this.showOnlyIcons) {
+                return ''
+            }
+
             // Handle translations
             let pageName = page.name
             if (page.name && typeof page.name === 'object') {

@@ -100,6 +100,8 @@
                 wrapText: { value: false },
                 className: { value: '' },
                 translations: { value: {} }
+                value: { value: 'payloads', required: false },
+                valueType: { value: 'msg' }
             },
             inputs: 1,
             outputs: 0,
@@ -195,6 +197,19 @@
                 })
                 $('#node-input-style').change()
 
+                // Setup TypedInput for value processing
+                $('#node-input-value').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-valueType'),
+                    types: ['msg', 'str', 'num', 'jsonata', 'flow', 'global']
+                })
+
+                // if there is no config.value, then set it to payload
+                if (!this.value) {
+                    // set the TypedInput value to msg
+                    $('#node-input-value').typedInput('value', 'payload')
+                }
+
                 // when opening the config, make sure the test text is updated
                 if (this.fontSize) {
                     $('#node-test-text').css({
@@ -249,6 +264,11 @@
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
+        <label for="node-input-Value"><i class="fa fa-calculator"></i> <span data-i18n="ui-text.label.Value"></span></label>
+        <input type="text" id="node-input-value" style="width:70%">
+        <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-text.label.class"></label>
         <div style="display: inline;">
             <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-text.label.optionalCssClassNames" style="flex-grow: 1;">
@@ -261,10 +281,6 @@
             </a>
         </div>
     </div>
-    <!--<div class="form-row">
-        <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
-        <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
-    </div>-->
     <div class="form-row">
         <label for="node-input-wrapText"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.wrapText"></label>
         <input type="checkbox" id="node-input-wrapText" style="width: auto">
