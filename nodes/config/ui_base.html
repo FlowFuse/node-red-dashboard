@@ -648,13 +648,13 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         editSettingsButton.on('click', function () {
             RED.editor.editConfig('', 'ui-base', id)
         })
-        
+
         const translationsButton = $('<a id="translations-ui-base" class="editor-button editor-button-small nr-db-sb-list-header-button">' +
             c_('label.translations') + ' <i style="margin-left: 3px;" class="fa fa-language"></i></a>')
         translationsButton.on('click', function () {
             openTranslationsTray(id)
         })
-        
+
         const target = `nr-dashboard-${id}` // try to reuse the same window per base
         const openDashboardButton = $(`<a id="open-dashboard" href="${fullPath}" target="${target}" class="editor-button editor-button-small nr-db-sb-list-header-button">` +
             c_('label.openDashboard') + ' <i style="margin-left: 3px;" class="fa fa-external-link"></i></a>')
@@ -2233,35 +2233,34 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
      * Open the translations tray
      * @param {string} baseId - The base configuration node ID
      */
-    function openTranslationsTray(baseId) {
+    function openTranslationsTray (baseId) {
         const base = RED.nodes.node(baseId)
         if (!base) return
-        
         RED.tray.show({
             title: c_('label.translations'),
             width: 500,
             buttons: [
                 {
-                    id: "node-dialog-cancel",
-                    text: RED._("common.label.cancel"),
-                    click: function() {
+                    id: 'node-dialog-cancel',
+                    text: RED._('common.label.cancel'),
+                    click: function () {
                         RED.tray.close()
                     }
                 },
                 {
-                    id: "node-dialog-ok",
-                    text: RED._("common.label.done"),
-                    class: "primary",
-                    click: function() {
+                    id: 'node-dialog-ok',
+                    text: RED._('common.label.done'),
+                    class: 'primary',
+                    click: function () {
                         // Apply any changes if needed
                         RED.tray.close()
                     }
                 }
             ],
-            resize: function(dimensions) {
+            resize: function (dimensions) {
                 // Handle resize if needed
             },
-            open: function(tray) {
+            open: function (tray) {
                 const trayBody = tray.find('.red-ui-tray-body')
                 trayBody.addClass('nrdb2-translations-tray')
                 buildTranslationsTabs(base, trayBody)
@@ -2278,34 +2277,30 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         // Create tabs structure
         const tabsContainer = $('<div class="red-ui-tabs" style="margin-bottom: 10px;"></div>').appendTo(parent)
         const tabsList = $('<ul style="border-bottom: 1px solid #ddd;"></ul>').appendTo(tabsContainer)
-        
         // Add Languages tab
         const languagesTab = $('<li class="red-ui-tab" style="border-bottom: 1px solid transparent;"><a class="red-ui-tab-label">Languages</a></li>').appendTo(tabsList)
         const translationsTab = $('<li class="red-ui-tab" style="border-bottom: 1px solid transparent;"><a class="red-ui-tab-label">Translations</a></li>').appendTo(tabsList)
-        
         // Create content containers
         const contentContainer = $('<div style="padding: 10px 0;"></div>').appendTo(parent)
         const languagesContent = $('<div id="nrdb2-languages-content-' + base.id + '" class="red-ui-tab-content"></div>').appendTo(contentContainer)
         const translationsContent = $('<div id="nrdb2-translations-content-' + base.id + '" class="red-ui-tab-content" style="display:none;"></div>').appendTo(contentContainer)
-        
         // Tab switching logic
-        languagesTab.on('click', function() {
+        languagesTab.on('click', function () {
             tabsList.find('li').removeClass('active')
             $(this).addClass('active')
             translationsContent.hide()
             languagesContent.show()
         })
-        
-        translationsTab.on('click', function() {
+
+        translationsTab.on('click', function () {
             tabsList.find('li').removeClass('active')
             $(this).addClass('active')
             languagesContent.hide()
             translationsContent.show()
         })
-        
+
         // Set Languages tab as default active
         languagesTab.addClass('active')
-        
         // Build the content for each tab
         buildLanguagesEditor(base, languagesContent)
         buildTranslationsEditor(base, translationsContent)
