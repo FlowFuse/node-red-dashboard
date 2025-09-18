@@ -345,7 +345,6 @@ export default {
             }
         },
         getPageLabel (page) {
-	
             if (this.showOnlyIcons) {
                 return ''
             }
