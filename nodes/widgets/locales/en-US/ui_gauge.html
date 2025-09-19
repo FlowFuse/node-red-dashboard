@@ -46,9 +46,14 @@
         <dd>Update the label rendered above the Gauge</dd>
         <dt class="optional">segments <span class="property-type">array</span></dt>
         <dd>
-            Change the options available in the dropdown at runtime
+            Pass in an array of objects, each containing properties <code>color</code> and <code>from</code> to update the segments settings.
+            The entries in the array must be in increasing order of <code>from</code>.
+            In addition the overlay specification for Tile gauges may be updated by including properties <code>textType</code> and <code>text</code>.
+            <code>textType</code> can be one of <i>label</i>, <i>value</i>, <i>str</i>, <i>env</i> or <i>none</i>.
+            For <i>str</i> and <i>env</i>, <code>text</code> should be the required text or environment variable name, otherwise it should be an empty string.
+            <code>textType</code> and <code>text</code> may be omitted if not required. 
             <ul>
-                <li><code>Array&lt;{color: String, from: Number}&gt;</code></li>
+                <li><code>Array&lt;{color: String, from: Number, textType: String, text: String}&gt;</code></li>
             </ul>
         </dd>
         <dt class="optional">gtype <span class="property-type">see detail</span></dt>
