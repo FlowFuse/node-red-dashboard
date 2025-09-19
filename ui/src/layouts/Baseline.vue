@@ -1,7 +1,7 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline" :class="`nrdb-view-density--${density}`" :style="customThemeDefinitions">
         <v-app-bar v-if="appBarStyle !== 'hidden'" :style="{'position': navPosition}" :elevation="1">
-            <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
+            <template v-if="!['none', 'fixed', 'hidden'].includes(effectiveNavigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>
@@ -17,14 +17,14 @@
 
         <v-main :class="{'nrdb-edit-mode': editMode}">
             <v-navigation-drawer
-                v-if="navigationStyle !== 'hidden'"
+                v-if="effectiveNavigationStyle !== 'hidden'"
                 v-model="drawer"
                 :rail="rail"
                 :rail-width="68"
                 data-el="nav-drawer"
-                :mobile-breakpoint="['none', 'fixed'].includes(navigationStyle) ? '0' : 'md'"
-                :temporary="navigationStyle === 'temporary'"
-                :permanent="navigationStyle === 'icon'"
+                :mobile-breakpoint="['none', 'fixed'].includes(effectiveNavigationStyle) ? '0' : 'md'"
+                :temporary="effectiveNavigationStyle === 'temporary'"
+                :permanent="effectiveNavigationStyle === 'icon'"
                 :style="{'position': navPosition}"
             >
                 <v-list nav>
@@ -133,7 +133,8 @@ export default {
                 displayTime: 0,
                 allowDismiss: false,
                 showCountdown: false
-            }
+            },
+            isMobile: false
         }
     },
     computed: {
@@ -191,6 +192,13 @@ export default {
             }
             return style
         },
+        effectiveNavigationStyle: function () {
+            // When in "Fixed" mode and screen width is below 768px, switch to "Appear over Content" (temporary)
+            if (this.navigationStyle === 'fixed' && this.isMobile) {
+                return 'temporary'
+            }
+            return this.navigationStyle
+        },
         navPosition: function () {
             return this.appBarStyle === 'fixed' ? 'fixed' : 'absolute'
         },
@@ -207,21 +215,21 @@ export default {
             return editMode.value
         },
         showOnlyIcons: function () {
-            return this.navigationStyle === 'icon' && this.rail
+            return this.effectiveNavigationStyle === 'icon' && this.rail
         }
     },
     watch: {
         theme: function () {
             this.updateTheme()
         },
-        navigationStyle: {
+        effectiveNavigationStyle: {
             immediate: true,
             handler () {
-                if (['fixed', 'icon'].includes(this.navigationStyle)) {
+                if (['fixed', 'icon'].includes(this.effectiveNavigationStyle)) {
                     this.drawer = true
                 }
 
-                if (['icon'].includes(this.navigationStyle)) {
+                if (['icon'].includes(this.effectiveNavigationStyle)) {
                     this.rail = true
                 }
             }
@@ -269,8 +277,16 @@ export default {
     },
     mounted () {
         this.updateTheme()
+        this.checkMobile()
+        window.addEventListener('resize', this.checkMobile)
+    },
+    beforeUnmount () {
+        window.removeEventListener('resize', this.checkMobile)
     },
     methods: {
+        checkMobile () {
+            this.isMobile = window.innerWidth < 768
+        },
         subscribeAlerts (context) {
             Alerts.subscribe((title, description, color, alertOptions) => {
                 context.close()
@@ -323,11 +339,11 @@ export default {
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         },
         handleNavigationClick () {
-            if (this.navigationStyle === 'fixed') {
+            if (this.effectiveNavigationStyle === 'fixed') {
                 return
             }
 
-            if (this.navigationStyle === 'icon') {
+            if (this.effectiveNavigationStyle === 'icon') {
                 // Toggle display of list item, rather than entire drawer
                 this.rail = !this.rail
             } else {
@@ -335,7 +351,7 @@ export default {
             }
         },
         closeNavigationDrawer () {
-            if (this.navigationStyle === 'default') {
+            if (this.effectiveNavigationStyle === 'default') {
                 this.drawer = false
             }
         }
