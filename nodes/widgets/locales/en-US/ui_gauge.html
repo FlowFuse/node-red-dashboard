@@ -2,14 +2,14 @@
 <script type="text/html" data-help-name="ui-gauge">
     <h3>Properties</h3>
     <dl class="message-properties">
-        <dt>Type <span class="property-type">half | 3/4</span></dt>
-        <dd>Defines the shape of the gauge, <i>"Tile"</i>, <i>"Battery"</i>, <i>"Water Tank"</i>, <i>"Half Gauge"</i> or <i>"3/4 Gauge"</i>.</dd>
+        <dt>Type <span class="property-type">see detail</span></dt>
+        <dd>Defines the type and shape of the gauge, <i>"Tile"</i>, <i>"Battery"</i>, <i>"Water Tank"</i>, <i>"Half Gauge"</i> or <i>"3/4 Gauge"</i>.</dd>
         <dt>Style <span class="property-type">rounded | needle</span></dt>
-        <dd>Defines the style of arc rendered, "Needle" or "Rounded". Not available for "Tile".</dd>
+        <dd>Defines the style of arc rendered, "Needle" or "Rounded". Only available for "Half Gauge" and "3/4 Gauge".</dd>
         <dt>Range <span class="property-type">number</span></dt>
         <dd>The smallest and largest values that can be rendered on the gauge</dd>
         <dt>Segments <span class="property-type">list</span></dt>
-        <dd>Collection of objects that define the relevant color for a given value</dd>
+        <dd>Collection of objects that define the relevant color for a given value, and the overlay text source for Tile gauges.</dd>
         <dt>Label <span class="property-type">list</span></dt>
         <dd>The label text shown above the gauge</dd>
         <dt>Value <span class="property-type">typed input</span></dt>
@@ -46,9 +46,14 @@
         <dd>Update the label rendered above the Gauge</dd>
         <dt class="optional">segments <span class="property-type">array</span></dt>
         <dd>
-            Change the options available in the dropdown at runtime
+            Pass in an array of objects, each containing properties <code>color</code> and <code>from</code> to update the segments settings.
+            The entries in the array must be in increasing order of <code>from</code>.
+            In addition the overlay specification for Tile gauges may be updated by including properties <code>textType</code> and <code>text</code>.
+            <code>textType</code> can be one of <i>label</i>, <i>value</i>, <i>str</i>, <i>env</i> or <i>none</i>.
+            For <i>str</i> and <i>env</i>, <code>text</code> should be the required text or environment variable name, otherwise it should be an empty string.
+            <code>textType</code> and <code>text</code> may be omitted if not required. 
             <ul>
-                <li><code>Array&lt;{color: String, from: Number}&gt;</code></li>
+                <li><code>Array&lt;{color: String, from: Number, textType: String, text: String}&gt;</code></li>
             </ul>
         </dd>
         <dt class="optional">gtype <span class="property-type">see detail</span></dt>
