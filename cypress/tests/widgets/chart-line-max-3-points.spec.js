@@ -9,7 +9,7 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - bar - stacked', () => {
     })
 
     it('should limit the chart data to 3 points', () => {
-        cy.get('#nrdb-ui-widget-chart-1 > div > canvas').should('exist')
+        cy.get('#nrdb-ui-widget-chart-1 > div > div').should('exist')
         // operate input button 5 times
         cy.clickAndWait(cy.get('button').contains('random'))
         cy.wait(10)
@@ -27,11 +27,11 @@ describe('Node/-RED Dashboard 2.0 - Chart Widget - bar - stacked', () => {
             should(win.uiCharts).is.not.empty()
             const chart = win.uiCharts['chart-1']
             should(chart).is.not.empty()
-            should(chart.chart.config.data).be.an.Object()
-            should(chart.chart.config.data.datasets).be.an.Array()
+            const options = chart.chart.getOption()
+            should(options.series).be.an.Array()
 
-            should(chart.chart.config.data.datasets).be.an.Array().and.have.length(1)
-            should(chart.chart.config.data.datasets[0].data).be.an.Array().and.have.length(3)
+            should(options.series).be.an.Array().and.have.length(1)
+            should(options.series[0].data).be.an.Array().and.have.length(3)
         })
     })
 })

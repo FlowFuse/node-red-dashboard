@@ -1,6 +1,6 @@
 <template>
     <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
-    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" @submit.prevent="onSubmit">
+    <v-form ref="form" v-model="isValid" :disabled="!state.enabled" validate-on="input" :style="{'margin-top': label ? 0 : '0.5rem'}" @submit.prevent="onSubmit">
         <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
             <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
                 <v-checkbox
@@ -147,7 +147,7 @@ export default {
             if (row.required) {
                 // is required
                 return [(v) => {
-                    return !!v || row.label + ' is required'
+                    return (v !== null && v !== undefined && v !== '' && (row.type === 'number' ? !Number.isNaN(v) : true)) || row.label + ' is required'
                 }]
             } else {
                 // no rules

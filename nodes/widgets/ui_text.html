@@ -98,7 +98,9 @@
                 fontSize: { value: 16 },
                 color: { value: '#717171' },
                 wrapText: { value: false },
-                className: { value: '' }
+                className: { value: '' },
+                value: { value: 'payloads', required: false },
+                valueType: { value: 'msg' }
             },
             inputs: 1,
             outputs: 0,
@@ -114,12 +116,12 @@
                     // change inputs from hidden to text & display them
                     $('#node-input-width').attr('type', 'text')
                     $('#node-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
-                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
                 } else {
                     // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-sizer-row').show()
-                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
                     $('#node-input-size').elementSizer({
                         width: '#node-input-width',
                         height: '#node-input-height',
@@ -194,6 +196,19 @@
                 })
                 $('#node-input-style').change()
 
+                // Setup TypedInput for value processing
+                $('#node-input-value').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-valueType'),
+                    types: ['msg', 'str', 'num', 'jsonata', 'flow', 'global']
+                })
+
+                // if there is no config.value, then set it to payload
+                if (!this.value) {
+                    // set the TypedInput value to msg
+                    $('#node-input-value').typedInput('value', 'payload')
+                }
+
                 // when opening the config, make sure the test text is updated
                 if (this.fontSize) {
                     $('#node-test-text').css({
@@ -227,21 +242,30 @@
         <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-text.label.group"></label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-text.label.size"></label>
+    <div class="form-row nr-db-ui-element-hide-in-subflow">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-text.label.width">Width</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
         <input type="hidden" id="node-input-width">
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-text.label.height">Height</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
         <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+        <input type="text" id="node-input-order">
     </div>
     <div class="form-row">
         <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-text.label.label"></label>
         <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-Value"><i class="fa fa-calculator"></i> <span data-i18n="ui-text.label.Value"></span></label>
+        <input type="text" id="node-input-value" style="width:70%">
+        <input type="hidden" id="node-input-valueType">
     </div>
     <div class="form-row">
         <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-text.label.class"></label>
@@ -256,10 +280,6 @@
             </a>
         </div>
     </div>
-    <!--<div class="form-row">
-        <label for="node-input-format"><i class="fa fa-i-cursor"></i> Value format</label>
-        <input type="text" id="node-input-format" placeholder="{{msg.payload}}">
-    </div>-->
     <div class="form-row">
         <label for="node-input-wrapText"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ui-text.label.wrapText"></label>
         <input type="checkbox" id="node-input-wrapText" style="width: auto">
@@ -381,9 +401,6 @@
         box-shadow: inset 0px 0px 0px 2px #fff;
         background: #333;
         border-color: #333;
-    }
-    .nr-db-ui-manual-size-row {
-        display: none;
     }
 
 </style>

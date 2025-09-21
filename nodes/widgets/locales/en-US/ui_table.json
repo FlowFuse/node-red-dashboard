@@ -25,7 +25,9 @@
             "append": "Append",
             "replace": "Replace",
             "deselect": "Deselect",
-            "deselectRows": "Deselect all rows when the table is filled"
+            "deselectRows": "Deselect all rows when the table is filled",
+            "className": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s)"
         },
         "selection": {
             "none": "None",

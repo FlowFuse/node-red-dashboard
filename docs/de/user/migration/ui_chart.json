@@ -1,0 +1,88 @@
+{
+    "node": "ui_chart",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "type",
+            "changes": -2,
+            "notes": "Linie, Balken (V), Kreis und Donut sind bereits migriert. Es gibt noch Arbeiten zur Unterstützung von <a href='https://github.com/FlowFuse/node-red-dashboard/issues/378' target='_blank'>Balken (H)</a>, <a href='https://github.com/FlowFuse/node-red-dashboard/issues/380' target='_blank'>Polar</a> und <a href='https://github.com/FlowFuse/node-red-dashboard/issues/381' target='_blank'>Radar</a> Diagrammen. Streudiagramme wurden ebenfalls hinzugefügt."
+        },
+        {
+            "property": "legend",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "cutout",
+            "changes": "verbessert",
+            "notes": "Wir unterstützen jetzt sowohl die 'Größe' als auch die 'Form' von Punkten in einem Streu- und Liniendiagramm."
+        },
+        {
+            "property": "interpolate",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/384' target='_blank'>Problem #384</a>"
+        },
+        {
+            "property": "x-axis limit",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "x-axis label",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "y-axis min/max",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "colors",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "blank label",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/383' target='_blank'>Problem #383</a>"
+        }
+    ],
+    "new_properties": [
+        {
+            "property": "x-axis type",
+            "notes": "'Zeit', 'Linear' oder 'Kategorisch' sind je nach Diagrammtyp verfügbar."
+        },
+        {
+            "property": "series",
+            "notes": "Ermöglicht die Anpassung der msg-Eigenschaft oder des verschachtelten JSON-Schlüssels, der definiert, zu welcher 'Serie' ein bestimmter Datenpunkt gehört.<br /><br />In Dashboard 1.0 war dies <i>immer</i> <code>msg.topic</code>."
+        },
+        {
+            "property": "x-property",
+            "notes": "Beim Bereitstellen von Objekten oder Arrays von Daten in ein Diagramm kann diese Eigenschaft verwendet werden, um zu definieren, welcher Schlüssel in den Daten verwendet werden soll, um die x-Achse zu füllen. Zum Beispiel mit dem folgenden Datenpunkt:<pre><code>{date: '2023-10-30', value: 6}</code></pre>würde das Setzen dieser Eigenschaft auf <code>date</code> den <code>x</code>-Wert auf <code>2023-10-30</code> setzen."
+        },
+        {
+            "property": "y-property",
+            "notes": "Beim Bereitstellen von Objekten oder Arrays von Daten in ein Diagramm kann diese Eigenschaft verwendet werden, um zu definieren, welcher Schlüssel in den Daten verwendet werden soll, um die y-Achse zu füllen. Zum Beispiel mit dem folgenden Datenpunkt:<pre><code>{date: '2023-10-30', value: 6}</code></pre>würde das Setzen dieser Eigenschaft auf <code>value</code> den <code>y</code>-Wert auf <code>6</code> setzen."
+        }
+    ]
+}

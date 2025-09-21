@@ -8,7 +8,9 @@
             "autoCalculateColumns": "列を自動判断",
             "key": "キー",
             "label": "ラベル",
-            "column": "列"
+            "column": "列",
+            "className": "クラス",
+            "classNamePlaceholder": "任意のCSSクラス名"
         }
     }
 }

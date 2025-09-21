@@ -1,0 +1,50 @@
+{
+    "title": "Node-RED Dashboard 2.0",
+    "description": "Entdecken Sie die Funktionen und Vorteile des Node-RED Dashboards 2.0, das entwickelt wurde, um Ihr Node-RED-Erlebnis zu optimieren und zu verbessern.",
+    "nav": {
+        "docs": "Dokumentation",
+        "widgets": "Widgets",
+        "contributing": "Mitwirken",
+        "flowfuse": "FlowFuse"
+    },  
+    "sidebar": {
+        "about": "Über",
+        "getting-started": "Erste Schritte",
+        "widgets": "Widgets",
+        "user-guides": "Benutzerhandbücher",
+        "settings": "Einstellungen",
+        "sidebar": "Seitenleiste",
+        "dynamic-properties": "Dynamische Eigenschaften",
+        "migration-guide": "Migrationsanleitung",
+        "ui-template-examples": "UI-Vorlagenbeispiele",
+        "multi-tenancy": "Multi-Tenancy",
+        "subflows": "Subflows",
+        "installing-on-mobile": "Installation auf Mobilgeräten",
+        "nodes": "Knoten",
+        "config-nodes": "Konfigurationsknoten",
+        "layouts": "Layouts",
+        "types": "Typen",
+        "contributing": "Mitwirken",
+        "introduction": "Einführung",
+        "building-widgets": "Widgets entwickeln",
+        "adding-core-widgets": "Core-Widgets hinzufügen",
+        "third-party-widgets": "Drittanbieter-Widgets",
+        "testing": "Testen",
+        "debugging": "Debuggen",
+        "useful-guides": "Nützliche Anleitungen",
+        "repo-structure": "Repository-Struktur",
+        "events-architecture": "Events-Architektur",
+        "state-management": "Zustandsmanagement",
+        "layout-managers": "Layout-Manager",
+        "registering-widgets": "Widgets registrieren",
+        "plugins": "Plugins",
+        "adding-plugins": "Plugins hinzufügen"
+    },
+    "nodes": { },
+    "layouts": {
+        "grid": "Raster",
+        "fixed": "Fest",
+        "notebook": "Notizbuch",
+        "tabs": "Tabs"
+    }
+}

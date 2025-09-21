@@ -287,11 +287,6 @@
 /** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
 // #endregion
 
-// convert to i18 text
-function c_ (x) {
-    return RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.' + x)
-}
-
 // Custom global sidebar function used in other nodes
 async function showDashboardWysiwygEditor (pageId, baseId) {
     // call to httpadmin endpoint requesting layout editor mode for this group
@@ -338,7 +333,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         window.open(url, target)
     } catch (err) {
         console.error('layout mode error', err)
-        RED.notify(c_('error.layoutEditor'), 'error')
+        RED.notify(RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.error.layoutEditor'), 'error')
     }
 }
 
@@ -347,6 +342,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
+
+    // convert to i18 text
+    function c_ (x) {
+        return RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.' + x)
+    }
 
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)

@@ -6,6 +6,19 @@
     input.gauge-color::-webkit-color-swatch {
         border: none;
     }
+    #node-input-segments-container-div {
+        min-height: 120px;
+        resize: vertical;
+        display: block;
+        width: calc(100% - 30px)
+    }
+    #node-input-container-tile-options {
+        margin-left: 100px;
+        padding-left: 6px;
+    }
+    #node-input-container-floating-title-position {
+        margin-left: 24px;
+    }
 </style>
 
 <script type="text/javascript">
@@ -116,6 +129,10 @@
             return true
         }
 
+        function c_ (path, scope = 'ui-gauge') {
+            return RED._(`@flowfuse/node-red-dashboard/${scope}:${path}`)
+        }
+
         RED.nodes.registerType('ui-gauge', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
@@ -123,6 +140,8 @@
                 name: { value: '' },
                 group: { type: 'ui-group', required: true },
                 order: { value: 0 },
+                value: { value: 'payload', required: false },
+                valueType: { value: 'msg' },
                 width: {
                     value: 3,
                     validate: function (v) {
@@ -138,6 +157,8 @@
                 gtype: { value: 'gauge-half' },
                 gstyle: { value: 'needle' },
                 title: { value: 'gauge' },
+                alwaysShowTitle: { value: false },
+                floatingTitlePosition: { value: 'top-left' },
                 units: { value: 'units' },
                 icon: { value: '' },
                 prefix: { value: '' },
@@ -159,7 +180,7 @@
                 className: { value: '' }
             },
             inputs: 1,
-            outputs: 0,
+            outputs: 1,
             inputLabels: function () { return this.min + ' - ' + this.max },
             align: 'right',
             icon: 'ui-gauge.svg',
@@ -175,12 +196,12 @@
                     // change inputs from hidden to text & display them
                     $('#node-input-width').attr('type', 'text')
                     $('#node-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
-                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
                 } else {
                     // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-sizer-row').show()
-                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
                     $('#node-input-size').elementSizer({
                         width: '#node-input-width',
                         height: '#node-input-height',
@@ -197,8 +218,20 @@
                     $('<i style="color: var(--red-ui-form-text-color, #eee); cursor:move; margin-left:3px;" class="node-input-segment-handle fa fa-bars"></i>').appendTo(row)
 
                     $('<input/>', { class: 'node-input-segment-color', type: 'color', style: 'margin-left:7px; width: 50px;', placeholder: 'Color', value: segment.color }).appendTo(row)
-                    $('<input/>', { class: 'node-input-segment-from', type: 'text', style: 'margin-left:7px; width:calc(100% - 175px);', placeholder: 'From', value: segment.from }).appendTo(row)
-
+                    $('<input/>', { class: 'node-input-segment-from', type: 'text', style: 'margin-left:7px; width: 80px;', placeholder: 'From', value: segment.from }).appendTo(row)
+                    const segmentTextInput = $('<input/>', { class: 'node-input-segment-text', type: 'text', style: 'margin-left:7px; width:calc(100% - 210px);', placeholder: this.title, value: segment.text }).appendTo(row)
+                    const segmentTextTypeInput = $('<input/>', { class: 'node-input-segment-text-type', type: 'hidden', value: segment.textType || 'label' }).appendTo(row)
+                    segmentTextInput.typedInput({
+                        default: 'label',
+                        typeField: segmentTextTypeInput,
+                        types: [
+                            { value: 'label', label: c_('ui-gauge.label.label'), icon: 'fa fa-tag', hasValue: false },
+                            { value: 'value', label: c_('ui-gauge.label.value'), icon: 'fa fa-calculator', hasValue: false },
+                            'str',
+                            'env',
+                            { value: 'none', label: 'None', icon: 'fa fa-ban', hasValue: false }
+                        ]
+                    })
                     const finalSpan = $('<span/>', { style: 'float:right; margin-right:8px;' }).appendTo(row)
                     const deleteButton = $('<a/>', { href: '#', class: 'editor-button editor-button-small', style: 'margin-top:7px; margin-left:5px;' }).appendTo(finalSpan)
                     $('<i/>', { class: 'fa fa-remove' }).appendTo(deleteButton)
@@ -221,10 +254,16 @@
                         $('#node-input-container-sizes').hide()
                         $('#node-input-container-gstyle').hide()
                         $('#node-input-container-label-extras').hide()
+                        if (type === 'gauge-tile') {
+                            $('#node-input-container-tile-options').show()
+                        } else {
+                            $('#node-input-container-tile-options').hide()
+                        }
                     } else {
                         $('#node-input-container-sizes').show()
                         $('#node-input-container-gstyle').show()
                         $('#node-input-container-label-extras').show()
+                        $('#node-input-container-tile-options').hide()
                     }
 
                     if (isInitialised && isChanging && isDefault(oldType)) {
@@ -244,7 +283,17 @@
                 }
 
                 $('#node-input-add-segment').click(function () {
-                    generateSegment($('#node-input-segments-container').children().length + 1, {})
+                    const priorSegment = $('#node-input-segments-container').children().last()
+                    const priorSegmentFrom = priorSegment.find('.node-input-segment-from').val() || 0
+                    const priorSegmentColor = priorSegment.find('.node-input-segment-color').val() || '#000000'
+                    const priorSegmentText = priorSegment.find('.node-input-segment-text').val() || ''
+                    const priorSegmentTextType = priorSegment.find('.node-input-segment-text-type').val() || 'label'
+                    generateSegment($('#node-input-segments-container').children().length + 1, {
+                        from: +priorSegmentFrom + 1,
+                        color: priorSegmentColor,
+                        text: priorSegmentText,
+                        textType: priorSegmentTextType
+                    })
                     $('#node-input-segments-container-div').scrollTop($('#node-input-segments-container-div').get(0).scrollHeight)
                 })
 
@@ -268,6 +317,19 @@
                     showTypeOptions(gType)
                 })
 
+                // Setup TypedInput for value processing
+                $('#node-input-value').typedInput({
+                    default: 'msg',
+                    typeField: $('#node-input-valueType'),
+                    types: ['msg', 'str', 'num', 'jsonata', 'flow', 'global']
+                })
+
+                // if there is no config.value, then set it to payload
+                if (!this.value) {
+                    // set the TypedInput value to msg
+                    $('#node-input-value').typedInput('value', 'payload')
+                }
+
                 // now event handlers are set up, set the initial state of the form
                 setup(this.segments, this.min, this.max)
 
@@ -288,10 +350,13 @@
                     const segment = $(this)
                     const s = {
                         from: segment.find('.node-input-segment-from').val(),
-                        color: segment.find('.node-input-segment-color').val()
+                        color: segment.find('.node-input-segment-color').val(),
+                        text: segment.find('.node-input-segment-text').val() || '',
+                        textType: segment.find('.node-input-segment-text-type').val() || 'label'
                     }
                     node.segments.push(s)
                 })
+                this.alwaysShowTitle = $('#node-input-alwaysShowTitle').is(':checked')
             }
         })
     })()
@@ -306,17 +371,21 @@
         <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-gauge.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-gauge.label.size">Size</label>
+    <div class="form-row nr-db-ui-element-hide-in-subflow">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-gauge.label.width">Width</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
         <input type="hidden" id="node-input-width">
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-gauge.label.height">Height</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
         <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+        <input type="text" id="node-input-order">
     </div>
     <div class="form-row">
         <label for="node-input-gtype"><i class="fa fa-list"></i> <span data-i18n="ui-gauge.label.type"></span></label>
@@ -340,6 +409,14 @@
         </select>
     </div>
     <div class="form-row">
+        <h3><span data-i18n="ui-gauge.label.value"></span></h3>
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.value"></span></label>
+        <input type="text" id="node-input-value" style="width:70%">
+        <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
         <h3><span data-i18n="ui-gauge.label.limits"></span></h3>
     </div>
     <div class="form-row">
@@ -352,7 +429,7 @@
     <span id="node-input-validation-segments" style="color: var(--red-ui-text-color-error, #910000)"></span>
     <div class="form-row node-input-segments-container-row" style="margin-bottom: 0px;width: 100%">
         <label for="node-input-width" style="vertical-align:top"><i class="fa fa-list-alt"></i> <span data-i18n="ui-gauge.label.segments"></span></label>
-        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll; display:inline-block; width: 70%;">
+        <div id="node-input-segments-container-div" style="box-sizing:border-box; border-radius:5px; height:257px; padding:5px; border:1px solid var(--red-ui-form-input-border-color, #ccc); overflow-y:scroll;">
             <span id="valWarning" style="color: var(--red-ui-text-color-error, #910000)"><b data-i18n="ui-gauge.errors.unique"></b></span>
             <ol id="node-input-segments-container" style="list-style-type:none; margin:0;"></ol>
         </div>
@@ -365,7 +442,7 @@
         </a> -->
     </div>
     <div class="form-row">
-        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:103px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
+        <a href="#" class="editor-button editor-button-small" id="node-input-add-segment" style="margin-top:4px; margin-left:3px;"><i class="fa fa-plus"></i> <span data-i18n="ui-gauge.label.segment"></span></a>
         <a href="#" class="editor-button editor-button-small" id="node-input-get-defaults" style="margin-top:4px;"><span data-i18n="ui-gauge.label.defaults"></span></a>
     </div>
     <div class="form-row">
@@ -375,6 +452,20 @@
         <div class="form-row">
             <label for="node-input-title"><i class="fa fa-tag"></i> <span data-i18n="ui-gauge.label.label"></span></label>
             <input type="text" id="node-input-title">
+        </div>
+        <div class="form-row" id="node-input-container-tile-options">
+            <label for="node-input-alwaysShowTitle" style="display:flex; align-items: center; gap: 6px; width:auto;">
+                <input type="checkbox" id="node-input-alwaysShowTitle" style="width:auto; margin: 0; vertical-align: middle;" />
+                <span data-i18n="ui-gauge.label.alwaysShowTitle">Always Show Label</span>
+                <div id="node-input-container-floating-title-position">
+                    <select id="node-input-floatingTitlePosition" style="width:150px">
+                        <option value="top-left" data-i18n="ui-gauge.label.positionTopLeft">Top Left</option>
+                        <option value="top-right" data-i18n="ui-gauge.label.positionTopRight">Top Right</option>
+                        <option value="bottom-left" data-i18n="ui-gauge.label.positionBottomLeft">Bottom Left</option>
+                        <option value="bottom-right" data-i18n="ui-gauge.label.positionBottomRight">Bottom Right</option>
+                    </select>
+                </div>
+            </label>
         </div>
         <div id="node-input-container-label-extras">
             <div class="form-row form-row-flex">

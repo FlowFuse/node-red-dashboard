@@ -81,8 +81,8 @@ module.exports = function (RED) {
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
-        if (!config.interporlation || typeof config.interporlation === 'undefined') {
-            config.interporlation = 'linear'
+        if (!config.interpolation || typeof config.interpolation === 'undefined') {
+            config.interpolation = 'linear'
         }
 
         const evts = {
@@ -93,7 +93,7 @@ module.exports = function (RED) {
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
-                if (config.categoryType === 'property') {
+                if (config.categoryType === 'property' && config.category !== '') {
                     series = getProperty(p, config.category)
                 }
 

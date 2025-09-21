@@ -20,7 +20,7 @@
                 v-bind="activatorProps"
                 v-model="value" :disabled="!state.enabled" class="nrdb-ui-text-field nrdb-ui-textarea" :style="{ 'grid-row-end': `span ${props.height}` }"
                 :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :prepend-inner-icon="prependInnerIcon"
-                :clearable="clearable" variant="outlined" hide-details="auto" @update:model-value="onChange" @blur="send"
+                :clearable="clearable" variant="outlined" hide-details="auto" :rows="props.height || 1" @update:model-value="onChange" @blur="send"
                 @click:clear="onClear"
             >
                 <template #label>
@@ -186,6 +186,7 @@ export default {
     }
     textarea.v-field__input {
         height:100%;
+        resize: none;
     }
 }
 </style>
