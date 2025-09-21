@@ -26,6 +26,10 @@ module.exports = function (RED) {
                         // dynamically set "label" property
                         statestore.set(group.getBase(), node, msg, 'multiple', update.multiple)
                     }
+                    if (typeof update.msgTrigger !== 'undefined') {
+                        // dynamically set "msgTrigger" property
+                        statestore.set(group.getBase(), node, msg, 'msgTrigger', update.msgTrigger)
+                    }
                 }
                 if (msg.options) {
                     // backward compatibility support
@@ -36,7 +40,11 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard  UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
     }
 
     RED.nodes.registerType('ui-dropdown', DropdownNode)

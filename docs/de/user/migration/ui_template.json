@@ -1,0 +1,51 @@
+{
+    "node": "ui_template",
+    "description": "Wir haben kurzfristig große Pläne für weitere Verbesserungen an `ui-template`. Dies konzentriert sich hauptsächlich auf die Möglichkeit, vollständiges Vue-Komponentenverhalten, bidirektionale Bindung und die Einbindung von Drittanbieter-JS-Bibliotheken zu ermöglichen.",
+    "properties": [
+        {
+            "property": "name",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "group",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "type",
+            "changes": "geändert",
+            "notes": "<i>'Widget in Gruppe'</i> ist immer noch der Standard, aber wir haben die <code>&lt;head&gt;</code>-Einbindung (vorübergehend) entfernt und durch zwei Optionen zum Einfügen von CSS ersetzt, eine für <i>alle</i> Seiten und eine andere für eine <i>einzelne</i> Seite."
+        },
+        {
+            "property": "size",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "class",
+            "changes": null,
+            "notes": null
+        },
+        {
+            "property": "template",
+            "changes": "geändert",
+            "notes": "Es gibt keine Unterstützung mehr für Angular-basierte Templates.<br /><br />Stattdessen sollten Templates mit <a href='https://vuejs.org/'>VueJS</a> geschrieben werden. <a href='https://vuetifyjs.com/en/components/all/#containment'>Vuetify-Komponenten</a> werden ebenfalls nativ unterstützt und bieten ein reichhaltiges Ökosystem verfügbarer Widgets."
+        },
+        {
+            "property": "passthru",
+            "changes": -1,
+            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/354' target='_blank'>Problem #354</a>"
+        },
+        {
+            "property": "reload on refresh",
+            "changes": "geändert",
+            "notes": "Das Standardverhalten ist, dass, wenn ein bekannter Zustand vorliegt, dieser automatisch wiederhergestellt wird."
+        },
+        {
+            "property": "store output",
+            "changes": "geändert",
+            "notes": "Wenn die neue eingebaute 'send'-Funktion innerhalb eines Templates verwendet wird, speichert dies die Ausgabe der send-Funktion im Zustand des Knotens."
+        }
+    ]
+}

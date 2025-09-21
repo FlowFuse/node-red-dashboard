@@ -79,13 +79,20 @@ module.exports = function (RED) {
                     if (typeof (updates.colorThumb) !== 'undefined') {
                         statestore.set(group.getBase(), node, msg, 'colorThumb', updates.colorThumb)
                     }
+                    if (typeof (updates.showTextField) !== 'undefined') {
+                        statestore.set(group.getBase(), node, msg, 'showTextField', updates.showTextField)
+                    }
                 }
                 return msg
             }
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
     }
     RED.nodes.registerType('ui-slider', SliderNode)
 }

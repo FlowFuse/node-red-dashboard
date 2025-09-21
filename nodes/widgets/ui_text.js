@@ -1,4 +1,5 @@
 const statestore = require('../store/state.js')
+const { asyncEvaluateNodeProperty } = require('../utils/index.js')
 
 module.exports = function (RED) {
     function TextNode (config) {
@@ -21,7 +22,7 @@ module.exports = function (RED) {
             config.style = style
         }
 
-        const beforeSend = function (msg) {
+        const beforeSend = async function (msg) {
             const updates = msg.ui_update
             if (updates) {
                 if (typeof updates.label !== 'undefined') {
@@ -45,15 +46,39 @@ module.exports = function (RED) {
                     statestore.set(group.getBase(), node, msg, 'color', updates.color)
                 }
             }
+
+            // Process the value using TypedInput configuration
+            const processValue = async () => {
+                const value = msg.payload // default to payload if evaluation fails
+
+                if (config.valueType && config.value) {
+                    const results = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
+                    msg.payload = results
+                } else {
+                    msg.payload = value
+                }
+            }
+
+            try {
+                await processValue()
+            } catch (err) {
+                node.warn('Error evaluating value property: ' + err.message)
+                // msg.payload remains unchanged on error
+            }
+
             return msg
         }
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, {
-            beforeSend
-        })
+        if (group) {
+            group.register(node, config, {
+                beforeSend
+            })
+        } else {
+            node.error('No group configured')
+        }
     }
 
     RED.nodes.registerType('ui-text', TextNode)

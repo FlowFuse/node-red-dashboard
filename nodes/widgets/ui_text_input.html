@@ -56,12 +56,12 @@
                     // change inputs from hidden to text & display them
                     $('#node-input-width').attr('type', 'text')
                     $('#node-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
-                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
                 } else {
                     // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-sizer-row').show()
-                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
                     $('#node-input-size').elementSizer({
                         width: '#node-input-width',
                         height: '#node-input-height',
@@ -118,48 +118,58 @@
 
 <script type="text/html" data-template-name="ui-text-input">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-text-input.label.group"></span></label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row">
-        <label><i class="fa fa-object-group"></i> Size</label>
-        <input type="hidden" id="node-input-width">
-        <input type="hidden" id="node-input-height">
+    <div class="form-row nr-db-ui-element-hide-in-subflow">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
+        <input type="hidden" id="node-input-width">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
+        <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+        <input type="text" id="node-input-order">
+    </div>
     <div class="form-row form-row-flex">
-        <label for="node-input-icon"><i class="fa fa-picture-o"></i> Icon</label>
+        <label for="node-input-icon"><i class="fa fa-picture-o"></i> <span data-i18n="ui-text-input.label.icon"></span></label>
         <div style="display: flex; align-items: center; flex-grow: 1; padding-right: calc(30% - 104px); gap: 12px;">
-            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" placeholder="(optional) e.g. 'gesture-tap'">
+            <input style="flex-grow: 2; width: 75px;" type="text" id="node-input-icon" data-i18n="[placeholder]ui-text-input.label.iconPlaceholder">
             <select id="node-input-iconPosition" style="width: 75px;">
-                <option value="left"> Left</option>
-                <option value="right"> Right</option>
+                <option value="left" data-i18n="ui-text-input.option.left"></option>
+                <option value="right" data-i18n="ui-text-input.option.right"></option>
             </select>
             <select id="node-input-iconInnerPosition" style="width: 75px;">
-                <option value="inside"> In</option>
-                <option value="outside"> Out</option>
+                <option value="inside" data-i18n="ui-text-input.option.inside"></option>
+                <option value="outside" data-i18n="ui-text-input.option.outside"></option>
             </select>
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> <span data-i18n="ui-text-input.label.label"></span></label>
         <input type="text" id="node-input-label">
     </div>
     <div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info"></i> Tooltip</label>
+        <label for="node-input-tooltip"><i class="fa fa-info"></i> <span data-i18n="ui-text-input.label.tooltip"></span></label>
         <input type="text" id="node-input-tooltip">
     </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-text-input.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-text-input.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-text-input.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -167,61 +177,61 @@
         </div>
     </div>
     <div class="form-row form-row-flex">
-        <label for="node-input-mode"><i class="fa fa-keyboard-o"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-keyboard-o"></i> <span data-i18n="ui-text-input.label.mode"></span></label>
         <select id="node-input-mode">
-            <option value="text">text input (single line)</option>
-            <option value="textarea">text area (multi-line)</option>
-            <option value="email">email address</option>
-            <option value="password">password</option>
-            <option value="number">number</option>
-            <option value="color">color picker</option>
-            <option value="datetime-local">datetime picker</option>
-            <option value="date">date picker</option>
-            <option value="time">time picker</option>
-            <option value="week">week picker</option>
-            <option value="month">month picker</option>
+            <option value="text" data-i18n="ui-text-input.option.textInput"></option>
+            <option value="textarea" data-i18n="ui-text-input.option.textArea"></option>
+            <option value="email" data-i18n="ui-text-input.option.email"></option>
+            <option value="password" data-i18n="ui-text-input.option.password"></option>
+            <option value="number" data-i18n="ui-text-input.option.number"></option>
+            <option value="color" data-i18n="ui-text-input.option.color"></option>
+            <option value="datetime-local" data-i18n="ui-text-input.option.datetime"></option>
+            <option value="date" data-i18n="ui-text-input.option.date"></option>
+            <option value="time" data-i18n="ui-text-input.option.time"></option>
+            <option value="week" data-i18n="ui-text-input.option.week"></option>
+            <option value="month" data-i18n="ui-text-input.option.month"></option>
         </select>
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="[html]ui-text-input.label.passThrough"></span></label>
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;">
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> Clear text input with button </label>
+        <label style="width:auto" for="node-input-clearable"><i class="fa fa-times"></i> <span data-i18n="ui-text-input.label.clearable"></span></label>
         <input type="checkbox" checked id="node-input-clearable" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
     </div>    
     <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> Send message on:</label>
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> <span data-i18n="ui-text-input.label.sendMessageOn"></span></label>
     </div>
     <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
         <input type="checkbox" checked id="node-input-sendOnDelay" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnDelay"> Delay</label>
+        <label style="width:auto" for="node-input-sendOnDelay"> <span data-i18n="ui-text-input.label.delay"></span></label>
         <div id="node-input-delay-box">
             <input type="text" style="width:58px" id="node-input-delay">
-            <label for="node-input-delay">(ms)</label>
+            <label for="node-input-delay"><span data-i18n="ui-text-input.label.delayUnit"></span></label>
         </div>
     </div>
     <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnBlur"> Focus Leave</label>
+        <label style="width:auto" for="node-input-sendOnBlur"> <span data-i18n="ui-text-input.label.focusLeave"></span></label>
     </div>
     <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnEnter"> Press Enter</label>
+        <label style="width:auto" for="node-input-sendOnEnter"> <span data-i18n="ui-text-input.label.pressEnter"></span></label>
     </div>
     <div id="node-input-container-sendOnClear" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnClear" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnClear"> Clear Button</label>
+        <label style="width:auto" for="node-input-sendOnClear"> <span data-i18n="ui-text-input.label.clearButton"></span></label>
     </div>
     <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> When changed, send:</label>
+        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-text-input.label.whenChanged"></span></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
-        <label style="margin-right: -25px">Payload</label>
-        <label style="width:auto">Current value</label>
+        <label style="margin-right: -25px" data-i18n="ui-text-input.label.payload"></label>
+        <label style="width:auto" data-i18n="ui-text-input.label.currentValue"></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
-        <label for="node-input-topic" style="margin-right:-25px">Topic</label>
+        <label for="node-input-topic" style="margin-right:-25px" data-i18n="ui-text-input.label.topic"></label>
         <input type="text" id="node-input-topic">
         <input type="hidden" id="node-input-topicType">
     </div>

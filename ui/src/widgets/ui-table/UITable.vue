@@ -173,6 +173,11 @@ export default {
             if (this.props.action === 'append') {
                 this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
             } else {
+                // Deselect all selected rows when the table is filled with new rows, but only when
+                // that behaviour is explicit required (or when not specified for older nodes)
+                if (this.props.deselect === true || typeof this.props.deselect === 'undefined') {
+                    this.selected = null
+                }
                 this.localData = value
             }
 
@@ -192,7 +197,7 @@ export default {
         calculatePaginatedRows () {
             if (this.itemsPerPage > 0) {
                 this.pagination.pages = Math.ceil(this.localData?.length / this.props.maxrows)
-                this.pagination.rows = this.localData.slice(
+                this.pagination.rows = (this.localData || []).slice(
                     (this.pagination.page - 1) * this.props.maxrows,
                     (this.pagination.page) * this.props.maxrows
                 )

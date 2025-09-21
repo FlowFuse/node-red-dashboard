@@ -70,8 +70,8 @@
             "auto": "Automatic",
             "textColor": "Text Color",
             "gridColor": "Grid Line Color",
-            "setTextColorDefault": "Use ChartJs Default Text Colors",
-            "setGridColorDefault": "Use ChartJs Default Grid Colors" ,
+            "setTextColorDefault": "Use eCharts Default Text Colors",
+            "setGridColorDefault": "Use eCharts Default Grid Colors" ,
             "stackSeries": "Group By",
             "stackSeriesTrue": "Stacks",
             "stackSeriesFalse": "Side-by-Side",
@@ -80,7 +80,8 @@
             "stepInterpolation": "Step",
             "bezierInterpolation": "Bezier",
             "cubicInterpolation": "Cubic",
-            "cubicMonoInterpolation": "Cubic-Mono"
+            "cubicMonoInterpolation": "Cubic-Mono",
+            "smoothInterpolation": "Smooth"
         },
         "notifications": {
             "clearSuccess": "Chart data cleared successfully",

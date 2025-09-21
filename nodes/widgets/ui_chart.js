@@ -26,6 +26,16 @@ module.exports = function (RED) {
             base.emit('msg-input:' + node.id, { payload: empty }, node)
         }
 
+        function hasProperty (value, property) {
+            const props = property.split('.')
+            props.forEach((prop) => {
+                if (value) {
+                    value = value[prop]
+                }
+            })
+            return typeof value !== 'undefined'
+        }
+
         function getProperty (value, property) {
             const props = property.split('.')
             props.forEach((prop) => {
@@ -34,6 +44,25 @@ module.exports = function (RED) {
                 }
             })
             return value
+        }
+
+        /**
+         * Given the config of the chart, clear "old" data points
+         */
+        function clearOldPoints () {
+            const removeOlder = parseFloat(config.removeOlder)
+            const removeOlderUnit = parseFloat(config.removeOlderUnit)
+            const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+            const cutoff = (new Date()).getTime() - ago
+            const _msg = datastore.get(node.id).filter((msg) => {
+                let timestamp = msg._datapoint.x
+                // is x already a millisecond timestamp?
+                if (typeof (msg._datapoint.x) === 'string') {
+                    timestamp = (new Date(msg._datapoint.x)).getTime()
+                }
+                return timestamp > cutoff
+            })
+            datastore.save(base, node, _msg)
         }
 
         // ensure sane defaults
@@ -52,8 +81,8 @@ module.exports = function (RED) {
         config.xAxisProperty = config.xAxisProperty || ''
         config.yAxisProperty = config.yAxisProperty || ''
 
-        if (!config.interporlation || typeof config.interporlation === 'undefined') {
-            config.interporlation = 'linear'
+        if (!config.interpolation || typeof config.interpolation === 'undefined') {
+            config.interpolation = 'linear'
         }
 
         const evts = {
@@ -64,7 +93,7 @@ module.exports = function (RED) {
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
-                if (config.categoryType === 'property') {
+                if (config.categoryType === 'property' && config.category !== '') {
                     series = getProperty(p, config.category)
                 }
 
@@ -84,7 +113,7 @@ module.exports = function (RED) {
                         // we can produce multiple datapoints from a single object/value here
                         const points = []
                         series.forEach((s) => {
-                            if (s in p) {
+                            if (hasProperty(p, s)) {
                                 const datapoint = addToChart(p, s)
                                 points.push(datapoint)
                             }
@@ -139,7 +168,12 @@ module.exports = function (RED) {
                                 y = getProperty(payload, series[0])
                             }
                         } else {
-                            y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            if (config.categoryType === 'json') {
+                                // we are using the "series" as a key to get the y value from the payload
+                                y = getProperty(payload, series)
+                            } else {
+                                y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            }
                         }
                         datapoint.x = x
                         datapoint.y = y
@@ -205,22 +239,8 @@ module.exports = function (RED) {
 
                     if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
                         // remove any points older than the specified time
-                        const removeOlder = parseFloat(config.removeOlder)
-                        const removeOlderUnit = parseFloat(config.removeOlderUnit)
-                        const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                        const cutoff = (new Date()).getTime() - ago
-                        const _msg = datastore.get(node.id).filter((msg) => {
-                            let timestamp = msg._datapoint.x
-                            // is x already a millisecond timestamp?
-                            if (typeof (msg._datapoint.x) === 'string') {
-                                timestamp = (new Date(msg._datapoint.x)).getTime()
-                            }
-                            return timestamp > cutoff
-                        })
-                        datastore.save(base, node, _msg)
+                        clearOldPoints()
                     }
-
-                    // check sizing limits
                 }
 
                 send(msg)
@@ -228,7 +248,11 @@ module.exports = function (RED) {
         }
 
         // inform the dashboard UI that we are adding this node
-        group.register(node, config, evts)
+        if (group) {
+            group.register(node, config, evts)
+        } else {
+            node.error('No group configured')
+        }
     }
 
     RED.nodes.registerType('ui-chart', ChartNode)

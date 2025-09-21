@@ -253,7 +253,7 @@
     }
     div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
-        content: "empty";
+       /* content: "empty";  TODO: localized properly? */
         color: #d2d2d2;
         font-style: italic;
     }
@@ -286,6 +286,56 @@
 
 /** @typedef {Object<string, Array<DashboardItem>>} DashboardItemLookup */
 // #endregion
+
+// Custom global sidebar function used in other nodes
+async function showDashboardWysiwygEditor (pageId, baseId) {
+    // call to httpadmin endpoint requesting layout editor mode for this group
+    const windowUrl = new URL(window.location.href)
+    const base = RED.nodes.node(baseId)
+    const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
+    const authTokens = RED.settings.get('auth-tokens') || {}
+    const headers = {}
+    if (authTokens.access_token) {
+        headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
+    }
+
+    // promisify the ajax call so we can await it & return false after opening the popup
+    const ajax = () => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
+                type: 'PATCH',
+                headers,
+                data: {
+                    mode: 'edit',
+                    dashboard: baseId,
+                    page: pageId
+                },
+                success: function (data) {
+                    // construct the url to open the layout editor
+                    const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                    _url.searchParams.set('edit-key', data.editKey)
+                    const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
+                    if (editorPath) {
+                        _url.searchParams.set('editor-path', editorPath)
+                    }
+                    resolve(_url)
+                },
+                error: function (err) {
+                    reject(err)
+                }
+            })
+        })
+    }
+    try {
+        const url = await ajax()
+        const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
+        window.open(url, target)
+    } catch (err) {
+        console.error('layout mode error', err)
+        RED.notify(RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.error.layoutEditor'), 'error')
+    }
+}
 
 (function () {
     const supportedEditableLayouts = ['grid', 'flex']
@@ -339,14 +389,26 @@
             showPathInSidebar: {
                 value: false
             },
-            showPageTitle: {
-                value: true
+            headerContent: {
+                value: 'page'
             },
             navigationStyle: {
                 value: 'default'
             },
             titleBarStyle: {
                 value: 'default'
+            },
+            showReconnectNotification: {
+                value: true
+            },
+            notificationDisplayTime: {
+                value: 1
+            },
+            showDisconnectNotification: {
+                value: true
+            },
+            allowInstall: {
+                value: true
             }
         },
         label: function () {
@@ -361,16 +423,45 @@
                 $('#node-config-input-titleBarStyle').val('default')
             }
 
-            // backward compatibility for including page name
-            if (this.showPageTitle === undefined) {
-                // set to true
-                this.showPageTitle = true
-                // update the jquery checkbox
-                $('#node-config-input-showPageTitle').prop('checked', true)
+            // backward compatibility for including header content
+            // The headerContent replaces the old (boolean) showPageTitle
+            if (this.headerContent === undefined) {
+                const showPageTitle = (this.showPageTitle === undefined) ? true : this.showPageTitle
+
+                if (showPageTitle) {
+                    this.headerContent = 'page'
+                    $('#node-config-input-headerContent').val('page')
+                } else {
+                    this.headerContent = 'none'
+                    $('#node-config-input-headerContent').val('none')
+                }
             }
 
             if (this.appIcon) {
                 $('#node-config-input-appIcon').val(this.appIcon)
+            }
+
+            // backward compatibility for reconnect notification
+            if (typeof this.showReconnectNotification === 'undefined') {
+                this.showReconnectNotification = true
+                $('#node-config-input-showReconnectNotification').prop('checked', true)
+            }
+
+            // backward compatibility for reconnect notification display time
+            if (!this.notificationDisplayTime) {
+                this.notificationDisplayTime = 5
+                $('#node-config-input-notificationDisplayTime').val(this.notificationDisplayTime)
+            }
+
+            // backward compatibility for disconnect notification
+            if (typeof this.showDisconnectNotification === 'undefined') {
+                this.showDisconnectNotification = true
+                $('#node-config-input-showDisconnectNotification').prop('checked', true)
+            }
+            // backward compatibility for allowing PWA install
+            if (typeof this.allowInstall === 'undefined') {
+                this.allowInstall = true
+                $('#node-config-input-allowInstall').prop('checked', true)
             }
         },
         onpaletteadd: function () {
@@ -674,7 +765,7 @@
         return nodes
     }
 
-    function createBaseNode ({ name = 'My Dashboard' } = {}) {
+    function createBaseNode ({ name = c_('label.myDashboard') } = {}) {
         if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createBaseNode', name) }
         const base = RED.nodes.getType('ui-base')
         const baseNode = {
@@ -682,7 +773,7 @@
             id: RED.nodes.id(),
             type: 'ui-base',
             ...mapDefaults(base.defaults),
-            name: name || 'My Dashboard'
+            name: name || c_('label.myDashboard')
         }
         return baseNode
     }
@@ -694,10 +785,10 @@
         const existingGroups = getConfigNodesByType(['ui-group']) || []
         let counter = existingGroups.length + 1
         if (!groupName) {
-            groupName = `Group ${counter}`
+            groupName = c_('layout.group') + ` ${counter}`
             while (existingGroups.find(e => e.name === groupName)) {
                 counter++
-                groupName = `Group ${counter}`
+                groupName = c_('layout.group') + ` ${counter}`
             }
         }
         const groupNode = {
@@ -705,7 +796,7 @@
             id: RED.nodes.id(),
             type: 'ui-group',
             ...mapDefaults(group.defaults),
-            name: groupName || 'My Group',
+            name: groupName || c_('label.myGroup'),
             page: null
         }
         if (order) {
@@ -724,10 +815,10 @@
             // get all links and determine the next link number
             const existingLinks = getConfigNodesByType(['ui-link']) || []
             let counter = existingLinks.length + 1
-            linkName = `Link ${counter}`
+            linkName = c_('layout.link') + ` ${counter}`
             while (existingLinks.find(e => e.name === linkName)) {
                 counter++
-                linkName = `Link ${counter}`
+                linkName = c_('layout.link') + ` ${counter}`
             }
         }
         const nextOrder = order ?? ((getConfigNodesByType(['ui-page', 'ui-link']) || []).length || 0) + 1
@@ -754,7 +845,7 @@
             type: 'ui-spacer',
             ...mapDefaults(spacer.defaults),
             users: [],
-            name: name ?? 'spacer',
+            name: name ?? c_('label.spacer'),
             group: group || null,
             order: order ?? 0,
             hasUsers: false,
@@ -772,11 +863,11 @@
             // get all pages & links and determine the next page number
             const existingPages = getConfigNodesByType(['ui-page']) || []
             let counter = existingPages.length + 1
-            pageName = `Page ${counter}`
+            pageName = c_('layout.page') + ` ${counter}`
             pagePath = `/page${counter}`
             while (existingPages.find(e => e.path === pagePath)) {
                 counter++
-                pageName = `Page ${counter}`
+                pageName = c_('layout.page') + ` ${counter}`
                 pagePath = `/page${counter}`
             }
         }
@@ -804,10 +895,10 @@
             // get all themes and determine the next theme number
             const entries = getConfigNodesByType(['ui-theme']) || []
             let counter = entries.length + 1
-            themeName = counter === 1 ? 'Default Theme' : `Theme ${counter}`
+            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('label.theme') + ` ${counter}`
             while (entries.find(e => e.name === themeName)) {
                 counter++
-                themeName = `Theme ${counter}`
+                themeName = c_('label.theme') + ` ${counter}`
             }
         }
         const themeNode = {
@@ -815,7 +906,7 @@
             id: RED.nodes.id(),
             type: 'ui-theme',
             ...mapDefaults(theme.defaults),
-            name: themeName || 'Default Theme'
+            name: themeName || c_('themes.defaultTheme')
         }
         return themeNode
     }
@@ -1093,9 +1184,9 @@
      * @param {Object} list - The editableList instance associated with this item
      */
     function addRowActions (parent, item, list) {
-        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme']
+        const configNodes = ['ui-base', 'ui-page', 'ui-link', 'ui-group', 'ui-theme', 'ui-spacer']
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group', id: item.id }).appendTo(parent)
-        if (!configNodes.includes(item.type) && item.type !== 'ui-spacer') {
+        if (!configNodes.includes(item.type)) {
             const focusButton = $(`<a href="#" class="nr-db-sb-tab-focus-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.focus')}"><i class="fa fa-bullseye"></i></a>`).appendTo(btnGroup)
             focusButton.on('click', function (evt) {
                 RED.view.reveal(item.id)
@@ -1116,69 +1207,28 @@
             evt.preventDefault()
         })
 
-        if (item.type === 'ui-page' && supportedEditableLayouts.includes(item.node.layout)) {
-            // button to edit group in wysiwyg layout editor
-            const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
-            layoutButton.on('click', async function (evt) {
-                evt.preventDefault()
-                evt.stopPropagation()
-
-                // call to httpadmin endpoint requesting layout editor mode for this group
-                const windowUrl = new URL(window.location.href)
-                const pageId = item.id
-                const baseId = item.node.ui
-                const base = RED.nodes.node(item.node.ui)
-                const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
-                const authTokens = RED.settings.get('auth-tokens') || {}
-                const headers = {}
-                if (authTokens.access_token) {
-                    headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
-                }
-
-                // promisify the ajax call so we can await it & return false after opening the popup
-                const ajax = () => {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: `${dashboardBasePath}/api/v1/${baseId}/edit/${pageId}`, // e.g. /dashboard/api/v1/123/edit/456
-                            type: 'PATCH',
-                            headers,
-                            data: {
-                                mode: 'edit',
-                                dashboard: baseId,
-                                page: pageId
-                            },
-                            success: function (data) {
-                                // construct the url to open the layout editor
-                                const _url = new URL(`${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
-                                _url.searchParams.set('edit-key', data.editKey)
-                                const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
-                                if (editorPath) {
-                                    _url.searchParams.set('editor-path', editorPath)
-                                }
-                                resolve(_url)
-                            },
-                            error: function (err) {
-                                reject(err)
-                            }
-                        })
-                    })
-                }
-                try {
-                    const url = await ajax()
-                    const target = `ff-dashboard-${baseId}` // try to reuse the same window per base
-                    window.open(url, target)
-                } catch (err) {
-                    console.error('layout mode error', err)
-                    RED.notify('Unable to begin layout editor', 'error')
-                }
-                return false // return false to click event to prevent default
-            })
+        if (item.type === 'ui-page') {
             // add the "+ group" button
             const groupEditButton = $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.addGroup')}"><i class="fa fa-plus"></i></a>`).appendTo(btnGroup)
             groupEditButton.on('click', function (evt) {
                 list.editableList('addItem')
                 evt.preventDefault()
             })
+
+            if (supportedEditableLayouts.includes(item.node.layout)) {
+                // button to edit group in wysiwyg layout editor
+                const layoutButton = $(`<a class="nr-db-sb-tab-layout-button editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.layoutEditor')}"><i class="fa fa-pencil-square-o"></i></a>`).appendTo(btnGroup)
+                layoutButton.on('click', function (evt) {
+                    evt.preventDefault()
+                    evt.stopPropagation()
+
+                    const pageId = item.id
+                    const baseId = item.node.ui
+                    showDashboardWysiwygEditor(pageId, baseId)
+
+                    return false // return false to click event to prevent default
+                })
+            }
         }
 
         // if this is a group & it is not an unattached group, add the "_ spacer" button
@@ -1186,7 +1236,7 @@
             // add the "+ spacer" button
             $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.spacer')}"><i class="fa fa-plus"></i></a>`)
                 .on('click', function (evt) {
-                    const spacerNode = createSpacerNode({ name: 'spacer', group: item.id, order: list.editableList('items').length + 1 })
+                    const spacerNode = createSpacerNode({ name: c_('label.spacer'), group: item.id, order: list.editableList('items').length + 1 })
                     const history = []
                     addNode(spacerNode, history)
                     assignGroup(spacerNode, item.node, history)
@@ -1194,7 +1244,7 @@
                     evt.preventDefault()
                     const widget = toDashboardItem(spacerNode)
                     list.editableList('addItem', widget)
-                    RED.editor.edit(widget.node)
+                    RED.editor.editConfig('', spacerNode.type, spacerNode.id)
                 })
                 .appendTo(btnGroup)
         }
@@ -1212,7 +1262,7 @@
         const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-state-options', id: item.id }).appendTo(parent)
         if (nodes.includes(item.type)) {
             const visibleIcon = (item.visible === 'false' || item.visible === false) ? 'fa-eye-slash' : 'fa-eye'
-            const visibleBtn = $('<a href="#" title="Hide" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
+            const visibleBtn = $('<a href="#" title="' + c_('action.hide') + '" class="nr-db-sb-tab-visible-button editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa ' + visibleIcon + '"></i></a>').appendTo(btnGroup)
             visibleBtn.on('click', function (evt) {
                 const events = []
 
@@ -1223,7 +1273,7 @@
                     // toggle to hidden
                     item.visible = false
                     titleRow.addClass('nrdb2-sb-item-hidden')
-                    $(this).prop('title', 'Show')
+                    $(this).prop('title', c_('action.show'))
                     $(this).find('i').addClass('fa-eye-slash').removeClass('fa-eye')
                     events.push({
                         t: 'edit',
@@ -1238,7 +1288,7 @@
                     // toggle to shown
                     item.visible = true
                     titleRow.removeClass('nrdb2-sb-item-hidden')
-                    $(this).prop('title', 'Hide')
+                    $(this).prop('title', c_('action.hide'))
                     $(this).find('i').addClass('fa-eye').removeClass('fa-eye-slash')
                     events.push({
                         t: 'edit',
@@ -1264,7 +1314,7 @@
                     // toggle to hidden
                     item.disabled = false
                     titleRow.removeClass('nrdb2-sb-item-disabled')
-                    $(this).prop('title', 'Disable')
+                    $(this).prop('title', c_('action.disable'))
                     $(this).find('i').addClass('fa-unlock').removeClass('fa-lock')
                     events.push({
                         t: 'edit',
@@ -1279,7 +1329,7 @@
                     // toggle to shown
                     item.disabled = true
                     titleRow.addClass('nrdb2-sb-item-disabled')
-                    $(this).prop('title', 'Enable')
+                    $(this).prop('title', c_('action.enable'))
                     $(this).find('i').addClass('fa-lock').removeClass('fa-unlock')
                     events.push({
                         t: 'edit',
@@ -1297,7 +1347,7 @@
     }
 
     function setStateClasses (item, row) {
-        if (!item.node.visible === 'true' || item.node.visible === false) {
+        if (item.node.visible === 'false' || item.node.visible === false) {
             row.addClass('nrdb2-sb-item-hidden')
         }
         if (item.node.disabled === 'true' || item.node.disabled === true) {
@@ -1408,6 +1458,19 @@
             if (RED._db2debug) { if (RED._db2debug) { console.log('dashboard 2: ui_base.html: addGroupOrderingList: adding group', group) } }
             groupsOL.editableList('addItem', group)
         })
+
+        // Set localized content for empty lists -- TODO: localized properly?
+        const localizedEmptyText = c_('label.empty')
+        const styleSheet = document.styleSheets[0]
+        const rule = `
+        div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
+        div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
+            content: "${localizedEmptyText}";
+            color: #d2d2d2;
+            font-style: italic;
+        }
+    `
+        styleSheet.insertRule(rule, styleSheet.cssRules.length)
 
         return groupsOL
     }
@@ -1761,8 +1824,7 @@
                     const tabicon = 'fa-object-group'
                     $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                     $('<span>', { class: 'nrdb2-sb-title' }).text(item.name || item.id).appendTo(titleRow)
-                    $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} Groups`).appendTo(titleRow)
-
+                    $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} ${c_('layout.groups')}`).appendTo(titleRow)
                     // adds groups within this page
                     titleRow.click(titleToggle(item.id, groupsList, chevron))
                     const groupsOL = addGroupOrderingList(item.id, groupsList, groups, widgetsByGroup)
@@ -1893,7 +1955,7 @@
                 const tabicon = 'fa-paint-brush'
                 $('<i>', { class: 'nrdb2-sb-icon nrdb2-sb-tab-icon fa ' + tabicon }).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-title' }).text(theme.name || theme.id).appendTo(titleRow)
-                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('label.pages') : c_('label.page'))).appendTo(titleRow)
+                $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('layout.pages') : c_('layout.page'))).appendTo(titleRow)
 
                 // backward compatibility
                 if (!hasProperty(theme.colors, 'light') && hasProperty(theme.colors, 'surface')) {
@@ -1957,28 +2019,26 @@
         const html = `<div class="nrdb2-sidebar-tab-content">
         <div style="margin-bottom: 9px;border-bottom: 1px solid #ddd;">
             <p>
-                This tab allows you to control whether or not client-specific data is included in messages,
-                and which nodes accept it in order to constrain communication to specific clients.
-                You can read more about it <a href="https://dashboard.flowfuse.com/user/sidebar.html#client-data" target="_blank">here</a>
+                ${c_('clientConstraints.description')}
+                <a href="https://dashboard.flowfuse.com/user/sidebar.html#client-data" target="_blank">${c_('clientConstraints.readMore')}</a>.
+                ${c_('clientConstraints.syncDescription')}
             </p>
         </div>
         <div class="form-row form-row-flex">
             <input type="checkbox" id="node-config-input-includeClientData">
-            <label style="width:auto" for="node-config-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Include Client Data</label>
+            <label style="width:auto" for="node-config-input-includeClientData"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>${c_('clientConstraints.includeClientData')}</label>
         </div>
         <p class="nrdb2-helptext" style="margin-top: -12px;">
-            <i class="fa fa-info-circle"></i> This option includes client data in all messages transmitted
-            by Dashboard 2.0 (e.g. Socket ID and information about any logged in user)
+            <i class="fa fa-info-circle"></i> ${c_('clientConstraints.includeClientDataHelp')}
         </p>
         <div id="nrdb2-sb-client-data-providers">
-            <label>Client Data Providers:</label>
+            <label>${c_('clientConstraints.clientDataProviders')}</label>
             <ul id="nrdb2-sb-client-data-providers-list"></ul>
         </div>
         <div id="node-config-client-constraints-nodes-container" class="form-row">
-            <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>Accept Client Data</label>
+            <label style="display: block; width: auto;"><i class="fa fa-id-card-o" style="margin-right:4px;"></i>${c_('clientConstraints.acceptClientData')}</label>
             <p class="nrdb2-helptext" style="margin-top: -4px;">
-                <i class="fa fa-info-circle"></i> Defines whether the respective node type will use client data
-                (e.g. socketid), and constrain communications to just that client.
+                <i class="fa fa-info-circle"></i> ${c_('clientConstraints.acceptClientDataHelp')}
             </p>
             <div id="node-config-client-constraints-nodes"></div>
         </div></div>`
@@ -2025,7 +2085,7 @@
         // add core as a data provider as it provides socketId
         const coreLi = $('<li>').appendTo('#nrdb2-sb-client-data-providers-list')
         $('<i class="fa fa-bar-chart"></i>').appendTo(coreLi)
-        $('<label></label>').text('Socket ID').appendTo(coreLi)
+        $('<label></label>').text(c_('clientConstraints.socketId')).appendTo(coreLi)
         $('<span class="nrdb2-sb-client-data-provider-package"></span>').text('@flowfuse/node-red-dashboard').appendTo(coreLi)
 
         // detail any auth providers we have
@@ -2125,8 +2185,7 @@
     }
 
     function addSidebarTab (label, id, tabs, sidebar) {
-        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="Layout"><span>${label}</span></a></li>`).appendTo(tabs)
-
+        $(`<li id="dashboard-2-tab-${id}" class="red-ui-tab" style="min-width: 90px; width: fit-content"><a class="red-ui-tab-label" style="padding-inline: 12px" title="${c_('label.layout')}"><span>${label}</span></a></li>`).appendTo(tabs)
         // Add in Tab Content
         const content = $(`<div id="dashboard-2-${id}" class="red-ui-tab-content" style="height: calc(100% - 88px);"></div>`).appendTo(sidebar)
         return content
@@ -2421,14 +2480,21 @@
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></label>
+        <label for="node-config-input-path"><i class="fa fa-bookmark"></i> <span data-i18n="ui-base.label.path"></span></label>
         <input type="text" id="node-config-input-path" disabled>
-        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">This option is currently disabled and still in-development.</span>
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;" data-i18n="ui-base.label.pathDisabledNote"></span>
     </div>
     <div class="form-row">
-        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></label>
+        <label for="node-config-input-appIcon"><i class="fa fa-cube"></i> <span data-i18n="ui-base.label.appIcon"></span></label>
         <input type="text" id="node-config-input-appIcon">
-        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;">Enter the url of your app icon here</span>
+        <span style="display: block; margin-left: 105px; margin-top: 0px; font-style: italic; color: #bbb; font-size: 8pt;" data-i18n="ui-base.label.appIconNote"></span>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.installation"></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-allowInstall">
+        <label style="width:auto" for="node-config-input-allowInstall"><span data-i18n="ui-base.label.allowInstall"></span></label>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.header"></label>
@@ -2441,9 +2507,14 @@
             <option value="fixed" data-i18n="ui-base.label.titleBarStyleFixed"></option>
         </select>
     </div>
-    <div class="form-row form-row-flex" style="align-items: center;">
-        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPageTitle">
-        <label style="width:auto" for="node-config-input-showPageTitle"><span data-i18n="ui-base.label.showPageTitle"></span></label>
+    <div class="form-row" style="align-items: center;">
+        <label style="margin-right: 5px; margin-bottom: 0px;" for="node-config-input-headerContent"><span data-i18n="ui-base.label.headerContent"></span></label>
+        <select id="node-config-input-headerContent">
+            <option value="page" data-i18n="ui-base.label.headerPage"></option>
+            <option value="dashboard" data-i18n="ui-base.label.headerDashboard"></option>
+            <option value="dashpage" data-i18n="ui-base.label.headerDashboardPage"></option>
+            <option value="none" data-i18n="ui-base.label.headerNone"></option>
+        </select>
     </div>
     <div class="form-row" style="margin-bottom: 0;">
         <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.sidebar"></label>
@@ -2461,5 +2532,21 @@
     <div class="form-row form-row-flex" style="align-items: center;">
         <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showPathInSidebar">
         <label style="width:auto" for="node-config-input-showPathInSidebar"><span data-i18n="ui-base.label.showPath"></span></label>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.connectionNotifications"></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showReconnectNotification">
+        <label style="width:auto" for="node-config-input-showReconnectNotification"><span data-i18n="ui-base.label.showReconnect"></span></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">   
+        <input style="width: 50px; margin-left: 75px;" type="number" id="node-config-input-notificationDisplayTime">
+        <label style="width:auto" for="node-config-input-notificationDisplayTime"><span data-i18n="ui-base.label.notificationDisplayTime"></span></label>
+    </div>
+
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showDisconnectNotification">
+        <label style="width:auto" for="node-config-input-showDisconnectNotification"><span data-i18n="ui-base.label.showDisconnect"></span></label>
     </div>
 </script>

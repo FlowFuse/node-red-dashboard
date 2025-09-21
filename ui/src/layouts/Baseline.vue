@@ -1,11 +1,11 @@
 <template>
     <v-app class="nrdb-app nrdb-app--baseline" :class="`nrdb-view-density--${density}`" :style="customThemeDefinitions">
         <v-app-bar v-if="appBarStyle !== 'hidden'" :style="{'position': navPosition}" :elevation="1">
-            <template v-if="!['none', 'fixed', 'hidden'].includes(navigationStyle)" #prepend>
+            <template v-if="!['none', 'fixed', 'hidden'].includes(effectiveNavigationStyle)" #prepend>
                 <v-app-bar-nav-icon @click="handleNavigationClick" />
             </template>
             <v-app-bar-title>
-                <template v-if="dashboard.showPageTitle === true || dashboard.showPageTitle === undefined">
+                <template v-if="dashboard.headerContent !== 'none' && dashboard.headerContent !== false">
                     {{ pageTitle }}
                 </template>
                 <div id="app-bar-title" />
@@ -17,31 +17,42 @@
 
         <v-main :class="{'nrdb-edit-mode': editMode}">
             <v-navigation-drawer
-                v-if="navigationStyle !== 'hidden'"
+                v-if="effectiveNavigationStyle !== 'hidden'"
                 v-model="drawer"
                 :rail="rail"
                 :rail-width="68"
                 data-el="nav-drawer"
-                :mobile-breakpoint="['none', 'fixed'].includes(navigationStyle) ? '0' : 'md'"
-                :temporary="navigationStyle === 'temporary'"
-                :permanent="navigationStyle === 'icon'"
+                :mobile-breakpoint="['none', 'fixed'].includes(effectiveNavigationStyle) ? '0' : 'md'"
+                :temporary="effectiveNavigationStyle === 'temporary'"
+                :permanent="effectiveNavigationStyle === 'icon'"
                 :style="{'position': navPosition}"
             >
                 <v-list nav>
-                    <v-list-item
-                        v-for="page in orderedPages" :key="page.id" active-class="v-list-item--active"
-                        :disabled="page.disabled || undefined"
-                        :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
-                        :title="getPageLabel(page)"
-                        :href="page.type === 'ui-link' ? page.path : null"
-                        :to="page.type === 'ui-page' ? { name: page.route.name } : null"
-                        :data-nav="page.id"
-                        @click="closeNavigationDrawer()"
+                    <v-tooltip
+                        v-for="page in orderedPages"
+                        :key="page.id"
+                        :disabled="!showOnlyIcons"
+                        :text="page.name + (dashboard.showPathInSidebar ? ` (${page.path})` : '')"
+                        location="end"
                     >
-                        <template #append>
-                            <v-icon v-if="page.editMode" class="mdi-pencil mdi item-edit-mode-icon" />
+                        <template #activator="{ props }">
+                            <v-list-item
+                                v-bind="showOnlyIcons ? props : {}"
+                                active-class="v-list-item--active"
+                                :disabled="page.disabled || undefined"
+                                :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
+                                :title="getPageLabel(page)"
+                                :href="page.type === 'ui-link' ? page.path : null"
+                                :to="page.type === 'ui-page' ? { name: page.route.name } : null"
+                                :data-nav="page.id"
+                                @click="closeNavigationDrawer()"
+                            >
+                                <template #append>
+                                    <v-icon v-if="page.editMode" class="mdi-pencil mdi item-edit-mode-icon" />
+                                </template>
+                            </v-list-item>
                         </template>
-                    </v-list-item>
+                    </v-tooltip>
                 </v-list>
                 <v-btn
                     class="ma-4 position-absolute bottom-0 left-0" icon
@@ -154,7 +165,8 @@ export default {
                 displayTime: 0,
                 allowDismiss: false,
                 showCountdown: false
-            }
+            },
+            isMobile: false
         }
     },
     computed: {
@@ -212,6 +224,13 @@ export default {
             }
             return style
         },
+        effectiveNavigationStyle: function () {
+            // When in "Fixed" mode and screen width is below 768px, switch to "Appear over Content" (temporary)
+            if (this.navigationStyle === 'fixed' && this.isMobile) {
+                return 'temporary'
+            }
+            return this.navigationStyle
+        },
         navPosition: function () {
             return this.appBarStyle === 'fixed' ? 'fixed' : 'absolute'
         },
@@ -226,20 +245,23 @@ export default {
         },
         editMode: function () {
             return editMode.value
+        },
+        showOnlyIcons: function () {
+            return this.effectiveNavigationStyle === 'icon' && this.rail
         }
     },
     watch: {
         theme: function () {
             this.updateTheme()
         },
-        navigationStyle: {
+        effectiveNavigationStyle: {
             immediate: true,
             handler () {
-                if (['fixed', 'icon'].includes(this.navigationStyle)) {
+                if (['fixed', 'icon'].includes(this.effectiveNavigationStyle)) {
                     this.drawer = true
                 }
 
-                if (['icon'].includes(this.navigationStyle)) {
+                if (['icon'].includes(this.effectiveNavigationStyle)) {
                     this.rail = true
                 }
             }
@@ -287,8 +309,16 @@ export default {
     },
     mounted () {
         this.updateTheme()
+        this.checkMobile()
+        window.addEventListener('resize', this.checkMobile)
+    },
+    beforeUnmount () {
+        window.removeEventListener('resize', this.checkMobile)
     },
     methods: {
+        checkMobile () {
+            this.isMobile = window.innerWidth < 768
+        },
         subscribeAlerts (context) {
             Alerts.subscribe((title, description, color, alertOptions) => {
                 context.close()
@@ -350,14 +380,18 @@ export default {
             }
         },
         getPageLabel (page) {
+            if (this.showOnlyIcons) {
+                return ''
+            }
+
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         },
         handleNavigationClick () {
-            if (this.navigationStyle === 'fixed') {
+            if (this.effectiveNavigationStyle === 'fixed') {
                 return
             }
 
-            if (this.navigationStyle === 'icon') {
+            if (this.effectiveNavigationStyle === 'icon') {
                 // Toggle display of list item, rather than entire drawer
                 this.rail = !this.rail
             } else {
@@ -365,7 +399,7 @@ export default {
             }
         },
         closeNavigationDrawer () {
-            if (this.navigationStyle === 'default') {
+            if (this.effectiveNavigationStyle === 'default') {
                 this.drawer = false
             }
         }

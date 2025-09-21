@@ -34,19 +34,12 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
             cy.get('[data-action="form-submit"]').should('not.be.disabled')
         })
     })
-})
-
-describe('Node-RED Dashboard 2.0 - Forms', () => {
-    beforeEach(() => {
-        cy.deployFixture('dashboard-forms')
-        cy.visit('/dashboard/page1')
-    })
-
     it('permits users to set default values via msg.payload', () => {
         // check that the form is empty
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name0"]').find('input[type="text"]').should('have.value', '')
-        cy.clickAndWait(cy.get('button').contains('Set Defaults'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name0"]').find('input[type="text"]').should('have.value', 'Overridden Default Name')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name0"] input[type="text"]').should('have.value', '')
+        cy.clickAndWait(cy.get('button').contains('Set Defaults'), 200)
+        cy.clickAndWait(cy.get('button').contains('Set Defaults'), 200)
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name0"] input[type="text"]').should('have.value', 'Overridden Default Name')
     })
 
     it('can have their content defined by msg.ui_update.options', () => {
@@ -60,16 +53,63 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-dob"]').should('not.exist')
         cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-tob"]').should('not.exist')
 
-        cy.clickAndWait(cy.get('button').contains('Override Form Options'))
+        cy.clickAndWait(cy.get('button').contains('Override Form Options'), 200)
 
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name"]').find('input[type="text"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-multiline"]').find('textarea').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-password"]').find('input[type="password"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-email"]').find('input[type="email"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-age"]').find('input[type="number"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-newsletter"]').find('input[type="checkbox"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-notifications"]').find('input[type="checkbox"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-dob"]').find('input[type="date"]').should('exist')
-        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-tob"]').find('input[type="time"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name"] input[type="text"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-multiline"] textarea').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-password"] input[type="password"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-email"] input[type="email"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-age"] input[type="number"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-newsletter"] input[type="checkbox"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-notifications"] input[type="checkbox"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-dob"] input[type="date"]').should('exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-tob"] input[type="time"]').should('exist')
+    })
+
+    const payloadElId = '#nrdb-ui-widget-74cbdedad6183c40'
+    const topicElId = '#nrdb-ui-widget-d31f09b33f18c5db'
+
+    it('Delivers topic from msg.topic', () => {
+        const formElId = '#nrdb-ui-widget-3cd8df20415c4c04'
+        // wait for the input to be actionable
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('not.be.disabled')
+        // enter a value into the text input field
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').clear()
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('have.value', '')
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').type('payload for msg.topic test')
+        // submit the form
+        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // check the output for the topic
+        cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name1":"payload for msg.topic test"}')
+        cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from msg.topic')
+    })
+
+    it('Delivers topic from flow.f1', () => {
+        const formElId = '#nrdb-ui-widget-ddb5a30c677e5e0b'
+        // wait for the input to be actionable
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
+        // enter a value into the text input field
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').clear()
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('have.value', '')
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').type('flow.f1 test')
+        // submit the form
+        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // check the output for the topic
+        cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name2":"flow.f1 test"}')
+        cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from flow.f1')
+    })
+
+    it('Delivers topic from global.g1', () => {
+        const formElId = '#nrdb-ui-widget-cf0774a3c2e9edd4'
+        // wait for the input to be actionable
+        cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').should('not.be.disabled')
+        // enter a value into the text input field
+        cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').type('global.g1 test')
+        // submit the form
+        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // check the output for the topic
+        cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name3":"global.g1 test"}')
+        cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from global.g1')
     })
 })

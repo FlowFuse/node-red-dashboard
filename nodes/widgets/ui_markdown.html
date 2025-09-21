@@ -1,6 +1,6 @@
 <script type="text/javascript">
     (function () {
-        // convert to i18 text
+        // convert to i18n text
         function c_ (x) {
             return RED._('@flowfuse/node-red-dashboard/ui-markdown:ui-markdown.' + x)
         }
@@ -27,7 +27,7 @@
                     }
                 },
                 height: { value: 0 },
-                content: { value: '# Markdown Content\n\nGoes here...' },
+                content: { value: c_('label.sampleContent') },
                 className: { value: '' }
             },
             inputs: 1,
@@ -46,12 +46,12 @@
                     // change inputs from hidden to text & display them
                     $('#node-input-width').attr('type', 'text')
                     $('#node-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-sizer-row').hide()
-                    $('div.form-row.nr-db-ui-manual-size-row').show()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
                 } else {
                     // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-sizer-row').show()
-                    $('div.form-row.nr-db-ui-manual-size-row').hide()
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
                     $('#node-input-size').elementSizer({
                         width: '#node-input-width',
                         height: '#node-input-height',
@@ -109,28 +109,32 @@
 
 <script type="text/html" data-template-name="ui-markdown">
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-markdown.label.group"></span></label>
         <input style="flex-grow:1" type="text" id="node-input-group">
     </div>
-    <div class="form-row nr-db-ui-element-sizer-row">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-markdown.label.size">Size</label>
+    <div class="form-row nr-db-ui-element-hide-in-subflow">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-markdown.label.width">Width</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
         <input type="hidden" id="node-input-width">
     </div>
-    <div class="form-row nr-db-ui-manual-size-row">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-markdown.label.height">Height</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
         <input type="hidden" id="node-input-height">
     </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+        <input type="text" id="node-input-order">
+    </div>
     <div class="form-row">
-        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-markdown.label.class"></span></label>
         <div style="display: inline;">
-            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-markdown.label.classNamePlaceholder" style="flex-grow: 1;">
             <a
                 data-html="true"
-                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                data-i18n="[title]ui-markdown.tooltip.dynamicProperty"
                 class="red-ui-button ui-node-popover-title"
                 style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
                 <i style="font-family: ui-serif;">fx</i>
@@ -144,10 +148,10 @@
         </div>
     </div>
     <div class="form-row" style="margin-bottom:0px;">
-        <label for="node-input-content"><i class="fa fa-copy"></i> Content</label>
+        <label for="node-input-content"><i class="fa fa-copy"></i> <span data-i18n="ui-markdown.label.content"></span></label>
         <input type="hidden" id="node-input-content">
     </div>
     <div class="form-row node-text-editor-row" style="display: block;">
-        <div style="height:250px; min-height:100px" class="node-text-editor" id="node-input-content-editor" ></div>
+        <div style="height:250px; min-height:100px" class="node-text-editor" id="node-input-content-editor"></div>
     </div>
 </script>

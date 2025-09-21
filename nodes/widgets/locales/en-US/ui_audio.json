@@ -1,0 +1,17 @@
+{
+    "ui-audio": {
+        "label": {
+            "group": "Group",
+            "size": "Size",
+            "icon": "Icon",
+            "source": "Source",
+            "autoplay": "Autoplay",
+            "loop": "Loop",
+            "muted": "Muted"
+        },
+        "option": {
+            "on": "On",
+            "off": "Off"
+       }
+    }
+}

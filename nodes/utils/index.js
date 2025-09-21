@@ -15,14 +15,7 @@ function asyncEvaluateNodeProperty (RED, value, type, node, msg) {
 
 async function appendTopic (RED, config, wNode, msg) {
     // populate topic if the node specifies one
-    if (config.topic || config.topicType) {
-        try {
-            msg.topic = await asyncEvaluateNodeProperty(RED, config.topic, config.topicType || 'str', wNode, msg) || ''
-        } catch (_err) {
-            // do nothing
-            console.error(_err)
-        }
-    }
+    msg.topic = await getTopic(RED, config, wNode, msg)
 
     // ensure we have a topic property in the msg, even if it's an empty string
     if (!('topic' in msg)) {
@@ -32,27 +25,58 @@ async function appendTopic (RED, config, wNode, msg) {
     return msg
 }
 
+async function getTopic (RED, config, wNode, msg) {
+    // populate topic if the node specifies one
+    let topic
+    if (config.topic || config.topicType) {
+        try {
+            topic = await asyncEvaluateNodeProperty(RED, config.topic, config.topicType || 'str', wNode, msg) || ''
+        } catch (_err) {
+            // do nothing
+            console.error(_err)
+        }
+    }
+
+    return topic
+}
+
 /**
  * Adds socket/client data to a msg payload, if enabled
  *
  */
 function addConnectionCredentials (RED, msg, conn, config) {
     if (config.includeClientData) {
-        if (!msg._client) {
-            msg._client = {}
-        }
-        RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
-            if (plugin.hooks?.onAddConnectionCredentials && msg) {
-                msg = plugin.hooks.onAddConnectionCredentials(conn, msg)
+        // Add _client to each element
+        const addClientData = (item) => {
+            if (!item._client) {
+                item._client = {}
             }
-        })
-        msg._client = {
-            ...msg._client,
-            ...{
-                socketId: conn.id,
-                socketIp: conn.handshake?.address
+            RED.plugins.getByType('node-red-dashboard-2').forEach(plugin => {
+                if (plugin.hooks?.onAddConnectionCredentials && item) {
+                    item = plugin.hooks.onAddConnectionCredentials(conn, item)
+                }
+            })
+            item._client = {
+                ...item._client,
+                ...{
+                    socketId: conn.id,
+                    socketIp: conn.handshake?.address
+                }
             }
+            return item
         }
+
+        // Handle arrays and nested arrays
+        const processMsg = (data) => {
+            if (Array.isArray(data)) {
+                return data.map(item => processMsg(item))
+            } else if (typeof data === 'object' && data !== null) {
+                return addClientData(data)
+            }
+            return data
+        }
+
+        msg = processMsg(msg)
     }
     return msg
 }
@@ -101,6 +125,7 @@ function getThirdPartyWidgets (directory) {
 module.exports = {
     asyncEvaluateNodeProperty,
     appendTopic,
+    getTopic,
     addConnectionCredentials,
     getThirdPartyWidgets
 }

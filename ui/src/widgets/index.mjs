@@ -1,3 +1,4 @@
+import UIAudio from './ui-audio/UIAudio.vue'
 import UIButton from './ui-button/UIButton.vue'
 import UIButtonGroup from './ui-button-group/UIButtonGroup.vue'
 import UIChart from './ui-chart/UIChart.vue'
@@ -10,6 +11,7 @@ import UIGauge from './ui-gauge/UIGauge.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UINumberInput from './ui-number-input/UINumberInput.vue'
+import UIProgress from './ui-progress/UIProgress.vue'
 import UIRadioGroup from './ui-radio-group/UIRadioGroup.vue'
 import UISlider from './ui-slider/UISlider.vue'
 import UISpacer from './ui-spacer/UISpacer.vue'
@@ -21,6 +23,7 @@ import UITextInput from './ui-text-input/UITextInput.vue'
 
 // Named exports for use in other components
 export {
+    UIAudio,
     UIButton,
     UIButtonGroup,
     UIChart,
@@ -33,6 +36,7 @@ export {
     UIMarkdown,
     UINotification,
     UINumberInput,
+    UIProgress,
     UIRadioGroup,
     UISlider,
     UISpacer,
@@ -48,6 +52,7 @@ export { useDataTracker } from './data-tracker.mjs'
 
 // Exported as an object for look up by widget name
 export default {
+    'ui-audio': UIAudio,
     'ui-button': UIButton,
     'ui-button-group': UIButtonGroup,
     'ui-chart': UIChart,
@@ -60,6 +65,7 @@ export default {
     'ui-markdown': UIMarkdown,
     'ui-notification': UINotification,
     'ui-number-input': UINumberInput,
+    'ui-progress': UIProgress,
     'ui-radio-group': UIRadioGroup,
     'ui-slider': UISlider,
     'ui-spacer': UISpacer,
