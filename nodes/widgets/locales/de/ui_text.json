@@ -1,0 +1,21 @@
+{
+    "ui-text": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "label": "Beschriftung",
+            "class": "Klasse",
+            "optionalCssClassNames": "Optionale CSS-Klassenname(n)",
+            "layout": "Layout",
+            "label2": "beschriftung",
+            "value": "Wert",
+            "style": "Stil",
+            "applyStyle": "Stil anwenden",
+            "font": "Schriftart",
+            "textSize": "Textgröße",
+            "textColor": "Textfarbe",
+            "enterSampleHere": "Beispiel hier eingeben",
+            "wrapText": "Text umbrechen"
+        }
+    }
+}

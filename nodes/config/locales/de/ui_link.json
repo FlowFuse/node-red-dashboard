@@ -1,0 +1,20 @@
+{
+    "ui-link": {
+        "label": {
+            "linkName": "Link",
+            "ui": "UI",
+            "path": "Pfad",
+            "icon": "Symbol",
+            "defaultState": "Standardzustand",
+            "visibility": "Sichtbarkeit",
+            "visible": "Sichtbar",
+            "hidden": "Versteckt",
+            "interactivity": "Interaktivität",
+            "active": "Aktiv",
+            "disabled": "Deaktiviert"
+        },
+        "error": {
+            "registeringWidget": "Fehler beim Registrieren des Widgets - __widgetName__. Kein übergeordnetes ui-base-Knoten für ui-link-Knoten gefunden: __linkName__"
+        }
+    }
+}

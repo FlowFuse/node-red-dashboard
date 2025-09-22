@@ -1,0 +1,36 @@
+{
+    "ui-table": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "maxRows": "Max. Zeilen",
+            "columns": "Spalten",
+            "autoCalculateColumns": "Spalten automatisch berechnen",
+            "key": "Schlüssel:",
+            "value": "Wert",
+            "label": "Beschriftung",
+            "optionalTableTitle": "optionale Beschriftung",
+            "type": "Typ",
+            "width": "Breite",
+            "align": "Ausrichtung",
+            "alignLeft": "Links",
+            "alignCenter": "Mitte",
+            "alignRight": "Rechts",
+            "column": "Spalte",
+            "selection": "Interaktion",
+            "search": "Suche",
+            "showSearch": "Anzeigen",
+            "mobileBreakpoint": "Haltepunkt",
+            "action": "Aktion",
+            "append": "Anhängen",
+            "replace": "Ersetzen",
+            "deselect": "Auswahl aufheben",
+            "deselectRows": "Gesamte Auswahl aufheben, wenn die Tabelle gefüllt ist"
+        },
+        "selection": {
+            "none": "Keine",
+            "checkbox": "Kontrollkästchen",
+            "click": "Klick"
+        }
+    }
+}

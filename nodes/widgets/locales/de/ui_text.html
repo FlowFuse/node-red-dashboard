@@ -1,0 +1,48 @@
+<script type="text/html" data-help-name="ui-text">
+    <p>
+        Zeigt ein nicht bearbeitbares Textfeld in der Benutzeroberfläche an.
+        Jedes empfangene <code>msg.payload</code> aktualisiert den angezeigten Wert
+        zusammen mit der (optional) Beschriftung.
+    </p>
+    <p>
+        Sie können auch den Stil des Textes anpassen, indem Sie "Stil anwenden" aktivieren.
+        Dadurch werden die folgenden Optionen angezeigt:
+        <ul>
+            <li><b>Schriftart:</b> Wählen Sie aus einer Sammlung vordefinierter Schriftarten.</li>
+            <li><b>Textgröße:</b> Numerischer Wert, der definiert (in px), wie groß der Text angezeigt werden soll.</li>
+            <li><b>Textfarbe:</b> Farbwähler, um die Farbe zu definieren, in der der Text angezeigt werden soll.</li>
+        </ul>
+    </p>
+    <h3>HTML-Inhalt</h3>
+    <p>
+        Das Textfeld kann auch verwendet werden, um HTML-Inhalt in der Benutzeroberfläche festzulegen.
+        Dies kann durch Setzen von <code>msg.payload</code> auf eine HTML-Zeichenkette erfolgen.
+        Dies kann nützlich sein, um Bilder, Links oder andere HTML-Elemente anzuzeigen.
+    </p>
+    <p>
+        Sie können auch den eingebauten "Template"-Knoten von Node-RED verwenden, um das HTML zu generieren, das Sie anzeigen möchten, wenn
+        Sie <code>msg</code>, <code>flow</code> oder <code>global</code> Inhalte rendern möchten.
+    </p>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Überschreiben Sie die Beschriftung, die zusammen mit dem Textwert angezeigt wird. HTML-Inhalt ist erlaubt.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">layout <span class="property-type">string</span></dt>
+        <dd>Wählen Sie aus "reihe-links", "reihe-mitte", "reihe-rechts", "reihe-verteilt", "spalte-mitte"</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">font <span class="property-type">string</span></dt>
+        <dd>Der Name der Schriftart, mit der Sie die Beschriftung und den Wert des Knotens anzeigen möchten</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">fontSize <span class="property-type">string</span></dt>
+        <dd>Eine gültige CSS-Schriftgröße, z.B. "16pt", "32px", "2rem"</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">color <span class="property-type">string</span></dt>
+        <dd>Eine gültige CSS-Farbzeichenfolge, z.B. "#ff0000", "rot"</dd>
+    </dl>
+</script>
