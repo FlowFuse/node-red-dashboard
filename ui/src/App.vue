@@ -304,11 +304,11 @@ export default {
         },
         clearServiceWorkers () {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    for (const registration of registrations) {
                         registration.unregister()
                     }
-                }).catch(function(error) {
+                }).catch(function (error) {
                     console.error('Error unregistering service workers:', error)
                 })
             }
