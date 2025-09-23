@@ -282,6 +282,13 @@ export default {
             }
         })
     },
+    mounted () {
+        // pass postMessages to handler
+        window.addEventListener('message', this.handleMessage, false)
+    },
+    unmounted () {
+        window.removeEventListener('message', this.handleMessage, false)
+    },
     methods: {
         send: function () {
             this.$socket.emit('widget-action', '<node-id>', 'hello world')
@@ -293,6 +300,27 @@ export default {
         },
         reloadApp () {
             location.reload()
+        },
+        handleMessage (event) {
+            // listen for post messages from the Node-RED editor in particular type: 'authorization', access_token, etc
+            if (event.origin !== window.location.origin) {
+                return // we only accept messages from the same origin
+            }
+            if (event.data?.type === 'authorization' && event.data?.access_token) {
+                // we have been sent an access token - store this in local storage under 'auth-tokens'
+                // so we can use it when sending "save page" requests back to Node-RED
+                let authTokens = {}
+                try {
+                    authTokens = JSON.parse(localStorage.getItem('auth-tokens')) || {}
+                } catch { /* ignore */ }
+
+                // ensure we have an object before updating it
+                if (!authTokens || typeof authTokens !== 'object') { authTokens = {} }
+                authTokens.access_token = event.data.access_token
+                authTokens.token_type = event.data.token_type || authTokens.token_type || 'Bearer'
+                authTokens.expires_in = event.data.expires_in || authTokens.expires_in || 3600
+                localStorage.setItem('auth-tokens', JSON.stringify(authTokens))
+            }
         }
     }
 }
