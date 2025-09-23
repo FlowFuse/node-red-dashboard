@@ -294,10 +294,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     const base = RED.nodes.node(baseId)
     const dashboardBasePath = (base.path || 'dashboard').replace(/\/$/, '').replace(/^\/+/, '')
     const authTokens = RED.settings.get('auth-tokens') || {}
-    const access_token = authTokens.access_token || undefined
     const headers = {}
-    if (access_token) {
-        headers.Authorization = `${authTokens.token_type || 'Bearer'} ${access_token}`
+    if (authTokens?.access_token) {
+        headers.Authorization = `${authTokens.token_type || 'Bearer'} ${authTokens.access_token}`
     }
 
     // promisify the ajax call so we can await it & return false after opening the popup
@@ -335,13 +334,13 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         // if we have an access_token then send it to the new window once opened
         // This becomes necessary if the user has gotten logged out since opening the editor.
         // Also, this squares up any token mismatch due to iframes/Same-Origin Policy etc.
-        if (access_token && newWindow) {
+        if (authTokens?.access_token && newWindow) {
             // Wait 1s then send the local access_token
             // (it is unlikely user will have done any editing and be wanting to deploy within 1s!)
             setTimeout(() => {
                 newWindow.postMessage({
                     type: 'authorization',
-                    access_token,
+                    access_token: authTokens.access_token,
                     token_type: authTokens.token_type,
                     expires_in: authTokens.expires_in
                 }, url.origin)
