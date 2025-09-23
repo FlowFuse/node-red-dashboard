@@ -221,9 +221,7 @@ export default {
                         }
                     },
                     color: this.props.colors,
-                    series: [],
-                    animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 50 // minimal animation on data update
+                    series: []
                 }
                 return options
             } else {
@@ -300,7 +298,7 @@ export default {
                     },
                     series: [],
                     animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 50 // minimal animation on data update
+                    animationDurationUpdate: 0 // minimal animation on data update
                 }
 
                 // set timeseries formatting
@@ -561,6 +559,8 @@ export default {
                         radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
                         data: [],
                         top: this.hasTitle ? 40 : 0, // account for the title
+                        animationDuration: 300, // minimal animation on inital data load
+                        animationDurationUpdate: 0, // minimal animation on data update
                         itemStyle: {
                             borderWidth: 2,
                             borderColor: '#fff'
