@@ -34,7 +34,7 @@
                 <p :class="'status-' + status.type" v-html="status.msg" />
             </div>
         </div>
-        <PWABadge />
+        <PWABadge v-if="installable" />
     </v-app>
 </template>
 
@@ -59,7 +59,8 @@ export default {
     inject: ['$socket'],
     data () {
         return {
-            loading: true
+            loading: true,
+            installable: false
         }
     },
     head () {
@@ -70,10 +71,17 @@ export default {
             const id = dashboards.length ? dashboards[0] : undefined
             const dashboard = this.dashboards[id]
             if (dashboard.allowInstall) {
+                this.installable = true
                 links.push({
                     rel: 'manifest',
                     crossorigin: 'use-credentials',
                     href: './manifest.webmanifest'
+                })
+            } else {
+                this.installable = false
+                // Clear any existing service workers when PWA is disabled
+                this.$nextTick(() => {
+                    this.clearServiceWorkers()
                 })
             }
         }
@@ -300,6 +308,17 @@ export default {
         },
         reloadApp () {
             location.reload()
+        },
+        clearServiceWorkers () {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    for (const registration of registrations) {
+                        registration.unregister()
+                    }
+                }).catch(function (error) {
+                    console.error('Error unregistering service workers:', error)
+                })
+            }
         },
         handleMessage (event) {
             // listen for post messages from the Node-RED editor in particular type: 'authorization', access_token, etc
