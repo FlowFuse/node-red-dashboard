@@ -235,6 +235,7 @@ export default {
                         }
                     },
                     tooltip: {
+                        transitionDuration: 0,
                         trigger: (this.chartType === 'line' || this.chartType === 'bar') ? 'axis' : 'item'
                     },
                     grid: {
