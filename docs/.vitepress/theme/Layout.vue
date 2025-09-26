@@ -1,5 +1,5 @@
 <script setup>
-// import AdvertBanner from '../../components/AdvertBanner.vue';
+import AdvertBanner from '../../components/AdvertBanner.vue';
 import DefaultTheme from 'vitepress/theme'
 
 const { Layout } = DefaultTheme
@@ -7,11 +7,10 @@ const { Layout } = DefaultTheme
 
 <template>
   <Layout>
-    <!-- <template #layout-top>
-        <AdvertBanner href="https://flowfuse.com/webinars/2024/workshop-dashboard/">
-            <b>FlowFuse Dashboard Workshop: </b> Join us for a free workshop
-            on how to use FlowFuse Dashboard in Node-RED on July 2nd - <span class="underline">Register Now</span>
-        </AdvertBanner>
-    </template> -->
+    <template #layout-top>
+      <AdvertBanner href="https://events.zoom.us/ev/AqhqiQ8mTK2lnAoOEH8c8TA1a_9MzVhZq_T7d1-kMHlHDt2_Qh_0~ArcN-ZX5krxu4ZAzDUcXulsjgHFpQDqn-dc1TzdVf0bUM1KUhnjRpRwTMA">
+        <b>Node-RED Con 2025 – Nov. 4:</b> Global Community Conference on Industrial Applications — <span class="underline">Register free today!</span>
+      </AdvertBanner>
+    </template>
   </Layout>
 </template>
