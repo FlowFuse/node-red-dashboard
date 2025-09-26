@@ -46,7 +46,7 @@ The plugins will append additional information to the `_client` object, such as 
 #### FlowFuse User Addon
 
 <AuthProvider img="/images/addon-logos/flowfuse-logo-square.png">
-  The <a class="https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon">FlowFuse User Plugin</a>, has a requirement for Node-RED to be running on <a href="https://flowfuse.com/">FlowFuse</a> with the <a href="https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication">FlowFuse User Authentication</a> option enabled.
+  The <a href="https://flows.nodered.org/node/@flowfuse/node-red-dashboard-2-user-addon">FlowFuse User Plugin</a>, has a requirement for Node-RED to be running on <a href="https://flowfuse.com/">FlowFuse</a> with the <a href="https://flowfuse.com/docs/user/instance-settings/#flowfuse-user-authentication">FlowFuse User Authentication</a> option enabled.
 
   FlowFuse automatically handles all of the authentication provider setup, and so there is no need for you to configure this yourself.
 </AuthProvider>
