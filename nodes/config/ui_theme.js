@@ -32,7 +32,33 @@ module.exports = function (RED) {
             sizes.widgetGap = '12px'
         }
 
-        node.colors = { ...rest.colors }
+        const colors = { ...rest.colors }
+        node.colors = colors
+
+        if (!hasProperty(colors, 'light') && hasProperty(colors, 'surface')) {
+            // Set default values for light theme
+            const updatedColors = {
+                light: {
+                    surface: colors.surface,
+                    primary: colors.primary,
+                    bgPage: colors.bgPage,
+                    groupBg: colors.groupBg,
+                    groupOutline: colors.groupOutline
+                },
+
+                // Set default values for dark theme
+                dark: {
+                    surface: '#111111',
+                    primary: colors.primary,
+                    bgPage: '#222222',
+                    groupBg: '#333333',
+                    groupOutline: '#cccccc'
+                }
+            }
+
+            node.colors = updatedColors
+        }
+
         node.sizes = sizes
 
         let uiBase = null
