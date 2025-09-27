@@ -9,8 +9,8 @@ const getAxisMinMax = (value) => {
 
     const step = niceNumber(roughStep)
     // round min down and max up using multiples of step
-    const axisMin = Math.floor(min / step) * step;
-    const axisMax = Math.ceil(max / step) * step;
+    const axisMin = Math.floor(min / step) * step
+    const axisMax = Math.ceil(max / step) * step
 
     return {
         min: axisMin,
@@ -20,14 +20,14 @@ const getAxisMinMax = (value) => {
 
 // Round x to a nice number, using factors of 1, 2, 5 or 10
 const niceNumber = (x) => {
-    let exp = Math.floor(Math.log10(x));
-    let f = x / Math.pow(10, exp);  // fraction in [1, 10)
-    let niceFraction;
-    if (f < 1.5) niceFraction = 1;
-    else if (f < 3) niceFraction = 2;
-    else if (f < 7) niceFraction = 5;
-    else niceFraction = 10;
-    return niceFraction * Math.pow(10, exp);
+    const exp = Math.floor(Math.log10(x))
+    const f = x / Math.pow(10, exp) // fraction in [1, 10)
+    let niceFraction
+    if (f < 1.5) niceFraction = 1
+    else if (f < 3) niceFraction = 2
+    else if (f < 7) niceFraction = 5
+    else niceFraction = 10
+    return niceFraction * Math.pow(10, exp)
 }
 
 const getAxisMin = (value) => {
