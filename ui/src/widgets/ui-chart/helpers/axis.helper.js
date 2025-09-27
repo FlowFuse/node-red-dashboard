@@ -6,7 +6,6 @@ const getAxisMinMax = (value) => {
 
     const targetTicks = 6
     const roughStep = range / (targetTicks - 1)
-    console.log()
 
     const step = niceNumber(roughStep)
     // round min down and max up using multiples of step
