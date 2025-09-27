@@ -4,44 +4,31 @@ const getAxisMinMax = (value) => {
 
     const range = max - min
 
-    // Determine rounding unit based on magnitude
-    const getRoundingUnit = (val) => {
-        const absVal = Math.abs(val)
-        if (absVal < 0.1) {
-            return 0.1
-        } else if (absVal < 1) {
-            return 1
-        } else if (absVal < 100) {
-            return 10
-        } else if (absVal < 1000) {
-            return 100
-        } else if (absVal < 10000) {
-            return 1000
-        } else if (absVal < 100000) {
-            return 10000
-        } else {
-            // For values >= 100000, use powers of 10
-            return Math.pow(10, Math.floor(Math.log10(absVal)))
-        }
-    }
+    const targetTicks = 6
+    const roughStep = range / (targetTicks - 1)
+    console.log()
 
-    // Round min down to nearest appropriate unit
-    const roundingUnit = getRoundingUnit(range)
-    let axisMin = 0
-    if (roundingUnit > 0) {
-        axisMin = Math.floor(min / roundingUnit) * roundingUnit
-    }
-
-    // Round max up to nearest appropriate unit
-    let axisMax = 10
-    if (roundingUnit > 0) {
-        axisMax = Math.ceil(max / roundingUnit) * roundingUnit
-    }
+    const step = niceNumber(roughStep)
+    // round min down and max up using multiples of step
+    const axisMin = Math.floor(min / step) * step;
+    const axisMax = Math.ceil(max / step) * step;
 
     return {
         min: axisMin,
         max: axisMax
     }
+}
+
+// Round x to a nice number, using factors of 1, 2, 5 or 10
+const niceNumber = (x) => {
+    let exp = Math.floor(Math.log10(x));
+    let f = x / Math.pow(10, exp);  // fraction in [1, 10)
+    let niceFraction;
+    if (f < 1.5) niceFraction = 1;
+    else if (f < 3) niceFraction = 2;
+    else if (f < 7) niceFraction = 5;
+    else niceFraction = 10;
+    return niceFraction * Math.pow(10, exp);
 }
 
 const getAxisMin = (value) => {
