@@ -33,6 +33,8 @@ export default {
         switch (chartType) {
         case 'line':
             return 'line'
+        case 'area':
+            return 'line'
         case 'bar':
         case 'histogram':
             return 'bar'

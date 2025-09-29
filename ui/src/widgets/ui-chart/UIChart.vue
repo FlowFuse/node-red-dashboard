@@ -236,7 +236,7 @@ export default {
                     },
                     tooltip: {
                         transitionDuration: 0,
-                        trigger: (this.chartType === 'line' || this.chartType === 'bar') ? 'axis' : 'item'
+                        trigger: (this.chartType === 'line' || this.chartType === 'bar' || this.chartType === 'area') ? 'axis' : 'item'
                     },
                     grid: {
                         left: '3%',
@@ -302,6 +302,15 @@ export default {
                     animationDurationUpdate: 0 // minimal animation on data update
                 }
 
+                // if an area chart, set the fill to true
+                if (this.chartType === 'area') {
+                    options.series.forEach(series => {
+                        series.areaStyle = {
+                            opacity: 1
+                        }
+                    })
+                }
+
                 // set timeseries formatting
                 if (this.xAxisType === 'time' && this.props.xAxisFormatType !== 'auto') {
                     const format = this.props.xAxisFormatType === 'custom' ? this.props.xAxisFormat : this.props.xAxisFormatType
@@ -334,6 +343,9 @@ export default {
             const options = this.chart.getOption()
             switch (this.chartType) {
             case 'line':
+                options.tooltip.trigger = 'axis'
+                break
+            case 'area':
                 options.tooltip.trigger = 'axis'
                 break
             case 'scatter':
@@ -484,7 +496,7 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            if (this.chartType === 'line' || this.chartType === 'scatter') {
+            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
@@ -636,6 +648,13 @@ export default {
                         series.symbolSize = this.props.pointRadius || 4
                         series.symbol = chartJStoECharts.symbol(this.props.pointShape)
                         chartJStoECharts.setSmooth(series, this.interpolation)
+                    }
+
+                    // fill the line area if chart type is area
+                    if (this.chartType === 'area') {
+                        series.areaStyle = {
+                            opacity: 0.9
+                        }
                     }
 
                     options.series.push(series)

@@ -2,6 +2,7 @@
     "ui-chart": {
         "label": {
             "line": "Line",
+            "area": "Area",
             "bar": "Bar",
             "scatter": "Scatter",
             "pie": "Pie",
