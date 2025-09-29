@@ -2,7 +2,7 @@ const getAxisMinMax = (value) => {
     const min = typeof value?.min === 'number' ? value?.min : 0
     let max = typeof value?.max === 'number' ? value?.max : 1
     // protect against min == max which is the case when only one point has been added
-    max = (max == min) ? min+1 : max
+    max = (max === min) ? min + 1 : max
 
     const range = max - min
 
