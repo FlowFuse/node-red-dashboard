@@ -1,6 +1,8 @@
 const getAxisMinMax = (value) => {
     const min = typeof value?.min === 'number' ? value?.min : 0
-    const max = typeof value?.max === 'number' ? value?.max : 1
+    let max = typeof value?.max === 'number' ? value?.max : 1
+    // protect against min == max which is the case when only one point has been added
+    max = (max == min) ? min+1 : max
 
     const range = max - min
 
@@ -8,9 +10,11 @@ const getAxisMinMax = (value) => {
     const roughStep = range / (targetTicks - 1)
 
     const step = niceNumber(roughStep)
+    // number of decimal places necessary to represent step cleanly
+    const decimals = Math.max(0, -Math.floor(Math.log10(step)))
     // round min down and max up using multiples of step
-    const axisMin = Math.floor(min / step) * step
-    const axisMax = Math.ceil(max / step) * step
+    const axisMin = Number((Math.floor(min / step) * step).toFixed(decimals))
+    const axisMax = Number((Math.ceil(max / step) * step).toFixed(decimals))
 
     return {
         min: axisMin,
