@@ -26,6 +26,15 @@ Dieses Projekt wurde von FlowFuse ins Leben gerufen, um das ursprüngliche Dashb
 
 <RecommendedTutorials />
 
+## FlowFuse Dashboard Blueprints
+
+Der schnellste Weg, um mit FlowFuse Dashboard zu beginnen, ist die [Anmeldung bei FlowFuse Cloud](https://app.flowfuse.com/account/create) und die Auswahl einer der vorhandenen [FlowFuse Dashboard Blueprints](https://flowfuse.com/blueprints/), zum Beispiel die unten gezeigte [Getting Started with FlowFuse Dashboard](https://flowfuse.com/blueprints/getting-started/dashboard/) Blueprint:
+
+![Screenshot des FlowFuse Cloud Dashboards](../assets/images/blueprint-getting-started.png){data-zoomable}
+_Screenshot der "Getting Started with FlowFuse Dashboard" Blueprint von FlowFuse Cloud_
+
+FlowFuse bietet eine vollständige Lösung, um Ihre Node-RED-Bereitstellungen zu hosten, zu sichern, zu verwalten und zu skalieren, sei es für Ihr eigenes Hobbyprojekt zu Hause oder wenn Sie Tausende von Node-RED-Instanzen am Edge betreiben. Es gibt auch Angebote für Cloud-, Self-Hosted- und Dedicated-Lösungen.
+
 ## Installation
 
 Das Node-RED Dashboard 2.0 von [FlowFuse](https://flowfuse.com) ist im Node-RED Palette Manager verfügbar. Um es zu installieren:
