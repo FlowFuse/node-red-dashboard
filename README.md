@@ -18,6 +18,17 @@ If you want to use `npm` to install your nodes, you can instead [follow these in
 
 *Note*: this package was previously published under the name `@flowforge/node-red-dashboard`. That package has now been deprecated and will not receive any further updates.
 
+### Cloud Hosted Dashboards
+
+If you're looking to host Node-RED in the Cloud, then look no further than [FlowFuse](https://flowfuse.com/). FlowFuse is a fully managed platform for hosting, securing, managing and scaling Node-RED deployments. You can [sign up today for a free trial](https://app.flowfuse.com/account/create).
+
+<div style="text-align: center; margin-bottom: 12px;">
+    <img width="600" alt="Screenshot of the 'Getting Started with FlowFuse Dashboard' blueprint from FlowFuse Cloud" src="./docs/assets/images/blueprint-getting-started.png">
+    <em style="display: block; text-align: center;">Screenshot of the "Getting Started with FlowFuse Dashboard" blueprint from FlowFuse Cloud</em>
+</div>
+
+FlowFuse also comes with a collection of [FlowFuse Dashboard Blueprints](https://flowfuse.com/blueprints/) to help you get started on your FlowFuse Dashboard journey.
+
 ## Features
 
 FlowFuse Dashboard provides a base set of nodes for building your own user interfaces and data visualisations. Much like it's predecessor, it provides a set of easy-to-use, core nodes, but provides complete flexibility for customisation and control over theming, layout and behaviour if you want to go further.
@@ -28,13 +39,19 @@ The nodes provided integrate seamlessly with any of the existing nodes and flows
 
 ### Data Visualization
 
-<img width="600" alt="Example of data visualisations in FlowFuse Dashboard" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/48da3687-bebd-4e2a-88b5-6abe2af4fc46">
+<div style="text-align: center; margin-bottom: 12px;">
+    <img width="600" alt="Example of data visualisations in FlowFuse Dashboard" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/48da3687-bebd-4e2a-88b5-6abe2af4fc46">
+    <em style="display: block; text-align: center;">Example of data visualisations in FlowFuse Dashboard</em>
+</div>
 
 No dashboard is complete without data visualisation. FlowFuse Dashboard provides a core `ui-chart` widget to provide a simple, yet powerful way to visualise your data. It supports a wide range of chart types, including line, bar and scatter, with more planned for the near future.
 
 ### Flexible Customisation
 
-<img width="600" alt="Example of a dashboard using custom templates to render a to-do list" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/10d2b81b-8dfe-4597-84c8-03c1776287d5">
+<div style="text-align: center; margin-bottom: 12px;">
+    <img width="600" alt="Example of a dashboard using custom templates to render a to-do list" src="https://github.com/FlowFuse/node-red-dashboard/assets/99246719/10d2b81b-8dfe-4597-84c8-03c1776287d5">
+    <em style="display: block; text-align: center;">Example of a dashboard using custom templates to render a to-do list</em>
+</div>
 
 As with Node-RED Dashboard, the new FlowFuse Dashboard, comes with a `ui-template` node which allows you to define your own custom widgets and styling. 
 
