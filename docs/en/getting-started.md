@@ -26,6 +26,15 @@ This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts
 
 <RecommendedTutorials />
 
+## FlowFuse Dashboard Blueprints
+
+The quickest way to get up and running with FlowFuse Dashboard is to [sign up to FlowFuse Cloud](https://app.flowfuse.com/account/create), and select one of the existing [FlowFuse Dashboard Blueprints](https://flowfuse.com/blueprints/), for example the [Getting Started with FlowFuse Dashboard](https://flowfuse.com/blueprints/getting-started/dashboard/) blueprint show below:
+
+![Screenshot of the FlowFuse Cloud dashboard](../assets/images/blueprint-getting-started.png){data-zoomable}
+_Screenshot of the "Getting Started with FlowFuse Dashboard" blueprint from FlowFuse Cloud_
+
+FlowFuse offers a complete solution to help you host, secure, manage and scale your Node-RED deployments, whether that's for your own home hobby project, or you're running thousands of Node-RED instances at the Edge. It also comes in offerings for Cloud, Self-Hosted and Dedicated solutions.
+
 ## Installation
 
 [FlowFuse](https://flowfuse.com) Dashboard is available in the Node-RED Palette Manager. To install it:
@@ -42,6 +51,10 @@ This project was formed by [FlowFuse](https://flowfuse.com/), as part of efforts
 The nodes will then be available in your editor for you to get started.
 
 If you want to use `npm` to install your nodes, you can instead [follow these instructions](https://nodered.org/docs/user-guide/runtime/adding-nodes)
+
+### Hosting Node-RED
+
+If you're looking to host Node-RED, we recommend using [FlowFuse](https://flowfuse.com) to get started. FlowFuse can either be self-hosted on your own infrastructure, or to get up and running in 30 seconds, you can use FlowFuse Cloud, which comes with a collection of FlowFuse Dashboard Blueprints to help you get started.
 
 ## Dashboard Hierarchy
 
