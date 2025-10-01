@@ -6,12 +6,13 @@ const getAxisMinMax = (value) => {
 
     const range = max - min
 
-    const targetTicks = 6
+    const targetTicks = 6 // assume 6 ticks on y axis (5 divisions)
     const roughStep = range / (targetTicks - 1)
 
-    const step = niceNumber(roughStep)
-    // number of decimal places necessary to represent step cleanly
-    const decimals = Math.max(0, -Math.floor(Math.log10(step)))
+    // round the step size to a nice number and determine how many decimal places
+    // are needed to show it
+    const [step, decimals] = niceNumber(roughStep)
+
     // round min down and max up using multiples of step
     const axisMin = Number((Math.floor(min / step) * step).toFixed(decimals))
     const axisMax = Number((Math.ceil(max / step) * step).toFixed(decimals))
@@ -23,15 +24,24 @@ const getAxisMinMax = (value) => {
 }
 
 // Round x to a nice number, using factors of 1, 2, 5 or 10
+// and determine how may decimal places are needed to show it
 const niceNumber = (x) => {
+    // find x as a number between 1 and 9.9999 with power of 10 multiplier
+    // eg, 68.7 is 6.87 * 10^1 so exp is 1 and f is 6.8
     const exp = Math.floor(Math.log10(x))
-    const f = x / Math.pow(10, exp) // fraction in [1, 10)
+    const f = x / Math.pow(10, exp)
+
+    // round f to 1, 2 5 or 10
     let niceFraction
     if (f < 1.5) niceFraction = 1
     else if (f < 3) niceFraction = 2
     else if (f < 7) niceFraction = 5
     else niceFraction = 10
-    return niceFraction * Math.pow(10, exp)
+    // and scale it up to the range of the input value so if x were 68.7 this returns 50
+    const niceX = niceFraction * Math.pow(10, exp)
+    // determine the number of decimal places necessary to represent this
+    const decimals = Math.max(0, -exp)
+    return [niceX, decimals]
 }
 
 const getAxisMin = (value) => {
