@@ -271,10 +271,7 @@ export default {
                             color: textColor
                         },
                         minorSplitLine: {
-                            show: true,
-                            lineStyle: {
-                                color: gridColor
-                            }
+                            show: false
                         }
                     },
                     yAxis: {
