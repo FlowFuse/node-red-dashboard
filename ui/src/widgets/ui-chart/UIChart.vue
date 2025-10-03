@@ -206,6 +206,7 @@ export default {
                 const options = {
                     title: {
                         text: this.props.label,
+                        top: 0,
                         textStyle: {
                             color: textColor
                         }
@@ -215,7 +216,7 @@ export default {
                     },
                     legend: {
                         show: showLegend,
-                        top: this.hasTitle ? 40 : 0,
+                        top: this.hasTitle ? 30 : 0,
                         textStyle: {
                             color: textColor
                         }
@@ -229,6 +230,7 @@ export default {
                 const options = {
                     title: {
                         text: this.props.label,
+                        top: 0,
                         textStyle: {
                             color: textColor,
                             fontSize: 14 // taken from ChartJS default
@@ -242,11 +244,11 @@ export default {
                         left: '3%',
                         right: '4%',
                         bottom: '0%',
-                        top: this.hasTitle ? (this.props.showLegend ? 70 : 40) : (this.props.showLegend ? 30 : 0)
+                        top: this.hasTitle ? (this.props.showLegend ? 70 : 30) : (this.props.showLegend ? 40 : 0)
                     },
                     legend: {
                         show: showLegend,
-                        top: this.hasTitle ? 40 : 0,
+                        top: this.hasTitle ? 30 : 0,
                         textStyle: {
                             color: textColor
                         }
