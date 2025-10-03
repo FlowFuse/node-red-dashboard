@@ -231,7 +231,7 @@ export default {
                         text: this.props.label,
                         textStyle: {
                             color: textColor,
-                            fontSize: 14 // taken from ChartJS default
+                            fontSize: 12.5
                         }
                     },
                     tooltip: {
