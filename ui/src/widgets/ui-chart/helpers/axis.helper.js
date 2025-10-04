@@ -1,42 +1,42 @@
+// Round x to a nice number, using factors of 1, 2, 5 or 10
+// and determine how many decimal places are needed to show it
+const niceNumber = (x) => {
+    // find x as a number between 1 and 9.9999 with power of 10 multiplier
+    // eg, 68.7 is 6.87 * 10^1 so exp is 1 and f is 6.8
+    const exp = Math.floor(Math.log10(x))
+    const f = x / Math.pow(10, exp)
+
+    // round f to 1, 2 5 or 10
+    let niceFraction
+    if (f < 1.5) niceFraction = 1
+    else if (f < 3) niceFraction = 2
+    else if (f < 7) niceFraction = 5
+    else niceFraction = 10
+    // and scale it up to the range of the input value so if x were 68.7 this returns 50
+    const niceX = niceFraction * Math.pow(10, exp)
+    // determine the number of decimal places necessary to represent this
+    const decimals = Math.max(0, -exp)
+    return [niceX, decimals]
+}
+
 const getAxisMinMax = (value) => {
     const min = typeof value?.min === 'number' ? value?.min : 0
-    const max = typeof value?.max === 'number' ? value?.max : 1
+    let max = typeof value?.max === 'number' ? value?.max : 1
+    // protect against min == max which is the case when only one point has been added
+    max = (max === min) ? min + 1 : max
 
     const range = max - min
 
-    // Determine rounding unit based on magnitude
-    const getRoundingUnit = (val) => {
-        const absVal = Math.abs(val)
-        if (absVal < 0.1) {
-            return 0.1
-        } else if (absVal < 1) {
-            return 1
-        } else if (absVal < 100) {
-            return 10
-        } else if (absVal < 1000) {
-            return 100
-        } else if (absVal < 10000) {
-            return 1000
-        } else if (absVal < 100000) {
-            return 10000
-        } else {
-            // For values >= 100000, use powers of 10
-            return Math.pow(10, Math.floor(Math.log10(absVal)))
-        }
-    }
+    const targetTicks = 6 // assume 6 ticks on y axis (5 divisions)
+    const roughStep = range / (targetTicks - 1)
 
-    // Round min down to nearest appropriate unit
-    const roundingUnit = getRoundingUnit(range)
-    let axisMin = 0
-    if (roundingUnit > 0) {
-        axisMin = Math.floor(min / roundingUnit) * roundingUnit
-    }
+    // round the step size to a nice number and determine how many decimal places
+    // are needed to show it
+    const [step, decimals] = niceNumber(roughStep)
 
-    // Round max up to nearest appropriate unit
-    let axisMax = 10
-    if (roundingUnit > 0) {
-        axisMax = Math.ceil(max / roundingUnit) * roundingUnit
-    }
+    // round min down and max up using multiples of step
+    const axisMin = Number((Math.floor(min / step) * step).toFixed(decimals))
+    const axisMax = Number((Math.ceil(max / step) * step).toFixed(decimals))
 
     return {
         min: axisMin,
