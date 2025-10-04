@@ -271,12 +271,6 @@ export default {
                         axisLabel: {
                             hideOverlap: true, // hide labels that would overlap adjacent label
                             color: textColor
-                        },
-                        minorSplitLine: {
-                            show: true,
-                            lineStyle: {
-                                color: gridColor
-                            }
                         }
                     },
                     yAxis: {
