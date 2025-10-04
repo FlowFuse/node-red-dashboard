@@ -244,11 +244,11 @@ export default {
                         left: '3%',
                         right: '4%',
                         bottom: '0%',
-                        top: this.hasTitle ? (this.props.showLegend ? 70 : 30) : (this.props.showLegend ? 40 : 0)
+                        top: this.hasTitle ? (this.props.showLegend ? 70 : 30) : (this.props.showLegend ? 45 : 0)
                     },
                     legend: {
                         show: showLegend,
-                        top: this.hasTitle ? 30 : 0,
+                        top: this.hasTitle ? 20 : 0,
                         textStyle: {
                             color: textColor
                         }
