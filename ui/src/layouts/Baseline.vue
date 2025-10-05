@@ -251,7 +251,6 @@ export default {
             // Force update of the component when locale changes
             this.$forceUpdate()
         },
-        navigationStyle: {
         effectiveNavigationStyle: {
             immediate: true,
             handler () {
