@@ -76,14 +76,14 @@ export default {
             if (vm.orderedGroups && vm.orderedGroups.length > 0) {
                 // Check if origin and destination pages are unique
                 if (to?.name !== from?.name) {
-                    vm.tab = 0
+                    vm.tab = vm.orderedGroups[0].id
                 }
             }
         })
     },
     data () {
         return {
-            tab: 0
+            tab: null
         }
     },
     computed: {
@@ -91,7 +91,7 @@ export default {
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
         orderedGroups: function () {
-            // get groups on this page
+            // get groups on this page - these are going to be rendered as the different tabs
             const groups = this.groupsByPage(this.$route.meta.id)
                 // only show hte groups that haven't had their "visible" property set to false
                 .filter((g) => {

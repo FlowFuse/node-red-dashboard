@@ -1,0 +1,36 @@
+{
+    "ui-notification": {
+        "label": {
+            "ui": "UI",
+            "position": "Position",
+            "color": "Farbe",
+            "default": "Standard",
+            "timeout": "Timeout (S)",
+            "showCountdown": "Timeout-Countdown-Leiste in Benachrichtigung anzeigen",
+            "allowDismiss": "Manuelles Schließen erlauben",
+            "dismissText": "Schaltflächentext",
+            "allowConfirm": "Manuelle Bestätigung erlauben",
+            "confirmText": "Schaltflächentext",
+            "raw": "Rohes HTML/JavaScript in msg.payload akzeptieren, um Popup zu formatieren.",
+            "class": "Klasse",
+            "defaultDismissText": "Schließen",
+            "defaultConfirmText": "Bestätigen",
+            "showNotification": "Benachrichtigung anzeigen",
+            "showDialog": "Dialog anzeigen",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)"
+        },
+        "option": {
+            "topRight": "Oben Rechts",
+            "topCenter": "Oben Mitte",
+            "topLeft": "Oben Links",
+            "bottomRight": "Unten Rechts",
+            "bottomCenter": "Unten Mitte",
+            "bottomLeft": "Unten Links",
+            "center": "Mitte"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        },
+        "note": "Hinweis: Das Aktivieren von Rohes HTML/JavaScript akzeptieren kann die Injektion von Code ermöglichen. Stellen Sie sicher, dass die Eingabe aus vertrauenswürdigen Quellen stammt."
+    }
+}

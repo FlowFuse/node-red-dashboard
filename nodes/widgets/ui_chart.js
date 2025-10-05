@@ -85,6 +85,13 @@ module.exports = function (RED) {
             config.interpolation = 'linear'
         }
 
+        // if area chart, force stacking, otherwise no stacking if it's not a bar chart
+        if (config.chartType === 'area') {
+            config.stackSeries = true
+        } else if (config.chartType !== 'bar') {
+            config.stackSeries = false
+        }
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting

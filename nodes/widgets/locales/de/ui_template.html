@@ -1,0 +1,152 @@
+<script type="text/markdown" data-help-name="ui-template">
+(siehe [vollständige Dokumentation](https://dashboard.flowfuse.com/nodes/widgets/ui-template.html))
+
+Der Inhalt von `ui-template` wird durch die "Typ"-Eigenschaft gesteuert.
+
+Bietet eine Möglichkeit, benutzerdefinierte Inhalte oder eine Reihe von Knotenstilen je nach Umfang zu rendern.
+- **Widget:** Eine Vue-Komponente (einschließlich aller <a href="https://vuetifyjs.com/en/components/all/" target="blank">
+  Vuetify-Komponenten</a>), die im Dashboard gerendert wird.
+- **CSS (Alle Seiten):** Definieren Sie benutzerdefinierte CSS-Klassen/Stile, die für das gesamte Dashboard gelten.
+- **CSS (Einzelseite):** Definieren Sie benutzerdefinierte CSS-Klassen/Stile, die nur für eine einzelne Seite Ihres Dashboards gelten.
+
+### Typ: Widget
+Wenn der Umfang auf **Widget** gesetzt ist, wird die Vorlage im Dashboard als HTML gerendert.
+
+Sie können dynamische Inhalte mit beliebigen VueJS-Datenbindungsausdrücken rendern (z.B. `v-if`, `v-for`, `:class`)
+und auf eingehende Daten zum Knoten über das `msg`-Objekt zugreifen.
+
+#### Arbeiten mit Variablen
+
+Alle Variablen, die Sie in Ihr `<template />` rendern möchten, werden auf eine von zwei Arten eingefügt:
+
+- **Attributbindung** - Verwenden Sie `:`, um eine Variable an ein Attribut zu binden. Alles innerhalb der Anführungszeichen `""` wird als JavaScript behandelt, zum Beispiel:
+
+```html
+&lt;p :class="msg.payload">Hallo Welt&lt;/p>
+````
+
+oder, wenn Sie `msg.payload` als Teil des Wertes verwenden möchten, können Sie dies tun:
+
+```html
+&lt;!-- Ändern Sie die Farbe basierend auf msg.payload. Erwartet, dass payload entweder "error", "warning" oder "info" ist -->
+&lt;p :class="'text-' + msg.payload">Hallo Welt&lt;/p>
+&lt;!-- oder mit String-Literalen: -->
+&lt;p :class="`text-${msg.payload}`">Hallo Welt&lt;/p>
+````
+
+oder verwenden Sie `msg.payload` als Bedingung:
+
+```html
+&lt;!-- 
+  Ändern Sie die Farbe basierend auf dem Wert von msg.payload: 
+  * Wenn msg.payload "error" ist, setzen Sie den Text auf die vordefinierte `text-error`-Farbe. 
+  * Andernfalls setzen Sie den Text auf die vordefinierte `text-info`-Farbe.
+-->
+&lt;p :class="msg.payload === 'error' ? 'text-error' : 'text-info'">Hallo Welt&lt;/p>
+````
+
+oder sogar als bedingten Block:
+
+```html
+&lt;!-- 
+  Zeigen Sie eine Nachricht basierend auf dem Wert von msg.payload an:
+  * Wenn msg.payload "error" ist, zeigen Sie die Fehlermeldung an.
+  * Wenn msg.payload "warning" ist, zeigen Sie die Warnmeldung an.
+  * Andernfalls zeigen Sie die Infomeldung an.
+-->
+&lt;div>
+  &lt;p v-if="msg.payload === 'error'">Fehler: Etwas ist schief gelaufen!&lt;/p>
+  &lt;p v-else-if="msg.payload === 'warning'">Warnung: Seien Sie vorsichtig!&lt;/p>
+  &lt;p v-else>Info: Alles ist in Ordnung!&lt;/p>
+&lt;/div>
+```
+
+- **Textinterpolation** - Verwenden Sie `{{ }}`, um eine Variable in den Text eines Elements zu interpolieren. Alles innerhalb der geschweiften Klammern wird als JavaScript behandelt. Zum Beispiel:
+
+```html
+&lt;p>Hallo {{ msg.payload }}&lt;/p>
+```
+
+```html
+&lt;p>Prozentsatz {{ msg.payload * 100 }}%&lt;/p>
+```
+
+#### Eingebaute Funktionen
+
+Die Vorlage enthält zwei eingebaute Funktionen:
+
+`send(msg)` - Kann verwendet werden, um eine `msg` aus der Vorlage zu senden, z.B.:
+
+```html
+&lt;v-btn @click="send({'hello': 'world'})">&lt;/v-btn>
+```
+
+`submit()` - Kann an ein `<form />` angehängt werden. Die gesendete `msg` wird eine Objekt
+  Darstellung der `FormData` aus dem angehängten Formular sein, z.B.:
+```html
+&lt;form @submit.prevent="submit">
+    &lt;v-text-field name="first" label="Vorname">&lt;/v-text-field>
+    &lt;v-text-field name="last" label="Nachname">&lt;/v-text-field>
+    &lt;v-btn type="submit">&lt;/v-btn>
+&lt;/form>
+```
+Würde die folgende `msg` senden, wenn sie übermittelt wird:
+```js
+{ "first": <value>, "last": <value> }
+```
+
+#### Senden bei Klick
+Hier rufen wir es auf, wenn jemand auf unsere "Hallo Welt senden"-Schaltfläche klickt:
+
+```vue
+&lt;v-btn @click="send({payload: 'Hallo Welt'})">Hallo Welt senden</v-btn>
+```
+
+#### Senden bei Änderung
+Oder ein weiteres Beispiel, bei dem die Nutzlast automatisch gesendet wird, wenn das `v-model` geändert wird:
+
+```vue
+&lt;v-rating hover :length="5" :size="32" v-model="value"
+    active-color="primary" @update:modelValue="send({payload: value})"/>
+```
+
+#### Lesen von Knoten-Eingaben
+
+Wann immer ein `ui-template` eine `msg` in Node-RED erhält, wird diese automatisch der `msg`-Variable in der Vorlage zugewiesen.
+
+Zusätzlich binden wir auch eine berechnete Variable `value` an `msg.payload`. Das bedeutet, dass Sie auf das `msg`-Objekt in Ihrer Vorlage zugreifen können, sowie die `value`-Variable an beliebige Widgets binden können, die Sie verwenden. 
+
+Ein solches Beispiel wäre:
+
+```html
+&lt;div>
+    &lt;h2>Letzte &lt;code>msg&lt;/code> erhalten:&lt;/h2>
+    &lt;pre>{{ msg }}&lt;/pre>
+&lt;/div>
+```
+
+#### Vuetify-Widgets
+
+Der `ui-template`-Knoten hat auch standardmäßig Zugriff auf die [Vuetify-Komponentenbibliothek](https://vuetifyjs.com/en/components/all/). Die Bibliothek bietet eine große Anzahl vorgefertigter Widgets, die Sie in Ihrem Dashboard verwenden können.
+
+Diese sind besonders nützlich, da sie einfachen Zugriff auf eine große Anzahl vorgefertigter Widgets bieten, die nicht unbedingt in den Kernknoten des Node-RED Dashboards 2.0 enthalten sind.
+
+### Typ - CSS (Alle Seiten)
+Wenn der Umfang auf **Site Scoped Style** gesetzt ist, wird das CSS in der Vorlage dem `head` aller Seiten hinzugefügt.
+z.B.
+```css
+.my-class {
+  color: red;
+}
+```
+
+### Typ: CSS (Einzelseite)
+Wenn der Umfang auf **Site Scoped Style** gesetzt ist, wird das CSS in der Vorlage dem `head` der ausgewählten Seite hinzugefügt.
+z.B.
+```css
+.my-page1-only-class {
+  color: green;
+}
+```
+
+</script>

@@ -1,0 +1,20 @@
+{
+    "ui-button-group": {
+        "label": {
+            "group": "Gruppe",
+            "size": "Größe",
+            "icon": "Symbol",
+            "label": "Beschriftung",
+            "colors": "Farben",
+            "options": "Optionen",
+            "appearance": "Erscheinungsbild",
+            "tcolors": "Themenfarben verwenden",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)"
+        },
+        "errors": {
+            "uniqueValues": "Alle Werte müssen eindeutig sein.",
+            "twoOptions": "Konfigurieren Sie mindestens zwei Optionen"
+        }
+    }
+}

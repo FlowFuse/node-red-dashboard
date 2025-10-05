@@ -206,6 +206,7 @@ export default {
                 const options = {
                     title: {
                         text: this.props.label,
+                        top: 0,
                         textStyle: {
                             color: textColor
                         }
@@ -215,15 +216,13 @@ export default {
                     },
                     legend: {
                         show: showLegend,
-                        top: this.hasTitle ? 40 : 0,
+                        top: this.hasTitle ? 30 : 0,
                         textStyle: {
                             color: textColor
                         }
                     },
                     color: this.props.colors,
-                    series: [],
-                    animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 50 // minimal animation on data update
+                    series: []
                 }
                 return options
             } else {
@@ -231,23 +230,25 @@ export default {
                 const options = {
                     title: {
                         text: this.props.label,
+                        top: 0,
                         textStyle: {
                             color: textColor,
-                            fontSize: 14 // taken from ChartJS default
+                            fontSize: 12.5
                         }
                     },
                     tooltip: {
-                        trigger: (this.chartType === 'line' || this.chartType === 'bar') ? 'axis' : 'item'
+                        transitionDuration: 0,
+                        trigger: (this.chartType === 'line' || this.chartType === 'bar' || this.chartType === 'area') ? 'axis' : 'item'
                     },
                     grid: {
                         left: '3%',
                         right: '4%',
                         bottom: '0%',
-                        top: this.hasTitle ? (this.props.showLegend ? 70 : 40) : (this.props.showLegend ? 30 : 0)
+                        top: this.hasTitle ? (this.props.showLegend ? 70 : 30) : (this.props.showLegend ? 45 : 0)
                     },
                     legend: {
                         show: showLegend,
-                        top: this.hasTitle ? 40 : 0,
+                        top: this.hasTitle ? 20 : 0,
                         textStyle: {
                             color: textColor
                         }
@@ -268,13 +269,8 @@ export default {
                             }
                         },
                         axisLabel: {
+                            hideOverlap: true, // hide labels that would overlap adjacent label
                             color: textColor
-                        },
-                        minorSplitLine: {
-                            show: true,
-                            lineStyle: {
-                                color: gridColor
-                            }
                         }
                     },
                     yAxis: {
@@ -299,7 +295,16 @@ export default {
                     },
                     series: [],
                     animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 50 // minimal animation on data update
+                    animationDurationUpdate: 0 // minimal animation on data update
+                }
+
+                // if an area chart, set the fill to true
+                if (this.chartType === 'area') {
+                    options.series.forEach(series => {
+                        series.areaStyle = {
+                            opacity: 1
+                        }
+                    })
                 }
 
                 // set timeseries formatting
@@ -334,6 +339,9 @@ export default {
             const options = this.chart.getOption()
             switch (this.chartType) {
             case 'line':
+                options.tooltip.trigger = 'axis'
+                break
+            case 'area':
                 options.tooltip.trigger = 'axis'
                 break
             case 'scatter':
@@ -484,7 +492,7 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            if (this.chartType === 'line' || this.chartType === 'scatter') {
+            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
@@ -560,6 +568,8 @@ export default {
                         radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
                         data: [],
                         top: this.hasTitle ? 40 : 0, // account for the title
+                        animationDuration: 300, // minimal animation on inital data load
+                        animationDurationUpdate: 0, // minimal animation on data update
                         itemStyle: {
                             borderWidth: 2,
                             borderColor: '#fff'
@@ -634,6 +644,13 @@ export default {
                         series.symbolSize = this.props.pointRadius || 4
                         series.symbol = chartJStoECharts.symbol(this.props.pointShape)
                         chartJStoECharts.setSmooth(series, this.interpolation)
+                    }
+
+                    // fill the line area if chart type is area
+                    if (this.chartType === 'area') {
+                        series.areaStyle = {
+                            opacity: 0.9
+                        }
                     }
 
                     options.series.push(series)

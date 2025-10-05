@@ -1,0 +1,24 @@
+{
+    "ui-theme": {
+        "label": {
+            "themeName": "Themenname",
+            "colors": "Farben",
+            "dashboard": "Dashboard",
+            "header": "Kopfzeile",
+            "primary": "Primär",
+            "pages": "Seiten",
+            "background": "Hintergrund",
+            "groups": "Gruppen",
+            "outline": "Umriss",
+            "sizings": "Größen",
+            "pagePadding": "Seitenabstand",
+            "groupGap": "Gruppenabstand",
+            "groupBorderRadius": "Gruppenrandradius",
+            "widgetGap": "Widget-Abstand",
+            "default": "Standard (48px)",
+            "comfortable": "Bequem (38px)",
+            "compact": "Kompakt (32px)",
+            "density": "Zeilenhöhe"
+        }
+    }
+}

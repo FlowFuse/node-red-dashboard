@@ -1,0 +1,48 @@
+{
+    "ui-form": {
+        "label": {
+            "dropdown": "Dropdown",
+            "group": "Gruppe",
+            "size": "Größe",
+            "width": "Breite",
+            "height": "Höhe",
+            "key": "Schlüssel",
+            "label": "Beschriftung",
+            "value": "Wert",
+            "labelPlaceholder": "optionale Beschriftung",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)",
+            "formElements": "Formularelemente",
+            "form": "Formular",
+            "dropdownOptions": "Dropdown-Optionen",
+            "type": "Typ",
+            "required": "Erforderlich",
+            "rows": "Zeilen",
+            "remove": "Entfernen",
+            "egLabel": "z.B. Option 1",
+            "egValue": "z.B. 1",
+            "text": "Text",
+            "multiline": "Mehrzeilig",
+            "number": "Nummer",
+            "email": "E-Mail",
+            "password": "Passwort",
+            "checkbox": "Kontrollkästchen",
+            "switch": "Schalter",
+            "date": "Datum",
+            "time": "Zeit",
+            "element": "Element",
+            "buttons": "Schaltflächen",
+            "submit": "Absenden",
+            "submitButtonText": "Absenden-Schaltflächentext",
+            "cancel": "Löschen",
+            "cancelButtonText": "Abbrechen-Schaltflächentext",
+            "topic": "Thema",
+            "msgTopicPlaceholder": "optional msg.thema",
+            "splitLayout": "Die Formularelemente in zwei Spalten anordnen",
+            "resetOnSubmit": "Formular beim Absenden zurücksetzen"
+        },
+        "tooltip": {
+            "dynamicProperty": "Dynamische Eigenschaft: Senden Sie msg.class, um neue Klassen zu diesem Widget hinzuzufügen. HINWEIS: Klassen, die zur Laufzeit festgelegt werden, werden zusätzlich zu den im Knotenfeld festgelegten Klassen angewendet."
+        }
+    }
+}

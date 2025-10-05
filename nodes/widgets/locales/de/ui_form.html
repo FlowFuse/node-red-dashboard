@@ -1,0 +1,68 @@
+<script type="text/html" data-help-name="ui-form">
+    <p>Fügt der Benutzeroberfläche ein Formular hinzu.</p>
+    <p>Hilft, mehrere Werte vom Benutzer beim Klicken auf die Schaltfläche "Senden" als Objekt in <code>msg.payload</code> zu sammeln.</p>
+    <p>Mehrere Eingabeelemente können mit der Schaltfläche "Elemente hinzufügen" hinzugefügt werden.</p>
+    <p>Jedes Element enthält folgende Komponenten:</p>
+    <ul>
+        <li> <b>Beschriftung</b> : Wert, der die Beschriftung des Elements in der Benutzeroberfläche sein wird</li>
+        <li> <b>Name</b> : Repräsentiert den Schlüssel (Variablennamen) in <code>msg.payload</code>, in dem der Wert des entsprechenden Elements vorhanden ist</li>
+        <li> <b>Typ</b> : Dropdown-Option zur Auswahl des Typs des Eingabeelements</li>
+        <li> <b>Erforderlich</b> : Beim Einschalten muss der Benutzer den Wert vor dem Absenden angeben</li>
+        <li> <b>Zeilen</b> : Anzahl der UI-Zeilen für mehrzeiligen Texteingang</li>
+        <li> <b>Löschen</b> : Um das aktuelle Element aus dem Formular zu entfernen</li>
+    </ul>
+    <p>Optional kann das <b>Thema</b>-Feld verwendet werden, um die <code>msg.topic</code>-Eigenschaft festzulegen.</p>
+    <p>Die Schaltfläche "Abbrechen" kann ausgeblendet werden, indem ihr Wert auf leer "" gesetzt wird.</p>
+    <p>Wenn Formularelemente vom Typ 'Dropdown' verwendet wurden, können die entsprechenden Dropdown-Optionen im zweiten Tabblatt angegeben werden.</p>
+    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
+    <dl class="message-properties">
+        <dt class="optional">label <span class="property-type">string</span></dt>
+        <dd>Die Beschriftung, die das Formular beschreibt.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">options <span class="property-type">array</span></dt>
+        <dd>Definieren Sie die Elemente des Formulars neu, indem Sie ein Array von Objekten übergeben, die die Elemente definieren, die Sie in Ihrem Formular sehen möchten.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">dropdownOptions <span class="property-type">array</span></dt>
+        <dd>Definieren Sie die Dropdown-Optionen des Formulars neu, indem Sie ein Array von Objekten übergeben, die die Optionen definieren, die Sie in Ihrem Dropdown sehen möchten.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">class <span class="property-type">string</span></dt>
+        <dd>Fügen Sie zur Laufzeit eine oder mehrere CSS-Klassen zum Formular hinzu.</dd>
+    </dl>
+    <h4>Formularelemente definieren (Optionen)</h4>
+    <p>
+        Wenn Sie die Konfiguration für Ihr `ui-form` überschreiben und Details Ihrer Elemente bereitstellen möchten, nachdem Ihr Node-RED-Flow bereitgestellt wurde, können Sie dies tun, indem Sie einen `msg.ui_update.options`-Wert übergeben. Dieser Wert sollte ein Array von Objekten sein, wobei jedes Objekt ein Formularelement darstellt. Jedes Objekt sollte die folgenden Eigenschaften haben:
+    </p>
+    <h5>Element: Text</h5>
+    <pre><code>{
+    "type": "text",
+    "label": "Name",
+    "key": "name",
+    "required": true
+}</code></pre>
+    <h5>Element: Mehrzeilig</h5>
+    <pre><code>{
+    "type": "multiline",
+    "label": "Name",
+    "key": "name",
+    "required": true,
+    "rows": 4
+}</code></pre>
+    <h5>Element: Passwort</h5>
+    <pre><code>{
+    "type": "password",
+    "label": "Passwort",
+    "key": "password",
+    "required": true
+}</code></pre>
+    <h5>Element: E-Mail</h5>
+    <pre><code>{
+    "type": "email",
+    "label": "E-Mail-Adresse",
+    "key": "email",
+    "required": true
+}</code></pre>
+</script>

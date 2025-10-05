@@ -34,7 +34,7 @@
                 <p :class="'status-' + status.type" v-html="status.msg" />
             </div>
         </div>
-        <PWABadge />
+        <PWABadge v-if="installable" />
     </v-app>
 </template>
 
@@ -59,7 +59,8 @@ export default {
     inject: ['$socket'],
     data () {
         return {
-            loading: true
+            loading: true,
+            installable: false
         }
     },
     head () {
@@ -70,10 +71,17 @@ export default {
             const id = dashboards.length ? dashboards[0] : undefined
             const dashboard = this.dashboards[id]
             if (dashboard.allowInstall) {
+                this.installable = true
                 links.push({
                     rel: 'manifest',
                     crossorigin: 'use-credentials',
                     href: './manifest.webmanifest'
+                })
+            } else {
+                this.installable = false
+                // Clear any existing service workers when PWA is disabled
+                this.$nextTick(() => {
+                    this.clearServiceWorkers()
                 })
             }
         }
@@ -301,6 +309,13 @@ export default {
             }
         })
     },
+    mounted () {
+        // pass postMessages to handler
+        window.addEventListener('message', this.handleMessage, false)
+    },
+    unmounted () {
+        window.removeEventListener('message', this.handleMessage, false)
+    },
     methods: {
         send: function () {
             this.$socket.emit('widget-action', '<node-id>', 'hello world')
@@ -312,6 +327,38 @@ export default {
         },
         reloadApp () {
             location.reload()
+        },
+        clearServiceWorkers () {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    for (const registration of registrations) {
+                        registration.unregister()
+                    }
+                }).catch(function (error) {
+                    console.error('Error unregistering service workers:', error)
+                })
+            }
+        },
+        handleMessage (event) {
+            // listen for post messages from the Node-RED editor in particular type: 'authorization', access_token, etc
+            if (event.origin !== window.location.origin) {
+                return // we only accept messages from the same origin
+            }
+            if (event.data?.type === 'authorization' && event.data?.access_token) {
+                // we have been sent an access token - store this in local storage under 'auth-tokens'
+                // so we can use it when sending "save page" requests back to Node-RED
+                let authTokens = {}
+                try {
+                    authTokens = JSON.parse(localStorage.getItem('auth-tokens')) || {}
+                } catch { /* ignore */ }
+
+                // ensure we have an object before updating it
+                if (!authTokens || typeof authTokens !== 'object') { authTokens = {} }
+                authTokens.access_token = event.data.access_token
+                authTokens.token_type = event.data.token_type || authTokens.token_type || 'Bearer'
+                authTokens.expires_in = event.data.expires_in || authTokens.expires_in || 3600
+                localStorage.setItem('auth-tokens', JSON.stringify(authTokens))
+            }
         }
     }
 }

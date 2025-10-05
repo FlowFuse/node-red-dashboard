@@ -1,0 +1,96 @@
+{
+    "ui-base": {
+        "auto": "auto",
+        "label": {
+            "uiName": "UI-Name",
+            "path": "Pfad",
+            "pathDisabledNote": "Diese Option ist derzeit deaktiviert und noch in Entwicklung.",
+            "appIcon": "App-Symbol",
+            "appIconNote": "Geben Sie hier die URL Ihres App-Symbols ein",
+            "category": "Dashboard 2",
+            "dashboard2": "Dashboard 2.0",
+            "editSettings": "Einstellungen bearbeiten",
+            "openDashboard": "Dashboard öffnen",
+            "layout": "Layout",
+            "layoutMessage": "Hier können Sie Ihre Widgets, Gruppen und Seiten neu anordnen und verschieben.",
+            "unattachedMessage": "Die folgenden Gruppen haben keine übergeordnete Seite definiert.",
+            "theming": "Theming",
+            "themingMessage": "Hier können Sie schnell auf Ihre UI-Themen zugreifen, die auf Ihrem Dashboard definiert sind.",
+            "constraints": "Client-Daten",
+            "spacer": "Abstandshalter",
+            "settings": "Einstellungen",
+            "header": "Header-Optionen",
+            "titleBarStyle": "Stil",
+            "titleBarStyleDefault": "Standard",
+            "titleBarStyleHidden": "Versteckt",
+            "titleBarStyleFixed": "Fest",
+            "sidebar": "Seitenleisten-Optionen",
+            "showPath": "Seitenpfad in Beschriftung einbeziehen",
+            "headerContent": "Inhalt",
+            "headerDashboard": "Dashboard-Name",
+            "headerPage": "Seitenname",
+            "headerDashboardPage": "Dashboard-Name (Seitenname)",
+            "headerNone": "Keine",
+            "navigationStyle": "Stil",
+            "navigationStyleDefault": "Einklappen (Standard)",
+            "navigationStyleFixed": "Fest",
+            "navigationStyleIcon": "Zu Symbolen einklappen",
+            "navigationStyleTemporary": "Über Inhalt erscheinen",
+            "navigationStyleNone": "Immer ausblenden",
+            "connectionNotifications": "Verbindungsbenachrichtigungen",
+            "showReconnect": "Benachrichtigung bei Wiederverbindung anzeigen",
+            "showDisconnect": "Benachrichtigung bei Trennung anzeigen",
+            "notificationDisplayTime": "Anzeigedauer der Benachrichtigung (Sekunden)",
+            "myDashboard": "Mein Dashboard",
+            "myGroup": "Meine Gruppe",
+            "empty": "leer"
+        },
+        "layout": {
+            "pages": "Seiten",
+            "page": "Seite",
+            "link": "Link",
+            "groups": "Gruppen",
+            "group": "Gruppe",
+            "addGroup": "Gruppe hinzufügen",
+            "edit": "Bearbeiten",
+            "layoutEditor": "Layout-Editor",
+            "focus": "Fokus",
+            "collapse": "Einklappen",
+            "expand": "Erweitern",
+            "delete": "Löschen",
+            "spacer": "Abstandshalter hinzufügen",
+            "unattachedGroups": "Nicht zugeordnete Gruppen"
+        },
+        "themes": {
+            "header": "Themen",
+            "theme": "Thema",
+            "defaultTheme": "Standardthema"
+        },
+        "colors": {
+            "light": "var(--nrdb-node-light)",
+            "medium": "var(--nrdb-node-medium)",
+            "dark": "var(--nrdb-node-dark)",
+            "darkest": "var(--nrdb-node-darkest)"
+        },
+        "error": {
+            "layoutEditor": "Layout-Editor konnte nicht gestartet werden"
+        },
+        "action": {
+            "hide": "Ausblenden",
+            "show": "Anzeigen",
+            "disable": "Deaktivieren",
+            "enable": "Aktivieren"
+        },
+        "clientConstraints": {
+            "description": "Dieser Tab ermöglicht es Ihnen zu steuern, ob client-spezifische Daten in Nachrichten enthalten sind und welche Knoten sie akzeptieren, um die Kommunikation auf bestimmte Clients zu beschränken.",
+            "readMore": "Mehr erfahren",
+            "syncDescription": "Dies wird auch verwendet, um die Synchronisierung zwischen Clients zu deaktivieren, was bedeutet, dass Widgets ihre Werte automatisch über mehrere Client-Verbindungen hinweg aktualisieren, z.B. das Umschalten eines Schalters in einem Client wird auch alle anderen Clients aktualisieren.",
+            "includeClientData": "Client-Daten einbeziehen",
+            "includeClientDataHelp": "Diese Option umfasst Client-Daten in allen von Dashboard 2.0 übertragenen Nachrichten (z.B. Socket-ID und Informationen über einen angemeldeten Benutzer)",
+            "clientDataProviders": "Client-Datenanbieter:",
+            "acceptClientData": "Client-Daten akzeptieren",
+            "acceptClientDataHelp": "Definiert, ob der jeweilige Knotentyp Client-Daten (z.B. socketid) verwenden wird und die Kommunikation nur auf diesen Client beschränkt.",
+            "socketId": "Socket-ID"
+        }
+    }
+}

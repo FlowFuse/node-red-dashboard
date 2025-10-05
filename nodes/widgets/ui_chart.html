@@ -207,6 +207,7 @@
 
                 // Allowable "X-Axis Type" choices for chart type
                 // line     : time, linear, categorical
+                // area     : time, linear
                 // bar      : categorical (or just hide)
                 // scatter  : time, linear
                 // pie      : radial
@@ -330,7 +331,7 @@
                     const interpolationWrapper = $('#interpolation-wrapper')
                     interpolationWrapper.hide()
 
-                    if (value === 'line' || value === 'scatter') {
+                    if (value === 'line' || value === 'scatter' || value === 'area') {
                         // for line and scatter
                         // types - time, linear
                         const xAxisTypeOptions = value === 'line' ? ['time', 'linear', 'category'] : ['time', 'linear']
@@ -541,6 +542,7 @@
             <label for="node-input-chartType"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-chart.label.type"></span></label>
             <select id="node-input-chartType">
                 <option value="line" data-i18n="ui-chart.label.line"></option>
+                <option value="area" data-i18n="ui-chart.label.area"></option>
                 <option value="bar" data-i18n="ui-chart.label.bar"></option>
                 <option value="scatter" data-i18n="ui-chart.label.scatter"></option>
                 <option value="pie" data-i18n="ui-chart.label.pie"></option>
