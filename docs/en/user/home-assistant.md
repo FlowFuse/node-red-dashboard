@@ -1,16 +1,16 @@
-# Running Node-RED within Home Assistant
+# Running Node-RED with Home Assistant
 
-Node-RED can be integrated with Home Assistant (**HA**) in 2 ways:
-- Running Node-RED on an external host, and connecting to the HA server via HTTP messaging or the `node-red-contrib-home-assistant-websocket` node-set 
-- Using the internal Node-RED add-on within HA, which by default is part of the HA installation
+Node-RED can be integrated with Home Assistant (**HA**) in 2 modes:
+1. Running Node-RED on an separate host, and connecting to the HA server via HTTP messaging or the `node-red-contrib-home-assistant-websocket` node-set 
+2. Using the internal Node-RED add-on within HA, which comes by default as part of the HA installation
 
-### Configuring Node-RED dashboard 2.0 in Home Assistant
+### Configuring FlowFuse Dashboard (Node-RED dashboard 2.0) in Home Assistant
 
-As of today, the Node-RED add-on within HA includes the Node-RED dashboard 1.0 nodes (`node-red-dashboard`), and exposes its URL (`.../ui`). However, Node-RED Dashboard 1.0 is now deprecated and replaced has been replaced by FlowFuse Dashboard. 
+As of today, the Node-RED add-on within HA includes the Node-RED dashboard 1.0 nodes (`node-red-dashboard`), and exposes its base URL (`.../ui`). However, Node-RED Dashboard 1.0 is now deprecated and has been replaced by FlowFuse Dashboard. 
 
-Following are instructions for installing & configuring FlowFuse Dashboard into the Node-RED add-on in HA
+Below are guidelines for installing & configuring FlowFuse Dashboard in the Node-RED add-on within HA
 
-1. Within the Node-RED add-on, install the FlowFuse Dashboard nodes (`@flowfuse/node-red-dashboard`) via the "Manage Palette" option.
+1. Within the Node-RED add-on, install the FlowFuse Dashboard node-set (`@flowfuse/node-red-dashboard`) using the "Manage Palette" option.
 
 2. Create a new iframe container for hosting the FlowFuse Dashboard clients:
 - In HA, go to **Settings->Dashboards->Add dashboard**, select **Webpage**
@@ -20,7 +20,8 @@ Following are instructions for installing & configuring FlowFuse Dashboard into 
 - Set the URL of the dashboard, e.g. `<HA host>:1880/endpoint/dashboard`
 
 ![Image](https://github.com/user-attachments/assets/9815d378-ca6c-458c-8de4-33b40934bd05)
-- Set the iframe a title & optional icon (which will show in the HA sidebar), and click **Create**
+
+- Set the iframe title & optional icon (which will show in the HA sidebar), and click **Create**
 
 ![Image](https://github.com/user-attachments/assets/38428345-cac0-4be7-b1fc-33c741c2db95)
 
