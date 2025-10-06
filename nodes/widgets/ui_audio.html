@@ -169,8 +169,12 @@
                 }
             },
             oneditsave: function () {
-                if ($('#node-input-mode').val() === 'tts') {
+                this.mode = $('#node-input-mode').val() || 'src'
+                if (this.mode === 'tts') {
                     this.voice = document.getElementById('node-input-voice').value || ''
+                    $('#node-input-group').val('_ADD_')
+                } else if (this.mode === 'src') {
+                    $('#node-input-ui').val('_ADD_')
                 }
             }
         })
