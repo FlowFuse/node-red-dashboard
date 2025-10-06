@@ -1,10 +1,30 @@
 <script type="text/javascript">
     (function () {
+        let voices;
+        const i18n = (id, def, scope) => {
+            scope = scope || 'ui-audio'
+            const path = `@flowfuse/node-red-dashboard/${scope}:${id}`
+            const text = RED._(path)
+            return (text === id ? def : text) || def || id
+        }
         RED.nodes.registerType('ui-audio', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.medium'),
             defaults: {
-                group: { type: 'ui-group', required: true },
+                group: {
+                    type: 'ui-group',
+                    validate: function (v) {
+                        const mode = $('#node-input-mode').val() || this.mode || 'src'
+                        return mode === 'tts' ? true : (v !== null && v !== undefined && v !== '')
+                    }
+                },
+                ui: {
+                    type: 'ui-base',
+                    validate: function (v) {
+                        const mode = $('#node-input-mode').val() || this.mode || 'src'
+                        return mode === 'tts' ? (v !== null && v !== undefined && v !== '') : true
+                    }
+                },
                 name: { value: '' },
                 order: { value: 0 },
                 width: {
@@ -19,6 +39,8 @@
                     }
                 },
                 height: { value: 0 },
+                mode: { value: 'src' }, // src or tts
+                voice: { value: '' }, // empty string means default browser voice
                 src: { value: '' },
                 autoplay: { value: 'off' },
                 loop: { value: 'off' },
@@ -31,25 +53,15 @@
             paletteLabel: 'audio',
             label: function () { return this.name },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
-            oneditprepare: function () {
-                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
-                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
-                if (RED.nodes.subflow(this.z)) {
-                    // change inputs from hidden to text & display them
-                    $('#node-input-width').attr('type', 'text')
-                    $('#node-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
-                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
-                } else {
-                    // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
-                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
-                    $('#node-input-size').elementSizer({
-                        width: '#node-input-width',
-                        height: '#node-input-height',
-                        group: '#node-input-group'
-                    })
+            onpaletteadd: function() {
+                console.log('ui-audio onpaletteadd')
+                if ('speechSynthesis' in window) {
+                    voices = window.speechSynthesis.getVoices()
                 }
+            },
+            oneditprepare: function () {
+                console.log('ui-audio oneditprepare')
+                const node = this
 
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
                 $('.ui-node-popover-title').tooltip({
@@ -58,6 +70,89 @@
                         delay: 150
                     }
                 })
+
+               // in-place upgrade - ensure mode is set
+               if (this.mode !== 'src' && this.mode !== 'tts') {
+                   this.mode = 'src'
+                   $('#node-input-mode').val('src')
+                }
+
+                // Watch for changes to the mode and show/hide relevant fields
+                const showHideFields = () => {
+                    const mode = $('#node-input-mode').val() || 'src'
+
+                    if (mode === 'src') {
+                        $('.ui-audio-mode-tts').hide()
+                        $('.ui-audio-mode-src').show()
+                        // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                        // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                        if (RED.nodes.subflow(this.z)) {
+                            // change inputs from hidden to text & display them
+                            $('#node-input-width').attr('type', 'text')
+                            $('#node-input-height').attr('type', 'text')
+                            $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                            $('div.form-row.nr-db-ui-element-show-in-subflow').show()
+                        } else {
+                            // not in a subflow, use the elementSizer
+                            $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                            $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
+                            $('#node-input-size').elementSizer({
+                                width: '#node-input-width',
+                                height: '#node-input-height',
+                                group: '#node-input-group'
+                            })
+                        }
+                    } else if (mode === 'tts') {
+                        $('.ui-audio-mode-tts').show()
+                        $('.ui-audio-mode-src').hide()
+                        // clear group to remove it from the dashboard sidebar tree
+                        $('#node-input-group').val('')
+                    }
+                }
+
+                $('#node-input-mode').on('change', () => {
+                    showHideFields()
+                })
+                showHideFields()
+
+                const listEl = document.getElementById("node-input-voice")
+                if ('speechSynthesis' in window) {
+                    voices = window.speechSynthesis.getVoices();
+                    let selectedVoiceURI = null
+                    let defaultIndex = null
+                    const browserDefaultOption = document.createElement('option')
+                    browserDefaultOption.textContent = i18n('label.browser-default-voice', 'Browser Default')
+                    browserDefaultOption.setAttribute('value', '')
+                    if (node.voice === '') {
+                        browserDefaultOption.setAttribute('selected', 'selected')
+                        selectedVoiceURI = ''
+                    }
+                    while (listEl.firstChild) {
+                        listEl.removeChild(listEl.firstChild)
+                    }
+                    listEl.appendChild(browserDefaultOption)
+                    for (let i = 0; i < voices.length ; i++) {
+                        const option = document.createElement('option')
+                        option.textContent = i + " : " + voices[i].name + ' (' + voices[i].lang + ')'
+                        if (voices[i].default) { option.textContent += ' -- DEFAULT' }
+                        option.setAttribute('value', voices[i].voiceURI)
+                        if (voices[i].voiceURI === node.voice) {
+                            option.setAttribute('selected', 'selected')
+                            selectedIndex = i
+                            selectedVoiceURI = voices[i].voiceURI
+                        }
+                        listEl.appendChild(option)
+                    }
+                    if (selectedVoiceURI === null && voices.length > 0) {
+                        // select "browser default" option
+                        listEl.children[0].setAttribute('selected', 'selected')
+                    }
+                }
+            },
+            oneditsave: function () {
+                if ($('#node-input-mode').val() === 'tts') {
+                    this.voice = document.getElementById("node-input-voice").value || ''
+                }
             }
         })
     })()
@@ -65,53 +160,77 @@
 
 <script type="text/html" data-template-name="ui-audio">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name">Name</span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <div class="form-row">
-        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-audio.label.group"></label>
+        <label for="node-input-mode"><i class="fa fa-volume-up"></i> <span data-i18n="ui-audio.label.mode">Mode</span></label>
+        <select id="node-input-mode" style="width:70%">
+            <option value="src" data-i18n="ui-audio.option.src">Audio Player</option>
+            <option value="tts" data-i18n="ui-audio.option.tts">Text-to-Speech</option>
+        </select>
+    </div>
+    <div class="form-row ui-audio-mode-tts" style="display: none;">
+        <label for="node-input-ui"><i class="fa fa-bookmark"></i> <span data-i18n="ui-event.label.ui">UI</span></label>
+        <input type="text" id="node-input-ui">
+    </div>
+    <div class="form-row ui-audio-mode-tts" style="display: none;">
+        <label for="node-input-voice"><i class="fa fa-language"></i> <span data-i18n="ui-audio.label.voice">TTS Voice</span></label>
+        <select id="node-input-voice" style="width:70%"></select>
+    </div>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-audio.label.group">Group</span></label>
         <input type="text" id="node-input-group">
     </div>
-    <div class="form-row nr-db-ui-element-hide-in-subflow">
-        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
+    <div class="form-row nr-db-ui-element-hide-in-subflow ui-audio-mode-src">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</span></label>
         <button class="editor-button" id="node-input-size"></button>
     </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow ui-audio-mode-src">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</span></label>
         <input type="hidden" id="node-input-width">
     </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow ui-audio-mode-src">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</span></label>
         <input type="hidden" id="node-input-height">
     </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+    <div class="form-row nr-db-ui-element-show-in-subflow ui-audio-mode-src">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</span></label>
         <input type="text" id="node-input-order">
     </div>
-    <div class="form-row">
-        <label for="node-input-src"><i class="fa fa-globe"></i> <span data-i18n="ui-audio.label.source"></label>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-src"><i class="fa fa-globe"></i> <span data-i18n="ui-audio.label.source"></span>Source</label>
         <input type="text" id="node-input-src">
     </div>
-    <div class="form-row">
-        <label for="node-input-autoplay"><i class="fa fa-play-circle"></i> <span data-i18n="ui-audio.label.autoplay"></label>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-autoplay"><i class="fa fa-play-circle"></i> <span data-i18n="ui-audio.label.autoplay">Autoplay</span></label>
         <select id="node-input-autoplay" style="width:70%;">
-            <option value="on" data-i18n="ui-audio.option.on"></option>
-            <option value="off" data-i18n="ui-audio.option.off"></option>
+            <option value="on" data-i18n="ui-audio.option.on">On</option>
+            <option value="off" data-i18n="ui-audio.option.off">Off</option>
         </select>
     </div>
-    <div class="form-row">
-        <label for="node-input-loop"><i class="fa fa-retweet"></i> <span data-i18n="ui-audio.label.loop"></label>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-loop"><i class="fa fa-retweet"></i> <span data-i18n="ui-audio.label.loop">Loop</span></label>
         <select id="node-input-loop" style="width:70%;">
-            <option value="on" data-i18n="ui-audio.option.on"></option>
-            <option value="off" data-i18n="ui-audio.option.off"></option>
+            <option value="on" data-i18n="ui-audio.option.on">On</option>
+            <option value="off" data-i18n="ui-audio.option.off">Off</option>
         </select>
     </div>
-    <div class="form-row">
-        <label for="node-input-muted"><i class="fa fa-volume-up"></i> <span data-i18n="ui-audio.label.muted"></label>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-muted"><i class="fa fa-volume-up"></i> <span data-i18n="ui-audio.label.muted">Muted</span></label>
         <select id="node-input-muted" style="width:70%;">
-            <option value="on" data-i18n="ui-audio.option.on"></option>
-            <option value="off" data-i18n="ui-audio.option.off"></option>
+            <option value="on" data-i18n="ui-audio.option.on">On</option>
+            <option value="off" data-i18n="ui-audio.option.off">Off</option>
         </select>
     </div>
-    <div class="form-tips"><b>Note</b>: Autoplay will only work after a user gesture (e.g. click on the dashboard).</span></div>
+    <div class="form-tips ui-audio-mode-src"><span data-i18n="ui-audio.label.mode-tip-src">Autoplay will only work after a user gesture (e.g. click on the dashboard).</span></div>
+    <div class="form-tips ui-audio-mode-tts"><span data-i18n="ui-audio.label.mode-tip-tts">Text-to-Speech will only work after a user gesture (e.g. click on the dashboard).</span></div>
 </script>
+
+<style>
+    #dialog-form > div.form-tips.ui-audio-mode-src,
+    #dialog-form > div.form-tips.ui-audio-mode-tts {
+        max-width: unset;
+        font-size: 0.9em;
+    }
+</style>
