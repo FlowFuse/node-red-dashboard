@@ -3,16 +3,25 @@
         "label": {
             "group": "Gruppe",
             "size": "Größe",
+            "width": "Breite",
+            "height": "Höhe",
             "icon": "Symbol",
             "source": "Quelle",
             "autoplay": "Automatisch abspielen",
             "loop": "Schleife",
             "muted": "Stumm",
-            "note": "<b>Hinweis</b>: Die automatische Wiedergabe funktioniert nur, nachdem eine Benutzergeste (z.B. Klick auf das Dashboard) vorgenommen wurde."
+            "mode-tip-src": "Die automatische Wiedergabe funktioniert nur nach einer Benutzergeste (z. B. Klicken auf das Dashboard).",
+            "mode-tip-tts": "Die Text-zu-Sprache-Funktion funktioniert nur nach einer Benutzergeste (z. B. Klicken auf das Dashboard).",
+            "mode": "Modus",
+            "voice": "Stimme",
+            "ui": "UI",
+            "browser-default-voice": "Standard-Browserstimme"
         },
         "option": {
             "on": "Ein",
-            "off": "Aus"
+            "off": "Aus",
+            "src": "Audioplayer",
+            "tts": "Text-zu-Sprache"
        }
     }
 }

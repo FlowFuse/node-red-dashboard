@@ -3,15 +3,25 @@
         "label": {
             "group": "Group",
             "size": "Size",
+            "width": "Width",
+            "height": "Height",
             "icon": "Icon",
             "source": "Source",
             "autoplay": "Autoplay",
             "loop": "Loop",
-            "muted": "Muted"
+            "muted": "Muted",
+            "mode-tip-src": "Autoplay only works after a user gesture (e.g. clicking on the dashboard).",
+            "mode-tip-tts": "Text-to-speech only works after a user gesture (e.g. clicking on the dashboard).",
+            "mode": "Mode",
+            "voice": "Voice",
+            "ui": "UI",
+            "browser-default-voice": "Browser Default Voice"
         },
         "option": {
             "on": "On",
-            "off": "Off"
+            "off": "Off",
+            "src": "Audio Player",
+            "tts": "Text-to-Speech"
        }
     }
 }
