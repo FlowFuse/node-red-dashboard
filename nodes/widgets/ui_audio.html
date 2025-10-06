@@ -1,6 +1,6 @@
 <script type="text/javascript">
     (function () {
-        let voices;
+        let voices
         const i18n = (id, def, scope) => {
             scope = scope || 'ui-audio'
             const path = `@flowfuse/node-red-dashboard/${scope}:${id}`
@@ -53,7 +53,7 @@
             paletteLabel: 'audio',
             label: function () { return this.name },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
-            onpaletteadd: function() {
+            onpaletteadd: function () {
                 console.log('ui-audio onpaletteadd')
                 if ('speechSynthesis' in window) {
                     voices = window.speechSynthesis.getVoices()
@@ -71,10 +71,10 @@
                     }
                 })
 
-               // in-place upgrade - ensure mode is set
-               if (this.mode !== 'src' && this.mode !== 'tts') {
-                   this.mode = 'src'
-                   $('#node-input-mode').val('src')
+                // in-place upgrade - ensure mode is set
+                if (this.mode !== 'src' && this.mode !== 'tts') {
+                    this.mode = 'src'
+                    $('#node-input-mode').val('src')
                 }
 
                 // Watch for changes to the mode and show/hide relevant fields
@@ -115,11 +115,10 @@
                 })
                 showHideFields()
 
-                const listEl = document.getElementById("node-input-voice")
+                const listEl = document.getElementById('node-input-voice')
                 if ('speechSynthesis' in window) {
-                    voices = window.speechSynthesis.getVoices();
+                    voices = window.speechSynthesis.getVoices()
                     let selectedVoiceURI = null
-                    let defaultIndex = null
                     const browserDefaultOption = document.createElement('option')
                     browserDefaultOption.textContent = i18n('label.browser-default-voice', 'Browser Default')
                     browserDefaultOption.setAttribute('value', '')
@@ -131,14 +130,13 @@
                         listEl.removeChild(listEl.firstChild)
                     }
                     listEl.appendChild(browserDefaultOption)
-                    for (let i = 0; i < voices.length ; i++) {
+                    for (let i = 0; i < voices.length; i++) {
                         const option = document.createElement('option')
-                        option.textContent = i + " : " + voices[i].name + ' (' + voices[i].lang + ')'
+                        option.textContent = i + ' : ' + voices[i].name + ' (' + voices[i].lang + ')'
                         if (voices[i].default) { option.textContent += ' -- DEFAULT' }
                         option.setAttribute('value', voices[i].voiceURI)
                         if (voices[i].voiceURI === node.voice) {
                             option.setAttribute('selected', 'selected')
-                            selectedIndex = i
                             selectedVoiceURI = voices[i].voiceURI
                         }
                         listEl.appendChild(option)
@@ -151,7 +149,7 @@
             },
             oneditsave: function () {
                 if ($('#node-input-mode').val() === 'tts') {
-                    this.voice = document.getElementById("node-input-voice").value || ''
+                    this.voice = document.getElementById('node-input-voice').value || ''
                 }
             }
         })
