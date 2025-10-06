@@ -1,6 +1,6 @@
 {
     "name": "@flowfuse/node-red-dashboard",
-    "version": "1.28.0",
+    "version": "1.29.0",
     "description": "FlowFuse Dashboard - A collection of Node-RED nodes that provide functionality to build your own UI applications (inc. forms, buttons, charts).",
     "keywords": [
         "node-red"
@@ -60,7 +60,7 @@
     },
     "dependencies": {
         "acorn": "^8.14.1",
-        "axios": "^1.8.4",
+        "axios": "^1.12.2",
         "core-js": "^3.41.0",
         "d3": "^7.9.0",
         "echarts": "^6.0.0",
@@ -156,10 +156,12 @@
         }
     },
     "overrides": {
-        "node-red-node-test-helper": {
-            "semver": "^7.5.4"
+        "node-red-admin@4.1.1": {
+            "axios": "^1.12.2"
         },
-        "esbuild": ">=0.25.0",
+        "nise@5.1.9": {
+            "path-to-regexp": "6.3.0"
+        },
         "cross-spawn": "~7.0.5"
     }
 }
