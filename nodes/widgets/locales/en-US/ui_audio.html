@@ -1,11 +1,53 @@
 <script type="text/html" data-help-name="ui-audio">
-    <p>
-        Plays an audio file in the dashboard.
-    </p>
-    <p>
-        Each received <code>msg.payload</code> will contain a new source, i.e. a new audio file url.
-    </p>
-    <h3>Properties</h3>
+    <div>
+        <h5><i class="fa fa-volume-up"></i> Mode: Audio Player</h5>
+        <div style="margin-left: 16px;">
+            <p>When mode is set to Audio Player, it plays the audio specified.</p>
+            <p>Each received <code>msg.payload</code> will contain a new source, i.e. a new audio file url.</p>
+        </div>
+        <h5><i class="fa fa-volume-up"></i> Mode: Text-to-Speech</h5>
+        <div style="margin-left: 16px;">
+            <p>
+                When mode is set to Text-to-Speech, it plays text-to-speech audio using the Web Speech API (requires browser support).
+            </p>
+            Accepted formats for <code>msg.payload</code>:
+            <ul>
+                <li><code>string</code>: the text to be spoken</li>
+                <li><code>object</code>: an object containing additional parameters (see below)</li>
+            </ul>
+
+            <b>Object format</b>: an object containing <code>text</code> and optionally, any of the following properties:
+            <ul>
+                <li><code>text</code>: the text to speak (REQUIRED)</li>
+                <li><code>lang</code>: language code e.g. "en-US", "en-GB", "de-DE", "fr-FR", etc (optional: defaults to browser language)</li>
+                <li><code>voice</code>: index of the voice or the name of the voice to use (optional: defaults to selected voice)</li>
+                <li><code>rate</code>: speed of the speech <code>0.1</code> to <code>10</code> (optional: defaults to <code>1</code>)</li>
+                <li><code>pitch</code>: pitch of the speech <code>0</code> to <code>2</code> (optional: defaults to <code>1</code>)</li>
+                <li><code>volume</code>: volume of the speech <code>0</code> to <code>100</code> (optional: defaults to <code>100</code>)</li>
+                <li><code>interrupt</code>: if set to <code>true</code>, it will stop any ongoing speech and start the new one immediately (optional: defaults to <code>true</code>)</li>
+                <li><code>queue</code>: if set to <code>true</code>, it will queue the new speech and play it after the current one finishes (optional: defaults to <code>false</code>)</li>
+            </ul>
+            <p>Example object payload:</p>
+            <pre class="nr-db-audio-help-pre"><code>{
+    "text": "Hello, world!",
+    "lang": "en-US",
+    "voice": 0,
+    "rate": 0.9,
+    "pitch": 1.2,
+    "volume": 88,
+    "interrupt": true,
+    "queue": false
+}</code></pre>
+        </div>
+        <p>In either mode, you can also send a <code>msg.playback</code> property to control playback:</p>
+        <ul>
+            <li><code>msg.playback = 'play'</code>: starts or resumes playback. Note: in TTS mode, only resume is supported</li>
+            <li><code>msg.playback = 'pause'</code>: pauses playback</li>
+            <li><code>msg.playback = 'stop'</code>: stops playback</li>
+        </ul>
+        <p>NOTE: When <code>msg.playback</code> is used, the payload is ignored.</p>
+    </div>
+    <h3>Properties [Audio Player Mode Only]</h3>
     <dl class="message-properties">
         <dt>Source <span class="property-type">string</span></dt>
         <dd>The source is the url where the audio file can be fetched.</dd>
@@ -16,7 +58,7 @@
         <dt>Muted <span class="property-type">list</span></dt>
         <dd>Specify whether the audio should be muted.</dd>
     </dl>
-    <h3>Dynamic Properties (Inputs)</h3>
+    <h3>Dynamic Properties (Inputs) [Audio Player Mode Only]</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
     <dl class="message-properties">
         <dt class="optional">src<span class="property-type">string</span></dt>
@@ -29,3 +71,13 @@
         <dd>Override the configured muted setting.</dd>
     </dl>
 </script>
+
+<style type="text/css">
+div.red-ui-help pre.nr-db-audio-help-pre {
+    overflow-x: auto;
+}
+div.red-ui-help pre.nr-db-audio-help-pre > code {
+    white-space: pre;
+    font-size: small;
+}
+</style>

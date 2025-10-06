@@ -73,7 +73,13 @@ The following details a direct comparison of all properties available on each no
 
 <MigrationWidgetProfile :profile="widgets['ui_audio']" />
 
-You can track progress, and input thoughts and ideas on this here: [Widget: Audio #52](https://github.com/FlowFuse/node-red-dashboard/issues/52)
+The ui-audio widget has now been migrated. In FlowFuse Dashboard the node has two distinct modes - Audio Player and Text-to-Speech (TTS).
+
+In Audio Player mode, a `group` property is present, so that an audio player can be rendered in a group.
+
+In TTS mode, the `group` property is no longer required, and has been replaced with a `ui` property, which defines which `ui-page` this widget will be rendered on.
+
+Refer to the [ui-audio documentation](/en/nodes/widgets/ui-audio.html) and the nodes built-in help for more details.
 
 ### `ui_button`
 

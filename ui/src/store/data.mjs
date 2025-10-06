@@ -8,7 +8,9 @@ import { getDeepValue } from '../util.mjs'
 const state = () => ({
     values: {},
     messages: {},
-    properties: {}
+    properties: {},
+    /** @type {SpeechSynthesisVoice[]} */
+    voices: []
 })
 
 const mutations = {
@@ -55,6 +57,16 @@ const mutations = {
             const points = data.points
             state.messages[widgetId] = state.messages[widgetId]?.slice(-points)
         }
+    },
+
+    /**
+     * Set the available speech synthesis voices
+     * @param {*} state
+     * @param {SpeechSynthesisVoice[]} voices
+     */
+    setVoices (state, voices) {
+        console.log('Mutating voices', voices)
+        state.voices = voices
     }
 
 }
@@ -68,6 +80,11 @@ const getters = {
     getMsgProperty: (state) => (widgetId, path, defaultValue) => {
         const msg = state.messages[widgetId] || {}
         return getDeepValue(msg, path, defaultValue)
+    },
+    // get voices
+    voices: (state) => {
+        console.log('Getting voices', state.voices)
+        return { voices: state.voices }
     }
 }
 

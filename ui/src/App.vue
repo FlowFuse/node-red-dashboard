@@ -312,11 +312,26 @@ export default {
     mounted () {
         // pass postMessages to handler
         window.addEventListener('message', this.handleMessage, false)
+        this.loadVoices()
     },
     unmounted () {
         window.removeEventListener('message', this.handleMessage, false)
     },
     methods: {
+        loadVoices () {
+            // speechSynthesis.getVoices() may return empty initially, so listen for 'voiceschanged'
+            const self = this
+            if (!('speechSynthesis' in window)) {
+                console.warn('No speech synthesis support in this browser')
+                return
+            }
+            const updateVoices = () => {
+                const voices = window.speechSynthesis.getVoices()
+                self.$store.commit('data/setVoices', voices)
+            }
+            window.speechSynthesis.addEventListener('voiceschanged', updateVoices)
+            updateVoices()
+        },
         send: function () {
             this.$socket.emit('widget-action', '<node-id>', 'hello world')
         },

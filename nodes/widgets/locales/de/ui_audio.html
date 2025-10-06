@@ -1,11 +1,64 @@
 <script type="text/html" data-help-name="ui-audio">
-    <p>
-        Spielt eine Audiodatei im Dashboard ab.
-    </p>
-    <p>
-        Jedes empfangene <code>msg.payload</code> enthält eine neue Quelle, d.h. eine neue Audio-Datei-URL.
-    </p>
-    <h3>Eigenschaften</h3>
+    <div>
+        <h5><i class="fa fa-volume-up"></i> Modus: Audioplayer</h5>
+        <div style="margin-left: 16px;">
+            <p>Wenn der Modus auf „Audioplayer“ eingestellt ist, wird die angegebene Audiodatei abgespielt.</p>
+            <p>Jede empfangene <code>msg.payload</code> enthält eine neue Quelle, d. h. eine neue Audiodatei-URL.</p>
+        </div>
+        <h5><i class="fa fa-volume-up"></i> Modus: Text-to-Speech</h5>
+        <div style="margin-left: 16px;">
+            <p>
+                Wenn der Modus auf „Text-to-Speech“ eingestellt ist, wird Text-to-Speech-Audio über die Web Speech API
+                abgespielt (Browserunterstützung erforderlich).
+            </p>
+            Akzeptierte Formate für <code>msg.payload</code>:
+            <ul>
+                <li><code>string</code>: der zu sprechende Text</li>
+                <li><code>object</code>: ein Objekt mit zusätzlichen Parametern (siehe unten)</li>
+            </ul>
+
+            <b>Objektformat</b>: ein Objekt mit <code>text</code> und optional, einer der folgenden Eigenschaften:
+            <ul>
+                <li><code>text</code>: der zu sprechende Text (ERFORDERLICH)</li>
+                <li><code>lang</code>: Sprachcode, z. B. "en-US", "en-GB", "de-DE", "fr-FR", etc (optional: Standardeinstellung ist die Browsersprache)</li>
+                <li><code>voice</code>: Index der zu verwendenden Stimme oder Name der Stimme (optional: Standardeinstellung
+                    ist die ausgewählte Stimme)</li>
+                <li><code>rate</code>: Geschwindigkeit der Rede <code>0,1</code> bis <code>10</code> (optional:
+                    Standardeinstellung ist <code>1</code>)</li>
+                <li><code>pitch</code>: Tonhöhe der Rede <code>0</code> bis <code>2</code> (optional: Standardeinstellung
+                    ist <code>1</code>)</li>
+                <li><code>volume</code>: Lautstärke der Rede <code>0</code> bis <code>100</code> (optional:
+                    Standardeinstellung ist <code>100</code>)</li>
+                <li><code>interrupt</code>: Wenn diese Option auf <code>true</code> gesetzt ist, wird die laufende Rede
+                    unterbrochen und sofort mit der neuen begonnen (optional: Standardeinstellung ist <code>true</code>)
+                </li>
+                <li><code>queue</code>: Wenn <code>true</code> gesetzt ist, wird die neue Sprache in die Warteschlange
+                    gestellt und nach dem Ende der aktuellen abgespielt (optional: Standardwert ist <code>false</code>).
+                </li>
+            </ul>
+            <p>Beispiel für eine Objektnutzlast:</p>
+            <pre class="nr-db-audio-help-pre"><code>{
+    "text": "Hallo Welt!",
+    "lang": "en-US",
+    "voice": 0,
+    "rate": 0,9,
+    "pitch": 1,2,
+    "volume": 88,
+    "interrupt": true,
+    "queue": false
+}</code></pre>
+        </div>
+        <p>In beiden Modi können Sie auch eine <code>msg.playback</code>-Eigenschaft senden, um die Wiedergabe zu steuern:
+        </p>
+        <ul>
+            <li><code>msg.playback = 'play'</code>: Startet oder setzt die Wiedergabe fort. Hinweis: Im TTS-Modus wird nur
+                die Fortsetzung unterstützt.</li>
+            <li><code>msg.playback = 'pause'</code>: Pausiert die Wiedergabe.</li>
+            <li><code>msg.playback = 'stop'</code>: Stoppt die Wiedergabe.</li>
+        </ul>
+        <p>HINWEIS: Bei Verwendung von <code>msg.playback</code> wird die Nutzlast ignoriert.</p>
+    </div>
+    <h3>Eigenschaften [Nur Audioplayer-Modus]</h3>
     <dl class="message-properties">
         <dt>Quelle <span class="property-type">string</span></dt>
         <dd>Die Quelle ist die URL, unter der die Audiodatei abgerufen werden kann.</dd>
@@ -16,7 +69,7 @@
         <dt>Stumm <span class="property-type">Liste</span></dt>
         <dd>Geben Sie an, ob die Audiodatei stummgeschaltet werden soll.</dd>
     </dl>
-    <h3>Dynamische Eigenschaften (Eingaben)</h3>
+    <h3>Dynamische Eigenschaften (Eingaben) [Nur Audioplayer-Modus]</h3>
     <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
     <dl class="message-properties">
         <dt class="optional">src<span class="property-type">string</span></dt>
