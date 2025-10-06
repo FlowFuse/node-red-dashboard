@@ -13,16 +13,39 @@
             defaults: {
                 group: {
                     type: 'ui-group',
-                    validate: function (v) {
-                        const mode = $('#node-input-mode').val() || this.mode || 'src'
-                        return mode === 'tts' ? true : (v !== null && v !== undefined && v !== '')
+                    validate: function () {
+                        const tempScope = ($('#node-input-mode').val() !== undefined) ? $('#node-input-mode').val() : this.mode || 'src'
+                        const groupVal = ($('#node-input-group').val() !== undefined) ? $('#node-input-group').val() : this.group
+
+                        if (tempScope !== 'src') {
+                            return true
+                        }
+
+                        if (tempScope === 'src') {
+                            if (!!groupVal && groupVal !== '_ADD_') {
+                                return true
+                            }
+                        }
+                        return false
                     }
+
                 },
                 ui: {
                     type: 'ui-base',
                     validate: function (v) {
-                        const mode = $('#node-input-mode').val() || this.mode || 'src'
-                        return mode === 'tts' ? (v !== null && v !== undefined && v !== '') : true
+                        const tempScope = ($('#node-input-mode').val() !== undefined) ? $('#node-input-mode').val() : this.mode || 'src'
+                        const uiVal = ($('#node-input-ui').val() !== undefined) ? $('#node-input-ui').val() : this.ui
+
+                        if (tempScope !== 'tts') {
+                            return true
+                        }
+
+                        if (tempScope === 'tts') {
+                            if (!!uiVal && uiVal !== '_ADD_') {
+                                return true
+                            }
+                        }
+                        return false
                     }
                 },
                 name: { value: '' },
