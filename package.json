@@ -162,6 +162,7 @@
         "nise@5.1.9": {
             "path-to-regexp": "6.3.0"
         },
+        "esbuild": ">=0.25.0",
         "cross-spawn": "~7.0.5"
     }
 }
