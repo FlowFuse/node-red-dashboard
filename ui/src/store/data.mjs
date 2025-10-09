@@ -14,6 +14,10 @@ const state = () => ({
 })
 
 const mutations = {
+    deleteMessages (state, data) {
+        const widgetId = data.widgetId
+        delete state.messages[widgetId]
+    },
     bind (state, data) {
         const widgetId = data.widgetId
         // if packet contains a msg, then we process it
