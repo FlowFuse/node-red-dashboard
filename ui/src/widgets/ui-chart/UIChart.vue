@@ -383,10 +383,13 @@ export default {
             if (Array.isArray(msg.payload) && !msg.payload.length) {
                 // clear the chart if msg.payload = [] is received
                 this.clearChart()
+                this.clearDataStore()
             } else {
                 if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
                     // clear the chart
                     this.clearChart()
+                    // delete messages array in the store
+                    this.clearDataStore()
                 }
                 // update the chart
                 this.add(msg)
@@ -422,6 +425,9 @@ export default {
             }
             return xDisplayFormats
         },
+        clearDataStore () {
+            this.$store.commit('data/deleteMessages', { widgetId: this.id })
+        },
         clearChart () {
             const option = this.chart.getOption()
             if (this.props.xAxisType === 'radial') {
@@ -439,7 +445,11 @@ export default {
                 labels: [],
                 bins: []
             }
-            this.chart.setOption(option, true)
+            this.chart.setOption(option, {
+                notMerge: true, // don't merge with existing option
+                lazyUpdate: true, // lazy update true means it won't animate
+                silent: true // don't trigger events
+            })
             this.hasData = false
         },
         /**
