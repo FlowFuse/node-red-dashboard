@@ -492,7 +492,8 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
+            // only prune old data for relevant chart types, and if action is append
+            if ((this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') && this.props.action === 'append') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
@@ -715,7 +716,7 @@ export default {
                 for (let i = 0; i < series.length; i++) {
                     const length = series[i].data.length // check how much data there is in this series
                     series[i].data = series[i].data.filter((d, i) => {
-                        if (cutoff && d.x < cutoff) {
+                        if (cutoff && d[0] < cutoff) {
                             return false
                         } else if (points && (i < length - points)) {
                             return false
