@@ -31,6 +31,15 @@
         <dd>Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
             See <a target="_blank" href="https://dashboard.flowfuse.com/nodes/widgets/ui-chart#formatting-timestamps">here</a> for an overview of the available format types.  
         </dd>
+
+        <dt>X-Axis Limit</dt>
+        <dd>When the X-Axis Type is <code>Timescale</code> these properties define under what circumstances to remove old data from the chart.
+            For example setting this to last 5 minutes will cause data to be removed from the chart when it is greater than 5 minutes old.
+            To disable time based removal of data (for example if displaying historical data) set <code>last</code> to 0.
+            In addition a data points limit can be applied, in which case old data will be removed when there are more than the specified number of points on the chart
+            If both a time limit and points limit are specified then both will be applied.
+        </dd>
+
         <dt>Properties <span class="property-type">string</span></dt>
         <dd>
             <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array, which will plot multiple data points from a single msg object.</p>

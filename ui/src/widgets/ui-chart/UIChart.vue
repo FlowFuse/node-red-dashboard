@@ -698,9 +698,12 @@ export default {
             let points = null
             if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
                 const removeOlder = parseFloat(this.props.removeOlder)
-                const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
-                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                cutoff = (new Date()).getTime() - ago
+                // only prune if removeOlder > 0
+                if (removeOlder > 0) {
+                    const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
+                    const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                    cutoff = (new Date()).getTime() - ago
+                }
             }
 
             if (this.props.removeOlderPoints) {
