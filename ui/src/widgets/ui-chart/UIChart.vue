@@ -492,8 +492,7 @@ export default {
                 // no payload
                 console.log('have no payload')
             }
-            // only prune old data for relevant chart types, and if action is append
-            if ((this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') && this.props.action === 'append') {
+            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
