@@ -222,6 +222,7 @@ export default {
                         }
                     },
                     color: this.props.colors,
+                    animation: false,
                     series: []
                 }
                 return options
@@ -254,6 +255,7 @@ export default {
                         }
                     },
                     color: this.props.colors,
+                    animation: false,
                     xAxis: {
                         type: chartJStoECharts.axisType(this.xAxisType),
                         name: this.props.xAxisLabel,
@@ -294,8 +296,6 @@ export default {
                         }
                     },
                     series: [],
-                    animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 0 // minimal animation on data update
                 }
 
                 // if an area chart, set the fill to true
@@ -568,8 +568,6 @@ export default {
                         radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
                         data: [],
                         top: this.hasTitle ? 40 : 0, // account for the title
-                        animationDuration: 300, // minimal animation on inital data load
-                        animationDurationUpdate: 0, // minimal animation on data update
                         itemStyle: {
                             borderWidth: 2,
                             borderColor: '#fff'
