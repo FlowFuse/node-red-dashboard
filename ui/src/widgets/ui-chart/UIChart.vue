@@ -295,7 +295,7 @@ export default {
                             }
                         }
                     },
-                    series: [],
+                    series: []
                 }
 
                 // if an area chart, set the fill to true
