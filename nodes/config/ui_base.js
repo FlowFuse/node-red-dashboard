@@ -658,9 +658,10 @@ module.exports = function (RED) {
          * @param {Socket} conn - socket.io socket connecting to the server
          * @param {String} id - widget id sending the action
          * @param {*} value - The value to send to node-red. Typically this is the payload
+         * @param {String} event - The event type (onChange, focusLeave, pressEnter)
          * @returns void
          */
-        async function onChange (conn, id, value) {
+        async function onChange (conn, id, value, event) {
             // console.log('conn:' + conn.id, 'on:widget-change:' + id, value)
 
             // get widget node and configuration
@@ -684,11 +685,16 @@ module.exports = function (RED) {
 
             msg = addConnectionCredentials(RED, msg, conn, n)
 
-            async function defaultHandler (msg, value, conn, id) {
+            async function defaultHandler (msg, value, conn, id, event) {
                 if (typeof (value) === 'object' && value !== null && hasProperty(value, 'payload')) {
                     msg.payload = value.payload
                 } else {
                     msg.payload = value
+                }
+
+                // Add event field if provided
+                if (event) {
+                    msg.event = event
                 }
 
                 msg = await appendTopic(RED, widgetConfig, wNode, msg)
@@ -707,7 +713,7 @@ module.exports = function (RED) {
                 // Most of the time, we can just use this default handler,
                 // but sometimes a node needs to do something specific (e.g. ui-switch)
                 const handler = typeof (widgetEvents.onChange) === 'function' ? widgetEvents.onChange : defaultHandler
-                await handler(msg, value, conn, id)
+                await handler(msg, value, conn, id, event)
             } catch (error) {
                 console.log(error)
                 let errorHandler = typeof (widgetEvents.onError) === 'function' ? widgetEvents.onError : null

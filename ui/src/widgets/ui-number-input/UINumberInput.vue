@@ -150,7 +150,7 @@ export default {
                     } else if (this.value > this.max) {
                         this.value = this.max
                     }
-                    this.send()
+                    this.send('onChange')
                     this.previousValue = this.value
                 }
             }
@@ -175,26 +175,28 @@ export default {
         this.$dataTracker(this.id, null, null, this.onDynamicProperties, null)
     },
     methods: {
-        send () {
-            this.$socket.emit('widget-change', this.id, this.value)
+        send (event) {
+            this.$socket.emit('widget-change', this.id, this.value, event)
         },
         onChange () {
-            this.send()
+            if (this.props.sendOnChange) {
+                this.send('onChange')
+            }
         },
         onBlur: function () {
             if (this.props.sendOnBlur) {
                 // user has to click away (focus out / blur) they want it submitted
-                this.send()
+                this.send('focusLeave')
             }
         },
         onEnter: function () {
             if (this.props.sendOnEnter) {
                 // user has to press <enter> they want it submitted
-                this.send()
+                this.send('pressEnter')
             }
         },
         onClear () {
-            this.send()
+            this.send('onChange')
         },
         makeMdiIcon (icon) {
             return 'mdi-' + icon?.replace(/^mdi-/, '')
