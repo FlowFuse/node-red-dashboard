@@ -99,6 +99,18 @@ Adds a single number input row to your dashboard.
 
 <ControlsTable/>
 
+## Message Events
+
+You can control when the number input emits messages by configuring the following options in the node editor under "Send message on:":
+
+| Option | Description |
+|--------|-------------|
+| On Change | Sends a message each time the value changes in the input field. |
+| Focus Leave | Sends a message when the input field loses focus (user clicks away). |
+| Press Enter | Sends a message when the user presses the Enter key while the input is focused. |
+
+These options can be enabled or disabled independently, allowing you to choose exactly when the node should emit messages.
+
 ## Example
 
 ![Example of Number Inputs Types](/images/node-examples/ui-number-input.png "Example of Number Inputs Types"){data-zoomable}
