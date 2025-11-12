@@ -51,18 +51,21 @@ module.exports = function (RED) {
          */
         function clearOldPoints () {
             const removeOlder = parseFloat(config.removeOlder)
-            const removeOlderUnit = parseFloat(config.removeOlderUnit)
-            const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-            const cutoff = (new Date()).getTime() - ago
-            const _msg = datastore.get(node.id).filter((msg) => {
-                let timestamp = msg._datapoint.x
-                // is x already a millisecond timestamp?
-                if (typeof (msg._datapoint.x) === 'string') {
-                    timestamp = (new Date(msg._datapoint.x)).getTime()
-                }
-                return timestamp > cutoff
-            })
-            datastore.save(base, node, _msg)
+            // only prune if removeOlder > 0
+            if (removeOlder > 0) {
+                const removeOlderUnit = parseFloat(config.removeOlderUnit)
+                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                const cutoff = (new Date()).getTime() - ago
+                const _msg = datastore.get(node.id).filter((msg) => {
+                    let timestamp = msg._datapoint.x
+                    // is x already a millisecond timestamp?
+                    if (typeof (msg._datapoint.x) === 'string') {
+                        timestamp = (new Date(msg._datapoint.x)).getTime()
+                    }
+                    return timestamp > cutoff
+                })
+                datastore.save(base, node, _msg)
+            }
         }
 
         // ensure sane defaults

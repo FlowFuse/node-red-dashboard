@@ -16,7 +16,7 @@ props:
     X-Axis Format: <code>{HH}:{mm}:{ss}</code> | <code>{HH}:{mm}</code> | <code>{yyyy}-{M}-{d}</code> | <code>{d}/{M}</code> | <code>{ee} {HH}:{mm}</code> | <code>Custom</code> | <code>Auto</code>
         Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
         See <a target="_blank" href="https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter">here</a> for an overview of the available format types.
-    X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
+    X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.  The time based limit may be disabled by setting the value to 0.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
         <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>

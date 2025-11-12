@@ -26,7 +26,7 @@
         "pointShape": "circle",
         "pointRadius": 4,
         "showLegend": true,
-        "removeOlder": 1,
+        "removeOlder": 0,
         "removeOlderUnit": "3600",
         "removeOlderPoints": "",
         "colors": [
