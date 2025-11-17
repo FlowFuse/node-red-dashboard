@@ -30,8 +30,9 @@ export default {
             const msg = this.messages[this.id]
             // if the value field is of type number or string then fetch the value from the properties
             // rather than the payload, so that the value is displayed immediately
-            const theValue = (this.props.valueType === "num" || this.props.valueType === "str") ?
-                this.props.value : msg?.payload
+            const theValue = (this.props.valueType === 'num' || this.props.valueType === 'str')
+                ? this.props.value
+                : msg?.payload
             return this.purify(theValue)
         },
         label () {

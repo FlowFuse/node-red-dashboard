@@ -30,8 +30,9 @@ export default {
         value: function () {
             // if the value field is of type number or string then fetch the value from the properties
             // rather than the payload, so that the value is displayed immediately
-            return (this.props.valueType === "num" || this.props.valueType === "str") ?
-                this.props.value : this.messages[this.id]?.payload
+            return (this.props.valueType === 'num' || this.props.valueType === 'str')
+                ? this.props.value
+                : this.messages[this.id]?.payload
         },
         label () {
             return this.getProperty('label')
