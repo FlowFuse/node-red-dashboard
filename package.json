@@ -88,7 +88,7 @@
         "eslint-plugin-promise": "^6.6.0",
         "eslint-plugin-vue": "^9.33.0",
         "eslint-plugin-vuetify": "^2.5.2",
-        "glob": "^10.4.5",
+        "glob": "^11.1.0",
         "highlight.js": "^11.11.1",
         "luxon": "^3.6.1",
         "marked": "^4.3.0",
