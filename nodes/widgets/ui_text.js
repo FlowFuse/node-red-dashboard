@@ -46,16 +46,11 @@ module.exports = function (RED) {
                     statestore.set(group.getBase(), node, msg, 'color', updates.color)
                 }
             }
-
             // Process the value using TypedInput configuration
             const processValue = async () => {
-                const value = msg.payload // default to payload if evaluation fails
-
+                // defaults to leaving existing payload untouched if evaluation fails
                 if (config.valueType && config.value) {
-                    const results = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
-                    msg.payload = results
-                } else {
-                    msg.payload = value
+                    msg.payload = await asyncEvaluateNodeProperty(RED, config.value, config.valueType, node, msg)
                 }
             }
 
