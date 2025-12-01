@@ -1,5 +1,5 @@
-const statestore = require('../store/state.js')
 const datastore = require('../store/data.js')
+const statestore = require('../store/state.js')
 
 module.exports = function (RED) {
     function ChartNode (config) {
@@ -137,7 +137,7 @@ module.exports = function (RED) {
                     if (typeof updates.chartOptions !== 'undefined') {
                         // merge chart options specified here in with any others previously set
                         const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
-                        statestore.set(group.getBase(), node, msg, 'chartOptions', {...currentOptions, ...updates.chartOptions})
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', { ...currentOptions, ...updates.chartOptions })
                     }
                 }
 
