@@ -1,3 +1,4 @@
+const statestore = require('../store/state.js')
 const datastore = require('../store/data.js')
 
 module.exports = function (RED) {
@@ -128,6 +129,15 @@ module.exports = function (RED) {
                         msg._datapoint = points
                     } else {
                         msg._datapoint = addToChart(p, series)
+                    }
+                }
+
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.chartOptions !== 'undefined') {
+                        // merge chart options specified here in with any others previously set
+                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', {...currentOptions, ...updates.chartOptions})
                     }
                 }
 

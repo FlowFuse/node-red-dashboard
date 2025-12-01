@@ -134,7 +134,7 @@ export default {
     },
     created () {
         // Setup custom onMsgInput Handler & onLoad Handler
-        this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
+        this.$dataTracker(this.id, this.onMsgInput, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         if (window.Cypress) {
@@ -152,6 +152,13 @@ export default {
         // Initialize with basic option structure
         const options = this.generateChartOptions()
         chart.setOption(options)
+
+        // merge in any updates provided via ui_update.chartOptions
+        const chartOptions = this.props.chartOptions
+        if (chartOptions) {
+            // pass the options to the chart
+            chart.setOption(chartOptions)
+        }
 
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
@@ -171,6 +178,16 @@ export default {
         this.resizeObserver = resizeObserver
     },
     methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            if (updates.chartOptions) {
+                // merge the updates into the chart
+                this.chart.setOption(updates.chartOptions)
+            }
+        },
         generateChartOptions () {
             const isRadial = this.props.xAxisType === 'radial'
 
@@ -489,8 +506,10 @@ export default {
                     }
                 }
             } else {
-                // no payload
-                console.log('have no payload')
+                // no payload, only an issue if msg.ui_update is not present
+                if (!msg.ui_update) {
+                    console.log('have no payload')
+                }
             }
             if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
@@ -724,7 +743,6 @@ export default {
                     })
                 }
             }
-
             // apply data limtations to the vuex store
             this.$store.commit('data/restrict', {
                 widgetId: this.id,
