@@ -1,5 +1,6 @@
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
+const _ = require("lodash");
 
 module.exports = function (RED) {
     function ChartNode (config) {
@@ -137,7 +138,9 @@ module.exports = function (RED) {
                     if (typeof updates.chartOptions !== 'undefined') {
                         // merge chart options specified here in with any others previously set
                         const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
-                        statestore.set(group.getBase(), node, msg, 'chartOptions', { ...currentOptions, ...updates.chartOptions })
+                        // Deep merge new options in with old
+                        const mergedOptions = _.merge(currentOptions, updates.chartOptions)
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
                     }
                 }
 
