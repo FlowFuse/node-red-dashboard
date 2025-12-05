@@ -185,7 +185,9 @@ export default {
             }
             if (updates.chartOptions) {
                 // merge the updates into the chart
-                this.chart.setOption(updates.chartOptions)
+                if (this.chart) {
+                    this.chart.setOption(updates.chartOptions)
+                }
             }
         },
         generateChartOptions () {
