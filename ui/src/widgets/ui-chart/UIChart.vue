@@ -708,9 +708,12 @@ export default {
             let points = null
             if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
                 const removeOlder = parseFloat(this.props.removeOlder)
-                const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
-                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                cutoff = (new Date()).getTime() - ago
+                // only prune if removeOlder > 0
+                if (removeOlder > 0) {
+                    const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
+                    const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                    cutoff = (new Date()).getTime() - ago
+                }
             }
 
             if (this.props.removeOlderPoints) {
@@ -725,7 +728,7 @@ export default {
                 for (let i = 0; i < series.length; i++) {
                     const length = series[i].data.length // check how much data there is in this series
                     series[i].data = series[i].data.filter((d, i) => {
-                        if (cutoff && d.x < cutoff) {
+                        if (cutoff && d[0] < cutoff) {
                             return false
                         } else if (points && (i < length - points)) {
                             return false
