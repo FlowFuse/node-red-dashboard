@@ -18,7 +18,7 @@ const mutations = {
      * Delete all messages for a specific widget
      * @param {Object} state
      * @param {Object} data
-     * @param {String} widgetId - The id of the widget whose messages should be deleted
+     * @param {String} data.widgetId - The id of the widget whose messages should be deleted
      */
     deleteMessages (state, data) {
         const widgetId = data.widgetId
