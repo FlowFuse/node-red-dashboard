@@ -54,17 +54,17 @@ module.exports = function (RED) {
          * @param {*} update    -   Object containing updates
          * @returns             -   Merged object
          */
-        function deepMerge(original, update) {
+        function deepMerge (original, update) {
             // Deep clone original to avoid mutating input
             const result = JSON.parse(JSON.stringify(original))
 
-            function merge(target, src) {
+            function merge (target, src) {
                 for (const key of Object.keys(src)) {
                     const tVal = target[key]
                     const sVal = src[key]
 
-                    const tIsObj = tVal && typeof tVal === "object" && !Array.isArray(tVal)
-                    const sIsObj = sVal && typeof sVal === "object" && !Array.isArray(sVal)
+                    const tIsObj = tVal && typeof tVal === 'object' && !Array.isArray(tVal)
+                    const sIsObj = sVal && typeof sVal === 'object' && !Array.isArray(sVal)
 
                     const tIsArr = Array.isArray(tVal)
                     const sIsArr = Array.isArray(sVal)
@@ -79,8 +79,8 @@ module.exports = function (RED) {
                             const tEl = tVal[i]
                             const sEl = sVal[i]
 
-                            const tElObj = tEl && typeof tEl === "object" && !Array.isArray(tEl)
-                            const sElObj = sEl && typeof sEl === "object" && !Array.isArray(sEl)
+                            const tElObj = tEl && typeof tEl === 'object' && !Array.isArray(tEl)
+                            const sElObj = sEl && typeof sEl === 'object' && !Array.isArray(sEl)
 
                             const tElArr = Array.isArray(tEl)
                             const sElArr = Array.isArray(sEl)
