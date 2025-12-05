@@ -874,7 +874,7 @@ module.exports = function (RED) {
          * Queue up a config emit to the UI. This is a debounced function
          * NOTES:
          * * only sockets connected to this node will receive the config
-         * * each ui-node will have it's own connections and will emit it's own config
+         * * each ui-node will have its own connections and will emit its own config
          * @returns {void}
          */
         node.requestEmitConfig = function () {
@@ -1049,7 +1049,7 @@ module.exports = function (RED) {
                  * Event Handlers
                  */
 
-                // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
+                // add Node-RED listener to the widget for when its corresponding node receives a msg in Node-RED
                 widgetNode?.on('input', async function (msg, send, done) {
                     // clean msg - #668
                     delete msg.res
