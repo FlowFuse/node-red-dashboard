@@ -1,6 +1,7 @@
+const _ = require('lodash')
+
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const _ = require("lodash");
 
 module.exports = function (RED) {
     function ChartNode (config) {
