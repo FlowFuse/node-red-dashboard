@@ -313,7 +313,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 },
                 success: function (data) {
                     // construct the url to open the layout editor
-                    const _url = new URL(`${RED.settings.httpNodeRoot}/${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
+                    const _url = new URL(`${RED.settings.httpNodeRoot || '/'}/${dashboardBasePath}/${data.path}`.replace(/\/\//g, '/'), windowUrl.origin)
                     _url.searchParams.set('edit-key', data.editKey)
                     const editorPath = windowUrl.pathname?.replace(/\/$/, '').replace(/^\/+/, '') || ''
                     if (editorPath) {
