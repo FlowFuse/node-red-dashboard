@@ -15,6 +15,7 @@
             "passThrough": "Wenn <code>msg</code> am Eingang ankommt, an den Ausgang weiterleiten:",
             "clearable": "Zahleneingabe mit Schaltfläche löschen",
             "sendMessageOn": "Nachricht senden bei:",
+            "onChange": "Bei Änderung",
             "focusLeave": "Fokus verlassen",
             "pressEnter": "Enter drücken",
             "whenChanged": "Bei Änderung senden:",
