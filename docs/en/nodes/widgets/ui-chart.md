@@ -30,6 +30,13 @@ dynamic:
     Class:
         payload: msg.class
         structure: ["String"]
+    Action:
+        payload: msg.action
+        structure: ["String"]
+        examples: ['replace', 'append']
+    Chart Options:
+        payload: msg.ui_update.chartOptions
+        structure: ["Object"]
 ---
 
 <script setup>
@@ -465,9 +472,42 @@ msg = {
 Where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
 
 
-## Building Custom Charts
+## Chart Customisation
 
-ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
+ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to further customise the appearance of your chart, direct access to the underlying eCharts options objects can be obtained by using `msg.ui_update.chartOptions`. Any of the options defined in the [eCharts Documentation](https://echarts.apache.org/en/option.html) may be set. For example, to move the yAxis scale to the right hand side, change the title font size and drop the top of the grid area down, msg.ui_update might be
+```
+{
+    "chartOptions": {
+        "yAxis": {
+            "position": "right"
+        },
+        "grid": {
+            "top": 90
+        },
+        "title": {
+            "textStyle": {
+                "fontSize": 20
+            }
+        }
+    }
+}
+```
+The changes are additive, so that after the above message were sent, if it was also desired to move the bottom of the grid then another ui_update could be sent containing
+```
+{
+    "chartOptions": {
+        "grid": {
+            "bottom": 200
+        }
+    }
+}
+```
+The options set earlier will remain in force.
+
+
+
+## Building Custom Charts
+For even further customisataion such as rendering charts we don't yet support, you can use a UI Template node.
 
 Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/en/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
 
