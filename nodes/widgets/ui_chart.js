@@ -203,8 +203,8 @@ module.exports = function (RED) {
                     datastore.save(base, node, [])
                 } else {
                     // delete old data if a replace is being performed.
-                    // This is the case if msg.action is replace 
-                    // or the node is configured for replace and ths is not being overriden by msg.action set to append
+                    // This is the case if msg.action is replace
+                    // or the node is configured for replace and this is not being overriden by msg.action set to append
                     if (msg.action === 'replace' || (config.action === 'replace' && msg.action !== 'append')) {
                         // clear our data store as we are replacing data
                         datastore.save(base, node, [])
