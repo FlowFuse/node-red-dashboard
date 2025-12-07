@@ -66,6 +66,7 @@
         "echarts": "^6.0.0",
         "escodegen": "^2.1.0",
         "express": "^4.21.2",
+        "lodash.merge": "^4.6.2",
         "socket.io": "^4.8.1",
         "vue": "^3.5.13"
     },

@@ -1,3 +1,5 @@
+const deepMerge = require('lodash.merge')
+
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
 
@@ -45,63 +47,6 @@ module.exports = function (RED) {
                 }
             })
             return value
-        }
-
-        /**
-         * Performs a deep merge of object update into original, coping with both objects and arrays
-         * If the types do not match then the update value is used
-         * @param {*} original  -   Original object
-         * @param {*} update    -   Object containing updates
-         * @returns             -   Merged object
-         */
-        function deepMerge (original, update) {
-            // Deep clone original to avoid mutating input
-            const result = JSON.parse(JSON.stringify(original))
-
-            function merge (target, src) {
-                for (const key of Object.keys(src)) {
-                    const tVal = target[key]
-                    const sVal = src[key]
-
-                    const tIsObj = tVal && typeof tVal === 'object' && !Array.isArray(tVal)
-                    const sIsObj = sVal && typeof sVal === 'object' && !Array.isArray(sVal)
-
-                    const tIsArr = Array.isArray(tVal)
-                    const sIsArr = Array.isArray(sVal)
-
-                    // object ← object
-                    if (tIsObj && sIsObj) {
-                        merge(tVal, sVal)
-                    } else if (tIsArr && sIsArr) {
-                        // array ← array (element-wise merge)
-                        const max = Math.max(tVal.length, sVal.length)
-                        for (let i = 0; i < max; i++) {
-                            const tEl = tVal[i]
-                            const sEl = sVal[i]
-
-                            const tElObj = tEl && typeof tEl === 'object' && !Array.isArray(tEl)
-                            const sElObj = sEl && typeof sEl === 'object' && !Array.isArray(sEl)
-
-                            const tElArr = Array.isArray(tEl)
-                            const sElArr = Array.isArray(sEl)
-
-                            if (tElObj && sElObj) {
-                                merge(tEl, sEl)
-                            } else if (tElArr && sElArr) {
-                                merge(tEl, sEl)
-                            } else if (sEl !== undefined) {
-                                tVal[i] = JSON.parse(JSON.stringify(sEl))
-                            }
-                        }
-                    } else {
-                        // Replace primitive or mismatched types
-                        target[key] = JSON.parse(JSON.stringify(sVal))
-                    }
-                }
-            }
-
-            merge(result, update)
-            return result
         }
 
         /**
