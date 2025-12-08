@@ -474,7 +474,7 @@ Where you could set the `y` property to `key:value`. The `x` value, if left blan
 
 ## Chart Customisation
 
-ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to further customise the appearance of your chart, direct access to the underlying eCharts options objects can be obtained by using `msg.ui_update.chartOptions`. Any of the options defined in the [eCharts Documentation](https://echarts.apache.org/en/option.html) may be set. For example, to move the yAxis scale to the right hand side, change the title font size and drop the top of the grid area down, msg.ui_update might be
+eCharts have a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to further customise the appearance of your chart, direct access to the underlying eCharts options objects can be obtained by using `msg.ui_update.chartOptions`. Any of the options defined in the [eCharts Documentation](https://echarts.apache.org/en/option.html) may be set. For example, to move the yAxis scale to the right hand side, change the title font size and drop the top of the grid area down, send the below via `msg.ui_update`:
 ```
 {
     "chartOptions": {
