@@ -315,7 +315,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     // construct the url to open the layout editor
                     const pathParts = []
                     const trimSlashes = (s) => s.replace(/^\/|\/$/g, '')
-                    const httpRoot = RED.settings.httpNodeRoot;
+                    const httpRoot = RED.settings.httpNodeRoot
                     if (httpRoot && typeof httpRoot === 'string' && httpRoot !== '/') {
                         pathParts.push(trimSlashes(httpRoot))
                     }
