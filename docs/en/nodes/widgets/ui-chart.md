@@ -492,7 +492,7 @@ eCharts have a rich set of configuration options, of which we only expose a smal
     }
 }
 ```
-The changes are additive, so that after the above message were sent, if it was also desired to move the bottom of the grid then another ui_update could be sent containing
+The changes are additive, so that after the above message were sent, if it was also desired to move the bottom of the grid then another `msg.ui_update` could be sent containing:
 ```
 {
     "chartOptions": {
