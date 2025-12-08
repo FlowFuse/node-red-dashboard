@@ -1,4 +1,7 @@
+const deepMerge = require('lodash.merge')
+
 const datastore = require('../store/data.js')
+const statestore = require('../store/state.js')
 
 module.exports = function (RED) {
     function ChartNode (config) {
@@ -131,6 +134,17 @@ module.exports = function (RED) {
                         msg._datapoint = points
                     } else {
                         msg._datapoint = addToChart(p, series)
+                    }
+                }
+
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.chartOptions !== 'undefined') {
+                        // merge chart options specified here in with any others previously set
+                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
+                        // Deep merge new options in with old
+                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
                     }
                 }
 
