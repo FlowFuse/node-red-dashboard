@@ -38,7 +38,8 @@ export default {
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
-        state: { type: Object, default: () => ({}) }
+        state: { type: Object, default: () => ({}) },
+        value: { type: Number, default: 0 }
     },
     data () {
         return {
@@ -64,9 +65,6 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        value: function () {
-            return this.messages[this.id]?.payload
-        },
         icon () {
             return this.props.icon?.replace(/^mdi-/, '')
         },
