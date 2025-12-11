@@ -491,7 +491,7 @@ module.exports = {
      */
     // nodeMessageBufferMaxLength: 0,
 
-    /** If you installed the optional node-red-dashboard you can set it's path
+    /** If you installed the optional node-red-dashboard you can set its path
      * relative to httpNodeRoot
      * Other optional properties include
      *  readOnly:{boolean},

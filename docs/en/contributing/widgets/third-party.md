@@ -42,7 +42,7 @@ FlowFuse Dashboard is built on top of [VueJS](https://vuejs.org/), and as such, 
 
 We have created an [Example Node repository](https://github.com/FlowFuse/node-red-dashboard-example-node) that will provide foundations for your widget. It includes plenty of examples for functionality you'll likely need.
 
-It's base repository has the following file/folder structure:
+Its base repository has the following file/folder structure:
 
 As with any Node-RED nodes, you'll need to start with two files:
 
@@ -79,7 +79,7 @@ To start working with your own third-party widget, locally on your machine:
    ```bash
    export NODE_ENV=development
    ```
-4. Inside the Example Node directory, build the Example Node's `.umd.js` file (what Node-RED uses to run your widget), this will generate it's `/resources` folder, loaded by Node-RED.
+4. Inside the Example Node directory, build the Example Node's `.umd.js` file (what Node-RED uses to run your widget), this will generate its `/resources` folder, loaded by Node-RED.
    ```bash
    npm run build
    ```
@@ -356,7 +356,7 @@ You can read more about the Node-RED data store in our [State Management](../gui
 
 State refers to any properties of your widget that have changed in runtime, and would differ from that set in the Node-RED editor.
 
-For example, the `ui-dropdown` can have it's `options` overriden with a `msg.options` message sent to the node. This updates `options` would be stored against the node in the state store.
+For example, the `ui-dropdown` can have its `options` overriden with a `msg.options` message sent to the node. This updates `options` would be stored against the node in the state store.
 
 #### Client-Side Data Store
 

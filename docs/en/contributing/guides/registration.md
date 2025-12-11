@@ -8,7 +8,7 @@ Every `ui-base`, `ui-page` and `ui-group` has a `.register` function. The core r
 
 This function is used by all of the widgets to inform Dashboard of their existence, and allows the widget to define which group/page/ui it belongs too, along with the relevant properties that widget has and any event handlers (e.g. `onInput` or `onAction`).
 
-The function is called within the node's Node-RED `.js` file, and in th case of a widget registering as part of a group (the most common use case), would look something like this:
+The function is called within the node's Node-RED `.js` file, and in the case of a widget registering as part of a group (the most common use case), would look something like this:
 
 ```js
 module.exports = function (RED) {
@@ -48,13 +48,13 @@ This is the `this` of your node's constructor, and can be used directly from the
 
 ### `config`
 
-This is made available by Node-RED as the input to the constructor, and can generally passed straight into the `.register` function without modification, it will be an object that maps all of the properties and values that have been described in the node's `.html` definition.
+This is made available by Node-RED as the input to the constructor, and can generally passed straight into the `.register` function without modification. It will be an object that maps all of the properties and values that have been described in the node's `.html` definition.
 
 ### `evts`
 
 We expose a range of different event handlers as part of the `register` function. All of these handlers run server (Node-RED) side.
 
-In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle), in other occasions, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
+In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle). In others, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
 
 A full breakdown of the event lifecycle can be found [here](../../contributing/guides/events.md).
 
@@ -88,7 +88,7 @@ An example of this is with `ui-button`, where the widget's `UIButton` contains a
 this.$socket.emit('widget-action', this.id, msg)
 ```
 
-This sends a message via SocketIO to Node-RED, with the topic of the widget's ID. Because the `ui-button` has `onAction: true` in it's registration, it will consequently run the default handler detailed above.
+This sends a message via SocketIO to Node-RED, with the topic of the widget's ID. Because the `ui-button` has `onAction: true` in its registration, it will consequently run the default handler detailed above.
 
 ### `.onChange` (`boolean` || `function`)
 
@@ -100,12 +100,12 @@ Similar to `onAction`, when used as a boolean, this flag will trigger the defaul
 2. Appends any `msg.topic` defined on the node config
 3. Runs `evts.beforeSend()` _(if provided)_
 4. Store the most recent message on the widget under the `._msg` property which will contain the latest state/value of the widget
-5. Pushes a `widget-sync` event to synchronize the widgets in all clients.
+5. Pushes a `widget-sync` event to synchronize the widgets in all clients
 6. Sends the `msg` onwards to any connected nodes
 
 #### Custom `onChange` Handler
 
-Alternatively, you can override this default behaviour by providing a custom `onChange` function. An example of this is in the `ui-switch` node which needs to do `node.status` updates to in order for the Node-RED Editor to reflect it's latest status:
+Alternatively, you can override this default behaviour by providing a custom `onChange` function. An example of this is in the `ui-switch` node which needs to do `node.status` updates to in order for the Node-RED Editor to reflect its latest status:
 
 ```js
 /**
@@ -165,7 +165,7 @@ When provided, this will override the default handler.
 
 We use this in the core widgets in Dashboard with `ui-chart`, where we want to be storing the history of recent `msg` value, rather than _just_ the most recent value as done in the default handler. We also use it here to ensure we don't have too many data points (as defined in the `ui-chart` config).
 
-Another use case here would be if you do not want to pass on any incoming `msg` payloads onto connected nodes automatically, for example, you could have a bunch of command-type `msg` payloads that instruct your node to do something, that are then not relevant to any preceding nodes in the flow.
+Another use case here would be if you do not want to pass on any incoming `msg` payloads onto connected nodes automatically. For example, you could have a bunch of command-type `msg` payloads that instruct your node to do something, that are then not relevant to any preceding nodes in the flow.
 
 ### `.onError(err)` (`function`)
 

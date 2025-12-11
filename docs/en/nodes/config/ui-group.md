@@ -4,9 +4,9 @@ props:
     Name: Descriptive name for this group, will show in the Node-RED Editor and as a label in the Dashboard.
     Page: The Page (<code>ui-page</code>) that this group will render on.
     Type: Controls whether the group appears as a default group or as a dialog, which needs to be triggered manually using ui-control. You can choose between 'Default' and 'Dialog' types.
-    Size: The width and height of the group. Height will always be reinforced by this value, the height is generally a <i>minimum</i> height, and will extend to fit it's content.
+    Size: The width and height of the group. Height will always be reinforced by this value, the height is generally a <i>minimum</i> height, and will extend to fit its content.
     Class: Any custom CSS classes you wish to add to the Group.
-    Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this group.</li><li><b>Interactivity</b> - Controls whether the group and it's contents are disabled/enabled when the page is loaded.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
+    Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this group.</li><li><b>Interactivity</b> - Controls whether the group and its contents are disabled/enabled when the page is loaded.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
 ---
 
 <script setup>

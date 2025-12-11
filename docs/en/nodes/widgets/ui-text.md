@@ -61,7 +61,7 @@ Displays a non-editable text field on the user interface. Each received `msg.pay
 
 ## Adding Prefixes & Suffixes
 
-In Node-RED Dashboard an option existed called `valueFormat` which allowed you to add a prefix or suffix to a `ui-text` widget within the node's configuration. Whilst valuable, this had a lot of security vulnerabilities, so with FlowFuse Dashboard we made the decision to remove it..
+In Node-RED Dashboard an option existed called `valueFormat` which allowed you to add a prefix or suffix to a `ui-text` widget within the node's configuration. Whilst valuable, this had a lot of security vulnerabilities, so with FlowFuse Dashboard we made the decision to remove it.
 
 Instead, we take a different approach, and use Node-RED's built-in "template" node:
 
@@ -118,7 +118,7 @@ For example, if you want to round the value to 1 decimal place, you can set the 
 $round(payload, 1) // round to 1 decimal place
 ```
 
-You can read more about the JSONata expression language and in particular, it's numeric functions, [here](https://docs.jsonata.org/numeric-functions)
+You can read more about the JSONata expression language and in particular, its numeric functions, [here](https://docs.jsonata.org/numeric-functions)
 
 ## Example
 

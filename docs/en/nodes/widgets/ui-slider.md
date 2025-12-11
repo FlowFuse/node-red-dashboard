@@ -78,7 +78,7 @@ dynamic:
 
 </TryDemo>
 
-Adds a slider to your dashboard that will emit values in Node-RED under `msg.payload` anytime it's value is changed.
+Adds a slider to your dashboard that will emit values in Node-RED under `msg.payload` anytime its value is changed.
 
 ## Properties
 

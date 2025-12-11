@@ -25,7 +25,7 @@ A group has a default width of "6" columns, with the full Notebook also a width 
 ![Notebook Layout](../../../assets/images/layout-eg-notebook-width6.png){data-zoomable}
 *An example UI rendered using the "Notebook" Layout*
 
-We can get finer grain width control within a group by increasing it's width. The Notebook itself will not render the group any wider, but the group itself will render with 12 columns internally. So, if we increase the "width" (number of columns) of the group to 12, then the two charts are then setup to only take up half of the width of the group (3 columns each).
+We can get finer grain width control within a group by increasing its width. The Notebook itself will not render the group any wider, but the group itself will render with 12 columns internally. So, if we increase the "width" (number of columns) of the group to 12, then the two charts are then setup to only take up half of the width of the group (3 columns each).
 
 ![Notebook Layout](../../../assets/images/layout-eg-notebook-width12.png){data-zoomable}
 *An example UI rendered using the "Notebook" Layout*
