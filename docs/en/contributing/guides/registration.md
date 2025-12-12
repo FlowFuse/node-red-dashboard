@@ -54,7 +54,7 @@ This is made available by Node-RED as the input to the constructor, and can gene
 
 We expose a range of different event handlers as part of the `register` function. All of these handlers run server (Node-RED) side.
 
-In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle). In others, it's only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
+In some cases, it is possible to define full functions (that will run at the appropriate point in the event lifecycle); in other cases, it is only possible to define a `true`/`false` value that informs Dashboard that you wish for the widget to send or subscribe to that event.
 
 A full breakdown of the event lifecycle can be found [here](../../contributing/guides/events.md).
 
