@@ -29,14 +29,14 @@ function hasProperty (obj, prop) {
 /**
  * Test whether a message has any properties other than ui_update, class, visible, enabled and _msgid
  * Properties with the value undefined are ignored
- * @param {*} msg 
+ * @param {*} msg
  * @returns true if other properties found
  */
-function hasExtraProps (message) {
-  const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
-  const keys = Object.keys(message).filter(key => message[key] !== undefined)
+function hasExtraProps(message) {
+    const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
+    const keys = Object.keys(message).filter(key => message[key] !== undefined)
 
-  return keys.length > 0 && keys.some(key => !allowed.includes(key))
+    return keys.length > 0 && keys.some(key => !allowed.includes(key))
 }
 
 module.exports = function (RED) {
