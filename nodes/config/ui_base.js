@@ -32,7 +32,7 @@ function hasProperty (obj, prop) {
  * @param {*} msg
  * @returns true if other properties found
  */
-function hasExtraProps(message) {
+function hasExtraProps (message) {
     const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
     const keys = Object.keys(message).filter(key => message[key] !== undefined)
 
