@@ -26,6 +26,19 @@ function hasProperty (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
+/**
+ * Test whether a message has any properties other than ui_update, class, visible, enabled and _msgid
+ * Properties with the value undefined are ignored
+ * @param {*} msg 
+ * @returns true if other properties found
+ */
+function hasExtraProps (message) {
+  const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
+  const keys = Object.keys(message).filter(key => message[key] !== undefined)
+
+  return keys.length > 0 && keys.some(key => !allowed.includes(key))
+}
+
 module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
@@ -1101,8 +1114,9 @@ module.exports = function (RED) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
 
-                                // store the latest msg passed to node unless payload is missing
-                                if (typeof msg.payload !== 'undefined') {
+                                // store the latest msg passed to the node unless the message only contains
+                                // ui_update, visible, enabled or class properties, which are handled in the state store
+                                if (hasExtraProps(msg)) {
                                     datastore.save(n, widgetNode, msg)
                                 }
 
