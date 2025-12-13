@@ -37,6 +37,7 @@
                 },
                 tooltip: { value: '' },
                 passthru: { value: true },
+                sendOnChange: { value: true },
                 sendOnBlur: { value: true },
                 sendOnEnter: { value: true },
                 className: { value: '' },
@@ -100,6 +101,9 @@
                 }
                 if (this.sendOnClear === undefined) {
                     $('#node-input-sendOnClear').prop('checked', false)
+                }
+                if (this.sendOnChange === undefined) {
+                    $('#node-input-sendOnChange').prop('checked', true)
                 }
 
                 if (!this.iconPosition) {
@@ -216,6 +220,10 @@
     </div>    
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> <span data-i18n="ui-number-input.label.sendMessageOn"></span></label>
+    </div>
+    <div class="form-row" style="padding-left: 25px;">
+        <input type="checkbox" checked id="node-input-sendOnChange" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnChange" data-i18n="ui-number-input.label.onChange"></label>
     </div>
     <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">

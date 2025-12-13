@@ -99,6 +99,18 @@ Fügt Ihrem Dashboard eine einzelne Zahleneingabezeile hinzu.
 
 <ControlsTable/>
 
+## Nachrichtenereignisse
+
+Sie können steuern, wann die Zahleneingabe Nachrichten sendet, indem Sie die folgenden Optionen im Knoteneditor unter "Nachricht senden bei:" konfigurieren:
+
+| Option | Beschreibung |
+|--------|--------------|
+| Bei Änderung | Sendet eine Nachricht, sobald sich der Wert im Eingabefeld ändert. |
+| Fokus verlassen | Sendet eine Nachricht, wenn das Eingabefeld den Fokus verliert (Benutzer klickt weg). |
+| Enter drücken | Sendet eine Nachricht, wenn der Benutzer die Enter-Taste drückt, während das Eingabefeld fokussiert ist. |
+
+Diese Optionen können unabhängig voneinander aktiviert oder deaktiviert werden, sodass Sie genau auswählen können, wann der Knoten Nachrichten senden soll.
+
 ## Beispiel
 
 ![Beispiel von Zahleneingabetypen](/images/node-examples/ui-number-input.png "Beispiel von Zahleneingabetypen"){data-zoomable}
