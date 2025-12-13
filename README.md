@@ -31,7 +31,7 @@ FlowFuse also comes with a collection of [FlowFuse Dashboard Blueprints](https:/
 
 ## Features
 
-FlowFuse Dashboard provides a base set of nodes for building your own user interfaces and data visualisations. Much like it's predecessor, it provides a set of easy-to-use, core nodes, but provides complete flexibility for customisation and control over theming, layout and behaviour if you want to go further.
+FlowFuse Dashboard provides a base set of nodes for building your own user interfaces and data visualisations. Much like its predecessor, it provides a set of easy-to-use, core nodes, but provides complete flexibility for customisation and control over theming, layout and behaviour if you want to go further.
 
 ### Easy Integration
 

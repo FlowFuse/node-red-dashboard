@@ -31,7 +31,7 @@ You can find a collection of example of how to use Chart.js within the `ui-templ
 
 ### Custom Data Tables
 
-Whilst we do offer the [`ui-table`](../nodes/widgets/ui-table.md) widget out of the box, it's fairly basic in it's functionality, and doesn't allow for much customization of cells and styling. 
+Whilst we do offer the [`ui-table`](../nodes/widgets/ui-table.md) widget out of the box, it's fairly basic in its functionality, and doesn't allow for much customization of cells and styling.
 
 In Node-RED Dashboard, there was a popular third-party `ui-table` widget, which offered wider customisation, but for FlowFuse Dashboard, we've taken a slightly different approach. Rather than defining a spec that you must put your data into, in order to utilise a set number of features in a library, with FlowFuse Dashboard, you can use the `ui-template` to customise a data table in anyway you like, and with any data format.
 

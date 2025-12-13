@@ -38,7 +38,7 @@ Our default server-side `onInput` handler handles the common use cases of:
 
 - Updating the widget's value into our server-side data store
 - Checking if the widget is configured to define a `msg.topic` and if so, updating the widget's `msg.topic` property
-- Check if the widget is configured with a `passthrough` option, and if so, check it's value before emitting the `msg` object to any connected nodes.
+- Check if the widget is configured with a `passthrough` option, and if so, check its value before emitting the `msg` object to any connected nodes.
 - Emit the `msg` object to any connected nodes, if appropriate.
 
 ### "Dashboard Actions" Event Flow

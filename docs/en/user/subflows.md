@@ -11,7 +11,7 @@ description: Maximize efficiency in FlowFuse Dashboard by leveraging subflows fo
 
 ## What are subflows?
 
-A subflow as an opportunity to build your own, completely custom node, with it's logic completely defined by other Node-RED nodes that you can configure and connect together in the workspace in any way you like.
+A subflow as an opportunity to build your own, completely custom node, with its logic completely defined by other Node-RED nodes that you can configure and connect together in the workspace in any way you like.
 
 Subflows remove the need to write any code, publish to npm, or maintain a separate repository. They are particularly useful for two reasons:
 
@@ -101,7 +101,7 @@ NOTE: You can still set the widget width and height to `0` to make the it perfor
 ![Screenshot of Node-RED, highlighting where the "Appearance" button is](../../assets/images/subflow-appearance.png){data-zoomable}
 *Screenshot of Node-RED, highlighting where the "Appearance" button is*
 
-When editing a subflow's properties, you can click the "Appearance" tab in order to customise it's appearance when the subflow is rendered in the workspace flows.
+When editing a subflow's properties, you can click the "Appearance" tab in order to customise its appearance when the subflow is rendered in the workspace flows.
 
 You can control:
 

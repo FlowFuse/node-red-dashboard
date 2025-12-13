@@ -102,7 +102,7 @@ Adds a clickable button to your dashboard.
 
 ### Measuring Hold Duration
 
-It's possible to cofnigure a button to emit `pointerdown` and `pointerup` events. With this, it's possible to measure how long a button is held down for.
+It's possible to configure a button to emit `pointerdown` and `pointerup` events. With this, it's possible to measure how long a button is held down for.
 
 <video controls height="200px">
     <source src="/videos/demo-button-hold.mp4" type="video/mp4">

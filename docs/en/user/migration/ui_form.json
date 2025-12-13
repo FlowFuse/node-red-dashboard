@@ -55,7 +55,7 @@
     "new_properties": [
         {
             "property": "reset",
-            "notes": "On 'submit', this property defines whether or not the form clears it's data in the Dashboard."
+            "notes": "On 'submit', this property defines whether or not the form clears its data in the Dashboard."
         }
     ],
     "msgs": [
