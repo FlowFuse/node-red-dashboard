@@ -29,7 +29,7 @@
                 </svg>
                 <div ref="labels" class="nrdb-ui-gauge-tank-labels">
                     <label class="nrdb-ui-gauge-tank--fglabel" :style="{'line-height': labelLineHeight}">
-                        {{ props.prefix}}{{ value ?? props.min }}{{ props.suffix }}
+                        {{ displayValue }}
                     </label>
                 </div>
             </div>
@@ -60,6 +60,20 @@ export default {
     computed: {
         color: function () {
             return UIGaugeMethods.valueToColor(this.props.segments, this.value)
+        },
+        pc: function () {
+            if (typeof this.value !== 'undefined') {
+                return Math.max(0, Math.min(Math.round((this.value - this.props.min) / (this.props.max - this.props.min) * 100), 100))
+            } else {
+                return 0
+            }
+        },
+        displayValue: function () {
+            if (this.props.valueAsPercent) {
+                return `${this.pc}%`
+            } else {
+                return `${this.props.prefix}${this.value ?? this.props.min}${this.props.suffix}`
+            }
         },
         clipId: function () {
             return `clip-${this.id}`

@@ -30,7 +30,8 @@
             "units": "Units",
             "icon": "Icon",
             "defaults": "Defaults",
-            "value": "Value"
+            "value": "Value",
+            "valueAsPercent": "Display Value as Percent"
         },
         "errors": {
             "unique": "All 'from' values must be unique."
