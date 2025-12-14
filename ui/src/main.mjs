@@ -19,6 +19,9 @@ import * as directives from 'vuetify/directives'
 
 // Labs Imports
 import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
+import { VColorInput } from 'vuetify/labs/VColorInput'
+import { VPie } from 'vuetify/labs/VPie'
+import { VVideo } from 'vuetify/labs/VVideo'
 
 import './stylesheets/common.css'
 
@@ -58,7 +61,10 @@ const theme = {
 const vuetify = createVuetify({
     components: {
         ...components,
-        VNumberInput
+        VNumberInput,
+        VColorInput,
+        VPie,
+        VVideo
     },
     directives: {
         ...directives,
