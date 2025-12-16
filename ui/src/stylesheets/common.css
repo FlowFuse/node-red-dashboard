@@ -159,6 +159,12 @@ main {
     --v-input-control-height: var(--widget-row-height);
 }
 
+/* Minimal padding for the Text In and Dropdown nodes in order to leave room for the text in compact theme */
+.nrdb-app .v-field--variant-outlined {
+    --v-field-input-padding-top: 2px;
+    --v-field-input-padding-bottom: 2px;
+}
+
 /**
 * Widget: Button
 */
