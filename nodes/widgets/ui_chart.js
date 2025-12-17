@@ -184,13 +184,10 @@ module.exports = function (RED) {
                             x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         }
                         if (Array.isArray(series)) {
-                            if (series.length > 1) {
-                                y = series.map((s) => {
-                                    return getProperty(payload, s)
-                                })
-                            } else {
-                                y = getProperty(payload, series[0])
-                            }
+                            // if the series is an array then y should be an array too, even if only of length 1
+                            y = series.map((s) => {
+                                return getProperty(payload, s)
+                            })
                         } else {
                             if (config.categoryType === 'json') {
                                 // we are using the "series" as a key to get the y value from the payload
