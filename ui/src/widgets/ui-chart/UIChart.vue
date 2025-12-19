@@ -161,7 +161,7 @@ export default {
         }
 
         // don't want chart to be reactive, so we can use shallowRef
-        this.chart = shallowRef(chart)
+        this.chart = shallowRef(chart)        
 
         // Ensure chart resizes properly on first load
         this.$nextTick(() => {
@@ -188,6 +188,7 @@ export default {
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
                 }
+                this.props.chartOptions = updates.chartOptions
             }
         },
         generateChartOptions () {
@@ -398,20 +399,33 @@ export default {
                 this.onMsgInput(history)
             }
         },
-        onMsgInput (msg) {
-            if (Array.isArray(msg.payload) && !msg.payload.length) {
-                // clear the chart if msg.payload = [] is received
-                this.clearChart()
-                this.clearDataStore()
-            } else {
-                if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
-                    // clear the chart
+        onMsgInput(msg) {
+            // ignore if payload is empty and msg is not an array (on loading it can be an array)
+            // ui_update messages are handled by OnDynamicProperties
+            if (msg.payload !== undefined || Array.isArray(msg)) {
+                if (Array.isArray(msg.payload) && !msg.payload.length) {
+                    // clear the chart if msg.payload = [] is received
                     this.clearChart()
-                    // delete messages array in the store
                     this.clearDataStore()
+                } else {
+                    if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
+                        // clear the chart
+                        this.clearChart()
+                        // delete messages array in the store
+                        this.clearDataStore()
+                    }
+                    // update the chart
+                    // remember how many series are currently configured
+                    const seriesCount = this.chart.getOption().series.length
+                    this.add(msg)
+                    // if any series have been added, re-apply any chartOptions passed in
+                    if (this.chart.getOption().series.length > seriesCount) {
+                        const chartOptions = this.props.chartOptions
+                        if (chartOptions) {
+                            this.chart.setOption(chartOptions)
+                        }
+                    }
                 }
-                // update the chart
-                this.add(msg)
             }
         },
         getXDisplayFormats (xAxisFormatType) {
@@ -687,6 +701,8 @@ export default {
                 }
 
                 // Add data point
+                // ensure the data array exists
+                options.series[sIndex].data ||= []
                 if (this.props.xAxisType === 'category') {
                     // for categories, we need to update the existing data point for this x-value
                     const xIndex = options.series[sIndex].data.findIndex(d => d[0] === datapoint.x)
@@ -745,15 +761,17 @@ export default {
             if ((cutoff || points) && series.length > 0) {
                 // loop over each series
                 for (let i = 0; i < series.length; i++) {
-                    const length = series[i].data.length // check how much data there is in this series
-                    series[i].data = series[i].data.filter((d, i) => {
-                        if (cutoff && d[0] < cutoff) {
-                            return false
-                        } else if (points && (i < length - points)) {
-                            return false
-                        }
-                        return true
-                    })
+                    const length = series[i].data?.length // check how much data there is in this series
+                    if (length) {
+                        series[i].data = series[i].data.filter((d, i) => {
+                            if (cutoff && d[0] < cutoff) {
+                                return false
+                            } else if (points && (i < length - points)) {
+                                return false
+                            }
+                            return true
+                        })
+                    }
                 }
             }
             // apply data limtations to the vuex store

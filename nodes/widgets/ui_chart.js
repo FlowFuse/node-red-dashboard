@@ -212,61 +212,64 @@ module.exports = function (RED) {
                 if (!datastore.get(node.id)) {
                     datastore.save(base, node, [])
                 }
-                if (Array.isArray(msg.payload) && !msg.payload.length) {
-                    // clear history
-                    datastore.save(base, node, [])
-                } else {
-                    // delete old data if a replace is being performed.
-                    // This is the case if msg.action is replace
-                    // or the node is configured for replace and this is not being overriden by msg.action set to append
-                    if (msg.action === 'replace' || (config.action === 'replace' && msg.action !== 'append')) {
-                        // clear our data store as we are replacing data
+                // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
+                if (msg.payload !== undefined) {
+                    if (Array.isArray(msg.payload) && !msg.payload.length) {
+                        // clear history
                         datastore.save(base, node, [])
-                    }
-                    if (!Array.isArray(msg.payload)) {
-                        // quick clone of msg, and store in history
-                        datastore.append(base, node, {
-                            ...msg
-                        })
                     } else {
-                        // we have an array in msg.payload, let's split them
-                        msg.payload.forEach((p, i) => {
-                            const payload = JSON.parse(JSON.stringify(p))
-                            const d = msg._datapoint ? msg._datapoint[i] : null
-                            const m = {
-                                ...msg,
-                                payload,
-                                _datapoint: d
-                            }
-                            datastore.append(base, node, m)
-                        })
-                    }
-
-                    const maxPoints = parseInt(config.removeOlderPoints)
-
-                    if (maxPoints && config.removeOlderPoints) {
-                        // account for multiple lines?
-                        // client-side does this for _each_ line
-                        // remove older points
-                        const lineCounts = {}
-                        const _msg = datastore.get(node.id)
-                        // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
-                        for (let i = _msg.length - 1; i >= 0; i--) {
-                            const msg = _msg[i]
-                            const label = msg.topic
-                            lineCounts[label] = lineCounts[label] || 0
-                            if (lineCounts[label] >= maxPoints) {
-                                _msg.splice(i, 1)
-                            } else {
-                                lineCounts[label]++
-                            }
+                        // delete old data if a replace is being performed.
+                        // This is the case if msg.action is replace
+                        // or the node is configured for replace and this is not being overriden by msg.action set to append
+                        if (msg.action === 'replace' || (config.action === 'replace' && msg.action !== 'append')) {
+                            // clear our data store as we are replacing data
+                            datastore.save(base, node, [])
                         }
-                        datastore.save(base, node, _msg)
-                    }
+                        if (!Array.isArray(msg.payload)) {
+                            // quick clone of msg, and store in history
+                            datastore.append(base, node, {
+                                ...msg
+                            })
+                        } else {
+                            // we have an array in msg.payload, let's split them
+                            msg.payload.forEach((p, i) => {
+                                const payload = JSON.parse(JSON.stringify(p))
+                                const d = msg._datapoint ? msg._datapoint[i] : null
+                                const m = {
+                                    ...msg,
+                                    payload,
+                                    _datapoint: d
+                                }
+                                datastore.append(base, node, m)
+                            })
+                        }
 
-                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
-                        // remove any points older than the specified time
-                        clearOldPoints()
+                        const maxPoints = parseInt(config.removeOlderPoints)
+
+                        if (maxPoints && config.removeOlderPoints) {
+                            // account for multiple lines?
+                            // client-side does this for _each_ line
+                            // remove older points
+                            const lineCounts = {}
+                            const _msg = datastore.get(node.id)
+                            // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
+                            for (let i = _msg.length - 1; i >= 0; i--) {
+                                const msg = _msg[i]
+                                const label = msg.topic
+                                lineCounts[label] = lineCounts[label] || 0
+                                if (lineCounts[label] >= maxPoints) {
+                                    _msg.splice(i, 1)
+                                } else {
+                                    lineCounts[label]++
+                                }
+                            }
+                            datastore.save(base, node, _msg)
+                        }
+
+                        if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                            // remove any points older than the specified time
+                            clearOldPoints()
+                        }
                     }
                 }
 
