@@ -14,6 +14,9 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
 
+        // add a chartOptions object into the config
+        config.chartOptions ||= {}
+
         // correct typing
         if (typeof config.xmin !== 'undefined') {
             config.xmin = parseFloat(config.xmin)
