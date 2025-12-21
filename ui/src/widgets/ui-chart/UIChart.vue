@@ -33,6 +33,7 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
+            dynamicChartOptions: [], // an array of chart options updates received this session
             resizeObserver: null
         }
     },
@@ -188,7 +189,8 @@ export default {
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
                 }
-                this.props.chartOptions = updates.chartOptions
+                // add these options to the array of previous updates received this session
+                this.dynamicChartOptions.push(updates.chartOptions)
             }
         },
         generateChartOptions () {
@@ -420,10 +422,15 @@ export default {
                     this.add(msg)
                     // if any series have been added, re-apply any chartOptions passed in
                     if (this.chart.getOption().series.length > seriesCount) {
+                        // update the chart first from options applied in previous sessions
                         const chartOptions = this.props.chartOptions
                         if (chartOptions) {
                             this.chart.setOption(chartOptions)
                         }
+                        // then from this session
+                        this.dynamicChartOptions.forEach((options) => {
+                            this.chart.setOption(options)
+                        })
                     }
                 }
             }

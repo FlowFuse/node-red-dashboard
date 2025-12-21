@@ -15,7 +15,7 @@ module.exports = function (RED) {
         const base = group.getBase()
 
         // add a chartOptions object into the config
-        config.chartOptions ||= {}
+        config.chartOptions = config.chartOptions || {}
 
         // correct typing
         if (typeof config.xmin !== 'undefined') {
