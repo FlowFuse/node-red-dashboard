@@ -161,7 +161,7 @@ export default {
         }
 
         // don't want chart to be reactive, so we can use shallowRef
-        this.chart = shallowRef(chart)        
+        this.chart = shallowRef(chart)
 
         // Ensure chart resizes properly on first load
         this.$nextTick(() => {
@@ -399,7 +399,7 @@ export default {
                 this.onMsgInput(history)
             }
         },
-        onMsgInput(msg) {
+        onMsgInput (msg) {
             // ignore if payload is empty and msg is not an array (on loading it can be an array)
             // ui_update messages are handled by OnDynamicProperties
             if (msg.payload !== undefined || Array.isArray(msg)) {
