@@ -149,8 +149,8 @@ export default {
             // Widgets
             payload.widgets?.show?.forEach(id => set('widget', id, 'visible', true))
             payload.widgets?.hide?.forEach(id => set('widget', id, 'visible', false))
-            payload.widgets?.disable?.forEach(id => set('widget', id, 'disabled', true))
-            payload.widgets?.enable?.forEach(id => set('widget', id, 'disabled', false))
+            payload.widgets?.disable?.forEach(id => set('widget', id, 'enabled', false))
+            payload.widgets?.enable?.forEach(id => set('widget', id, 'enabled', true))
 
             if ('url' in payload) {
                 if ('target' in payload) {
