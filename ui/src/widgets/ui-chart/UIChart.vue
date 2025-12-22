@@ -20,7 +20,8 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
@@ -63,6 +64,9 @@ export default {
         },
         interpolation () {
             return this.props.interpolation
+        },
+        chartOptions () {
+            return this.getProperty('chartOptions')
         }
     },
     watch: {
@@ -155,7 +159,7 @@ export default {
         chart.setOption(options)
 
         // merge in any updates provided via ui_update.chartOptions
-        const chartOptions = this.props.chartOptions
+        const chartOptions = this.chartOptions
         if (chartOptions) {
             // pass the options to the chart
             chart.setOption(chartOptions)
@@ -423,7 +427,7 @@ export default {
                     // if any series have been added, re-apply any chartOptions passed in
                     if (this.chart.getOption().series.length > seriesCount) {
                         // update the chart first from options applied in previous sessions
-                        const chartOptions = this.props.chartOptions
+                        const chartOptions = this.chartOptions
                         if (chartOptions) {
                             this.chart.setOption(chartOptions)
                         }
