@@ -71,6 +71,23 @@ module.exports = function (RED) {
             }
         }
 
+        /**
+         * For categorical xaxis and types other than histogram then only keep the latest data point for
+         * each category in each series
+         */
+        function clearOldCategoricalPoints() {
+            const points = datastore.get(node.id)
+            const latestSet = {}
+            for (const item of points) {
+                const { category, x } = item._datapoint
+                const key = JSON.stringify([category, x]) // a unique key for each category/series combination
+                latestSet[key] = item
+            }
+
+            const filtered = Object.values(latestSet)
+            datastore.save(base, node, filtered)
+        }
+
         // ensure sane defaults
         if (!['msg', 'str', 'property', 'timestamp'].includes(config.xAxisPropertyType)) {
             config.xAxisPropertyType = 'timestamp' // default to 'timestamp'
@@ -264,6 +281,10 @@ module.exports = function (RED) {
                     if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
                         // remove any points older than the specified time
                         clearOldPoints()
+                    } else if (config.xAxisType === 'category' && config.chartType !== "histogram") {
+                        // for categorical xaxis and types other than histogram then only keep the latest data point for
+                        // each category in each series
+                        clearOldCategoricalPoints()
                     }
                 }
 
