@@ -523,7 +523,9 @@ export default {
                     console.log('have no payload')
                 }
             }
-            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
+            if (this.xAxisType === 'category' && this.props.chartType !== 'histogram') {
+                this.clearOldCategoricalPoints(options)
+            } else if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
@@ -739,7 +741,6 @@ export default {
                 // remove older points
                 points = parseInt(this.props.removeOlderPoints)
             }
-
             // apply data limitations to the chart
             const series = options.series
             if ((cutoff || points) && series.length > 0) {
@@ -756,13 +757,26 @@ export default {
                     })
                 }
             }
-            // apply data limtations to the vuex store
+            // apply data limitations to the vuex store
             this.$store.commit('data/restrict', {
                 widgetId: this.id,
                 min: cutoff,
                 points
             })
         },
+
+        /**
+         * For categorical xaxis and types other than histogram then only keep the latest data point for
+         * each category in each series
+         * @param {Object} options - existing eChart options object
+         */
+        clearOldCategoricalPoints (options) {
+            // There is no need to remove old data from the chart itself as, for categorical xAxis,
+            // the chart only retains one value for each category
+
+            // Do we need to do anything to the vuex store here?
+        },
+
         calculateBins () {
             if (this.props.chartType !== 'histogram') {
                 return []

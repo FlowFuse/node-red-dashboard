@@ -75,7 +75,7 @@ module.exports = function (RED) {
          * For categorical xaxis and types other than histogram then only keep the latest data point for
          * each category in each series
          */
-        function clearOldCategoricalPoints() {
+        function clearOldCategoricalPoints () {
             const points = datastore.get(node.id)
             const latestSet = {}
             for (const item of points) {
