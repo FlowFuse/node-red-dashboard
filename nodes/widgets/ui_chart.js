@@ -216,7 +216,7 @@ module.exports = function (RED) {
                     datastore.save(base, node, [])
                 }
                 // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
-                if (msg.payload !== undefined) {
+                if (typeof msg.payload !== 'undefined') {
                     if (Array.isArray(msg.payload) && !msg.payload.length) {
                         // clear history
                         datastore.save(base, node, [])
