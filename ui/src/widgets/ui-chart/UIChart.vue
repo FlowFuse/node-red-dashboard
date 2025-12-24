@@ -713,7 +713,9 @@ export default {
 
                 // Add data point
                 // ensure the data array exists
-                options.series[sIndex].data ||= []
+                if (Array.isArray(options.series[sIndex].data) === false) {
+                    options.series[sIndex].data = []
+                ]
                 if (this.props.xAxisType === 'category') {
                     // for categories, we need to update the existing data point for this x-value
                     const xIndex = options.series[sIndex].data.findIndex(d => d[0] === datapoint.x)
