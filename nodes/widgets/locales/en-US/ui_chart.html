@@ -106,6 +106,46 @@
     }
 }
             </pre>
-            The options set earlier will remain in force.
+            The options set earlier will remain in force. Generally a message containing `msg.ui_update` should contain
+            no payload or other properties otherwise those will be interpreted as data to go on the chart.
+        </dd>
+        <dd>
+            The settings for each series on the chart can also be set using `msg.ui_update`. In particular this allows line
+            colours to be configured. Note that when adjusting settings
+            for a series you must include all customised settings for all series, as each update to series configuration will
+            replace any previous customisation to series.
+            For example, for a line chart with two lines 'temperature' and 'humidity', to set the colour of the temperature line
+            to red and humidity to green `msg.ui_update` could be sent containing
+            <pre>
+{
+    "chartOptions": {
+        "series": [
+            {
+                "name": "temperature",
+                "type": "line",
+                "lineStyle": {
+                    "color": "red",
+                },
+                "itemStyle": {
+                    "color": "red"
+                },
+            },
+            {
+                "name": "humidity",
+                "type": "line",
+                "lineStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+                "itemStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+            }
+        ]
+    }
+}
+            </pre>
+            Note that this sets the colour for the whole line. It cannot be used to change the colour for just a section of the line.
+
+            Any such message should always contain the series name and type for each series.
         </dd>
         </script>
