@@ -178,7 +178,6 @@ fetch('_setup')
         })
 
         socket.on('connect', () => {
-            console.log('SIO connected')
             // if we've just disconnected (i.e. aren't connecting for the first time)
             if (disconnected) {
                 // check vuex store here

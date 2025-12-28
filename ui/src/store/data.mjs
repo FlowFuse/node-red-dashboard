@@ -75,7 +75,6 @@ const mutations = {
      * @param {SpeechSynthesisVoice[]} voices
      */
     setVoices (state, voices) {
-        console.log('Mutating voices', voices)
         state.voices = voices
     }
 
