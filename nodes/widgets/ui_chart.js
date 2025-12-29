@@ -283,13 +283,14 @@ module.exports = function (RED) {
                             datastore.save(base, node, _msg)
                         }
 
-                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
-                        // remove any points older than the specified time
-                        clearOldPoints()
-                    } else if (config.xAxisType === 'category' && config.chartType !== 'histogram') {
-                        // for categorical xaxis and types other than histogram then only keep the latest data point for
-                        // each category in each series
-                        clearOldCategoricalPoints()
+                        if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                            // remove any points older than the specified time
+                            clearOldPoints()
+                        } else if (config.xAxisType === 'category' && config.chartType !== 'histogram') {
+                            // for categorical xaxis and types other than histogram then only keep the latest data point for
+                            // each category in each series
+                            clearOldCategoricalPoints()
+                        }
                     }
                 }
 
