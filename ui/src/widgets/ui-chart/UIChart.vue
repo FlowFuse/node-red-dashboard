@@ -773,8 +773,6 @@ export default {
         clearOldCategoricalPoints (options) {
             // There is no need to remove old data from the chart itself as, for categorical xAxis,
             // the chart only retains one value for each category
-
-            // Do we need to do anything to the vuex store here?
         },
 
         calculateBins () {
