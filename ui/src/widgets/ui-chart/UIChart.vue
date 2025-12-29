@@ -425,7 +425,9 @@ export default {
                     const seriesCount = this.chart.getOption().series.length
                     this.add(msg)
                     // if any series have been added, re-apply any chartOptions passed in
-                    if (this.chart.getOption().series.length > seriesCount) {
+                    // Also re-apply if this is a radial (pie or doughnut) chart as the radius for these are re-calculated
+                    // when adding data, which may remove any radius applied via msg.ui_update.
+                    if (this.chart.getOption().series.length > seriesCount || this.props.xAxisType === 'radial') {
                         // update the chart first from options applied in previous sessions
                         const chartOptions = this.chartOptions
                         if (chartOptions) {
