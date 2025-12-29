@@ -6,7 +6,6 @@ const state = () => ({
 
 const mutations = {
     set (state, setup) {
-        console.log('setup', setup)
         state.setup = setup
     },
     setError (state, error) {

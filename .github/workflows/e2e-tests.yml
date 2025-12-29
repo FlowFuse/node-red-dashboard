@@ -20,13 +20,13 @@ jobs:
       - name: Run Linting Tests
         run: npm run lint
       - name: Run Dashboard E2E (Cypress) Tests
-        uses: cypress-io/github-action@7ef72e250a9e564efb4ed4c2433971ada4cc38b4 # v6.10.4
+        uses: cypress-io/github-action@2ad32e649e4db26c07674ebae31a297601dbcbaf # v6.10.8
         with:
           install: false
           config-file: cypress.config.js
           build: npm run build
           start: npm run cy:server
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()
         with:
           name: cypress-output

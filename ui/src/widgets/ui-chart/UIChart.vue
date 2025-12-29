@@ -20,7 +20,8 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
@@ -33,6 +34,7 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
+            dynamicChartOptions: [], // an array of chart options updates received this session
             resizeObserver: null
         }
     },
@@ -62,6 +64,9 @@ export default {
         },
         interpolation () {
             return this.props.interpolation
+        },
+        chartOptions () {
+            return this.getProperty('chartOptions')
         }
     },
     watch: {
@@ -154,7 +159,7 @@ export default {
         chart.setOption(options)
 
         // merge in any updates provided via ui_update.chartOptions
-        const chartOptions = this.props.chartOptions
+        const chartOptions = this.chartOptions
         if (chartOptions) {
             // pass the options to the chart
             chart.setOption(chartOptions)
@@ -188,6 +193,8 @@ export default {
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
                 }
+                // add these options to the array of previous updates received this session
+                this.dynamicChartOptions.push(updates.chartOptions)
             }
         },
         generateChartOptions () {
@@ -399,19 +406,39 @@ export default {
             }
         },
         onMsgInput (msg) {
-            if (Array.isArray(msg.payload) && !msg.payload.length) {
-                // clear the chart if msg.payload = [] is received
-                this.clearChart()
-                this.clearDataStore()
-            } else {
-                if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
-                    // clear the chart
+            // ignore if payload is empty and msg is not an array (on loading it can be an array)
+            // ui_update messages are handled by OnDynamicProperties
+            if (msg.payload !== undefined || Array.isArray(msg)) {
+                if (Array.isArray(msg.payload) && !msg.payload.length) {
+                    // clear the chart if msg.payload = [] is received
                     this.clearChart()
-                    // delete messages array in the store
                     this.clearDataStore()
+                } else {
+                    if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
+                        // clear the chart
+                        this.clearChart()
+                        // delete messages array in the store
+                        this.clearDataStore()
+                    }
+                    // update the chart
+                    // remember how many series are currently configured
+                    const seriesCount = this.chart.getOption().series.length
+                    this.add(msg)
+                    // if any series have been added, re-apply any chartOptions passed in
+                    // Also re-apply if this is a radial (pie or doughnut) chart as the radius for these are re-calculated
+                    // when adding data, which may remove any radius applied via msg.ui_update.
+                    if (this.chart.getOption().series.length > seriesCount || this.props.xAxisType === 'radial') {
+                        // update the chart first from options applied in previous sessions
+                        const chartOptions = this.chartOptions
+                        if (chartOptions) {
+                            this.chart.setOption(chartOptions)
+                        }
+                        // then from this session
+                        this.dynamicChartOptions.forEach((options) => {
+                            this.chart.setOption(options)
+                        })
+                    }
                 }
-                // update the chart
-                this.add(msg)
             }
         },
         getXDisplayFormats (xAxisFormatType) {
@@ -689,6 +716,10 @@ export default {
                 }
 
                 // Add data point
+                // ensure the data array exists
+                if (Array.isArray(options.series[sIndex].data) === false) {
+                    options.series[sIndex].data = []
+                }
                 if (this.props.xAxisType === 'category') {
                     // for categories, we need to update the existing data point for this x-value
                     const xIndex = options.series[sIndex].data.findIndex(d => d[0] === datapoint.x)
@@ -746,15 +777,17 @@ export default {
             if ((cutoff || points) && series.length > 0) {
                 // loop over each series
                 for (let i = 0; i < series.length; i++) {
-                    const length = series[i].data.length // check how much data there is in this series
-                    series[i].data = series[i].data.filter((d, i) => {
-                        if (cutoff && d[0] < cutoff) {
-                            return false
-                        } else if (points && (i < length - points)) {
-                            return false
-                        }
-                        return true
-                    })
+                    const length = series[i].data?.length // check how much data there is in this series
+                    if (length) {
+                        series[i].data = series[i].data.filter((d, i) => {
+                            if (cutoff && d[0] < cutoff) {
+                                return false
+                            } else if (points && (i < length - points)) {
+                                return false
+                            }
+                            return true
+                        })
+                    }
                 }
             }
             // apply data limitations to the vuex store
