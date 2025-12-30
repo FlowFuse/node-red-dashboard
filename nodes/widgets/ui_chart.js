@@ -266,21 +266,31 @@ module.exports = function (RED) {
                         if (maxPoints && config.removeOlderPoints) {
                             // account for multiple lines?
                             // client-side does this for _each_ line
-                            // remove older points
+                            // remove older points using datastore.filter instead of saving the whole array
                             const lineCounts = {}
-                            const _msg = datastore.get(node.id)
-                            // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
+                            const _msg = datastore.get(node.id) || []
+
+                            // determine which message objects to keep (latest maxPoints per label)
+                            const keepIndexes = []
+                            let doFiltering = false
                             for (let i = _msg.length - 1; i >= 0; i--) {
-                                const msg = _msg[i]
-                                const label = msg.topic
+                                const m = _msg[i]
+                                const label = m.topic
                                 lineCounts[label] = lineCounts[label] || 0
-                                if (lineCounts[label] >= maxPoints) {
-                                    _msg.splice(i, 1)
-                                } else {
+                                if (lineCounts[label] < maxPoints) {
+                                    keepIndexes[i] = true
                                     lineCounts[label]++
+                                } else {
+                                    doFiltering = true
                                 }
                             }
-                            datastore.save(base, node, _msg)
+
+                            // filter the datastore to only keep the selected messages
+                            if (doFiltering) {
+                                datastore.filter(base, node, (m, i) => {
+                                    return keepIndexes[i]
+                                })
+                            }
                         }
 
                         if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
