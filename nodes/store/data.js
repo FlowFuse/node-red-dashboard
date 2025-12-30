@@ -102,6 +102,22 @@ const setters = {
             }
             data[node.id].push(config.RED.util.cloneMessage(msg))
         }
+    },
+    /**
+     * Fast filtering of existing array data (skips cloning and save checks for fast data cleanup)
+     * @param {*} base - the base node
+     * @param {*} node - the owner node
+     * @param {(msg) => Boolean} filterFunction
+     */
+    filter (base, node, filterFunction) {
+        const currentData = data[node.id]
+        if (filterFunction && Array.isArray(currentData) && currentData.length) {
+            const filteredMessages = currentData.filter(filterFunction)
+            if (filteredMessages.length !== currentData.length) {
+                // no need for save operation to process messages - just apply them
+                data[node.id] = filteredMessages
+            }
+        }
     }
 }
 
@@ -111,5 +127,6 @@ module.exports = {
     setConfig: setters.setConfig,
     save: setters.save,
     append: setters.append,
+    filter: setters.filter,
     clear: setters.clear
 }
