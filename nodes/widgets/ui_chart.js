@@ -61,16 +61,16 @@ module.exports = function (RED) {
             if (removeOlder > 0) {
                 const removeOlderUnit = parseFloat(config.removeOlderUnit)
                 const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                const cutoff = (new Date()).getTime() - ago
-                const _msg = datastore.get(node.id).filter((msg) => {
+                const cutOff = (new Date()).getTime() - ago
+                const filterFn = (msg) => {
                     let timestamp = msg._datapoint.x
                     // is x already a millisecond timestamp?
                     if (typeof (msg._datapoint.x) === 'string') {
                         timestamp = (new Date(msg._datapoint.x)).getTime()
                     }
-                    return timestamp > cutoff
-                })
-                datastore.save(base, node, _msg)
+                    return timestamp > cutOff
+                }
+                datastore.filter(base, node, filterFn)
             }
         }
 
