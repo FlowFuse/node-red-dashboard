@@ -15,6 +15,7 @@
             "passThrough": "If <code>msg</code> arrives on input, pass through to output:",
             "clearable": "Clear number input with button",
             "sendMessageOn": "Send message on:",
+            "onChange": "On Change",
             "focusLeave": "Focus Leave",
             "pressEnter": "Press Enter",
             "whenChanged": "When changed, send:",
