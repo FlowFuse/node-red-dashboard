@@ -115,7 +115,7 @@
                     // The behaviour in existing nodes was to deselect all items
                     $('#node-input-deselect').prop('checked', true)
                 }
-                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // if this groups parent is a subflow template, set the node-input-width and node-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
                     // change inputs from hidden to text & display them
@@ -347,8 +347,8 @@
         <input type="text" id="node-input-label" data-i18n="[placeholder]ui-table.label.optionalTableTitle">
     </div>
     <div class="form-row" id="text-row-class">
-        <label for="node-config-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-table.label.className"></span></label>
-        <input type="text" id="node-config-input-className" data-i18n="[placeholder]ui-table.label.classNamePlaceholder"/>
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-table.label.className"></span></label>
+        <input type="text" id="node-input-className" data-i18n="[placeholder]ui-table.label.classNamePlaceholder"/>
     </div>
     <div class="form-row">
         <label for="node-input-maxrows"><i class="fa fa-tag"></i> <span data-i18n="ui-table.label.maxRows"></label>
