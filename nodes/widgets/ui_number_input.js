@@ -6,6 +6,15 @@ module.exports = function (RED) {
     function NumberInputNode (config) {
         const node = this
 
+        // Handle in-place upgrade: set defaults for existing nodes
+        if (config.delay === undefined) {
+            config.delay = 0
+            config.sendOnDelay = true
+        }
+
+        // Ensure delay is a valid number >= 0
+        config.delay = Math.max(0, parseInt(config.delay, 10) || 0)
+
         // create node in Node-RED
         RED.nodes.createNode(this, config)
 

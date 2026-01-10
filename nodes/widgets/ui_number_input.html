@@ -109,6 +109,13 @@
                     $('#node-input-sendOnClear').prop('checked', false)
                 }
 
+                // Handle in-place upgrade: existing nodes should maintain current behavior
+                if (this.delay === undefined) {
+                    // Set delay to 0 and enable sendOnDelay for upgraded nodes
+                    $('#node-input-delay').val('0')
+                    $('#node-input-sendOnDelay').prop('checked', true)
+                }
+
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
                 }
