@@ -179,7 +179,16 @@ export default {
             this.$socket.emit('widget-change', this.id, this.value)
         },
         onChange () {
-            this.send()
+            if (this.props.sendOnDelay) {
+                // is send on delay enabled, if so, set a timeout to send the message
+                if (this.delayTimer) {
+                    // reset the timer to count from the latest change
+                    clearTimeout(this.delayTimer)
+                }
+                this.delayTimer = setTimeout(this.send, this.props.delay)
+            } else {
+                this.send()
+            }
         },
         onBlur: function () {
             if (this.props.sendOnBlur) {
