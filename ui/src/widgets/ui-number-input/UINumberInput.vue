@@ -186,8 +186,6 @@ export default {
                     clearTimeout(this.delayTimer)
                 }
                 this.delayTimer = setTimeout(this.send, this.props.delay)
-            } else {
-                this.send()
             }
         },
         onBlur: function () {
