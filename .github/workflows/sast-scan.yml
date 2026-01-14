@@ -1,0 +1,19 @@
+name: SAST Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: SAST Scan
+    uses : flowfuse/github-actions-workflows/.github/workflows/sast_scan.yaml@v0.46.0
