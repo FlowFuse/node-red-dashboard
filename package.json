@@ -53,6 +53,8 @@
         "lint:package": "sort-package-json --check 'package.json'",
         "lint:package:fix": "sort-package-json 'package.json'",
         "test": "mocha \"test/**/*.spec.js\"",
+        "test:cov": "npx nyc mocha \"test/**/*.spec.js\" && npx nyc report --reporter=html",
+        "test:cov:view": "npx open-cli coverage/index.html",
         "test:debug": "mocha --inspect=9226 \"test/**/*.spec.js\"",
         "watch": "npm-run-all --parallel watch:dashboard watch:node-red",
         "watch:dashboard": "npm run dev",
