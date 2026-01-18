@@ -373,7 +373,7 @@ describe('ui-audio node', function () {
                 const mutedCall = setCalls.find(call => call.args[3] === 'muted')
                 mutedCall.args[4].should.equal('on')
             })
-            it('should call node.error when  dynamic updates value is bad', async function () {
+            it('should call node.error when dynamic updates value is bad', async function () {
                 await helper.load(nodeImports, flow)
                 verifyFlowLoaded(helper, flow)
                 const group = helper.getNode('config-ui-group')
