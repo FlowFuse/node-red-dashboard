@@ -58,7 +58,16 @@ module.exports = function (RED) {
                     payloadType = 'str'
                 }
             } else if (payloadType === 'date') {
-                payload = Date.now()
+                switch (payload) {
+                case 'iso':
+                    payload = new Date().toISOString()
+                    break
+                case 'object':
+                    payload = new Date()
+                    break
+                default:
+                    payload = Date.now()
+                }
             } else if (payloadType === 'num') {
                 payload = Number(payload)
             } else {
@@ -74,7 +83,6 @@ module.exports = function (RED) {
                 }
             }
             msg.payload = payload
-
             const updates = msg.ui_update
 
             if (updates) {
