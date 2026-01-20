@@ -58,16 +58,7 @@ module.exports = function (RED) {
                     payloadType = 'str'
                 }
             } else if (payloadType === 'date') {
-                switch (payload) {
-                case 'iso':
-                    payload = new Date().toISOString()
-                    break
-                case 'object':
-                    payload = new Date()
-                    break
-                default:
-                    payload = Date.now()
-                }
+                payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
             } else if (payloadType === 'num') {
                 payload = Number(payload)
             } else {
