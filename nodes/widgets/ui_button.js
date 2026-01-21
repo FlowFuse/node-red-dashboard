@@ -58,7 +58,7 @@ module.exports = function (RED) {
                     payloadType = 'str'
                 }
             } else if (payloadType === 'date') {
-                payload = Date.now()
+                payload = RED.util.evaluateNodeProperty(payload, payloadType, node)
             } else if (payloadType === 'num') {
                 payload = Number(payload)
             } else {
@@ -74,7 +74,6 @@ module.exports = function (RED) {
                 }
             }
             msg.payload = payload
-
             const updates = msg.ui_update
 
             if (updates) {
