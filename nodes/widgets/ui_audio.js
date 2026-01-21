@@ -85,10 +85,11 @@ module.exports = function (RED) {
                                 }
                             }
                         }
-                    } else if (mode === 'tts') {
-                        // lets clean up the datastore since there is no audio player involved
-                        datastore.remove(node.id)
                     }
+                } else if (mode === 'tts') {
+                    // lets clean up the datastore & statestore (not needed for tts mode)
+                    datastore.clear(node.id)
+                    statestore.reset(node.id)
                 }
                 return msg
             }

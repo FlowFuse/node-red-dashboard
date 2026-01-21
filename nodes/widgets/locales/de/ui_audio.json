@@ -15,7 +15,9 @@
             "mode": "Modus",
             "voice": "Stimme",
             "ui": "UI",
-            "browser-default-voice": "Standard-Browserstimme"
+            "browser-default-voice": "Standard-Browserstimme",
+            "className": "Klasse",
+            "classNamePlaceholder": "Optionale CSS-Klassenname(n)"
         },
         "option": {
             "on": "Ein",
