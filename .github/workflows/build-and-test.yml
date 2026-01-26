@@ -3,7 +3,7 @@ on:
   pull_request:
 jobs:
   build:
-    uses: 'flowfuse/github-actions-workflows/.github/workflows/build_node_package.yml@v0.46.0'
+    uses: 'flowfuse/github-actions-workflows/.github/workflows/build_node_package.yml@v0.47.0'
     with:
       node: '[
               {"version": "20", "tests": true, "lint": true},
