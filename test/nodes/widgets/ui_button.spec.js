@@ -10,6 +10,13 @@ const nodeImports = testData1.getImports(null, ['ui_button'])
 
 helper.init(require.resolve('node-red'))
 
+/** utility to wait for an event and return a promise */
+function on (emitter, event) {
+    return new Promise((resolve) => {
+        emitter.on(event, resolve)
+    })
+}
+
 describe('ui-button node', function () {
     beforeEach(function (done) {
         helper.startServer(done)
@@ -125,5 +132,101 @@ describe('ui-button node', function () {
             })
             button.receive({})
         })
+    })
+
+    it('should receive an iso date in payload', async function () {
+        const copyOfFlow = JSON.parse(JSON.stringify(flow))
+        const buttonDefinition = copyOfFlow.find(n => n.id === 'node-ui-button')
+        buttonDefinition.payload = 'iso'
+        buttonDefinition.payloadType = 'date'
+        await helper.load(nodeImports, copyOfFlow)
+        verifyFlowLoaded(helper, copyOfFlow)
+        const base = helper.getNode('config-ui-base')
+
+        // setup a fake connection so that button has somewhere to emit to and we can spy on it
+        const socket = {
+            id: 'fake-conn-id',
+            emit: sinon.spy()
+        }
+        base.uiShared.connections['fake-conn-id'] = socket // fake connection so that button has somewhere to emit
+
+        // send a message to the button node
+        const button = helper.getNode('node-ui-button')
+        const hNode = helper.getNode('helper-node')
+        const inputPromise = on(hNode, 'input')
+        button.receive({})
+        const msg = await inputPromise
+
+        // tests
+        socket.emit.calledOnce.should.be.true()
+        const [eventName, message] = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
+        eventName.should.equal('msg-input:' + button.id)
+        message.should.equal(msg)
+        msg.should.have.property('payload').and.be.a.String()
+        new Date(msg.payload).getTime().should.be.approximately(Date.now(), 500) // within 0.5 second
+    })
+
+    it('should receive a date object in payload', async function () {
+        const copyOfFlow = JSON.parse(JSON.stringify(flow))
+        const buttonDefinition = copyOfFlow.find(n => n.id === 'node-ui-button')
+        buttonDefinition.payload = 'object'
+        buttonDefinition.payloadType = 'date'
+        await helper.load(nodeImports, copyOfFlow)
+        verifyFlowLoaded(helper, copyOfFlow)
+        const base = helper.getNode('config-ui-base')
+
+        // setup a fake connection so that button has somewhere to emit to and we can spy on it
+        const socket = {
+            id: 'fake-conn-id',
+            emit: sinon.spy()
+        }
+        base.uiShared.connections['fake-conn-id'] = socket // fake connection so that button has somewhere to emit
+
+        // send a message to the button node
+        const button = helper.getNode('node-ui-button')
+        const hNode = helper.getNode('helper-node')
+        const inputPromise = on(hNode, 'input')
+        button.receive({})
+        const msg = await inputPromise
+
+        // tests
+        socket.emit.calledOnce.should.be.true()
+        const [eventName, message] = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
+        eventName.should.equal('msg-input:' + button.id)
+        message.should.equal(msg)
+        msg.should.have.property('payload').and.be.an.instanceOf(Date)
+        msg.payload.getTime().should.be.approximately(Date.now(), 500) // within 0.5 second
+    })
+
+    it('should receive an epoch time value in payload', async function () {
+        const copyOfFlow = JSON.parse(JSON.stringify(flow))
+        const buttonDefinition = copyOfFlow.find(n => n.id === 'node-ui-button')
+        buttonDefinition.payload = '' // should be blank for epoch time
+        buttonDefinition.payloadType = 'date'
+        await helper.load(nodeImports, copyOfFlow)
+        verifyFlowLoaded(helper, copyOfFlow)
+        const base = helper.getNode('config-ui-base')
+
+        // setup a fake connection so that button has somewhere to emit to and we can spy on it
+        const socket = {
+            id: 'fake-conn-id',
+            emit: sinon.spy()
+        }
+        base.uiShared.connections['fake-conn-id'] = socket // fake connection so that button has somewhere to emit
+
+        // send a message to the button node
+        const button = helper.getNode('node-ui-button')
+        const hNode = helper.getNode('helper-node')
+        const inputPromise = on(hNode, 'input')
+        button.receive({})
+        const msg = await inputPromise
+
+        // tests
+        socket.emit.calledOnce.should.be.true()
+        const [eventName, message] = socket.emit.args[0] // [0][0] is the event name, [0][1] is the payload
+        eventName.should.equal('msg-input:' + button.id)
+        message.should.equal(msg)
+        msg.should.have.property('payload').and.be.a.Number()
+        msg.payload.should.be.approximately(Date.now(), 500) // within 0.5 second
     })
 })

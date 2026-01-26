@@ -67,7 +67,8 @@
                 src: { value: '' },
                 autoplay: { value: 'off' },
                 loop: { value: 'off' },
-                muted: { value: 'off' }
+                muted: { value: 'off' },
+                className: { value: '' }
             },
             inputs: 1,
             outputs: 1,
@@ -245,6 +246,19 @@
             <option value="on" data-i18n="ui-audio.option.on">On</option>
             <option value="off" data-i18n="ui-audio.option.off">Off</option>
         </select>
+    </div>
+    <div class="form-row ui-audio-mode-src">
+        <label for="node-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-audio.label.className">Class</span></label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" data-i18n="[placeholder]ui-audio.label.classNamePlaceholder" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
     </div>
     <div class="form-tips ui-audio-mode-src"><span data-i18n="ui-audio.label.mode-tip-src">Autoplay will only work after a user gesture (e.g. click on the dashboard).</span></div>
     <div class="form-tips ui-audio-mode-tts"><span data-i18n="ui-audio.label.mode-tip-tts">Text-to-Speech will only work after a user gesture (e.g. click on the dashboard).</span></div>

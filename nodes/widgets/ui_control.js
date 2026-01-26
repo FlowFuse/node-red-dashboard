@@ -201,7 +201,6 @@ module.exports = function (RED) {
                     // When the target was to identify a widget, then the search is over here if a widget has been found
                     if (widgetNode && type === 'widget') {
                         identifiedNodes.push(widgetNode)
-                        return
                     }
                 }
 
@@ -338,10 +337,10 @@ module.exports = function (RED) {
                         widgets.hide = updateStateStore('widget', widgets.hide, msg, 'visible', false)
                     }
                     if ('enable' in widgets) {
-                        widgets.enable = updateStateStore('widget', widgets.enable, msg, 'disabled', false)
+                        widgets.enable = updateStateStore('widget', widgets.enable, msg, 'enabled', true)
                     }
                     if ('disable' in widgets) {
-                        widgets.disable = updateStateStore('widget', widgets.disable, msg, 'disabled', true)
+                        widgets.disable = updateStateStore('widget', widgets.disable, msg, 'enabled', false)
                     }
 
                     // ensure consistency in payload format

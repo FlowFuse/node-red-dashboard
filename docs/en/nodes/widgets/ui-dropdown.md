@@ -50,7 +50,7 @@ dynamic:
 
 </TryDemo>
 
-Adds a dropdown to your dashboard that will emit values in Node-RED under `msg.payload` anytime it's value is changed.
+Adds a dropdown to your dashboard that will emit values in Node-RED under `msg.payload` anytime its value is changed.
 
 ## Programmatic Selections
 

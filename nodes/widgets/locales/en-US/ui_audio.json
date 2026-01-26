@@ -15,7 +15,9 @@
             "mode": "Mode",
             "voice": "Voice",
             "ui": "UI",
-            "browser-default-voice": "Browser Default Voice"
+            "browser-default-voice": "Browser Default Voice",
+            "className": "Class",
+            "classNamePlaceholder": "Optional CSS class name(s)"
         },
         "option": {
             "on": "On",

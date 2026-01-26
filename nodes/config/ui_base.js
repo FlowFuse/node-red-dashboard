@@ -26,6 +26,19 @@ function hasProperty (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
+/**
+ * Test whether a message has any properties other than ui_update, class, visible, enabled and _msgid
+ * Properties with the value undefined are ignored
+ * @param {*} msg
+ * @returns true if other properties found
+ */
+function hasExtraProps (message) {
+    const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
+    const keys = Object.keys(message).filter(key => message[key] !== undefined)
+
+    return keys.length > 0 && keys.some(key => !allowed.includes(key))
+}
+
 module.exports = function (RED) {
     const express = require('express')
     const { Server } = require('socket.io')
@@ -980,7 +993,7 @@ module.exports = function (RED) {
          * Queue up a config emit to the UI. This is a debounced function
          * NOTES:
          * * only sockets connected to this node will receive the config
-         * * each ui-node will have it's own connections and will emit it's own config
+         * * each ui-node will have its own connections and will emit its own config
          * @returns {void}
          */
         node.requestEmitConfig = function () {
@@ -1172,7 +1185,7 @@ module.exports = function (RED) {
                  * Event Handlers
                  */
 
-                // add Node-RED listener to the widget for when it's corresponding node receives a msg in Node-RED
+                // add Node-RED listener to the widget for when its corresponding node receives a msg in Node-RED
                 widgetNode?.on('input', async function (msg, send, done) {
                     // clean msg - #668
                     delete msg.res
@@ -1224,8 +1237,11 @@ module.exports = function (RED) {
                                     msg = await appendTopic(RED, widgetConfig, wNode, msg)
                                 }
 
-                                // store the latest msg passed to node
-                                datastore.save(n, widgetNode, msg)
+                                // store the latest msg passed to the node unless the message only contains
+                                // ui_update, visible, enabled or class properties, which are handled in the state store
+                                if (hasExtraProps(msg)) {
+                                    datastore.save(n, widgetNode, msg)
+                                }
 
                                 if (hasProperty(widgetConfig, 'passthru')) {
                                     if (widgetConfig.passthru) {

@@ -129,7 +129,7 @@ For example, if you want to round the value to 1 decimal place, you can set the 
 $round(payload, 1) // round to 1 decimal place
 ```
 
-You can read more about the JSONata expression language and in particular, it's numeric functions, [here](https://docs.jsonata.org/numeric-functions).
+You can read more about the JSONata expression language and in particular, its numeric functions, [here](https://docs.jsonata.org/numeric-functions).
 
 ## Examples
 

@@ -144,6 +144,10 @@ export default {
             if (widget.state.class) {
                 classes.push(widget.state.class)
             }
+            // hide the widget if required
+            if (this.resizable === false && widget.state.visible === false) {
+                classes.push('d-none')
+            }
             return classes.join(' ')
         },
         getWidgetEditingClass (widget) {

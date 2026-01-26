@@ -88,7 +88,7 @@ When "Include Client Data" is enabled, every `msg._client` will detail the `sock
 
 ### Storing User Data
 
-By default, Dashboard will store the latest messages received against a given node in it's own context stores. However, for nodes that are setup to "Accept Client Data", this is not he case, as it's very memory inefficient for us to automatically store data for _every_ message, for _every_ user against every _widget_.
+By default, Dashboard will store the latest messages received against a given node in its own context stores. However, for nodes that are setup to "Accept Client Data", this is not he case, as it's very memory inefficient for us to automatically store data for _every_ message, for _every_ user against every _widget_.
 
 Instead, the recommended pattern is to use the "change" node, and the built-in `global` and `flow` context stores of Node-RED. We can make use of the `[]` annotation available in the "change" node, to store an object of the latest submitted form for a given user (making the most of the FlowFuse User Addon to get `msg._client.user.username`):
 
@@ -105,7 +105,7 @@ Let's take a look at the steps involved here:
 1. When a user loads the page, `ui-event` triggers a `$pageview` event, containing the details of the user viewing the page. 
 2. We check our `global` context store to see if we have any data stored against the user's username.
 3. If we do, we set `msg.payload` to the contents of the store, otherwise, branch to a "debug" node.
-4. Send the `msg.payload` to the form to populate it with the stored values
+4. Send the `msg.payload` to the form to populate it with the stored values.
 5. On submit of the form, save the contents of the form to the `global` context store, using the user's username as the key.
 
 ### Comparing different communication options
@@ -127,7 +127,7 @@ We can see how it's possible to control the interaction of a widget, and how the
 
 2. "Send to Same User" slider passes through a change node, and has the `socketId` field removed from `msg._client`, leaving just the `user` object. This means the data is sent to any connected clients where the same authenticated user is found.
 
-3. "Single Client" slider just passes it's default output to the "Chart" node, including the full `msg._client` object. This means that the data is only sent to the client (`socketId`) & user (`user`) that interacted with the slider.
+3. "Single Client" slider just passes its default output to the "Chart" node, including the full `msg._client` object. This means that the data is only sent to the client (`socketId`) & user (`user`) that interacted with the slider.
 
 Below you will find the flow that runs the above example:
 

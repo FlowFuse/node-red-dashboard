@@ -36,7 +36,14 @@
                     }
                 },
                 tooltip: { value: '' },
+                delay: {
+                    value: 300,
+                    validate: function (v) {
+                        return $('#node-input-sendOnDelay').is(':checked') ? (RED.validators.number()(v) && v >= 0) : true
+                    }
+                },
                 passthru: { value: true },
+                sendOnDelay: { value: false },
                 sendOnBlur: { value: true },
                 sendOnEnter: { value: true },
                 className: { value: '' },
@@ -101,6 +108,13 @@
                 }
                 if (this.sendOnClear === undefined) {
                     $('#node-input-sendOnClear').prop('checked', false)
+                }
+
+                // Handle in-place upgrade: existing nodes should maintain current behavior
+                if (this.delay === undefined) {
+                    // Set delay to 0 and enable sendOnDelay for upgraded nodes
+                    $('#node-input-delay').val('0')
+                    $('#node-input-sendOnDelay').prop('checked', true)
                 }
 
                 if (!this.iconPosition) {
@@ -218,9 +232,17 @@
     <div class="form-row">
         <label style="width:auto" for="node-input-payload"><i class="fa fa-clock-o"></i> <span data-i18n="ui-number-input.label.sendMessageOn"></span></label>
     </div>
+    <div class="form-row form-row-flex" style="padding-left: 25px; align-items: center;">
+        <input type="checkbox" checked id="node-input-sendOnDelay" style="display:inline-block; width:auto; vertical-align:top;">
+        <label style="width:auto" for="node-input-sendOnDelay"> <span data-i18n="ui-number-input.label.delay"></span></label>
+        <div id="node-input-delay-box">
+            <input type="text" style="width:58px" id="node-input-delay">
+            <label for="node-input-delay"><span data-i18n="ui-number-input.label.delayUnit"></span></label>
+        </div>
+    </div>
     <div class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
-        <label style="width:auto" for="node-input-sendOnBlur" data-i18n="ui-number-input.label.focusLeave"></label>
+        <label style="width:auto" for="node-input-sendOnBlur"> <span data-i18n="ui-number-input.label.focusLeave"></span></label>
     </div>
     <div id="node-input-container-sendOnEnter" class="form-row" style="padding-left: 25px;">
         <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">

@@ -16,13 +16,13 @@ props:
     X-Axis Format: <code>{HH}:{mm}:{ss}</code> | <code>{HH}:{mm}</code> | <code>{yyyy}-{M}-{d}</code> | <code>{d}/{M}</code> | <code>{ee} {HH}:{mm}</code> | <code>Custom</code> | <code>Auto</code>
         Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
         See <a target="_blank" href="https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter">here</a> for an overview of the available format types.
-    X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.
+    X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.  The time based limit may be disabled by setting the value to 0.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
         <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>
         <b>Y:</b> Defines how to render the y-value of any data point.
     Text Color: Option to override Chart.Js default color for text.
-        At moment overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
+        At the moment it overrides the text color for <code>Chart Title</code>, <code>Ticks Text</code>, <code>Axis Title</code> and <code>Legend Text</code></br>
         It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Text Colors</code>
     Grid Line Color: Option to override Chart.Js default color for <code>Grid Lines</code> and <code>Axis Border</code>.</br>
         It is possible to return to Chart.Js defaults by using the checkbox <code>Use ChartJs Default Grid Colors</code>
@@ -30,6 +30,13 @@ dynamic:
     Class:
         payload: msg.class
         structure: ["String"]
+    Action:
+        payload: msg.action
+        structure: ["String"]
+        examples: ['replace', 'append']
+    Chart Options:
+        payload: msg.ui_update.chartOptions
+        structure: ["Object"]
 ---
 
 <script setup>
@@ -98,7 +105,7 @@ To map your data to the chart, the most important properties to configure are:
 ![Example key mapping config for UI Chart](/images/node-examples/ui-chart-keymapping.png "Example key mapping config for UI Chart"){data-zoomable}
 _Example key mapping config for UI Chart_
 
-- **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example, on a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
+- **Series**: Controls how you want to group your data. On a line chart, different series result in different lines for example. On a bar chart, different series result in different bars for a single x-value (stacked or grouped side-by-side).
 - **X**: Defines where to read the value to plot on the x-axis. This can be read from the `msg` object, as a `key` on an object, or generate a new `timestamp` for each data point being received to the node.
 - **Y**: Define where to read the value to plot on the y-axis. This can be read as a property on the `msg` object, or as a `key` on objects in an array of data.
 
@@ -114,10 +121,10 @@ The next most important properties to configure are the "Chart Type" and "X-Axis
 
 <FlowViewer :flow="examples['chart-line-timestamp']" height="250px"/>
 
-In this example we wire a [Slider](./ui-slider.md) to our Chart to plot it's output over time:
+In this example we wire a [Slider](./ui-slider.md) to our Chart to plot its output over time:
 
 ![Example of a Line Chart](/images/node-examples/ui-chart-line.png "Example of a Line Chart"){data-zoomable}
-*Example of a rendered line chart with a "time" x-axis.*
+*Example of a rendered Line Chart with a "time" x-axis.*
 
 A very common use case of Node-RED is to process timeseries data, such as sensor readings. In this case, you would set the following:
 
@@ -131,7 +138,7 @@ The value for the `x` property would then be one of two things:
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the current date/time.
 - If your data is an object, you can provide the key of the timestamp in your data, e.g. `{"myTime": 1743608192522}` would set the "X" property to the type `key` and the value `myTime`.
 
-Then, the last piece of the puzzle would be to set the `y` property would be one of two options:
+Then, the last piece of the puzzle to set the `y` property would be one of two options:
 
 - If your data is a simple numerical value, you can leave this blank, and the chart will automatically use the value of `msg.payload`.
 - If your data is an object, you can provide the key of the value in your data, e.g. `{"myTime": 1743608192522, "myValue": 123}` would set the "Y" property to the type `key` and the value `myValue`.
@@ -209,7 +216,7 @@ If you want a single piece of data to plot multiple lines, you can set the `Seri
 ### Scatter Charts
 
 ![Example of a Scatter Plot](/images/node-examples/ui-chart-scatter.png "Example of a Scatter Plot"){data-zoomable}
-*Example of a rendered scatter plot with a "time" x-axis.*
+*Example of a rendered Scatter Plot with a "time" x-axis.*
 
 We can also use "Series" to group points. Let's take an example with the following data set:
 
@@ -238,8 +245,8 @@ With the following configuration:
 
 Which results in:
 
-![Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered scatter plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
-*Example of a rendered scatter plot with a "Linear" x-axis, and data grouped into "Series".*
+![Example of a rendered Scatter Plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered Scatter Plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
+*Example of a rendered Scatter Plot with a "Linear" x-axis, and data grouped into "Series".*
 
 
 ### Bar Charts
@@ -250,12 +257,12 @@ Let's take an example of loading data for the Star Wars API:
 
 <FlowViewer :flow="examples['chart-bar-sw-characters']" height="250px" />
 
-![Example of a bar chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw.png "Example of a bar chart showing character 'height' data"){data-zoomable}
-_Example of a bar chart showing character "height" data_
+![Example of a Bar Chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw.png "Example of a Bar Chart showing character 'height' data"){data-zoomable}
+_Example of a Bar Chart showing character "height" data_
 
 If we take a look at the configuration for this chart:
 
-![Example of a bar chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw-config.png "Example of a bar chart showing character 'height' data"){data-zoomable}
+![Example of a Bar Chart showing character 'height' data](/images/node-examples/ui-chart-bar-sw-config.png "Example of a Bar Chart showing character 'height' data"){data-zoomable}
 
 We could easily modify the "Y" property to plot a different value, without needing to modify our data.
 
@@ -280,19 +287,19 @@ Default behavior for a Bar Chart is to group content "Side-by-Side".
 
 In our chart config we can define:
 
-![Configuration for of a bar chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance-config.png "Configuration for of a bar chart showing financial data, grouped by year"){data-zoomable}
-_Configuration for of a bar chart showing financial data, grouped by year_
+![Configuration for of a Bar Chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance-config.png "Configuration for of a Bar Chart showing financial data, grouped by year"){data-zoomable}
+_Configuration for of a Bar Chart showing financial data, grouped by year_
 
 
 where we have defined "Series" as a type `JSON` because we want to render multiple bars for each data point, in this case, one for each quarter:
 
-![Example of a bar chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance.png "Example of a bar chart showing financial data, grouped by year"){data-zoomable}
-_Example of a bar chart showing financial data, grouped by year_
+![Example of a Bar Chart showing financial data, grouped by year](/images/node-examples/ui-chart-bar-grouped-finance.png "Example of a Bar Chart showing financial data, grouped by year"){data-zoomable}
+_Example of a Bar Chart showing financial data, grouped by year_
 
 If we switch over the "Group By" option to be "Stacks", we'd see:
 
-![Example of a bar chart showing the same data, but stacked](/images/node-examples/ui-chart-bar-grouped-finance-stacks.png "Example of a bar chart showing the same data, but stacked"){data-zoomable}
-_Example of a bar chart showing the same data, but stacked_
+![Example of a Bar Chart showing the same data, but stacked](/images/node-examples/ui-chart-bar-grouped-finance-stacks.png "Example of a Bar Chart showing the same data, but stacked"){data-zoomable}
+_Example of a Bar Chart showing the same data, but stacked_
 
 
 #### Grouped Bars - Election Data Example
@@ -316,31 +323,31 @@ Here we have a piece of data for each candidate, for each year, which details th
 
 We have a couple of different ways we could group this data, firstly, we have a series for each "Year" and the x-value defined as the "candidate":
 
-![Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election-config-A.png "Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
-_Configuration for of a bar chart showing election data, grouped by candidate, and a series for each year_
+![Configuration for a Bar Chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election-config-A.png "Configuration for a Bar Chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
+_Configuration for a Bar Chart showing election data, grouped by candidate, and a series for each year_
 
-Resulting in:
+resulting in:
 
-![Example of a bar chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election.png "Example of a bar chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
-_Example of a bar chart showing election data, grouped by candidate, and a series for each year_
+![Example of a Bar Chart showing election data, grouped by candidate, and a series for each year](/images/node-examples/ui-chart-bar-grouped-election.png "Example of a Bar Chart showing election data, grouped by candidate, and a series for each year"){data-zoomable}
+_Example of a Bar Chart showing election data, grouped by candidate, and a series for each year_
 
 
 Alternatively, we could have a series per candidate, and then the x-value defined as the "year":
 
-![Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-config-B.png "Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
-_Configuration for of a bar chart showing election data, grouped by year, and a series for each candidate_
+![Configuration for a Bar Chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-config-B.png "Configuration for a Bar Chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
+_Configuration for a Bar Chart showing election data, grouped by year, and a series for each candidate_
 
 
-Resulting in:
+resulting in:
 
-![Example of a bar chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a bar chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
+![Example of a Bar Chart showing election data, grouped by year, and a series for each candidate](/images/node-examples/ui-chart-bar-grouped-election-B.png "Example of a Bar Chart showing election data, grouped by year, and a series for each candidate"){data-zoomable}
 
 
 ### Pie/Doughnut Charts
 
-These chart types use "Radial" axes. The "Series" property is used to define the layer that the particular data is rendered in, multiple series results in nested pie/doughnut charts.
+These chart types use "Radial" axes. The "Series" property is used to define the layer that the particular data is rendered in - multiple series result in nested pie/doughnut charts.
 
-The "X" value defines the key within a single Series", and the "Y" property should point to the numerical value that dictates the size of a given segment.
+The "X" value defines the key within a single "Series", and the "Y" property should point to the numerical value that dictates the size of a given segment.
 
 Let's take a look at a couple of examples:
 
@@ -357,11 +364,11 @@ With a sample data set such as:
 ]
 ```
 
-We can configure our chart to render a Pie or Doughnut chart like so:
+we can configure our chart to render a Pie or Doughnut chart like so:
 
 ![Configuration for of a Pie and Doughnut Chart](/images/node-examples/ui-chart-pie-doughnut-config.png "Configuration for of a Pie and Doughnut Chart"){data-zoomable}
 
-Results in the following, where for the "Doughnut" chart has two "Series" worth of data.
+which results in the following, where for the "Doughnut" chart it has two "Series" worth of data:
 
 ![Example of Pie and Doughnut Charts](/images/node-examples/ui-chart-pie-doughnut.png "Example of Pie and Doughnut Charts"){data-zoomable}
 _Example of Pie and Doughnut Charts_
@@ -378,7 +385,7 @@ If you want to render numerical data on the x-axis, then you should use the "Bin
 
 ![Example Histogram with numerical bins](/images/node-examples/ui-chart-histogram-bins.png "Example Histogram with numerical bins"){data-zoomable}
 
-Here, we have a slider that inject a payload into the chart everytime it is moved, with numbers being split into 5 bins between 0 and 10.
+Here, we have a slider that injects a payload into the chart everytime it is moved, with numbers being split into 5 bins between 0 and 10.
 
 #### Categorical
 
@@ -397,9 +404,9 @@ Here, each button emits a payload matching a given letter (the x-axis value), an
 We can also add an extra dimension of data to our Histogram with "Series".
 
 ![Example Histogram with categorical bins and grouped by Series](/images/node-examples/ui-chart-histogram-bins-series.png "Example Histogram with categorical bins and grouped by Series"){data-zoomable}
-_Screenshot showing two histograms rendering hte same data source, but with different series_ 
+_Screenshot showing two Histograms rendering the same data source, but with different series_
 
-Here, we have a sample data set which details licenses for software running for _n_ days. Each license details the operating system (`os`), which `version` of the software it is running, and whether or not it is a paid for `license`.
+Here, we have a sample data set which details licenses for software running for _n_ days. Each license details the operating system (`os`), which `version` of the software it is running, and whether or not it is a paid-for `license`.
 
 Our two side-by-side charts show the same frequency data (with bins for the `age` on the x-axis), but one breaks it down by `version` and the other by `os`.
 
@@ -411,7 +418,7 @@ Our two side-by-side charts show the same frequency data (with bins for the `age
 
 The "Action" property on the chart allows you to control whether you:
 
-- Append: Any new data provided will be added to the existing data on the chart
+- Append: Any new data provided will be added to the existing data on the chart.
 - Replace: Any existing data will first be removed, then new data will be added.
 
 If you ever want to override the property on a message-by-message basis, you can also do this by including a `msg.action` property, which will override the default behaviour. For example:
@@ -423,7 +430,7 @@ msg = {
 }
 ```
 
-Would append this data point to the chart, leaving existing data, even if the underlying chart has been configured to always "Replace".
+would append this data point to the chart, leaving existing data, even if the underlying chart has been configured to always "Replace".
 
 #### Clear All Data
 
@@ -462,12 +469,77 @@ msg = {
 }
 ```
 
-Where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
+where you could set the `y` property to `key:value`. The `x` value, if left blank in the configuration would be calculated as the current date/time.
 
+
+## Chart Customisation
+
+eCharts have a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to further customise the appearance of your chart, direct access to the underlying eCharts options objects can be obtained by using `msg.ui_update.chartOptions`. Any of the options defined in the [eCharts Documentation](https://echarts.apache.org/en/option.html) may be set. For example, to move the yAxis scale to the right hand side, change the title font size and drop the top of the grid area down, send the below via `msg.ui_update`:
+```
+{
+    "chartOptions": {
+        "yAxis": {
+            "position": "right"
+        },
+        "grid": {
+            "top": 90
+        },
+        "title": {
+            "textStyle": {
+                "fontSize": 20
+            }
+        }
+    }
+}
+```
+The changes are additive, so if it was also desired to move the bottom of the grid, after the above message was sent, then another `msg.ui_update` could be sent containing:
+```
+{
+    "chartOptions": {
+        "grid": {
+            "bottom": 200
+        }
+    }
+}
+```
+The options set earlier will remain in force. Generally a message containing `msg.ui_update` should contain no payload or other properties otherwise those will be interpreted as data to go on the chart.
+### Setting Series Colour
+The settings for each series on the chart can also be set using `msg.ui_update`.  Note that when adjusting settings for a series you must include all 
+customised settings for all series, as each update to series configuration will replace any previous customisation to series.
+For example, for a line chart with two lines 'temperature' and 'humidity', to set the colour of the temperature line to red and humidity to green `msg.ui_update` could be sent containing
+```
+{
+    "chartOptions": {
+        "series": [
+            {
+                "name": "temperature",
+                "type": "line",
+                "lineStyle": {
+                    "color": "red",
+                },
+                "itemStyle": {
+                    "color": "red"
+                },
+            },
+            {
+                "name": "humidity",
+                "type": "line",
+                "lineStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+                "itemStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+            }
+        ]
+    }
+}
+```
+Note that this sets the colour for the whole line. It cannot be used to change the colour for just a section of the line.
+Any such message should always contain the series name and type for each series.
 
 ## Building Custom Charts
-
-ChartJS has a rich set of configuration options, of which we only expose a small subsection via the Node-RED configuration. If you want to customise the appearance of your chart further, or even render charts we don't yet support, you can do so with a UI Template node.
+For even further customisataion such as rendering charts we don't yet support, you can use a UI Template node.
 
 Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/en/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
 
@@ -475,7 +547,7 @@ Currently, although not ideal, we do need to load the ChartJS library from a CDN
 
 ![Example of a static 2D bar chart](/images/node-examples/ui-template-chartjs-example-1.png "Example of a static 2D bar chart"){data-zoomable}
 
-Here here is the template code that will render this bar chart:
+Here is the template code that will render this bar chart:
 
 ```html
 <template>
@@ -525,7 +597,7 @@ Here here is the template code that will render this bar chart:
 
 ### Example: Plotting Incoming Data
 
-It's unlikely, as per the first example, we just want to render static data - this is Node-RED after all. So as a quick example, we can also wire this example to a `ui-slider` for a quick demo, here's a flow that can get you started:
+It's unlikely, as per the first example, that we just want to render static data - this is Node-RED after all. So as a quick example, we can also wire this example to a `ui-slider` for a quick demo, here's a flow that can get you started:
 
 <FlowViewer :flow="examples['custom-chart-line']" height="200px"/>
 
@@ -617,7 +689,7 @@ Taking a deep-dive into the contents of the `ui-template` for this chart, we can
 
 Let's take a more complex example, where we can render a chart type that we don't _currently_ support in core Dashboard, a Polar Area Chart.
 
-![Example of a bar chart categorising incoming data](/images/node-examples/ui-template-chartjs-example-3.png "Example of a bar chart categorising incoming data"){data-zoomable}
+![Example of a Bar Chart categorising incoming data](/images/node-examples/ui-template-chartjs-example-3.png "Example of a Bar Chart categorising incoming data"){data-zoomable}
 
 
 This example is adapted from [this example](https://www.chartjs.org/docs/latest/samples/other-charts/polar-area-center-labels.html#polar-area-centered-point-labels) from the ChartJS documentation

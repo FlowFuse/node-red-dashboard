@@ -2,10 +2,10 @@
     {
         "id": "chart-1",
         "type": "ui-chart",
-        "z": "9524c548fb0b956c",
+        "z": "b508b2cf4781499a",
         "group": "dashboard-ui-group",
-        "name": "line-append-max-3-points",
-        "label": "line-append-max-3-points",
+        "name": "line-append-max-3-seconds",
+        "label": "line-append-max-3-seconds",
         "order": 2,
         "chartType": "line",
         "category": "",
@@ -16,18 +16,22 @@
         "xAxisType": "time",
         "xAxisFormat": "",
         "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
         "yAxisLabel": "",
         "yAxisProperty": "",
+        "yAxisPropertyType": "property",
         "ymin": "",
         "ymax": "",
+        "bins": "",
         "action": "append",
         "stackSeries": false,
         "pointShape": "circle",
         "pointRadius": 4,
         "showLegend": true,
-        "removeOlder": 1,
-        "removeOlderUnit": "3600",
-        "removeOlderPoints": "3",
+        "removeOlder": "3",
+        "removeOlderUnit": "1",
+        "removeOlderPoints": "",
         "colors": [
             "#1f77b4",
             "#aec7e8",
@@ -50,8 +54,9 @@
         "width": 6,
         "height": "4",
         "className": "",
-        "x": 1690,
-        "y": 640,
+        "interpolation": "linear",
+        "x": 580,
+        "y": 40,
         "wires": [
             []
         ]
@@ -59,7 +64,7 @@
     {
         "id": "da1332f160b6a255",
         "type": "inject",
-        "z": "9524c548fb0b956c",
+        "z": "b508b2cf4781499a",
         "name": "",
         "props": [
             {
@@ -77,8 +82,8 @@
         "topic": "",
         "payload": "[]",
         "payloadType": "json",
-        "x": 1490,
-        "y": 680,
+        "x": 370,
+        "y": 80,
         "wires": [
             [
                 "chart-1"
@@ -88,7 +93,7 @@
     {
         "id": "13bf93c81c0bd0a7",
         "type": "change",
-        "z": "9524c548fb0b956c",
+        "z": "b508b2cf4781499a",
         "name": "rand",
         "rules": [
             {
@@ -104,8 +109,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1490,
-        "y": 640,
+        "x": 370,
+        "y": 40,
         "wires": [
             [
                 "chart-1"
@@ -115,11 +120,11 @@
     {
         "id": "12a55e898bb4162f",
         "type": "ui-button",
-        "z": "9524c548fb0b956c",
+        "z": "b508b2cf4781499a",
         "group": "dashboard-ui-group",
         "name": "random",
         "label": "random",
-        "order": 0,
+        "order": 1,
         "width": 0,
         "height": 0,
         "emulateClick": true,
@@ -136,8 +141,9 @@
         "buttonColor": "",
         "textColor": "",
         "iconColor": "",
-        "x": 1340,
-        "y": 640,
+        "enableClick": true,
+        "x": 220,
+        "y": 40,
         "wires": [
             [
                 "13bf93c81c0bd0a7"
@@ -161,33 +167,36 @@
         "id": "dashboard-ui-page-1",
         "type": "ui-page",
         "name": "import demos",
-        "ui": "dashboard-ui-base",
+        "ui": "72c1e5a9ec204878",
         "path": "/page4",
         "icon": "home",
         "layout": "grid",
         "theme": "dashboard-ui-theme",
-        "order": 1,
+        "order": 2,
         "className": "",
         "visible": "true",
         "disabled": "false"
     },
     {
-        "id": "dashboard-ui-base",
+        "id": "72c1e5a9ec204878",
         "type": "ui-base",
-        "name": "base",
+        "name": "My Dashboard",
         "path": "/dashboard",
+        "appIcon": "",
         "includeClientData": true,
         "acceptsClientConfig": [
             "ui-notification",
             "ui-control"
         ],
         "showPathInSidebar": false,
+        "headerContent": "page",
         "navigationStyle": "default",
-        "titleBarStyle": "default"
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 5,
+        "showDisconnectNotification": true,
+        "allowInstall": true
     },
-
-
-
     {
         "id": "dashboard-ui-theme",
         "type": "ui-theme",

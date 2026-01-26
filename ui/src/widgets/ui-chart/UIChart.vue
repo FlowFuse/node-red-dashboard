@@ -20,7 +20,8 @@ export default {
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) }
+        props: { type: Object, default: () => ({}) },
+        state: { type: Object, default: () => ({}) }
     },
     data () {
         return {
@@ -33,6 +34,7 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
+            dynamicChartOptions: [], // an array of chart options updates received this session
             resizeObserver: null
         }
     },
@@ -62,6 +64,9 @@ export default {
         },
         interpolation () {
             return this.props.interpolation
+        },
+        chartOptions () {
+            return this.getProperty('chartOptions')
         }
     },
     watch: {
@@ -134,7 +139,7 @@ export default {
     },
     created () {
         // Setup custom onMsgInput Handler & onLoad Handler
-        this.$dataTracker(this.id, this.onMsgInput, this.onLoad)
+        this.$dataTracker(this.id, this.onMsgInput, this.onLoad, this.onDynamicProperties)
     },
     mounted () {
         if (window.Cypress) {
@@ -152,6 +157,13 @@ export default {
         // Initialize with basic option structure
         const options = this.generateChartOptions()
         chart.setOption(options)
+
+        // merge in any updates provided via ui_update.chartOptions
+        const chartOptions = this.chartOptions
+        if (chartOptions) {
+            // pass the options to the chart
+            chart.setOption(chartOptions)
+        }
 
         // don't want chart to be reactive, so we can use shallowRef
         this.chart = shallowRef(chart)
@@ -171,6 +183,20 @@ export default {
         this.resizeObserver = resizeObserver
     },
     methods: {
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (!updates) {
+                return
+            }
+            if (updates.chartOptions) {
+                // merge the updates into the chart
+                if (this.chart) {
+                    this.chart.setOption(updates.chartOptions)
+                }
+                // add these options to the array of previous updates received this session
+                this.dynamicChartOptions.push(updates.chartOptions)
+            }
+        },
         generateChartOptions () {
             const isRadial = this.props.xAxisType === 'radial'
 
@@ -222,6 +248,7 @@ export default {
                         }
                     },
                     color: this.props.colors,
+                    animation: false,
                     series: []
                 }
                 return options
@@ -254,6 +281,7 @@ export default {
                         }
                     },
                     color: this.props.colors,
+                    animation: false,
                     xAxis: {
                         type: chartJStoECharts.axisType(this.xAxisType),
                         name: this.props.xAxisLabel,
@@ -293,9 +321,7 @@ export default {
                             }
                         }
                     },
-                    series: [],
-                    animationDuration: 300, // minimal animation on inital data load
-                    animationDurationUpdate: 0 // minimal animation on data update
+                    series: []
                 }
 
                 // if an area chart, set the fill to true
@@ -380,16 +406,39 @@ export default {
             }
         },
         onMsgInput (msg) {
-            if (Array.isArray(msg.payload) && !msg.payload.length) {
-                // clear the chart if msg.payload = [] is received
-                this.clearChart()
-            } else {
-                if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
-                    // clear the chart
+            // ignore if payload is empty and msg is not an array (on loading it can be an array)
+            // ui_update messages are handled by OnDynamicProperties
+            if (msg.payload !== undefined || Array.isArray(msg)) {
+                if (Array.isArray(msg.payload) && !msg.payload.length) {
+                    // clear the chart if msg.payload = [] is received
                     this.clearChart()
+                    this.clearDataStore()
+                } else {
+                    if (msg.action === 'replace' || (this.props.action === 'replace' && msg.action !== 'append')) {
+                        // clear the chart
+                        this.clearChart()
+                        // delete messages array in the store
+                        this.clearDataStore()
+                    }
+                    // update the chart
+                    // remember how many series are currently configured
+                    const seriesCount = this.chart.getOption().series.length
+                    this.add(msg)
+                    // if any series have been added, re-apply any chartOptions passed in
+                    // Also re-apply if this is a radial (pie or doughnut) chart as the radius for these are re-calculated
+                    // when adding data, which may remove any radius applied via msg.ui_update.
+                    if (this.chart.getOption().series.length > seriesCount || this.props.xAxisType === 'radial') {
+                        // update the chart first from options applied in previous sessions
+                        const chartOptions = this.chartOptions
+                        if (chartOptions) {
+                            this.chart.setOption(chartOptions)
+                        }
+                        // then from this session
+                        this.dynamicChartOptions.forEach((options) => {
+                            this.chart.setOption(options)
+                        })
+                    }
                 }
-                // update the chart
-                this.add(msg)
             }
         },
         getXDisplayFormats (xAxisFormatType) {
@@ -422,6 +471,9 @@ export default {
             }
             return xDisplayFormats
         },
+        clearDataStore () {
+            this.$store.commit('data/deleteMessages', { widgetId: this.id })
+        },
         clearChart () {
             const option = this.chart.getOption()
             if (this.props.xAxisType === 'radial') {
@@ -439,7 +491,11 @@ export default {
                 labels: [],
                 bins: []
             }
-            this.chart.setOption(option, true)
+            this.chart.setOption(option, {
+                notMerge: true, // don't merge with existing option
+                lazyUpdate: true, // lazy update true means it won't animate
+                silent: true // don't trigger events
+            })
             this.hasData = false
         },
         /**
@@ -489,10 +545,14 @@ export default {
                     }
                 }
             } else {
-                // no payload
-                console.log('have no payload')
+                // no payload, only an issue if msg.ui_update is not present
+                if (!msg.ui_update) {
+                    console.log('have no payload')
+                }
             }
-            if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
+            if (this.xAxisType === 'category' && this.props.chartType !== 'histogram') {
+                this.clearOldCategoricalPoints(options)
+            } else if (this.chartType === 'line' || this.chartType === 'area' || this.chartType === 'scatter') {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
@@ -568,8 +628,6 @@ export default {
                         radius: this.chartType === 'doughnut' ? ['40%', '100%'] : '100%',
                         data: [],
                         top: this.hasTitle ? 40 : 0, // account for the title
-                        animationDuration: 300, // minimal animation on inital data load
-                        animationDurationUpdate: 0, // minimal animation on data update
                         itemStyle: {
                             borderWidth: 2,
                             borderColor: '#fff'
@@ -658,6 +716,10 @@ export default {
                 }
 
                 // Add data point
+                // ensure the data array exists
+                if (Array.isArray(options.series[sIndex].data) === false) {
+                    options.series[sIndex].data = []
+                }
                 if (this.props.xAxisType === 'category') {
                     // for categories, we need to update the existing data point for this x-value
                     const xIndex = options.series[sIndex].data.findIndex(d => d[0] === datapoint.x)
@@ -698,40 +760,54 @@ export default {
             let points = null
             if (this.props.xAxisType === 'time' && this.props.removeOlder && this.props.removeOlderUnit) {
                 const removeOlder = parseFloat(this.props.removeOlder)
-                const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
-                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-                cutoff = (new Date()).getTime() - ago
+                // only prune if removeOlder > 0
+                if (removeOlder > 0) {
+                    const removeOlderUnit = parseFloat(this.props.removeOlderUnit)
+                    const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                    cutoff = (new Date()).getTime() - ago
+                }
             }
 
             if (this.props.removeOlderPoints) {
                 // remove older points
                 points = parseInt(this.props.removeOlderPoints)
             }
-
             // apply data limitations to the chart
             const series = options.series
             if ((cutoff || points) && series.length > 0) {
                 // loop over each series
                 for (let i = 0; i < series.length; i++) {
-                    const length = series[i].data.length // check how much data there is in this series
-                    series[i].data = series[i].data.filter((d, i) => {
-                        if (cutoff && d.x < cutoff) {
-                            return false
-                        } else if (points && (i < length - points)) {
-                            return false
-                        }
-                        return true
-                    })
+                    const length = series[i].data?.length // check how much data there is in this series
+                    if (length) {
+                        series[i].data = series[i].data.filter((d, i) => {
+                            if (cutoff && d[0] < cutoff) {
+                                return false
+                            } else if (points && (i < length - points)) {
+                                return false
+                            }
+                            return true
+                        })
+                    }
                 }
             }
-
-            // apply data limtations to the vuex store
+            // apply data limitations to the vuex store
             this.$store.commit('data/restrict', {
                 widgetId: this.id,
                 min: cutoff,
                 points
             })
         },
+
+        /**
+         * For categorical xaxis and types other than histogram then only keep the latest data point for
+         * each category in each series
+         * @param {Object} options - existing eChart options object
+         */
+        clearOldCategoricalPoints (options) {
+            // There is no need to remove old data from the chart itself as, for categorical xAxis,
+            // the chart only retains one value for each category
+        },
+
         calculateBins () {
             if (this.props.chartType !== 'histogram') {
                 return []

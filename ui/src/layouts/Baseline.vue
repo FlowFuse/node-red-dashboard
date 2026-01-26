@@ -191,7 +191,10 @@ export default {
         navigationStyle: function () {
             const style = this.dashboard.navigationStyle
             if (![null, 'default', 'fixed', 'icon', 'temporary', 'none'].includes(style)) {
-                console.warn(`Invalid navigationStyle value: ${style}`)
+                // show warning unless undefined, in which case silently default
+                if (typeof style !== 'undefined') {
+                    console.warn(`Invalid navigationStyle value: ${style}`)
+                }
                 return 'default'
             }
             return style

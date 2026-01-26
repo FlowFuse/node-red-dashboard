@@ -31,6 +31,15 @@
         <dd>Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
             See <a target="_blank" href="https://dashboard.flowfuse.com/nodes/widgets/ui-chart#formatting-timestamps">here</a> for an overview of the available format types.  
         </dd>
+
+        <dt>X-Axis Limit</dt>
+        <dd>When the X-Axis Type is <code>Timescale</code> these properties define under what circumstances to remove old data from the chart.
+            For example setting this to last 5 minutes will cause data to be removed from the chart when it is greater than 5 minutes old.
+            To disable time based removal of data (for example if displaying historical data) set <code>last</code> to 0.
+            In addition a data points limit can be applied, in which case old data will be removed when there are more than the specified number of points on the chart
+            If both a time limit and points limit are specified then both will be applied.
+        </dd>
+
         <dt>Properties <span class="property-type">string</span></dt>
         <dd>
             <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array, which will plot multiple data points from a single msg object.</p>
@@ -61,4 +70,82 @@
             Use this if sometimes you want to "append" data, and sometimes you want to "replace" it.
         </dd>
     </dl>
-</script>
+    <p>The following can be appended to <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
+    <dl class="message-properties">
+        <dt class="optional">chartOptions <span class="property-type">string</span></dt>
+        <dd>This provides direct access to the eCharts options to allow configuration of the chart using any of the
+            the options defined in the <a href="https://echarts.apache.org/en/option.html" target="_blank">eCharts
+                documentation</a>
+            For example, to move the yAxis scale to the right hand side, change the title font size and
+            drop the top of the grid area down, msg.ui_update might be
+            <pre>
+{
+    "chartOptions": {
+        "yAxis": {
+            "position": "right"
+        },
+        "grid": {
+            "top": 90
+        },
+        "title": {
+            "textStyle": {
+                "fontSize": 20
+            }
+        }
+    }
+}
+            </pre>
+            The changes are additive, so if it was also desired to move the bottom of the grid, after the above
+            message was sent, then another <code>msg.ui_update</code> could be sent containing
+             <pre>
+{
+    "chartOptions": {
+        "grid": {
+            "bottom": 200
+        }
+    }
+}
+            </pre>
+            The options set earlier will remain in force. Generally a message containing `msg.ui_update` should contain
+            no payload or other properties otherwise those will be interpreted as data to go on the chart.
+        </dd>
+        <dd>
+            The settings for each series on the chart can also be set using `msg.ui_update`. In particular this allows line
+            colours to be configured. Note that when adjusting settings
+            for a series you must include all customised settings for all series, as each update to series configuration will
+            replace any previous customisation to series.
+            For example, for a line chart with two lines 'temperature' and 'humidity', to set the colour of the temperature line
+            to red and humidity to green `msg.ui_update` could be sent containing
+            <pre>
+{
+    "chartOptions": {
+        "series": [
+            {
+                "name": "temperature",
+                "type": "line",
+                "lineStyle": {
+                    "color": "red",
+                },
+                "itemStyle": {
+                    "color": "red"
+                },
+            },
+            {
+                "name": "humidity",
+                "type": "line",
+                "lineStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+                "itemStyle": {
+                    "color": "rgb(0, 255, 0)"
+                },
+            }
+        ]
+    }
+}
+            </pre>
+            Note that this sets the colour for the whole line. It cannot be used to change the colour for just a section of the line.
+
+            Any such message should always contain the series name and type for each series.
+        </dd>
+        </script>

@@ -29,7 +29,12 @@ export default {
         ...mapState('i18n', ['locale']),
         value () {
             const msg = this.messages[this.id]
-            return this.purify(msg?.payload)
+            // if the value field is of type number or string then fetch the value from the properties
+            // rather than the payload, so that the value is displayed immediately
+            const theValue = (this.props.valueType === 'num' || this.props.valueType === 'str')
+                ? this.props.value
+                : msg?.payload
+            return this.purify(theValue)
         },
         label () {
             // Sanitize the html to avoid XSS attacks

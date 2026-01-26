@@ -1,4 +1,7 @@
+const deepMerge = require('lodash.merge')
+
 const datastore = require('../store/data.js')
+const statestore = require('../store/state.js')
 
 module.exports = function (RED) {
     function ChartNode (config) {
@@ -10,6 +13,9 @@ module.exports = function (RED) {
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
         const base = group.getBase()
+
+        // add a chartOptions object into the config
+        config.chartOptions = config.chartOptions || {}
 
         // correct typing
         if (typeof config.xmin !== 'undefined') {
@@ -51,18 +57,38 @@ module.exports = function (RED) {
          */
         function clearOldPoints () {
             const removeOlder = parseFloat(config.removeOlder)
-            const removeOlderUnit = parseFloat(config.removeOlderUnit)
-            const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
-            const cutoff = (new Date()).getTime() - ago
-            const _msg = datastore.get(node.id).filter((msg) => {
-                let timestamp = msg._datapoint.x
-                // is x already a millisecond timestamp?
-                if (typeof (msg._datapoint.x) === 'string') {
-                    timestamp = (new Date(msg._datapoint.x)).getTime()
+            // only prune if removeOlder > 0
+            if (removeOlder > 0) {
+                const removeOlderUnit = parseFloat(config.removeOlderUnit)
+                const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
+                const cutOff = (new Date()).getTime() - ago
+                const filterFn = (msg) => {
+                    let timestamp = msg._datapoint.x
+                    // is x already a millisecond timestamp?
+                    if (typeof (msg._datapoint.x) === 'string') {
+                        timestamp = (new Date(msg._datapoint.x)).getTime()
+                    }
+                    return timestamp > cutOff
                 }
-                return timestamp > cutoff
-            })
-            datastore.save(base, node, _msg)
+                datastore.filter(base, node, filterFn)
+            }
+        }
+
+        /**
+         * For categorical xaxis and types other than histogram then only keep the latest data point for
+         * each category in each series
+         */
+        function clearOldCategoricalPoints () {
+            const points = datastore.get(node.id)
+            const latestSet = {}
+            for (const item of points) {
+                const { category, x } = item._datapoint
+                const key = JSON.stringify([category, x]) // a unique key for each category/series combination
+                latestSet[key] = item
+            }
+
+            const filtered = Object.values(latestSet)
+            datastore.save(base, node, filtered)
         }
 
         // ensure sane defaults
@@ -131,6 +157,17 @@ module.exports = function (RED) {
                     }
                 }
 
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.chartOptions !== 'undefined') {
+                        // merge chart options specified here in with any others previously set
+                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
+                        // Deep merge new options in with old
+                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
+                    }
+                }
+
                 function evaluateNodePropertyWithKey (node, msg, payload, property, propertyType) {
                     if (propertyType === 'property' /* AKA key */) {
                         return RED.util.evaluateNodeProperty(property, 'msg', node, payload)
@@ -167,13 +204,10 @@ module.exports = function (RED) {
                             x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         }
                         if (Array.isArray(series)) {
-                            if (series.length > 1) {
-                                y = series.map((s) => {
-                                    return getProperty(payload, s)
-                                })
-                            } else {
-                                y = getProperty(payload, series[0])
-                            }
+                            // if the series is an array then y should be an array too, even if only of length 1
+                            y = series.map((s) => {
+                                return getProperty(payload, s)
+                            })
                         } else {
                             if (config.categoryType === 'json') {
                                 // we are using the "series" as a key to get the y value from the payload
@@ -195,58 +229,78 @@ module.exports = function (RED) {
                 if (!datastore.get(node.id)) {
                     datastore.save(base, node, [])
                 }
-                if (Array.isArray(msg.payload) && !msg.payload.length) {
-                    // clear history
-                    datastore.save(base, node, [])
-                } else {
-                    if (config.action === 'replace') {
-                        // clear our data store as we are replacing data
+                // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
+                if (typeof msg.payload !== 'undefined') {
+                    if (Array.isArray(msg.payload) && !msg.payload.length) {
+                        // clear history
                         datastore.save(base, node, [])
-                    }
-                    if (!Array.isArray(msg.payload)) {
-                        // quick clone of msg, and store in history
-                        datastore.append(base, node, {
-                            ...msg
-                        })
                     } else {
-                        // we have an array in msg.payload, let's split them
-                        msg.payload.forEach((p, i) => {
-                            const payload = JSON.parse(JSON.stringify(p))
-                            const d = msg._datapoint ? msg._datapoint[i] : null
-                            const m = {
-                                ...msg,
-                                payload,
-                                _datapoint: d
+                        // delete old data if a replace is being performed.
+                        // This is the case if msg.action is replace
+                        // or the node is configured for replace and this is not being overriden by msg.action set to append
+                        if (msg.action === 'replace' || (config.action === 'replace' && msg.action !== 'append')) {
+                            // clear our data store as we are replacing data
+                            datastore.save(base, node, [])
+                        }
+                        if (!Array.isArray(msg.payload)) {
+                            // quick clone of msg, and store in history
+                            datastore.append(base, node, {
+                                ...msg
+                            })
+                        } else {
+                            // we have an array in msg.payload, let's split them
+                            msg.payload.forEach((p, i) => {
+                                const payload = JSON.parse(JSON.stringify(p))
+                                const d = msg._datapoint ? msg._datapoint[i] : null
+                                const m = {
+                                    ...msg,
+                                    payload,
+                                    _datapoint: d
+                                }
+                                datastore.append(base, node, m)
+                            })
+                        }
+
+                        const maxPoints = parseInt(config.removeOlderPoints)
+
+                        if (maxPoints && config.removeOlderPoints) {
+                            // account for multiple lines?
+                            // client-side does this for _each_ line
+                            // remove older points using datastore.filter instead of saving the whole array
+                            const lineCounts = {}
+                            const _msg = datastore.get(node.id) || []
+
+                            // determine which message objects to keep (latest maxPoints per label)
+                            const keepIndexes = []
+                            let doFiltering = false
+                            for (let i = _msg.length - 1; i >= 0; i--) {
+                                const m = _msg[i]
+                                const label = m.topic
+                                lineCounts[label] = lineCounts[label] || 0
+                                if (lineCounts[label] < maxPoints) {
+                                    keepIndexes[i] = true
+                                    lineCounts[label]++
+                                } else {
+                                    doFiltering = true
+                                }
                             }
-                            datastore.append(base, node, m)
-                        })
-                    }
 
-                    const maxPoints = parseInt(config.removeOlderPoints)
-
-                    if (maxPoints && config.removeOlderPoints) {
-                        // account for multiple lines?
-                        // client-side does this for _each_ line
-                        // remove older points
-                        const lineCounts = {}
-                        const _msg = datastore.get(node.id)
-                        // trawl through in reverse order, and only keep the latest points (up to maxPoints) for each label
-                        for (let i = _msg.length - 1; i >= 0; i--) {
-                            const msg = _msg[i]
-                            const label = msg.topic
-                            lineCounts[label] = lineCounts[label] || 0
-                            if (lineCounts[label] >= maxPoints) {
-                                _msg.splice(i, 1)
-                            } else {
-                                lineCounts[label]++
+                            // filter the datastore to only keep the selected messages
+                            if (doFiltering) {
+                                datastore.filter(base, node, (m, i) => {
+                                    return keepIndexes[i]
+                                })
                             }
                         }
-                        datastore.save(base, node, _msg)
-                    }
 
-                    if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
-                        // remove any points older than the specified time
-                        clearOldPoints()
+                        if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {
+                            // remove any points older than the specified time
+                            clearOldPoints()
+                        } else if (config.xAxisType === 'category' && config.chartType !== 'histogram') {
+                            // for categorical xaxis and types other than histogram then only keep the latest data point for
+                            // each category in each series
+                            clearOldCategoricalPoints()
+                        }
                     }
                 }
 

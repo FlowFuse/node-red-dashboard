@@ -19,6 +19,9 @@ import * as directives from 'vuetify/directives'
 
 // Labs Imports
 import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
+import { VColorInput } from 'vuetify/labs/VColorInput'
+import { VPie } from 'vuetify/labs/VPie'
+import { VVideo } from 'vuetify/labs/VVideo'
 
 import './stylesheets/common.css'
 
@@ -59,7 +62,10 @@ const theme = {
 const vuetify = createVuetify({
     components: {
         ...components,
-        VNumberInput
+        VNumberInput,
+        VColorInput,
+        VPie,
+        VVideo
     },
     directives: {
         ...directives,
@@ -173,7 +179,6 @@ fetch('_setup')
         })
 
         socket.on('connect', () => {
-            console.log('SIO connected')
             // if we've just disconnected (i.e. aren't connecting for the first time)
             if (disconnected) {
                 // check vuex store here

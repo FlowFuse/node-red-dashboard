@@ -9,25 +9,24 @@ module.exports = function (RED) {
 
         // which group are we rendering this widget
         const group = RED.nodes.getNode(config.group)
-        const base = group.getBase() // Used for datastore
-
-        config.maxrows = parseInt(config.maxrows) || 0
-
-        if (config.columns) {
-            config.columns.map((col) => {
-                // map older data where 'label' was used.
-                return {
-                    title: col.title || col.label,
-                    key: col.key,
-                    keyType: col.keyType || 'key',
-                    type: col.type,
-                    width: col.width,
-                    align: col.align
-                }
-            })
+        const base = group?.getBase() // Used for datastore
+        config.maxrows = typeof config.maxrows === 'number' ? config.maxrows : parseInt(config.maxrows)
+        if (isNaN(config.maxrows) || config.maxrows < 0) {
+            config.maxrows = 0
         }
 
-        if (!config.action || typeof config.action === 'undefined') {
+        if (config.columns && Array.isArray(config.columns)) {
+            config.columns.forEach((col) => {
+                // map older data where 'label' was used.
+                if (typeof col.label !== 'undefined' && (typeof col.title === 'undefined' || col.title === '')) {
+                    col.title = col.label
+                }
+            })
+        } else {
+            config.columns = undefined
+        }
+
+        if (['append', 'replace'].indexOf(config.action) === -1) {
             config.action = 'append'
         }
 

@@ -4,7 +4,7 @@
     <h3>Controls List</h3>
     <h4>Navigation</h4>
     <p>Control which page is shown to a user, by programmatically changing the page.</p>
-    <p><b>Change Page:</b> The default function is to change the currently displayed page. The following optins are supported for the <code>msg.payload</code></p>
+    <p><b>Change Page:</b> The default function is to change the currently displayed page. The following options are supported for the <code>msg.payload</code></p>
     <ul>
         <li><code>"Page Name"</code> - String</li>
         <li><code>{"page":"Page Name"}</code> - Object</li>
@@ -77,8 +77,8 @@
     <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>group</i>.
     <li><code>socketid</code> - the ID of the socket (this will change every time the browser reloads the page).
     <li><code>socketip</code> - the ip address from where the connection originated.
-    <li><code>tab</code> - the number of the tab. (only for 'change' event).
-    <li><code>name</code> - the name of the tab. (only for 'change' event).
+    <li><code>tab</code> - the number of the tab (only for 'change' event).
+    <li><code>name</code> - the name of the tab (only for 'change' event).
     </ul>
     <p>Optional - report only connect events - useful to use to trigger a resend of data to a new client without needing to filter out other events.</p>
 </script>
