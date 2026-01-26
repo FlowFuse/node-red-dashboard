@@ -27,6 +27,7 @@ import './stylesheets/common.css'
 
 import store from './store/index.mjs'
 import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-line import/order
+import i18n from './i18n/index.js'
 
 // Retrieve the "Default" theme from cache
 function retrieveDefaultThemeFromCache () {
@@ -246,6 +247,7 @@ fetch('_setup')
             .use(store)
             .use(vuetify)
             .use(router)
+            .use(i18n)
 
         const head = createHead()
         app.use(head)
@@ -273,10 +275,68 @@ fetch('_setup')
                 },
                 // retrieves a property from the store for a given widget
                 getProperty (property) {
-                    const config = this.props ? this.props[property] : null // last known value for the config of this widget property
-                    const state = this.state[property] // chec if there have been any dynamic updates to this property
+                    // Handle case where props might not be defined
+                    if (!this.props) {
+                        return null
+                    }
+
+                    const config = this.props[property] // last known value for the config of this widget property
+                    const state = this.state ? this.state[property] : undefined // check if there have been any dynamic updates to this property
                     // return the dynamic property if it exists, otherwise return the last known configuration
-                    return this.state && property in this.state && state !== null ? state : config
+                    const value = this.state && property in this.state && state !== null ? state : config
+
+                    // Parse JSON strings for translation objects
+                    if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
+                        try {
+                            const parsed = JSON.parse(value)
+                            return parsed
+                        } catch (e) {
+                            // Not valid JSON, return as is
+                        }
+                    }
+
+                    return value
+                },
+                // get translated text for a widget property
+                getTranslatedProperty (property) {
+                    const value = this.getProperty(property)
+
+                    // If value is not defined, check if we have a fallback in props
+                    if (!value && this.props && this.props[property]) {
+                        return this.props[property]
+                    }
+
+                    // Check if value is a translation object
+                    if (value && typeof value === 'object' && !Array.isArray(value)) {
+                        const locale = this.$store.state.i18n.locale
+
+                        // Try to get translation for current locale
+                        let translated = value[locale]
+
+                        // If not found or empty, try English
+                        if (!translated && locale !== 'en') {
+                            translated = value.en
+                        }
+
+                        // If still not found, check for 'original' key (fallback to original value)
+                        if (!translated && value.original) {
+                            translated = value.original
+                        }
+
+                        // If still not found, try to get the first available translation
+                        if (!translated) {
+                            const availableKeys = Object.keys(value).filter(k => value[k] && k !== 'original')
+                            if (availableKeys.length > 0) {
+                                translated = value[availableKeys[0]]
+                            }
+                        }
+
+                        // Return translated value, or empty string as last resort
+                        return translated || ''
+                    }
+
+                    // Return the value as-is if it's not a translation object
+                    return value || ''
                 }
             }
         })
@@ -284,6 +344,18 @@ fetch('_setup')
         // make the socket service available app-wide via this.$socket
         app.provide('$socket', socket)
         app.provide('$dataTracker', useDataTracker)
+
+        // Initialize i18n with detected language
+        const detectedLang = i18n.global.locale.value
+        store.dispatch('i18n/setLocale', detectedLang)
+
+        // Watch for locale changes in the store and update i18n
+        store.watch(
+            (state) => state.i18n.locale,
+            (newLocale) => {
+                i18n.global.locale.value = newLocale
+            }
+        )
 
         // mount the VueJS app into <div id="app"></div> in /ui/public/index.html
         app.mount('#app')
