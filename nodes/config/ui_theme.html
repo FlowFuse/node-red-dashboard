@@ -6,16 +6,30 @@
                 value: RED._('@flowfuse/node-red-dashboard/ui-theme:ui-theme.label.themeName'),
                 required: true
             },
+    
             // colors
             colors: {
                 value: {
-                    surface: '#ffffff',
-                    primary: '#0094CE',
-                    bgPage: '#eeeeee',
-                    groupBg: '#ffffff',
-                    groupOutline: '#cccccc'
+                    // light mode
+                    light: {
+                        surface: '#ffffff',
+                        primary: '#0094CE',
+                        bgPage: '#eeeeee',
+                        groupBg: '#ffffff',
+                        groupOutline: '#cccccc'
+                    },
+
+                    // dark mode
+                    dark: {
+                        surface: '#111111',
+                        primary: '#0094CE',
+                        bgPage: '#222222',
+                        groupBg: '#333333',
+                        groupOutline: '#cccccc'
+                    }
                 }
             },
+
             // sizes
             sizes: {
                 value: {
@@ -33,15 +47,44 @@
             }
 
             if (!this.colors) {
-                this.colors = {}
-                // set default values
-                this.colors.surface = '#ffffff'
-                this.colors.primary = '#0094CE'
-                // pages
-                this.colors.bgPage = '#eeeeee'
-                // groups
-                this.colors.groupBg = '#ffffff'
-                this.colors.groupOutline = '#cccccc'
+                this.colors = {
+                    light: {
+                        surface: '#ffffff',
+                        primary: '#0094CE',
+                        bgPage: '#eeeeee',
+                        groupBg: '#ffffff',
+                        groupOutline: '#cccccc'
+                    },
+                    dark: {
+                        surface: '#111111',
+                        primary: '#0094CE',
+                        bgPage: '#222222',
+                        groupBg: '#333333',
+                        groupOutline: '#cccccc'
+                    }
+                }
+            } else if (!hasProperty(this.colors, 'light') && hasProperty(this.colors, 'surface')) {
+                // Set default values for light theme
+                const updatedColors = {
+                    light: {
+                        surface: this.colors.surface,
+                        primary: this.colors.primary,
+                        bgPage: this.colors.bgPage,
+                        groupBg: this.colors.groupBg,
+                        groupOutline: this.colors.groupOutline
+                    },
+
+                    // Set default values for dark theme
+                    dark: {
+                        surface: '#111111',
+                        primary: this.colors.primary,
+                        bgPage: '#222222',
+                        groupBg: '#333333',
+                        groupOutline: '#cccccc'
+                    }
+                }
+
+                this.colors = updatedColors
             }
 
             if (!this.sizes) {
@@ -65,11 +108,12 @@
             }
 
             // loop over keys in this.colors
-            Object.keys(this.colors).forEach((color) => {
-                // get the value of the key
-                const value = this.colors[color]
-                // set the value of the input
-                $('#node-config-input-' + color).val(value)
+            Object.keys(this.colors).forEach((theme) => {
+                const colors = this.colors[theme]
+                Object.keys(colors).forEach((color) => {
+                    const value = colors[color]
+                    $('#node-config-input-' + theme + '-' + color).val(value)
+                })
             })
 
             // loop over keys in this.sizes
@@ -81,7 +125,118 @@
                 // set the value of the input
                 $('#node-config-input-' + size).val(value)
             })
+    
+            function hexToRgb (hex) {
+                const bigint = parseInt(hex.replace('#', ''), 16)
+                const r = (bigint >> 16) & 255
+                const g = (bigint >> 8) & 255
+                const b = bigint & 255
+                return [r, g, b]
+            }
+            // get the contrast of background color for text color
+            function getContrast (bg) {
+                const bgRgb = hexToRgb(bg)
 
+                // http://www.w3.org/TR/AERT#color-contrast
+                const brightness = Math.round(((parseInt(bgRgb[0]) * 299) +
+                    (parseInt(bgRgb[1]) * 587) +
+                    (parseInt(bgRgb[2]) * 114)) / 1000)
+
+                const textColor = (brightness > 125) ? '#000000' : '#ffffff'
+                return textColor
+            }
+
+            let activeTheme = 'light'
+
+            function setElementColor (colorPicker) {
+                const colorPickerId = colorPicker.attr('id')
+                const selectedColor = colorPicker.val()
+                const contrastColor = getContrast(selectedColor)
+
+                if (activeTheme === 'light') {
+                    switch (colorPickerId) {
+                    case 'node-config-input-light-surface':
+                        $('#header').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-light-primary':
+                        $('.primary-btn').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-light-bgPage':
+                        $('#bgPage').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-light-groupBg':
+                        $('.group').each(function () {
+                            $(this).css({
+                                'background-color': selectedColor,
+                                color: contrastColor
+                            })
+                            if (!$(this).css('border-color')) {
+                                $(this).css('border-color', 'initial') // Ensures border color is not overwritten if not set
+                            }
+                        })
+                        break
+                    case 'node-config-input-light-groupOutline':
+                        $('.group').each(function () {
+                            $(this).css('border-color', selectedColor)
+                            if (!$(this).css('background-color')) {
+                                $(this).css('background-color', 'initial') // Ensures background color is not overwritten if not set
+                            }
+                        })
+                        break
+                    }
+                } else if (activeTheme === 'dark') {
+                    switch (colorPickerId) {
+                    case 'node-config-input-dark-surface':
+                        $('#header').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-dark-primary':
+                        $('.primary-btn').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-dark-bgPage':
+                        $('#bgPage').css({
+                            'background-color': selectedColor,
+                            color: contrastColor
+                        })
+                        break
+                    case 'node-config-input-dark-groupBg':
+                        $('.group').each(function () {
+                            $(this).css({
+                                'background-color': selectedColor,
+                                color: contrastColor
+                            })
+                            if (!$(this).css('border-color')) {
+                                $(this).css('border-color', 'initial') // Ensures border color is not overwritten if not set
+                            }
+                        })
+                        break
+                    case 'node-config-input-dark-groupOutline':
+                        $('.group').each(function () {
+                            $(this).css('border-color', selectedColor)
+                            if (!$(this).css('background-color')) {
+                                $(this).css('background-color', 'initial') // Ensures background color is not overwritten if not set
+                            }
+                        })
+                        break
+                    }
+                }
+            }
+    
+            // update label bg to match the colour input values
             // update label b/g to match the colour input values
             // this provides nicer styling than the default browser styling
             const colorWrappers = $('.color-picker-wrapper')
@@ -90,15 +245,48 @@
                 const colorPicker = wrapper.children("input[type='color']").eq(0)
                 colorPicker.on('change', () => {
                     wrapper.css('background-color', colorPicker.val())
+                    setElementColor(colorPicker)
                 })
                 wrapper.css('background-color', colorPicker.val())
+                setElementColor(colorPicker)
             })
+
+            const that = this
+            const tabs = RED.tabs.create({
+                id: 'color-tabs',
+                onchange: function (tab) {
+                    $('#color-tabs-content').children().hide()
+                    $('#' + tab.id).show()
+                    activeTheme = tab.id === 'color-tab-light' ? 'light' : 'dark'
+                    // Update colors based on the active theme
+                    colorWrappers.each(function (i) {
+                        const wrapper = $(this)
+                        const colorPicker = wrapper.children("input[type='color']").eq(0)
+                        setElementColor(colorPicker)
+                    })
+                }
+            })
+            tabs.addTab({
+                id: 'color-tab-light',
+                iconClass: 'fa fa-sun-o',
+                label: that._('ui-theme.label.colorsLight')
+            })
+
+            tabs.addTab({
+                id: 'color-tab-dark',
+                iconClass: 'fa fa-moon-o',
+                label: that._('ui-theme.label.colorsDark')
+            })
+
+            tabs.activateTab('color-tab-light')
         },
         oneditsave: function () {
             // update our config values from the input values
-            Object.keys(this.colors).forEach((color) => {
-                // set the value of the input
-                this.colors[color] = $('#node-config-input-' + color).val()
+            Object.keys(this.colors).forEach((theme) => {
+                const colors = this.colors[theme]
+                Object.keys(colors).forEach((color) => {
+                    this.colors[theme][color] = $('#node-config-input-' + theme + '-' + color).val()
+                })
             })
 
             // update our config values from the input values
@@ -124,49 +312,124 @@
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
     <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.colors"></h3>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span data-i18n="ui-theme.label.dashboard"></h4>
+   
+    <!-- tabs -->
+    <div class="form-row color-tabs-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="color-tabs"></ul>
     </div>
-    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
-        <div>
-            <label data-i18n="ui-theme.label.header"></label>
-            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-surface" style="opacity: 0; width: 100%;"/>
-            </label>
+    <div id="color-tabs-content">
+        <div id="color-tab-light" style="display:none">
+            <div class="form-row node-text-editor-row" style="position:relative">
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span
+                            data-i18n="ui-theme.label.dashboard"></h4>
+                </div>
+                <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                    <div>
+                        <label data-i18n="ui-theme.label.header"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-light-surface"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-light-surface" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                    <div>
+                        <label data-i18n="ui-theme.label.primary"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-light-primary"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-light-primary" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages">
+                    </h4>
+                </div>
+                <div class="form-row labels-right" style="margin-bottom: 3px;">
+                    <label data-i18n="ui-theme.label.background"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-light-bgPage"
+                        style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-light-bgPage" style="opacity: 0; width: 100%;" />
+                    </label>
+                </div>
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
+                </div>
+                <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                    <div>
+                        <label data-i18n="ui-theme.label.background"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-light-groupBg"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-light-groupBg" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                    <div>
+                        <label data-i18n="ui-theme.label.outline"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-light-groupOutline"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-light-groupOutline"
+                                style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            <label data-i18n="ui-theme.label.primary"></label>
-            <label class="color-picker-wrapper" for="node-config-input-primary" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-primary" style="opacity: 0; width: 100%;"/>
-            </label>
+    
+        <div id="color-tab-dark" style="display:none">
+            <div class="form-row node-text-editor-row" style="position:relative">
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-bar-chart"></i> <span
+                            data-i18n="ui-theme.label.dashboard"></h4>
+                </div>
+                <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                    <div>
+                        <label data-i18n="ui-theme.label.header"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-dark-surface"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-dark-surface" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                    <div>
+                        <label data-i18n="ui-theme.label.primary"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-dark-primary"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-dark-primary" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                </div>
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages">
+                    </h4>
+                </div>
+                <div class="form-row labels-right" style="margin-bottom: 3px;">
+                    <label data-i18n="ui-theme.label.background"></label>
+                    <label class="color-picker-wrapper" for="node-config-input-dark-bgPage"
+                        style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                        <input type="color" id="node-config-input-dark-bgPage" style="opacity: 0; width: 100%;" />
+                    </label>
+                </div>
+                <div class="form-row" style="margin-bottom: 3px;">
+                    <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
+                </div>
+                <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
+                    <div>
+                        <label data-i18n="ui-theme.label.background"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-dark-groupBg"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-dark-groupBg" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                    <div>
+                        <label data-i18n="ui-theme.label.outline"></label>
+                        <label class="color-picker-wrapper" for="node-config-input-dark-groupOutline"
+                            style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
+                            <input type="color" id="node-config-input-dark-groupOutline" style="opacity: 0; width: 100%;" />
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-object-group"></i> <span data-i18n="ui-theme.label.pages"></h4>
-    </div>
-    <div class="form-row labels-right" style="margin-bottom: 3px;">
-        <label data-i18n="ui-theme.label.background"></label>
-        <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-            <input type="color" id="node-config-input-bgPage" style="opacity: 0; width: 100%;"/>
-        </label>
-    </div>
-    <div class="form-row" style="margin-bottom: 3px;">
-        <h4 style="margin-bottom: 0;"><i class="fa fa-table"></i> <span data-i18n="ui-theme.label.groups"></h4>
-    </div>
-    <div class="form-row form-row-flex labels-right" style="margin-bottom: 3px; gap: 9px;">
-        <div>
-            <label data-i18n="ui-theme.label.background"></label>
-            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-groupBg" style="opacity: 0; width: 100%;"/>
-            </label>
-        </div>
-        <div>
-            <label data-i18n="ui-theme.label.outline"></label>
-            <label class="color-picker-wrapper" for="node-config-input-background" style="width: 100px; height: 32px; border-radius: 6px; border: 1px solid #ccc">
-                <input type="color" id="node-config-input-groupOutline" style="opacity: 0; width: 100%;"/>
-            </label>
-        </div>
-    </div>
+   
     <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.sizings"></h3>
     <div class="form-row">
         <label for="node-config-input-density" data-i18n="ui-theme.label.density"></label>
@@ -192,6 +455,31 @@
         <label for="node-config-input-widgetGap" data-i18n="ui-theme.label.widgetGap"></label>
         <input type="text" id="node-config-input-widgetGap">
     </div>
+    <h3 style="margin: 12px 0 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.preview">
+    </h3>
+    <p style="font-size: small; margin-top: 10px;">*Only shows theme colors</p>
+    
+    <div class="ui-preview">
+        <div class="app-bar" id="header">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+            <h1>Dashboard</h1>
+        </div>
+        <div class="page" id="bgPage">
+            <div class="group">
+                <h2>Group 1</h2>
+                <button class="primary-btn">Button1</button>
+            </div>
+            <div class="group">
+                <h2>Group 2</h2>
+                <button class="primary-btn">Button2</button>
+            </div>
+            <div class="group">
+                <h2>Group 3</h2>
+                <button class="primary-btn">Button3</button>
+            </div>
+        </div>
+    </div>
+      
 </script>
 
 <style>
@@ -204,4 +492,65 @@
 .labels-right label:first-child:after {
     content: ':';
 }
+
+/* UI Preview Styling */
+.ui-preview {
+    border: 2px solid grey;
+    border-radius: 10px;
+    overflow: hidden;
+    }
+
+.app-bar {
+    width: 100%;
+    height: 50px;
+    background-color: lightgrey;
+    display: flex; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.app-bar h1 {
+    margin: 10; 
+    font-size: 1.5em;
+    margin-left: 15px; 
+    }
+
+.page {
+    width: 100%;
+    height: 300px;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap; 
+}
+
+.group {
+    width: 200px;
+    height: 100px;
+    background-color: lightgrey;
+    border: 2px solid darkgrey;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 12px;
+    position: relative;
+}
+
+.group h2 {
+    margin: 0;
+    font-size: 1em;
+    top: 5px;
+    left: 10px;
+    position: absolute;
+}
+
+.primary-btn {
+    background-color: rgb(0, 174, 255);
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
 </style>

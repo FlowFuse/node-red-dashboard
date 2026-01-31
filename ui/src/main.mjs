@@ -37,21 +37,48 @@ function retrieveDefaultThemeFromCache () {
     return null
 }
 
+function retrieveDarkModeFromCache () {
+    const cachedDarkMode = localStorage.getItem('ndrb-theme-dark-mode')
+    if (cachedDarkMode) {
+        return JSON.parse(cachedDarkMode)
+    }
+    return false
+}
+
 const defaultTheme = retrieveDefaultThemeFromCache()
+const darkMode = retrieveDarkModeFromCache()
 
 // set a base theme on which we will add our custom NR-defined theme (initially set to the default theme if exists in cache)
-const theme = {
+const lightTheme = {
     dark: false,
     colors: {
-        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
-        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
-        'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
-        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
-        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
+        background: defaultTheme ? defaultTheme.colors.light.bgPage : '#fff',
+        'navigation-background': defaultTheme ? defaultTheme.colors.light.surface : '#ffffff',
+        'group-background': defaultTheme ? defaultTheme.colors.light.groupBg : '#ffffff',
+        'group-outline': defaultTheme ? defaultTheme.colors.light.groupOutline : '#d1d1d1',
+        primary: defaultTheme ? defaultTheme.colors.light.primary : '#0094CE',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.light.surface : '#ffffff',
+        info: '#ff53d0',
+        warning: '#ff8e00',
+        error: '#ff5252'
+    }
+}
+
+const darkTheme = {
+    dark: true,
+    colors: {
+        background: defaultTheme ? defaultTheme.colors.dark.bgPage : '#222222',
+        'navigation-background': defaultTheme ? defaultTheme.colors.dark.surface : '#111111',
+        'group-background': defaultTheme ? defaultTheme.colors.dark.groupBg : '#333333',
+        'group-outline': defaultTheme ? defaultTheme.colors.dark.groupOutline : '#cccccc',
+        primary: defaultTheme ? defaultTheme.colors.dark.primary : '#0094CE',
+        accent: '#ff6b99',
+        secondary: '#26ff8c',
+        success: '#a5d64c',
+        surface: defaultTheme ? defaultTheme.colors.dark.surface : '#111111',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
@@ -71,9 +98,10 @@ const vuetify = createVuetify({
         resize: Resize
     },
     theme: {
-        defaultTheme: 'nrdb',
+        defaultTheme: darkMode ? 'nrdbDark' : 'nrdbLight',
         themes: {
-            nrdb: theme
+            nrdbLight: lightTheme,
+            nrdbDark: darkTheme
         }
     },
     defaults: {
