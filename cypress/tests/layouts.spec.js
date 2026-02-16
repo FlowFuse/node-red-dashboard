@@ -1,4 +1,4 @@
-// test admin rights & access in FlowForge
+// test admin rights & access in FlowFuse
 
 describe('Node-RED Dashboard 2.0 - Layout: Grid', () => {
     beforeEach(() => {
