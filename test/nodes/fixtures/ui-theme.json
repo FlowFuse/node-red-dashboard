@@ -1,12 +1,21 @@
 {
-    "id": "config-ui-theme",
-    "type": "ui-theme",
-    "name": "Theme 1",
-    "colors": {
-        "surface": "#ffffff",
-        "primary": "#0094ce",
-        "bgPage": "#eeeeee",
-        "groupBg": "#ffffff",
-        "groupOutline": "#cccccc"
+  "id": "config-ui-theme",
+  "type": "ui-theme",
+  "name": "Theme 1",
+  "colors": {
+    "light": {
+      "surface": "#ffffff",
+      "primary": "#0094CE",
+      "bgPage": "#eeeeee",
+      "groupBg": "#ffffff",
+      "groupOutline": "#cccccc"
+    },
+    "dark": {
+      "surface": "#111111",
+      "primary": "#0094CE",
+      "bgPage": "#222222",
+      "groupBg": "#333333",
+      "groupOutline": "#cccccc"
     }
+  }
 }
