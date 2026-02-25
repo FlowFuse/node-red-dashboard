@@ -1981,14 +1981,47 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 $('<span>', { class: 'nrdb2-sb-title' }).text(theme.name || theme.id).appendTo(titleRow)
                 $('<span>', { class: 'nrdb2-sb-info' }).text(theme.users.length + ' ' + (theme.users.length > 1 ? c_('layout.pages') : c_('layout.page'))).appendTo(titleRow)
 
-                const palette = $('<div>', { class: 'nrdb2-sb-palette' }).appendTo(titleRow)
+                // backward compatibility
+                if (!hasProperty(theme.colors, 'light') && hasProperty(theme.colors, 'surface')) {
+                    // Set default values for light theme
+                    const updatedColors = {
+                        light: {
+                            surface: theme.colors.surface,
+                            primary: theme.colors.primary,
+                            bgPage: theme.colors.bgPage,
+                            groupBg: theme.colors.groupBg,
+                            groupOutline: theme.colors.groupOutline
+                        },
+
+                        // Set default values for dark theme
+                        dark: {
+                            surface: '#111111',
+                            primary: theme.colors.primary,
+                            bgPage: '#222222',
+                            groupBg: '#333333',
+                            groupOutline: '#cccccc'
+                        }
+                    }
+
+                    theme.colors = updatedColors
+                }
+
+                const paletteLight = $('<div>', { class: 'nrdb2-sb-palette' }).appendTo(titleRow)
                 const colors = theme.colors
 
-                palette.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.surface}` }))
-                palette.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.primary}` }))
-                palette.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.bgPage}` }))
-                palette.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.groupBg}` }))
-                palette.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.groupOutline}` }))
+                paletteLight.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.light.surface}` }))
+                paletteLight.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.light.primary}` }))
+                paletteLight.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.light.bgPage}` }))
+                paletteLight.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.light.groupBg}` }))
+                paletteLight.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.light.groupOutline}` }))
+
+                const paletteDark = $('<div>', { class: 'nrdb2-sb-palette' }).appendTo(titleRow)
+
+                paletteDark.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.dark.surface}` }))
+                paletteDark.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.dark.primary}` }))
+                paletteDark.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.dark.bgPage}` }))
+                paletteDark.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.dark.groupBg}` }))
+                paletteDark.append($('<div>', { class: 'nrdb2-sb-palette-color', style: `background-color: ${colors.dark.groupOutline}` }))
 
                 // theme - actions
                 const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
