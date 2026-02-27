@@ -64,13 +64,13 @@ export default {
         },
         label: function () {
             // Sanetize the html to avoid XSS attacks
-            return DOMPurify.sanitize(this.getProperty('label'))
+            return DOMPurify.sanitize(this.getTranslatedProperty('label'))
         },
         type: function () {
             return this.getProperty('mode') || 'text'
         },
         tooltip: function () {
-            return this.props.tooltip
+            return this.getTranslatedProperty('tooltip')
         },
         clearable: function () {
             return this.getProperty('clearable')

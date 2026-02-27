@@ -38,6 +38,7 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
+        ...mapState('i18n', ['locale']),
         prependIcon () {
             const icon = this.getProperty('icon')
             const mdiIcon = this.makeMdiIcon(icon)
@@ -50,13 +51,14 @@ export default {
         },
         label () {
             // Sanetize the html to avoid XSS attacks
-            return DOMPurify.sanitize(this.getProperty('label'))
+            const translated = this.getTranslatedProperty('label')
+            return DOMPurify.sanitize(translated)
         },
         iconPosition () {
             return this.getProperty('iconPosition')
         },
         iconOnly () {
-            return this.getProperty('icon') && !this.getProperty('label')
+            return this.getProperty('icon') && !this.label
         },
         buttonColor () {
             return this.getProperty('buttonColor')
@@ -66,6 +68,17 @@ export default {
         },
         textColor () {
             return this.getProperty('textColor')
+        }
+    },
+    watch: {
+        locale () {
+            this.$forceUpdate()
+        },
+        'props.label': {
+            deep: true,
+            handler () {
+                this.$forceUpdate()
+            }
         }
     },
     created () {

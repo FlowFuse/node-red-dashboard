@@ -1,0 +1,251 @@
+<script type="text/javascript">
+    (function () {
+        function hasProperty (obj, prop) {
+            return Object.prototype.hasOwnProperty.call(obj, prop)
+        }
+        RED.nodes.registerType('ui-language-selector', {
+            category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+            color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
+            defaults: {
+                group: { type: 'ui-group', required: false },
+                ui: { type: 'ui-base' },
+                name: { value: '' },
+                label: { value: 'Language' },
+                order: { value: 0 },
+                width: {
+                    value: 0,
+                    validate: function (v) {
+                        const width = v || 0
+                        const currentGroup = $('#node-input-group').val() || this.group
+                        const groupNode = RED.nodes.node(currentGroup)
+                        const valid = !groupNode || +width >= 0
+                        $('#node-input-size').toggleClass('input-error', !valid)
+                        return valid
+                    }
+                },
+                height: { value: 0 },
+                widgetType: { value: 'group' },
+                teleportTarget: { value: '#app-bar-actions' },
+                teleportCustom: { value: '' },
+                outputFormat: { value: 'auto' },
+                passthru: { value: false },
+                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
+                topicType: { value: 'msg' },
+                className: { value: '' },
+                translations: { value: {} }
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: 'font-awesome/fa-language',
+            paletteLabel: 'language',
+            label: function () { return this.name || this.label || 'language selector' },
+            labelStyle: function () { return this.name ? 'node_label_italic' : '' },
+            oneditprepare: function () {
+                const node = this
+    
+                // Set ui if not already set and widget type is ui
+                if (this.widgetType === 'ui' && !this.ui) {
+                    // Find the first ui-base node
+                    RED.nodes.eachConfig(function (n) {
+                        if (n.type === 'ui-base') {
+                            node.ui = n.id
+                            $('#node-input-ui').val(n.id)
+                            return false // stop iteration
+                        }
+                    })
+                }
+    
+                // Handle widget type change
+                $('#node-input-widgetType').on('change', function () {
+                    const widgetType = $(this).val()
+                    if (widgetType === 'ui') {
+                        $('#group-row').hide()
+                        $('#teleport-row').show()
+                        $('.nr-db-ui-element-hide-in-subflow').hide()
+                        // Make group optional for UI type
+                        $('#node-input-group').removeAttr('required')
+    
+                        // Set ui if not already set
+                        if (!node.ui) {
+                            RED.nodes.eachConfig(function (n) {
+                                if (n.type === 'ui-base') {
+                                    node.ui = n.id
+                                    $('#node-input-ui').val(n.id)
+                                    return false // stop iteration
+                                }
+                            })
+                        }
+                    } else {
+                        $('#group-row').show()
+                        $('#teleport-row').hide()
+                        $('#teleport-custom-row').hide()
+                        $('.nr-db-ui-element-hide-in-subflow').show()
+                        // Make group required for group type
+                        $('#node-input-group').attr('required', true)
+                    }
+                })
+    
+                // Handle teleport target change
+                $('#node-input-teleportTarget').on('change', function () {
+                    if ($(this).val() === 'custom') {
+                        $('#teleport-custom-row').show()
+                    } else {
+                        $('#teleport-custom-row').hide()
+                    }
+                })
+    
+                // Initialize values
+                if (!node.teleportCustom) {
+                    node.teleportCustom = ''
+                }
+    
+                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
+                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
+                if (RED.nodes.subflow(this.z) && this.widgetType !== 'ui') {
+                    // change inputs from hidden to text & display them
+                    $('#node-input-width').attr('type', 'text')
+                    $('#node-input-height').attr('type', 'text')
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
+                } else if (this.widgetType !== 'ui') {
+                    // not in a subflow, use the elementSizer
+                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
+                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
+                    $('#node-input-size').elementSizer({
+                        width: '#node-input-width',
+                        height: '#node-input-height',
+                        group: '#node-input-group'
+                    })
+                }
+    
+                $('#node-input-topic').typedInput({
+                    default: 'str',
+                    typeField: $('#node-input-topicType'),
+                    types: ['str', 'msg', 'flow', 'global']
+                })
+    
+                // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
+                $('.ui-node-popover-title').tooltip({
+                    show: {
+                        effect: 'slideDown',
+                        delay: 150
+                    }
+                })
+    
+                // Trigger initial state
+                $('#node-input-widgetType').trigger('change')
+                $('#node-input-teleportTarget').trigger('change')
+            },
+            oneditsave: function () {
+                // Save custom teleport value
+                if ($('#node-input-teleportTarget').val() === 'custom') {
+                    this.teleportTarget = $('#node-input-teleportCustom').val() || '#app-bar-actions'
+                }
+    
+                // Handle widget type
+                if (this.widgetType === 'ui') {
+                    // Clear group and set ui
+                    this.group = null
+                    // Find the first ui-base node
+                    RED.nodes.eachConfig(function (n) {
+                        if (n.type === 'ui-base') {
+                            $('#node-input-ui').val(n.id)
+                            return false // stop iteration
+                        }
+                    })
+                } else {
+                    // Clear ui for group widgets
+                    this.ui = null
+                }
+            }
+        })
+    })()
+</script>
+
+<script type="text/html" data-template-name="ui-language-selector">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <input type="hidden" id="node-input-ui">
+    <div class="form-row">
+        <label for="node-input-widgetType"><i class="fa fa-cube"></i> Type</label>
+        <select id="node-input-widgetType" style="width:70%">
+            <option value="group">Widget Group</option>
+            <option value="ui">Widget UI</option>
+        </select>
+    </div>
+    <div class="form-row" id="group-row">
+        <label for="node-input-group"><i class="fa fa-table"></i> Group</label>
+        <input type="text" id="node-input-group">
+    </div>
+    <div class="form-row" id="teleport-row" style="display:none;">
+        <label for="node-input-teleportTarget"><i class="fa fa-location-arrow"></i> Teleport Target</label>
+        <select id="node-input-teleportTarget" style="width:70%">
+            <option value="#app-bar-actions">App Bar Actions</option>
+            <option value="#app-bar-title">App Bar Title</option>
+            <option value="#page-header">Page Header</option>
+            <option value="#navigation-drawer">Navigation Drawer</option>
+            <option value="custom">Custom Selector</option>
+        </select>
+    </div>
+    <div class="form-row" id="teleport-custom-row" style="display:none;">
+        <label for="node-input-teleportCustom"><i class="fa fa-code"></i> Custom Selector</label>
+        <input type="text" id="node-input-teleportCustom" placeholder="e.g. #my-custom-element">
+    </div>
+    <div class="form-row nr-db-ui-element-hide-in-subflow">
+        <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
+        <button class="editor-button" id="node-input-size"></button>
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
+        <input type="hidden" id="node-input-width">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
+        <input type="hidden" id="node-input-height">
+    </div>
+    <div class="form-row nr-db-ui-element-show-in-subflow">
+        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
+        <input type="text" id="node-input-order">
+    </div>
+    <div class="form-row">
+        <label for="node-input-label"><i class="fa fa-i-cursor"></i> Label</label>
+        <input type="text" id="node-input-label">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputFormat"><i class="fa fa-sign-out"></i> Output Format</label>
+        <select id="node-input-outputFormat" style="width:70%">
+            <option value="auto">Auto-detect (code or full object)</option>
+            <option value="code">Language code only</option>
+            <option value="object">Full language object</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-className"><i class="fa fa-code"></i> Class</label>
+        <div style="display: inline;">
+            <input style="width: 70%;" type="text" id="node-input-className" placeholder="Optional CSS class name(s)" style="flex-grow: 1;">
+            <a
+                data-html="true"
+                title="Dynamic Property: Send msg.class to append new classes to this widget. NOTE: classes set at runtime will be applied in addition to any class(es) set in the nodes class field."
+                class="red-ui-button ui-node-popover-title"
+                style="margin-left: 4px; cursor: help; font-size: 0.625rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center;">
+                <i style="font-family: ui-serif;">fx</i>
+            </a>
+        </div>
+    </div>
+    <div class="form-row">
+        <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> If <code>msg</code> arrives on input, pass through to output: </label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic" style="padding-left:25px; margin-right:-25px">Topic</label>
+        <input type="text" id="node-input-topic">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+    <div class="form-tips">
+        <p><b>Note:</b> This widget automatically generates a dropdown with all enabled languages from the dashboard configuration.</p>
+        <p>The dropdown options are generated in the order defined in the Languages tab.</p>
+        <p>When a language is selected, it emits a message with the selected language code or full object.</p>
+    </div>
+</script>

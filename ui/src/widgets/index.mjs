@@ -8,6 +8,7 @@ import UIEvent from './ui-event/UIEvent.vue'
 import UIFileInput from './ui-file-input/UIFileInput.vue'
 import UIForm from './ui-form/UIForm.vue'
 import UIGauge from './ui-gauge/UIGauge.vue'
+import UILanguageSelector from './ui-language-selector/UILanguageSelector.vue'
 import UIMarkdown from './ui-markdown/UIMarkdown.vue'
 import UINotification from './ui-notification/UINotification.vue'
 import UINumberInput from './ui-number-input/UINumberInput.vue'
@@ -44,7 +45,8 @@ export {
     UITable,
     UITemplate,
     UIText,
-    UITextInput
+    UITextInput,
+    UILanguageSelector
 }
 
 // Component helpers
@@ -73,5 +75,6 @@ export default {
     'ui-table': UITable,
     'ui-template': UITemplate,
     'ui-text-input': UITextInput,
-    'ui-text': UIText
+    'ui-text': UIText,
+    'ui-language-selector': UILanguageSelector
 }

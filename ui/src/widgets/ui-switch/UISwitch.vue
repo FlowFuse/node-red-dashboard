@@ -62,7 +62,7 @@ export default {
         ...mapState('data', ['messages']),
         label () {
             // Sanetize the html to avoid XSS attacks
-            return DOMPurify.sanitize(this.getProperty('label'))
+            return DOMPurify.sanitize(this.getTranslatedProperty('label'))
         },
         layout () {
             // This spreaded layout will be the default for the existing flows
