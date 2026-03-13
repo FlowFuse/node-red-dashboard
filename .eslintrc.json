@@ -65,7 +65,14 @@
             "extends": ["plugin:n/recommended"],
             "env": {
                 "commonjs": true,
-                "browser": false
+                "browser": false,
+                "node": true
+            },
+            "globals": {
+                "require": "readonly",
+                "module": "readonly",
+                "__dirname": "readonly",
+                "__filename": "readonly"
             },
             "rules": {
                 // plugin:n
