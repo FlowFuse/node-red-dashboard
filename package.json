@@ -75,7 +75,7 @@
     "devDependencies": {
         "@flowfuse/flow-renderer": "^0.5.0",
         "@mdi/font": "^7.4.47",
-        "@unhead/vue": "^1.11.20",
+        "@unhead/vue": "^2.1.12",
         "@vite-pwa/assets-generator": "^1.0.0",
         "@vitejs/plugin-vue": "^5.0.4",
         "cross-env": "^7.0.3",

@@ -1,7 +1,7 @@
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
-import { VueHeadMixin, createHead } from '@unhead/vue'
+import { VueHeadMixin, createHead } from '@unhead/vue/client'
 import * as Vue from 'vue'
 import * as vuex from 'vuex'
 import App from './App.vue'
