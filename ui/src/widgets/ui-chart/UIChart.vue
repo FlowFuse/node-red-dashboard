@@ -396,6 +396,7 @@ export default {
             return value
         },
         onLoad (history) {
+
             if (history && history.length > 0) {
                 // we have received a history of data points
                 // we need to add them to the chart
@@ -509,13 +510,8 @@ export default {
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
-                msg.forEach((m, i) => {
-                    const p = m.payload
-                    const d = m._datapoint // server-side we compute a chart friendly format
-                    const label = d.category
-                    if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label, options)
-                    }
+                msg.forEach((m) => {
+                    this.add(m)
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
