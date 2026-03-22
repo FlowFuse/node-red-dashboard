@@ -396,7 +396,6 @@ export default {
             return value
         },
         onLoad (history) {
-
             if (history && history.length > 0) {
                 // we have received a history of data points
                 // we need to add them to the chart
