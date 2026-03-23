@@ -1131,7 +1131,7 @@ module.exports = function (RED) {
                         }
 
                         // emit to all connected UIs
-                        emit('msg-input:' + widget.id, msg, wNode)
+                        if (msg) { emit('msg-input:' + widget.id, msg, wNode) }
 
                         done()
                     } catch (err) {
