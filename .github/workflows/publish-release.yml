@@ -34,7 +34,7 @@ jobs:
         run: |
           VERSION=$(npm info . --json version | sed -e 's/"//g')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - uses: flowfuse/github-actions-workflows/actions/update-nr-flows@v0.49.0
+      - uses: flowfuse/github-actions-workflows/actions/update-nr-flows@v0.52.0
         with:
           package: '@flowfuse/node-red-dashboard'
           version: ${{ steps.getVersion.outputs.version }}
