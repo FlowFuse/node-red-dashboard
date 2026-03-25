@@ -13,7 +13,7 @@ jobs:
     uses: 'flowfuse/github-actions-workflows/.github/workflows/build_node_package.yml@v0.52.0'
     with:
       node: '[
-              {"version": "20", "tests": true, "lint": true},
+              {"version": "24", "tests": true, "lint": true},
             ]'
   
   publish:
