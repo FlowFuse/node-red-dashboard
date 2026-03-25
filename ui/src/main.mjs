@@ -217,23 +217,50 @@ fetch('_setup')
         // default interval - every 2.5 seconds
         function reconnect (interval = 2500) {
             if (disconnected) {
-                socket.connect()
-                if (retryCount >= 14) {
-                    // trying for over 1 minute
-                    interval = 30000 // interval at 30 seconds
-                } else if (retryCount >= 4) {
-                    // trying for over 10 seconds
-                    interval = 5000 // interval at 5 seconds
-                }
-                retryCount++
-                // if still within our maximum retry count
-                if (retryCount <= MAX_RETRIES) {
-                    // check for a connection again in <interval> milliseconds
-                    reconnectTO = setTimeout(reconnect, interval)
-                } else {
-                    // we have been retrying for 5 minutes so give up and reload the page
-                    forcePageReload('Too many retries')
-                }
+                /** Prior to trying the socket connect, use an http fetch to check for redirection to auth proxy
+                 * fetch '_setup' as that is a short json file
+                 * use redirect: 'manual' to stop any redirection to a login page in case it causes a CORS error
+                 */
+                fetch("_setup", { redirect: 'manual', cache: 'no-cache' })
+                    .then(function (res) {
+                        const contentType = res.headers?.get("content-type")
+                        /** If the content type is not application/json then likely it is a login request,
+                         * or a failed redirection to login page, either of which would cause the websocket
+                         * connect to fail, so reload the page in order to show the login request.
+                         * Allow it continue the first few times though, allowing the socket connect code to fail
+                         * and retry, in case this is just a transient issue
+                         */
+                        if((contentType && contentType.includes("application/json")) || retryCount < 3) {
+                            tryConnect(interval)
+                        } else {
+                            forcePageReload('Websocket pre-fetch failed')
+                        }
+                    })
+                    .catch(function (err) {
+                        // there is some sort of network failure, let the websocket connection code handle that
+                        tryConnect(interval)
+                    })
+            }
+        }
+
+        // default interval - every 2.5 seconds
+        function tryConnect(interval) {
+            socket.connect()
+            if (retryCount >= 14) {
+                // trying for over 1 minute
+                interval = 30000 // interval at 30 seconds
+            } else if (retryCount >= 4) {
+                // trying for over 10 seconds
+                interval = 5000 // interval at 5 seconds
+            }
+            retryCount++
+            // if still within our maximum retry count
+            if (retryCount <= MAX_RETRIES) {
+                // check for a connection again in <interval> milliseconds
+                reconnectTO = setTimeout(reconnect, interval)
+            } else {
+                // we have been retrying for 5 minutes so give up and reload the page
+                forcePageReload('Too many retries')
             }
         }
 
