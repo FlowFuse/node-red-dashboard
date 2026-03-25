@@ -221,22 +221,22 @@ fetch('_setup')
                  * fetch '_setup' as that is a short json file
                  * use redirect: 'manual' to stop any redirection to a login page in case it causes a CORS error
                  */
-                fetch("_setup", { redirect: 'manual', cache: 'no-cache' })
+                fetch('_setup', { redirect: 'manual', cache: 'no-cache' })
                     .then(function (res) {
-                        const contentType = res.headers?.get("content-type")
+                        const contentType = res.headers?.get('content-type')
                         /** If the content type is not application/json then likely it is a login request,
                          * or a failed redirection to login page, either of which would cause the websocket
                          * connect to fail, so reload the page in order to show the login request.
                          * Allow it continue the first few times though, allowing the socket connect code to fail
                          * and retry, in case this is just a transient issue
                          */
-                        if((contentType && contentType.includes("application/json")) || retryCount < 3) {
+                        if ((contentType && contentType.includes('application/json')) || retryCount < 3) {
                             tryConnect(interval)
                         } else {
                             forcePageReload('Websocket pre-fetch failed')
                         }
                     })
-                    .catch(function (err) {
+                    .catch(function () {
                         // there is some sort of network failure, let the websocket connection code handle that
                         tryConnect(interval)
                     })
@@ -244,7 +244,7 @@ fetch('_setup')
         }
 
         // default interval - every 2.5 seconds
-        function tryConnect(interval) {
+        function tryConnect (interval) {
             socket.connect()
             if (retryCount >= 14) {
                 // trying for over 1 minute
