@@ -229,8 +229,10 @@ fetch('_setup')
                          * connect to fail, so reload the page in order to show the login request.
                          * Allow it continue the first few times though, allowing the socket connect code to fail
                          * and retry, in case this is just a transient issue
+                         * retryCount will still be 0 after first failure, so it will not force a page reload until
+                         * it has failed 3 times
                          */
-                        if ((contentType && contentType.includes('application/json')) || retryCount < 3) {
+                        if ((contentType && contentType.includes('application/json')) || retryCount < 2) {
                             tryConnect(interval)
                         } else {
                             forcePageReload('Websocket pre-fetch failed')
