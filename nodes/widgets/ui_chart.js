@@ -24,6 +24,9 @@ module.exports = function (RED) {
         if (typeof config.xmax !== 'undefined') {
             config.xmax = parseFloat(config.xmax)
         }
+        if (typeof config.removeInactiveAfter !== 'undefined') {
+            config.removeInactiveAfter = parseFloat(config.removeInactiveAfter)
+        }
 
         node.clearHistory = function () {
             const empty = []
@@ -50,6 +53,86 @@ module.exports = function (RED) {
                 }
             })
             return value
+        }
+
+        function getSeriesKey (series) {
+            return JSON.stringify(series)
+        }
+
+        function getSeriesTimestamp (msg, fallback = Date.now()) {
+            if (typeof msg?._uiChartReceivedAt === 'number' && Number.isFinite(msg._uiChartReceivedAt)) {
+                return msg._uiChartReceivedAt
+            }
+
+            const timestamp = msg?._datapoint?.x
+            if (typeof timestamp === 'number' && Number.isFinite(timestamp)) {
+                return timestamp
+            }
+            if (typeof timestamp === 'string') {
+                const parsed = (new Date(timestamp)).getTime()
+                if (!Number.isNaN(parsed)) {
+                    return parsed
+                }
+            }
+
+            return fallback
+        }
+
+        function collectActiveSeries (datapoints) {
+            const activeSeries = new Set()
+            const points = Array.isArray(datapoints) ? datapoints : [datapoints]
+
+            points.forEach((point) => {
+                const category = point?.category
+                if (category !== null && typeof category !== 'undefined') {
+                    activeSeries.add(getSeriesKey(category))
+                }
+            })
+
+            return activeSeries
+        }
+
+        function clearInactiveSeries (activeSeries = new Set()) {
+            if (!config.removeInactive || !(config.removeInactiveAfter > 0)) {
+                return
+            }
+
+            const cutOff = Date.now() - (config.removeInactiveAfter * 1000)
+            const points = datastore.get(node.id) || []
+            const latestBySeries = new Map()
+
+            points.forEach((point) => {
+                const category = point?._datapoint?.category
+                if (category === null || typeof category === 'undefined') {
+                    return
+                }
+
+                const key = getSeriesKey(category)
+                const timestamp = getSeriesTimestamp(point)
+                const latest = latestBySeries.get(key)
+
+                if (!latest || latest < timestamp) {
+                    latestBySeries.set(key, timestamp)
+                }
+            })
+
+            const inactiveSeries = new Set()
+            latestBySeries.forEach((timestamp, key) => {
+                if (timestamp <= cutOff && !activeSeries.has(key)) {
+                    inactiveSeries.add(key)
+                }
+            })
+
+            if (inactiveSeries.size > 0) {
+                datastore.filter(base, node, (point) => {
+                    const category = point?._datapoint?.category
+                    if (category === null || typeof category === 'undefined') {
+                        return true
+                    }
+
+                    return !inactiveSeries.has(getSeriesKey(category))
+                })
+            }
         }
 
         /**
@@ -235,6 +318,7 @@ module.exports = function (RED) {
                         // clear history
                         datastore.save(base, node, [])
                     } else {
+                        const receivedAt = Date.now()
                         // delete old data if a replace is being performed.
                         // This is the case if msg.action is replace
                         // or the node is configured for replace and this is not being overriden by msg.action set to append
@@ -245,7 +329,8 @@ module.exports = function (RED) {
                         if (!Array.isArray(msg.payload)) {
                             // quick clone of msg, and store in history
                             datastore.append(base, node, {
-                                ...msg
+                                ...msg,
+                                _uiChartReceivedAt: receivedAt
                             })
                         } else {
                             // we have an array in msg.payload, let's split them
@@ -255,7 +340,8 @@ module.exports = function (RED) {
                                 const m = {
                                     ...msg,
                                     payload,
-                                    _datapoint: d
+                                    _datapoint: d,
+                                    _uiChartReceivedAt: receivedAt
                                 }
                                 datastore.append(base, node, m)
                             })
@@ -301,6 +387,8 @@ module.exports = function (RED) {
                             // each category in each series
                             clearOldCategoricalPoints()
                         }
+
+                        clearInactiveSeries(collectActiveSeries(msg._datapoint))
                     }
                 }
 

@@ -35,7 +35,9 @@ export default {
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
             dynamicChartOptions: [], // an array of chart options updates received this session
-            resizeObserver: null
+            resizeObserver: null,
+            inactiveSeriesTimers: {},
+            seriesActivity: {}
         }
     },
     computed: {
@@ -128,6 +130,7 @@ export default {
         }
     },
     beforeUnmount () {
+        this.clearInactiveSeriesTimers()
         // Cleanup resize observer
         if (this.resizeObserver) {
             this.resizeObserver.disconnect()
@@ -474,7 +477,156 @@ export default {
         clearDataStore () {
             this.$store.commit('data/deleteMessages', { widgetId: this.id })
         },
+        getSeriesKey (label) {
+            return JSON.stringify(label)
+        },
+        getMessageTimestamp (msg) {
+            if (typeof msg?._uiChartReceivedAt === 'number' && Number.isFinite(msg._uiChartReceivedAt)) {
+                return msg._uiChartReceivedAt
+            }
+
+            return Date.now()
+        },
+        isInactiveSeriesRemovalEnabled () {
+            const timeout = parseFloat(this.props.removeInactiveAfter)
+            return this.props.removeInactive === true && Number.isFinite(timeout) && timeout > 0
+        },
+        getInactiveSeriesTimeout () {
+            return parseFloat(this.props.removeInactiveAfter) * 1000
+        },
+        clearInactiveSeriesTimers () {
+            Object.values(this.inactiveSeriesTimers).forEach((timer) => {
+                clearTimeout(timer)
+            })
+            this.inactiveSeriesTimers = {}
+            this.seriesActivity = {}
+        },
+        clearInactiveSeriesTimer (seriesKey) {
+            if (this.inactiveSeriesTimers[seriesKey]) {
+                clearTimeout(this.inactiveSeriesTimers[seriesKey])
+                delete this.inactiveSeriesTimers[seriesKey]
+            }
+        },
+        updateSeriesActivity (label, receivedAt) {
+            if (!this.isInactiveSeriesRemovalEnabled()) {
+                return
+            }
+
+            const seriesKey = this.getSeriesKey(label)
+            this.seriesActivity[seriesKey] = {
+                label,
+                lastSeen: receivedAt
+            }
+            this.scheduleInactiveSeriesRemoval(label)
+        },
+        scheduleInactiveSeriesRemoval (label) {
+            if (!this.isInactiveSeriesRemovalEnabled()) {
+                return
+            }
+
+            const seriesKey = this.getSeriesKey(label)
+            const activity = this.seriesActivity[seriesKey]
+            if (!activity) {
+                return
+            }
+
+            this.clearInactiveSeriesTimer(seriesKey)
+
+            const timeout = this.getInactiveSeriesTimeout()
+            const delay = Math.max(0, timeout - (Date.now() - activity.lastSeen))
+
+            this.inactiveSeriesTimers[seriesKey] = setTimeout(() => {
+                const latestActivity = this.seriesActivity[seriesKey]
+                if (!latestActivity) {
+                    return
+                }
+
+                if ((Date.now() - latestActivity.lastSeen) >= this.getInactiveSeriesTimeout()) {
+                    this.removeSeries(label)
+                } else {
+                    this.scheduleInactiveSeriesRemoval(latestActivity.label)
+                }
+            }, delay)
+        },
+        pruneInactiveSeries () {
+            if (!this.isInactiveSeriesRemovalEnabled()) {
+                return
+            }
+
+            const now = Date.now()
+            const timeout = this.getInactiveSeriesTimeout()
+
+            Object.values(this.seriesActivity).forEach((activity) => {
+                if ((now - activity.lastSeen) >= timeout) {
+                    this.removeSeries(activity.label)
+                }
+            })
+        },
+        updateRadialSeriesAppearance (options) {
+            options.series.forEach((series, index) => {
+                series.radius = pieCharts.getRadius(this.props.chartType, index, options.series.length)
+                if (index !== options.series.length - 1) {
+                    series.label = {
+                        show: false
+                    }
+                    series.emphasis = {
+                        label: {
+                            show: false
+                        }
+                    }
+                } else {
+                    series.label = {
+                        show: true
+                    }
+                    series.emphasis = {
+                        label: {
+                            show: true
+                        }
+                    }
+                }
+            })
+        },
+        removeSeries (label) {
+            const seriesKey = this.getSeriesKey(label)
+            this.clearInactiveSeriesTimer(seriesKey)
+            delete this.seriesActivity[seriesKey]
+
+            const options = this.chart.getOption()
+            const seriesIndex = options.series.findIndex((series) => this.getSeriesKey(series.name) === seriesKey)
+
+            if (seriesIndex === -1) {
+                return
+            }
+
+            options.series.splice(seriesIndex, 1)
+
+            if (this.props.chartType === 'histogram') {
+                this.histogram.bins.splice(seriesIndex, 1)
+            }
+
+            this.$store.commit('data/deleteSeriesMessages', {
+                widgetId: this.id,
+                series: label
+            })
+
+            if (options.series.length === 0) {
+                this.clearChart()
+                return
+            }
+
+            if (this.props.xAxisType === 'radial') {
+                this.updateRadialSeriesAppearance(options)
+            }
+
+            this.hasData = options.series.some((series) => Array.isArray(series.data) && series.data.length > 0)
+            this.chart.setOption(options, {
+                notMerge: true,
+                lazyUpdate: true,
+                silent: true
+            })
+        },
         clearChart () {
+            this.clearInactiveSeriesTimers()
             const option = this.chart.getOption()
             if (this.props.xAxisType === 'radial') {
                 option.series.forEach(s => {
@@ -504,6 +656,7 @@ export default {
          */
         add (msg) {
             const payload = msg.payload
+            const receivedAt = this.getMessageTimestamp(msg)
 
             const options = this.chart.getOption()
             // determine what type of msg we have
@@ -514,7 +667,7 @@ export default {
                     const d = m._datapoint // server-side we compute a chart friendly format
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label, options)
+                        this.addPoints(p, d, label, options, this.getMessageTimestamp(m))
                     }
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
@@ -524,7 +677,7 @@ export default {
                     const d = msg._datapoint ? msg._datapoint[i] : null // server-side we compute a chart friendly format where required
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label, options)
+                        this.addPoints(p, d, label, options, receivedAt)
                     }
                 })
             } else if (payload !== null && payload !== undefined) {
@@ -534,14 +687,14 @@ export default {
                     msg._datapoint.forEach((d) => {
                         const label = d.category
                         if (label !== null && label !== undefined) {
-                            this.addPoints(msg.payload, d, label, options)
+                            this.addPoints(msg.payload, d, label, options, receivedAt)
                         }
                     })
                 } else {
                     const d = msg._datapoint // server-side we compute a chart friendly format
                     const label = d.category
                     if (label !== null && label !== undefined) {
-                        this.addPoints(msg.payload, d, label, options)
+                        this.addPoints(msg.payload, d, label, options, receivedAt)
                     }
                 }
             } else {
@@ -556,6 +709,7 @@ export default {
                 this.limitDataSize(options)
             }
             this.updateChart(options)
+            this.pruneInactiveSeries()
         },
         /**
          * Add points to the chart
@@ -564,7 +718,7 @@ export default {
          * @param {*} label
          * @param {*} options - existing eChart options object
          */
-        addPoints (payload, datapoint, label, options) {
+        addPoints (payload, datapoint, label, options, receivedAt) {
             const d = { ...datapoint, ...payload }
             if (!this.chart.config?.options?.parsing?.xAxisKey) {
                 d.x = datapoint.x // if there is no mapping key, ensure server side computed datapoint.x is used
@@ -582,21 +736,24 @@ export default {
                     dd.category = d.category[i]
                     dd.y = d.y[i]
                     options = this.addToChart(dd, label[i], options)
-                    this.commit(payload, dd, label[i])
+                    this.commit(payload, dd, label[i], receivedAt)
+                    this.updateSeriesActivity(label[i], receivedAt)
                 }
             } else {
                 options = this.addToChart(d, label, options)
-                this.commit(payload, datapoint, label)
+                this.commit(payload, datapoint, label, receivedAt)
+                this.updateSeriesActivity(label, receivedAt)
             }
         },
-        commit (payload, datapoint, label) {
+        commit (payload, datapoint, label, receivedAt) {
             // APPEND our latest data point to the store
             this.$store.commit('data/append', {
                 widgetId: this.id,
                 msg: {
                     payload,
                     _datapoint: datapoint,
-                    series: label
+                    series: label,
+                    _uiChartReceivedAt: receivedAt
                 }
             })
         },
@@ -658,31 +815,7 @@ export default {
                 options.series[sIndex].data = existingData
 
                 // update the radius for each series depending on the number of series
-                options.series.forEach((s, i) => {
-                    s.radius = pieCharts.getRadius(this.props.chartType, i, options.series.length)
-                    // only show the label on the outer series
-                    if (i !== options.series.length - 1) {
-                        // don't show the label on the inner series as they overlap with the outer series
-                        s.label = {
-                            show: false
-                        }
-                        s.emphasis = {
-                            label: {
-                                show: false
-                            }
-                        }
-                    } else {
-                        // make sure we're updating in case we have a new series, and now there is a new outer series
-                        s.label = {
-                            show: true
-                        }
-                        s.emphasis = {
-                            label: {
-                                show: true
-                            }
-                        }
-                    }
-                })
+                this.updateRadialSeriesAppearance(options)
             } else {
                 // Handle regular charts (line, bar, scatter)
                 const sLabels = options.series.map(s => s.name)
