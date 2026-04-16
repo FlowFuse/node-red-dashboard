@@ -6,7 +6,7 @@
             </template>
             <v-app-bar-title>
                 <template v-if="dashboard.headerContent !== 'none' && dashboard.headerContent !== false">
-                    {{ pageTitle }}
+                    {{ computedPageTitle }}
                 </template>
                 <div id="app-bar-title" />
             </v-app-bar-title>
@@ -139,6 +139,7 @@ export default {
     },
     computed: {
         ...mapState('ui', ['dashboards', 'pages', 'themes', 'pageData', 'widgets']),
+        ...mapState('i18n', ['locale']),
         ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
         theme: function () {
             const page = this.pages[this.$route.meta.id]
@@ -169,8 +170,11 @@ export default {
         },
         uiWidgets: function () {
             // get widgets scoped to the UI, not a group/page
-            const widgets = Object.values(this.widgets).filter(w => {
-                return Object.hasOwn(w.props, 'ui') && !!w.props.ui && !w.props.group && !w.props.page
+            const allWidgets = Object.values(this.widgets)
+
+            const widgets = allWidgets.filter(w => {
+                const hasUi = Object.hasOwn(w.props, 'ui') && !!w.props.ui && !w.props.group && !w.props.page
+                return hasUi
             })
             return widgets
         },
@@ -217,6 +221,27 @@ export default {
         editMode: function () {
             return editMode.value
         },
+        computedPageTitle: function () {
+            // Get current page
+            const page = this.pages[this.$route.meta.id]
+            if (!page) return this.pageTitle
+
+            // Handle page name translations
+            let pageName = page.name
+            if (page.name && typeof page.name === 'object') {
+                const locale = this.locale || 'en'
+                pageName = page.name[locale] || page.name.en || page.name[Object.keys(page.name)[0]] || 'Untitled'
+            }
+
+            // Apply header content style
+            const headerStyle = this.dashboard.headerContent
+            if (headerStyle === 'dashboard') {
+                return this.dashboard.name
+            } else if (headerStyle === 'dashpage') {
+                return `${this.dashboard.name} (${pageName})`
+            }
+            return pageName
+        },
         showOnlyIcons: function () {
             return this.effectiveNavigationStyle === 'icon' && this.rail
         }
@@ -224,6 +249,10 @@ export default {
     watch: {
         theme: function () {
             this.updateTheme()
+        },
+        locale: function () {
+            // Force update of the component when locale changes
+            this.$forceUpdate()
         },
         effectiveNavigationStyle: {
             immediate: true,
@@ -339,7 +368,13 @@ export default {
                 return ''
             }
 
-            return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
+            // Handle translations
+            let pageName = page.name
+            if (page.name && typeof page.name === 'object') {
+                const locale = this.$store.state.i18n?.locale || 'en'
+                pageName = page.name[locale] || page.name.en || page.name[Object.keys(page.name)[0]] || 'Untitled'
+            }
+            return pageName + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
         },
         handleNavigationClick () {
             if (this.effectiveNavigationStyle === 'fixed') {
