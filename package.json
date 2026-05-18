@@ -79,7 +79,7 @@
         "@vite-pwa/assets-generator": "^1.0.0",
         "@vitejs/plugin-vue": "^5.0.4",
         "cross-env": "^7.0.3",
-        "cypress": "^13.17.0",
+        "cypress": "^15.15.0",
         "dompurify": "^3.3.1",
         "eslint": "^8.57.1",
         "eslint-config-standard": "^17.1.0",
