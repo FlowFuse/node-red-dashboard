@@ -76,7 +76,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         // enter a value into the text input field
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').clear()
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('have.value', '')
-        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').type('payload for msg.topic test')
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').type('payload for msg.topic test', { force: true })
         // submit the form
         cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
         // check the output for the topic
@@ -92,7 +92,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').clear()
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('have.value', '')
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
-        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').type('flow.f1 test')
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').type('flow.f1 test', { force: true })
         // submit the form
         cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
         // check the output for the topic
@@ -105,7 +105,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').should('not.be.disabled')
         // enter a value into the text input field
-        cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').type('global.g1 test')
+        cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').type('global.g1 test', { force: true })
         // submit the form
         cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
         // check the output for the topic
