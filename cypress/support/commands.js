@@ -136,7 +136,8 @@ Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq', { timeout = 
             if (Date.now() >= deadline) {
                 throw new Error(`checkOutput timed out after ${timeout}ms: expected '${key}' ${comparator} ${JSON.stringify(value)}, got ${JSON.stringify(actual)}`)
             }
-            return cy.wait(interval, { log: false }).then(attempt)
+            cy.wait(interval, { log: false })
+            return attempt()
         })
     }
     return attempt()
