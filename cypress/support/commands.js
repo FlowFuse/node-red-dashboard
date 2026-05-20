@@ -118,9 +118,27 @@ Cypress.Commands.add('resetContext', () => {
     cy.request('POST', '/context/reset')
 })
 
-Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq') => {
+Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq', { timeout = 4000, interval = 100 } = {}) => {
+    // Polls /context/flow, re-issuing the request each attempt until the assertion passes or the timeout expires.
+    // Plain cy.request().its().should() only retries the assertion against the original response body, so a value
+    // that arrives after the first fetch would never be observed.
     const parentKey = key.split('.')[0]
-    cy.request('GET', '/context/flow?key=' + parentKey).its(`body.${key}`).should(comparator, value)
+    const getNested = (obj, path) => path.split('.').reduce((acc, k) => (acc == null ? acc : acc[k]), obj)
+    const matches = (actual) => comparator === 'not.eq' ? actual !== value : actual === value
+    const deadline = Date.now() + timeout
+    const attempt = () => {
+        return cy.request({ method: 'GET', url: '/context/flow?key=' + parentKey, log: false }).then((res) => {
+            const actual = getNested(res.body, key)
+            if (matches(actual)) {
+                return actual
+            }
+            if (Date.now() >= deadline) {
+                throw new Error(`checkOutput timed out after ${timeout}ms: expected '${key}' ${comparator} ${JSON.stringify(value)}, got ${JSON.stringify(actual)}`)
+            }
+            return cy.wait(interval, { log: false }).then(attempt)
+        })
+    }
+    return attempt()
 })
 
 Cypress.Commands.add('setGlobalVar', (key, value) => {
