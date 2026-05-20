@@ -122,8 +122,9 @@ Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq', { timeout = 
     // Polls /context/flow, re-issuing the request each attempt until the assertion passes or the timeout expires.
     // Plain cy.request().its().should() only retries the assertion against the original response body, so a value
     // that arrives after the first fetch would never be observed.
-    const parentKey = key.split('.')[0]
-    const getNested = (obj, path) => path.split('.').reduce((acc, k) => (acc == null ? acc : acc[k]), obj)
+    const tokenise = (path) => path.match(/[^.[\]]+/g) || []
+    const parentKey = tokenise(key)[0]
+    const getNested = (obj, path) => tokenise(path).reduce((acc, k) => (acc == null ? acc : acc[k]), obj)
     const matches = (actual) => comparator === 'not.eq' ? actual !== value : actual === value
     const deadline = Date.now() + timeout
     const attempt = () => {
