@@ -13,8 +13,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.clickAndWait(cy.get('[data-form="form-row-name"]'), 200)
         cy.get('[data-form="form-row-name"]').find('input[type="text"]').focus()
 
-        // blur the text input
-        cy.focused().blur()
+        // blur the text input directly rather than via cy.focused(),
+        // which can pick up the wrong element if the form is mid-re-render
+        cy.get('[data-form="form-row-name"]').find('input[type="text"]').blur({ force: true })
 
         cy.contains('Name is required').should('be.visible')
     })
