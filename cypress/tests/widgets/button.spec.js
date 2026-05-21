@@ -13,6 +13,13 @@ describe('Node-RED Dashboard 2.0 - Buttons', () => {
     })
 
     it('Button 1 (bool) outputs a bool payload & topic from msg.topic', () => {
+        // Wait for the ui-control "connect" event to have propagated through change-1
+        // and seeded msg.topic on the button. Without this barrier, the click can race
+        // the WS-driven re-render and the button emits with an empty topic.
+        // The connect-marker node writes msg.topic into flow.connectTopic on every ui-control
+        // event, deliberately separate from the test-helper's global.msg so subsequent
+        // ui-control events don't clobber the button-click msg we assert on below.
+        cy.checkOutput('connectTopic', 'msg.topic from inject-1')
         // Emitting Bool
         cy.clickAndWait(cy.get('button').contains('Button 1 (bool)'))
         cy.checkOutput('msg.payload', true)
