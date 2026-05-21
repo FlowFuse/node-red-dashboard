@@ -2,6 +2,10 @@
 describe('Node-RED Dashboard 2.0 - Buttons', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-buttons')
+        // Clear sentinel context keys (like connectTopic) before the dashboard page loads,
+        // so the barrier in the Button 1 (bool) test waits for THIS test's connect-event
+        // rather than passing immediately on stale data from a previous test run.
+        cy.resetContext()
         cy.visit('/dashboard/page1')
     })
 
