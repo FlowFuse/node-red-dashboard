@@ -78,8 +78,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').clear()
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('have.value', '')
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').type('payload for msg.topic test', { force: true })
-        // submit the form
-        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // submit the form; force-click to bypass transient disabled state from connect-event re-renders
+        cy.get(formElId).find('[data-action="form-submit"]').click({ force: true })
+        cy.wait(200)
         // check the output for the topic
         cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name1":"payload for msg.topic test"}')
         cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from msg.topic')
@@ -94,8 +95,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('have.value', '')
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').type('flow.f1 test', { force: true })
-        // submit the form
-        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // submit the form; force-click to bypass transient disabled state from connect-event re-renders
+        cy.get(formElId).find('[data-action="form-submit"]').click({ force: true })
+        cy.wait(200)
         // check the output for the topic
         cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name2":"flow.f1 test"}')
         cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from flow.f1')
@@ -107,8 +109,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').should('not.be.disabled')
         // enter a value into the text input field
         cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').type('global.g1 test', { force: true })
-        // submit the form
-        cy.clickAndWait(cy.get(formElId).find('[data-action="form-submit"]'), 200)
+        // submit the form; force-click to bypass transient disabled state from connect-event re-renders
+        cy.get(formElId).find('[data-action="form-submit"]').click({ force: true })
+        cy.wait(200)
         // check the output for the topic
         cy.get(payloadElId).find('.nrdb-ui-text-value').contains('{"name3":"global.g1 test"}')
         cy.get(topicElId).find('.nrdb-ui-text-value').contains('topic from global.g1')
