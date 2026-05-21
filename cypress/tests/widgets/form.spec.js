@@ -10,6 +10,9 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
 
     it('blurring a required field runs validation', () => {
         cy.contains('Name is required').should('not.exist')
+        // Stabilise: wait for the required input to be enabled before interacting,
+        // so Vuetify will actually run validators on blur (it skips them on disabled fields).
+        cy.get('[data-form="form-row-name"] input[type="text"]').should('be.visible').and('not.be.disabled')
         cy.clickAndWait(cy.get('[data-form="form-row-name"]'), 200)
         cy.get('[data-form="form-row-name"]').find('input[type="text"]').focus()
 
@@ -75,7 +78,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('not.be.disabled')
         // enter a value into the text input field
-        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').clear()
+        cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').clear({ force: true })
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('have.value', '')
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').type('payload for msg.topic test', { force: true })
         // submit the form; force-click to bypass transient disabled state from connect-event re-renders
@@ -90,7 +93,7 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
         // enter a value into the text input field
-        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').clear()
+        cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').clear({ force: true })
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('have.value', '')
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').type('flow.f1 test', { force: true })
