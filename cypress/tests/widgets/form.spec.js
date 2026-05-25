@@ -1,6 +1,10 @@
 describe('Node-RED Dashboard 2.0 - Forms', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-forms')
+        // Clear sentinel context keys (like connectTopic) before the dashboard page loads,
+        // so the per-test barrier waits for THIS test's connect-event rather than
+        // passing immediately on stale data from a previous test run.
+        cy.resetContext()
         cy.visit('/dashboard/page1')
     })
 
@@ -9,16 +13,16 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 
     it('blurring a required field runs validation', () => {
+        // Deterministic barrier: wait for the ui-control connect-event chain to have
+        // propagated to the forms tab. Without this, Vuetify can be mid-re-render when
+        // we focus/blur and the validator gets skipped because the input is transiently disabled.
+        cy.checkOutput('connectTopic', 'forms-connect-ready')
         cy.contains('Name is required').should('not.exist')
-        // Stabilise: wait for the required input to be enabled before interacting,
-        // so Vuetify will actually run validators on blur (it skips them on disabled fields).
         cy.get('[data-form="form-row-name"] input[type="text"]').should('be.visible').and('not.be.disabled')
-        cy.clickAndWait(cy.get('[data-form="form-row-name"]'), 200)
-        cy.get('[data-form="form-row-name"]').find('input[type="text"]').focus()
-
-        // blur the text input directly rather than via cy.focused(),
-        // which can pick up the wrong element if the form is mid-re-render
-        cy.get('[data-form="form-row-name"]').find('input[type="text"]').blur({ force: true })
+        // Click the input directly (rather than the wrapper + .focus()) so Vuetify's
+        // "touched" state is set reliably; then blur the focused element to fire validators.
+        cy.get('[data-form="form-row-name"]').find('input[type="text"]').click({ force: true })
+        cy.focused().blur()
 
         cy.contains('Name is required').should('be.visible')
     })
@@ -47,6 +51,10 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 
     it('can have their content defined by msg.ui_update.options', () => {
+        // Deterministic barrier: the ui-control connect-event chain also re-sets the dynamic
+        // form's options to a minimal set. Wait for that to complete first, otherwise it can
+        // arrive AFTER the override click and overwrite the full option set we're testing.
+        cy.checkOutput('connectTopic', 'forms-connect-ready')
         cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-name"]').should('not.exist')
         cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-multiline"]').should('not.exist')
         cy.get('#nrdb-ui-widget-dashboard-ui-form-dynamic').find('[data-form="form-row-password"]').should('not.exist')
@@ -74,6 +82,8 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     const topicElId = '#nrdb-ui-widget-d31f09b33f18c5db'
 
     it('Delivers topic from msg.topic', () => {
+        // Deterministic barrier: wait for connect-event chain to complete before interacting
+        cy.checkOutput('connectTopic', 'forms-connect-ready')
         const formElId = '#nrdb-ui-widget-3cd8df20415c4c04'
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name1"] input[type="text"]').should('not.be.disabled')
@@ -89,6 +99,8 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 
     it('Delivers topic from flow.f1', () => {
+        // Deterministic barrier: wait for connect-event chain to complete before interacting
+        cy.checkOutput('connectTopic', 'forms-connect-ready')
         const formElId = '#nrdb-ui-widget-ddb5a30c677e5e0b'
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name2"] input[type="text"]').should('not.be.disabled')
@@ -105,10 +117,13 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
     })
 
     it('Delivers topic from global.g1', () => {
+        // Deterministic barrier: wait for connect-event chain to complete before interacting
+        cy.checkOutput('connectTopic', 'forms-connect-ready')
         const formElId = '#nrdb-ui-widget-cf0774a3c2e9edd4'
         // wait for the input to be actionable
         cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').should('not.be.disabled')
         // enter a value into the text input field
+        cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').clear({ force: true })
         cy.get(formElId).find('[data-form="form-row-name3"] input[type="text"]').type('global.g1 test', { force: true })
         // submit the form; force-click to bypass transient disabled state from connect-event re-renders
         cy.get(formElId).find('[data-action="form-submit"]').click({ force: true })
