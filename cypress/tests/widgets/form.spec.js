@@ -17,18 +17,27 @@ describe('Node-RED Dashboard 2.0 - Forms', () => {
         // propagated to the forms tab. Without this, Vuetify can be mid-re-render when
         // we focus/blur and the validator gets skipped because the input is transiently disabled.
         cy.checkOutput('connectTopic', 'forms-connect-ready')
-        cy.contains('Name is required').should('not.exist')
+        // Scope assertions to the Test Form widget — the connect-event chain sends
+        // payload:'connect' to form1 which inadvertently triggers its validation,
+        // so an unscoped cy.contains() would pick up form1's "Name is required" text.
+        cy.get('#nrdb-ui-widget-dashboard-ui-form').within(() => {
+            cy.contains('Name is required').should('not.exist')
+        })
         cy.get('[data-form="form-row-name"] input[type="text"]').should('be.visible').and('not.be.disabled')
         // Click the input directly (rather than the wrapper + .focus()) so Vuetify's
         // "touched" state is set reliably; then blur the focused element to fire validators.
         cy.get('[data-form="form-row-name"]').find('input[type="text"]').click({ force: true })
         cy.focused().blur()
 
-        cy.contains('Name is required').should('be.visible')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form').within(() => {
+            cy.contains('Name is required').should('be.visible')
+        })
     })
 
     it('enables the submit button once required fields are completed', () => {
-        cy.contains('Name is required').should('not.exist')
+        cy.get('#nrdb-ui-widget-dashboard-ui-form').within(() => {
+            cy.contains('Name is required').should('not.exist')
+        })
 
         // need to click first to allow for Vuetify's animation of label
         // cy.get('[data-form="form-row-name"]').click()
