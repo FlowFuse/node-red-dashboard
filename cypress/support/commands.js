@@ -121,7 +121,7 @@ Cypress.Commands.add('resetContext', () => {
 Cypress.Commands.add('checkOutput', (key, value, comparator = 'eq', { timeout = 4000, interval = 100 } = {}) => {
     // Polls /context/flow, re-issuing the request each attempt until the assertion passes or the timeout expires.
     // Plain cy.request().its().should() only retries the assertion against the original response body, so a value
-    // that arrives after the first fetch would never be observed.
+    // that arrives after the first fetch would never be observed
     const tokenise = (path) => path.match(/[^.[\]]+/g) || []
     const parentKey = tokenise(key)[0]
     const getNested = (obj, path) => tokenise(path).reduce((acc, k) => (acc == null ? acc : acc[k]), obj)
