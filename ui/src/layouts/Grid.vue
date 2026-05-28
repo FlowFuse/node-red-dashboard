@@ -19,7 +19,7 @@
             >
                 <v-card variant="outlined" class="bg-group-background">
                     <template v-if="g.showTitle" #title>
-                        {{ g.name }}
+                        {{ getGroupName(g) }}
                     </template>
                     <template #text>
                         <widget-group :group="g" :index="$index" :widgets="groupWidgets(g.id)" :resizable="editMode" :group-dragging="groupDragging.active" @resize="onGroupResize" @widget-added="updateEditStateObjects" @widget-removed="updateEditStateObjects" @refresh-state-from-store="updateEditStateObjects" />
@@ -91,6 +91,7 @@ export default {
         ...mapState('ui', ['groups', 'widgets', 'pages', 'edits']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage', 'editedGroups']),
+        ...mapGetters('i18n', ['currentLocale']),
         dialogGroups () {
             const groups = this.groupsByPage(this.$route.meta.id).filter((g) => g.groupType === 'dialog')
             return groups
@@ -121,6 +122,32 @@ export default {
         }
     },
     methods: {
+        getGroupName (group) {
+            if (!group.name) return ''
+            if (typeof group.name === 'string') {
+                return group.name
+            }
+            if (typeof group.name === 'object') {
+                // Try current locale first
+                if (group.name[this.currentLocale]) {
+                    return group.name[this.currentLocale]
+                }
+                // Fallback to English
+                if (group.name.en) {
+                    return group.name.en
+                }
+                // Fallback to original
+                if (group.name.original) {
+                    return group.name.original
+                }
+                // Fallback to first available translation
+                const keys = Object.keys(group.name)
+                if (keys.length > 0) {
+                    return group.name[keys[0]]
+                }
+            }
+            return String(group.name)
+        },
         getPageGroups () {
             // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
