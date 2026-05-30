@@ -34,7 +34,10 @@ props:
         description: Kleiner Text, der unter dem Wert in der Mitte des Messgeräts angezeigt wird. (nur anwendbar für 3/4 und Halb-Messgeräte)
         dynamic: true
     Symbol:
-        description: Symbol, das unter dem Wert in der Mitte des Messgeräts angezeigt wird. Verwendet <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, das Präfix <code>mdi-</code> muss nicht enthalten sein. (nur anwendbar für 3/4 und Halb-Messgeräte)
+        description: Symbol, das im Messgerät angezeigt wird. Verwendet <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, das Präfix <code>mdi-</code> muss nicht enthalten sein. Bei 3/4- und Halb-Messgeräten wird das Symbol unterhalb des Wertes angezeigt; bei Kachel-Messgeräten richtet sich die Position nach "Symbolposition".
+        dynamic: true
+    Symbolposition:
+        description: (nur anwendbar für Kachel-Messgeräte) Wo das Symbol relativ zum Segmenttext angezeigt wird. Eines von "top", "bottom", "left" oder "right". Standard ist "top".
         dynamic: true
     Größen (Messgerät): (px) Wie dick der Bogen und die Hintergrundkulisse des Messgeräts gerendert werden.
     Größen (Lücke): (px) Wie groß der Abstand/die Polsterung zwischen dem Messgerät und den "Segmenten" ist.
@@ -50,6 +53,10 @@ dynamic:
     Symbol:
         payload: msg.ui_update.icon
         structure: ["String"]
+    Symbolposition:
+        payload: msg.ui_update.iconPosition
+        structure: ["String"]
+        examples: ['top', 'bottom', 'left', 'right']
     Typ:
         payload: msg.ui_update.gtype
         structure: ["String"]
