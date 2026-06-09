@@ -179,6 +179,10 @@ export default {
 <style lang="scss">
 .nrdb-ui-textarea {
     height: 100%; /* Ensure the textarea takes full height */
+    &.v-input .v-field--variant-outlined {
+        --v-field-input-padding-top: 12px;
+        --v-field-input-padding-bottom: 12px;
+    }
     &.v-input--horizontal{
         &:has(textarea) {
             grid-template-rows: auto 0;
