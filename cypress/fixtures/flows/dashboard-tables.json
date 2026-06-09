@@ -42,6 +42,30 @@
         ]
     },
     {
+        "id": "dashboard-ui-table-fixed-height",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Fixed Height",
+        "label": "fixed height",
+        "action": "replace",
+        "order": 7,
+        "width": 6,
+        "height": 8,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "x": 320,
+        "y": 320,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
+    },
+    {
         "id": "1ad285ca06fd711f",
         "type": "inject",
         "z": "node-red-tab-tables",
@@ -67,7 +91,8 @@
                 "dashboard-ui-table-single-row-click",
                 "dashboard-ui-table-multi-select",
                 "dashboard-ui-table-table-buttons-string-value",
-                "dashboard-ui-table-buttons-text-from-payload"
+                "dashboard-ui-table-buttons-text-from-payload",
+                "dashboard-ui-table-fixed-height"
             ]
         ]
     },

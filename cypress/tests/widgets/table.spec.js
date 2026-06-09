@@ -10,6 +10,11 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-default').find('.v-data-table-footer').should('not.exist')
     })
 
+    it('renders the provided data when a fixed widget size (not auto) is configured', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-fixed-height').find('tbody tr').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-fixed-height').invoke('outerHeight').should('be.greaterThan', 100)
+    })
+
     it('render the provided data, with a pagination limit if defined', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-max-rows').find('tbody tr').should('have.length', 2)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-max-rows').find('tbody .v-selection-control').should('have.length', 0)
