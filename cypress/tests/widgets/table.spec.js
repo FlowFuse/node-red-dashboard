@@ -11,8 +11,13 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
     })
 
     it('renders the provided data when a fixed widget size (not auto) is configured', () => {
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-fixed-height').find('tbody tr').should('have.length', 5)
-        cy.get('#nrdb-ui-widget-dashboard-ui-table-fixed-height').invoke('outerHeight').should('be.greaterThan', 100)
+        // with a fixed size the table was clamped to a single grid row, hiding all but the first row
+        const widget = '#nrdb-ui-widget-dashboard-ui-table-fixed-height'
+        cy.get(widget).find('tbody tr').should('have.length', 5)
+        // a row beyond the first should be visible - i.e. not clipped into a single-row-high table
+        cy.get(widget).find('tbody tr').eq(3).should('be.visible')
+        // the table should fill the widget's fixed height rather than collapse to a single row
+        cy.get(widget).find('.nrdb-table').invoke('outerHeight').should('be.greaterThan', 150)
     })
 
     it('render the provided data, with a pagination limit if defined', () => {
