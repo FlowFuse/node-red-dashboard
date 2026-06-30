@@ -7,9 +7,15 @@
                     v-model="value" :class="{'compressed': isCompressed, 'stacked-spinner': spinner === 'stacked'}" :reverse="false" :controlVariant="spinner" :hideInput="false" :inset="false"
                     v-bind="props" :disabled="!state.enabled"
                     :rules="validation" :clearable="clearable" variant="outlined" hide-details="auto"
-                    :prepend-icon="prependIcon" :append-icon="appendIcon" :append-inner-icon="appendInnerIcon" :precision="precision"
-                    :prepend-inner-icon="prependInnerIcon" :min="min" :max="max" :step="step" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
+                    :prepend-icon="prependIcon" :append-icon="appendIcon" :precision="precision"
+                    :min="min" :max="max" :step="step" @update:model-value="onChange" @keyup.enter="onEnter" @blur="onBlur" @click:clear="onClear"
                 >
+                    <template v-if="prependInnerIcon" #prepend-inner>
+                        <v-icon :icon="prependInnerIcon" />
+                    </template>
+                    <template v-if="appendInnerIcon" #append-inner>
+                        <v-icon :icon="appendInnerIcon" />
+                    </template>
                     <template #label>
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <span v-html="label" />
@@ -236,18 +242,6 @@ export default {
 
 <style lang="scss">
 .nrdb-ui-number-field {
-    .v-field__prepend-inner {
-        > .v-icon {
-            margin-left: 12px;
-        }
-    }
-
-    .v-field__append-inner {
-        > .v-icon {
-            margin-right: 12px;
-        }
-    }
-
     button {
         color: var(--red-ui-form-input-border-color);
     }
