@@ -54,6 +54,18 @@
                         </template>
                     </v-tooltip>
                 </v-list>
+                <v-btn
+                    class="ma-4 position-absolute bottom-0 left-0" icon
+                    :color="darkMode ? 'grey-darken-4' : 'grey-lighten-3'"
+                    @click="toggleTheme"
+                >
+                    <v-icon
+                        :color="darkMode ? 'yellow-lighten-4' : 'yellow-darken-2'"
+                        size="32"
+                    >
+                        {{ darkMode ? 'mdi-weather-night' : 'mdi-weather-sunny' }}
+                    </v-icon>
+                </v-btn>
             </v-navigation-drawer>
             <slot class="nrdb-layout" />
             <div class="nrdb-layout-overlay">
@@ -77,14 +89,34 @@
     </v-app>
 </template>
 
-<script>
-import { mapGetters, mapState } from 'vuex'
+<script setup>
+import { useTheme } from 'vuetify'
+
+import { mapGetters, mapState, useStore } from 'vuex'
 
 import { editMode, editPage } from '../EditTracking.js'
 
 import Alerts from '../services/alerts'
 import UINotification from '../widgets/ui-notification/UINotification.vue'
 
+const theme = useTheme()
+const store = useStore()
+
+function toggleTheme () {
+    if (theme.global.name.value === 'nrdbDark') {
+        theme.global.name.value = 'nrdbLight'
+        store.commit('ui/setDarkMode', false)
+        localStorage.setItem('ndrb-theme-dark-mode', JSON.stringify(false))
+    } else {
+        theme.global.name.value = 'nrdbDark'
+        store.commit('ui/setDarkMode', true)
+        localStorage.setItem('ndrb-theme-dark-mode', JSON.stringify(true))
+    }
+}
+
+</script>
+
+<script>
 /**
  * Convert a hex to RGB color
  * @param {String(hex)} hex
@@ -138,7 +170,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('ui', ['dashboards', 'pages', 'themes', 'pageData', 'widgets']),
+        ...mapState('ui', ['dashboards', 'pages', 'themes', 'pageData', 'widgets', 'darkMode']),
         ...mapGetters('ui', ['siteTemplates', 'pageTemplates']),
         theme: function () {
             const page = this.pages[this.$route.meta.id]
@@ -308,22 +340,38 @@ export default {
             })
         },
         updateTheme () {
-            const colors = this.$vuetify.theme.themes.nrdb.colors // Modify the Vuetify Theming
+            const colorsLight = this.$vuetify.theme.themes.nrdbLight.colors // Modify the Vuetify Theming
+            const colorsDark = this.$vuetify.theme.themes.nrdbDark.colors // Modify the Vuetify Theming
             const sizes = this.customThemeDefinitions // Implement some of our own Theming
             // convert NR Theming to Vuetify Theming
             if (this.theme) {
-                colors['navigation-background'] = this.theme.colors.surface
+                // light theme
+                colorsLight['navigation-background'] = this.theme.colors.light.surface
                 // primary bg
-                colors.primary = this.theme.colors.primary
+                colorsLight.primary = this.theme.colors.light.primary
                 // primary font - auto calculated
-                colors['on-primary'] = getContrast(this.theme.colors.primary)
+                colorsLight['on-primary'] = getContrast(this.theme.colors.light.primary)
                 // UI Background
-                colors.background = this.theme.colors.bgPage
+                colorsLight.background = this.theme.colors.light.bgPage
                 // Group Styling
-                colors['group-background'] = this.theme.colors.groupBg
-                colors['group-outline'] = this.theme.colors.groupOutline
+                colorsLight['group-background'] = this.theme.colors.light.groupBg
+                colorsLight['group-outline'] = this.theme.colors.light.groupOutline
                 // widget background
-                colors.surface = this.theme.colors.groupBg
+                colorsLight.surface = this.theme.colors.light.groupBg
+
+                // dark theme
+                colorsDark['navigation-background'] = this.theme.colors.dark.surface
+                // primary bg
+                colorsDark.primary = this.theme.colors.dark.primary
+                // primary font - auto calculated
+                colorsDark['on-primary'] = getContrast(this.theme.colors.dark.primary)
+                // UI Background
+                colorsDark.background = this.theme.colors.dark.bgPage
+                // Group Styling
+                colorsDark['group-background'] = this.theme.colors.dark.groupBg
+                colorsDark['group-outline'] = this.theme.colors.dark.groupOutline
+                // widget background
+                colorsDark.surface = this.theme.colors.dark.groupBg
 
                 // sizes
                 sizes['--page-padding'] = this.theme.sizes.pagePadding
