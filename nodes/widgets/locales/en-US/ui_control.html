@@ -55,6 +55,12 @@
     }
 }</pre>
     <p>When a (page, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
+    <h4>Language Control</h4>
+    <p>You can change the display language for all connected clients by sending a <code>msg.payload</code> object with the format:</p>
+    <pre>msg.payload = {
+    language: 'fr'  // Language code (e.g., 'en', 'fr', 'es', 'de', etc.)
+}</pre>
+    <p>The language code must match one of the enabled languages configured in the Dashboard's Languages tab. This will update the interface language for all connected clients immediately.</p>
     <h4>External URL</h4>
     <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
     <pre>msg.payload = {

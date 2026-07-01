@@ -1,0 +1,618 @@
+[
+    {
+        "id": "node-red-tab-i18n",
+        "type": "tab",
+        "label": "i18n Testing",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default",
+        "languages": [
+            {
+                "code": "en",
+                "name": "English",
+                "enabled": true
+            },
+            {
+                "code": "fr",
+                "name": "Français",
+                "enabled": true
+            },
+            {
+                "code": "es",
+                "name": "Español",
+                "enabled": true
+            }
+        ],
+        "defaultLanguage": "en",
+        "autoDetectLanguage": true
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "dashboard-ui-page",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": false,
+        "translations": {}
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Language Testing",
+        "page": "dashboard-ui-page",
+        "width": "12",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": true,
+        "disabled": false,
+        "translations": {}
+    },
+    {
+        "id": "language-selector-widget",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "ui": "dashboard-ui-base",
+        "name": "",
+        "label": "Language:",
+        "order": 1,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "code",
+        "passthru": false,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Langue:"
+            },
+            "es": {
+                "label": "Idioma:"
+            }
+        },
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "test-helper",
+                "language-transform"
+            ]
+        ]
+    },
+    {
+        "id": "test-helper",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Store Latest Msg",
+        "func": "global.set('msg', msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "translated-text-widget",
+        "type": "ui-text",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "order": 2,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Hello World",
+        "format": "",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Bonjour le monde"
+            },
+            "es": {
+                "label": "Hola Mundo"
+            }
+        },
+        "x": 350,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "translated-button",
+        "type": "ui-button",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Click Me",
+        "order": 3,
+        "width": 3,
+        "height": 1,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "clicked",
+        "payloadType": "str",
+        "topic": "button",
+        "topicType": "str",
+        "translations": {
+            "fr": {
+                "label": "Cliquez-moi"
+            },
+            "es": {
+                "label": "Hacer clic"
+            }
+        },
+        "x": 350,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "language-selector-code",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "ui": "dashboard-ui-base",
+        "name": "Code Format",
+        "label": "Code Format:",
+        "order": 4,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "code",
+        "passthru": false,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "code-format-store",
+                "language-transform"
+            ]
+        ]
+    },
+    {
+        "id": "code-format-store",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Store Code Format",
+        "func": "global.set('code_format', msg)\nreturn msg;",
+        "outputs": 1,
+        "x": 600,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "language-selector-object",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "ui": "dashboard-ui-base",
+        "name": "Object Format",
+        "label": "Object Format:",
+        "order": 5,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "object",
+        "passthru": false,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "x": 350,
+        "y": 260,
+        "wires": [
+            [
+                "object-format-store",
+                "language-transform"
+            ]
+        ]
+    },
+    {
+        "id": "object-format-store",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Store Object Format",
+        "func": "global.set('object_format', msg)\nreturn msg;",
+        "outputs": 1,
+        "x": 600,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "language-selector-auto",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "ui": "dashboard-ui-base",
+        "name": "Auto Format",
+        "label": "Auto Format:",
+        "order": 6,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "auto",
+        "passthru": false,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "auto-format-store",
+                "language-transform"
+            ]
+        ]
+    },
+    {
+        "id": "auto-format-store",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Store Auto Format",
+        "func": "global.set('auto_format', msg)\nreturn msg;",
+        "outputs": 1,
+        "x": 600,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "update-languages-button",
+        "type": "ui-button",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "Update Languages",
+        "label": "Update Languages",
+        "order": 7,
+        "width": 3,
+        "height": 1,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "update",
+        "topicType": "str",
+        "translations": {},
+        "x": 150,
+        "y": 340,
+        "wires": [
+            [
+                "update-languages-inject"
+            ]
+        ]
+    },
+    {
+        "id": "update-languages-inject",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Add German",
+        "func": "// Send message to language selector to update options\nmsg.options = [\n    { value: 'en', label: 'English' },\n    { value: 'fr', label: 'Français' },\n    { value: 'es', label: 'Español' },\n    { value: 'de', label: 'Deutsch' }\n];\nreturn msg;",
+        "outputs": 1,
+        "x": 350,
+        "y": 340,
+        "wires": [
+            [
+                "language-selector-widget"
+            ]
+        ]
+    },
+    {
+        "id": "text-widget-greeting",
+        "type": "ui-text",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "order": 8,
+        "width": 3,
+        "height": 1,
+        "name": "Greeting",
+        "label": "Hello",
+        "format": "",
+        "layout": "row-spread",
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Bonjour"
+            },
+            "es": {
+                "label": "Hola"
+            }
+        },
+        "x": 150,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "text-widget-welcome",
+        "type": "ui-text",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "order": 9,
+        "width": 6,
+        "height": 1,
+        "name": "Welcome",
+        "label": "Welcome to Dashboard",
+        "format": "",
+        "layout": "row-spread",
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Bienvenue au tableau de bord"
+            },
+            "es": {
+                "label": "Bienvenido al panel"
+            }
+        },
+        "x": 150,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "button-save",
+        "type": "ui-button",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "Save Button",
+        "label": "Save",
+        "order": 10,
+        "width": 3,
+        "height": 1,
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Sauvegarder"
+            },
+            "es": {
+                "label": "Guardar"
+            }
+        },
+        "x": 150,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "button-cancel",
+        "type": "ui-button",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "Cancel Button",
+        "label": "Cancel",
+        "order": 11,
+        "width": 3,
+        "height": 1,
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Annuler"
+            },
+            "es": {
+                "label": "Cancelar"
+            }
+        },
+        "x": 150,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dropdown-colors",
+        "type": "ui-dropdown",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "Color Dropdown",
+        "label": "Choose Color:",
+        "tooltip": "",
+        "order": 12,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Red",
+                "value": "red"
+            },
+            {
+                "label": "Blue",
+                "value": "blue"
+            },
+            {
+                "label": "Green",
+                "value": "green"
+            }
+        ],
+        "payload": "",
+        "topic": "color",
+        "topicType": "str",
+        "className": "",
+        "translations": {
+            "fr": {
+                "label": "Choisir Couleur:",
+                "options": [
+                    {"label": "Rouge", "value": "red"},
+                    {"label": "Bleu", "value": "blue"},
+                    {"label": "Vert", "value": "green"}
+                ]
+            },
+            "es": {
+                "label": "Elegir Color:",
+                "options": [
+                    {"label": "Rojo", "value": "red"},
+                    {"label": "Azul", "value": "blue"},
+                    {"label": "Verde", "value": "green"}
+                ]
+            }
+        },
+        "x": 150,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "passthrough-trigger",
+        "type": "ui-button",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "name": "Passthrough Trigger",
+        "label": "Trigger Passthrough",
+        "order": 13,
+        "width": 3,
+        "height": 1,
+        "payload": "original-payload",
+        "payloadType": "str",
+        "topic": "original-topic",
+        "topicType": "str",
+        "translations": {},
+        "x": 150,
+        "y": 580,
+        "wires": [
+            [
+                "passthrough-selector"
+            ]
+        ]
+    },
+    {
+        "id": "passthrough-selector",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n",
+        "group": "dashboard-ui-group",
+        "ui": "dashboard-ui-base",
+        "name": "Passthrough Selector",
+        "label": "Passthrough:",
+        "order": 14,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "code",
+        "passthru": true,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "x": 380,
+        "y": 580,
+        "wires": [
+            [
+                "passthrough-store"
+            ]
+        ]
+    },
+    {
+        "id": "passthrough-store",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Store Passthrough",
+        "func": "global.set('passthrough', msg)\nreturn msg;",
+        "outputs": 1,
+        "x": 620,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "language-transform",
+        "type": "function",
+        "z": "node-red-tab-i18n",
+        "name": "Transform Language",
+        "func": "// Transform language code to ui-control format\nmsg.payload = {\n    language: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 140,
+        "wires": [
+            [
+                "ui-control-language"
+            ]
+        ]
+    },
+    {
+        "id": "ui-control-language",
+        "type": "ui-control",
+        "z": "node-red-tab-i18n",
+        "name": "Set Dashboard Language",
+        "ui": "dashboard-ui-base",
+        "events": "change",
+        "x": 820,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    }
+]

@@ -47,6 +47,7 @@ export default {
         options: {
             get () {
                 const items = this.items || this.getProperty('options')
+                const locale = this.$store.state.i18n.locale
                 return items.map((item) => {
                     if (typeof item !== 'object') {
                         return {
@@ -59,7 +60,16 @@ export default {
                             value: item.value
                         }
                     } else {
-                        return item
+                        // Check if label is multilingual
+                        let label = item.label
+                        if (typeof label === 'object' && label !== null && !Array.isArray(label)) {
+                            // Get translated label
+                            label = label[locale] || label.en || label
+                        }
+                        return {
+                            ...item,
+                            label
+                        }
                     }
                 })
             },
@@ -78,7 +88,7 @@ export default {
         },
         label: function () {
             // Sanetize the html to avoid XSS attacks
-            return DOMPurify.sanitize(this.getProperty('label'))
+            return DOMPurify.sanitize(this.getTranslatedProperty('label'))
         },
         typeIsComboBox: function () {
             return this.props.typeIsComboBox ?? true
