@@ -63,10 +63,12 @@ module.exports = function (RED) {
                 const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
                 const cutOff = (new Date()).getTime() - ago
                 const filterFn = (msg) => {
-                    let timestamp = msg._datapoint.x
+                    // msg._datapoint may be a single point or, in the case of multiple series in one msg, an array
+                    // if it is an array then all the elements will have the same timestamp so use the first one
+                    let timestamp = Array.isArray(msg._datapoint) ? msg._datapoint[0].x : msg._datapoint.x
                     // is x already a millisecond timestamp?
-                    if (typeof (msg._datapoint.x) === 'string') {
-                        timestamp = (new Date(msg._datapoint.x)).getTime()
+                    if (typeof (timestamp) === 'string') {
+                        timestamp = (new Date(timestamp)).getTime()
                     }
                     return timestamp > cutOff
                 }
