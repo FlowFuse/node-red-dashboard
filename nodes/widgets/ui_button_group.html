@@ -34,7 +34,8 @@
                 }
             },
             topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-            topicType: { value: 'msg' }
+            topicType: { value: 'msg' },
+            translations: { value: {} }
         },
         inputs: 1,
         outputs: 1,
