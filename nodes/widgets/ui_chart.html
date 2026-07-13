@@ -123,6 +123,8 @@
                 removeOlder: { value: 1, validate: RED.validators.number(), required: true },
                 removeOlderUnit: { value: '3600', required: true },
                 removeOlderPoints: { value: '', validate: function (value) { return numberValidator(value, true) } },
+                removeInactive: { value: false },
+                removeInactiveAfter: { value: 60, validate: RED.validators.number(), required: true },
                 colors: { value: ['#0095FF', '#FF0000', '#FF7F0E', '#2CA02C', '#A347E1', '#D62728', '#FF9896', '#9467BD', '#C5B0D5'] },
                 textColor: { value: ['#666666'] },
                 textColorDefault: { value: true },
@@ -460,6 +462,13 @@
                 } else {
                     $('#node-input-interpolation').val('linear')
                 }
+
+                const toggleRemoveInactiveAfter = function () {
+                    $('#node-input-removeInactiveAfter').prop('disabled', !$('#node-input-removeInactive').prop('checked'))
+                }
+
+                $('#node-input-removeInactive').on('change', toggleRemoveInactiveAfter)
+                toggleRemoveInactiveAfter()
             },
             oneditsave: function () {
                 // Stack By - convert from string values to bool
@@ -576,6 +585,13 @@
             <option value="append" data-i18n="ui-chart.label.append"></option>
             <option value="replace" data-i18n="ui-chart.label.replace"></option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-removeInactive"><i class="fa fa-clock-o"></i> Remove Inactive Series</label>
+        <input type="checkbox" id="node-input-removeInactive" style="display: inline-block; width: auto; margin: 0px 0px 0px 4px;">
+        <label for="node-input-removeInactiveAfter" style="width:auto; margin-left:12px;">after</label>
+        <input type="number" id="node-input-removeInactiveAfter" style="width:80px;" min="1">
+        <span style="margin-left:5px;">seconds</span>
     </div>
     <div class="form-row form-row-flex" id="point-radius-show">
         <label for="node-input-pointRadius" data-i18n="ui-chart.label.pointStyle"></label>
