@@ -99,7 +99,7 @@
         "medium-zoom": "^1.1.0",
         "mermaid": "^11.12.2",
         "mocha": "^11.7.5",
-        "node-red": "^4.1.8",
+        "node-red": "^5.0.1",
         "node-red-node-test-helper": "^0.3.5",
         "npm-run-all": "^4.1.5",
         "sass": "^1.96.0",
