@@ -85,13 +85,21 @@ const vuetify = createVuetify({
 
 const host = new URL(window.location.href)
 
+function getDashboardReloadUrl () {
+    const setupBasePath = store.state.setup.setup?.basePath
+    const currentDashboardPath = window.location.pathname.match(/^(.+?\/dashboard)(?:\/|$)/)?.[1]
+    const basePath = setupBasePath || currentDashboardPath || '/dashboard'
+
+    return new URL(basePath, window.location.origin)
+}
+
 function forcePageReload (err) {
     console.log('Reloading page:', err)
-    console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
     const currentParams = new URLSearchParams(window.location.search)
-    const url = new URL(window.location.origin + '/dashboard')
+    const url = getDashboardReloadUrl()
+    console.log('redirecting to:', url.toString())
     currentParams.set('reloadTime', Date.now().toString() + Math.random())
     if (host.searchParams.has('edit-key')) {
         currentParams.set('edit-key', host.searchParams.get('edit-key'))
