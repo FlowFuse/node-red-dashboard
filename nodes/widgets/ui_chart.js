@@ -165,6 +165,8 @@ module.exports = function (RED) {
                         // Deep merge new options in with old
                         const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
                         statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
+                        // pass the full set to the clients so they don't need to do the merge
+                        msg.ui_update.chartOptions = mergedOptions
                     }
                 }
 
