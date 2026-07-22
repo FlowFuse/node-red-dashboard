@@ -102,9 +102,13 @@ const getters = {
     },
     widgetsByGroup: (state) => (groupId) => {
         if (state.widgets) {
-            // Since there could be several widgets in a subflow, we need to first group them by subflow.id
-            // and then sort each widget in the grouped data by layout.order
-            // then sort the groups by subflow.order
+            // Widgets in a group share a single ordering space (assigned in the editor's layout manager,
+            // where both regular widgets and subflow instances get a sequential order). The complication
+            // is that a single subflow instance can contribute several widgets which must stay contiguous.
+            // So we build a list of sortable "units": each regular widget is its own unit (ordered by its
+            // layout.order), while all widgets belonging to the same subflow instance collapse into one
+            // unit (ordered by subflow.order). Sorting the units together lets a subflow be positioned
+            // freely between regular widgets, rather than only before/after the whole block of them.
 
             // First though, filter out any non-local scoped ui-templates
             const widgetsInGroup = Object.values(state.widgets).filter((w) => {
@@ -112,38 +116,43 @@ const getters = {
                 return w.props.group === groupId && !(w.type === 'ui-template' && w.props.templateScope !== 'local')
             })
 
-            // SORTING:
-            // 1. Group elements by subflow.id (or '_' if no subflow)
-            const groupedByZ = widgetsInGroup.reduce((acc, curr) => {
-                const subflowId = curr.props?.subflow?.id || '_'
-                if (!acc[subflowId]) {
-                    acc[subflowId] = []
+            // 1. Build sortable units. A regular widget => its own unit; widgets from the same subflow
+            //    instance => a single shared unit so they render contiguously.
+            const subflowUnits = {}
+            const units = []
+            widgetsInGroup.forEach((w) => {
+                const subflowId = w.props?.subflow?.id
+                if (subflowId) {
+                    if (!subflowUnits[subflowId]) {
+                        subflowUnits[subflowId] = {
+                            order: w.props.subflow.order || Number.MAX_SAFE_INTEGER,
+                            widgets: []
+                        }
+                        units.push(subflowUnits[subflowId])
+                    }
+                    subflowUnits[subflowId].widgets.push(w)
+                } else {
+                    units.push({
+                        order: w.layout?.order || Number.MAX_SAFE_INTEGER,
+                        widgets: [w]
+                    })
                 }
-                acc[subflowId].push(curr)
-                return acc
-            }, {})
-
-            // 2. Sort widgets inside each grouping by layout.order so that the widgets are in the correct order inside their respective sections
-            for (const groupId in groupedByZ) {
-                groupedByZ[groupId].sort((a, b) => {
-                    // If props.subflow.order is the same, sort by layout.order
-                    const aOrder = a.layout.order || Number.MAX_SAFE_INTEGER
-                    const bOrder = b.layout.order || Number.MAX_SAFE_INTEGER
-                    return aOrder - bOrder
-                })
-            }
-
-            // 3. now sort each grouping by subflow.order (use the first object in the group)
-            // NOTE: in cases where the grouping is NOT a subflow (i.e. a normal flow with ui elements), the use layout.order
-            const sortedGroups = Object.entries(groupedByZ).sort((a, b) => {
-                const o1 = a[1][0]?.props?.subflow?.order || a[1][0]?.layout?.order || Number.MAX_SAFE_INTEGER
-                const o2 = b[1][0]?.props?.subflow?.order || b[1][0]?.layout?.order || Number.MAX_SAFE_INTEGER
-                return o1 - o2
             })
 
-            // 4. Flatten the grouped data back into a single array
-            const sorted = sortedGroups.flatMap((e) => e[1])
-            return sorted
+            // 2. Sort widgets within each subflow unit by their own layout.order.
+            units.forEach((unit) => {
+                if (unit.widgets.length > 1) {
+                    unit.widgets.sort((a, b) => {
+                        const aOrder = a.layout?.order || Number.MAX_SAFE_INTEGER
+                        const bOrder = b.layout?.order || Number.MAX_SAFE_INTEGER
+                        return aOrder - bOrder
+                    })
+                }
+            })
+
+            // 3. Sort the units together in the shared ordering space, then flatten back to a widget list.
+            units.sort((a, b) => a.order - b.order)
+            return units.flatMap((unit) => unit.widgets)
         }
     },
     /**
