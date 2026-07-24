@@ -21,8 +21,8 @@ In der linken Navigation finden Sie einen Abschnitt "Nützliche Anleitungen". Wi
 
 Insbesondere werden die folgenden empfohlen:
 
-- [Ereignisarchitektur](/en/contributing/guides/state-management.html)
-- [Zustandsverwaltung](/en/contributing/guides/state-management.html)
+- [Ereignisarchitektur](/de/contributing/guides/events.html)
+- [Zustandsverwaltung](/de/contributing/guides/state-management.html)
 
 ## Checkliste
 
@@ -270,4 +270,4 @@ Jeder Knoten hat eine entsprechende `/locales/<locale>/<node>.html`-Datei, die e
 
 ### Debugging dynamischer Eigenschaften
 
-Dashboard 2.0 verfügt über eine [Debug-Ansicht](/en/contributing/widgets/debugging.html), die ein [Spezialpanel](/en/contributing/widgets/debugging.html#dynamic-properties) enthält, um alle dynamischen Eigenschaften zu überwachen, die einem Widget zugewiesen sind. Dies kann ein sehr nützliches Werkzeug sein, um zu überprüfen, ob der Client über alle dynamischen Eigenschaften informiert ist, die gesendet wurden.
+Dashboard 2.0 verfügt über eine [Debug-Ansicht](/de/contributing/widgets/debugging.html), die ein [Spezialpanel](/de/contributing/widgets/debugging.html#dynamic-properties) enthält, um alle dynamischen Eigenschaften zu überwachen, die einem Widget zugewiesen sind. Dies kann ein sehr nützliches Werkzeug sein, um zu überprüfen, ob der Client über alle dynamischen Eigenschaften informiert ist, die gesendet wurden.

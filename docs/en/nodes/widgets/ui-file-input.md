@@ -54,7 +54,7 @@ dashboard: {
 }
 ```
 
-Read more about Dashboard configuration in the `settings.js` [here](/en/user/settings.html#maxhttpbuffersize).
+Read more about Dashboard configuration in the `settings.js` [here](/user/settings.html#maxhttpbuffersize).
 
 Note that we do have plans to improve this behavior by chunking files into smaller parts, and reassembling them on the server side. This will allow for larger files to be uploaded, and will be implemented in a future release.
 
