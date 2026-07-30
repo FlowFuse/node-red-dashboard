@@ -29,6 +29,7 @@
             "url": "https://flowfuse.com"
         }
     ],
+    "type": "module",
     "files": [
         "dist/*",
         "nodes/*"
