@@ -3,6 +3,8 @@
         "label": {
             "themeName": "Theme Name",
             "colors": "Colors",
+            "colorsLight": "Light",
+            "colorsDark": "Dark",
             "dashboard": "Dashboard",
             "header": "Header",
             "primary": "Primary",
@@ -18,7 +20,8 @@
             "default": "Default (48px)",
             "comfortable": "Comfortable (38px)",
             "compact": "Compact (32px)",
-            "density": "Row Height"
+            "density": "Row Height",
+            "preview": "Preview"
         }
     }
 }
