@@ -3,7 +3,7 @@
     <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
         <v-card>
             <template v-if="group.showTitle" #title>
-                {{ group.name }}
+                {{ getGroupName(group) }}
             </template>
             <template #append>
                 <v-btn variant="plain" density="compact" icon="mdi-close" @click="isActive = false" />
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'DialogGroup',
     props: {
@@ -35,6 +37,7 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('i18n', ['currentLocale']),
         showDialogState () {
             return this.group.showDialog
         },
@@ -84,6 +87,32 @@ export default {
         window.addEventListener('resize', this.onResize)
     },
     methods: {
+        getGroupName (group) {
+            if (!group.name) return ''
+            if (typeof group.name === 'string') {
+                return group.name
+            }
+            if (typeof group.name === 'object') {
+                // Try current locale first
+                if (group.name[this.currentLocale]) {
+                    return group.name[this.currentLocale]
+                }
+                // Fallback to English
+                if (group.name.en) {
+                    return group.name.en
+                }
+                // Fallback to original
+                if (group.name.original) {
+                    return group.name.original
+                }
+                // Fallback to first available translation
+                const keys = Object.keys(group.name)
+                if (keys.length > 0) {
+                    return group.name[keys[0]]
+                }
+            }
+            return String(group.name)
+        },
         onResize () {
             this.windowWidth = window.innerWidth
         }
