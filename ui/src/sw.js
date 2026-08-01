@@ -1,37 +1,26 @@
 /// <reference lib="webworker" />
 import { clientsClaim } from 'workbox-core'
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
-import { NavigationRoute, registerRoute } from 'workbox-routing'
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 
-// self.__WB_MANIFEST is the default injection point
-precacheAndRoute(self.__WB_MANIFEST)
+// Navigation requests (request.mode === 'navigate') are intentionally NOT
+// handled by the Service Worker. This lets the browser perform normal network
+// navigation, which is critical when the dashboard sits behind an
+// authentication proxy (Cloudflare Access, OAuth2 Proxy, Authelia, etc.).
+// Without this, the SW would serve a cached index.html, preventing the browser
+// from following HTTP redirects to the login page when the auth session expires.
+//
+// directoryIndex and cleanURLs are disabled so that precacheAndRoute does not
+// implicitly serve index.html for navigation requests to '/dashboard/'.
+// Static assets (JS, CSS, fonts, images) are still served from the precache
+// via exact URL match, so page loads remain fast.
+precacheAndRoute(self.__WB_MANIFEST, {
+    directoryIndex: null,
+    cleanURLs: false
+})
 
 // clean old assets
 cleanupOutdatedCaches()
 
-/** @type {RegExp[] | undefined} */
-const denylist = []
-
-// in dev mode, do not precache anything
-if (import.meta.env.DEV) {
-    // don't precache anything
-    console.log('Development mode, not pre-caching anything')
-    denylist.push(/.*/)
-} else {
-    // don't precache anything where the urls pathname ends with a slash (including times when the url has a query string)
-    // this permits the request to be handled by the server which will do a redirect as required
-    const configPath = self.location.pathname.split('/')[1]
-    denylist.push(new RegExp(`/${configPath}/[^?]*/(\\?.*)*$`))
-}
-
-// to allow work offline for allowed routes only
-registerRoute(new NavigationRoute(
-    createHandlerBoundToURL('index.html'),
-    { denylist }
-))
-
 self.skipWaiting()
 // https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
 clientsClaim()
-
-// Add custom service worker code here
