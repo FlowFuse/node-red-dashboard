@@ -40,7 +40,10 @@ props:
         description: Small text to be shown below the value in the middle of the gauge. (only applicable to for 3/4 and Half gauges)
         dynamic: true
     Icon:
-        description: Icon to be shown below the value in the middle of the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix. (only applicable to for 3/4 and Half gauges)
+        description: Icon to be shown on the gauge. Uses <a href="https://pictogrammers.com/library/mdi/">Material Designs Icon</a>, no need to include the <code>mdi-</code> prefix. For 3/4 and Half gauges, the icon is rendered below the value; for Tile gauges, the icon is positioned according to "Icon Position".
+        dynamic: true
+    Icon Position:
+        description: (only applicable to Tile gauges) Where the icon is rendered relative to the segment text. One of "top", "bottom", "left", or "right". Defaults to "top".
         dynamic: true
     Sizes (Gauge): (px) How thick the arc and backdrop of the gauge are rendered.
     Sizes (Gap): (px) How big the gap/padding is between the Gauge and the "Segments"
@@ -56,6 +59,10 @@ dynamic:
     Icon:
         payload: msg.ui_update.icon
         structure: ["String"]
+    Icon Position:
+        payload: msg.ui_update.iconPosition
+        structure: ["String"]
+        examples: ['top', 'bottom', 'left', 'right']
     Type:
         payload: msg.ui_update.gtype
         structure: ["String"]

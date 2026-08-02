@@ -48,6 +48,10 @@ module.exports = function (RED) {
                         // dynamically set "icon" property
                         statestore.set(group.getBase(), node, msg, 'icon', updates.icon)
                     }
+                    if (typeof updates.iconPosition !== 'undefined') {
+                        // dynamically set "iconPosition" property
+                        statestore.set(group.getBase(), node, msg, 'iconPosition', updates.iconPosition)
+                    }
                     if (typeof updates.segments !== 'undefined') {
                         // dynamically set "segments" property
                         statestore.set(group.getBase(), node, msg, 'segments', updates.segments)
