@@ -34,7 +34,6 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
-            dynamicChartOptions: [], // an array of chart options updates received this session
             resizeObserver: null
         }
     },
@@ -193,8 +192,6 @@ export default {
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
                 }
-                // add these options to the array of previous updates received this session
-                this.dynamicChartOptions.push(updates.chartOptions)
             }
         },
         generateChartOptions () {
@@ -433,10 +430,6 @@ export default {
                         if (chartOptions) {
                             this.chart.setOption(chartOptions)
                         }
-                        // then from this session
-                        this.dynamicChartOptions.forEach((options) => {
-                            this.chart.setOption(options)
-                        })
                     }
                 }
             }
