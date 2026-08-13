@@ -188,13 +188,16 @@ export default {
             if (!updates) {
                 return
             }
+            // merge the updates into the chart
             if (updates.chartOptions) {
-                // merge the updates into the chart
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
+                    // consolidate the options applied this session
+                    this.dynamicChartOptions = [this.chart.getOption()]
+                } else {
+                    // add these options to the array of previous updates received this session
+                    this.dynamicChartOptions.push(updates.chartOptions)
                 }
-                // add these options to the array of previous updates received this session
-                this.dynamicChartOptions.push(updates.chartOptions)
             }
         },
         generateChartOptions () {
