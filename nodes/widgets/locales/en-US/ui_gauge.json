@@ -29,6 +29,11 @@
             "class": "Class",
             "units": "Units",
             "icon": "Icon",
+            "iconPosition": "Icon Position",
+            "top": "Top",
+            "bottom": "Bottom",
+            "left": "Left",
+            "right": "Right",
             "defaults": "Defaults",
             "value": "Value"
         },
