@@ -146,7 +146,7 @@ function path (str) {
     return str.replaceAll('//', '/')
 }
 
-export function themeColor (el, token, { alpha, fallback = '' } = {}) {
+export function resolveThemeColorToRgb (el, token, { alpha, fallback = '' } = {}) {
     const rgb = el ? getComputedStyle(el).getPropertyValue('--v-theme-' + token).trim() : ''
     if (!rgb) { return fallback }
     return (alpha === undefined || alpha === null) ? `rgb(${rgb})` : `rgba(${rgb}, ${alpha})`

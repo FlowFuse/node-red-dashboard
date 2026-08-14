@@ -961,7 +961,6 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             ...mapDefaults(theme.defaults),
             name: themeName || c_('themes.defaultTheme')
         }
-        // preset:null keeps the raw node defaults
         const presetDef = THEME_PRESETS.presets[preset]
         if (presetDef) {
             themeNode.colors = { ...presetDef.colors }

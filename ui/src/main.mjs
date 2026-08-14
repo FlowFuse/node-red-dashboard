@@ -43,15 +43,15 @@ const defaultTheme = retrieveDefaultThemeFromCache()
 const theme = {
     dark: false,
     colors: {
-        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
-        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        background: defaultTheme ? defaultTheme.colors.bgPage : '#f9f9fb',
+        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
-        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
-        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
+        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d9d9e0',
+        primary: defaultTheme ? defaultTheme.colors.primary : '#0d74ce',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
