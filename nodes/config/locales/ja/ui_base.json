@@ -26,7 +26,8 @@
             "expand": "展開"
         },
         "themes": {
-            "header": "テーマ"
+            "header": "テーマ",
+            "theme": "テーマ"
         }
     }
 }

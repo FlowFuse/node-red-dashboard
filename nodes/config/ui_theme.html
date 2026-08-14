@@ -95,22 +95,20 @@
             })
         },
         oneditsave: function () {
-            // update our config values from the input values
+            const colors = {}
             Object.keys(this.colors).forEach((color) => {
-                // set the value of the input
-                this.colors[color] = $('#node-config-input-' + color).val()
+                colors[color] = $('#node-config-input-' + color).val()
             })
+            this.colors = colors
 
-            // update our config values from the input values
+            const sizes = {}
             Object.keys(this.sizes).forEach((size) => {
-                // get the value of the key
                 let value = $('#node-config-input-' + size).val()
                 // value is a number, add `px` to the end
                 value += (parseFloat(value).toString() === value) ? 'px' : ''
-
-                // set the value of the input
-                this.sizes[size] = value
+                sizes[size] = value
             })
+            this.sizes = sizes
         },
         label: function () {
             return `${this.name}` || 'UI Theme'

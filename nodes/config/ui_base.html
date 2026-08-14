@@ -919,10 +919,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // get all themes and determine the next theme number
             const entries = getConfigNodesByType(['ui-theme']) || []
             let counter = entries.length + 1
-            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('label.theme') + ` ${counter}`
+            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('themes.theme') + ` ${counter}`
             while (entries.find(e => e.name === themeName)) {
                 counter++
-                themeName = c_('label.theme') + ` ${counter}`
+                themeName = c_('themes.theme') + ` ${counter}`
             }
         }
         const themeNode = {
