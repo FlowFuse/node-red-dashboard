@@ -11,6 +11,8 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import { themeColor } from '../../util.mjs'
+
 import axisHelper from './helpers/axis.helper'
 import chartJStoECharts from './helpers/chartJsToECharts.js'
 import * as pieCharts from './helpers/pie.helper'
@@ -215,6 +217,8 @@ export default {
                 if (this.props.textColorDefault !== undefined) {
                     if (this.props.textColorDefault === false) {
                         textColor = this.props.textColor[0]
+                    } else if (this.$vuetify.theme.current.dark) {
+                        textColor = themeColor(this.$refs.chart, 'on-group-background', { fallback: textColor })
                     }
                 }
             }
@@ -222,6 +226,8 @@ export default {
                 if (this.props.gridColorDefault !== undefined) {
                     if (this.props.gridColorDefault === false) {
                         gridColor = this.props.gridColor[0]
+                    } else if (this.$vuetify.theme.current.dark) {
+                        gridColor = themeColor(this.$refs.chart, 'on-group-background', { alpha: 0.12, fallback: gridColor })
                     }
                 }
             }
@@ -630,7 +636,7 @@ export default {
                         top: this.hasTitle ? 40 : 0, // account for the title
                         itemStyle: {
                             borderWidth: 2,
-                            borderColor: '#fff'
+                            borderColor: themeColor(this.$refs.chart, 'group-background', { fallback: '#fff' })
                         }
                     }
                     if (this.props.showLegend) {
