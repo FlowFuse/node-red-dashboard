@@ -317,5 +317,85 @@
             "groupBg": "#ffffff",
             "groupOutline": "#cccccc"
         }
+    },
+    {
+        "id": "dashboard-ui-table-dates-inject",
+        "type": "inject",
+        "z": "node-red-tab-tables",
+        "name": "date rows",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[{\"dt\":1749988800000,\"d\":1749988800000,\"t\":1749988800000,\"raw\":1749988800000}]",
+        "payloadType": "json",
+        "x": 300,
+        "y": 560,
+        "wires": [
+            [
+                "dashboard-ui-table-dates"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-dates",
+        "type": "ui-table",
+        "z": "node-red-tab-tables",
+        "group": "dashboard-ui-group",
+        "name": "Dates",
+        "label": "",
+        "action": "replace",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": false,
+        "selectionType": "none",
+        "columns": [
+            {
+                "title": "Datetime",
+                "key": "dt",
+                "keyType": "key",
+                "type": "datetime",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Date",
+                "key": "d",
+                "keyType": "key",
+                "type": "date",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Time",
+                "key": "t",
+                "keyType": "key",
+                "type": "time",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Raw",
+                "key": "raw",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            }
+        ],
+        "x": 520,
+        "y": 560,
+        "wires": [
+            []
+        ]
     }
 ]
