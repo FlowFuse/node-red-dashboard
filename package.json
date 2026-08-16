@@ -70,7 +70,8 @@
         "express": "^4.22.1",
         "lodash.merge": "^4.6.2",
         "socket.io": "^4.8.1",
-        "vue": "^3.5.25"
+        "vue": "^3.5.25",
+        "vue-i18n": "^9.14.5"
     },
     "devDependencies": {
         "@flowfuse/flow-renderer": "^0.5.0",
@@ -155,7 +156,8 @@
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
             "ui-control": "nodes/widgets/ui_control.js",
-            "ui-progress": "nodes/widgets/ui_progress.js"
+            "ui-progress": "nodes/widgets/ui_progress.js",
+            "ui-language-selector": "nodes/widgets/ui_language_selector.js"
         }
     },
     "overrides": {

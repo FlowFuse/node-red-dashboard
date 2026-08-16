@@ -44,7 +44,8 @@
                 pointerdownPayloadType: { value: 'str' },
                 enablePointerup: { value: false },
                 pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
-                pointerupPayloadType: { value: 'str' }
+                pointerupPayloadType: { value: 'str' },
+                translations: { value: {} }
             },
             inputs: 1,
             outputs: 1,
