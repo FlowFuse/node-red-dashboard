@@ -147,6 +147,15 @@ export default {
 </script>
 
 <style>
+.nrdb-ui-button .v-btn__content {
+    white-space: normal;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+}
+
 .nrdb-ui-button--icon .v-btn__append {
     margin-left: 0;
     margin-inline: initial;
