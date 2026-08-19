@@ -13,8 +13,7 @@ describe('store: ui getters', function () {
     // in a subflow could only be positioned before or after the whole block of regular widgets, never interleaved
     // between them.
     describe('widgetsByGroup', function () {
-
-      // Each test lists the widgets present (in arbitrary input order) and asserts the ids we expect back in render
+        // Each test lists the widgets present (in arbitrary input order) and asserts the ids we expect back in render
         // order. Widgets use the same shape as the `state.widgets` entries built by the ui-base node:
         // { id, type, props, layout }.
         function orderOf (widgets, group = 'g1') {
