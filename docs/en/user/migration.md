@@ -79,7 +79,7 @@ In Audio Player mode, a `group` property is present, so that an audio player can
 
 In TTS mode, the `group` property is no longer required, and has been replaced with a `ui` property, which defines which `ui-page` this widget will be rendered on.
 
-Refer to the [ui-audio documentation](/en/nodes/widgets/ui-audio.html) and the nodes built-in help for more details.
+Refer to the [ui-audio documentation](/nodes/widgets/ui-audio.html) and the nodes built-in help for more details.
 
 ### `ui_button`
 
@@ -165,7 +165,7 @@ Whilst there is currently not an explicit `ui_colour_picker` widget, the `ui_tex
 
 All Node-RED Dashboard controls are supported in FlowFuse Dashboard, with the exception of the `open/close` control for a group, which is currently not supported.
 
-You can see detailed documentation of the available controls, and emitted events [here](/en/nodes/widgets/ui-control.html).
+You can see detailed documentation of the available controls, and emitted events [here](/nodes/widgets/ui-control.html).
 
 ### `ui_date_picker`
 

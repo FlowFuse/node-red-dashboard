@@ -22,8 +22,8 @@ Auf der linken Seite der Navigation finden Sie einen Abschnitt "Nützliche Anlei
 
 Insbesondere werden die folgenden empfohlen:
 
-- [Ereignisarchitektur](/en/contributing/guides/state-management.html)
-- [Zustandsverwaltung](/en/contributing/guides/state-management.html)
+- [Ereignisarchitektur](/de/contributing/guides/events.html)
+- [Zustandsverwaltung](/de/contributing/guides/state-management.html)
 
 ## Wie Widgets geladen werden
 
