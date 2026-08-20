@@ -136,6 +136,9 @@ export default {
                 if (widget.type === 'ui-chart') {
                     return 8
                 }
+                if (widget.type === 'ui-gauge' && widget.props.gtype === 'gauge-34') {
+                    return 3
+                }
             }
             return height
         },

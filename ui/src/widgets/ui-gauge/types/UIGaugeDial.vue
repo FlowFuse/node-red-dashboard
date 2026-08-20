@@ -136,7 +136,12 @@ export default {
             this.sizes.titleHeight = this.$refs.title ? this.$refs.title.clientHeight : 0
 
             this.width = this.$refs.container.clientWidth
-            this.height = this.props.height ? this.$refs.container.clientHeight - this.sizes.titleHeight : (this.props.gtype === 'gauge-half' ? 150 : 300)
+            const available = this.$refs.container.clientHeight - this.sizes.titleHeight
+            if (this.props.gtype === 'gauge-34' && !this.props.height) {
+                this.height = available > 0 ? available : 300
+            } else {
+                this.height = this.props.height ? available : (this.props.gtype === 'gauge-half' ? 150 : 300)
+            }
 
             // heights for the SVG
             const w = this.width
