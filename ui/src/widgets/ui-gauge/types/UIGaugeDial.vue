@@ -162,7 +162,8 @@ export default {
 
             const limit = this.$refs['limits-min']
             const labelRoom = limit ? Math.ceil(limit.getBBox().height) : 16
-            if (gaugeArea + labelRoom < h) {
+            this.capped = gaugeArea + labelRoom < h
+            if (this.capped) {
                 this.height = gaugeArea
                 this.$refs.gauge.style.flexGrow = '0'
                 this.$refs.gauge.setAttribute('height', gaugeArea + labelRoom)
@@ -334,7 +335,13 @@ export default {
             // this.svg.select('#needle-container')
 
             this.svg.select('#needle-container')
+                .style('transform-box', this.capped ? 'view-box' : null)
                 .style('transform-origin', () => {
+                    if (this.capped) {
+                        const cx = this.width / 2
+                        const cy = this.props.gtype === 'gauge-half' ? this.height + this.sizes.fudge : this.height / 2
+                        return `${cx}px ${cy}px`
+                    }
                     return this.sizes.angle > Math.PI ? 'center center' : 'center bottom'
                 })
                 .transition().duration(duration)
@@ -347,7 +354,8 @@ export default {
                         const rotate = d3.interpolate(start, end)(t)
                         const deg = rotate * (180 / Math.PI)
                         // -6 is fudge factor to ensure needle is visible and doesn't have half hanging out of SVG window
-                        return `translate(0, ${vue.props.gtype === 'gauge-half' ? vue.sizes.fudge.toString() : '0'}px)rotate(${deg}deg)`
+                        const yOffset = (vue.props.gtype === 'gauge-half' && !vue.capped) ? vue.sizes.fudge : 0
+                        return `translate(0, ${yOffset}px)rotate(${deg}deg)`
                     }
                     return tween
                 })
