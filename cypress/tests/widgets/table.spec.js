@@ -64,4 +64,18 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(3).should('have.text', fixedString)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(4).should('have.text', fixedString)
     })
+
+    it('formats datetime/date/time columns instead of showing the raw epoch', () => {
+        // the row's timestamp is 2025-06-15T12:00:00Z — midday keeps the year 2025 in every timezone
+        const epoch = '1749988800000'
+        const cells = () => cy.get('#nrdb-ui-widget-dashboard-ui-table-dates').find('tbody tr').eq(0).find('td')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-dates').find('tbody tr').should('have.length', 1)
+        // datetime + date columns render a human date, not the epoch number
+        cells().eq(0).should('contain.text', '2025').and('not.contain.text', epoch)
+        cells().eq(1).should('contain.text', '2025').and('not.contain.text', epoch)
+        // time column renders a clock value
+        cells().eq(2).invoke('text').should('match', /\d{1,2}:\d{2}/)
+        // a plain text column still shows the raw value, confirming only date-typed columns format
+        cells().eq(3).should('contain.text', epoch)
+    })
 })
