@@ -144,12 +144,26 @@ export default {
 
             this.$refs.gauge.setAttribute('width', w)
 
+            let gaugeArea
             if (this.props.gtype === 'gauge-half') {
                 const minDimension = Math.min(w / 2, h)
                 this.r = minDimension + this.sizes.fudge
+                gaugeArea = minDimension
             } else {
                 const minDimension = Math.min(w, h)
                 this.r = minDimension / 2
+                gaugeArea = minDimension
+            }
+
+            const limit = this.$refs['limits-min']
+            const labelRoom = limit ? Math.ceil(limit.getBBox().height) : 16
+            if (gaugeArea + labelRoom < h) {
+                this.height = gaugeArea
+                this.$refs.gauge.style.flexGrow = '0'
+                this.$refs.gauge.setAttribute('height', gaugeArea + labelRoom)
+            } else {
+                this.$refs.gauge.style.flexGrow = ''
+                this.$refs.gauge.setAttribute('height', '100%')
             }
         },
         update (value, duration = 1000) {
