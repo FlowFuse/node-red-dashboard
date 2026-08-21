@@ -911,7 +911,36 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         return pageNode
     }
 
-    function createThemeNode ({ name } = {}) {
+    const THEME_PRESETS = {
+        version: 1,
+        presets: {
+            light: {
+                colors: { surface: '#fcfcfd', primary: '#0d74ce', bgPage: '#f9f9fb', groupBg: '#ffffff', groupOutline: '#d9d9e0' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            dark: {
+                colors: { surface: '#18191b', primary: '#0d74ce', bgPage: '#111113', groupBg: '#212225', groupOutline: '#363a3f' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            dracula: {
+                colors: { surface: '#21222c', primary: '#bd93f9', bgPage: '#282a36', groupBg: '#343746', groupOutline: '#44475a' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            nord: {
+                colors: { surface: '#3b4252', primary: '#88c0d0', bgPage: '#2e3440', groupBg: '#3b4252', groupOutline: '#4c566a' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            sepia: {
+                colors: { surface: '#f2e5bc', primary: '#af3a03', bgPage: '#ebdbb2', groupBg: '#fbf1c7', groupOutline: '#d5c4a1' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            }
+        }
+    }
+    window.NRDB_THEME_PRESETS = THEME_PRESETS
+
+    let themePreset = Object.keys(THEME_PRESETS.presets)[0]
+
+    function createThemeNode ({ name, preset = 'light' } = {}) {
         if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createThemeNode', name) }
         const theme = RED.nodes.getType('ui-theme')
         let themeName = name
@@ -931,6 +960,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             type: 'ui-theme',
             ...mapDefaults(theme.defaults),
             name: themeName || c_('themes.defaultTheme')
+        }
+        const presetDef = THEME_PRESETS.presets[preset]
+        if (presetDef) {
+            themeNode.colors = { ...presetDef.colors }
+            themeNode.sizes = { ...presetDef.sizes }
         }
         return themeNode
     }
@@ -1945,11 +1979,32 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         // button group
         const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(themeHeader)
 
-        // add theme button
+        const presetKeys = Object.keys(THEME_PRESETS.presets)
+        const presetLabel = (k) => c_('themes.presets.' + k)
+        const themePresetButton = $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"></a>').appendTo(buttonGroup)
+        function renderThemePresetButton () {
+            themePresetButton.text(presetLabel(themePreset) + ' ')
+            $('<i class="fa fa-caret-down"></i>').appendTo(themePresetButton)
+        }
+        renderThemePresetButton()
+        const themePresetTooltip = RED.popover.tooltip(themePresetButton, c_('themes.presetHint'))
+        themePresetButton.click(function (evt) {
+            evt.preventDefault()
+            themePresetTooltip.close(true)
+            RED.popover.menu({
+                options: presetKeys.map((key) => ({
+                    label: presetLabel(key),
+                    onselect: function () { themePreset = key; renderThemePresetButton() }
+                }))
+            }).show({ target: themePresetButton })
+        })
         $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('themes.theme') + '</a>')
             .click(function (evt) {
-                themesOL.editableList('addItem')
                 evt.preventDefault()
+                const theme = createThemeNode({ preset: themePreset })
+                addNode(theme)
+                themesOL.editableList('addItem', theme)
+                RED.editor.editConfig('', theme.type, theme.id)
             })
             .appendTo(buttonGroup)
 

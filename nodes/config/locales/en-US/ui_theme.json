@@ -2,6 +2,8 @@
     "ui-theme": {
         "label": {
             "themeName": "Theme Name",
+            "preset": "Preset",
+            "custom": "Custom",
             "colors": "Colors",
             "dashboard": "Dashboard",
             "header": "Header",
