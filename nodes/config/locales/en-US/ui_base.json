@@ -67,7 +67,15 @@
         "themes": {
             "header": "Themes",
             "theme": "Theme",
-            "defaultTheme": "Default Theme"
+            "defaultTheme": "Default Theme",
+            "presetHint": "Theme preset",
+            "presets": {
+                "light": "Light",
+                "dark": "Dark",
+                "dracula": "Dracula",
+                "nord": "Nord",
+                "sepia": "Sepia"
+            }
         },
         "colors": {
             "light": "var(--nrdb-node-light)",
