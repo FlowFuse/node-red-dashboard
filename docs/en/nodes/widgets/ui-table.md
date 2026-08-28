@@ -141,6 +141,9 @@ _An example of a ui-table displaying various of the cell types available_
 - **Button**: Renders a clickable button in the cell. The label of the button will be either the `row[key]` or the fixed string entered on the manual column configuration.
 - **Row Number**: Renders the row number into the cell.
 - **Image**: Renders the cell as an image. The "Image" value provided should be a valid URL.  A data url is also supported for base64 encoded images. When an invalid url is specified, an empty space will appear.
+- **Date & Time**: Renders a timestamp as a locale date and time. The value can be an epoch (seconds or milliseconds), an ISO-8601 string, or a `Date`. Formatting uses the viewer's own browser locale and timezone, so a UTC timestamp displays in local time.
+- **Date**: As **Date & Time**, but shows the date only.
+- **Time**: As **Date & Time**, but shows the time only.
 
 #### Interaction: Buttons
 
@@ -169,6 +172,8 @@ Given the `action` and `column` keys, you can determine which button was clicked
 ### Search & Filter
 
 The `ui-table` node can be configured to include a search bar above the table. This will allow users to search and filter across all columns, and automatically search across all columns when you type.
+
+Search matches the underlying cell value, not the rendered output. Columns that render their value differently — `Date & Time`, `Date`, `Time`, `Color`, `Progress`, and the sparklines — are therefore searched by their raw data (e.g. the epoch number), not the displayed text.
 
 #### Example
 

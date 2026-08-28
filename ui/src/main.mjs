@@ -43,15 +43,15 @@ const defaultTheme = retrieveDefaultThemeFromCache()
 const theme = {
     dark: false,
     colors: {
-        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
-        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        background: defaultTheme ? defaultTheme.colors.bgPage : '#f9f9fb',
+        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
-        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
-        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
+        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d9d9e0',
+        primary: defaultTheme ? defaultTheme.colors.primary : '#0d74ce',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
@@ -85,13 +85,21 @@ const vuetify = createVuetify({
 
 const host = new URL(window.location.href)
 
+function getDashboardReloadUrl () {
+    const setupBasePath = store.state.setup.setup?.basePath
+    const currentDashboardPath = window.location.pathname.match(/^(.+?\/dashboard)(?:\/|$)/)?.[1]
+    const basePath = setupBasePath || currentDashboardPath || '/dashboard'
+
+    return new URL(basePath, window.location.origin)
+}
+
 function forcePageReload (err) {
     console.log('Reloading page:', err)
-    console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
     const currentParams = new URLSearchParams(window.location.search)
-    const url = new URL(window.location.origin + '/dashboard')
+    const url = getDashboardReloadUrl()
+    console.log('redirecting to:', url.toString())
     currentParams.set('reloadTime', Date.now().toString() + Math.random())
     if (host.searchParams.has('edit-key')) {
         currentParams.set('edit-key', host.searchParams.get('edit-key'))

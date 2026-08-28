@@ -1,0 +1,136 @@
+[
+    {
+        "id": "dashboard-themes-tab",
+        "type": "tab",
+        "label": "Themes",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-theme-light",
+        "type": "ui-theme",
+        "name": "Light",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        }
+    },
+    {
+        "id": "dashboard-theme-dark",
+        "type": "ui-theme",
+        "name": "Dark",
+        "colors": {
+            "surface": "#18191b",
+            "primary": "#0d74ce",
+            "bgPage": "#111113",
+            "groupBg": "#212225",
+            "groupOutline": "#363a3f"
+        }
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Light",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-theme-light",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-2",
+        "type": "ui-page",
+        "name": "Dark",
+        "ui": "dashboard-ui-base",
+        "path": "/page2",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-theme-dark",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-group-1",
+        "type": "ui-group",
+        "name": "G1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-group-2",
+        "type": "ui-group",
+        "name": "G2",
+        "page": "dashboard-ui-page-2",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-text-1",
+        "type": "ui-text",
+        "z": "dashboard-themes-tab",
+        "group": "dashboard-group-1",
+        "order": 1,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Themed",
+        "format": "",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "",
+        "className": "",
+        "wires": []
+    },
+    {
+        "id": "dashboard-text-2",
+        "type": "ui-text",
+        "z": "dashboard-themes-tab",
+        "group": "dashboard-group-2",
+        "order": 1,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Themed",
+        "format": "",
+        "layout": "row-left",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "",
+        "className": "",
+        "wires": []
+    }
+]

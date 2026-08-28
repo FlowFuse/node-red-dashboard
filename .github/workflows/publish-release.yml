@@ -13,11 +13,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version: 24
       - name: Install Dependencies
         run: npm ci
       - name: Run Tests
@@ -34,7 +34,27 @@ jobs:
         run: |
           VERSION=$(npm info . --json version | sed -e 's/"//g')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - uses: flowfuse/github-actions-workflows/actions/update-nr-flows@v0.49.0
+      - uses: flowfuse/github-actions-workflows/actions/update-nr-flows@update-nr-flows/v1
         with:
           package: '@flowfuse/node-red-dashboard'
           version: ${{ steps.getVersion.outputs.version }}
+
+  notify-slack:
+    name: Notify about release failure
+    needs: [publish]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notify Slack
+      uses: FlowFuse/github-actions-workflows/actions/slack_notification@slack_notification/v1
+      with:
+        bot-token: ${{ secrets.SLACK_GHBOT_TOKEN }}
+        mode: channel
+        blocks: |
+          [
+            { "type": "header", "text": { "type": "plain_text", "text": ":x: ${{ github.workflow }} workflow failed", "emoji": true } },
+            { "type": "divider" },
+            { "type": "section", "text": { "type": "mrkdwn", "text": "<${{ github.server_url }}/${{ github.repository }}/actions/workflows/publish-release.yml|${{ github.workflow }}> workflow failed to complete successfully." } },
+            { "type": "section", "text": { "type": "mrkdwn", "text": "*Workflow run:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View>" } }
+          ]

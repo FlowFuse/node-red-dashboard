@@ -159,7 +159,7 @@ Obwohl es derzeit kein explizites `ui_colour_picker`-Widget gibt, kann das `ui_t
 
 Alle Steuerungen von Dashboard 1.0 werden in Dashboard 2.0 unterstützt, mit Ausnahme der `open/close`-Steuerung für eine Gruppe, die derzeit nicht unterstützt wird.
 
-Detaillierte Dokumentation der verfügbaren Steuerungen und ausgelösten Ereignisse finden Sie [hier](/en/nodes/widgets/ui-control.html).
+Detaillierte Dokumentation der verfügbaren Steuerungen und ausgelösten Ereignisse finden Sie [hier](/de/nodes/widgets/ui-control.html).
 
 ### `ui_date_picker`
 
@@ -248,4 +248,4 @@ Wir haben auch zukünftige Pläne, die Injektion von Drittanbieter-Layouts und s
 
 Alle Addons, die für Dashboard 1.0 erstellt wurden (z.B. `ui-svg`, `ui-worldmap`), werden in Dashboard 2.0 nicht unterstützt.
 
-Wir benötigen Community-Beiträge, um sie auf die "Dashboard 2.0 Weise" neu zu erstellen. Wenn Sie daran interessiert sind, uns bei dieser Übung zu helfen, haben wir einen [Leitfaden zum Erstellen benutzerdefinierter Widgets](/en/contributing/widgets/third-party.md), um Ihnen den Einstieg zu erleichtern.
+Wir benötigen Community-Beiträge, um sie auf die "Dashboard 2.0 Weise" neu zu erstellen. Wenn Sie daran interessiert sind, uns bei dieser Übung zu helfen, haben wir einen [Leitfaden zum Erstellen benutzerdefinierter Widgets](/de/contributing/widgets/third-party.html), um Ihnen den Einstieg zu erleichtern.
