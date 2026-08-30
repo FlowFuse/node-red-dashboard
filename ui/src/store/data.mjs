@@ -45,6 +45,21 @@ const mutations = {
             state.messages[widgetId].push(data.msg)
         }
     },
+    deleteSeriesMessages (state, data) {
+        const widgetId = data.widgetId
+        const seriesKey = JSON.stringify(data.series)
+
+        if (Array.isArray(state.messages[widgetId])) {
+            state.messages[widgetId] = state.messages[widgetId].filter((msg) => {
+                const msgSeries = msg.series ?? msg._datapoint?.category
+                return JSON.stringify(msgSeries) !== seriesKey
+            })
+
+            if (state.messages[widgetId].length === 0) {
+                delete state.messages[widgetId]
+            }
+        }
+    },
     /**
      *
      * @param {*} state
