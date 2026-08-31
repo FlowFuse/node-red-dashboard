@@ -9,6 +9,7 @@ import { io } from 'socket.io-client'
 import router from './router.mjs'
 import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
+import { nextReconnectInterval } from './util/reconnect-interval'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -157,7 +158,6 @@ fetch('_setup')
         let retryCount = 0 // number of reconnection attempts made
 
         let reconnectTO = null
-        const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
         const editKey = host.searchParams.get('edit-key')
         const socket = io({
             ...setup.socketio,
@@ -222,8 +222,7 @@ fetch('_setup')
             }
         })
 
-        // default interval - every 2.5 seconds
-        function reconnect (interval = 2500) {
+        function reconnect () {
             if (disconnected) {
                 /** Prior to trying the socket connect, use an http fetch to check for redirection to auth proxy
                  * fetch '_setup' as that is a short json file
@@ -241,37 +240,24 @@ fetch('_setup')
                          * it has failed 3 times
                          */
                         if ((contentType && contentType.includes('application/json')) || retryCount < 2) {
-                            tryConnect(interval)
+                            tryConnect()
                         } else {
                             forcePageReload('Websocket pre-fetch failed')
                         }
                     })
                     .catch(function () {
                         // there is some sort of network failure, let the websocket connection code handle that
-                        tryConnect(interval)
+                        tryConnect()
                     })
             }
         }
 
-        // default interval - every 2.5 seconds
-        function tryConnect (interval) {
+        // No give-up reload: the _setup pre-fetch handles auth-redirects, and reloading an unreachable server is useless.
+        function tryConnect () {
             socket.connect()
-            if (retryCount >= 14) {
-                // trying for over 1 minute
-                interval = 30000 // interval at 30 seconds
-            } else if (retryCount >= 4) {
-                // trying for over 10 seconds
-                interval = 5000 // interval at 5 seconds
-            }
+            const interval = nextReconnectInterval(retryCount)
             retryCount++
-            // if still within our maximum retry count
-            if (retryCount <= MAX_RETRIES) {
-                // check for a connection again in <interval> milliseconds
-                reconnectTO = setTimeout(reconnect, interval)
-            } else {
-                // we have been retrying for 5 minutes so give up and reload the page
-                forcePageReload('Too many retries')
-            }
+            reconnectTO = setTimeout(reconnect, interval)
         }
 
         /**
