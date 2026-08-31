@@ -61,7 +61,7 @@ If you're looking to host Node-RED, we recommend using [FlowFuse](https://flowfu
 Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can be configured and arranged in our own User Interface. The hierarchy of a Dashboard is as follows:
 
 - **Base** - Defines the base URL (e.g. `/dashboard`) for your Dashboard.
-- **Page** - A given page that a visitor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. A page can contain any number of groups, laid out according to its chosen [Layout](../layouts/). Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
+- **Page** - A given page that a visitor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. A page can contain any number of groups, laid out according to its chosen [Layout](../layouts/index.md). Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
 - **Group** - A collection of widgets. Rendered onto a page. A page can have as many groups as you need, each with its own width and order.
 - **Widget** - A single widget (e.g. chart, button, form) created in Dashboard.
 
