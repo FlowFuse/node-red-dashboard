@@ -260,6 +260,14 @@ fetch('_setup')
             reconnectTO = setTimeout(reconnect, interval)
         }
 
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && disconnected) {
+                clearTimeout(reconnectTO)
+                retryCount = 0
+                reconnect()
+            }
+        })
+
         /**
          * Create VueJS App
          */
