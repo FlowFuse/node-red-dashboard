@@ -158,6 +158,7 @@ fetch('_setup')
         let retryCount = 0 // number of reconnection attempts made
 
         let reconnectTO = null
+        let reconnecting = false
         const editKey = host.searchParams.get('edit-key')
         const socket = io({
             ...setup.socketio,
@@ -223,7 +224,8 @@ fetch('_setup')
         })
 
         function reconnect () {
-            if (disconnected) {
+            if (disconnected && !reconnecting) {
+                reconnecting = true
                 /** Prior to trying the socket connect, use an http fetch to check for redirection to auth proxy
                  * fetch '_setup' as that is a short json file
                  * use redirect: 'manual' to stop any redirection to a login page in case it causes a CORS error
@@ -249,6 +251,9 @@ fetch('_setup')
                         // there is some sort of network failure, let the websocket connection code handle that
                         tryConnect()
                     })
+                    .finally(function () {
+                        reconnecting = false
+                    })
             }
         }
 
@@ -261,7 +266,7 @@ fetch('_setup')
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && disconnected) {
+            if (document.visibilityState === 'visible' && disconnected && !reconnecting) {
                 clearTimeout(reconnectTO)
                 retryCount = 0
                 reconnect()
