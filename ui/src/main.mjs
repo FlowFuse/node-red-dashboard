@@ -9,6 +9,7 @@ import { io } from 'socket.io-client'
 import router from './router.mjs'
 import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
+import { getOrCreateClientId } from './util/client-id'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -159,10 +160,11 @@ fetch('_setup')
         let reconnectTO = null
         const MAX_RETRIES = 22 // 4 at 2.5 seconds, 10 at 5 secs then 8 at 30 seconds
         const editKey = host.searchParams.get('edit-key')
+        const clientId = getOrCreateClientId(() => window.localStorage)
         const socket = io({
             ...setup.socketio,
             reconnection: false,
-            query: editKey ? { editKey } : undefined // include handshake data so that only original edit-key holder can edit
+            query: { clientId, ...(editKey ? { editKey } : {}) }
         })
 
         // handle final disconnection

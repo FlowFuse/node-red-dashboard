@@ -411,7 +411,27 @@ module.exports = function (RED) {
             node.error('No UI configured')
         }
 
+        let onClientEvent = null
+        let clientEventStore = null
+        if (ui && (config.events === 'all' || config.events === 'clients')) {
+            clientEventStore = ui.uiShared?.clientStore
+            if (clientEventStore) {
+                onClientEvent = (e) => {
+                    const wNode = RED.nodes.getNode(node.id)
+                    if (wNode && typeof wNode.send === 'function') {
+                        const client = { clientId: e.clientId }
+                        if (e.socketId) { client.socketId = e.socketId }
+                        wNode.send({ payload: 'client-' + e.event, _client: client })
+                    }
+                }
+                clientEventStore.events.on('client', onClientEvent)
+            }
+        }
+
         node.on('close', function (removed, done) {
+            if (onClientEvent && clientEventStore) {
+                clientEventStore.events.off('client', onClientEvent)
+            }
             if (removed) {
                 // handle node being removed
                 ui?.deregister(null, null, node)

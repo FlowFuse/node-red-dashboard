@@ -4,6 +4,7 @@ const path = require('path')
 const axios = require('axios')
 
 const v = require('../../package.json').version
+const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, getThirdPartyWidgets } = require('../utils/index.js')
@@ -59,6 +60,8 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
+        // presence registry: clientId -> live sockets, with connect/reconnect/gone events
+        clientStore: createClientStore(),
         settings: {},
         contribs: {}
     }
@@ -413,6 +416,7 @@ module.exports = function (RED) {
                 socket.on('widget-action', onAction.bind(null, socket))
                 socket.on('widget-change', onChange.bind(null, socket))
                 socket.on('widget-load', onLoad.bind(null, socket))
+                socket.on('disconnect', () => uiShared.clientStore.disconnect(socket._clientId, socket.id))
             }
         }
         /** @type {NodeJS.Timeout} */
@@ -591,6 +595,7 @@ module.exports = function (RED) {
             socket.on('disconnect', reason => {
                 cleanupEventHandlers(socket)
                 delete uiShared.connections[socket.id]
+                uiShared.clientStore.disconnect(socket._clientId, socket.id)
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
         }
@@ -605,6 +610,9 @@ module.exports = function (RED) {
 
             // node.connections[socket.id] = socket // store the connection for later use
             uiShared.connections[socket.id] = socket // store the connection for later use
+
+            socket._clientId = socket.handshake?.query?.clientId
+            uiShared.clientStore.connect(socket._clientId, socket.id)
 
             emitConfig(socket)
 

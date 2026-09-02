@@ -60,7 +60,8 @@ function addConnectionCredentials (RED, msg, conn, config) {
                 ...item._client,
                 ...{
                     socketId: conn.id,
-                    socketIp: conn.handshake?.address
+                    socketIp: conn.handshake?.address,
+                    clientId: conn.handshake?.query?.clientId
                 }
             }
             return item
