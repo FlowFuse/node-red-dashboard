@@ -60,7 +60,6 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
-        // presence registry: clientId -> live sockets, with connect/reconnect/gone events
         clientStore: createClientStore(),
         settings: {},
         contribs: {}
