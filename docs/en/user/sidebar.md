@@ -36,7 +36,7 @@ Dashboard 2.0 can append data to every `msg` a node emits that details informati
 
 Defines whether or not any client data is being appended to messages emitted by the Dashboard. If on, then a new `msg._client` value will be available to you which the relevant data included.
 
-You will also find a list here of "Data providers" that are currently active in the Dashboard. In addition to the core provider (which provides `msg._client.socketId`), it will list any plugins that have declared `auth: true` in their `index.html` file (see [Plugins docs](../contributing/plugins/index.md) for more information)
+You will also find a list here of "Data providers" that are currently active in the Dashboard. In addition to the core provider (which provides `msg._client.clientId` and `msg._client.socketId`), it will list any plugins that have declared `auth: true` in their `index.html` file (see [Plugins docs](../contributing/plugins/index.md) for more information)
 
 #### Accepts Client Data
 
