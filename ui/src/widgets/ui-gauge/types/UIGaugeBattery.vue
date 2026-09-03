@@ -136,7 +136,7 @@ export default {
     fill-opacity: 0.25;
 }
 .nrdb-ui-gauge-battery-icon.nrdb-ui-gauge-battery-icon--bg {
-    color: black;
+    color: rgb(var(--v-theme-on-group-background));
 }
 .nrdb-ui-gauge-battery-icon.nrdb-ui-gauge-battery-icon--fill {
     color: white;

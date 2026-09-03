@@ -1,46 +1,48 @@
 <template>
-    <label v-if="props.label" ref="title" class="nrdb-ui-table-title">{{ props.label }}</label>
-    <v-text-field
-        v-if="props.showSearch"
-        v-model="search"
-        label="Search"
-        prepend-inner-icon="mdi-magnify"
-        variant="outlined"
-        hide-details
-        single-line
-    />
-    <v-data-table
-        ref="table"
-        v-model="selected"
-        class="nrdb-table"
-        :mobile="isMobile"
-        :class="{'nrdb-table--mobile': isMobile}"
-        :items="payload || []" :return-object="true"
-        :items-per-page="itemsPerPage"
-        :headers="headers" :show-select="props.selectionType === 'checkbox'"
-        :search="search"
-        @update:model-value="onMultiSelect"
-    >
-        <template v-if="itemsPerPage === 0" #bottom />
-        <template #item="{ item, index, internalItem, isSelected, toggleSelect }">
-            <tr
-                :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item, 'v-data-table__tr--mobile': isMobile}"
-                @click="props.selectionType === 'click' ? onRowClick(item) : {}"
-            >
-                <td v-if="props.selectionType === 'checkbox'" class="v-data-table__td v-data-table-column--no-padding v-data-table-column--align-start">
-                    <v-checkbox-btn :modelValue="isSelected(internalItem)" @click="toggleSelect(internalItem)" />
-                </td>
-                <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
-                    <div v-if="isMobile">
-                        {{ col.title }}
-                    </div>
-                    <div class="nrdb-table-cell-align" :style="{'justify-content': isMobile ? 'end' : (col.align || 'start')}">
-                        <UITableCell :row="index + 1" :item="item" :property="col.key" :propertyType="col.keyType" :type="col.type" @action-click="onCellClick" />
-                    </div>
-                </td>
-            </tr>
-        </template>
-    </v-data-table>
+    <div class="nrdb-ui-table-wrapper">
+        <label v-if="props.label" ref="title" class="nrdb-ui-table-title">{{ props.label }}</label>
+        <v-text-field
+            v-if="props.showSearch"
+            v-model="search"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+        />
+        <v-data-table
+            ref="table"
+            v-model="selected"
+            class="nrdb-table"
+            :mobile="isMobile"
+            :class="{'nrdb-table--mobile': isMobile}"
+            :items="payload || []" :return-object="true"
+            :items-per-page="itemsPerPage"
+            :headers="headers" :show-select="props.selectionType === 'checkbox'"
+            :search="search"
+            @update:model-value="onMultiSelect"
+        >
+            <template v-if="itemsPerPage === 0" #bottom />
+            <template #item="{ item, index, internalItem, isSelected, toggleSelect }">
+                <tr
+                    :class="{'nrdb-table-row-selectable': props.selectionType === 'click', 'nrdb-table-row-selected': selected === item, 'v-data-table__tr--mobile': isMobile}"
+                    @click="props.selectionType === 'click' ? onRowClick(item) : {}"
+                >
+                    <td v-if="props.selectionType === 'checkbox'" class="v-data-table__td v-data-table-column--no-padding v-data-table-column--align-start">
+                        <v-checkbox-btn :modelValue="isSelected(internalItem)" @click="toggleSelect(internalItem)" />
+                    </td>
+                    <td v-for="col in headers" :key="col.key" :data-column-key="col.key">
+                        <div v-if="isMobile">
+                            {{ col.title }}
+                        </div>
+                        <div class="nrdb-table-cell-align" :style="{'justify-content': isMobile ? 'end' : (col.align || 'start')}">
+                            <UITableCell :row="index + 1" :item="item" :property="col.key" :propertyType="col.keyType" :type="col.type" @action-click="onCellClick" />
+                        </div>
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
+    </div>
 </template>
 
 <script>
@@ -268,8 +270,16 @@ export default {
 </script>
 
 <style>
-.nrdb-ui-table {
-    overflow-y: auto;
+.nrdb-ui-table-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+.nrdb-ui-table-wrapper > .nrdb-table.v-table {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .nrdb-table.v-table {

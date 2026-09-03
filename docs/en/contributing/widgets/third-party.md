@@ -22,8 +22,8 @@ On the left-side navigation you'll find a "Useful Guides" section, we recommend 
 
 In particular, the following are recommended:
 
-- [Events Architecture](/en/contributing/guides/state-management.html)
-- [State Management](/en/contributing/guides/state-management.html)
+- [Events Architecture](/contributing/guides/events.html)
+- [State Management](/contributing/guides/state-management.html)
 
 ## How Widgets are Loaded
 

@@ -70,7 +70,7 @@ export default {
             const dashboards = Object.keys(this.dashboards)
             const id = dashboards.length ? dashboards[0] : undefined
             const dashboard = this.dashboards[id]
-            if (dashboard.allowInstall) {
+            if (dashboard?.allowInstall) {
                 this.installable = true
                 links.push({
                     rel: 'manifest',

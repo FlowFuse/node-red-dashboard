@@ -28,6 +28,20 @@ _Guidelines demonstrating the columns rendered in the "Grid" Layout at different
 
 You can read more about these customizations to the theme and layout [here](../index.md).
 
+### Making widget widths uniform
+
+A group insets its widgets with a small side padding, and because that padding is shared across the group's columns, a 1×1 widget is a touch narrower in a narrow group than in a wide one. To make widths match across all group sizes, set that padding equal to `(Widget Gap − Group Gap) / 2` using a [`ui-template`](../../nodes/widgets/ui-template.md) CSS override.
+
+For example, with the default 12px gaps, set **Group Gap** to `0` and add:
+
+```css
+.nrdb-ui-group .v-card-text {
+    padding: 6px;
+}
+```
+
+Widgets are then the same width at every group size. Groups sit flush against each other with this setting; raise Group Gap and Widget Gap together to keep a visible gap between groups. The exact padding depends on your group border and gaps, so adjust it to taste.
+
 ## Controlling Empty Space
 
 Controlling empty space can be tricky with a Grid Layout. We do not have a smart masonry layout ([example](https://masonry.desandro.com/layout)) currently, instead we are utilizing [CSS's Grid Layout Module](https://www.w3schools.com/css/css_grid.asp).
