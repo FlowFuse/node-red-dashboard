@@ -432,6 +432,38 @@
         ]
     },
     {
+        "id": "c1d2e3f4a5b60718",
+        "type": "ui-text-input",
+        "z": "f4f554a38c3ce158",
+        "g": "ecc44c4e975ac4e9",
+        "group": "cf67bdc7fbda3210",
+        "name": "",
+        "label": "Marking Notes",
+        "order": 2,
+        "width": 0,
+        "height": 3,
+        "topic": "topic",
+        "topicType": "msg",
+        "mode": "textarea",
+        "tooltip": "",
+        "delay": 300,
+        "passthru": true,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "className": "",
+        "clearable": false,
+        "sendOnClear": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "x": 290,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "9387656b7b07aa72",
         "type": "function",
         "z": "f4f554a38c3ce158",

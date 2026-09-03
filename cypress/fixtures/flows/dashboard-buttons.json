@@ -90,9 +90,33 @@
         "y": 60,
         "wires": [
             [
-                "dashboard-ui-button-bool"
+                "dashboard-ui-button-bool",
+                "connect-marker"
             ]
         ]
+    },
+    {
+        "id": "connect-marker",
+        "type": "change",
+        "z": "node-red-tab-buttons",
+        "name": "ui-control connect marker",
+        "rules": [
+            {
+                "t": "set",
+                "p": "connectTopic",
+                "pt": "global",
+                "to": "topic",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 80,
+        "y": 100,
+        "wires": [[]]
     },
     {
         "id": "dashboard-ui-button-bool",

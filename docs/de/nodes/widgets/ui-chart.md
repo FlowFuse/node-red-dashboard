@@ -428,7 +428,7 @@ Wo Sie die `y`-Eigenschaft auf `key:value` setzen könnten. Der `x`-Wert, wenn e
 
 ChartJS bietet eine Vielzahl von Konfigurationsoptionen, von denen wir nur einen kleinen Teil über die Node-RED-Konfiguration bereitstellen. Wenn Sie das Erscheinungsbild Ihres Diagramms weiter anpassen oder sogar Diagramme rendern möchten, die wir noch nicht unterstützen, können Sie dies mit einem UI-Template-Knoten tun.
 
-Derzeit müssen wir, obwohl es nicht ideal ist, die ChartJS-Bibliothek von einem CDN laden und dann darauf warten, dass die Datei geladen wurde, bevor wir sie verwenden können, wie in den [Externe Abhängigkeiten laden](/en/nodes/widgets/ui-template.html#loading-external-dependencies) Details in der UI-Template-Dokumentation beschrieben.
+Derzeit müssen wir, obwohl es nicht ideal ist, die ChartJS-Bibliothek von einem CDN laden und dann darauf warten, dass die Datei geladen wurde, bevor wir sie verwenden können, wie in den [Externe Abhängigkeiten laden](/de/nodes/widgets/ui-template.html#loading-external-dependencies) Details in der UI-Template-Dokumentation beschrieben.
 
 ### Beispiel: Statische Daten
 

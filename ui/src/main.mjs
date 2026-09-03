@@ -1,7 +1,7 @@
 /* eslint-disable n/file-extension-in-import */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/order */
-import { VueHeadMixin, createHead } from '@unhead/vue'
+import { VueHeadMixin, createHead } from '@unhead/vue/client'
 import * as Vue from 'vue'
 import * as vuex from 'vuex'
 import App from './App.vue'
@@ -43,15 +43,15 @@ const defaultTheme = retrieveDefaultThemeFromCache()
 const theme = {
     dark: false,
     colors: {
-        background: defaultTheme ? defaultTheme.colors.bgPage : '#fff',
-        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        background: defaultTheme ? defaultTheme.colors.bgPage : '#f9f9fb',
+        'navigation-background': defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         'group-background': defaultTheme ? defaultTheme.colors.groupBg : '#ffffff',
-        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d1d1d1',
-        primary: defaultTheme ? defaultTheme.colors.primary : '#0094CE',
+        'group-outline': defaultTheme ? defaultTheme.colors.groupOutline : '#d9d9e0',
+        primary: defaultTheme ? defaultTheme.colors.primary : '#0d74ce',
         accent: '#ff6b99',
         secondary: '#26ff8c',
         success: '#a5d64c',
-        surface: defaultTheme ? defaultTheme.colors.surface : '#ffffff',
+        surface: defaultTheme ? defaultTheme.colors.surface : '#fcfcfd',
         info: '#ff53d0',
         warning: '#ff8e00',
         error: '#ff5252'
@@ -85,13 +85,21 @@ const vuetify = createVuetify({
 
 const host = new URL(window.location.href)
 
+function getDashboardReloadUrl () {
+    const setupBasePath = store.state.setup.setup?.basePath
+    const currentDashboardPath = window.location.pathname.match(/^(.+?\/dashboard)(?:\/|$)/)?.[1]
+    const basePath = setupBasePath || currentDashboardPath || '/dashboard'
+
+    return new URL(basePath, window.location.origin)
+}
+
 function forcePageReload (err) {
     console.log('Reloading page:', err)
-    console.log('redirecting to:', window.location.origin + '/dashboard')
 
     // Reloading dashboard without using cache by appending a cache-busting string to fully reload page to allow redirecting to auth
     const currentParams = new URLSearchParams(window.location.search)
-    const url = new URL(window.location.origin + '/dashboard')
+    const url = getDashboardReloadUrl()
+    console.log('redirecting to:', url.toString())
     currentParams.set('reloadTime', Date.now().toString() + Math.random())
     if (host.searchParams.has('edit-key')) {
         currentParams.set('edit-key', host.searchParams.get('edit-key'))
@@ -217,23 +225,52 @@ fetch('_setup')
         // default interval - every 2.5 seconds
         function reconnect (interval = 2500) {
             if (disconnected) {
-                socket.connect()
-                if (retryCount >= 14) {
-                    // trying for over 1 minute
-                    interval = 30000 // interval at 30 seconds
-                } else if (retryCount >= 4) {
-                    // trying for over 10 seconds
-                    interval = 5000 // interval at 5 seconds
-                }
-                retryCount++
-                // if still within our maximum retry count
-                if (retryCount <= MAX_RETRIES) {
-                    // check for a connection again in <interval> milliseconds
-                    reconnectTO = setTimeout(reconnect, interval)
-                } else {
-                    // we have been retrying for 5 minutes so give up and reload the page
-                    forcePageReload('Too many retries')
-                }
+                /** Prior to trying the socket connect, use an http fetch to check for redirection to auth proxy
+                 * fetch '_setup' as that is a short json file
+                 * use redirect: 'manual' to stop any redirection to a login page in case it causes a CORS error
+                 */
+                fetch('_setup', { redirect: 'manual', cache: 'no-cache' })
+                    .then(function (res) {
+                        const contentType = res.headers?.get('content-type')
+                        /** If the content type is not application/json then likely it is a login request,
+                         * or a failed redirection to login page, either of which would cause the websocket
+                         * connect to fail, so reload the page in order to show the login request.
+                         * Allow it continue the first few times though, allowing the socket connect code to fail
+                         * and retry, in case this is just a transient issue
+                         * retryCount will still be 0 after first failure, so it will not force a page reload until
+                         * it has failed 3 times
+                         */
+                        if ((contentType && contentType.includes('application/json')) || retryCount < 2) {
+                            tryConnect(interval)
+                        } else {
+                            forcePageReload('Websocket pre-fetch failed')
+                        }
+                    })
+                    .catch(function () {
+                        // there is some sort of network failure, let the websocket connection code handle that
+                        tryConnect(interval)
+                    })
+            }
+        }
+
+        // default interval - every 2.5 seconds
+        function tryConnect (interval) {
+            socket.connect()
+            if (retryCount >= 14) {
+                // trying for over 1 minute
+                interval = 30000 // interval at 30 seconds
+            } else if (retryCount >= 4) {
+                // trying for over 10 seconds
+                interval = 5000 // interval at 5 seconds
+            }
+            retryCount++
+            // if still within our maximum retry count
+            if (retryCount <= MAX_RETRIES) {
+                // check for a connection again in <interval> milliseconds
+                reconnectTO = setTimeout(reconnect, interval)
+            } else {
+                // we have been retrying for 5 minutes so give up and reload the page
+                forcePageReload('Too many retries')
             }
         }
 

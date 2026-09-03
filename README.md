@@ -16,8 +16,6 @@ The nodes will then be available in your editor for you to get started.
 
 If you want to use `npm` to install your nodes, you can instead [follow these instructions](https://nodered.org/docs/user-guide/runtime/adding-nodes)
 
-*Note*: this package was previously published under the name `@flowforge/node-red-dashboard`. That package has now been deprecated and will not receive any further updates.
-
 ### Cloud Hosted Dashboards
 
 If you're looking to host Node-RED in the Cloud, then look no further than [FlowFuse](https://flowfuse.com/). FlowFuse is a fully managed platform for hosting, securing, managing and scaling Node-RED deployments. You can [sign up today for a free trial](https://app.flowfuse.com/account/create).

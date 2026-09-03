@@ -1,0 +1,151 @@
+[
+    {
+        "id": "dashboard-bw-tab",
+        "type": "tab",
+        "label": "Button Wrap",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-theme-compact",
+        "type": "ui-theme",
+        "name": "Theme Compact",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px",
+            "density": "compact"
+        }
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-2",
+        "type": "ui-page",
+        "name": "Page 2",
+        "ui": "dashboard-ui-base",
+        "path": "/page2",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme-compact",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "G",
+        "page": "dashboard-ui-page-1",
+        "width": "2",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-2",
+        "type": "ui-group",
+        "name": "G2",
+        "page": "dashboard-ui-page-2",
+        "width": "2",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-btn-long",
+        "type": "ui-button",
+        "z": "dashboard-bw-tab",
+        "group": "dashboard-ui-group",
+        "name": "",
+        "label": "Acknowledge compressor fault",
+        "order": 1,
+        "width": 1,
+        "height": 1,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 300,
+        "y": 80,
+        "wires": [[]]
+    },
+    {
+        "id": "dashboard-btn-long-compact",
+        "type": "ui-button",
+        "z": "dashboard-bw-tab",
+        "group": "dashboard-ui-group-2",
+        "name": "",
+        "label": "Acknowledge compressor fault",
+        "order": 1,
+        "width": 1,
+        "height": 1,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 300,
+        "y": 160,
+        "wires": [[]]
+    }
+]
