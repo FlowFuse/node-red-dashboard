@@ -9,6 +9,7 @@ import { io } from 'socket.io-client'
 import router from './router.mjs'
 import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
+import { getOrCreateClientId } from './util/client-id'
 import { nextReconnectInterval } from './util/reconnect-interval'
 
 // Vuetify
@@ -160,10 +161,11 @@ fetch('_setup')
         let reconnectTO = null
         let reconnecting = false
         const editKey = host.searchParams.get('edit-key')
+        const clientId = getOrCreateClientId(() => window.localStorage)
         const socket = io({
             ...setup.socketio,
             reconnection: false,
-            query: editKey ? { editKey } : undefined // include handshake data so that only original edit-key holder can edit
+            query: { clientId, ...(editKey ? { editKey } : {}) }
         })
 
         // handle final disconnection

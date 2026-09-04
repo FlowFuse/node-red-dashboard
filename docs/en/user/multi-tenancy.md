@@ -30,9 +30,10 @@ With "Include Client Data" enabled, every `msg` a node emits will have a `_clien
 
 ### Core Client Data
 
-Out of the box, Dashboard will append two piece of information to the `_client` object:
+Out of the box, Dashboard will append this information to the `_client` object:
 
-- `socketId`: The unique ID of the socket connection that the client is using to interact with the Dashboard.
+- `clientId`: A stable identifier for the browser, generated on first load and kept in `localStorage`. Unlike `socketId`, it survives reconnects, page reloads, and browser restarts, making it a reliable key for per-client state that outlives a single connection. It is set by the client, so treat it as an identifier, not an authorization boundary. The [`ui-control` node](../nodes/widgets/ui-control.md#client-presence) can emit presence events keyed on this id.
+- `socketId`: The unique ID of the socket connection that the client is using to interact with the Dashboard. This changes on every reconnect (device sleep, network blip, reload), so it is not stable for tracking a client over time.
 - `socketIp`: The IP address of the client interacting with the Dashboard.
 
 ### Authentication Providers
@@ -82,7 +83,7 @@ In the [Dashboard sidebar](./sidebar.md#client-data) within the Node-RED Editor,
 
 Client data defines information on the user/client interacting with the Dashboard. This data can be appended to every `msg` a node emits, underneath the `msg._client` object.
 
-When "Include Client Data" is enabled, every `msg._client` will detail the `socketId` and `socketIp` of any connected users. 
+When "Include Client Data" is enabled, every `msg._client` will detail the `clientId`, `socketId`, and `socketIp` of any connected users.
 
 ## Examples
 

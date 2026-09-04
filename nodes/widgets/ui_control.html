@@ -24,7 +24,7 @@
             oneditprepare: function () {
                 const node = this
                 const sel = $('#node-input-events')
-                for (const name of ['all', 'change', 'connect']) {
+                for (const name of ['all', 'change', 'connect', 'clients']) {
                     const text = c_('events.' + name)
                     $('<option/>').val(name).text(text).appendTo(sel)
                 }
