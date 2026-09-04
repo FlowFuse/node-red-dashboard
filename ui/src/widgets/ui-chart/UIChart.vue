@@ -36,6 +36,7 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
+            mergedChartOptions: null, // the merged set of all ui_update.chartOptions passed in
             resizeObserver: null
         }
     },
@@ -161,6 +162,8 @@ export default {
 
         // merge in any updates provided via ui_update.chartOptions
         const chartOptions = this.chartOptions
+        // save in mergedChartOptions so they can be re-applied later if necessary
+        this.mergedChartOptions = chartOptions
         if (chartOptions) {
             // pass the options to the chart
             chart.setOption(chartOptions)
@@ -190,6 +193,9 @@ export default {
                 return
             }
             if (updates.chartOptions) {
+                // updates.chartOptions contains the full set of all options applied
+                // save them in case we have to re-apply
+                this.mergedChartOptions = updates.chartOptions
                 // merge the updates into the chart
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
@@ -431,8 +437,8 @@ export default {
                     // Also re-apply if this is a radial (pie or doughnut) chart as the radius for these are re-calculated
                     // when adding data, which may remove any radius applied via msg.ui_update.
                     if (this.chart.getOption().series.length > seriesCount || this.props.xAxisType === 'radial') {
-                        // update the chart first from options applied in previous sessions
-                        const chartOptions = this.chartOptions
+                        // re-apply chart options previously passed in
+                        const chartOptions = this.mergedChartOptions
                         if (chartOptions) {
                             this.chart.setOption(chartOptions)
                         }
