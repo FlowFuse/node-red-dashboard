@@ -65,7 +65,7 @@ module.exports = function (RED) {
                 const filterFn = (msg) => {
                     // msg._datapoint may be a single point or, in the case of multiple series in one msg, an array
                     // if it is an array then all the elements will have the same timestamp so use the first one
-                    let timestamp = Array.isArray(msg._datapoint) ? msg._datapoint[0].x : msg._datapoint.x
+                    let timestamp = Array.isArray(msg._datapoint) ? msg._datapoint[0]?.x : msg._datapoint.x
                     // is x already a millisecond timestamp?
                     if (typeof (timestamp) === 'string') {
                         timestamp = (new Date(timestamp)).getTime()
