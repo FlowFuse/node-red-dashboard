@@ -516,7 +516,13 @@ export default {
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
                 msg.forEach((m) => {
-                    this.add(m)
+                    const datapoints = Array.isArray(m._datapoint) ? m._datapoint : [m._datapoint]
+                    datapoints.forEach((d) => {
+                        const label = d.category
+                        if (label !== null && label !== undefined) {
+                            this.addPoints(m.payload, d, label, options)
+                        }
+                    })
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
