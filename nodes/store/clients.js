@@ -6,9 +6,9 @@ const DEFAULT_GRACE_MS = 20000
  * Tracks client presence across reconnects (socket.id churns every reconnect; clientId is stable).
  * A client may hold several live sockets (one per tab); events fire on its socket count crossing
  * zero, not per socket. Emits { event, clientId, socketId? }:
- *   connect:   count 0 -> 1, no grace pending (new client)
- *   reconnect: count 0 -> 1 during the grace window (returned before being declared gone)
- *   gone:      count -> 0 and the grace window elapses
+ *   connected:   count 0 -> 1, no grace pending (new client)
+ *   reconnected: count 0 -> 1 during the grace window (returned before being declared gone)
+ *   gone:        count -> 0 and the grace window elapses
  * Extra tabs (1 -> 2, 2 -> 1) emit nothing; the client is still present.
  */
 function createClientStore ({ graceMs = DEFAULT_GRACE_MS, setTimeoutFn = setTimeout, clearTimeoutFn = clearTimeout } = {}) {
@@ -30,7 +30,7 @@ function createClientStore ({ graceMs = DEFAULT_GRACE_MS, setTimeoutFn = setTime
         const wasEmpty = entry.sockets.size === 0
         entry.sockets.add(socketId)
         if (wasEmpty) {
-            events.emit('client', { event: returning ? 'reconnect' : 'connect', clientId, socketId })
+            events.emit('client', { event: returning ? 'reconnected' : 'connected', clientId, socketId })
         }
     }
 

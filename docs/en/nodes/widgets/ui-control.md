@@ -208,13 +208,13 @@ The `connect`/`lost` events above are per _socket_, and a socket's id changes ev
 
 For higher-level, per-_client_ events keyed on the stable [`clientId`](../../user/multi-tenancy.md#core-client-data), set the node's **Output** to **Client Presence Events Only** (or **All Events**). It then emits:
 
-#### client-connect
+#### client-connected
 
 A client opens its first connection, a genuinely new client:
 
 ```js
 msg = {
-    payload: 'client-connect',
+    payload: 'client-connected',
     _client: {
         clientId: '<clientId>',
         socketId: '<socketId>'
@@ -222,13 +222,13 @@ msg = {
 }
 ```
 
-#### client-reconnect
+#### client-reconnected
 
 A client that had dropped returns within a short grace window (same `clientId`, new socket):
 
 ```js
 msg = {
-    payload: 'client-reconnect',
+    payload: 'client-reconnected',
     _client: {
         clientId: '<clientId>',
         socketId: '<socketId>'
@@ -251,6 +251,6 @@ msg = {
 
 The grace window means a brief blip or a page refresh does **not** fire `client-gone`; only a genuine departure does. Opening a second tab of a client that is already connected emits nothing (it is already present).
 
-Use these to maintain per-client state that survives reconnects: add on `client-connect`, keep on `client-reconnect`, and remove on `client-gone`, all keyed on `clientId`.
+Use these to maintain per-client state that survives reconnects: add on `client-connected`, keep on `client-reconnected`, and remove on `client-gone`, all keyed on `clientId`.
 
 > **Note:** the `client-*` events also fire under **All Events**. Their `client-`-prefixed payloads are distinct from the socket-level `connect`/`lost`, so a flow switching on `msg.payload` won't confuse the two.

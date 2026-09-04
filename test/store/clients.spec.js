@@ -24,7 +24,7 @@ describe('client store', function () {
         const events = collect(store)
         store.connect('c1', 's1')
         events.should.have.length(1)
-        events[0].should.match({ event: 'connect', clientId: 'c1' })
+        events[0].should.match({ event: 'connected', clientId: 'c1' })
     })
 
     it('does not emit for a second tab of the same client', function () {
@@ -53,7 +53,7 @@ describe('client store', function () {
         const events = collect(store)
         store.disconnect('c1', 's1') // last socket -> grace pending
         store.connect('c1', 's2') // returns before grace fires
-        events.should.matchAny({ event: 'reconnect', clientId: 'c1' })
+        events.should.matchAny({ event: 'reconnected', clientId: 'c1' })
         events.should.not.matchAny({ event: 'gone' })
     })
 
@@ -75,7 +75,7 @@ describe('client store', function () {
         t.fire() // gone -> entry deleted
         const events = collect(store)
         store.connect('c1', 's2') // same clientId, but it's a fresh presence now
-        events.should.matchAny({ event: 'connect', clientId: 'c1' })
+        events.should.matchAny({ event: 'connected', clientId: 'c1' })
     })
 
     it('is silent when a new socket arrives while the old one is still live', function () {
