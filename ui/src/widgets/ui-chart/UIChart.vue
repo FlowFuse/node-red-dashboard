@@ -514,13 +514,14 @@ export default {
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
-                msg.forEach((m, i) => {
-                    const p = m.payload
-                    const d = m._datapoint // server-side we compute a chart friendly format
-                    const label = d.category
-                    if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label, options)
-                    }
+                msg.forEach((m) => {
+                    const datapoints = Array.isArray(m._datapoint) ? m._datapoint : [m._datapoint]
+                    datapoints.forEach((d) => {
+                        const label = d.category
+                        if (label !== null && label !== undefined) {
+                            this.addPoints(m.payload, d, label, options)
+                        }
+                    })
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
