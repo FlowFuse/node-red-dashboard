@@ -1,34 +1,31 @@
 /// <reference lib="webworker" />
 import { clientsClaim } from 'workbox-core'
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
+import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 
-// self.__WB_MANIFEST is the default injection point
-precacheAndRoute(self.__WB_MANIFEST)
+// directoryIndex/cleanURLs off so the precache doesn't serve a /dashboard/ navigation from cache - the route below owns navigations
+precacheAndRoute(self.__WB_MANIFEST, {
+    directoryIndex: null,
+    cleanURLs: false
+})
 
 // clean old assets
 cleanupOutdatedCaches()
 
-/** @type {RegExp[] | undefined} */
-const denylist = []
+const NETWORK_TIMEOUT_MS = 5000
 
-// in dev mode, do not precache anything
-if (import.meta.env.DEV) {
-    // don't precache anything
-    console.log('Development mode, not pre-caching anything')
-    denylist.push(/.*/)
-} else {
-    // don't precache anything where the urls pathname ends with a slash (including times when the url has a query string)
-    // this permits the request to be handled by the server which will do a redirect as required
-    const configPath = self.location.pathname.split('/')[1]
-    denylist.push(new RegExp(`/${configPath}/[^?]*/(\\?.*)*$`))
-}
-
-// to allow work offline for allowed routes only
-registerRoute(new NavigationRoute(
-    createHandlerBoundToURL('index.html'),
-    { denylist }
-))
+// Network-first so an auth proxy's login redirect is followed - cached shell as offline fallback
+registerRoute(new NavigationRoute(async ({ request }) => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), NETWORK_TIMEOUT_MS)
+    try {
+        return await fetch(request, { signal: controller.signal })
+    } catch {
+        return (await matchPrecache('index.html')) || Response.error()
+    } finally {
+        clearTimeout(timeout)
+    }
+}))
 
 self.skipWaiting()
 // https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
