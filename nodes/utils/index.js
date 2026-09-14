@@ -40,6 +40,11 @@ async function getTopic (RED, config, wNode, msg) {
     return topic
 }
 
+function normalizeClientId (raw) {
+    if (Array.isArray(raw)) { raw = raw[0] }
+    return (raw === undefined || raw === null || raw === '') ? undefined : String(raw)
+}
+
 /**
  * Adds socket/client data to a msg payload, if enabled
  *
@@ -61,7 +66,7 @@ function addConnectionCredentials (RED, msg, conn, config) {
                 ...{
                     socketId: conn.id,
                     socketIp: conn.handshake?.address,
-                    clientId: conn.handshake?.query?.clientId
+                    clientId: normalizeClientId(conn.handshake?.query?.clientId)
                 }
             }
             return item
@@ -128,5 +133,6 @@ module.exports = {
     appendTopic,
     getTopic,
     addConnectionCredentials,
+    normalizeClientId,
     getThirdPartyWidgets
 }

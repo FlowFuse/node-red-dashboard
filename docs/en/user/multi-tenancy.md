@@ -32,7 +32,7 @@ With "Include Client Data" enabled, every `msg` a node emits will have a `_clien
 
 Out of the box, Dashboard will append this information to the `_client` object:
 
-- `clientId`: A stable identifier for the browser, generated on first load and kept in `localStorage`. Unlike `socketId`, it survives reconnects, page reloads, and browser restarts, making it a reliable key for per-client state that outlives a single connection. It is set by the client, so treat it as an identifier, not an authorization boundary. The [`ui-control` node](../nodes/widgets/ui-control.md#client-presence) can emit presence events keyed on this id.
+- `clientId`: A stable identifier for the browser, generated on first load and kept in `localStorage`. Unlike `socketId`, it survives reconnects, page reloads, and browser restarts, making it a reliable key for per-client state that outlives a single connection. It is set by the client, so treat it as an identifier, not an authorization boundary. The [`ui-control` node](../nodes/widgets/ui-control.md#client-presence) can emit presence events keyed on this id. Stability depends on `localStorage` being writable: in a browser where writes fail (private mode, quota exceeded), a fresh `clientId` is generated on every reload, which the server sees as a new client each time (`client-connected`/`client-gone` churn from a single user).
 - `socketId`: The unique ID of the socket connection that the client is using to interact with the Dashboard. This changes on every reconnect (device sleep, network blip, reload), so it is not stable for tracking a client over time.
 - `socketIp`: The IP address of the client interacting with the Dashboard.
 

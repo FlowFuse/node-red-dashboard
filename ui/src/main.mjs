@@ -32,10 +32,12 @@ import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-li
 
 // Retrieve the "Default" theme from cache
 function retrieveDefaultThemeFromCache () {
-    const cachedTheme = localStorage.getItem('ndrb-theme-default')
-    if (cachedTheme) {
-        return JSON.parse(cachedTheme)
-    }
+    try {
+        const cachedTheme = localStorage.getItem('ndrb-theme-default')
+        if (cachedTheme) {
+            return JSON.parse(cachedTheme)
+        }
+    } catch (_error) { }
     return null
 }
 

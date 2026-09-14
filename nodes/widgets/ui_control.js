@@ -421,10 +421,18 @@ module.exports = function (RED) {
                     if (wNode && typeof wNode.send === 'function') {
                         const client = { clientId: e.clientId }
                         if (e.socketId) { client.socketId = e.socketId }
-                        wNode.send({ payload: 'client-' + e.event, _client: client })
+                        let msg = { payload: 'client-' + e.event, _client: client }
+                        const conn = e.socketId ? ui.uiShared?.connections?.[e.socketId] : null
+                        if (conn) { msg = addConnectionCredentials(RED, msg, conn, ui) }
+                        wNode.send(msg)
                     }
                 }
                 clientEventStore.events.on('client', onClientEvent)
+                setImmediate(() => {
+                    for (const c of clientEventStore.list()) {
+                        onClientEvent({ event: 'connected', clientId: c.clientId, socketId: c.socketId })
+                    }
+                })
             }
         }
 

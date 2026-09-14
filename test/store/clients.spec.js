@@ -93,4 +93,46 @@ describe('client store', function () {
         store.disconnect(undefined, 's1')
         events.should.have.length(0)
     })
+
+    it('dropSocket clears an entry silently so a reconnect emits connected', function () {
+        const t = fakeTimer()
+        const store = createClientStore(t)
+        store.connect('c1', 's1')
+        const events = collect(store)
+        store.dropSocket('c1', 's1') // base node removed while socket lingered
+        events.should.have.length(0) // no gone/grace on drop
+        store.connect('c1', 's2') // client reconnects after the dashboard is restored
+        events.should.matchAny({ event: 'connected', clientId: 'c1' })
+    })
+
+    it('dropSocket keeps the entry while another socket is still live', function () {
+        const store = createClientStore()
+        store.connect('c1', 's1')
+        store.connect('c1', 's2')
+        store.dropSocket('c1', 's1')
+        store.list().should.matchAny({ clientId: 'c1' })
+    })
+
+    it('list reports only currently-present clients', function () {
+        const t = fakeTimer()
+        const store = createClientStore(t)
+        store.connect('c1', 's1')
+        store.connect('c2', 's2')
+        store.disconnect('c2', 's2')
+        t.fire() // c2 gone
+        const present = store.list()
+        present.should.have.length(1)
+        present[0].should.match({ clientId: 'c1', socketId: 's1' })
+    })
+
+    it('unrefs the grace timer so it cannot hold the process open', function () {
+        let unrefd = false
+        const store = createClientStore({
+            setTimeoutFn: () => ({ unref: () => { unrefd = true } }),
+            clearTimeoutFn: () => {}
+        })
+        store.connect('c1', 's1')
+        store.disconnect('c1', 's1')
+        unrefd.should.be.true()
+    })
 })

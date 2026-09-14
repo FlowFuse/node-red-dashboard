@@ -44,10 +44,28 @@ function createClientStore ({ graceMs = DEFAULT_GRACE_MS, setTimeoutFn = setTime
                 delete clients[clientId]
                 events.emit('client', { event: 'gone', clientId })
             }, graceMs)
+            if (typeof entry.graceTO?.unref === 'function') { entry.graceTO.unref() }
         }
     }
 
-    return { connect, disconnect, events }
+    function dropSocket (clientId, socketId) {
+        if (!clientId) { return }
+        const entry = clients[clientId]
+        if (!entry) { return }
+        entry.sockets.delete(socketId)
+        if (entry.sockets.size === 0) {
+            if (entry.graceTO) { clearTimeoutFn(entry.graceTO) }
+            delete clients[clientId]
+        }
+    }
+
+    function list () {
+        return Object.entries(clients)
+            .filter(([, entry]) => entry.sockets.size > 0)
+            .map(([clientId, entry]) => ({ clientId, socketId: entry.sockets.values().next().value }))
+    }
+
+    return { connect, disconnect, dropSocket, list, events }
 }
 
 module.exports = { createClientStore }

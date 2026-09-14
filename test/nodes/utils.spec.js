@@ -39,4 +39,18 @@ describe('utils', function () {
             widgets['widget-b'].src.should.equal('ui-widget.js')
         })
     })
+
+    describe('normalizeClientId', function () {
+        it('returns a plain string id unchanged', function () {
+            utils.normalizeClientId('abc').should.equal('abc')
+        })
+        it('collapses a duplicated (array) query param to the first value', function () {
+            utils.normalizeClientId(['abc', 'def']).should.equal('abc')
+        })
+        it('returns undefined for missing or empty ids', function () {
+            should(utils.normalizeClientId(undefined)).be.undefined()
+            should(utils.normalizeClientId(null)).be.undefined()
+            should(utils.normalizeClientId('')).be.undefined()
+        })
+    })
 })
