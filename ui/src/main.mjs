@@ -89,7 +89,8 @@ const host = new URL(window.location.href)
 function getDashboardReloadUrl () {
     const setupBasePath = store.state.setup.setup?.basePath
     const currentDashboardPath = window.location.pathname.match(/^(.+?\/dashboard)(?:\/|$)/)?.[1]
-    const basePath = setupBasePath || currentDashboardPath || '/dashboard'
+    const rawBasePath = setupBasePath || currentDashboardPath || '/dashboard'
+    const basePath = rawBasePath.endsWith('/') ? rawBasePath : rawBasePath + '/'
 
     return new URL(basePath, window.location.origin)
 }
