@@ -9,6 +9,10 @@ import { NetworkOnly } from 'workbox-strategies'
 registerRoute(new NavigationRoute(new NetworkOnly({
     networkTimeoutSeconds: 5,
     plugins: [{
+        // 5xx -> serve the shell so it can self-heal. Match >= 500 not !response.ok, so the
+        // status-0 opaqueredirect (the auth redirect) passes through.
+        fetchDidSucceed: async ({ response }) =>
+            response.status >= 500 ? (await matchPrecache('index.html')) || response : response,
         handlerDidError: async () => (await matchPrecache('index.html')) || Response.error()
     }]
 })))
