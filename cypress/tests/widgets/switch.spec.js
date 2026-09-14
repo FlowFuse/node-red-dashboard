@@ -161,3 +161,31 @@ describe('Node-RED Dashboard 2.0 - Change the layout', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-switch-change-layout .nrdb-switch').should('have.class', 'nrdb-ui-switch--row-spread-swapped')
     })
 })
+
+describe('Node-RED Dashboard 2.0 - Switches with Buffer values', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-switches')
+        cy.visit('/dashboard/page1')
+    })
+
+    it('turns on when sent the matching on-buffer payload', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-buffer-on'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-buffer').find('.v-input.v-input--horizontal').should('have.class', 'active')
+    })
+
+    it('turns off when sent the matching off-buffer payload', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-buffer-on'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-buffer').find('.v-input.v-input--horizontal').should('have.class', 'active')
+
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-buffer-off'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-buffer').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
+    })
+
+    it('maintains buffer state on page refresh', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-buffer-off'))
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-buffer').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
+
+        cy.reload()
+        cy.get('#nrdb-ui-widget-dashboard-ui-switch-buffer').find('.v-input.v-input--horizontal').should('not.have.class', 'active')
+    })
+})
