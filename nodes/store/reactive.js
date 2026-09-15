@@ -29,16 +29,16 @@ function deepClone (v) {
     return out
 }
 
-function deepReactive (value, notify, path) {
+function deepReactive (value, notify, path, clone) {
     if (!isReactable(value)) return value
-    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`)
+    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone)
     return new Proxy(value, {
         get (t, p, r) { return Reflect.get(t, p, r) },
         set (t, p, v) {
             if (typeof p === 'symbol') return Reflect.set(t, p, v)
             // a push writes the new index then grows length; only a shrink is a change worth reporting
             const shrank = p === 'length' && Array.isArray(t) && v < t.length
-            t[p] = deepReactive(v, notify, `${path}.${String(p)}`)
+            t[p] = deepReactive(clone(v), notify, `${path}.${String(p)}`, clone)
             if (p !== 'length') notify(`${path}.${String(p)}`)
             else if (shrank) notify(path)
             return true
@@ -84,7 +84,7 @@ function createDataStore ({ maxHistory = 20, onChange, clone = deepClone, now = 
             }
             const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
             // clone on write so a flow reusing its own object can't mutate stored state
-            rec.value = deepReactive(cloneValue(value), notify, prop)
+            rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
             rec.timestamp = now()
             onChange?.(prop, rec, prop)
             return true

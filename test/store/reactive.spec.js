@@ -128,6 +128,24 @@ describe('store: reactive data store', function () {
             original.inner.x = 999
             store.obj.inner.x.should.equal(1)
         })
+
+        it('does not alias a nested assignment into the store', function () {
+            const { store } = makeStore()
+            store.robot = { sensors: {} }
+            const original = { x: 1 }
+            store.robot.sensors = original
+            original.x = 999
+            store.robot.sensors.x.should.equal(1)
+        })
+
+        it('does not wrap the caller object in place on a nested assignment', function () {
+            const { store } = makeStore()
+            store.robot = { sensors: {} }
+            const original = { inner: { x: 1 } }
+            const innerRef = original.inner
+            store.robot.sensors = original
+            should(original.inner).equal(innerRef)
+        })
     })
 
     describe('timestamps', function () {
