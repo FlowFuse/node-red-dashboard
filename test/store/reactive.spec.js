@@ -2,7 +2,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -310,6 +310,22 @@ describe('store: reactive data store', function () {
             store.robot.should.eql({ temp: 1 })
             store.a = 6
             log.should.containEql('a')
+        })
+    })
+
+    describe('isInMemoryBacked', function () {
+        it('is true for an in-memory context whose get returns synchronously', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            isInMemoryBacked(g).should.equal(true)
+        })
+
+        it('is false when a cache-off store throws on synchronous get', function () {
+            const g = {
+                get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
+                set: () => {}
+            }
+            isInMemoryBacked(g).should.equal(false)
         })
     })
 })
