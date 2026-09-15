@@ -1,3 +1,8 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+
+const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
@@ -326,6 +331,26 @@ describe('store: reactive data store', function () {
                 set: () => {}
             }
             isInMemoryBacked(g).should.equal(false)
+        })
+
+        // a real localfilesystem store, accessed the way the context manager's sync path does (store.get(scope, key))
+        function realGlobal (store) {
+            return { get: (key) => store.get('global', key) }
+        }
+        function tmpDir () {
+            const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-ctx-'))
+            after(() => fs.rmSync(dir, { recursive: true, force: true }))
+            return dir
+        }
+
+        it('is false for a real cache-off localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: false })
+            isInMemoryBacked(realGlobal(store)).should.equal(false)
+        })
+
+        it('is true for a real cache-backed localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: true })
+            isInMemoryBacked(realGlobal(store)).should.equal(true)
         })
     })
 })
