@@ -406,7 +406,7 @@ module.exports = function (RED) {
         if (isInMemoryBacked(node.context().global)) {
             attachToContext(node.context().global, { clone: RED.util.cloneMessage })
         } else {
-            node.warn('Dashboard data store disabled: the global context store does not support synchronous in-memory access (commonly a persistent store with cache: false). Reactive dashboard state needs an in-memory-backed context store.')
+            node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
         }
 
         n.root = RED.settings.httpNodeRoot || '/'
