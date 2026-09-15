@@ -1,8 +1,13 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+
+const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -310,6 +315,42 @@ describe('store: reactive data store', function () {
             store.robot.should.eql({ temp: 1 })
             store.a = 6
             log.should.containEql('a')
+        })
+    })
+
+    describe('isInMemoryBacked', function () {
+        it('is true for an in-memory context whose get returns synchronously', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            isInMemoryBacked(g).should.equal(true)
+        })
+
+        it('is false when a cache-off store throws on synchronous get', function () {
+            const g = {
+                get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
+                set: () => {}
+            }
+            isInMemoryBacked(g).should.equal(false)
+        })
+
+        // a real localfilesystem store, accessed the way the context manager's sync path does (store.get(scope, key))
+        function realGlobal (store) {
+            return { get: (key) => store.get('global', key) }
+        }
+        function tmpDir () {
+            const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-ctx-'))
+            after(() => fs.rmSync(dir, { recursive: true, force: true }))
+            return dir
+        }
+
+        it('is false for a real cache-off localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: false })
+            isInMemoryBacked(realGlobal(store)).should.equal(false)
+        })
+
+        it('is true for a real cache-backed localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: true })
+            isInMemoryBacked(realGlobal(store)).should.equal(true)
         })
     })
 })

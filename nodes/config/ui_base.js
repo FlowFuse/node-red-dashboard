@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
-const { attachToContext } = require('../store/reactive.js')
+const { attachToContext, isInMemoryBacked } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
@@ -403,7 +403,11 @@ module.exports = function (RED) {
 
         node._created = Date.now()
 
-        attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+        if (isInMemoryBacked(node.context().global)) {
+            attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+        } else {
+            node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
+        }
 
         n.root = RED.settings.httpNodeRoot || '/'
 

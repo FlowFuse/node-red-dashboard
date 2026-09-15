@@ -100,6 +100,16 @@ function createDataStore ({ maxHistory = 20, onChange, clone = deepClone, now = 
     return new Proxy(records, handler)
 }
 
+// A cache-off persistent store serves only async access, so a sync get throws; the reactive proxy needs an in-memory store.
+function isInMemoryBacked (globalContext, namespace = NAMESPACE) {
+    try {
+        globalContext.get(namespace)
+        return true
+    } catch (err) {
+        return false
+    }
+}
+
 // Inject the store into global context once. On redeploy the existing store is reused;
 // after a restart with a persistent context store, existing plain data is rehydrated.
 function attachToContext (globalContext, opts = {}) {
@@ -115,4 +125,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE }
+module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE }
