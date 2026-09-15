@@ -52,6 +52,7 @@ msg = {
         }
     },
     _client: {
+        clientId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
         socketId: '1234',
         socketIp: '127.0.0.1',
     }

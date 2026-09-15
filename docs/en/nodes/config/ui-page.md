@@ -17,6 +17,8 @@ props:
 
 Each page will be rendered in a navigation drawer within the UI, and can be accessed via the navigation bar at the top of the page. See [Layouts](../../contributing/guides/layouts) for more information on how layouts work.
 
+A page holds any number of [groups](./ui-group.md), arranged by its [Layout](../../layouts/index.md). If you're coming from the original Node-RED Dashboard, a page is the equivalent of a `ui-tab` — to render your groups as switchable tabs, use the [Tabs](../../layouts/types/tabs.md) layout.
+
 ## Properties
 
 <PropsTable :hide-dynamic="true"/>

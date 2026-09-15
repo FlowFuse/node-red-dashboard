@@ -9,6 +9,7 @@ import { io } from 'socket.io-client'
 import router from './router.mjs'
 import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
+import { getOrCreateClientId } from './util/client-id'
 import { nextReconnectInterval } from './util/reconnect-interval'
 
 // Vuetify
@@ -31,10 +32,12 @@ import { useDataTracker } from './widgets/data-tracker.mjs' // eslint-disable-li
 
 // Retrieve the "Default" theme from cache
 function retrieveDefaultThemeFromCache () {
-    const cachedTheme = localStorage.getItem('ndrb-theme-default')
-    if (cachedTheme) {
-        return JSON.parse(cachedTheme)
-    }
+    try {
+        const cachedTheme = localStorage.getItem('ndrb-theme-default')
+        if (cachedTheme) {
+            return JSON.parse(cachedTheme)
+        }
+    } catch (_error) { }
     return null
 }
 
@@ -89,7 +92,8 @@ const host = new URL(window.location.href)
 function getDashboardReloadUrl () {
     const setupBasePath = store.state.setup.setup?.basePath
     const currentDashboardPath = window.location.pathname.match(/^(.+?\/dashboard)(?:\/|$)/)?.[1]
-    const basePath = setupBasePath || currentDashboardPath || '/dashboard'
+    const rawBasePath = setupBasePath || currentDashboardPath || '/dashboard'
+    const basePath = rawBasePath.endsWith('/') ? rawBasePath : rawBasePath + '/'
 
     return new URL(basePath, window.location.origin)
 }
@@ -160,10 +164,11 @@ fetch('_setup')
         let reconnectTO = null
         let reconnecting = false
         const editKey = host.searchParams.get('edit-key')
+        const clientId = getOrCreateClientId(() => window.localStorage)
         const socket = io({
             ...setup.socketio,
             reconnection: false,
-            query: editKey ? { editKey } : undefined // include handshake data so that only original edit-key holder can edit
+            query: { clientId, ...(editKey ? { editKey } : {}) }
         })
 
         // handle final disconnection

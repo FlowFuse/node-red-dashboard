@@ -652,5 +652,101 @@
                 "test-helper"
             ]
         ]
+    },
+    {
+        "id": "dashboard-ui-group-5",
+        "type": "ui-group",
+        "name": "Group 5",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-button-buffer-on",
+        "type": "ui-button",
+        "z": "node-red-tab-switches",
+        "group": "dashboard-ui-group-5",
+        "name": "",
+        "label": "Button - On (buffer)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[\"0x00\",\"0x31\",\"11\",\"23\",\"1\",\"100\"]",
+        "payloadType": "bin",
+        "topic": "",
+        "topicType": "str",
+        "x": 100,
+        "y": 620,
+        "wires": [
+            ["dashboard-ui-switch-buffer"]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-buffer-off",
+        "type": "ui-button",
+        "z": "node-red-tab-switches",
+        "group": "dashboard-ui-group-5",
+        "name": "",
+        "label": "Button - Off (buffer)",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[\"0x00\",\"0x31\",\"11\",\"23\",\"1\",\"0\"]",
+        "payloadType": "bin",
+        "topic": "",
+        "topicType": "str",
+        "x": 100,
+        "y": 660,
+        "wires": [
+            ["dashboard-ui-switch-buffer"]
+        ]
+    },
+    {
+        "id": "dashboard-ui-switch-buffer",
+        "type": "ui-switch",
+        "z": "node-red-tab-switches",
+        "name": "",
+        "label": "Buffer",
+        "group": "dashboard-ui-group-5",
+        "order": 0,
+        "width": "3",
+        "height": "1",
+        "passthru": true,
+        "topic": "topic",
+        "topicType": "str",
+        "style": "",
+        "className": "",
+        "onvalue": "[\"0x00\",\"0x31\",\"11\",\"23\",\"1\",\"100\"]",
+        "onvalueType": "bin",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "[\"0x00\",\"0x31\",\"11\",\"23\",\"1\",\"0\"]",
+        "offvalueType": "bin",
+        "officon": "",
+        "offcolor": "",
+        "x": 300,
+        "y": 640,
+        "wires": [
+            [
+                "test-helper"
+            ]
+        ]
     }
 ]
