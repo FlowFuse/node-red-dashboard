@@ -1,34 +1,27 @@
 /// <reference lib="webworker" />
 import { clientsClaim } from 'workbox-core'
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
+import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
+import { NetworkOnly } from 'workbox-strategies'
+
+// Network-first (keeps 'navigate' mode so an auth proxy's login redirect is followed), cached shell
+// on failure. Registered before the precache route so it owns every navigation.
+registerRoute(new NavigationRoute(new NetworkOnly({
+    networkTimeoutSeconds: 5,
+    plugins: [{
+        // 5xx -> serve the shell so it can self-heal. Match >= 500 not !response.ok, so the
+        // status-0 opaqueredirect (the auth redirect) passes through.
+        fetchDidSucceed: async ({ response }) =>
+            response.status >= 500 ? (await matchPrecache('index.html')) || response : response,
+        handlerDidError: async () => (await matchPrecache('index.html')) || Response.error()
+    }]
+})))
 
 // self.__WB_MANIFEST is the default injection point
 precacheAndRoute(self.__WB_MANIFEST)
 
 // clean old assets
 cleanupOutdatedCaches()
-
-/** @type {RegExp[] | undefined} */
-const denylist = []
-
-// in dev mode, do not precache anything
-if (import.meta.env.DEV) {
-    // don't precache anything
-    console.log('Development mode, not pre-caching anything')
-    denylist.push(/.*/)
-} else {
-    // don't precache anything where the urls pathname ends with a slash (including times when the url has a query string)
-    // this permits the request to be handled by the server which will do a redirect as required
-    const configPath = self.location.pathname.split('/')[1]
-    denylist.push(new RegExp(`/${configPath}/[^?]*/(\\?.*)*$`))
-}
-
-// to allow work offline for allowed routes only
-registerRoute(new NavigationRoute(
-    createHandlerBoundToURL('index.html'),
-    { denylist }
-))
 
 self.skipWaiting()
 // https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
