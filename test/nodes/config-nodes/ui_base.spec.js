@@ -50,7 +50,7 @@ describe('ui-base config node: data store injection', function () {
         ...testFlow1
     ]
 
-    it('injects the reactive store into global context under the dashboard namespace', async function () {
+    it('injects the reactive store into global context under the dashboardStore namespace', async function () {
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
         const base = helper.getNode('config-ui-base')

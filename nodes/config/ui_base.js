@@ -407,7 +407,7 @@ module.exports = function (RED) {
             try {
                 attachToContext(node.context().global, {
                     clone: RED.util.cloneMessage,
-                    onOverwrite: () => node.warn('Dashboard data store was overwritten in global context by a flow; re-injecting it. Write keys as global.dashboard.<key> rather than replacing global.dashboard itself.')
+                    onOverwrite: () => node.warn('Dashboard data store was overwritten in global context by a flow; re-injecting it. Write keys as global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
                 })
             } catch (err) {
                 node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')

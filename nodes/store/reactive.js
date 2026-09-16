@@ -1,5 +1,5 @@
 const STORE = Symbol('dashboardDataStore')
-const NAMESPACE = 'dashboard'
+const NAMESPACE = 'dashboardStore'
 
 class Entry {
     constructor () {
