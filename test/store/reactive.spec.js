@@ -67,6 +67,27 @@ describe('store: reactive data store', function () {
             store.$h.history.map((h) => h.value).should.eql([2, 3])
             store.h.should.equal(4)
         })
+
+        it('keeps no history for array-valued keys (a chart series is its own history)', function () {
+            const { store } = makeStore()
+            store.series = [1, 2]
+            store.series = [3, 4, 5]
+            store.$series.history.should.eql([])
+        })
+
+        it('does not snapshot the old array when it is replaced (even by a scalar)', function () {
+            const { store } = makeStore()
+            store.k = [1, 2, 3]
+            store.k = 9
+            store.$k.history.should.eql([])
+        })
+
+        it('does snapshot a scalar when it becomes an array', function () {
+            const { store } = makeStore()
+            store.k = 5
+            store.k = [1, 2]
+            store.$k.history.map((h) => h.value).should.eql([5])
+        })
     })
 
     describe('deep reactivity', function () {

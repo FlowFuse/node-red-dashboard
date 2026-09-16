@@ -52,7 +52,7 @@ function deepReactive (value, notify, path, clone) {
     })
 }
 
-function createDataStore ({ maxHistory = 20, onChange, clone = deepClone, now = Date.now } = {}) {
+function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
     const records = Object.create(null)
 
@@ -78,7 +78,8 @@ function createDataStore ({ maxHistory = 20, onChange, clone = deepClone, now = 
             if (!rec) {
                 rec = new Entry()
                 target[prop] = rec
-            } else {
+            } else if (!Array.isArray(rec.value)) {
+                // array-valued keys (e.g. a chart series) are their own history; snapshotting them would blow up memory
                 rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
