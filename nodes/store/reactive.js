@@ -1,5 +1,5 @@
 const STORE = Symbol('dashboardDataStore')
-const NAMESPACE = 'dashboard'
+const NAMESPACE = 'dashboardStore'
 
 class Entry {
     constructor () {
@@ -52,7 +52,7 @@ function deepReactive (value, notify, path, clone) {
     })
 }
 
-function createDataStore ({ maxHistory = 20, onChange, clone = deepClone, now = Date.now } = {}) {
+function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
     const records = Object.create(null)
 

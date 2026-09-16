@@ -197,51 +197,51 @@ describe('store: reactive data store', function () {
         function makeContext () {
             const log = []
             const ctx = Memory({})
-            ctx.set('global', 'dashboard', createDataStore({ onChange: (k, e, p) => log.push(p) }))
+            ctx.set('global', 'dashboardStore', createDataStore({ onChange: (k, e, p) => log.push(p) }))
             return { ctx, log }
         }
 
         it('observes a change-node style path write', function () {
             const { ctx, log } = makeContext()
-            ctx.set('global', 'dashboard.tag1', 123)
+            ctx.set('global', 'dashboardStore.tag1', 123)
             log.should.eql(['tag1'])
-            ctx.get('global', 'dashboard.tag1').should.equal(123)
+            ctx.get('global', 'dashboardStore.tag1').should.equal(123)
         })
 
         it('observes a function-node get-then-mutate', function () {
             const { ctx, log } = makeContext()
-            ctx.set('global', 'dashboard.robot', { temp: 20 })
+            ctx.set('global', 'dashboardStore.robot', { temp: 20 })
             log.length = 0
-            ctx.get('global', 'dashboard.robot').temp = 25
+            ctx.get('global', 'dashboardStore.robot').temp = 25
             log.should.eql(['robot.temp'])
         })
 
         it('creates a brand-new nested path from a change-node write', function () {
             const { ctx, log } = makeContext()
-            ctx.set('global', 'dashboard.newObj.sub', 5)
-            ctx.get('global', 'dashboard.newObj').should.eql({ sub: 5 })
+            ctx.set('global', 'dashboardStore.newObj.sub', 5)
+            ctx.get('global', 'dashboardStore.newObj').should.eql({ sub: 5 })
             log.should.containEql('newObj.sub')
         })
 
         it('works through the async callback API', function () {
             const { ctx, log } = makeContext()
             let cbVal
-            ctx.set('global', 'dashboard.cbk', 42, () => {})
-            ctx.get('global', 'dashboard.cbk', (err, v) => { cbVal = err ? 'ERR' : v })
+            ctx.set('global', 'dashboardStore.cbk', 42, () => {})
+            ctx.get('global', 'dashboardStore.cbk', (err, v) => { cbVal = err ? 'ERR' : v })
             cbVal.should.equal(42)
             log.length = 0
-            ctx.set('global', 'dashboard.cbk', 43, () => {})
+            ctx.set('global', 'dashboardStore.cbk', 43, () => {})
             log.should.eql(['cbk'])
         })
 
         it('a raw overwrite drops reactivity until Dashboard re-injects (see attachToContext)', function () {
             const { ctx, log } = makeContext()
-            ctx.set('global', 'dashboard.k', 1)
-            ctx.set('global', 'dashboard', { k: 999 })
+            ctx.set('global', 'dashboardStore.k', 1)
+            ctx.set('global', 'dashboardStore', { k: 999 })
             log.length = 0
-            ctx.set('global', 'dashboard.k', 2)
+            ctx.set('global', 'dashboardStore.k', 2)
             log.should.eql([])
-            ctx.get('global', 'dashboard.k').should.equal(2)
+            ctx.get('global', 'dashboardStore.k').should.equal(2)
         })
     })
 
@@ -294,9 +294,9 @@ describe('store: reactive data store', function () {
         it('injects the store under the dashboard namespace', function () {
             const g = fakeGlobal()
             const store = attachToContext(g, { onChange: () => {} })
-            should(g.get('dashboard')).equal(store)
+            should(g.get('dashboardStore')).equal(store)
             store.a = 1
-            g.get('dashboard').a.should.equal(1)
+            g.get('dashboardStore').a.should.equal(1)
         })
 
         it('is idempotent, reusing the store across calls', function () {
@@ -308,7 +308,7 @@ describe('store: reactive data store', function () {
 
         it('rehydrates around existing plain data and rewires reactivity', function () {
             const g = fakeGlobal()
-            g.set('dashboard', { a: 5, robot: { temp: 1 } })
+            g.set('dashboardStore', { a: 5, robot: { temp: 1 } })
             const log = []
             const store = attachToContext(g, { onChange: (k, e, p) => log.push(p) })
             store.a.should.equal(5)
@@ -321,13 +321,13 @@ describe('store: reactive data store', function () {
             const g = fakeGlobal()
             const store = attachToContext(g)
             store.k = 1
-            g.set('dashboard', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
+            g.set('dashboardStore', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
 
             let warned = 0
             const restored = attachToContext(g, { onOverwrite: () => { warned++ } })
             warned.should.equal(1)
             restored[STORE].should.equal(true)
-            should(g.get('dashboard')).equal(restored)
+            should(g.get('dashboardStore')).equal(restored)
             restored.extra.should.equal(2)
             should(attachToContext(g)).equal(restored) // idempotent again, no re-overwrite
             restored.k = 5
