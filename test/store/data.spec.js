@@ -73,6 +73,27 @@ describe('store: data.js reactive-store mirror', function () {
         should(global.get('dashboardStore').w6).be.undefined()
     })
 
+    it('keeps the mirrored value when a later message carries no payload', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('w8', global)
+        datastore.save(base, node, { payload: 'keep me' })
+        datastore.save(base, node, { topic: 'no payload' })
+
+        global.get('dashboardStore').w8.should.equal('keep me')
+        datastore.get('w8').payload.should.equal('keep me')
+        global.get('dashboardStore').$w8.history.should.eql([])
+    })
+
+    it('blanks the mirrored value when a message explicitly carries payload: undefined', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('w11', global)
+        datastore.save(base, node, { payload: 'keep me' })
+        datastore.save(base, node, { payload: undefined, topic: 'explicit' })
+
+        should(global.get('dashboardStore').w11).be.undefined()
+        should(datastore.get('w11').payload).be.undefined()
+    })
+
     it('clearFromStore does not throw when the store is unavailable', function () {
         const throwingGlobal = {
             get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
@@ -80,6 +101,85 @@ describe('store: data.js reactive-store mirror', function () {
         }
         const node = fakeNode('w7', throwingGlobal)
         should(() => datastore.clearFromStore(node)).not.throw()
+    })
+})
+
+describe('store: data.js store options', function () {
+    afterEach(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
+    it('re-injects with the registered options when a flow overwrites the namespace', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('w9', global)
+        let overwrites = 0
+        datastore.initStore(global, { onOverwrite: () => { overwrites++ } })
+
+        datastore.save(base, node, { payload: 1 })
+        global.set('dashboardStore', { rogue: true })
+        datastore.save(base, node, { payload: 2 })
+
+        overwrites.should.equal(1)
+        global.get('dashboardStore').w9.should.equal(2)
+    })
+
+    it('keeps onChange wired through a widget-triggered re-injection', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('w10', global)
+        const changes = []
+        datastore.initStore(global, { onChange: (key) => changes.push(key) })
+
+        global.set('dashboardStore', { rogue: true })
+        datastore.save(base, node, { payload: 'after' })
+
+        changes.should.containEql('w10')
+    })
+})
+
+describe('store: data.js disabled store', function () {
+    const cacheOffGlobal = () => ({
+        gets: 0,
+        get () { this.gets++; throw new Error('File Store cache disabled - only asynchronous access supported') },
+        set () {}
+    })
+
+    afterEach(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
+    it('stops touching global context once the store is disabled', function () {
+        const global = cacheOffGlobal()
+        const scalar = fakeNode('w12', global)
+        const chart = fakeNode('w12-chart', global)
+        datastore.disableStore()
+
+        datastore.save(base, scalar, { payload: 1 })
+        datastore.append(base, chart, { _datapoint: { category: 'a', x: 1, y: 1 } })
+        datastore.filter(base, chart, () => false)
+        datastore.clearFromStore(scalar)
+
+        global.gets.should.equal(0)
+    })
+
+    it('leaves the legacy datastore working while disabled', function () {
+        const global = cacheOffGlobal()
+        const node = fakeNode('w13', global)
+        datastore.disableStore()
+
+        datastore.save(base, node, { payload: 'legacy still works' })
+
+        datastore.get('w13').payload.should.equal('legacy still works')
+    })
+
+    it('re-enables on a later initStore', function () {
+        datastore.disableStore()
+
+        const global = fakeGlobal()
+        const node = fakeNode('w14', global)
+        datastore.initStore(global, {})
+        datastore.save(base, node, { payload: 'back on' })
+
+        global.get('dashboardStore').w14.should.equal('back on')
     })
 })
 

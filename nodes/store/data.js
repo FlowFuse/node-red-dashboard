@@ -10,14 +10,37 @@ function projectValue (node, msg) {
     return msg.payload
 }
 
+let storeOptions = {}
+let storeEnabled = true
+
+function storeOpts () {
+    return { clone: config.RED.util.cloneMessage, ...storeOptions }
+}
+
+function initStore (globalContext, opts) {
+    storeOptions = { ...opts }
+    storeEnabled = true
+    return attachToContext(globalContext, storeOpts())
+}
+
+function disableStore () {
+    storeEnabled = false
+}
+
 function getStore (node) {
-    return attachToContext(node.context().global, { clone: config.RED.util.cloneMessage })
+    return attachToContext(node.context().global, storeOpts())
+}
+
+function withStore (node, fn) {
+    if (!storeEnabled) return
+    try {
+        fn(getStore(node))
+    } catch (err) {}
 }
 
 function writeToStore (node, msg) {
-    try {
-        getStore(node)[node.id] = projectValue(node, msg)
-    } catch (err) {}
+    if (!('payload' in msg)) return
+    withStore(node, (store) => { store[node.id] = projectValue(node, msg) })
 }
 
 function pointsFromMessages (messages) {
@@ -37,26 +60,21 @@ function pointsFromMessages (messages) {
 }
 
 function writeArrayToStore (node) {
-    try {
-        getStore(node)[node.id] = pointsFromMessages(data[node.id])
-    } catch (err) {}
+    withStore(node, (store) => { store[node.id] = pointsFromMessages(data[node.id]) })
 }
 
 function appendToStore (node, message) {
-    try {
-        const store = getStore(node)
+    withStore(node, (store) => {
         if (Array.isArray(store[node.id])) {
             for (const point of pointsFromMessages([message])) store[node.id].push(point)
         } else {
             store[node.id] = pointsFromMessages(data[node.id])
         }
-    } catch (err) {}
+    })
 }
 
 function clearFromStore (node) {
-    try {
-        delete getStore(node)[node.id]
-    } catch (err) {}
+    withStore(node, (store) => { delete store[node.id] })
 }
 
 /**
@@ -188,5 +206,7 @@ module.exports = {
     append: setters.append,
     filter: setters.filter,
     clear: setters.clear,
-    clearFromStore
+    clearFromStore,
+    initStore,
+    disableStore
 }

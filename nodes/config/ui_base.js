@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
-const { attachToContext, isInMemoryBacked } = require('../store/reactive.js')
+const { isInMemoryBacked } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
@@ -405,14 +405,15 @@ module.exports = function (RED) {
 
         if (isInMemoryBacked(node.context().global)) {
             try {
-                attachToContext(node.context().global, {
-                    clone: RED.util.cloneMessage,
+                datastore.initStore(node.context().global, {
                     onOverwrite: () => node.warn('Dashboard data store was overwritten in global context by a flow; re-injecting it. Write keys as global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
                 })
             } catch (err) {
+                datastore.disableStore()
                 node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
             }
         } else {
+            datastore.disableStore()
             node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
         }
 
