@@ -403,7 +403,11 @@ module.exports = function (RED) {
 
         node._created = Date.now()
 
-        attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+        try {
+            attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+        } catch (err) {
+            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+        }
 
         n.root = RED.settings.httpNodeRoot || '/'
 
