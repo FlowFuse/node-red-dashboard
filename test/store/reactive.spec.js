@@ -7,7 +7,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, isInMemoryBacked } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked, STORE } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -234,7 +234,7 @@ describe('store: reactive data store', function () {
             log.should.eql(['cbk'])
         })
 
-        it('loses reactivity if a flow clobbers the namespace (known Story 2 risk)', function () {
+        it('a raw overwrite drops reactivity until Dashboard re-injects (see attachToContext)', function () {
             const { ctx, log } = makeContext()
             ctx.set('global', 'dashboard.k', 1)
             ctx.set('global', 'dashboard', { k: 999 })
@@ -315,6 +315,30 @@ describe('store: reactive data store', function () {
             store.robot.should.eql({ temp: 1 })
             store.a = 6
             log.should.containEql('a')
+        })
+
+        it('reinjects and warns when a flow has overwritten the namespace, preserving data', function () {
+            const g = fakeGlobal()
+            const store = attachToContext(g)
+            store.k = 1
+            g.set('dashboard', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
+
+            let warned = 0
+            const restored = attachToContext(g, { onOverwrite: () => { warned++ } })
+            warned.should.equal(1)
+            restored[STORE].should.equal(true)
+            should(g.get('dashboard')).equal(restored)
+            restored.extra.should.equal(2)
+            should(attachToContext(g)).equal(restored) // idempotent again, no re-overwrite
+            restored.k = 5
+            restored.k.should.equal(5)
+        })
+
+        it('does not warn on a clean first injection', function () {
+            const g = fakeGlobal()
+            let warned = 0
+            attachToContext(g, { onOverwrite: () => { warned++ } })
+            warned.should.equal(0)
         })
     })
 

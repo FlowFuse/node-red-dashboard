@@ -404,7 +404,10 @@ module.exports = function (RED) {
         node._created = Date.now()
 
         if (isInMemoryBacked(node.context().global)) {
-            attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+            attachToContext(node.context().global, {
+                clone: RED.util.cloneMessage,
+                onOverwrite: () => node.warn('Dashboard data store was overwritten in global context by a flow; re-injecting it. Write keys as global.dashboard.<key> rather than replacing global.dashboard itself.')
+            })
         } else {
             node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
         }

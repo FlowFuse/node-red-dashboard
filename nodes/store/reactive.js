@@ -117,6 +117,8 @@ function attachToContext (globalContext, opts = {}) {
     const existing = globalContext.get(namespace)
     if (existing && existing[STORE]) return existing
 
+    if (existing && typeof existing === 'object') opts.onOverwrite?.()
+
     const store = createDataStore(opts)
     if (existing && typeof existing === 'object') {
         for (const [k, v] of Object.entries(existing)) store[k] = v
