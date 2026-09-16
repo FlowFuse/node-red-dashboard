@@ -1174,6 +1174,7 @@ module.exports = function (RED) {
                         // widget has been removed from the Editor
                         // clear any data from datastore
                         datastore.clear(widgetNode.id)
+                        datastore.clearFromStore(widgetNode)
                     }
                     node.deregister(null, null, widgetNode)
                     done()

@@ -1,7 +1,29 @@
+const { attachToContext } = require('./reactive.js')
+
 const data = {}
 
 const config = {
     RED: null
+}
+
+function projectValue (node, msg) {
+    return msg.payload
+}
+
+function getStore (node) {
+    return attachToContext(node.context().global, { clone: config.RED.util.cloneMessage })
+}
+
+function writeToStore (node, msg) {
+    try {
+        getStore(node)[node.id] = projectValue(node, msg)
+    } catch (err) {}
+}
+
+function clearFromStore (node) {
+    try {
+        delete getStore(node)[node.id]
+    } catch (err) {}
 }
 
 /**
@@ -90,6 +112,7 @@ const setters = {
                     ...data[node.id],
                     ...newMsg
                 }
+                writeToStore(node, msg)
             }
         }
     },
@@ -128,5 +151,6 @@ module.exports = {
     save: setters.save,
     append: setters.append,
     filter: setters.filter,
-    clear: setters.clear
+    clear: setters.clear,
+    clearFromStore
 }

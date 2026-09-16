@@ -6,7 +6,21 @@ const { testData1 } = require('../fixtures/index.js')
 const { verifyFlowLoaded } = require('../utils.js')
 
 const testFlow1 = testData1.flows
-const nodeImports = testData1.getImports(null, ['ui_button'])
+const nodeImports = testData1.getImports(null, ['ui_button', 'ui_text'])
+
+function waitFor (fn, timeout = 1000) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now()
+        const tick = () => {
+            let v
+            try { v = fn() } catch (e) {}
+            if (v !== undefined) { return resolve(v) }
+            if (Date.now() - start > timeout) { return reject(new Error('timeout waiting for store value')) }
+            setTimeout(tick, 5)
+        }
+        tick()
+    })
+}
 
 helper.init(require.resolve('node-red'))
 
@@ -32,6 +46,7 @@ describe('ui-base config node: data store injection', function () {
 
     const flow = [
         { id: 'node-ui-button', type: 'ui-button', z: 'tab-id', group: 'config-ui-group' },
+        { id: 'node-ui-text', type: 'ui-text', z: 'tab-id', group: 'config-ui-group', label: 'txt' },
         ...testFlow1
     ]
 
@@ -74,5 +89,17 @@ describe('ui-base config node: data store injection', function () {
         const again = attachToContext(global)
         should(again).equal(original)
         global.get(`${NAMESPACE}.reused`).should.equal(42)
+    })
+
+    it('populates the store with a widget\'s clean payload on input', async function () {
+        await helper.load(nodeImports, flow)
+        const text = helper.getNode('node-ui-text')
+        const global = helper.getNode('config-ui-base').context().global
+
+        text.receive({ payload: 'hello', topic: 't', _msgid: 'm' })
+
+        const value = await waitFor(() => global.get(NAMESPACE)['node-ui-text'])
+        value.should.equal('hello') // the clean payload, not the whole message
+        global.get(`${NAMESPACE}.$node-ui-text`).value.should.equal('hello')
     })
 })
