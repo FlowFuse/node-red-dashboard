@@ -1,7 +1,41 @@
+const { attachToContext } = require('./reactive.js')
+
 const data = {}
 
 const config = {
     RED: null
+}
+
+let storeOptions = {}
+let storeEnabled = true
+
+function getOrCreateStore (globalContext) {
+    return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
+}
+
+function initStore (globalContext, opts) {
+    storeOptions = { ...opts }
+    storeEnabled = true
+    return getOrCreateStore(globalContext)
+}
+
+function disableStore () {
+    storeEnabled = false
+}
+
+function writeToStore (node, msg) {
+    if (!storeEnabled) return
+    if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
+    try {
+        getOrCreateStore(node.context().global)[node.id] = msg.payload
+    } catch (err) {}
+}
+
+function clearFromStore (node) {
+    if (!storeEnabled) return
+    try {
+        delete getOrCreateStore(node.context().global)[node.id]
+    } catch (err) {}
 }
 
 /**
@@ -90,6 +124,7 @@ const setters = {
                     ...data[node.id],
                     ...newMsg
                 }
+                writeToStore(node, msg)
             }
         }
     },
@@ -128,5 +163,8 @@ module.exports = {
     save: setters.save,
     append: setters.append,
     filter: setters.filter,
-    clear: setters.clear
+    clear: setters.clear,
+    clearFromStore,
+    initStore,
+    disableStore
 }

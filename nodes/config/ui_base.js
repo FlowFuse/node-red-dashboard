@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
-const { attachToContext, isInMemoryBacked } = require('../store/reactive.js')
+const { isInMemoryBacked } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
@@ -405,14 +405,15 @@ module.exports = function (RED) {
 
         if (isInMemoryBacked(node.context().global)) {
             try {
-                attachToContext(node.context().global, {
-                    clone: RED.util.cloneMessage,
+                datastore.initStore(node.context().global, {
                     onReplaced: () => node.warn('A flow replaced global.dashboardStore, discarding the stored value of every widget; the store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
                 })
             } catch (err) {
+                datastore.disableStore()
                 node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
             }
         } else {
+            datastore.disableStore()
             node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
         }
 
@@ -1178,6 +1179,7 @@ module.exports = function (RED) {
                         // widget has been removed from the Editor
                         // clear any data from datastore
                         datastore.clear(widgetNode.id)
+                        datastore.clearFromStore(widgetNode)
                     }
                     node.deregister(null, null, widgetNode)
                     done()
