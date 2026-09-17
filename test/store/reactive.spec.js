@@ -1,8 +1,13 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+
+const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked, STORE } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -229,7 +234,7 @@ describe('store: reactive data store', function () {
             log.should.eql(['cbk'])
         })
 
-        it('loses reactivity if a flow clobbers the namespace (known Story 2 risk)', function () {
+        it('a raw overwrite drops reactivity until Dashboard re-injects (see attachToContext)', function () {
             const { ctx, log } = makeContext()
             ctx.set('global', 'dashboardStore.k', 1)
             ctx.set('global', 'dashboardStore', { k: 999 })
@@ -310,6 +315,95 @@ describe('store: reactive data store', function () {
             store.robot.should.eql({ temp: 1 })
             store.a = 6
             log.should.containEql('a')
+        })
+
+        it('reinjects and warns when a flow has overwritten the namespace, preserving data', function () {
+            const g = fakeGlobal()
+            const store = attachToContext(g)
+            store.k = 1
+            g.set('dashboardStore', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
+
+            let warned = 0
+            const restored = attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(1)
+            restored[STORE].should.equal(true)
+            should(g.get('dashboardStore')).equal(restored)
+            restored.extra.should.equal(2)
+            should(attachToContext(g)).equal(restored) // idempotent again, no re-overwrite
+            restored.k = 5
+            restored.k.should.equal(5)
+        })
+
+        it('does not warn on a clean first injection', function () {
+            const g = fakeGlobal()
+            let warned = 0
+            attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(0)
+        })
+
+        it('does not warn when a restart rehydrates plain data it never injected', function () {
+            const g = fakeGlobal()
+            g.set('dashboardStore', { widget: 'from disk' }) // what a persistent context store hands back
+            let warned = 0
+            const store = attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(0)
+            store.widget.should.equal('from disk')
+        })
+
+        const replacements = [
+            ['an object', { mine: 1 }],
+            ['an array', [1, 2]],
+            ['a string', 'hello'],
+            ['a number', 42],
+            ['null', null],
+            ['undefined', undefined]
+        ]
+        replacements.forEach(([label, value]) => {
+            it(`warns when a flow replaces the injected store with ${label}`, function () {
+                const g = fakeGlobal()
+                attachToContext(g)
+                let warned = 0
+                g.set('dashboardStore', value)
+                const restored = attachToContext(g, { onReplaced: () => { warned++ } })
+                warned.should.equal(1)
+                restored[STORE].should.equal(true)
+            })
+        })
+    })
+
+    describe('isInMemoryBacked', function () {
+        it('is true for an in-memory context whose get returns synchronously', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            isInMemoryBacked(g).should.equal(true)
+        })
+
+        it('is false when a cache-off store throws on synchronous get', function () {
+            const g = {
+                get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
+                set: () => {}
+            }
+            isInMemoryBacked(g).should.equal(false)
+        })
+
+        // a real localfilesystem store, accessed the way the context manager's sync path does (store.get(scope, key))
+        function realGlobal (store) {
+            return { get: (key) => store.get('global', key) }
+        }
+        function tmpDir () {
+            const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-ctx-'))
+            after(() => fs.rmSync(dir, { recursive: true, force: true }))
+            return dir
+        }
+
+        it('is false for a real cache-off localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: false })
+            isInMemoryBacked(realGlobal(store)).should.equal(false)
+        })
+
+        it('is true for a real cache-backed localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: true })
+            isInMemoryBacked(realGlobal(store)).should.equal(true)
         })
     })
 })
