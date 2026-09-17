@@ -227,6 +227,7 @@ fetch('_setup')
                 forcePageReload('parser error')
             } else if (!disconnected) {
                 // Initial connect failed - 'disconnect' never fires, so start the retry loop once (else it hangs on Loading).
+                retryCount = 0
                 disconnected = true
                 reconnect()
             }
