@@ -6,45 +6,36 @@ const config = {
     RED: null
 }
 
-function projectValue (node, msg) {
-    return msg.payload
-}
-
 let storeOptions = {}
 let storeEnabled = true
 
-function storeOpts () {
-    return { clone: config.RED.util.cloneMessage, ...storeOptions }
+function getOrCreateStore (globalContext) {
+    return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
 }
 
 function initStore (globalContext, opts) {
     storeOptions = { ...opts }
     storeEnabled = true
-    return attachToContext(globalContext, storeOpts())
+    return getOrCreateStore(globalContext)
 }
 
 function disableStore () {
     storeEnabled = false
 }
 
-function getStore (node) {
-    return attachToContext(node.context().global, storeOpts())
-}
-
-function withStore (node, fn) {
+function writeToStore (node, msg) {
     if (!storeEnabled) return
+    if (!('payload' in msg)) return
     try {
-        fn(getStore(node))
+        getOrCreateStore(node.context().global)[node.id] = msg.payload
     } catch (err) {}
 }
 
-function writeToStore (node, msg) {
-    if (!('payload' in msg)) return
-    withStore(node, (store) => { store[node.id] = projectValue(node, msg) })
-}
-
 function clearFromStore (node) {
-    withStore(node, (store) => { delete store[node.id] })
+    if (!storeEnabled) return
+    try {
+        delete getOrCreateStore(node.context().global)[node.id]
+    } catch (err) {}
 }
 
 /**
