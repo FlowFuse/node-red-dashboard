@@ -111,6 +111,14 @@ describe('store: data.js reactive-store mirror', function () {
         should(datastore.get('w11').payload).be.undefined()
     })
 
+    it('does not throw when a msg is not an object (unchanged from main)', function () {
+        const global = fakeGlobal()
+        for (const msg of ['hello', 42, true]) {
+            const node = fakeNode('prim-' + String(msg), global)
+            should(() => datastore.save(base, node, msg)).not.throw()
+        }
+    })
+
     it('clearFromStore does not throw when the store is unavailable', function () {
         const throwingGlobal = {
             get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },

@@ -25,7 +25,7 @@ function disableStore () {
 
 function writeToStore (node, msg) {
     if (!storeEnabled) return
-    if (!('payload' in msg)) return
+    if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
     try {
         getOrCreateStore(node.context().global)[node.id] = msg.payload
     } catch (err) {}

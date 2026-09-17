@@ -1,7 +1,9 @@
+const context = require('@node-red/runtime/lib/nodes/context')
 const helper = require('node-red-node-test-helper')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { attachToContext, STORE, NAMESPACE } = require('../../../nodes/store/reactive.js')
+const datastore = require('../../../nodes/store/data.js')
+const { STORE, NAMESPACE } = require('../../../nodes/store/reactive.js')
 const { testData1 } = require('../fixtures/index.js')
 const { verifyFlowLoaded } = require('../utils.js')
 
@@ -86,7 +88,10 @@ describe('ui-base config node: data store injection', function () {
 
         const original = global.get(NAMESPACE)
         original.reused = 42
-        const again = attachToContext(global)
+
+        // the path ui-base actually takes on a redeploy
+        const again = datastore.initStore(global, {})
+
         should(again).equal(original)
         global.get(`${NAMESPACE}.reused`).should.equal(42)
     })
@@ -101,5 +106,70 @@ describe('ui-base config node: data store injection', function () {
         const value = await waitFor(() => global.get(NAMESPACE)['node-ui-text'])
         value.should.equal('hello') // the clean payload, not the whole message
         global.get(`${NAMESPACE}.$node-ui-text`).value.should.equal('hello')
+    })
+})
+
+describe('ui-base config node: cache-off context store', function () {
+    const CACHE_OFF = 'File Store cache disabled - only asynchronous access supported'
+    let realGet
+    let touched
+
+    beforeEach(function (done) {
+        touched = { get: 0, set: 0 }
+        realGet = context.get
+        // a persistent context store with cache:false serves only async access, so a sync get throws
+        context.get = function (id, z) {
+            const real = realGet.call(context, id, z)
+            return Object.create(real, {
+                global: {
+                    value: {
+                        get () { touched.get++; throw new Error(CACHE_OFF) },
+                        set (...args) { touched.set++; return real.global.set(...args) }
+                    }
+                }
+            })
+        }
+        helper.startServer(done)
+    })
+
+    afterEach(function (done) {
+        context.get = realGet
+        datastore.initStore(fakeGlobal(), {})
+        helper.unload()
+        helper.stopServer(done)
+    })
+
+    function fakeGlobal () {
+        const m = {}
+        return { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+    }
+
+    const flow = [
+        { id: 'node-ui-text', type: 'ui-text', z: 'tab-id', group: 'config-ui-group', label: 'txt' },
+        ...testFlow1
+    ]
+
+    it('warns and does not inject the store', async function () {
+        await helper.load(nodeImports, flow)
+
+        const warned = helper.log().args.filter((args) =>
+            args[0].level === helper.log().WARN && /in-memory-backed/.test(args[0].msg)
+        )
+        warned.should.have.length(1)
+        touched.set.should.equal(0)
+    })
+
+    it('stops the write path instead of throwing on every message', async function () {
+        await helper.load(nodeImports, flow)
+        const text = helper.getNode('node-ui-text')
+
+        touched.get = 0
+        touched.set = 0
+        should(() => text.receive({ payload: 'hello' })).not.throw()
+        await new Promise((resolve) => setTimeout(resolve, 50))
+
+        touched.get.should.equal(0)
+        touched.set.should.equal(0)
+        datastore.get('node-ui-text').payload.should.equal('hello')
     })
 })
