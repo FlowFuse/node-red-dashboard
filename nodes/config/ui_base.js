@@ -6,6 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
+const { attachToContext } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
@@ -401,6 +402,12 @@ module.exports = function (RED) {
         const node = this
 
         node._created = Date.now()
+
+        try {
+            attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+        } catch (err) {
+            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+        }
 
         n.root = RED.settings.httpNodeRoot || '/'
 
