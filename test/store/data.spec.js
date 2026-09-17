@@ -109,17 +109,17 @@ describe('store: data.js store options', function () {
         datastore.initStore(fakeGlobal(), {})
     })
 
-    it('re-injects with the registered options when a flow overwrites the namespace', function () {
+    it('re-injects with the registered options when a flow replaces the namespace', function () {
         const global = fakeGlobal()
         const node = fakeNode('w9', global)
-        let overwrites = 0
-        datastore.initStore(global, { onOverwrite: () => { overwrites++ } })
+        let replaced = 0
+        datastore.initStore(global, { onReplaced: () => { replaced++ } })
 
         datastore.save(base, node, { payload: 1 })
         global.set('dashboardStore', { rogue: true })
         datastore.save(base, node, { payload: 2 })
 
-        overwrites.should.equal(1)
+        replaced.should.equal(1)
         global.get('dashboardStore').w9.should.equal(2)
     })
 

@@ -406,7 +406,7 @@ module.exports = function (RED) {
         if (isInMemoryBacked(node.context().global)) {
             try {
                 datastore.initStore(node.context().global, {
-                    onOverwrite: () => node.warn('Dashboard data store was overwritten in global context by a flow; re-injecting it. Write keys as global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
+                    onReplaced: () => node.warn('A flow replaced global.dashboardStore, discarding the stored value of every widget; the store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
                 })
             } catch (err) {
                 datastore.disableStore()

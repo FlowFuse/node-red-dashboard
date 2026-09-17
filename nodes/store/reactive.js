@@ -111,20 +111,27 @@ function isInMemoryBacked (globalContext, namespace = NAMESPACE) {
     }
 }
 
+const injected = new WeakMap()
+
 // Inject the store into global context once. On redeploy the existing store is reused;
 // after a restart with a persistent context store, existing plain data is rehydrated.
 function attachToContext (globalContext, opts = {}) {
     const namespace = opts.namespace || NAMESPACE
     const existing = globalContext.get(namespace)
-    if (existing && existing[STORE]) return existing
+    if (existing && existing[STORE]) {
+        injected.set(globalContext, existing)
+        return existing
+    }
 
-    if (existing && typeof existing === 'object') opts.onOverwrite?.()
+    const previous = injected.get(globalContext)
+    if (previous && existing !== previous) opts.onReplaced?.()
 
     const store = createDataStore(opts)
     if (existing && typeof existing === 'object') {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)
+    injected.set(globalContext, store)
     return store
 }
 

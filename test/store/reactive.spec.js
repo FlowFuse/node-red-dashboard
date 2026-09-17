@@ -345,7 +345,7 @@ describe('store: reactive data store', function () {
             g.set('dashboardStore', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
 
             let warned = 0
-            const restored = attachToContext(g, { onOverwrite: () => { warned++ } })
+            const restored = attachToContext(g, { onReplaced: () => { warned++ } })
             warned.should.equal(1)
             restored[STORE].should.equal(true)
             should(g.get('dashboardStore')).equal(restored)
@@ -358,8 +358,37 @@ describe('store: reactive data store', function () {
         it('does not warn on a clean first injection', function () {
             const g = fakeGlobal()
             let warned = 0
-            attachToContext(g, { onOverwrite: () => { warned++ } })
+            attachToContext(g, { onReplaced: () => { warned++ } })
             warned.should.equal(0)
+        })
+
+        it('does not warn when a restart rehydrates plain data it never injected', function () {
+            const g = fakeGlobal()
+            g.set('dashboardStore', { widget: 'from disk' }) // what a persistent context store hands back
+            let warned = 0
+            const store = attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(0)
+            store.widget.should.equal('from disk')
+        })
+
+        const replacements = [
+            ['an object', { mine: 1 }],
+            ['an array', [1, 2]],
+            ['a string', 'hello'],
+            ['a number', 42],
+            ['null', null],
+            ['undefined', undefined]
+        ]
+        replacements.forEach(([label, value]) => {
+            it(`warns when a flow replaces the injected store with ${label}`, function () {
+                const g = fakeGlobal()
+                attachToContext(g)
+                let warned = 0
+                g.set('dashboardStore', value)
+                const restored = attachToContext(g, { onReplaced: () => { warned++ } })
+                warned.should.equal(1)
+                restored[STORE].should.equal(true)
+            })
         })
     })
 
