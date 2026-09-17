@@ -79,7 +79,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 rec = new Entry()
                 target[prop] = rec
             } else if (!Array.isArray(rec.value)) {
-                // array-valued keys (e.g. a chart series) are their own history; snapshotting them would blow up memory
+                // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
                 rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
                 if (rec.history.length > maxHistory) rec.history.shift()
             }

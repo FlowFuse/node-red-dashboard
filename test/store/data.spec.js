@@ -46,11 +46,28 @@ describe('store: data.js reactive-store mirror', function () {
         should(global.get('dashboardStore')).be.undefined()
     })
 
-    it('mirrors array (chart-style) saves as a series', function () {
+    it('deep-copies a table rows array, so a flow reusing it cannot mutate stored state', function () {
         const global = fakeGlobal()
-        const node = fakeNode('w4', global)
-        datastore.save(base, node, [{ payload: 1 }, { payload: 2 }])
-        global.get('dashboardStore').w4.should.eql([1, 2])
+        const node = fakeNode('tbl-1', global)
+        const rows = [{ id: 1, name: 'a', meta: { site: { rack: 'r1' } } }]
+
+        datastore.save(base, node, { payload: rows })
+        rows[0].name = 'mutated'
+        rows[0].meta.site.rack = 'mutated-deep'
+
+        global.get('dashboardStore')['tbl-1'].should.eql([
+            { id: 1, name: 'a', meta: { site: { rack: 'r1' } } }
+        ])
+    })
+
+    it('keeps the mirrored rows independent of the legacy datastore', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('tbl-2', global)
+
+        datastore.save(base, node, { payload: [{ id: 1, name: 'original' }] })
+        global.get('dashboardStore')['tbl-2'][0].name = 'changed via store'
+
+        datastore.get('tbl-2').payload.should.eql([{ id: 1, name: 'original' }])
     })
 
     it('does not throw or mirror when the context store cannot hold the proxy', function () {
@@ -183,101 +200,67 @@ describe('store: data.js disabled store', function () {
     })
 })
 
-describe('store: data.js chart array mirror', function () {
+describe('store: data.js chart writes (deferred to Story 3)', function () {
     const pt = (x, y, category = 'a') => ({ category, x, y })
 
-    it('mirrors chart points (_datapoint) into the store on append', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c1', global)
-        datastore.append(base, node, { payload: 2, _datapoint: pt(1, 2) })
-        datastore.append(base, node, { payload: 3, _datapoint: pt(2, 3) })
-        global.get('dashboardStore').c1.should.eql([pt(1, 2), pt(2, 3)])
-    })
+    // an absent chart key only proves anything if the store is actually working
+    function liveStore (global, id) {
+        datastore.save(base, fakeNode(id, global), { payload: 'live' })
+        return global.get('dashboardStore')?.[id]
+    }
 
-    it('pushes each point when _datapoint is an array (multi-series)', function () {
+    it('does not mirror a chart append into the store', function () {
         const global = fakeGlobal()
-        const node = fakeNode('c2', global)
-        datastore.append(base, node, { _datapoint: [pt(1, 2, 'a'), pt(1, 5, 'b')] })
-        global.get('dashboardStore').c2.should.eql([pt(1, 2, 'a'), pt(1, 5, 'b')])
-    })
+        const node = fakeNode('chart-1', global)
 
-    it('replaces the store series on an array save (categorical/replace)', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c3', global)
-        datastore.append(base, node, { _datapoint: pt(1, 2) })
-        datastore.save(base, node, [{ _datapoint: pt(9, 9) }])
-        global.get('dashboardStore').c3.should.eql([pt(9, 9)])
-    })
-
-    it('clears the store series on save([])', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c4', global)
-        datastore.append(base, node, { _datapoint: pt(1, 2) })
-        datastore.save(base, node, [])
-        global.get('dashboardStore').c4.should.eql([])
-    })
-
-    it('mirrors a trim (filter) into the store', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c5', global)
         datastore.append(base, node, { _datapoint: pt(1, 1) })
         datastore.append(base, node, { _datapoint: pt(2, 2) })
-        datastore.append(base, node, { _datapoint: pt(3, 3) })
-        datastore.filter(base, node, (m, i) => i > 0) // drop the oldest
-        global.get('dashboardStore').c5.should.eql([pt(2, 2), pt(3, 3)])
+
+        liveStore(global, 'canary-1').should.equal('live')
+        should(global.get('dashboardStore')['chart-1']).be.undefined()
     })
 
-    it('keeps no history as the series grows', function () {
+    it('does not mirror an array save into the store', function () {
         const global = fakeGlobal()
-        const node = fakeNode('c6', global)
+        const node = fakeNode('chart-2', global)
+
+        datastore.save(base, node, [{ _datapoint: pt(1, 1) }, { _datapoint: pt(2, 2) }])
+
+        liveStore(global, 'canary-2').should.equal('live')
+        should(global.get('dashboardStore')['chart-2']).be.undefined()
+    })
+
+    it('does not mirror a trim into the store', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('chart-3', global)
+
         datastore.append(base, node, { _datapoint: pt(1, 1) })
-        datastore.save(base, node, []) // reassigns the array
         datastore.append(base, node, { _datapoint: pt(2, 2) })
-        global.get('dashboardStore').$c6.history.should.eql([])
+        datastore.filter(base, node, (m, i) => i > 0)
+
+        liveStore(global, 'canary-3').should.equal('live')
+        should(global.get('dashboardStore')['chart-3']).be.undefined()
     })
 
-    it('falls back to payload when _datapoint is null (multi-series without _datapoint)', function () {
+    it('still keeps the legacy chart series intact', function () {
         const global = fakeGlobal()
-        const node = fakeNode('c7', global)
-        datastore.append(base, node, { payload: 42, _datapoint: null })
-        global.get('dashboardStore').c7.should.eql([42])
+        const node = fakeNode('chart-4', global)
+
+        datastore.append(base, node, { _datapoint: pt(1, 1) })
+        datastore.append(base, node, { _datapoint: pt(2, 2) })
+        datastore.filter(base, node, (m, i) => i > 0)
+
+        datastore.get('chart-4').map((m) => m._datapoint).should.eql([pt(2, 2)])
     })
 
-    it('adds no point for an empty _datapoint array', function () {
+    it('clears a stale key if a node id was previously used for a value', function () {
         const global = fakeGlobal()
-        const node = fakeNode('c8', global)
-        datastore.append(base, node, { _datapoint: [] })
-        global.get('dashboardStore').c8.should.eql([])
-    })
+        const node = fakeNode('chart-5', global)
 
-    it('preserves falsy payloads (0/false) and skips a msg with neither field', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c9', global)
-        datastore.append(base, node, { payload: 0 })
-        datastore.append(base, node, { payload: false })
-        datastore.append(base, node, { topic: 'no value here' })
-        global.get('dashboardStore').c9.should.eql([0, false])
-    })
+        datastore.save(base, node, { payload: 'scalar first' })
+        global.get('dashboardStore')['chart-5'].should.equal('scalar first')
 
-    it('does not mirror a client-scoped chart append', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c10', global)
-        const scopedBase = { acceptsClientConfig: ['ui-text'] }
-        datastore.append(scopedBase, node, { _datapoint: pt(1, 2), _client: { socketId: 's1' } })
-        should(global.get('dashboardStore')).be.undefined()
-    })
-
-    it('stays in sync with a capped streaming chart (append + trim interleaved)', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('c-stream', global)
-        const CAP = 3
-        const keepLast = (message, index, arr) => index >= arr.length - CAP
-        for (let i = 1; i <= 6; i++) {
-            datastore.append(base, node, { _datapoint: pt(i, i) })
-            datastore.filter(base, node, keepLast)
-        }
-        // in-place appends interleaved with rebuild-trims must leave the store == the trimmed series
-        global.get('dashboardStore')['c-stream'].should.eql([pt(4, 4), pt(5, 5), pt(6, 6)])
-        datastore.get('c-stream').map((m) => m._datapoint).should.eql([pt(4, 4), pt(5, 5), pt(6, 6)])
+        datastore.clearFromStore(node)
+        should(global.get('dashboardStore')['chart-5']).be.undefined()
     })
 })

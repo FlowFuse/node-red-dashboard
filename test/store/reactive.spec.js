@@ -68,7 +68,7 @@ describe('store: reactive data store', function () {
             store.h.should.equal(4)
         })
 
-        it('keeps no history for array-valued keys (a chart series is its own history)', function () {
+        it('keeps no history for array-valued keys', function () {
             const { store } = makeStore()
             store.series = [1, 2]
             store.series = [3, 4, 5]
@@ -113,6 +113,28 @@ describe('store: reactive data store', function () {
             store.series.length = 0
             log.should.eql(['series'])
             store.series.should.eql([])
+        })
+
+        it('fires for an array at a nested path the same as one at a top-level key', function () {
+            const { store, log } = makeStore()
+            store.top = [1, 2]
+            store.nested = { rows: [1, 2] }
+
+            log.length = 0
+            store.top.push(3)
+            store.nested.rows.push(3)
+
+            log.should.eql(['top.2', 'nested.rows.2'])
+        })
+
+        it('does not alias an array assigned into the store', function () {
+            const { store } = makeStore()
+            const original = [{ x: 1 }]
+            store.series = original
+
+            original[0].x = 999
+
+            store.series.should.eql([{ x: 1 }])
         })
     })
 

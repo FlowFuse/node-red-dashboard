@@ -43,36 +43,6 @@ function writeToStore (node, msg) {
     withStore(node, (store) => { store[node.id] = projectValue(node, msg) })
 }
 
-function pointsFromMessages (messages) {
-    const points = []
-    if (!Array.isArray(messages)) return points
-    for (const message of messages) {
-        const datapoint = message && message._datapoint
-        if (datapoint == null) {
-            if (message && message.payload !== undefined) points.push(message.payload)
-        } else if (Array.isArray(datapoint)) {
-            points.push(...datapoint)
-        } else {
-            points.push(datapoint)
-        }
-    }
-    return points
-}
-
-function writeArrayToStore (node) {
-    withStore(node, (store) => { store[node.id] = pointsFromMessages(data[node.id]) })
-}
-
-function appendToStore (node, message) {
-    withStore(node, (store) => {
-        if (Array.isArray(store[node.id])) {
-            for (const point of pointsFromMessages([message])) store[node.id].push(point)
-        } else {
-            store[node.id] = pointsFromMessages(data[node.id])
-        }
-    })
-}
-
 function clearFromStore (node) {
     withStore(node, (store) => { delete store[node.id] })
 }
@@ -156,7 +126,6 @@ const setters = {
                 }
             }
             data[node.id] = filtered
-            writeArrayToStore(node)
         } else {
             if (canSaveInStore(base, node, msg)) {
                 const newMsg = stripMsg(msg)
@@ -176,7 +145,6 @@ const setters = {
                 data[node.id] = []
             }
             data[node.id].push(config.RED.util.cloneMessage(msg))
-            appendToStore(node, msg)
         }
     },
     /**
@@ -192,7 +160,6 @@ const setters = {
             if (filteredMessages.length !== currentData.length) {
                 // no need for save operation to process messages - just apply them
                 data[node.id] = filteredMessages
-                writeArrayToStore(node)
             }
         }
     }
