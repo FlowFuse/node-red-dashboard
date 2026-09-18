@@ -149,6 +149,7 @@ export default {
 <style>
 .nrdb-ui-button .v-btn__content {
     white-space: normal;
+    overflow-wrap: normal;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
