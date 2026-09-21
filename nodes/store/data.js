@@ -19,7 +19,7 @@ function canSaveInStore (base, node, msg) {
 
     if (constrained.includes(node.type)) {
         // core check
-        if (msg._client?.socketId) {
+        if (msg._client?.socketId || msg._client?.clientId) {
             // we are in a node type that allows for definition of specific clients,
             // and a client has been defined
             checks.push(false)

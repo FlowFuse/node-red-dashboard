@@ -18,7 +18,7 @@ function canSaveInStore (base, node, msg) {
         // core check
         if (base.acceptsClientConfig.includes(node.type)) {
             // we are in a node type that allows for definition of specific clients,
-            if (msg._client?.socketId) {
+            if (msg._client?.socketId || msg._client?.clientId) {
                 // and a client has been defined
                 checks.push(false)
             } else {
