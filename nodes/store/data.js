@@ -1,4 +1,4 @@
-const { attachToContext } = require('./reactive.js')
+const { attachToContext, SET_ENTRY } = require('./reactive.js')
 
 const data = {}
 
@@ -23,11 +23,12 @@ function disableStore () {
     storeEnabled = false
 }
 
-function writeToStore (node, msg) {
+function writeToStore (node, msg, stored) {
     if (!storeEnabled) return
     if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
     try {
-        getOrCreateStore(node.context().global)[node.id] = msg.payload
+        const clone = config.RED.util.cloneMessage
+        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, msg.payload, clone(stored))
     } catch (err) {}
 }
 
@@ -124,7 +125,7 @@ const setters = {
                     ...data[node.id],
                     ...newMsg
                 }
-                writeToStore(node, msg)
+                writeToStore(node, msg, data[node.id])
             }
         }
     },

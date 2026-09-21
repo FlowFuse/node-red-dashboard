@@ -1,9 +1,11 @@
 const STORE = Symbol('dashboardDataStore')
+const SET_ENTRY = Symbol('dashboardSetEntry')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
     constructor () {
         this.value = undefined
+        this.msg = undefined
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
@@ -58,6 +60,30 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[STORE] = true
 
+    // returns the record without notifying, so a caller can finish writing it before onChange fires
+    const writeValue = (prop, value) => {
+        let rec = records[prop]
+        if (!rec) {
+            rec = new Entry()
+            records[prop] = rec
+        } else if (!Array.isArray(rec.value)) {
+            // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
+            rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
+            if (rec.history.length > maxHistory) rec.history.shift()
+        }
+        const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
+        // clone on write so a flow reusing its own object can't mutate stored state
+        rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
+        rec.timestamp = now()
+        return rec
+    }
+
+    records[SET_ENTRY] = (prop, value, msg) => {
+        const rec = writeValue(prop, value)
+        rec.msg = msg
+        onChange?.(prop, rec, prop)
+    }
+
     const handler = {
         get (target, prop, receiver) {
             if (typeof prop === 'symbol') return Reflect.get(target, prop, receiver)
@@ -74,19 +100,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === '__proto__' || prop === 'constructor') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
-            let rec = target[prop]
-            if (!rec) {
-                rec = new Entry()
-                target[prop] = rec
-            } else if (!Array.isArray(rec.value)) {
-                // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-                rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
-                if (rec.history.length > maxHistory) rec.history.shift()
-            }
-            const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
-            // clone on write so a flow reusing its own object can't mutate stored state
-            rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
-            rec.timestamp = now()
+            const rec = writeValue(prop, value)
             onChange?.(prop, rec, prop)
             return true
         },
@@ -135,4 +149,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE }
+module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE, SET_ENTRY }

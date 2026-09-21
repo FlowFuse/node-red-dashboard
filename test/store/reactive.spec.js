@@ -7,7 +7,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, isInMemoryBacked, STORE } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked, STORE, SET_ENTRY } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -37,10 +37,47 @@ describe('store: reactive data store', function () {
             store.$k1.timestamp.should.be.a.Number()
         })
 
+        it('exposes an empty msg field on a new entry', function () {
+            const { store } = makeStore()
+            store.k1 = 123
+            store.$k1.should.have.property('msg')
+            should(store.$k1.msg).be.undefined()
+        })
+
         it('returns the whole object by default', function () {
             const { store } = makeStore()
             store.robot = { temp: 20 }
             store.robot.should.eql({ temp: 20 })
+        })
+    })
+
+    describe('entry setter', function () {
+        it('sets value and msg together and fires one change', function () {
+            const { store, log } = makeStore()
+            const msg = { payload: 42, topic: 'sensor-A' }
+
+            store[SET_ENTRY]('gauge', msg.payload, msg)
+
+            store.gauge.should.equal(42)
+            store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
+            log.should.eql(['gauge'])
+        })
+
+        it('keeps history on the value, as a normal write does', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('gauge', 1, { payload: 1 })
+            store[SET_ENTRY]('gauge', 2, { payload: 2 })
+
+            store.gauge.should.equal(2)
+            store.$gauge.history.map((h) => h.value).should.eql([1])
+        })
+
+        it('does not clone the message it is given', function () {
+            const { store } = makeStore()
+            const msg = { payload: 1, nested: { a: 1 } }
+            store[SET_ENTRY]('k', msg.payload, msg)
+
+            should(store.$k.msg).equal(msg)
         })
     })
 
