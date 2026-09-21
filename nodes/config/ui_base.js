@@ -225,7 +225,6 @@ module.exports = function (RED) {
                     lang: 'en',
                     scope: './',
                     description: config.name,
-                    theme_color: '#ffffff',
                     icons: [
                         { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
                         { src: hasAppIcon ? config.appIcon : 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
