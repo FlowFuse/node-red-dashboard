@@ -110,6 +110,44 @@ describe('store: reactive data store', function () {
             Reflect.ownKeys(store).filter((k) => k === '__proto__' || k === 'constructor').should.eql([])
         })
 
+        it('stores a self-referencing object without blowing the stack', function () {
+            const { store } = makeStore()
+            const a = { n: 1 }
+            a.self = a
+
+            const write = function () { store.k = a }
+
+            write.should.not.throw()
+            store.k.n.should.equal(1)
+            store.k.self.should.equal(store.k)
+        })
+
+        it('stores a mutually-referencing pair', function () {
+            const { store } = makeStore()
+            const a = { name: 'a' }
+            const b = { name: 'b', a }
+            a.b = b
+
+            const write = function () { store.k = a }
+
+            write.should.not.throw()
+            store.k.b.name.should.equal('b')
+            store.k.b.a.should.equal(store.k)
+        })
+
+        it('keeps a cyclic value reactive', function () {
+            const { store, log } = makeStore()
+            const a = { n: 1 }
+            a.self = a
+            store.k = a
+            log.length = 0
+
+            store.k.self.n = 2
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(2)
+        })
+
         it('does not let a subscriber error escape a write', function () {
             const { store } = makeStore({ onChange: () => { throw new Error('boom') } })
 

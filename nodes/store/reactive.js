@@ -19,20 +19,21 @@ function isReactable (v) {
 }
 
 // reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
-function deepClone (v) {
+function deepClone (v, seen = new WeakMap()) {
     if (v === null || typeof v !== 'object') return v
     if (Buffer.isBuffer(v)) return Buffer.from(v)
     if (v instanceof Date) return new Date(v)
-    if (Array.isArray(v)) return v.map(deepClone)
-    const out = {}
-    for (const k of Object.keys(v)) out[k] = deepClone(v[k])
+    if (seen.has(v)) return seen.get(v)
+    const out = Array.isArray(v) ? [] : {}
+    seen.set(v, out)
+    for (const k of Object.keys(v)) out[k] = deepClone(v[k], seen)
     return out
 }
 
-function deepReactive (value, notify, path, clone) {
+function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     if (!isReactable(value)) return value
-    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone)
-    return new Proxy(value, {
+    if (seen.has(value)) return seen.get(value)
+    const proxy = new Proxy(value, {
         get (t, p, r) { return Reflect.get(t, p, r) },
         set (t, p, v) {
             if (typeof p === 'symbol') return Reflect.set(t, p, v)
@@ -50,6 +51,10 @@ function deepReactive (value, notify, path, clone) {
             return ok
         }
     })
+    // registered before walking children so a cycle resolves to this proxy instead of recursing
+    seen.set(value, proxy)
+    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone, seen)
+    return proxy
 }
 
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
