@@ -397,6 +397,19 @@ describe('store: reactive data store', function () {
     })
 
     describe('attachToContext', function () {
+        it('recognises a store injected by another copy of the module', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            // what a second copy of this module would have put in context
+            const foreign = { robot: 'from the other copy' }
+            foreign[Symbol.for('@flowfuse/node-red-dashboard/store')] = true
+            m.dashboardStore = foreign
+
+            const store = attachToContext(g, {})
+
+            store.should.equal(foreign)
+        })
+
         function fakeGlobal () {
             const m = {}
             return { get: (k) => m[k], set: (k, v) => { m[k] = v } }

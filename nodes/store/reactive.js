@@ -1,4 +1,4 @@
-const STORE = Symbol('dashboardDataStore')
+const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
