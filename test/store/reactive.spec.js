@@ -110,6 +110,39 @@ describe('store: reactive data store', function () {
             Reflect.ownKeys(store).filter((k) => k === '__proto__' || k === 'constructor').should.eql([])
         })
 
+        it('does not let a subscriber error escape a write', function () {
+            const { store } = makeStore({ onChange: () => { throw new Error('boom') } })
+
+            const write = function () { store.k = 1 }
+
+            write.should.not.throw()
+            store.k.should.equal(1)
+        })
+
+        it('does not let a subscriber error escape a nested write', function () {
+            let live = false
+            const { store } = makeStore({ onChange: () => { if (live) throw new Error('boom') } })
+            store.k = { n: 1 }
+            live = true
+
+            const write = function () { store.k.n = 2 }
+
+            write.should.not.throw()
+            store.k.n.should.equal(2)
+        })
+
+        it('does not let a subscriber error escape a delete', function () {
+            let live = false
+            const { store } = makeStore({ onChange: () => { if (live) throw new Error('boom') } })
+            store.k = 1
+            live = true
+
+            const remove = function () { delete store.k }
+
+            remove.should.not.throw()
+            should(store.k).be.undefined()
+        })
+
         it('does not let a write through $ replace the stored value', function () {
             const { store, log } = makeStore()
             store.k = 1

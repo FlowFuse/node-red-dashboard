@@ -54,6 +54,7 @@ function deepReactive (value, notify, path, clone) {
 
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
+    const emit = (prop, rec, path) => { try { onChange?.(prop, rec, path) } catch (err) {} }
     const records = Object.create(null)
 
     records[STORE] = true
@@ -85,18 +86,18 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
-            const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
+            const notify = (path) => { rec.timestamp = now(); emit(prop, rec, path) }
             // clone on write so a flow reusing its own object can't mutate stored state
             rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
             rec.timestamp = now()
-            onChange?.(prop, rec, prop)
+            emit(prop, rec, prop)
             return true
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
             const existed = prop in target
             const ok = delete target[prop]
-            if (existed) onChange?.(prop, undefined, prop)
+            if (existed) emit(prop, undefined, prop)
             return ok
         }
     }
