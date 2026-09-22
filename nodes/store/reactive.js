@@ -91,9 +91,15 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
-            const notify = (path) => { rec.timestamp = now(); emit(prop, rec, path) }
+            const notify = (path) => {
+                // a replaced value keeps its proxies alive; they must not report into the record any more
+                if (rec.value !== wrapped) return
+                rec.timestamp = now()
+                emit(prop, rec, path)
+            }
             // clone on write so a flow reusing its own object can't mutate stored state
-            rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
+            const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
+            rec.value = wrapped
             rec.timestamp = now()
             emit(prop, rec, prop)
             return true

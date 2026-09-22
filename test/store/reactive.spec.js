@@ -110,6 +110,48 @@ describe('store: reactive data store', function () {
             Reflect.ownKeys(store).filter((k) => k === '__proto__' || k === 'constructor').should.eql([])
         })
 
+        it('does not report a write to a value that has been replaced', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            const detached = store.k
+            store.k = { n: 2 }
+            log.length = 0
+            const stamp = store.$k.timestamp
+
+            detached.n = 999
+
+            log.should.eql([])
+            detached.n.should.equal(999)
+            store.k.n.should.equal(2)
+            store.$k.timestamp.should.equal(stamp)
+        })
+
+        it('does not report a write to a child of a replaced value', function () {
+            const { store, log } = makeStore()
+            store.k = { child: { n: 1 } }
+            const detachedChild = store.k.child
+            store.k = { child: { n: 2 } }
+            log.length = 0
+
+            detachedChild.n = 999
+
+            log.should.eql([])
+            detachedChild.n.should.equal(999)
+            store.k.child.n.should.equal(2)
+        })
+
+        it('still reports writes to the current value after a replacement', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            store.k = { n: 2 }
+            log.length = 0
+
+            store.k.n = 3
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(3)
+        })
+
         it('stores a self-referencing object without blowing the stack', function () {
             const { store } = makeStore()
             const a = { n: 1 }
