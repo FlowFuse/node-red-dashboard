@@ -1,4 +1,4 @@
-const STORE = Symbol('dashboardDataStore')
+const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -19,20 +19,21 @@ function isReactable (v) {
 }
 
 // reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
-function deepClone (v) {
+function deepClone (v, seen = new WeakMap()) {
     if (v === null || typeof v !== 'object') return v
     if (Buffer.isBuffer(v)) return Buffer.from(v)
     if (v instanceof Date) return new Date(v)
-    if (Array.isArray(v)) return v.map(deepClone)
-    const out = {}
-    for (const k of Object.keys(v)) out[k] = deepClone(v[k])
+    if (seen.has(v)) return seen.get(v)
+    const out = Array.isArray(v) ? [] : {}
+    seen.set(v, out)
+    for (const k of Object.keys(v)) out[k] = deepClone(v[k], seen)
     return out
 }
 
-function deepReactive (value, notify, path, clone) {
+function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     if (!isReactable(value)) return value
-    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone)
-    return new Proxy(value, {
+    if (seen.has(value)) return seen.get(value)
+    const proxy = new Proxy(value, {
         get (t, p, r) { return Reflect.get(t, p, r) },
         set (t, p, v) {
             if (typeof p === 'symbol') return Reflect.set(t, p, v)
@@ -50,10 +51,15 @@ function deepReactive (value, notify, path, clone) {
             return ok
         }
     })
+    // registered before walking children so a cycle resolves to this proxy instead of recursing
+    seen.set(value, proxy)
+    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone, seen)
+    return proxy
 }
 
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
+    const emit = (prop, rec, path) => { try { onChange?.(prop, rec, path) } catch (err) {} }
     const records = Object.create(null)
 
     records[STORE] = true
@@ -64,14 +70,17 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === 'toJSON') {
                 return () => Object.fromEntries(Object.entries(target).map(([k, r]) => [k, r.value]))
             }
-            if (prop.startsWith('$')) return target[prop.slice(1)]
+            if (prop.startsWith('$')) {
+                const rec = target[prop.slice(1)]
+                return rec && Object.freeze({ value: rec.value, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
+            }
             const rec = target[prop]
             return rec ? rec.value : undefined
         },
         set (target, prop, value) {
             if (typeof prop === 'symbol') return Reflect.set(target, prop, value)
             // no-op guards return true so strict-mode callers do not throw
-            if (prop === '__proto__' || prop === 'constructor') return true
+            if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
             let rec = target[prop]
@@ -79,21 +88,27 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 rec = new Entry()
                 target[prop] = rec
             } else {
-                rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
+                rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
-            const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
+            const notify = (path) => {
+                // a replaced value keeps its proxies alive; they must not report into the record any more
+                if (rec.value !== wrapped) return
+                rec.timestamp = now()
+                emit(prop, rec, path)
+            }
             // clone on write so a flow reusing its own object can't mutate stored state
-            rec.value = deepReactive(cloneValue(value), notify, prop, cloneValue)
+            const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
+            rec.value = wrapped
             rec.timestamp = now()
-            onChange?.(prop, rec, prop)
+            emit(prop, rec, prop)
             return true
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
             const existed = prop in target
             const ok = delete target[prop]
-            if (existed) onChange?.(prop, undefined, prop)
+            if (existed) emit(prop, undefined, prop)
             return ok
         }
     }
@@ -126,7 +141,7 @@ function attachToContext (globalContext, opts = {}) {
     if (previous && existing !== previous) opts.onReplaced?.()
 
     const store = createDataStore(opts)
-    if (existing && typeof existing === 'object') {
+    if (isReactable(existing) && !Array.isArray(existing)) {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)

@@ -115,6 +115,177 @@ describe('store: reactive data store', function () {
             Reflect.ownKeys(store).filter((k) => k === '__proto__' || k === 'constructor').should.eql([])
         })
 
+        it('does not report a write to a value that has been replaced', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            const detached = store.k
+            store.k = { n: 2 }
+            log.length = 0
+            const stamp = store.$k.timestamp
+
+            detached.n = 999
+
+            log.should.eql([])
+            detached.n.should.equal(999)
+            store.k.n.should.equal(2)
+            store.$k.timestamp.should.equal(stamp)
+        })
+
+        it('does not report a write to a child of a replaced value', function () {
+            const { store, log } = makeStore()
+            store.k = { child: { n: 1 } }
+            const detachedChild = store.k.child
+            store.k = { child: { n: 2 } }
+            log.length = 0
+
+            detachedChild.n = 999
+
+            log.should.eql([])
+            detachedChild.n.should.equal(999)
+            store.k.child.n.should.equal(2)
+        })
+
+        it('still reports writes to the current value after a replacement', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            store.k = { n: 2 }
+            log.length = 0
+
+            store.k.n = 3
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(3)
+        })
+
+        it('stores a self-referencing object without blowing the stack', function () {
+            const { store } = makeStore()
+            const a = { n: 1 }
+            a.self = a
+
+            const write = function () { store.k = a }
+
+            write.should.not.throw()
+            store.k.n.should.equal(1)
+            store.k.self.should.equal(store.k)
+        })
+
+        it('stores a mutually-referencing pair', function () {
+            const { store } = makeStore()
+            const a = { name: 'a' }
+            const b = { name: 'b', a }
+            a.b = b
+
+            const write = function () { store.k = a }
+
+            write.should.not.throw()
+            store.k.b.name.should.equal('b')
+            store.k.b.a.should.equal(store.k)
+        })
+
+        it('keeps a cyclic value reactive', function () {
+            const { store, log } = makeStore()
+            const a = { n: 1 }
+            a.self = a
+            store.k = a
+            log.length = 0
+
+            store.k.self.n = 2
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(2)
+        })
+
+        it('does not let a subscriber error escape a write', function () {
+            const { store } = makeStore({ onChange: () => { throw new Error('boom') } })
+
+            const write = function () { store.k = 1 }
+
+            write.should.not.throw()
+            store.k.should.equal(1)
+        })
+
+        it('does not let a subscriber error escape a nested write', function () {
+            let live = false
+            const { store } = makeStore({ onChange: () => { if (live) throw new Error('boom') } })
+            store.k = { n: 1 }
+            live = true
+
+            const write = function () { store.k.n = 2 }
+
+            write.should.not.throw()
+            store.k.n.should.equal(2)
+        })
+
+        it('does not let a subscriber error escape a delete', function () {
+            let live = false
+            const { store } = makeStore({ onChange: () => { if (live) throw new Error('boom') } })
+            store.k = 1
+            live = true
+
+            const remove = function () { delete store.k }
+
+            remove.should.not.throw()
+            should(store.k).be.undefined()
+        })
+
+        it('does not let a write through $ replace the stored value', function () {
+            const { store, log } = makeStore()
+            store.k = 1
+            log.length = 0
+
+            store.$k.value = 'TAMPERED'
+
+            store.k.should.equal(1)
+            log.should.eql([])
+        })
+
+        it('does not let history grow past the cap through $', function () {
+            const { store } = makeStore({ maxHistory: 2 })
+            store.k = 1
+            store.k = 2
+            store.k = 3
+
+            const push = function () { store.$k.history.push({ value: 'x', timestamp: 0 }) }
+
+            push.should.throw()
+            store.$k.history.should.have.length(2)
+        })
+
+        it('does not let a stored history entry be rewritten through $', function () {
+            const { store } = makeStore()
+            store.k = 1
+            store.k = 2
+
+            const write = function () { 'use strict'; store.$k.history[0].value = 'x' }
+
+            write.should.throw()
+            store.$k.history[0].value.should.equal(1)
+        })
+
+        it('still reports a nested write made through the $ value', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            log.length = 0
+
+            store.$k.value.n = 2
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(2)
+        })
+
+        it('reserves toJSON so a key can never shadow the serialiser', function () {
+            const { store, log } = makeStore()
+            store.real = 1
+            log.length = 0
+
+            store.toJSON = 5
+
+            log.should.eql([])
+            should(store.$toJSON).be.undefined()
+            Object.keys(store).should.eql(['real'])
+            JSON.stringify(store).should.equal('{"real":1}')
+        })
+
         it('reserves the $ prefix so keys are never silently lost', function () {
             const { store } = makeStore()
             store.$weird = 1
@@ -286,6 +457,49 @@ describe('store: reactive data store', function () {
     })
 
     describe('attachToContext', function () {
+        it('does not rehydrate an array into numeric keys', function () {
+            const m = { dashboardStore: ['a', 'b'] }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            Object.keys(store).should.eql([])
+            JSON.stringify(store).should.equal('{}')
+        })
+
+        it('does not spread a class instance into keys', function () {
+            const m = { dashboardStore: new Date() }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            Object.keys(store).should.eql([])
+        })
+
+        it('still rehydrates a plain object', function () {
+            const m = { dashboardStore: { robot: { temp: 20 }, count: 3 } }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            store.count.should.equal(3)
+            store.robot.temp.should.equal(20)
+            store.$robot.timestamp.should.be.a.Number()
+        })
+
+        it('recognises a store injected by another copy of the module', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            // what a second copy of this module would have put in context
+            const foreign = { robot: 'from the other copy' }
+            foreign[Symbol.for('@flowfuse/node-red-dashboard/store')] = true
+            m.dashboardStore = foreign
+
+            const store = attachToContext(g, {})
+
+            store.should.equal(foreign)
+        })
+
         function fakeGlobal () {
             const m = {}
             return { get: (k) => m[k], set: (k, v) => { m[k] = v } }
