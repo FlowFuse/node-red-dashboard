@@ -110,6 +110,51 @@ describe('store: reactive data store', function () {
             Reflect.ownKeys(store).filter((k) => k === '__proto__' || k === 'constructor').should.eql([])
         })
 
+        it('does not let a write through $ replace the stored value', function () {
+            const { store, log } = makeStore()
+            store.k = 1
+            log.length = 0
+
+            store.$k.value = 'TAMPERED'
+
+            store.k.should.equal(1)
+            log.should.eql([])
+        })
+
+        it('does not let history grow past the cap through $', function () {
+            const { store } = makeStore({ maxHistory: 2 })
+            store.k = 1
+            store.k = 2
+            store.k = 3
+
+            const push = function () { store.$k.history.push({ value: 'x', timestamp: 0 }) }
+
+            push.should.throw()
+            store.$k.history.should.have.length(2)
+        })
+
+        it('does not let a stored history entry be rewritten through $', function () {
+            const { store } = makeStore()
+            store.k = 1
+            store.k = 2
+
+            const write = function () { 'use strict'; store.$k.history[0].value = 'x' }
+
+            write.should.throw()
+            store.$k.history[0].value.should.equal(1)
+        })
+
+        it('still reports a nested write made through the $ value', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            log.length = 0
+
+            store.$k.value.n = 2
+
+            log.should.eql(['k.n'])
+            store.k.n.should.equal(2)
+        })
+
         it('reserves the $ prefix so keys are never silently lost', function () {
             const { store } = makeStore()
             store.$weird = 1

@@ -64,7 +64,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === 'toJSON') {
                 return () => Object.fromEntries(Object.entries(target).map(([k, r]) => [k, r.value]))
             }
-            if (prop.startsWith('$')) return target[prop.slice(1)]
+            if (prop.startsWith('$')) {
+                const rec = target[prop.slice(1)]
+                return rec && Object.freeze({ value: rec.value, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
+            }
             const rec = target[prop]
             return rec ? rec.value : undefined
         },
@@ -79,7 +82,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 rec = new Entry()
                 target[prop] = rec
             } else {
-                rec.history.push({ value: cloneValue(rec.value), timestamp: rec.timestamp })
+                rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
             const notify = (path) => { rec.timestamp = now(); onChange?.(prop, rec, path) }
