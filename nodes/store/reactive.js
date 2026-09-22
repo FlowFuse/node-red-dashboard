@@ -117,7 +117,7 @@ function attachToContext (globalContext, opts = {}) {
     if (existing && existing[STORE]) return existing
 
     const store = createDataStore(opts)
-    if (existing && typeof existing === 'object') {
+    if (isReactable(existing) && !Array.isArray(existing)) {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)

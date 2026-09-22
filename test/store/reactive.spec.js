@@ -397,6 +397,36 @@ describe('store: reactive data store', function () {
     })
 
     describe('attachToContext', function () {
+        it('does not rehydrate an array into numeric keys', function () {
+            const m = { dashboardStore: ['a', 'b'] }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            Object.keys(store).should.eql([])
+            JSON.stringify(store).should.equal('{}')
+        })
+
+        it('does not spread a class instance into keys', function () {
+            const m = { dashboardStore: new Date() }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            Object.keys(store).should.eql([])
+        })
+
+        it('still rehydrates a plain object', function () {
+            const m = { dashboardStore: { robot: { temp: 20 }, count: 3 } }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            store.count.should.equal(3)
+            store.robot.temp.should.equal(20)
+            store.$robot.timestamp.should.be.a.Number()
+        })
+
         it('recognises a store injected by another copy of the module', function () {
             const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
