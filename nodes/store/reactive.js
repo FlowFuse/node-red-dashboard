@@ -1,4 +1,3 @@
-// registered globally so a second copy of this module recognises a store the first one injected
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const NAMESPACE = 'dashboardStore'
@@ -105,7 +104,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             }
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
-                // a projection, not the record: writing through $ would skip clone-on-write and onChange
                 return rec && Object.freeze({ value: rec.value, msg: rec.msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
