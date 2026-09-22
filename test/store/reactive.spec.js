@@ -226,6 +226,19 @@ describe('store: reactive data store', function () {
             store.k.n.should.equal(2)
         })
 
+        it('reserves toJSON so a key can never shadow the serialiser', function () {
+            const { store, log } = makeStore()
+            store.real = 1
+            log.length = 0
+
+            store.toJSON = 5
+
+            log.should.eql([])
+            should(store.$toJSON).be.undefined()
+            Object.keys(store).should.eql(['real'])
+            JSON.stringify(store).should.equal('{"real":1}')
+        })
+
         it('reserves the $ prefix so keys are never silently lost', function () {
             const { store } = makeStore()
             store.$weird = 1
