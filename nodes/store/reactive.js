@@ -1,5 +1,6 @@
 const STORE = Symbol('dashboardDataStore')
 const SET_ENTRY = Symbol('dashboardSetEntry')
+const APPEND_ENTRY = Symbol('dashboardAppendEntry')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -84,6 +85,16 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         onChange?.(prop, rec, prop)
     }
 
+    records[APPEND_ENTRY] = (prop, points, msg) => {
+        let rec = records[prop]
+        if (!rec) {
+            rec = writeValue(prop, [])
+            rec.msg = []
+        }
+        rec.msg.push(msg)
+        for (const point of points) rec.value.push(point)
+    }
+
     const handler = {
         get (target, prop, receiver) {
             if (typeof prop === 'symbol') return Reflect.get(target, prop, receiver)
@@ -149,4 +160,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE, SET_ENTRY }
+module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY }

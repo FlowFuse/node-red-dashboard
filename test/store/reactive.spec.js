@@ -7,7 +7,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, isInMemoryBacked, STORE, SET_ENTRY } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, isInMemoryBacked, STORE, SET_ENTRY, APPEND_ENTRY } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -78,6 +78,59 @@ describe('store: reactive data store', function () {
             store[SET_ENTRY]('k', msg.payload, msg)
 
             should(store.$k.msg).equal(msg)
+        })
+    })
+
+    describe('append entry', function () {
+        const pt = (x, y, category = 'a') => ({ category, x, y })
+
+        it('creates a series on first append', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1, _datapoint: pt(1, 1) })
+
+            store.c1.should.eql([pt(1, 1)])
+            store.$c1.msg.should.have.length(1)
+            store.$c1.msg[0].payload.should.equal(1)
+            log.should.eql(['c1.0'])
+        })
+
+        it('pushes onto an existing series', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1 })
+            log.length = 0
+            store[APPEND_ENTRY]('c1', [pt(2, 2)], { payload: 2 })
+
+            store.c1.should.have.length(2)
+            store.c1[1].x.should.equal(2)
+            store.$c1.msg.should.have.length(2)
+            log.should.eql(['c1.1'])
+        })
+
+        it('pushes every point of a multi-series message, but the message once', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', [pt(1, 1, 'a'), pt(1, 5, 'b')], { payload: [1, 5] })
+
+            store.c1.should.eql([pt(1, 1, 'a'), pt(1, 5, 'b')])
+            store.$c1.msg.should.have.length(1)
+            log.should.eql(['c1.0', 'c1.1'])
+        })
+
+        it('keeps the message but fires nothing when there are no points', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', [], { payload: 'no datapoint' })
+
+            store.c1.should.eql([])
+            store.$c1.msg.should.have.length(1)
+            log.should.eql([])
+        })
+
+        it('keeps history empty, because the value is an array', function () {
+            const { store } = makeStore()
+            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1 })
+            store[APPEND_ENTRY]('c1', [pt(2, 2)], { payload: 2 })
+            store[APPEND_ENTRY]('c1', [pt(3, 3)], { payload: 3 })
+
+            store.$c1.history.should.eql([])
         })
     })
 

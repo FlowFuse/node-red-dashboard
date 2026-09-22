@@ -1,4 +1,4 @@
-const { attachToContext, SET_ENTRY } = require('./reactive.js')
+const { attachToContext, SET_ENTRY, APPEND_ENTRY } = require('./reactive.js')
 
 const data = {}
 
@@ -8,6 +8,8 @@ const config = {
 
 let storeOptions = {}
 let storeEnabled = true
+const trimCounts = {}
+const TRIM_BATCH = 60
 
 function getOrCreateStore (globalContext) {
     return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
@@ -32,10 +34,48 @@ function writeToStore (node, msg, stored) {
     } catch (err) {}
 }
 
+function chartPoints (msgs) {
+    if (!storeEnabled) return
+    const points = []
+    for (const m of msgs) {
+        const d = m?._datapoint
+        if (d === undefined || d === null) continue
+        if (Array.isArray(d)) points.push(...d)
+        else points.push(d)
+    }
+    return points
+}
+
+function appendToStore (node, msg) {
+    if (!storeEnabled) return
+    try {
+        const stored = config.RED.util.cloneMessage(msg)
+        getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, chartPoints([stored]), stored)
+    } catch (err) {}
+}
+
+function replaceInStore (node, msgs) {
+    if (!storeEnabled) return
+    try {
+        const clone = config.RED.util.cloneMessage
+        const stored = msgs.map((m) => clone(m))
+        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, chartPoints(stored), stored)
+        delete trimCounts[node.id]
+    } catch (err) {}
+}
+
+function trimStore (node, msgs) {
+    if (!storeEnabled) return
+    trimCounts[node.id] = (trimCounts[node.id] || 0) + 1
+    if (trimCounts[node.id] < TRIM_BATCH) return
+    replaceInStore(node, msgs)
+}
+
 function clearFromStore (node) {
     if (!storeEnabled) return
     try {
         delete getOrCreateStore(node.context().global)[node.id]
+        delete trimCounts[node.id]
     } catch (err) {}
 }
 
@@ -118,6 +158,7 @@ const setters = {
                 }
             }
             data[node.id] = filtered
+            replaceInStore(node, filtered)
         } else {
             if (canSaveInStore(base, node, msg)) {
                 const newMsg = stripMsg(msg)
@@ -137,6 +178,7 @@ const setters = {
                 data[node.id] = []
             }
             data[node.id].push(config.RED.util.cloneMessage(msg))
+            appendToStore(node, msg)
         }
     },
     /**
@@ -152,6 +194,7 @@ const setters = {
             if (filteredMessages.length !== currentData.length) {
                 // no need for save operation to process messages - just apply them
                 data[node.id] = filteredMessages
+                trimStore(node, filteredMessages)
             }
         }
     }
