@@ -225,6 +225,11 @@ fetch('_setup')
                 // a login page. There may also be other situations under which this error occurs, but whatever the
                 // cause it doesn't seem that we can do much other than force a reload.
                 forcePageReload('parser error')
+            } else if (!disconnected) {
+                // Initial connect failed - 'disconnect' never fires, so start the retry loop once (else it hangs on Loading).
+                retryCount = 0
+                disconnected = true
+                reconnect()
             }
         })
 
