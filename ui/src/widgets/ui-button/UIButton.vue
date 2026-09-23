@@ -149,11 +149,22 @@ export default {
 <style>
 .nrdb-ui-button .v-btn__content {
     white-space: normal;
+    overflow-wrap: normal;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+}
+
+.nrdb-ui-button {
+    container-type: inline-size;
+}
+
+@container (max-width: 80px) {
+    .nrdb-ui-button .v-btn {
+        padding-inline: 4px;
+    }
 }
 
 .nrdb-ui-button--icon .v-btn__append {

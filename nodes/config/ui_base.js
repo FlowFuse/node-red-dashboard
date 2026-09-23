@@ -6,9 +6,8 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
-const { isInMemoryBacked } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -226,7 +225,6 @@ module.exports = function (RED) {
                     lang: 'en',
                     scope: './',
                     description: config.name,
-                    theme_color: '#ffffff',
                     icons: [
                         { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
                         { src: hasAppIcon ? config.appIcon : 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -403,18 +401,17 @@ module.exports = function (RED) {
 
         node._created = Date.now()
 
-        if (isInMemoryBacked(node.context().global)) {
-            try {
-                datastore.initStore(node.context().global, {
-                    onReplaced: () => node.warn('A flow replaced global.dashboardStore, discarding the stored value of every widget; the store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
-                })
-            } catch (err) {
+        try {
+            const store = datastore.initStore(node.context().global, {
+                onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
+            })
+            if (!store) {
                 datastore.disableStore()
-                node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
             }
-        } else {
+        } catch (err) {
             datastore.disableStore()
-            node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
+            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
         }
 
         n.root = RED.settings.httpNodeRoot || '/'
@@ -485,15 +482,7 @@ module.exports = function (RED) {
                 }
             }
             // conduct the core check too
-            if (msg._client?.socketId) {
-                // if a particular socketid has been defined,
-                // we only send comms on the connection that matches that id
-                checks.push(msg._client?.socketId === conn.id)
-            }
-            if (msg._client?.clientId) {
-                // clientId is the stable per-client key (spans a client's tabs/reconnects)
-                checks.push(normalizeClientId(msg._client.clientId) === conn._clientId)
-            }
+            checks.push(matchesClient(conn, msg))
             // ensure all checks validate sending this
             return !checks.length || !checks.includes(false)
         }
