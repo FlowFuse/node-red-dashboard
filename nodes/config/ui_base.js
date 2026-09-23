@@ -7,7 +7,7 @@ const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -469,15 +469,7 @@ module.exports = function (RED) {
                 }
             }
             // conduct the core check too
-            if (msg._client?.socketId) {
-                // if a particular socketid has been defined,
-                // we only send comms on the connection that matches that id
-                checks.push(msg._client?.socketId === conn.id)
-            }
-            if (msg._client?.clientId) {
-                // clientId is the stable per-client key (spans a client's tabs/reconnects)
-                checks.push(normalizeClientId(msg._client.clientId) === conn._clientId)
-            }
+            checks.push(matchesClient(conn, msg))
             // ensure all checks validate sending this
             return !checks.length || !checks.includes(false)
         }

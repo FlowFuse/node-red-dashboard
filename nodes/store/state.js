@@ -1,5 +1,7 @@
 // Store to manage any dynamic properties set
 
+const { isClientScoped } = require('../utils/index.js')
+
 const state = {}
 const config = {
     RED: null
@@ -18,7 +20,7 @@ function canSaveInStore (base, node, msg) {
         // core check
         if (base.acceptsClientConfig.includes(node.type)) {
             // we are in a node type that allows for definition of specific clients,
-            if (msg._client?.socketId) {
+            if (isClientScoped(msg)) {
                 // and a client has been defined
                 checks.push(false)
             } else {
