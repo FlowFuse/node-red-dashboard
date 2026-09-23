@@ -45,11 +45,22 @@ describe('store: reactive data store', function () {
             store.$k1.timestamp.should.be.a.Number()
         })
 
-        it('exposes an empty msg field on a new entry', function () {
+        it('synthesises a msg from the value when a flow writes the key directly', function () {
             const { store } = makeStore()
             store.k1 = 123
-            store.$k1.should.have.property('msg')
-            should(store.$k1.msg).be.undefined()
+            store.$k1.msg.should.eql({ payload: 123 })
+            store.$k1.msg.payload.should.equal(store.$k1.value)
+        })
+
+        it('does not leave a msg describing the previous value after a flow write', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k1', 42, { payload: 42, topic: 'boiler' })
+            store.$k1.msg.topic.should.equal('boiler')
+
+            store.k1 = 99
+
+            store.$k1.value.should.equal(99)
+            store.$k1.msg.should.eql({ payload: 99 })
         })
 
         it('returns the whole object by default', function () {

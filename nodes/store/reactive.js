@@ -93,6 +93,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         // clone on write so a flow reusing its own object can't mutate stored state
         const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
         rec.value = wrapped
+        rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
