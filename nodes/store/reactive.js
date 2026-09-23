@@ -79,7 +79,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         },
         set (target, prop, value) {
             if (typeof prop === 'symbol') return Reflect.set(target, prop, value)
-            // no-op guards return true so strict-mode callers do not throw
+            // returning true rather than false so a strict caller picking a reserved name doesn't throw
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
