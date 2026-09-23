@@ -17,7 +17,7 @@ function isReactable (v) {
     if (Array.isArray(v)) return true
     if (v === null || typeof v !== 'object') return false
     const proto = Object.getPrototypeOf(v)
-    return proto === Object.prototype || proto === null
+    return proto === null || Object.getPrototypeOf(proto) === null
 }
 
 // reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
@@ -111,7 +111,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         },
         set (target, prop, value) {
             if (typeof prop === 'symbol') return Reflect.set(target, prop, value)
-            // no-op guards return true so strict-mode callers do not throw
+            // returning true rather than false so a strict caller picking a reserved name doesn't throw
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
@@ -121,8 +121,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
+            const rec = target[prop]
             const existed = prop in target
             const ok = delete target[prop]
+            if (rec) rec.value = undefined
             if (existed) emit(prop, undefined, prop)
             return ok
         }
@@ -130,23 +132,20 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     return new Proxy(records, handler)
 }
 
-// A cache-off persistent store serves only async access, so a sync get throws; the reactive proxy needs an in-memory store.
-function isInMemoryBacked (globalContext, namespace = NAMESPACE) {
-    try {
-        globalContext.get(namespace)
-        return true
-    } catch (err) {
-        return false
-    }
-}
-
 const injected = new WeakMap()
 
 // Inject the store into global context once. On redeploy the existing store is reused;
 // after a restart with a persistent context store, existing plain data is rehydrated.
+// Returns null when the context store can't hold a live proxy: a cache-off store serves
+// only async access so a sync get throws, and a serialising store hands back a copy.
 function attachToContext (globalContext, opts = {}) {
     const namespace = opts.namespace || NAMESPACE
-    const existing = globalContext.get(namespace)
+    let existing
+    try {
+        existing = globalContext.get(namespace)
+    } catch (err) {
+        return null
+    }
     if (existing && existing[STORE]) {
         injected.set(globalContext, existing)
         return existing
@@ -160,8 +159,9 @@ function attachToContext (globalContext, opts = {}) {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)
+    if (globalContext.get(namespace) !== store) return null
     injected.set(globalContext, store)
     return store
 }
 
-module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE, SET_ENTRY }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY }
