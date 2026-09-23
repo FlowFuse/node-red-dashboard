@@ -9,7 +9,7 @@ const config = {
 }
 
 let storeOptions = {}
-let storeEnabled = true
+let storeEnabled = false
 
 function getOrCreateStore (globalContext) {
     return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
