@@ -1,4 +1,5 @@
 const fs = require('fs')
+const http = require('http')
 const os = require('os')
 const path = require('path')
 
@@ -361,6 +362,49 @@ describe('store: reactive data store', function () {
 
             write.should.throw()
             store.$k.history[0].value.should.equal(1)
+        })
+
+        it('does not let the stored msg be rewritten through $', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', 42, { payload: 42, topic: 'boiler' })
+            log.length = 0
+
+            const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.payload.should.equal(42)
+            log.should.be.empty()
+        })
+
+        it('does not let a nested property of the stored msg be rewritten through $', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { deep: { n: 1 } }, { payload: { deep: { n: 1 } } })
+
+            const write = function () { 'use strict'; store.$k.msg.payload.deep.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.payload.deep.n.should.equal(1)
+        })
+
+        it('does not let a nested property of a history entry be rewritten through $', function () {
+            const { store } = makeStore()
+            store.k = { n: 1 }
+            store.k = { n: 2 }
+
+            const write = function () { 'use strict'; store.$k.history[0].value.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.history[0].value.n.should.equal(1)
+        })
+
+        it('leaves msg.req and msg.res usable, since cloneMessage keeps them as live handles', function () {
+            const { store } = makeStore()
+            const req = new http.IncomingMessage({ fake: 'socket' })
+            const res = new http.ServerResponse(req)
+            store[SET_ENTRY]('k', 1, { payload: 1, req, res })
+
+            Object.isFrozen(req).should.be.false()
+            res.setHeader.bind(res, 'x-test', '1').should.not.throw()
         })
 
         it('still reports a nested write made through the $ value', function () {

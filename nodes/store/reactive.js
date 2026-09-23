@@ -2,6 +2,13 @@ const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const NAMESPACE = 'dashboardStore'
 
+function deepFreeze (v) {
+    if (!isReactable(v) || Object.isFrozen(v)) return v
+    Object.freeze(v)
+    for (const k of Object.keys(v)) deepFreeze(v[k])
+    return v
+}
+
 class Entry {
     constructor () {
         this.value = undefined
@@ -74,7 +81,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             records[prop] = rec
         } else if (!Array.isArray(rec.value)) {
             // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-            rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
+            rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
             if (rec.history.length > maxHistory) rec.history.shift()
         }
         const notify = (path) => {
@@ -92,7 +99,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[SET_ENTRY] = (prop, value, msg) => {
         const rec = writeValue(prop, value)
-        rec.msg = msg
+        rec.msg = deepFreeze(msg)
         emit(prop, rec, prop)
     }
 
