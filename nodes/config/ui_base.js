@@ -6,7 +6,7 @@ const axios = require('axios')
 const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
-const { attachToContext, isInMemoryBacked } = require('../store/reactive.js')
+const { attachToContext } = require('../store/reactive.js')
 const statestore = require('../store/state.js')
 const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
@@ -402,17 +402,16 @@ module.exports = function (RED) {
 
         node._created = Date.now()
 
-        if (isInMemoryBacked(node.context().global)) {
-            try {
-                attachToContext(node.context().global, {
-                    clone: RED.util.cloneMessage,
-                    onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
-                })
-            } catch (err) {
-                node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+        try {
+            const store = attachToContext(node.context().global, {
+                clone: RED.util.cloneMessage,
+                onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
+            })
+            if (!store) {
+                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
             }
-        } else {
-            node.warn('Dashboard data store disabled: the global context store isn\'t in-memory-backed (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
+        } catch (err) {
+            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
         }
 
         n.root = RED.settings.httpNodeRoot || '/'
