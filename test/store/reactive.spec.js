@@ -138,6 +138,20 @@ describe('store: reactive data store', function () {
             store.$k.timestamp.should.equal(stamp)
         })
 
+        it('does not report a write to a value whose key was deleted', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            const held = store.k
+            delete store.k
+            log.length = 0
+
+            held.n = 99
+
+            log.should.eql([])
+            held.n.should.equal(99)
+            should(store.k).be.undefined()
+        })
+
         it('does not report a write to a child of a replaced value', function () {
             const { store, log } = makeStore()
             store.k = { child: { n: 1 } }

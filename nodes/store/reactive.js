@@ -106,8 +106,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
+            const rec = target[prop]
             const existed = prop in target
             const ok = delete target[prop]
+            if (rec) rec.value = undefined
             if (existed) emit(prop, undefined, prop)
             return ok
         }
