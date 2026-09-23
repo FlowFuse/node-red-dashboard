@@ -2,8 +2,11 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 
+const vm = require('vm')
+
 const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
+
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
@@ -19,6 +22,10 @@ function makeStore (opts = {}) {
     })
     return { store, log }
 }
+
+// Node-RED runs function nodes in a vm context, so their objects carry that realm's Object.prototype
+const fnRealm = vm.createContext({})
+const fnNodeObject = (src) => vm.runInContext(src, fnRealm)
 
 describe('store: reactive data store', function () {
     describe('values and metadata', function () {
@@ -423,6 +430,17 @@ describe('store: reactive data store', function () {
             return { store, log }
         }
 
+        it('deep-watches an object built in a function node realm', function () {
+            const { store, log } = makeCloneStore()
+            store.w = fnNodeObject('({ nested: { temp: 20 } })')
+            log.length = 0
+
+            store.w.nested.temp = 25
+
+            log.should.eql(['w.nested.temp'])
+            store.w.nested.temp.should.equal(25)
+        })
+
         it('reassigning an object value fires only the key, no phantom req/res', function () {
             const { store, log } = makeCloneStore()
             store.robot = { temp: 20 }
@@ -474,6 +492,16 @@ describe('store: reactive data store', function () {
             const store = attachToContext(g, {})
 
             Object.keys(store).should.eql([])
+        })
+
+        it('rehydrates an object a function node left at the namespace', function () {
+            const m = { dashboardStore: fnNodeObject('({ robot: "PLAIN", count: 3 })') }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            store.robot.should.equal('PLAIN')
+            store.count.should.equal(3)
         })
 
         it('still rehydrates a plain object', function () {

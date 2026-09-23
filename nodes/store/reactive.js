@@ -15,7 +15,7 @@ function isReactable (v) {
     if (Array.isArray(v)) return true
     if (v === null || typeof v !== 'object') return false
     const proto = Object.getPrototypeOf(v)
-    return proto === Object.prototype || proto === null
+    return proto === null || Object.getPrototypeOf(proto) === null
 }
 
 // reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
