@@ -29,8 +29,7 @@ function writeToStore (node, msg, stored) {
     if (!storeEnabled) return
     if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
     try {
-        const clone = config.RED.util.cloneMessage
-        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, msg.payload, clone(stored))
+        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, stored)
     } catch (err) {}
 }
 

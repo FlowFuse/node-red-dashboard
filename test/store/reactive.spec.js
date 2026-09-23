@@ -54,7 +54,7 @@ describe('store: reactive data store', function () {
 
         it('does not leave a msg describing the previous value after a flow write', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k1', 42, { payload: 42, topic: 'boiler' })
+            store[SET_ENTRY]('k1', { payload: 42, topic: 'boiler' })
             store.$k1.msg.topic.should.equal('boiler')
 
             store.k1 = 99
@@ -75,7 +75,7 @@ describe('store: reactive data store', function () {
             const { store, log } = makeStore()
             const msg = { payload: 42, topic: 'sensor-A' }
 
-            store[SET_ENTRY]('gauge', msg.payload, msg)
+            store[SET_ENTRY]('gauge', msg)
 
             store.gauge.should.equal(42)
             store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
@@ -84,19 +84,29 @@ describe('store: reactive data store', function () {
 
         it('keeps history on the value, as a normal write does', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('gauge', 1, { payload: 1 })
-            store[SET_ENTRY]('gauge', 2, { payload: 2 })
+            store[SET_ENTRY]('gauge', { payload: 1 })
+            store[SET_ENTRY]('gauge', { payload: 2 })
 
             store.gauge.should.equal(2)
             store.$gauge.history.map((h) => h.value).should.eql([1])
         })
 
-        it('does not clone the message it is given', function () {
+        it('clones the message it is given, so a caller reusing it cannot mutate stored state', function () {
             const { store } = makeStore()
             const msg = { payload: 1, nested: { a: 1 } }
-            store[SET_ENTRY]('k', msg.payload, msg)
+            store[SET_ENTRY]('k', msg)
 
-            should(store.$k.msg).equal(msg)
+            should(store.$k.msg).not.equal(msg)
+            msg.nested.a = 'MUTATED'
+            store.$k.msg.nested.a.should.equal(1)
+        })
+
+        it('serves the stored value as the payload of the stored msg', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
+
+            store.$k.msg.payload.should.equal(store.$k.value)
+            store.k.n.should.equal(1)
         })
     })
 
@@ -377,7 +387,7 @@ describe('store: reactive data store', function () {
 
         it('does not let the stored msg be rewritten through $', function () {
             const { store, log } = makeStore()
-            store[SET_ENTRY]('k', 42, { payload: 42, topic: 'boiler' })
+            store[SET_ENTRY]('k', { payload: 42, topic: 'boiler' })
             log.length = 0
 
             const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
@@ -387,14 +397,25 @@ describe('store: reactive data store', function () {
             log.should.be.empty()
         })
 
-        it('does not let a nested property of the stored msg be rewritten through $', function () {
+        it('does not let a non-payload property of the stored msg be rewritten through $', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k', { deep: { n: 1 } }, { payload: { deep: { n: 1 } } })
+            store[SET_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
 
-            const write = function () { 'use strict'; store.$k.msg.payload.deep.n = 'TAMPERED' }
+            const write = function () { 'use strict'; store.$k.msg.meta.deep.n = 'TAMPERED' }
 
             write.should.throw()
-            store.$k.msg.payload.deep.n.should.equal(1)
+            store.$k.msg.meta.deep.n.should.equal(1)
+        })
+
+        it('reports a nested write made through the $ msg payload, since it is the value', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', { payload: { deep: { n: 1 } } })
+            log.length = 0
+
+            store.$k.msg.payload.deep.n = 2
+
+            log.should.eql(['k.deep.n'])
+            store.k.deep.n.should.equal(2)
         })
 
         it('does not let a nested property of a history entry be rewritten through $', function () {
@@ -412,7 +433,7 @@ describe('store: reactive data store', function () {
             const { store } = makeStore()
             const req = new http.IncomingMessage({ fake: 'socket' })
             const res = new http.ServerResponse(req)
-            store[SET_ENTRY]('k', 1, { payload: 1, req, res })
+            store[SET_ENTRY]('k', { payload: 1, req, res })
 
             Object.isFrozen(req).should.be.false()
             res.setHeader.bind(res, 'x-test', '1').should.not.throw()

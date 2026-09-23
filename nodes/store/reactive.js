@@ -90,17 +90,17 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        // clone on write so a flow reusing its own object can't mutate stored state
-        const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
+        const wrapped = deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
 
-    records[SET_ENTRY] = (prop, value, msg) => {
-        const rec = writeValue(prop, value)
-        rec.msg = deepFreeze(msg)
+    records[SET_ENTRY] = (prop, msg) => {
+        const { payload, ...rest } = cloneValue(msg)
+        const rec = writeValue(prop, payload)
+        rec.msg = Object.freeze({ ...deepFreeze(rest), payload: rec.value })
         emit(prop, rec, prop)
     }
 
@@ -123,7 +123,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
-            const rec = writeValue(prop, value)
+            const rec = writeValue(prop, cloneValue(value))
             emit(prop, rec, prop)
             return true
         },
