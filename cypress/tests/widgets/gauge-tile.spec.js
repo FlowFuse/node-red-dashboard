@@ -36,7 +36,7 @@ describe('Node-RED Dashboard 2.0 - Gauges - Tile', () => {
     })
     it('inject 100 should display Segment 5 (no label, white)', () => {
         cy.clickAndWait(cy.get('button').contains('button100'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div > label').should('have.text', '') // no label is displayed
+        cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div > label').should('not.exist') // no label is displayed
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div').should('have.css', 'background-color', 'rgb(255, 255, 255)') // white
     })
 })

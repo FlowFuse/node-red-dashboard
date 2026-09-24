@@ -161,6 +161,7 @@
                 floatingTitlePosition: { value: 'top-left' },
                 units: { value: 'units' },
                 icon: { value: '' },
+                iconPosition: { value: 'top' },
                 prefix: { value: '' },
                 suffix: { value: '' },
                 segments: {
@@ -256,14 +257,17 @@
                         $('#node-input-container-label-extras').hide()
                         if (type === 'gauge-tile') {
                             $('#node-input-container-tile-options').show()
+                            $('#ui-gauge-icon').show()
                         } else {
                             $('#node-input-container-tile-options').hide()
+                            $('#ui-gauge-icon').hide()
                         }
                     } else {
                         $('#node-input-container-sizes').show()
                         $('#node-input-container-gstyle').show()
                         $('#node-input-container-label-extras').show()
                         $('#node-input-container-tile-options').hide()
+                        $('#ui-gauge-icon').show()
                     }
 
                     if (isInitialised && isChanging && isDefault(oldType)) {
@@ -482,10 +486,16 @@
                 <label for="node-input-units"><i class="fa fa-calculator"></i> <span data-i18n="ui-gauge.label.units"></span></label>
                 <input type="text" id="node-input-units" placeholder="Unit">
             </div>
-            <div class="form-row" id="ui-gauge-icon">
-                <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
-                <input type="text" id="node-input-icon" placeholder="Icon from mdi library, e.g. 'home'">
-            </div>
+        </div>
+        <div class="form-row" id="ui-gauge-icon">
+            <label for="node-input-icon"><i class="fa fa-home"></i> <span data-i18n="ui-gauge.label.icon"></span></label>
+            <input type="text" id="node-input-icon" style="width: calc(70% - 140px);" placeholder="Icon from mdi library, e.g. 'home'">
+            <select id="node-input-iconPosition" style="width: 130px; margin-left: 6px;">
+                <option value="top" data-i18n="ui-gauge.label.top"></option>
+                <option value="left" data-i18n="ui-gauge.label.left"></option>
+                <option value="right" data-i18n="ui-gauge.label.right"></option>
+                <option value="bottom" data-i18n="ui-gauge.label.bottom"></option>
+            </select>
         </div>
     </div>
     <div id="node-input-container-sizes">

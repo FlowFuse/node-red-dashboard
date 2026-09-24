@@ -55,6 +55,9 @@ export default {
         icon () {
             return this.getProperty('icon')
         },
+        iconPosition () {
+            return this.getProperty('iconPosition')
+        },
         segments () {
             return this.getProperty('segments')
         },
@@ -74,6 +77,7 @@ export default {
                 suffix: this.suffix,
                 units: this.units,
                 icon: this.icon,
+                iconPosition: this.iconPosition,
                 segments: this.segments,
                 min: this.min,
                 max: this.max
@@ -106,6 +110,7 @@ export default {
             this.updateDynamicProperty('suffix', updates.suffix)
             this.updateDynamicProperty('units', updates.units)
             this.updateDynamicProperty('icon', updates.icon)
+            this.updateDynamicProperty('iconPosition', updates.iconPosition)
             this.updateDynamicProperty('segments', updates.segments)
             this.updateDynamicProperty('min', updates.min)
             this.updateDynamicProperty('max', updates.max)
