@@ -1,13 +1,17 @@
 const fs = require('fs')
+const http = require('http')
 const os = require('os')
 const path = require('path')
 
+const vm = require('vm')
+
 const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
+
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, isInMemoryBacked, STORE, SET_ENTRY, APPEND_ENTRY } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -19,6 +23,10 @@ function makeStore (opts = {}) {
     })
     return { store, log }
 }
+
+// Node-RED runs function nodes in a vm context, so their objects carry that realm's Object.prototype
+const fnRealm = vm.createContext({})
+const fnNodeObject = (src) => vm.runInContext(src, fnRealm)
 
 describe('store: reactive data store', function () {
     describe('values and metadata', function () {
@@ -37,11 +45,22 @@ describe('store: reactive data store', function () {
             store.$k1.timestamp.should.be.a.Number()
         })
 
-        it('exposes an empty msg field on a new entry', function () {
+        it('synthesises a msg from the value when a flow writes the key directly', function () {
             const { store } = makeStore()
             store.k1 = 123
-            store.$k1.should.have.property('msg')
-            should(store.$k1.msg).be.undefined()
+            store.$k1.msg.should.eql({ payload: 123 })
+            store.$k1.msg.payload.should.equal(store.$k1.value)
+        })
+
+        it('does not leave a msg describing the previous value after a flow write', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k1', { payload: 42, topic: 'boiler' })
+            store.$k1.msg.topic.should.equal('boiler')
+
+            store.k1 = 99
+
+            store.$k1.value.should.equal(99)
+            store.$k1.msg.should.eql({ payload: 99 })
         })
 
         it('returns the whole object by default', function () {
@@ -56,7 +75,7 @@ describe('store: reactive data store', function () {
             const { store, log } = makeStore()
             const msg = { payload: 42, topic: 'sensor-A' }
 
-            store[SET_ENTRY]('gauge', msg.payload, msg)
+            store[SET_ENTRY]('gauge', msg)
 
             store.gauge.should.equal(42)
             store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
@@ -65,19 +84,209 @@ describe('store: reactive data store', function () {
 
         it('keeps history on the value, as a normal write does', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('gauge', 1, { payload: 1 })
-            store[SET_ENTRY]('gauge', 2, { payload: 2 })
+            store[SET_ENTRY]('gauge', { payload: 1 })
+            store[SET_ENTRY]('gauge', { payload: 2 })
 
             store.gauge.should.equal(2)
             store.$gauge.history.map((h) => h.value).should.eql([1])
         })
 
-        it('does not clone the message it is given', function () {
+        it('clones the message it is given, so a caller reusing it cannot mutate stored state', function () {
             const { store } = makeStore()
             const msg = { payload: 1, nested: { a: 1 } }
-            store[SET_ENTRY]('k', msg.payload, msg)
+            store[SET_ENTRY]('k', msg)
 
-            should(store.$k.msg).equal(msg)
+            should(store.$k.msg).not.equal(msg)
+            store.$k.msg.nested.should.not.equal(msg.nested)
+            Object.isFrozen(msg).should.be.false()
+            Object.isFrozen(msg.nested).should.be.false()
+            msg.nested.a = 'MUTATED'
+            store.$k.msg.nested.a.should.equal(1)
+        })
+
+        it('serves the stored value as the payload of the stored msg', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
+
+            store.$k.msg.payload.should.equal(store.$k.value)
+            store.k.n.should.equal(1)
+        })
+    })
+
+    describe('series entries', function () {
+        const pt = (x, y, category = 'a') => ({ category, x, y })
+
+        it('clones every message it is given, so a caller reusing them cannot mutate stored state', function () {
+            const { store } = makeStore()
+            const msgs = [{ payload: 1, _datapoint: pt(1, 1), meta: { n: 1 } }]
+            store[SET_SERIES]('c1', msgs)
+
+            store.$c1.msg[0].should.not.equal(msgs[0])
+            store.$c1.msg[0].meta.should.not.equal(msgs[0].meta)
+            Object.isFrozen(msgs[0]).should.be.false()
+            Object.isFrozen(msgs[0].meta).should.be.false()
+            msgs[0].meta.n = 'MUTATED'
+            store.$c1.msg[0].meta.n.should.equal(1)
+        })
+
+        it('clones the appended message too', function () {
+            const { store } = makeStore()
+            const msg = { payload: 1, _datapoint: pt(1, 1), meta: { n: 1 } }
+            store[APPEND_ENTRY]('c1', msg)
+
+            store.$c1.msg[0].should.not.equal(msg)
+            store.$c1.msg[0].meta.should.not.equal(msg.meta)
+            Object.isFrozen(msg).should.be.false()
+            Object.isFrozen(msg.meta).should.be.false()
+            msg.meta.n = 'MUTATED'
+            store.$c1.msg[0].meta.n.should.equal(1)
+        })
+
+        it('does not let the stored series messages be replaced through $', function () {
+            const { store } = makeStore()
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
+
+            const push = function () { 'use strict'; store.$c1.msg.push({ payload: 'INJECTED' }) }
+            const truncate = function () { 'use strict'; store.$c1.msg.length = 0 }
+
+            push.should.throw()
+            truncate.should.throw()
+            store.$c1.msg.should.have.length(1)
+        })
+
+        it('emits once for the whole series, however many points', function () {
+            const { store, log } = makeStore()
+            store[SET_SERIES]('c1', [
+                { payload: 1, _datapoint: pt(1, 1) },
+                { payload: 2, _datapoint: [pt(2, 2), pt(3, 3)] }
+            ])
+
+            store.c1.should.eql([pt(1, 1), pt(2, 2), pt(3, 3)])
+            store.$c1.msg.should.have.length(2)
+            log.should.eql(['c1'])
+        })
+
+        it('replaces the previous series rather than appending to it', function () {
+            const { store } = makeStore()
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(9, 9) })
+            store[SET_SERIES]('c1', [{ payload: 2, _datapoint: pt(2, 2) }])
+
+            store.c1.should.eql([pt(2, 2)])
+            store.$c1.msg.should.have.length(1)
+        })
+
+        it('empties the series when given no messages', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
+            log.length = 0
+            store[SET_SERIES]('c1', [])
+
+            store.c1.should.eql([])
+            store.$c1.msg.should.eql([])
+            log.should.eql(['c1'])
+        })
+
+        it('keeps a message that carries no datapoint, contributing no points', function () {
+            const { store } = makeStore()
+            store[SET_SERIES]('c1', [
+                { payload: 'none' },
+                { payload: 1, _datapoint: pt(1, 1) },
+                { payload: 'null', _datapoint: null },
+                { payload: 'empty', _datapoint: [] }
+            ])
+
+            store.c1.should.eql([pt(1, 1)])
+            store.$c1.msg.should.have.length(4)
+        })
+
+        it('points each message at its own slice of the live series', function () {
+            const { store, log } = makeStore()
+            store[SET_SERIES]('c1', [
+                { payload: 1, _datapoint: pt(1, 1) },
+                { payload: 2, _datapoint: [pt(2, 2), pt(3, 3)] }
+            ])
+            log.length = 0
+
+            store.c1[0].y = 11
+            store.c1[2].y = 33
+
+            store.$c1.msg[0]._datapoint.y.should.equal(11)
+            store.$c1.msg[1]._datapoint[1].y.should.equal(33)
+            log.should.eql(['c1.0.y', 'c1.2.y'])
+        })
+
+        it('reports a write made through a series message datapoint, since it is the live point', function () {
+            const { store, log } = makeStore()
+            store[SET_SERIES]('c1', [
+                { payload: 1, _datapoint: pt(1, 1) },
+                { payload: 2, _datapoint: [pt(2, 2), pt(3, 3)] }
+            ])
+            log.length = 0
+
+            store.$c1.msg[0]._datapoint.y = 77
+            store.$c1.msg[1]._datapoint[0].y = 88
+
+            log.should.eql(['c1.0.y', 'c1.1.y'])
+            store.c1[0].y.should.equal(77)
+            store.c1[1].y.should.equal(88)
+        })
+
+        it('reports a write made through an appended message datapoint', function () {
+            const { store, log } = makeStore()
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
+            store[APPEND_ENTRY]('c1', { payload: 2, _datapoint: [pt(2, 2), pt(3, 3)] })
+            log.length = 0
+
+            store.$c1.msg[0]._datapoint.y = 77
+            store.$c1.msg[1]._datapoint[1].y = 88
+
+            log.should.eql(['c1.0.y', 'c1.2.y'])
+            store.c1[0].y.should.equal(77)
+            store.c1[2].y.should.equal(88)
+        })
+
+        it('re-seeds the series when a flow has left another shape at the key', function () {
+            for (const seed of [42, 'text', { not: 'a series' }, [1, 2]]) {
+                const { store } = makeStore()
+                store.c1 = seed
+
+                const append = function () { store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) }) }
+
+                append.should.not.throw()
+                store.c1.should.eql([pt(1, 1)])
+                store.$c1.msg.should.have.length(1)
+            }
+        })
+
+        it('keeps appending after a re-seed, rather than failing once and forever', function () {
+            const { store } = makeStore()
+            store.c1 = 42
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
+            store[APPEND_ENTRY]('c1', { payload: 2, _datapoint: pt(2, 2) })
+
+            store.c1.should.eql([pt(1, 1), pt(2, 2)])
+            store.$c1.msg.should.have.length(2)
+        })
+
+        it('does not let a multi-point datapoint be resized through $', function () {
+            const { store } = makeStore()
+            store[SET_SERIES]('c1', [{ payload: 1, _datapoint: [pt(1, 1), pt(2, 2)] }])
+
+            const push = function () { 'use strict'; store.$c1.msg[0]._datapoint.push(pt(9, 9)) }
+
+            push.should.throw()
+            store.$c1.msg[0]._datapoint.should.have.length(2)
+            store.c1.should.have.length(2)
+        })
+
+        it('freezes everything on a series message except its datapoint', function () {
+            const { store } = makeStore()
+            store[SET_SERIES]('c1', [{ payload: 1, _datapoint: pt(1, 1), meta: { n: 1 } }])
+
+            const write = function () { 'use strict'; store.$c1.msg[0].meta.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$c1.msg[0].meta.n.should.equal(1)
         })
     })
 
@@ -86,7 +295,7 @@ describe('store: reactive data store', function () {
 
         it('creates a series on first append', function () {
             const { store, log } = makeStore()
-            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1, _datapoint: pt(1, 1) })
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
 
             store.c1.should.eql([pt(1, 1)])
             store.$c1.msg.should.have.length(1)
@@ -96,9 +305,9 @@ describe('store: reactive data store', function () {
 
         it('pushes onto an existing series', function () {
             const { store, log } = makeStore()
-            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1 })
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
             log.length = 0
-            store[APPEND_ENTRY]('c1', [pt(2, 2)], { payload: 2 })
+            store[APPEND_ENTRY]('c1', { payload: 2, _datapoint: pt(2, 2) })
 
             store.c1.should.have.length(2)
             store.c1[1].x.should.equal(2)
@@ -108,7 +317,7 @@ describe('store: reactive data store', function () {
 
         it('pushes every point of a multi-series message, but the message once', function () {
             const { store, log } = makeStore()
-            store[APPEND_ENTRY]('c1', [pt(1, 1, 'a'), pt(1, 5, 'b')], { payload: [1, 5] })
+            store[APPEND_ENTRY]('c1', { payload: [1, 5], _datapoint: [pt(1, 1, 'a'), pt(1, 5, 'b')] })
 
             store.c1.should.eql([pt(1, 1, 'a'), pt(1, 5, 'b')])
             store.$c1.msg.should.have.length(1)
@@ -117,7 +326,7 @@ describe('store: reactive data store', function () {
 
         it('keeps the message but fires nothing when there are no points', function () {
             const { store, log } = makeStore()
-            store[APPEND_ENTRY]('c1', [], { payload: 'no datapoint' })
+            store[APPEND_ENTRY]('c1', { payload: 'no datapoint' })
 
             store.c1.should.eql([])
             store.$c1.msg.should.have.length(1)
@@ -126,9 +335,9 @@ describe('store: reactive data store', function () {
 
         it('keeps history empty, because the value is an array', function () {
             const { store } = makeStore()
-            store[APPEND_ENTRY]('c1', [pt(1, 1)], { payload: 1 })
-            store[APPEND_ENTRY]('c1', [pt(2, 2)], { payload: 2 })
-            store[APPEND_ENTRY]('c1', [pt(3, 3)], { payload: 3 })
+            store[APPEND_ENTRY]('c1', { payload: 1, _datapoint: pt(1, 1) })
+            store[APPEND_ENTRY]('c1', { payload: 2, _datapoint: pt(2, 2) })
+            store[APPEND_ENTRY]('c1', { payload: 3, _datapoint: pt(3, 3) })
 
             store.$c1.history.should.eql([])
         })
@@ -264,6 +473,20 @@ describe('store: reactive data store', function () {
             store.$k.timestamp.should.equal(stamp)
         })
 
+        it('does not report a write to a value whose key was deleted', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            const held = store.k
+            delete store.k
+            log.length = 0
+
+            held.n = 99
+
+            log.should.eql([])
+            held.n.should.equal(99)
+            should(store.k).be.undefined()
+        })
+
         it('does not report a write to a child of a replaced value', function () {
             const { store, log } = makeStore()
             store.k = { child: { n: 1 } }
@@ -393,6 +616,63 @@ describe('store: reactive data store', function () {
 
             write.should.throw()
             store.$k.history[0].value.should.equal(1)
+        })
+
+        it('does not let the stored msg be rewritten through $', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', { payload: 42, topic: 'boiler' })
+            log.length = 0
+
+            const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.payload.should.equal(42)
+            log.should.be.empty()
+        })
+
+        it('does not let a non-payload property of the stored msg be rewritten through $', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
+
+            const write = function () { 'use strict'; store.$k.msg.meta.deep.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.meta.deep.n.should.equal(1)
+        })
+
+        it('reports a nested write made through the $ msg payload, since it is the value', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', { payload: { deep: { n: 1 } } })
+            log.length = 0
+
+            store.$k.msg.payload.deep.n = 2
+
+            log.should.eql(['k.deep.n'])
+            store.k.deep.n.should.equal(2)
+        })
+
+        it('does not let a nested property of a history entry be rewritten through $', function () {
+            const { store } = makeStore()
+            store.k = { n: 1 }
+            store.k = { n: 2 }
+
+            const write = function () { 'use strict'; store.$k.history[0].value.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.history[0].value.n.should.equal(1)
+        })
+
+        it('leaves msg.req and msg.res usable, since cloneMessage keeps them as live handles', function () {
+            const { store } = makeStore({ clone: util.cloneMessage })
+            const req = new http.IncomingMessage({ fake: 'socket' })
+            const res = new http.ServerResponse(req)
+            store[SET_ENTRY]('k', { payload: 1, req, res })
+
+            // the point of the spec: cloneMessage keeps the real handle, so the store really can freeze it
+            store.$k.msg.req.should.equal(req)
+            Object.isFrozen(req).should.be.false()
+            Object.isFrozen(res).should.be.false()
+            res.setHeader.bind(res, 'x-test', '1').should.not.throw()
         })
 
         it('still reports a nested write made through the $ value', function () {
@@ -556,6 +836,17 @@ describe('store: reactive data store', function () {
             return { store, log }
         }
 
+        it('deep-watches an object built in a function node realm', function () {
+            const { store, log } = makeCloneStore()
+            store.w = fnNodeObject('({ nested: { temp: 20 } })')
+            log.length = 0
+
+            store.w.nested.temp = 25
+
+            log.should.eql(['w.nested.temp'])
+            store.w.nested.temp.should.equal(25)
+        })
+
         it('reassigning an object value fires only the key, no phantom req/res', function () {
             const { store, log } = makeCloneStore()
             store.robot = { temp: 20 }
@@ -607,6 +898,16 @@ describe('store: reactive data store', function () {
             const store = attachToContext(g, {})
 
             Object.keys(store).should.eql([])
+        })
+
+        it('rehydrates an object a function node left at the namespace', function () {
+            const m = { dashboardStore: fnNodeObject('({ robot: "PLAIN", count: 3 })') }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            store.robot.should.equal('PLAIN')
+            store.count.should.equal(3)
         })
 
         it('still rehydrates a plain object', function () {
@@ -718,24 +1019,46 @@ describe('store: reactive data store', function () {
         })
     })
 
-    describe('isInMemoryBacked', function () {
-        it('is true for an in-memory context whose get returns synchronously', function () {
+    describe('context stores that cannot hold a live proxy', function () {
+        it('attaches to an in-memory context', function () {
             const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
-            isInMemoryBacked(g).should.equal(true)
+            should(attachToContext(g, {})).not.be.null()
         })
 
-        it('is false when a cache-off store throws on synchronous get', function () {
+        it('returns null when a cache-off store throws on synchronous get', function () {
             const g = {
                 get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
                 set: () => {}
             }
-            isInMemoryBacked(g).should.equal(false)
+            should(attachToContext(g, {})).be.null()
         })
 
-        // a real localfilesystem store, accessed the way the context manager's sync path does (store.get(scope, key))
+        it('returns null for a store that hands back a serialised copy', function () {
+            const disk = {}
+            const g = {
+                get: (k) => disk[k] === undefined ? undefined : JSON.parse(disk[k]),
+                set: (k, v) => { disk[k] = JSON.stringify(v) }
+            }
+            should(attachToContext(g, {})).be.null()
+        })
+
+        it('never reports a replacement for a store it refused to attach to', function () {
+            const disk = {}
+            const g = {
+                get: (k) => disk[k] === undefined ? undefined : JSON.parse(disk[k]),
+                set: (k, v) => { disk[k] = JSON.stringify(v) }
+            }
+            let warned = 0
+
+            for (let deploy = 0; deploy < 3; deploy++) attachToContext(g, { onReplaced: () => { warned++ } })
+
+            warned.should.equal(0)
+        })
+
+        // a real localfilesystem store, accessed the way the context manager's sync path does
         function realGlobal (store) {
-            return { get: (key) => store.get('global', key) }
+            return { get: (key) => store.get('global', key), set: (key, value) => store.set('global', key, value) }
         }
         function tmpDir () {
             const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-ctx-'))
@@ -743,14 +1066,14 @@ describe('store: reactive data store', function () {
             return dir
         }
 
-        it('is false for a real cache-off localfilesystem store', function () {
+        it('returns null for a real cache-off localfilesystem store', function () {
             const store = LocalFileSystem({ dir: tmpDir(), cache: false })
-            isInMemoryBacked(realGlobal(store)).should.equal(false)
+            should(attachToContext(realGlobal(store), {})).be.null()
         })
 
-        it('is true for a real cache-backed localfilesystem store', function () {
+        it('attaches to a real cache-backed localfilesystem store', function () {
             const store = LocalFileSystem({ dir: tmpDir(), cache: true })
-            isInMemoryBacked(realGlobal(store)).should.equal(true)
+            should(attachToContext(realGlobal(store), {})).not.be.null()
         })
     })
 })

@@ -153,7 +153,7 @@ describe('ui-base config node: cache-off context store', function () {
         await helper.load(nodeImports, flow)
 
         const warned = helper.log().args.filter((args) =>
-            args[0].level === helper.log().WARN && /in-memory-backed/.test(args[0].msg)
+            args[0].level === helper.log().WARN && /hold objects by reference/.test(args[0].msg)
         )
         warned.should.have.length(1)
         touched.set.should.equal(0)

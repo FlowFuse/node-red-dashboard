@@ -1,4 +1,6 @@
-const { attachToContext, SET_ENTRY, APPEND_ENTRY } = require('./reactive.js')
+const { isClientScoped } = require('../utils/index.js')
+
+const { attachToContext, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('./reactive.js')
 
 const data = {}
 
@@ -7,7 +9,7 @@ const config = {
 }
 
 let storeOptions = {}
-let storeEnabled = true
+let storeEnabled = false
 const trimCounts = {}
 const TRIM_BATCH = 60
 
@@ -18,7 +20,9 @@ function getOrCreateStore (globalContext) {
 function initStore (globalContext, opts) {
     storeOptions = { ...opts }
     storeEnabled = true
-    return getOrCreateStore(globalContext)
+    const store = getOrCreateStore(globalContext)
+    storeEnabled = !!store
+    return store
 }
 
 function disableStore () {
@@ -29,38 +33,22 @@ function writeToStore (node, msg, stored) {
     if (!storeEnabled) return
     if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
     try {
-        const clone = config.RED.util.cloneMessage
-        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, msg.payload, clone(stored))
+        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, stored)
     } catch (err) {}
-}
-
-function chartPoints (msgs) {
-    if (!storeEnabled) return
-    const points = []
-    for (const m of msgs) {
-        const d = m?._datapoint
-        if (d === undefined || d === null) continue
-        if (Array.isArray(d)) points.push(...d)
-        else points.push(d)
-    }
-    return points
 }
 
 function appendToStore (node, msg) {
     if (!storeEnabled) return
     try {
-        const stored = config.RED.util.cloneMessage(msg)
-        getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, chartPoints([stored]), stored)
+        getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, msg)
     } catch (err) {}
 }
 
 function replaceInStore (node, msgs) {
     if (!storeEnabled) return
     try {
-        const clone = config.RED.util.cloneMessage
-        const stored = msgs.map((m) => clone(m))
-        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, chartPoints(stored), stored)
         delete trimCounts[node.id]
+        getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
     } catch (err) {}
 }
 
@@ -94,7 +82,7 @@ function canSaveInStore (base, node, msg) {
 
     if (constrained.includes(node.type)) {
         // core check
-        if (msg._client?.socketId) {
+        if (isClientScoped(msg)) {
             // we are in a node type that allows for definition of specific clients,
             // and a client has been defined
             checks.push(false)

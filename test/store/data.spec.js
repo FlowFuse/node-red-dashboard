@@ -18,6 +18,10 @@ function fakeNode (id, global) {
 const base = { acceptsClientConfig: [] }
 
 describe('store: data.js reactive-store mirror', function () {
+    before(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
     it('mirrors the clean payload into global.dashboardStore[id], not the whole message', function () {
         const global = fakeGlobal()
         const node = fakeNode('w1', global)
@@ -381,6 +385,27 @@ describe('store: data.js chart writes', function () {
         store['$chart-batch'].msg.should.have.length(40)
     })
 
+    it('resets the trim batch even when the rebuild fails, so it does not retry on every trim', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('chart-stuck', global)
+        for (let i = 0; i < 100; i++) {
+            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
+        }
+
+        const realGet = global.get
+        global.get = () => { throw new Error('context store unavailable') }
+        for (let i = 0; i < 60; i++) {
+            datastore.filter(base, node, (m, idx) => idx > 0)
+        }
+        global.get = realGet
+
+        // the counter was cleared despite the failure, so one more trim must not trigger a rebuild
+        const before = global.get('dashboardStore')['chart-stuck'].length
+        datastore.filter(base, node, (m, idx) => idx > 0)
+
+        global.get('dashboardStore')['chart-stuck'].should.have.length(before)
+    })
+
     it('does not advance the batch when a trim removes nothing', function () {
         const global = fakeGlobal()
         const node = fakeNode('chart-noop', global)
@@ -498,5 +523,51 @@ describe('store: data.js audit invariants', function () {
         const store = global.get('dashboardStore')
         should(store.a4).be.undefined()
         should(store.$a4).be.undefined()
+    })
+})
+
+describe('store: data.js client-scoped writes', function () {
+    describe('save', function () {
+        const base = { acceptsClientConfig: ['ui-text'] }
+        const node = { id: 'w1', type: 'ui-text' }
+
+        beforeEach(function () {
+            datastore.clear(node.id)
+        })
+
+        it('stores a msg with no client constraint', function () {
+            datastore.save(base, node, { payload: 'everyone' })
+            datastore.get(node.id).payload.should.equal('everyone')
+        })
+
+        it('does not store a socketId-targeted msg', function () {
+            datastore.save(base, node, { payload: 'for A', _client: { socketId: 's1' } })
+            should(datastore.get(node.id)).be.undefined()
+        })
+
+        it('does not store a clientId-targeted msg', function () {
+            datastore.save(base, node, { payload: 'for A', _client: { clientId: 'c1' } })
+            should(datastore.get(node.id)).be.undefined()
+        })
+
+        it('stores a targeted msg for a node type that is not client-constrained', function () {
+            datastore.save({ acceptsClientConfig: [] }, node, { payload: 'for A', _client: { clientId: 'c1' } })
+            datastore.get(node.id).payload.should.equal('for A')
+        })
+
+        it('filters targeted msgs out of an array', function () {
+            datastore.save(base, node, [
+                { payload: 'everyone' },
+                { payload: 'for A', _client: { clientId: 'c1' } }
+            ])
+            datastore.get(node.id).should.have.length(1)
+            datastore.get(node.id)[0].payload.should.equal('everyone')
+        })
+
+        it('does not append a clientId-targeted msg', function () {
+            datastore.append(base, node, { payload: 'everyone' })
+            datastore.append(base, node, { payload: 'for A', _client: { clientId: 'c1' } })
+            datastore.get(node.id).should.have.length(1)
+        })
     })
 })

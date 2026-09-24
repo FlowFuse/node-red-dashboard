@@ -1,7 +1,15 @@
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
+const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
 const NAMESPACE = 'dashboardStore'
+
+function deepFreeze (v) {
+    if (!isReactable(v) || Object.isFrozen(v)) return v
+    Object.freeze(v)
+    for (const k of Object.keys(v)) deepFreeze(v[k])
+    return v
+}
 
 class Entry {
     constructor () {
@@ -18,7 +26,7 @@ function isReactable (v) {
     if (Array.isArray(v)) return true
     if (v === null || typeof v !== 'object') return false
     const proto = Object.getPrototypeOf(v)
-    return proto === Object.prototype || proto === null
+    return proto === null || Object.getPrototypeOf(proto) === null
 }
 
 // reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
@@ -75,7 +83,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             records[prop] = rec
         } else if (!Array.isArray(rec.value)) {
             // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-            rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
+            rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
             if (rec.history.length > maxHistory) rec.history.shift()
         }
         const notify = (path) => {
@@ -84,27 +92,67 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        // clone on write so a flow reusing its own object can't mutate stored state
-        const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
+        const wrapped = deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
+        rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
 
-    records[SET_ENTRY] = (prop, value, msg) => {
-        const rec = writeValue(prop, value)
-        rec.msg = msg
+    records[SET_ENTRY] = (prop, msg) => {
+        const { payload, ...rest } = cloneValue(msg)
+        const rec = writeValue(prop, payload)
+        rec.msg = Object.freeze({ ...deepFreeze(rest), payload: rec.value })
         emit(prop, rec, prop)
     }
 
-    records[APPEND_ENTRY] = (prop, points, msg) => {
+    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
+
+    // the stored msg keeps _datapoint pointing at the live series, the same way an entry's msg.payload is its value
+    const storeMessage = (owned, live) => {
+        for (const k of Object.keys(owned)) if (k !== '_datapoint') deepFreeze(owned[k])
+        // _datapoint is left unfrozen only while it IS the live series; otherwise it is ordinary stored data
+        if (live !== undefined) owned._datapoint = live
+        else deepFreeze(owned._datapoint)
+        return Object.freeze(owned)
+    }
+
+    records[SET_SERIES] = (prop, msgs) => {
+        const owned = msgs.map((m) => cloneValue(m))
+        const points = []
+        const spans = owned.map((m) => {
+            const start = points.length
+            for (const p of pointsOf(m._datapoint)) points.push(p)
+            return [start, points.length]
+        })
+        const rec = writeValue(prop, points)
+        rec.msg = owned.map((m, i) => {
+            const [start, end] = spans[i]
+            if (end === start) return storeMessage(m)
+            return storeMessage(m, Array.isArray(m._datapoint) ? Object.freeze(rec.value.slice(start, end)) : rec.value[start])
+        })
+        emit(prop, rec, prop)
+    }
+
+    records[APPEND_ENTRY] = (prop, msg) => {
         let rec = records[prop]
-        if (!rec) {
+        // a flow can leave any shape at a chart's key; re-seed rather than throwing on every append from then on
+        if (!rec || !Array.isArray(rec.value) || !Array.isArray(rec.msg)) {
             rec = writeValue(prop, [])
             rec.msg = []
         }
-        rec.msg.push(msg)
-        for (const point of points) rec.value.push(point)
+        // the points are pushed through the proxy, which clones them, so only the rest of the message needs cloning here
+        const { _datapoint, ...rest } = msg
+        const owned = cloneValue(rest)
+        const start = rec.value.length
+        for (const p of pointsOf(_datapoint)) rec.value.push(p)
+        const end = rec.value.length
+        if (end > start) {
+            rec.msg.push(storeMessage(owned, Array.isArray(_datapoint) ? Object.freeze(rec.value.slice(start, end)) : rec.value[start]))
+        } else {
+            if ('_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
+            rec.msg.push(storeMessage(owned))
+        }
     }
 
     const handler = {
@@ -115,25 +163,29 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             }
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
-                return rec && Object.freeze({ value: rec.value, msg: rec.msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
+                if (!rec) return undefined
+                const msg = Array.isArray(rec.msg) ? Object.freeze(rec.msg.slice()) : rec.msg
+                return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
             return rec ? rec.value : undefined
         },
         set (target, prop, value) {
             if (typeof prop === 'symbol') return Reflect.set(target, prop, value)
-            // no-op guards return true so strict-mode callers do not throw
+            // returning true rather than false so a strict caller picking a reserved name doesn't throw
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
-            const rec = writeValue(prop, value)
+            const rec = writeValue(prop, cloneValue(value))
             emit(prop, rec, prop)
             return true
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
+            const rec = target[prop]
             const existed = prop in target
             const ok = delete target[prop]
+            if (rec) rec.value = undefined
             if (existed) emit(prop, undefined, prop)
             return ok
         }
@@ -141,23 +193,20 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     return new Proxy(records, handler)
 }
 
-// A cache-off persistent store serves only async access, so a sync get throws; the reactive proxy needs an in-memory store.
-function isInMemoryBacked (globalContext, namespace = NAMESPACE) {
-    try {
-        globalContext.get(namespace)
-        return true
-    } catch (err) {
-        return false
-    }
-}
-
 const injected = new WeakMap()
 
 // Inject the store into global context once. On redeploy the existing store is reused;
 // after a restart with a persistent context store, existing plain data is rehydrated.
+// Returns null when the context store can't hold a live proxy: a cache-off store serves
+// only async access so a sync get throws, and a serialising store hands back a copy.
 function attachToContext (globalContext, opts = {}) {
     const namespace = opts.namespace || NAMESPACE
-    const existing = globalContext.get(namespace)
+    let existing
+    try {
+        existing = globalContext.get(namespace)
+    } catch (err) {
+        return null
+    }
     if (existing && existing[STORE]) {
         injected.set(globalContext, existing)
         return existing
@@ -171,8 +220,9 @@ function attachToContext (globalContext, opts = {}) {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)
+    if (globalContext.get(namespace) !== store) return null
     injected.set(globalContext, store)
     return store
 }
 
-module.exports = { createDataStore, attachToContext, isInMemoryBacked, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES }
