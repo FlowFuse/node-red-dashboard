@@ -1,0 +1,160 @@
+[
+    {
+        "id": "node-red-tab-i18n-incomplete",
+        "type": "tab",
+        "label": "i18n Incomplete Translations Testing",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-base-incomplete",
+        "type": "ui-base",
+        "name": "Dashboard Incomplete",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default",
+        "languages": [
+            {
+                "code": "en",
+                "name": "English",
+                "enabled": true
+            },
+            {
+                "code": "de",
+                "name": "Deutsch",
+                "enabled": true
+            }
+        ],
+        "defaultLanguage": "en",
+        "autoDetectLanguage": false
+    },
+    {
+        "id": "dashboard-ui-theme-incomplete",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "dashboard-ui-page-incomplete",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base-incomplete",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme-incomplete",
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-group-incomplete",
+        "type": "ui-group",
+        "name": "Incomplete Translations Testing",
+        "page": "dashboard-ui-page-incomplete",
+        "width": "12",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "language-selector-widget-incomplete",
+        "type": "ui-language-selector",
+        "z": "node-red-tab-i18n-incomplete",
+        "group": "dashboard-ui-group-incomplete",
+        "ui": "dashboard-ui-base-incomplete",
+        "name": "",
+        "label": "Language:",
+        "order": 1,
+        "width": 3,
+        "height": 1,
+        "widgetType": "group",
+        "teleportCustom": "",
+        "outputFormat": "code",
+        "passthru": false,
+        "topic": "language",
+        "topicType": "str",
+        "className": "",
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "language-transform-incomplete"
+            ]
+        ]
+    },
+    {
+        "id": "language-transform-incomplete",
+        "type": "function",
+        "z": "node-red-tab-i18n-incomplete",
+        "name": "Transform Language",
+        "func": "// Transform language code to ui-control format\nmsg.payload = {\n    language: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 100,
+        "wires": [
+            [
+                "ui-control-language-incomplete"
+            ]
+        ]
+    },
+    {
+        "id": "ui-control-language-incomplete",
+        "type": "ui-control",
+        "z": "node-red-tab-i18n-incomplete",
+        "name": "Set Dashboard Language",
+        "ui": "dashboard-ui-base-incomplete",
+        "events": "change",
+        "x": 820,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "text-widget-partial",
+        "type": "ui-text",
+        "z": "node-red-tab-i18n-incomplete",
+        "group": "dashboard-ui-group-incomplete",
+        "order": 2,
+        "width": 6,
+        "height": 1,
+        "name": "Partial Translation",
+        "label": "Hello",
+        "format": "",
+        "layout": "row-spread",
+        "className": "",
+        "translations": {},
+        "x": 350,
+        "y": 140,
+        "wires": []
+    }
+]
