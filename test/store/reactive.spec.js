@@ -712,17 +712,27 @@ describe('store: reactive data store', function () {
             store.$k.history[0].value.n.should.equal(1)
         })
 
-        it('leaves msg.req and msg.res usable, since cloneMessage keeps them as live handles', function () {
-            const { store } = makeStore({ clone: util.cloneMessage })
-            const req = new http.IncomingMessage({ fake: 'socket' })
-            const res = new http.ServerResponse(req)
-            store[SET_ENTRY]('k', { payload: 1, req, res })
+        it('leaves msg.req and msg.res usable, since cloneMessage keeps them by reference', function () {
+            // msg.res is an object literal in Node-RED (createResponseWrapper), not a class instance,
+            // so isReactable accepts it and nothing but an explicit exemption keeps it writable
+            const paths = [
+                (store, msg) => store[SET_ENTRY]('k', msg),
+                (store, msg) => store[SET_SERIES]('k', [msg]),
+                (store, msg) => store[APPEND_ENTRY]('k', msg)
+            ]
+            for (const write of paths) {
+                const { store } = makeStore({ clone: util.cloneMessage })
+                const req = new http.IncomingMessage({ fake: 'socket' })
+                const res = { _res: new http.ServerResponse(req), set () {}, status () {} }
+                const msg = { payload: 1, req, res, _datapoint: { category: 'a', x: 1, y: 1 } }
+                write(store, msg)
 
-            // the point of the spec: cloneMessage keeps the real handle, so the store really can freeze it
-            store.$k.msg.req.should.equal(req)
-            Object.isFrozen(req).should.be.false()
-            Object.isFrozen(res).should.be.false()
-            res.setHeader.bind(res, 'x-test', '1').should.not.throw()
+                store.$k.msg.should.be.ok()
+                Object.isFrozen(req).should.be.false()
+                Object.isFrozen(res).should.be.false()
+                res.statusCode = 404
+                res.statusCode.should.equal(404)
+            }
         })
 
         it('still reports a nested write made through the $ value', function () {

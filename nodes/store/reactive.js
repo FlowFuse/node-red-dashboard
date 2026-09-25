@@ -4,13 +4,6 @@ const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
 const NAMESPACE = 'dashboardStore'
 
-function deepFreeze (v) {
-    if (!isReactable(v) || Object.isFrozen(v)) return v
-    Object.freeze(v)
-    for (const k of Object.keys(v)) deepFreeze(v[k])
-    return v
-}
-
 class Entry {
     constructor () {
         this.value = undefined
@@ -68,6 +61,21 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     return proxy
 }
 
+function deepFreeze (v) {
+    if (!isReactable(v) || Object.isFrozen(v)) return v
+    Object.freeze(v)
+    for (const k of Object.keys(v)) deepFreeze(v[k])
+    return v
+}
+
+function freezeOwned (owned, except) {
+    for (const k of Object.keys(owned)) {
+        if (k === except || k === 'req' || k === 'res') continue
+        deepFreeze(owned[k])
+    }
+    return owned
+}
+
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
     const emit = (prop, rec, path) => { try { onChange?.(prop, rec, path) } catch (err) {} }
@@ -102,7 +110,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[SET_ENTRY] = (prop, msg) => {
         const { payload, ...rest } = cloneValue(msg)
         const rec = writeValue(prop, payload)
-        rec.msg = Object.freeze({ ...deepFreeze(rest), payload: rec.value })
+        rec.msg = Object.freeze({ ...freezeOwned(rest), payload: rec.value })
         emit(prop, rec, prop)
     }
 
@@ -114,7 +122,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     }
 
     const toStoredMessage = (owned, datapoint) => {
-        for (const k of Object.keys(owned)) if (k !== '_datapoint') deepFreeze(owned[k])
+        freezeOwned(owned, '_datapoint')
         if (datapoint !== undefined) owned._datapoint = datapoint
         else deepFreeze(owned._datapoint)
         return Object.freeze(owned)
