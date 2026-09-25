@@ -2,13 +2,6 @@ const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const NAMESPACE = 'dashboardStore'
 
-function deepFreeze (v) {
-    if (!isReactable(v) || Object.isFrozen(v)) return v
-    Object.freeze(v)
-    for (const k of Object.keys(v)) deepFreeze(v[k])
-    return v
-}
-
 class Entry {
     constructor () {
         this.value = undefined
@@ -66,6 +59,21 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     return proxy
 }
 
+function deepFreeze (v) {
+    if (!isReactable(v) || Object.isFrozen(v)) return v
+    Object.freeze(v)
+    for (const k of Object.keys(v)) deepFreeze(v[k])
+    return v
+}
+
+function freezeOwned (owned) {
+    for (const k of Object.keys(owned)) {
+        if (k === 'req' || k === 'res') continue
+        deepFreeze(owned[k])
+    }
+    return owned
+}
+
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
     const emit = (prop, rec, path) => { try { onChange?.(prop, rec, path) } catch (err) {} }
@@ -100,7 +108,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[SET_ENTRY] = (prop, msg) => {
         const { payload, ...rest } = cloneValue(msg)
         const rec = writeValue(prop, payload)
-        rec.msg = Object.freeze({ ...deepFreeze(rest), payload: rec.value })
+        rec.msg = Object.freeze({ ...freezeOwned(rest), payload: rec.value })
         emit(prop, rec, prop)
     }
 
