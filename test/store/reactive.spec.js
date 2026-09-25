@@ -74,6 +74,27 @@ describe('store: reactive data store', function () {
             store.$h.history.map((h) => h.value).should.eql([2, 3])
             store.h.should.equal(4)
         })
+
+        it('keeps no history for array-valued keys', function () {
+            const { store } = makeStore()
+            store.series = [1, 2]
+            store.series = [3, 4, 5]
+            store.$series.history.should.eql([])
+        })
+
+        it('does not snapshot the old array when it is replaced (even by a scalar)', function () {
+            const { store } = makeStore()
+            store.k = [1, 2, 3]
+            store.k = 9
+            store.$k.history.should.eql([])
+        })
+
+        it('does snapshot a scalar when it becomes an array', function () {
+            const { store } = makeStore()
+            store.k = 5
+            store.k = [1, 2]
+            store.$k.history.map((h) => h.value).should.eql([5])
+        })
     })
 
     describe('deep reactivity', function () {
@@ -99,6 +120,28 @@ describe('store: reactive data store', function () {
             store.series.length = 0
             log.should.eql(['series'])
             store.series.should.eql([])
+        })
+
+        it('fires for an array at a nested path the same as one at a top-level key', function () {
+            const { store, log } = makeStore()
+            store.top = [1, 2]
+            store.nested = { rows: [1, 2] }
+
+            log.length = 0
+            store.top.push(3)
+            store.nested.rows.push(3)
+
+            log.should.eql(['top.2', 'nested.rows.2'])
+        })
+
+        it('does not alias an array assigned into the store', function () {
+            const { store } = makeStore()
+            const original = [{ x: 1 }]
+            store.series = original
+
+            original[0].x = 999
+
+            store.series.should.eql([{ x: 1 }])
         })
     })
 

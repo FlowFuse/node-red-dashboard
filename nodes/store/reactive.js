@@ -87,7 +87,8 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (!rec) {
                 rec = new Entry()
                 target[prop] = rec
-            } else {
+            } else if (!Array.isArray(rec.value)) {
+                // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
                 rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
                 if (rec.history.length > maxHistory) rec.history.shift()
             }
