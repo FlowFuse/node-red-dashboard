@@ -20,9 +20,7 @@ function getOrCreateStore (globalContext) {
 function initStore (globalContext, opts) {
     storeOptions = { ...opts }
     storeEnabled = true
-    const store = getOrCreateStore(globalContext)
-    storeEnabled = !!store
-    return store
+    return getOrCreateStore(globalContext)
 }
 
 function disableStore () {
@@ -52,7 +50,7 @@ function replaceInStore (node, msgs) {
     } catch (err) {}
 }
 
-function trimStore (node, msgs) {
+function trimInStore (node, msgs) {
     if (!storeEnabled) return
     trimCounts[node.id] = (trimCounts[node.id] || 0) + 1
     if (trimCounts[node.id] < TRIM_BATCH) return
@@ -182,7 +180,7 @@ const setters = {
             if (filteredMessages.length !== currentData.length) {
                 // no need for save operation to process messages - just apply them
                 data[node.id] = filteredMessages
-                trimStore(node, filteredMessages)
+                trimInStore(node, filteredMessages)
             }
         }
     }

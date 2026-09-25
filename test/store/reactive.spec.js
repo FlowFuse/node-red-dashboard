@@ -268,6 +268,17 @@ describe('store: reactive data store', function () {
             store.$c1.msg.should.have.length(2)
         })
 
+        it('reports discarding whatever a flow left at the key', function () {
+            const { store, log } = makeStore()
+            store.c1 = { not: 'a series' }
+            log.length = 0
+
+            store[APPEND_ENTRY]('c1', { payload: 1 })
+
+            store.c1.should.eql([])
+            log.should.eql(['c1'])
+        })
+
         it('does not let a multi-point datapoint be resized through $', function () {
             const { store } = makeStore()
             store[SET_SERIES]('c1', [{ payload: 1, _datapoint: [pt(1, 1), pt(2, 2)] }])

@@ -108,11 +108,14 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
 
-    // the stored msg keeps _datapoint pointing at the live series, the same way an entry's msg.payload is its value
-    const storeMessage = (owned, live) => {
+    const toStoredDatapoint = (series, datapoint, start, end) => {
+        if (end === start) return undefined
+        return Array.isArray(datapoint) ? Object.freeze(series.slice(start, end)) : series[start]
+    }
+
+    const toStoredMessage = (owned, datapoint) => {
         for (const k of Object.keys(owned)) if (k !== '_datapoint') deepFreeze(owned[k])
-        // _datapoint is left unfrozen only while it IS the live series; otherwise it is ordinary stored data
-        if (live !== undefined) owned._datapoint = live
+        if (datapoint !== undefined) owned._datapoint = datapoint
         else deepFreeze(owned._datapoint)
         return Object.freeze(owned)
     }
@@ -126,33 +129,26 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             return [start, points.length]
         })
         const rec = writeValue(prop, points)
-        rec.msg = owned.map((m, i) => {
-            const [start, end] = spans[i]
-            if (end === start) return storeMessage(m)
-            return storeMessage(m, Array.isArray(m._datapoint) ? Object.freeze(rec.value.slice(start, end)) : rec.value[start])
-        })
+        rec.msg = owned.map((m, i) => toStoredMessage(m, toStoredDatapoint(rec.value, m._datapoint, ...spans[i])))
         emit(prop, rec, prop)
     }
 
     records[APPEND_ENTRY] = (prop, msg) => {
         let rec = records[prop]
-        // a flow can leave any shape at a chart's key; re-seed rather than throwing on every append from then on
-        if (!rec || !Array.isArray(rec.value) || !Array.isArray(rec.msg)) {
+        const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
+        if (!rec || replaced) {
             rec = writeValue(prop, [])
             rec.msg = []
         }
-        // the points are pushed through the proxy, which clones them, so only the rest of the message needs cloning here
+        // the proxy clones on push, so points must not be cloned again here
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
         const start = rec.value.length
         for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const end = rec.value.length
-        if (end > start) {
-            rec.msg.push(storeMessage(owned, Array.isArray(_datapoint) ? Object.freeze(rec.value.slice(start, end)) : rec.value[start]))
-        } else {
-            if ('_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
-            rec.msg.push(storeMessage(owned))
-        }
+        const stored = toStoredDatapoint(rec.value, _datapoint, start, rec.value.length)
+        if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
+        rec.msg.push(toStoredMessage(owned, stored))
+        if (replaced) emit(prop, rec, prop)
     }
 
     const handler = {
