@@ -37,6 +37,7 @@ function writeToStore (node, msg, stored) {
 
 function appendToStore (node, msg) {
     if (!storeEnabled) return
+    if (!msg || typeof msg !== 'object') return
     try {
         getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, msg)
     } catch (err) {}
@@ -44,6 +45,7 @@ function appendToStore (node, msg) {
 
 function replaceInStore (node, msgs) {
     if (!storeEnabled) return
+    if (!Array.isArray(msgs) || msgs.some((m) => !m || typeof m !== 'object')) return
     try {
         delete trimCounts[node.id]
         getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
@@ -59,9 +61,9 @@ function trimInStore (node, msgs) {
 
 function clearFromStore (node) {
     if (!storeEnabled) return
+    delete trimCounts[node.id]
     try {
         delete getOrCreateStore(node.context().global)[node.id]
-        delete trimCounts[node.id]
     } catch (err) {}
 }
 

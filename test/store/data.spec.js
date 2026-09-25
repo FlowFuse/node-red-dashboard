@@ -385,6 +385,43 @@ describe('store: data.js chart writes', function () {
         store['$chart-batch'].msg.should.have.length(40)
     })
 
+    it('does not create a key when the appended message is not an object', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('chart-junk', global)
+        datastore.append(base, fakeNode('chart-ok', global), { payload: 1, _datapoint: pt(1, 1) })
+
+        datastore.append(base, node, 5)
+        datastore.save(base, node, [5, { payload: 1, _datapoint: pt(1, 1) }])
+
+        should(global.get('dashboardStore')['chart-junk']).be.undefined()
+        global.get('dashboardStore')['chart-ok'].should.have.length(1)
+    })
+
+    it('clears the trim batch even when the store cannot be reached', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('chart-cleared', global)
+        for (let i = 0; i < 100; i++) {
+            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
+        }
+        for (let i = 0; i < 59; i++) {
+            datastore.filter(base, node, (m, idx) => idx > 0)
+        }
+
+        const realGet = global.get
+        global.get = () => { throw new Error('context store unavailable') }
+        datastore.clear(node.id)
+        datastore.clearFromStore(node)
+        global.get = realGet
+
+        for (let i = 0; i < 100; i++) {
+            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
+        }
+        const before = global.get('dashboardStore')['chart-cleared'].length
+        datastore.filter(base, node, (m, idx) => idx > 0)
+
+        global.get('dashboardStore')['chart-cleared'].should.have.length(before)
+    })
+
     it('resets the trim batch even when the rebuild fails, so it does not retry on every trim', function () {
         const global = fakeGlobal()
         const node = fakeNode('chart-stuck', global)
