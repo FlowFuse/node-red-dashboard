@@ -279,6 +279,45 @@ describe('store: reactive data store', function () {
             log.should.eql(['c1'])
         })
 
+        it('does not freeze a point a message reaches through another key', function () {
+            for (const write of [
+                (store, msg) => store[SET_SERIES]('c1', [msg]),
+                (store, msg) => store[APPEND_ENTRY]('c1', msg)
+            ]) {
+                const { store } = makeStore({ clone: util.cloneMessage })
+                const payload = { reading: { v: 1 } }
+                write(store, { topic: 't', payload, _datapoint: { category: 'a', x: 1, y: payload.reading } })
+
+                Object.isFrozen(store.c1[0].y).should.be.false()
+                store.c1[0].y.v = 99
+                store.c1[0].y.v.should.equal(99)
+            }
+        })
+
+        it('freezes the stored series message itself', function () {
+            const { store } = makeStore()
+            store[APPEND_ENTRY]('c1', { topic: 't', payload: 1, _datapoint: pt(1, 1) })
+
+            Object.isFrozen(store.$c1.msg[0]).should.be.true()
+            const write = function () { 'use strict'; store.$c1.msg[0].topic = 'TAMPERED' }
+
+            write.should.throw()
+            store.$c1.msg[0].topic.should.equal('t')
+        })
+
+        it('keeps an empty or null datapoint on the stored message', function () {
+            for (const datapoint of [null, []]) {
+                const { store } = makeStore()
+                store[APPEND_ENTRY]('c1', { payload: 'x', _datapoint: datapoint })
+                store[SET_SERIES]('c2', [{ payload: 'x', _datapoint: datapoint }])
+
+                store.$c1.msg[0].should.have.property('_datapoint')
+                store.$c2.msg[0].should.have.property('_datapoint')
+                should(store.$c1.msg[0]._datapoint).eql(datapoint)
+                should(store.$c2.msg[0]._datapoint).eql(datapoint)
+            }
+        })
+
         it('does not let a multi-point datapoint be resized through $', function () {
             const { store } = makeStore()
             store[SET_SERIES]('c1', [{ payload: 1, _datapoint: [pt(1, 1), pt(2, 2)] }])

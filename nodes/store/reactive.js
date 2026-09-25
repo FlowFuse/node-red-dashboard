@@ -121,15 +121,21 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     }
 
     records[SET_SERIES] = (prop, msgs) => {
-        const owned = msgs.map((m) => cloneValue(m))
         const points = []
-        const spans = owned.map((m) => {
+        const parts = msgs.map((msg) => {
+            const { _datapoint, ...rest } = msg
+            const owned = cloneValue(rest)
+            const datapoint = cloneValue(_datapoint)
             const start = points.length
-            for (const p of pointsOf(m._datapoint)) points.push(p)
-            return [start, points.length]
+            for (const p of pointsOf(datapoint)) points.push(p)
+            return { msg, owned, datapoint, start, end: points.length }
         })
         const rec = writeValue(prop, points)
-        rec.msg = owned.map((m, i) => toStoredMessage(m, toStoredDatapoint(rec.value, m._datapoint, ...spans[i])))
+        rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
+            const stored = toStoredDatapoint(rec.value, datapoint, start, end)
+            if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
+            return toStoredMessage(owned, stored)
+        })
         emit(prop, rec, prop)
     }
 
