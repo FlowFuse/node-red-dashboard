@@ -403,7 +403,13 @@ module.exports = function (RED) {
         node._created = Date.now()
 
         try {
-            attachToContext(node.context().global, { clone: RED.util.cloneMessage })
+            const store = attachToContext(node.context().global, {
+                clone: RED.util.cloneMessage,
+                onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
+            })
+            if (!store) {
+                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
+            }
         } catch (err) {
             node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
         }

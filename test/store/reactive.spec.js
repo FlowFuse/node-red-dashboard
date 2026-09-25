@@ -1,8 +1,16 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+
+const vm = require('vm')
+
+const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
 const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
+
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -14,6 +22,10 @@ function makeStore (opts = {}) {
     })
     return { store, log }
 }
+
+// Node-RED runs function nodes in a vm context, so their objects carry that realm's Object.prototype
+const fnRealm = vm.createContext({})
+const fnNodeObject = (src) => vm.runInContext(src, fnRealm)
 
 describe('store: reactive data store', function () {
     describe('values and metadata', function () {
@@ -124,6 +136,20 @@ describe('store: reactive data store', function () {
             detached.n.should.equal(999)
             store.k.n.should.equal(2)
             store.$k.timestamp.should.equal(stamp)
+        })
+
+        it('does not report a write to a value whose key was deleted', function () {
+            const { store, log } = makeStore()
+            store.k = { n: 1 }
+            const held = store.k
+            delete store.k
+            log.length = 0
+
+            held.n = 99
+
+            log.should.eql([])
+            held.n.should.equal(99)
+            should(store.k).be.undefined()
         })
 
         it('does not report a write to a child of a replaced value', function () {
@@ -400,7 +426,7 @@ describe('store: reactive data store', function () {
             log.should.eql(['cbk'])
         })
 
-        it('loses reactivity if a flow clobbers the namespace (known Story 2 risk)', function () {
+        it('a raw overwrite drops reactivity until Dashboard re-injects (see attachToContext)', function () {
             const { ctx, log } = makeContext()
             ctx.set('global', 'dashboardStore.k', 1)
             ctx.set('global', 'dashboardStore', { k: 999 })
@@ -417,6 +443,17 @@ describe('store: reactive data store', function () {
             const store = createDataStore({ clone: util.cloneMessage, onChange: (k, e, p) => log.push(p) })
             return { store, log }
         }
+
+        it('deep-watches an object built in a function node realm', function () {
+            const { store, log } = makeCloneStore()
+            store.w = fnNodeObject('({ nested: { temp: 20 } })')
+            log.length = 0
+
+            store.w.nested.temp = 25
+
+            log.should.eql(['w.nested.temp'])
+            store.w.nested.temp.should.equal(25)
+        })
 
         it('reassigning an object value fires only the key, no phantom req/res', function () {
             const { store, log } = makeCloneStore()
@@ -469,6 +506,16 @@ describe('store: reactive data store', function () {
             const store = attachToContext(g, {})
 
             Object.keys(store).should.eql([])
+        })
+
+        it('rehydrates an object a function node left at the namespace', function () {
+            const m = { dashboardStore: fnNodeObject('({ robot: "PLAIN", count: 3 })') }
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            const store = attachToContext(g, {})
+
+            store.robot.should.equal('PLAIN')
+            store.count.should.equal(3)
         })
 
         it('still rehydrates a plain object', function () {
@@ -524,6 +571,117 @@ describe('store: reactive data store', function () {
             store.robot.should.eql({ temp: 1 })
             store.a = 6
             log.should.containEql('a')
+        })
+
+        it('reinjects and warns when a flow has overwritten the namespace, preserving data', function () {
+            const g = fakeGlobal()
+            const store = attachToContext(g)
+            store.k = 1
+            g.set('dashboardStore', { k: 1, extra: 2 }) // a flow replaces the proxy with a plain object
+
+            let warned = 0
+            const restored = attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(1)
+            restored[STORE].should.equal(true)
+            should(g.get('dashboardStore')).equal(restored)
+            restored.extra.should.equal(2)
+            should(attachToContext(g)).equal(restored) // idempotent again, no re-overwrite
+            restored.k = 5
+            restored.k.should.equal(5)
+        })
+
+        it('does not warn on a clean first injection', function () {
+            const g = fakeGlobal()
+            let warned = 0
+            attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(0)
+        })
+
+        it('does not warn when a restart rehydrates plain data it never injected', function () {
+            const g = fakeGlobal()
+            g.set('dashboardStore', { widget: 'from disk' }) // what a persistent context store hands back
+            let warned = 0
+            const store = attachToContext(g, { onReplaced: () => { warned++ } })
+            warned.should.equal(0)
+            store.widget.should.equal('from disk')
+        })
+
+        const replacements = [
+            ['an object', { mine: 1 }],
+            ['an array', [1, 2]],
+            ['a string', 'hello'],
+            ['a number', 42],
+            ['null', null],
+            ['undefined', undefined]
+        ]
+        replacements.forEach(([label, value]) => {
+            it(`warns when a flow replaces the injected store with ${label}`, function () {
+                const g = fakeGlobal()
+                attachToContext(g)
+                let warned = 0
+                g.set('dashboardStore', value)
+                const restored = attachToContext(g, { onReplaced: () => { warned++ } })
+                warned.should.equal(1)
+                restored[STORE].should.equal(true)
+            })
+        })
+    })
+
+    describe('context stores that cannot hold a live proxy', function () {
+        it('attaches to an in-memory context', function () {
+            const m = {}
+            const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            should(attachToContext(g, {})).not.be.null()
+        })
+
+        it('returns null when a cache-off store throws on synchronous get', function () {
+            const g = {
+                get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
+                set: () => {}
+            }
+            should(attachToContext(g, {})).be.null()
+        })
+
+        it('returns null for a store that hands back a serialised copy', function () {
+            const disk = {}
+            const g = {
+                get: (k) => disk[k] === undefined ? undefined : JSON.parse(disk[k]),
+                set: (k, v) => { disk[k] = JSON.stringify(v) }
+            }
+            should(attachToContext(g, {})).be.null()
+        })
+
+        it('never reports a replacement for a store it refused to attach to', function () {
+            const disk = {}
+            const g = {
+                get: (k) => disk[k] === undefined ? undefined : JSON.parse(disk[k]),
+                set: (k, v) => { disk[k] = JSON.stringify(v) }
+            }
+            let warned = 0
+
+            for (let deploy = 0; deploy < 3; deploy++) attachToContext(g, { onReplaced: () => { warned++ } })
+
+            warned.should.equal(0)
+        })
+
+        // a real localfilesystem store, accessed the way the context manager's sync path does
+        function realGlobal (store) {
+            return { get: (key) => store.get('global', key), set: (key, value) => store.set('global', key, value) }
+        }
+        function tmpDir () {
+            const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-ctx-'))
+            after(() => fs.rmSync(dir, { recursive: true, force: true }))
+            return dir
+        }
+
+        it('returns null for a real cache-off localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: false })
+            should(attachToContext(realGlobal(store), {})).be.null()
+        })
+
+        it('attaches to a real cache-backed localfilesystem store', function () {
+            const store = LocalFileSystem({ dir: tmpDir(), cache: true })
+            should(attachToContext(realGlobal(store), {})).not.be.null()
         })
     })
 })
