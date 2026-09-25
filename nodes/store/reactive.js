@@ -1,5 +1,7 @@
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
+const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
+const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -66,9 +68,9 @@ function deepFreeze (v) {
     return v
 }
 
-function freezeOwned (owned) {
+function freezeOwned (owned, except) {
     for (const k of Object.keys(owned)) {
-        if (k === 'req' || k === 'res') continue
+        if (k === except || k === 'req' || k === 'res') continue
         deepFreeze(owned[k])
     }
     return owned
@@ -112,6 +114,57 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         emit(prop, rec, prop)
     }
 
+    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
+
+    const toStoredDatapoint = (series, datapoint, start, end) => {
+        if (end === start) return undefined
+        return Array.isArray(datapoint) ? Object.freeze(series.slice(start, end)) : series[start]
+    }
+
+    const toStoredMessage = (owned, datapoint) => {
+        freezeOwned(owned, '_datapoint')
+        if (datapoint !== undefined) owned._datapoint = datapoint
+        else deepFreeze(owned._datapoint)
+        return Object.freeze(owned)
+    }
+
+    records[SET_SERIES] = (prop, msgs) => {
+        const points = []
+        const parts = msgs.map((msg) => {
+            const { _datapoint, ...rest } = msg
+            const owned = cloneValue(rest)
+            const datapoint = cloneValue(_datapoint)
+            const start = points.length
+            for (const p of pointsOf(datapoint)) points.push(p)
+            return { msg, owned, datapoint, start, end: points.length }
+        })
+        const rec = writeValue(prop, points)
+        rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
+            const stored = toStoredDatapoint(rec.value, datapoint, start, end)
+            if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
+            return toStoredMessage(owned, stored)
+        })
+        emit(prop, rec, prop)
+    }
+
+    records[APPEND_ENTRY] = (prop, msg) => {
+        let rec = records[prop]
+        const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
+        if (!rec || replaced) {
+            rec = writeValue(prop, [])
+            rec.msg = []
+        }
+        // the proxy clones on push, so points must not be cloned again here
+        const { _datapoint, ...rest } = msg
+        const owned = cloneValue(rest)
+        const start = rec.value.length
+        for (const p of pointsOf(_datapoint)) rec.value.push(p)
+        const stored = toStoredDatapoint(rec.value, _datapoint, start, rec.value.length)
+        if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
+        rec.msg.push(toStoredMessage(owned, stored))
+        if (replaced) emit(prop, rec, prop)
+    }
+
     const handler = {
         get (target, prop, receiver) {
             if (typeof prop === 'symbol') return Reflect.get(target, prop, receiver)
@@ -120,7 +173,9 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             }
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
-                return rec && Object.freeze({ value: rec.value, msg: rec.msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
+                if (!rec) return undefined
+                const msg = Array.isArray(rec.msg) ? Object.freeze(rec.msg.slice()) : rec.msg
+                return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
             return rec ? rec.value : undefined
@@ -180,4 +235,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES }
