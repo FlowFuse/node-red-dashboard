@@ -138,7 +138,7 @@ export default {
             }
         },
         send (msg) {
-            this.$socket.emit('widget-send', this.id, msg)
+            this.$socket.emit('widget-action', this.id, msg)
         },
         maxFileSize (files) {
             if (files) {
