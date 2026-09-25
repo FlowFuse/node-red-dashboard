@@ -1,9 +1,11 @@
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
+const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
     constructor () {
         this.value = undefined
+        this.msg = undefined
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
@@ -57,12 +59,58 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     return proxy
 }
 
+function deepFreeze (v) {
+    if (!isReactable(v) || Object.isFrozen(v)) return v
+    Object.freeze(v)
+    for (const k of Object.keys(v)) deepFreeze(v[k])
+    return v
+}
+
+function freezeOwned (owned) {
+    for (const k of Object.keys(owned)) {
+        if (k === 'req' || k === 'res') continue
+        deepFreeze(owned[k])
+    }
+    return owned
+}
+
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
     const cloneValue = (v) => (v && typeof v === 'object') ? clone(v) : v
     const emit = (prop, rec, path) => { try { onChange?.(prop, rec, path) } catch (err) {} }
     const records = Object.create(null)
 
     records[STORE] = true
+
+    // returns the record without notifying, so a caller can finish writing it before onChange fires
+    const writeValue = (prop, value) => {
+        let rec = records[prop]
+        if (!rec) {
+            rec = new Entry()
+            records[prop] = rec
+        } else if (!Array.isArray(rec.value)) {
+            // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
+            rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
+            if (rec.history.length > maxHistory) rec.history.shift()
+        }
+        const notify = (path) => {
+            // a replaced value keeps its proxies alive; they must not report into the record any more
+            if (rec.value !== wrapped) return
+            rec.timestamp = now()
+            emit(prop, rec, path)
+        }
+        const wrapped = deepReactive(value, notify, prop, cloneValue)
+        rec.value = wrapped
+        rec.msg = Object.freeze({ payload: wrapped })
+        rec.timestamp = now()
+        return rec
+    }
+
+    records[SET_ENTRY] = (prop, msg) => {
+        const { payload, ...rest } = cloneValue(msg)
+        const rec = writeValue(prop, payload)
+        rec.msg = Object.freeze({ ...freezeOwned(rest), payload: rec.value })
+        emit(prop, rec, prop)
+    }
 
     const handler = {
         get (target, prop, receiver) {
@@ -72,7 +120,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             }
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
-                return rec && Object.freeze({ value: rec.value, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
+                return rec && Object.freeze({ value: rec.value, msg: rec.msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
             return rec ? rec.value : undefined
@@ -83,25 +131,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
-            let rec = target[prop]
-            if (!rec) {
-                rec = new Entry()
-                target[prop] = rec
-            } else if (!Array.isArray(rec.value)) {
-                // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-                rec.history.push(Object.freeze({ value: cloneValue(rec.value), timestamp: rec.timestamp }))
-                if (rec.history.length > maxHistory) rec.history.shift()
-            }
-            const notify = (path) => {
-                // a replaced value keeps its proxies alive; they must not report into the record any more
-                if (rec.value !== wrapped) return
-                rec.timestamp = now()
-                emit(prop, rec, path)
-            }
-            // clone on write so a flow reusing its own object can't mutate stored state
-            const wrapped = deepReactive(cloneValue(value), notify, prop, cloneValue)
-            rec.value = wrapped
-            rec.timestamp = now()
+            const rec = writeValue(prop, cloneValue(value))
             emit(prop, rec, prop)
             return true
         },
@@ -150,4 +180,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY }

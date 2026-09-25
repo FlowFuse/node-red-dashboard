@@ -1,4 +1,5 @@
 const fs = require('fs')
+const http = require('http')
 const os = require('os')
 const path = require('path')
 
@@ -10,7 +11,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, STORE } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, SET_ENTRY } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -44,10 +45,68 @@ describe('store: reactive data store', function () {
             store.$k1.timestamp.should.be.a.Number()
         })
 
+        it('synthesises a msg from the value when a flow writes the key directly', function () {
+            const { store } = makeStore()
+            store.k1 = 123
+            store.$k1.msg.should.eql({ payload: 123 })
+            store.$k1.msg.payload.should.equal(store.$k1.value)
+        })
+
+        it('does not leave a msg describing the previous value after a flow write', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k1', { payload: 42, topic: 'boiler' })
+            store.$k1.msg.topic.should.equal('boiler')
+
+            store.k1 = 99
+
+            store.$k1.value.should.equal(99)
+            store.$k1.msg.should.eql({ payload: 99 })
+        })
+
         it('returns the whole object by default', function () {
             const { store } = makeStore()
             store.robot = { temp: 20 }
             store.robot.should.eql({ temp: 20 })
+        })
+    })
+
+    describe('entry setter', function () {
+        it('sets value and msg together and fires one change', function () {
+            const { store, log } = makeStore()
+            const msg = { payload: 42, topic: 'sensor-A' }
+
+            store[SET_ENTRY]('gauge', msg)
+
+            store.gauge.should.equal(42)
+            store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
+            log.should.eql(['gauge'])
+        })
+
+        it('keeps history on the value, as a normal write does', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('gauge', { payload: 1 })
+            store[SET_ENTRY]('gauge', { payload: 2 })
+
+            store.gauge.should.equal(2)
+            store.$gauge.history.map((h) => h.value).should.eql([1])
+        })
+
+        it('clones the message it is given, so a caller reusing it cannot mutate stored state', function () {
+            const { store } = makeStore()
+            const msg = { payload: 1, nested: { a: 1 } }
+            store[SET_ENTRY]('k', msg)
+
+            should(store.$k.msg).not.equal(msg)
+            msg.nested.a = 'MUTATED'
+            store.$k.msg.nested.a.should.equal(1)
+        })
+
+        it('serves the stored value as the payload of the stored msg', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
+
+            store.$k.msg.payload.should.equal(store.$k.value)
+            store.k.n.should.equal(1)
         })
     })
 
@@ -324,6 +383,66 @@ describe('store: reactive data store', function () {
 
             write.should.throw()
             store.$k.history[0].value.should.equal(1)
+        })
+
+        it('does not let the stored msg be rewritten through $', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', { payload: 42, topic: 'boiler' })
+            log.length = 0
+
+            const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.payload.should.equal(42)
+            log.should.be.empty()
+        })
+
+        it('does not let a non-payload property of the stored msg be rewritten through $', function () {
+            const { store } = makeStore()
+            store[SET_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
+
+            const write = function () { 'use strict'; store.$k.msg.meta.deep.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.msg.meta.deep.n.should.equal(1)
+        })
+
+        it('reports a nested write made through the $ msg payload, since it is the value', function () {
+            const { store, log } = makeStore()
+            store[SET_ENTRY]('k', { payload: { deep: { n: 1 } } })
+            log.length = 0
+
+            store.$k.msg.payload.deep.n = 2
+
+            log.should.eql(['k.deep.n'])
+            store.k.deep.n.should.equal(2)
+        })
+
+        it('does not let a nested property of a history entry be rewritten through $', function () {
+            const { store } = makeStore()
+            store.k = { n: 1 }
+            store.k = { n: 2 }
+
+            const write = function () { 'use strict'; store.$k.history[0].value.n = 'TAMPERED' }
+
+            write.should.throw()
+            store.$k.history[0].value.n.should.equal(1)
+        })
+
+        it('leaves msg.req and msg.res usable, since cloneMessage keeps them by reference', function () {
+            // msg.res is an object literal in Node-RED (createResponseWrapper), not a class instance,
+            // so isReactable accepts it and nothing but an explicit exemption keeps it writable
+            const { store } = makeStore({ clone: util.cloneMessage })
+            const req = new http.IncomingMessage({ fake: 'socket' })
+            const res = { _res: new http.ServerResponse(req), set () {}, status () {} }
+            const msg = { payload: 1, req, res }
+            store[SET_ENTRY]('k', msg)
+
+            store.$k.msg.req.should.equal(req)
+            Object.isFrozen(req).should.be.false()
+            Object.isFrozen(res).should.be.false()
+            res.statusCode = 404
+            res.statusCode.should.equal(404)
         })
 
         it('still reports a nested write made through the $ value', function () {

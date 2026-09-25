@@ -38,6 +38,48 @@ describe('store: data.js reactive-store mirror', function () {
         global.get('dashboardStore').w2.should.equal(2)
     })
 
+    it('stores the whole message alongside the value', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('m1', global)
+        datastore.save(base, node, { payload: 42, topic: 't', extra: 'x' })
+
+        const store = global.get('dashboardStore')
+        store.m1.should.equal(42)
+        store.$m1.msg.payload.should.equal(42)
+        store.$m1.msg.topic.should.equal('t')
+        store.$m1.msg.extra.should.equal('x')
+    })
+
+    it('keeps the stored message in step with the legacy merge', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('m3', global)
+        datastore.save(base, node, { payload: 1, topic: 'a', unit: 'bar' })
+        datastore.save(base, node, { payload: 2 })
+
+        global.get('dashboardStore').$m3.msg.should.eql(datastore.get('m3'))
+    })
+
+    it('does not alias the legacy store into the mirror', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('m4', global)
+        datastore.save(base, node, { payload: 1, topic: 'a' })
+
+        global.get('dashboardStore').$m4.msg.topic = 'mutated'
+
+        datastore.get('m4').topic.should.equal('a')
+    })
+
+    it('does not alias the flow\'s message into the store', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('m2', global)
+        const sent = { payload: 1, nested: { a: 1 } }
+        datastore.save(base, node, sent)
+
+        sent.nested.a = 999
+
+        global.get('dashboardStore').$m2.msg.nested.a.should.equal(1)
+    })
+
     it('does not mirror a client-scoped message (not stored centrally)', function () {
         const global = fakeGlobal()
         const node = fakeNode('w3', global)
@@ -270,6 +312,50 @@ describe('store: data.js chart writes (deferred to Story 3)', function () {
 
         datastore.clearFromStore(node)
         should(global.get('dashboardStore')['chart-5']).be.undefined()
+    })
+})
+
+describe('store: data.js audit invariants', function () {
+    it('does not store a message carrying only dynamic properties', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('a1', global)
+        datastore.save(base, node, { payload: 'real' })
+        datastore.save(base, node, { ui_update: { class: 'red' } })
+
+        global.get('dashboardStore').a1.should.equal('real')
+    })
+
+    it('keeps value and msg in step across writes', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('a2', global)
+        datastore.save(base, node, { payload: 1, topic: 'first' })
+        datastore.save(base, node, { payload: 2, topic: 'second' })
+
+        const store = global.get('dashboardStore')
+        store.a2.should.equal(2)
+        store.$a2.msg.topic.should.equal('second')
+    })
+
+    it('leaves no key at all when a widget never stores', function () {
+        const global = fakeGlobal()
+        datastore.save(base, fakeNode('a3', global), { payload: 1 })
+
+        const store = global.get('dashboardStore')
+        store.a3.should.equal(1)
+        should(store.never).be.undefined()
+    })
+
+    it('clears value and msg together when a widget is removed', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('a4', global)
+        datastore.save(base, node, { payload: 5, topic: 't' })
+        global.get('dashboardStore').$a4.msg.should.be.an.Object()
+
+        datastore.clearFromStore(node)
+
+        const store = global.get('dashboardStore')
+        should(store.a4).be.undefined()
+        should(store.$a4).be.undefined()
     })
 })
 
