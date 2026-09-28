@@ -137,6 +137,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         },
         ownKeys (target) { return Reflect.ownKeys(target) },
         deleteProperty (target, prop) {
+            if (typeof prop === 'symbol') return Reflect.deleteProperty(target, prop)
             const rec = target[prop]
             const existed = prop in target
             const ok = delete target[prop]
@@ -160,6 +161,7 @@ function attachToContext (globalContext, opts = {}) {
     try {
         existing = globalContext.get(namespace)
     } catch (err) {
+        opts.onUnavailable?.(err)
         return null
     }
     if (existing && existing[STORE]) {

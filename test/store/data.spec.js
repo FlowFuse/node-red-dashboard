@@ -18,6 +18,10 @@ function fakeNode (id, global) {
 const base = { acceptsClientConfig: [] }
 
 describe('store: data.js reactive-store mirror', function () {
+    before(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
     it('mirrors the clean payload into global.dashboardStore[id], not the whole message', function () {
         const global = fakeGlobal()
         const node = fakeNode('w1', global)
