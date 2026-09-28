@@ -91,6 +91,27 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
     })
 })
 
+describe('Node-RED Dashboard 2.0 - Layout: Tabs across redeploys', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-layouts')
+        cy.visit('/dashboard/tabs')
+    })
+
+    it('should keep the selected tab when flows are redeployed', () => {
+        cy.wait(1000)
+        cy.reloadDashboard()
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).click()
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('have.class', 'v-tab--selected')
+        // eslint-disable-next-line promise/catch-or-return
+        cy.request({ url: '/flows', headers: { 'Node-RED-API-Version': 'v2' } }).then((res) => {
+            return cy.deployFlow(res.body.rev, res.body.flows)
+        })
+        cy.wait(3000)
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('have.class', 'v-tab--selected')
+    })
+})
+
 describe('Node-RED Dashboard 2.0 - Layout: Tabs without page tabs', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')

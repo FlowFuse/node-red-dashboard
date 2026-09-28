@@ -14,7 +14,7 @@
             </div>
 
             <v-tabs v-model="tab" show-arrows>
-                <v-tab v-for="t in tabs" :key="t.id" :value="t.id">{{ t.name }}</v-tab>
+                <v-tab v-for="t in tabs" :key="t.id" :value="t.id" @click="selectedTab = t.id">{{ t.name }}</v-tab>
             </v-tabs>
 
             <v-tabs-window v-model="tab">
@@ -85,13 +85,15 @@ export default {
                 // Check if origin and destination pages are unique
                 if (to?.name !== from?.name) {
                     vm.tab = vm.tabs[0].id
+                    vm.selectedTab = null
                 }
             }
         })
     },
     data () {
         return {
-            tab: null
+            tab: null,
+            selectedTab: null
         }
     },
     computed: {
@@ -114,8 +116,13 @@ export default {
     },
     watch: {
         tabs (tabs) {
-            if (!tabs.some((t) => t.id === this.tab)) {
-                this.tab = tabs[0]?.id ?? null
+            if (tabs.length === 0) {
+                return
+            }
+            if (tabs.some((t) => t.id === this.selectedTab)) {
+                this.tab = this.selectedTab
+            } else if (!tabs.some((t) => t.id === this.tab)) {
+                this.tab = tabs[0].id
             }
         }
     },
