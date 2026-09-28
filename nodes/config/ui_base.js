@@ -402,12 +402,14 @@ module.exports = function (RED) {
         node._created = Date.now()
 
         try {
+            let unavailable = null
             const store = datastore.initStore(node.context().global, {
+                onUnavailable: (err) => { unavailable = err },
                 onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
             })
             if (!store) {
                 datastore.disableStore()
-                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.')
+                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.' + (unavailable ? ' Reading it failed with: ' + unavailable.message : ''))
             }
         } catch (err) {
             datastore.disableStore()
