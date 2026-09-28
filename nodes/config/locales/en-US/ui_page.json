@@ -26,7 +26,10 @@
             "interactivity": "Interactivity",
             "active": "Active",
             "disabled": "Disabled",
-            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar"
+            "openDashboardSidebar": "Open Dashboard 2.0 Sidebar",
+            "addTab": "tab",
+            "tabName": "Tab name",
+            "tabsEmpty": "Add tabs here to render multiple groups per tab, then set the tab in each group's settings."
         },
         "error": {
             "registeringConfig": "Error registering config. No parent ui-base node found for ui-page node: __pageName__",

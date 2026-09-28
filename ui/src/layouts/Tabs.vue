@@ -13,22 +13,30 @@
                 />
             </div>
 
-            <v-tabs v-if="orderedGroups" v-model="tab" show-arrows>
-                <v-tab v-for="t in orderedGroups" :key="t.id" :value="t.id">{{ t.name }}</v-tab>
+            <v-tabs v-model="tab" show-arrows>
+                <v-tab v-for="t in tabs" :key="t.id" :value="t.id">{{ t.name }}</v-tab>
             </v-tabs>
 
-            <v-tabs-window v-if="orderedGroups" v-model="tab">
-                <v-tabs-window-item v-for="t in orderedGroups" :key="t.id" :value="t.id">
-                    <div
-                        class="nrdb-ui-group" :class="getGroupClass(t)"
-                        :disabled="t.disabled === true ? 'disabled' : null"
-                        :style="`grid-column-end: span min(${ t.width }, var(--layout-columns)`"
-                    >
-                        <v-card variant="outlined" class="bg-group-background">
-                            <template #text>
-                                <widget-group :group="t" :widgets="widgetsByGroup(t.id)" />
-                            </template>
-                        </v-card>
+            <v-tabs-window v-model="tab">
+                <v-tabs-window-item v-for="t in tabs" :key="t.id" :value="t.id">
+                    <div :class="{ 'nrdb-layout--tabs-grid': t.groups.length > 1 }">
+                        <div
+                            v-for="g in t.groups"
+                            :id="'nrdb-ui-group-' + g.id"
+                            :key="g.id"
+                            class="nrdb-ui-group" :class="getGroupClass(g)"
+                            :disabled="g.disabled === true ? 'disabled' : null"
+                            :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
+                        >
+                            <v-card variant="outlined" class="bg-group-background">
+                                <template v-if="t.groups.length > 1 && g.showTitle" #title>
+                                    {{ g.name }}
+                                </template>
+                                <template #text>
+                                    <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                                </template>
+                            </v-card>
+                        </div>
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
@@ -73,10 +81,10 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             // Select the first tabsheet every time the user arrives on this page
-            if (vm.orderedGroups && vm.orderedGroups.length > 0) {
+            if (vm.tabs.length > 0) {
                 // Check if origin and destination pages are unique
                 if (to?.name !== from?.name) {
-                    vm.tab = vm.orderedGroups[0].id
+                    vm.tab = vm.tabs[0].id
                 }
             }
         })
@@ -89,21 +97,9 @@ export default {
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
-        ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
-        orderedGroups: function () {
-            // get groups on this page - these are going to be rendered as the different tabs
-            const groups = this.groupsByPage(this.$route.meta.id)
-                // only show hte groups that haven't had their "visible" property set to false
-                .filter((g) => {
-                    if ('visible' in g) {
-                        return g.visible && g.groupType !== 'dialog'
-                    }
-                    return true
-                })
-                .sort((a, b) => {
-                    return a.order - b.order
-                })
-            return groups
+        ...mapGetters('ui', ['groupsByPage', 'tabsByPage', 'widgetsByGroup', 'widgetsByPage']),
+        tabs () {
+            return this.tabsByPage(this.$route.meta.id)
         },
         dialogGroups () {
             const groups = this.groupsByPage(this.$route.meta.id).filter((g) => g.groupType === 'dialog')
@@ -114,6 +110,13 @@ export default {
         },
         page: function () {
             return this.pages[this.$route.meta.id]
+        }
+    },
+    watch: {
+        tabs (tabs) {
+            if (!tabs.some((t) => t.id === this.tab)) {
+                this.tab = tabs[0]?.id ?? null
+            }
         }
     },
     methods: {
@@ -155,6 +158,12 @@ export default {
     --widget-row-height: 48px;
     --layout-columns: v-bind(columns);
     padding: var(--page-padding);
+}
+
+.nrdb-layout--tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--layout-columns), 1fr);
+    gap: var(--group-gap);
 }
 
 .v-card {

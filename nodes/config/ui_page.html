@@ -29,6 +29,17 @@
     .node-config-breakpoints-actions {
 
     }
+    .node-config-list-tabs-item {
+        display: flex;
+        align-items: center;
+        margin-right: 28px;
+    }
+    .node-config-list-tabs-item input {
+        width: 100%;
+    }
+    #node-config-list-tabs li:last-child {
+        border-bottom: none;
+    }
 </style>
 
 <script type="text/javascript">
@@ -74,6 +85,7 @@
                         { name: 'Desktop', px: 1024, cols: 12 }
                     ]
                 },
+                tabs: { value: [] },
                 order: {
                     value: -1
                 },
@@ -115,7 +127,65 @@
                     } else {
                         $('#node-config-container-breakpoints').show()
                     }
+
+                    if (value === 'tabs') {
+                        $('#node-config-container-tabs').show()
+                    } else {
+                        $('#node-config-container-tabs').hide()
+                    }
                 })
+
+                const toggleTabsEmpty = function () {
+                    const tabsBorder = $('#node-config-list-tabs').closest('.red-ui-editableList-border')
+                    if ($('#node-config-list-tabs').editableList('length') === 0) {
+                        $('#node-config-tabs-empty').show()
+                        tabsBorder.hide()
+                    } else {
+                        $('#node-config-tabs-empty').hide()
+                        tabsBorder.show()
+                    }
+                }
+
+                const tabsList = $('#node-config-list-tabs').editableList({
+                    addButton: c_('label.addTab'),
+                    sortable: true,
+                    removable: true,
+                    height: 'auto',
+                    addItem: function (container, i, tab) {
+                        container.data('tab-id', tab.id || RED.nodes.id())
+                        const row = $('<div>').addClass('node-config-list-tabs-item').appendTo(container)
+
+                        $('<input/>').addClass('node-input-tab-name')
+                            .attr('type', 'text')
+                            .attr('placeholder', c_('label.tabName'))
+                            .val(tab.name || '')
+                            .appendTo(row)
+
+                        toggleTabsEmpty()
+                        return row
+                    },
+                    removeItem: toggleTabsEmpty
+                })
+
+                $('<div>', { id: 'node-config-tabs-empty', class: 'nrdb2-layout-helptext' })
+                    .text(c_('label.tabsEmpty'))
+                    .prependTo(tabsList.closest('.red-ui-editableList'))
+
+                if (!this.tabs) {
+                    this.tabs = []
+                }
+
+                for (let i = 0; i < this.tabs.length; i++) {
+                    const tab = this.tabs[i]
+                    tabsList.editableList('addItem', tab)
+                }
+                toggleTabsEmpty()
+
+                if ($('#node-config-input-layout').typedInput('value') === 'tabs') {
+                    $('#node-config-container-tabs').show()
+                } else {
+                    $('#node-config-container-tabs').hide()
+                }
 
                 // button to edit page layout in wysiwyg layout editor
                 $('#node-config-layout-edit').on('click', function (evt) {
@@ -244,6 +314,18 @@
                     this.disabled = false
                 }
 
+                const tabs = $('#node-config-list-tabs').editableList('items')
+
+                node.tabs = []
+                tabs.each(function (i) {
+                    const row = $(this)
+                    const tab = {
+                        id: row.data('tab-id'),
+                        name: row.find('.node-input-tab-name').val()
+                    }
+                    node.tabs.push(tab)
+                })
+
                 // breakpoints
                 const breakpoints = $('#node-config-list-breakpoints').editableList('items')
     
@@ -300,6 +382,14 @@
                 <i class="fa fa-pencil-square-o"></i>
                 <span data-i18n="ui-page.label.editLayout"></span>
             </button>
+        </div>
+    </div>
+    <div id="node-config-container-tabs">
+        <div class="form-row" style="font-weight: 600;">
+            <i class="w-16 fa fa-folder-o"></i> <span data-i18n="ui-page.label.tabs"></span>
+        </div>
+        <div class="form-row">
+            <ol id="node-config-list-tabs"></ol>
         </div>
     </div>
     <div class="form-row" id="text-row-class">
