@@ -746,6 +746,16 @@ describe('store: reactive data store', function () {
             store.k.n.should.equal(2)
         })
 
+        it('passes a symbol delete straight through, like get and set do', function () {
+            const { store, log } = makeStore()
+            store.k = 1
+            log.length = 0
+
+            delete store[STORE]
+
+            log.should.be.empty()
+        })
+
         it('reserves toJSON so a key can never shadow the serialiser', function () {
             const { store, log } = makeStore()
             store.real = 1
@@ -1084,6 +1094,29 @@ describe('store: reactive data store', function () {
             const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
             should(attachToContext(g, {})).not.be.null()
+        })
+
+        it('reports why the context store could not be read', function () {
+            let reason = null
+            const globalContext = {
+                get () { throw new Error('ECONNREFUSED: context store unreachable') },
+                set () {}
+            }
+
+            const store = attachToContext(globalContext, { onUnavailable: (err) => { reason = err } })
+
+            should(store).be.null()
+            reason.message.should.equal('ECONNREFUSED: context store unreachable')
+        })
+
+        it('does not report a reason when the context store reads fine', function () {
+            let reason = null
+            const m = {}
+            const globalContext = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+
+            attachToContext(globalContext, { onUnavailable: (err) => { reason = err } })
+
+            should(reason).be.null()
         })
 
         it('returns null when a cache-off store throws on synchronous get', function () {
