@@ -712,6 +712,18 @@ describe('store: reactive data store', function () {
             store.$k.history[0].value.n.should.equal(1)
         })
 
+        it('does not freeze the payload when the message references it under another key', function () {
+            // a change node copies by reference unless deep copy is ticked, so msg.copy === msg.payload
+            const { store } = makeStore({ clone: util.cloneMessage })
+            const payload = { temp: 25 }
+            store[SET_ENTRY]('k', { payload, copy: payload, topic: 't' })
+
+            Object.isFrozen(store.k).should.be.false()
+            store.k.temp = 26
+            store.k.temp.should.equal(26)
+            Object.isFrozen(store.$k.msg.copy).should.be.true()
+        })
+
         it('leaves msg.req and msg.res usable, since cloneMessage keeps them by reference', function () {
             // msg.res is an object literal in Node-RED (createResponseWrapper), not a class instance,
             // so isReactable accepts it and nothing but an explicit exemption keeps it writable

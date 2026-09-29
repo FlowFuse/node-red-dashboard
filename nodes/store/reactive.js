@@ -108,9 +108,9 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     }
 
     records[SET_ENTRY] = (prop, msg) => {
-        const { payload, ...rest } = cloneValue(msg)
-        const rec = writeValue(prop, payload)
-        rec.msg = Object.freeze({ ...freezeOwned(rest), payload: rec.value })
+        const { payload, ...rest } = msg
+        const rec = writeValue(prop, cloneValue(payload))
+        rec.msg = Object.freeze({ ...freezeOwned(cloneValue(rest)), payload: rec.value })
         emit(prop, rec, prop)
     }
 
