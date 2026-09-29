@@ -17,6 +17,8 @@ Rather than rendering groups side-by-side (as per Fixed and Grid layouts) or abo
 1. In the `ui-page` config, add tabs to the **Tabs** list. Drag to reorder.
 2. In each `ui-group` config, pick a **Tab**.
 
+You can also drag groups between tabs, and reorder tabs, in the Dashboard 2.0 sidebar's [Layout](../../user/sidebar.md#layout) tab.
+
 Groups in the same tab render side-by-side with their titles, as in the [Grid](./grid.md) layout. Any group without a tab still gets a tab of its own, placed after the page's tabs.
 
 To hide a tab, hide all of its groups with `ui-control`.
