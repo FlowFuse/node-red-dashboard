@@ -1,11 +1,12 @@
 function openEditor () {
+    cy.intercept({ method: 'GET', pathname: '/settings' }, (req) => {
+        req.continue((res) => {
+            res.body.telemetryEnabled = false
+            res.body.editorTheme = { ...res.body.editorTheme, tours: false }
+        })
+    })
     cy.loadFlows()
     cy.window().its('RED.nodes').invoke('node', 'dashboard-ui-page-tabs').should('exist')
-    // eslint-disable-next-line promise/catch-or-return
-    cy.get('body').then(($body) => {
-        const notifications = $body.find('button:contains("No, do not enable notifications")')
-        return notifications.length ? cy.wrap(notifications).click() : null
-    })
 }
 
 describe('Node-RED Dashboard 2.0 - Editor: Sidebar tabs', () => {

@@ -1570,7 +1570,8 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     changes.page = group.page
                     group.page = pageId
                 }
-                if ((tabIds.includes(group.tab) ? group.tab : '') !== tabId) {
+                const currentTab = 'page' in changes || tabIds.includes(group.tab) ? group.tab || '' : ''
+                if (currentTab !== tabId) {
                     changes.tab = group.tab
                     group.tab = tabId
                 }
