@@ -12,15 +12,30 @@ let storeOptions = {}
 let storeEnabled = false
 const trimCounts = {}
 const TRIM_BATCH = 60
+let warned = false
+
+function warnOnce (node, problem) {
+    if (warned) return
+    warned = true
+    node.warn(`Dashboard data store: ${problem}. Further store failures are not reported until the next full deploy or restart.`)
+}
 
 function getOrCreateStore (globalContext) {
-    return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
+    let unavailable = null
+    const store = attachToContext(globalContext, {
+        clone: config.RED.util.cloneMessage,
+        ...storeOptions,
+        onUnavailable: (err) => { unavailable = err }
+    })
+    if (!store) throw unavailable || new Error('global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values')
+    return store
 }
 
 function initStore (globalContext, opts) {
     storeOptions = { ...opts }
     storeEnabled = true
-    return getOrCreateStore(globalContext)
+    warned = false
+    return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
 }
 
 function disableStore () {
@@ -32,7 +47,7 @@ function writeToStore (node, msg, stored) {
     if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
     try {
         getOrCreateStore(node.context().global)[SET_ENTRY](node.id, stored)
-    } catch (err) {}
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function appendToStore (node, msg) {
@@ -40,7 +55,7 @@ function appendToStore (node, msg) {
     if (!msg || typeof msg !== 'object') return
     try {
         getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, msg)
-    } catch (err) {}
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function replaceInStore (node, msgs) {
@@ -49,7 +64,7 @@ function replaceInStore (node, msgs) {
     try {
         delete trimCounts[node.id]
         getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
-    } catch (err) {}
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function trimInStore (node, msgs) {
@@ -64,7 +79,7 @@ function clearFromStore (node) {
     delete trimCounts[node.id]
     try {
         delete getOrCreateStore(node.context().global)[node.id]
-    } catch (err) {}
+    } catch (err) { warnOnce(node, `clearing a store entry failed (${err.message}), so global.dashboardStore may still hold this widget's old value`) }
 }
 
 /**
