@@ -1047,6 +1047,21 @@ describe('store: reactive data store', function () {
             log.should.containEql('a')
         })
 
+        it('does not report a replacement when the context only ever hands back copies', function () {
+            const m = {}
+            let copying = false
+            const g = { get: (k) => copying ? JSON.parse(JSON.stringify(m[k])) : m[k], set: (k, v) => { m[k] = v } }
+            attachToContext(g)
+            copying = true
+
+            let warned = 0
+            const results = []
+            for (let i = 0; i < 3; i++) results.push(attachToContext(g, { onReplaced: () => { warned++ } }))
+
+            warned.should.equal(0)
+            results.should.eql([null, null, null])
+        })
+
         it('reinjects and warns when a flow has overwritten the namespace, preserving data', function () {
             const g = fakeGlobal()
             const store = attachToContext(g)

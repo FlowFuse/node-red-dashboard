@@ -225,7 +225,6 @@ function attachToContext (globalContext, opts = {}) {
     }
 
     const previous = injected.get(globalContext)
-    if (previous && existing !== previous) opts.onReplaced?.()
 
     const store = createDataStore(opts)
     if (isReactable(existing) && !Array.isArray(existing)) {
@@ -233,6 +232,7 @@ function attachToContext (globalContext, opts = {}) {
     }
     globalContext.set(namespace, store)
     if (globalContext.get(namespace) !== store) return null
+    if (previous && existing !== previous) opts.onReplaced?.()
     injected.set(globalContext, store)
     return store
 }
