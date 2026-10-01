@@ -20,13 +20,11 @@ function warnOnce (node, problem) {
     node.warn(`Dashboard data store: ${problem}. Further store failures are not reported until the next full deploy or restart.`)
 }
 
+const attachOptions = () => ({ clone: config.RED.util.cloneMessage, ...storeOptions })
+
 function getOrCreateStore (globalContext) {
     let unavailable = null
-    const store = attachToContext(globalContext, {
-        clone: config.RED.util.cloneMessage,
-        ...storeOptions,
-        onUnavailable: (err) => { unavailable = err }
-    })
+    const store = attachToContext(globalContext, { ...attachOptions(), onUnavailable: (err) => { unavailable = err } })
     if (!store) throw unavailable || new Error('global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values')
     return store
 }
@@ -35,7 +33,7 @@ function initStore (globalContext, opts) {
     storeOptions = { ...opts }
     storeEnabled = true
     warned = false
-    return attachToContext(globalContext, { clone: config.RED.util.cloneMessage, ...storeOptions })
+    return attachToContext(globalContext, attachOptions())
 }
 
 function disableStore () {
