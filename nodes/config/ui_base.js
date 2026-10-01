@@ -401,6 +401,21 @@ module.exports = function (RED) {
 
         node._created = Date.now()
 
+        try {
+            let unavailable = null
+            const store = datastore.initStore(node.context().global, {
+                onUnavailable: (err) => { unavailable = err },
+                onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
+            })
+            if (!store) {
+                datastore.disableStore()
+                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.' + (unavailable ? ' Reading it failed with: ' + unavailable.message : ''))
+            }
+        } catch (err) {
+            datastore.disableStore()
+            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+        }
+
         n.root = RED.settings.httpNodeRoot || '/'
 
         /** @type {Object.<string, Socket>} */
@@ -1155,6 +1170,7 @@ module.exports = function (RED) {
                         // widget has been removed from the Editor
                         // clear any data from datastore
                         datastore.clear(widgetNode.id)
+                        datastore.clearFromStore(widgetNode)
                     }
                     node.deregister(null, null, widgetNode)
                     done()
