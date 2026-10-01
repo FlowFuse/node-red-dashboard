@@ -11,7 +11,7 @@
             >
                 <v-card variant="outlined" class="bg-group-background" :style="{'min-height': ((rowHeight * g.height) + 'px')}">
                     <template v-if="g.showTitle" #title>
-                        {{ g.name }}
+                        {{ getGroupName(g) }}
                     </template>
                     <template #text>
                         <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
@@ -75,6 +75,7 @@ export default {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
         ...mapGetters('ui', ['groupsByPage', 'widgetsByGroup', 'widgetsByPage']),
+        ...mapGetters('i18n', ['currentLocale']),
         orderedGroups: function () {
             // get groups on this page
             const groups = this.groupsByPage(this.$route.meta.id)
@@ -102,6 +103,32 @@ export default {
         }
     },
     methods: {
+        getGroupName (group) {
+            if (!group.name) return ''
+            if (typeof group.name === 'string') {
+                return group.name
+            }
+            if (typeof group.name === 'object') {
+                // Try current locale first
+                if (group.name[this.currentLocale]) {
+                    return group.name[this.currentLocale]
+                }
+                // Fallback to English
+                if (group.name.en) {
+                    return group.name.en
+                }
+                // Fallback to original
+                if (group.name.original) {
+                    return group.name.original
+                }
+                // Fallback to first available translation
+                const keys = Object.keys(group.name)
+                if (keys.length > 0) {
+                    return group.name[keys[0]]
+                }
+            }
+            return String(group.name)
+        },
         getWidgetClass (widget) {
             const classes = []
             // ensure each widget has a class for its type
