@@ -65,6 +65,44 @@
         }
     },
     {
+        "id": "dashboard-ui-page-tabs",
+        "type": "ui-page",
+        "name": "Layout: Tabs",
+        "ui": "dashboard-ui-base",
+        "path": "/tabs",
+        "icon": "",
+        "layout": "tabs",
+        "theme": "dashboard-ui-theme",
+        "tabs": [
+            {
+                "id": "tab-compose",
+                "name": "Compose"
+            },
+            {
+                "id": "tab-inbox",
+                "name": "Inbox"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-page-tabs-legacy",
+        "type": "ui-page",
+        "name": "Layout: Tabs (no page tabs)",
+        "ui": "dashboard-ui-base",
+        "path": "/tabs-legacy",
+        "icon": "",
+        "layout": "tabs",
+        "theme": "dashboard-ui-theme",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
         "id": "dashboard-ui-group-grid1",
         "type": "ui-group",
         "name": "Order 1",
@@ -182,6 +220,114 @@
         "disabled": "false"
     },
     {
+        "id": "dashboard-ui-group-tabs-loose",
+        "type": "ui-group",
+        "name": "Loose",
+        "page": "dashboard-ui-page-tabs",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-tabs-inbox",
+        "type": "ui-group",
+        "name": "Inbox List",
+        "page": "dashboard-ui-page-tabs",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "tab": "tab-inbox"
+    },
+    {
+        "id": "dashboard-ui-group-tabs-compose2",
+        "type": "ui-group",
+        "name": "Attachments",
+        "page": "dashboard-ui-page-tabs",
+        "width": "6",
+        "height": "1",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "tab": "tab-compose"
+    },
+    {
+        "id": "dashboard-ui-group-tabs-compose1",
+        "type": "ui-group",
+        "name": "Compose",
+        "page": "dashboard-ui-page-tabs",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "tab": "tab-compose"
+    },
+    {
+        "id": "dashboard-ui-group-legacy-b",
+        "type": "ui-group",
+        "name": "Legacy B",
+        "page": "dashboard-ui-page-tabs-legacy",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-legacy-a",
+        "type": "ui-group",
+        "name": "Legacy A",
+        "page": "dashboard-ui-page-tabs-legacy",
+        "width": "6",
+        "height": "1",
+        "order": 0,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-legacy-hidden",
+        "type": "ui-group",
+        "name": "Legacy Hidden",
+        "page": "dashboard-ui-page-tabs-legacy",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": false,
+        "disabled": "false"
+    },
+    {
+        "id": "dashboard-ui-group-legacy-dialog",
+        "type": "ui-group",
+        "name": "Legacy Dialog",
+        "page": "dashboard-ui-page-tabs-legacy",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "dialog"
+    },
+    {
         "id": "dashboard-ui-button",
         "type": "ui-button",
         "z": "node-red-tab-layouts",
@@ -246,5 +392,96 @@
         "x": 250,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "dashboard-ui-button-tabs-hide-inbox",
+        "type": "ui-button",
+        "z": "node-red-tab-layouts",
+        "group": "dashboard-ui-group-tabs-inbox",
+        "name": "",
+        "label": "Hide Inbox",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"groups\":{\"hide\":[\"dashboard-ui-group-tabs-inbox\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 300,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-tabs-show-inbox",
+        "type": "ui-button",
+        "z": "node-red-tab-layouts",
+        "group": "dashboard-ui-group-tabs-compose1",
+        "name": "",
+        "label": "Show Inbox",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"groups\":{\"show\":[\"dashboard-ui-group-tabs-inbox\"]}}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-control-tabs",
+        "type": "ui-control",
+        "z": "node-red-tab-layouts",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "all",
+        "x": 380,
+        "y": 300,
+        "wires": [
+            []
+        ]
     }
 ]
