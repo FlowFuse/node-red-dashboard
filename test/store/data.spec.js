@@ -127,13 +127,14 @@ describe('store: data.js reactive-store mirror', function () {
         datastore.get('w5').payload.should.equal(7) // legacy datastore still works
     })
 
-    it('clearFromStore removes the widget key so a removed widget leaves no orphan', function () {
+    it('clear removes the widget key so a removed widget leaves no orphan', function () {
         const global = fakeGlobal()
+        datastore.initStore(global, {})
         const node = fakeNode('w6', global)
         datastore.save(base, node, { payload: 5 })
         global.get('dashboardStore').w6.should.equal(5)
 
-        datastore.clearFromStore(node)
+        datastore.clear(node.id)
         should(global.get('dashboardStore').w6).be.undefined()
     })
 
@@ -166,13 +167,15 @@ describe('store: data.js reactive-store mirror', function () {
         }
     })
 
-    it('clearFromStore does not throw when the store is unavailable', function () {
+    it('clear does not throw when the store is unavailable', function () {
         const throwingGlobal = {
             get: () => { throw new Error('File Store cache disabled - only asynchronous access supported') },
             set: () => {}
         }
         const node = fakeNode('w7', throwingGlobal)
-        should(() => datastore.clearFromStore(node)).not.throw()
+        datastore.initStore(throwingGlobal, { node: { warn: () => {} } })
+
+        should(() => datastore.clear(node.id)).not.throw()
     })
 })
 
@@ -223,12 +226,14 @@ describe('store: data.js disabled store', function () {
         const global = cacheOffGlobal()
         const scalar = fakeNode('w12', global)
         const chart = fakeNode('w12-chart', global)
+        datastore.initStore(global, { node: { warn: () => {} } })
+        global.gets = 0
         datastore.disableStore()
 
         datastore.save(base, scalar, { payload: 1 })
         datastore.append(base, chart, { _datapoint: { category: 'a', x: 1, y: 1 } })
         datastore.filter(base, chart, () => false)
-        datastore.clearFromStore(scalar)
+        datastore.clear(scalar.id)
 
         global.gets.should.equal(0)
     })
@@ -400,6 +405,7 @@ describe('store: data.js chart writes', function () {
 
     it('clears the trim batch even when the store cannot be reached', function () {
         const global = fakeGlobal()
+        datastore.initStore(global, { node: { warn: () => {} } })
         const node = fakeNode('chart-cleared', global)
         for (let i = 0; i < 100; i++) {
             datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
@@ -411,7 +417,6 @@ describe('store: data.js chart writes', function () {
         const realGet = global.get
         global.get = () => { throw new Error('context store unavailable') }
         datastore.clear(node.id)
-        datastore.clearFromStore(node)
         global.get = realGet
 
         for (let i = 0; i < 100; i++) {
@@ -474,12 +479,13 @@ describe('store: data.js chart writes', function () {
 
     it('clears a stale key if a node id was previously used for a value', function () {
         const global = fakeGlobal()
+        datastore.initStore(global, {})
         const node = fakeNode('chart-5', global)
 
         datastore.save(base, node, { payload: 'scalar first' })
         global.get('dashboardStore')['chart-5'].should.equal('scalar first')
 
-        datastore.clearFromStore(node)
+        datastore.clear(node.id)
         should(global.get('dashboardStore')['chart-5']).be.undefined()
     })
 
@@ -552,11 +558,12 @@ describe('store: data.js audit invariants', function () {
 
     it('clears value and msg together when a widget is removed', function () {
         const global = fakeGlobal()
+        datastore.initStore(global, {})
         const node = fakeNode('a4', global)
         datastore.save(base, node, { payload: 5, topic: 't' })
         global.get('dashboardStore').$a4.msg.should.be.an.Object()
 
-        datastore.clearFromStore(node)
+        datastore.clear(node.id)
 
         const store = global.get('dashboardStore')
         should(store.a4).be.undefined()
@@ -630,7 +637,7 @@ describe('store: data.js failure reporting', function () {
         datastore.save(base, node, { payload: 1 })
         datastore.save(base, node, { payload: 2 })
         datastore.append(base, fakeNode('fail-1-chart', global), { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
-        datastore.clearFromStore(node)
+        datastore.clear(node.id)
 
         warnings.should.have.length(1)
         warnings[0].should.equal('fail-1: Dashboard data store: a store write failed (context store unavailable), so global.dashboardStore may be out of date. Further store failures are not reported until the next full deploy or restart.')
@@ -647,15 +654,23 @@ describe('store: data.js failure reporting', function () {
         warnings[0].should.startWith('fail-a: Dashboard data store: a store write failed (context store unavailable)')
     })
 
-    it('warns when a clear fails', function () {
+    it('does not throw from clear when there is no base node to warn on', function () {
         const global = fakeGlobal()
         datastore.initStore(global, {})
         global.get = unreachable
 
-        datastore.clearFromStore(fakeNode('fail-c', global))
+        should(() => datastore.clear('no-base')).not.throw()
+    })
+
+    it('warns on the base node when a clear fails, since a clear has no widget node', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, { node: { warn: (m) => warnings.push(`base: ${m}`) } })
+        global.get = unreachable
+
+        datastore.clear('fail-c')
 
         warnings.should.have.length(1)
-        warnings[0].should.startWith('fail-c: Dashboard data store: clearing a store entry failed (context store unavailable), so global.dashboardStore may still hold this widget\'s old value.')
+        warnings[0].should.startWith('base: Dashboard data store: clearing the store entry for fail-c failed (context store unavailable), so global.dashboardStore may still hold its old value.')
     })
 
     it('explains a context store that stops holding the store by reference', function () {
@@ -810,5 +825,58 @@ describe('store: data reads that avoid cloning', function () {
         datastore.get('copy-1')[0].payload = 'mutated'
 
         datastore.get('copy-1')[0].payload.should.equal(1)
+    })
+})
+
+describe('store: data.js merges into the store from the store itself', function () {
+    afterEach(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
+    it('stores a message without a payload, merged onto the stored one', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        const node = fakeNode('merge-1', global)
+
+        datastore.save(base, node, { payload: 1 })
+        datastore.save(base, node, { topic: 't' })
+
+        global.get('dashboardStore')['$merge-1'].msg.should.eql({ payload: 1, topic: 't' })
+    })
+
+    it('merges onto what the store holds, not what the legacy datastore holds', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        const node = fakeNode('merge-2', global)
+        datastore.save(base, node, { payload: 1 })
+        global.get('dashboardStore')['merge-2'] = 5
+
+        datastore.save(base, node, { topic: 't' })
+
+        global.get('dashboardStore')['$merge-2'].msg.should.eql({ payload: 5, topic: 't' })
+        datastore.get('merge-2').should.eql({ payload: 1, topic: 't' })
+    })
+
+    it('ignores a message that is not an object, without warning', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        const warned = []
+        const node = { ...fakeNode('merge-4', global), warn: (m) => warned.push(m) }
+        datastore.save(base, node, { payload: 1 })
+
+        datastore.save(base, node, 5)
+
+        global.get('dashboardStore')['$merge-4'].msg.should.eql({ payload: 1 })
+        warned.should.eql([])
+    })
+
+    it('removes the store entry on clear(id), which has no node', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        datastore.save(base, fakeNode('merge-3', global), { payload: 'hello' })
+
+        datastore.clear('merge-3')
+
+        should(global.get('dashboardStore')['merge-3']).be.undefined()
     })
 })

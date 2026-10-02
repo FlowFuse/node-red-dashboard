@@ -1,6 +1,6 @@
 const { isClientScoped } = require('../utils/index.js')
 
-const { attachToContext, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('./reactive.js')
+const { attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES } = require('./reactive.js')
 
 const data = {}
 
@@ -10,12 +10,14 @@ const config = {
 
 let storeOptions = {}
 let storeEnabled = false
+let storeContext = null
+let storeBase = null
 const trimCounts = {}
 const TRIM_BATCH = 60
 let warned = false
 
 function warnOnce (node, problem) {
-    if (warned) return
+    if (warned || !node) return
     warned = true
     node.warn(`Dashboard data store: ${problem}. Further store failures are not reported until the next full deploy or restart.`)
 }
@@ -29,9 +31,11 @@ function getOrCreateStore (globalContext) {
     return store
 }
 
-function initStore (globalContext, opts) {
-    storeOptions = { ...opts }
+function initStore (globalContext, { node, ...opts } = {}) {
+    storeOptions = opts
     storeEnabled = true
+    storeContext = globalContext
+    storeBase = node
     warned = false
     return attachToContext(globalContext, attachOptions())
 }
@@ -40,11 +44,11 @@ function disableStore () {
     storeEnabled = false
 }
 
-function writeToStore (node, msg, stored) {
+function writeToStore (node, msg) {
     if (!storeEnabled) return
-    if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
+    if (!msg || typeof msg !== 'object') return
     try {
-        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, stored)
+        getOrCreateStore(node.context().global)[MERGE_ENTRY](node.id, msg)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
@@ -70,14 +74,6 @@ function trimInStore (node, msgs) {
     trimCounts[node.id] = (trimCounts[node.id] || 0) + 1
     if (trimCounts[node.id] < TRIM_BATCH) return
     replaceInStore(node, msgs)
-}
-
-function clearFromStore (node) {
-    if (!storeEnabled) return
-    delete trimCounts[node.id]
-    try {
-        delete getOrCreateStore(node.context().global)[node.id]
-    } catch (err) { warnOnce(node, `clearing a store entry failed (${err.message}), so global.dashboardStore may still hold this widget's old value`) }
 }
 
 /**
@@ -145,6 +141,13 @@ const setters = {
     // remove data associated to a given widget
     clear (id) {
         delete data[id]
+        if (!storeEnabled) {
+            return
+        }
+        delete trimCounts[id]
+        try {
+            delete getOrCreateStore(storeContext)[id]
+        } catch (err) { warnOnce(storeBase, `clearing the store entry for ${id} failed (${err.message}), so global.dashboardStore may still hold its old value`) }
     },
     /**
      *
@@ -170,7 +173,7 @@ const setters = {
                     ...data[node.id],
                     ...newMsg
                 }
-                writeToStore(node, msg, data[node.id])
+                writeToStore(node, newMsg)
             }
         }
     },
@@ -235,7 +238,6 @@ module.exports = {
     filter: setters.filter,
     keepLatestPerTopic: setters.keepLatestPerTopic,
     clear: setters.clear,
-    clearFromStore,
     initStore,
     disableStore
 }

@@ -11,7 +11,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -54,7 +54,7 @@ describe('store: reactive data store', function () {
 
         it('does not leave a msg describing the previous value after a flow write', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k1', { payload: 42, topic: 'boiler' })
+            store[MERGE_ENTRY]('k1', { payload: 42, topic: 'boiler' })
             store.$k1.msg.topic.should.equal('boiler')
 
             store.k1 = 99
@@ -75,7 +75,7 @@ describe('store: reactive data store', function () {
             const { store, log } = makeStore()
             const msg = { payload: 42, topic: 'sensor-A' }
 
-            store[SET_ENTRY]('gauge', msg)
+            store[MERGE_ENTRY]('gauge', msg)
 
             store.gauge.should.equal(42)
             store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
@@ -84,8 +84,8 @@ describe('store: reactive data store', function () {
 
         it('keeps history on the value, as a normal write does', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('gauge', { payload: 1 })
-            store[SET_ENTRY]('gauge', { payload: 2 })
+            store[MERGE_ENTRY]('gauge', { payload: 1 })
+            store[MERGE_ENTRY]('gauge', { payload: 2 })
 
             store.gauge.should.equal(2)
             store.$gauge.history.map((h) => h.value).should.eql([1])
@@ -94,7 +94,7 @@ describe('store: reactive data store', function () {
         it('clones the message it is given, so a caller reusing it cannot mutate stored state', function () {
             const { store } = makeStore()
             const msg = { payload: 1, nested: { a: 1 } }
-            store[SET_ENTRY]('k', msg)
+            store[MERGE_ENTRY]('k', msg)
 
             should(store.$k.msg).not.equal(msg)
             store.$k.msg.nested.should.not.equal(msg.nested)
@@ -106,7 +106,7 @@ describe('store: reactive data store', function () {
 
         it('serves the stored value as the payload of the stored msg', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
+            store[MERGE_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
 
             store.$k.msg.payload.should.equal(store.$k.value)
             store.k.n.should.equal(1)
@@ -670,7 +670,7 @@ describe('store: reactive data store', function () {
 
         it('does not let the stored msg be rewritten through $', function () {
             const { store, log } = makeStore()
-            store[SET_ENTRY]('k', { payload: 42, topic: 'boiler' })
+            store[MERGE_ENTRY]('k', { payload: 42, topic: 'boiler' })
             log.length = 0
 
             const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
@@ -682,7 +682,7 @@ describe('store: reactive data store', function () {
 
         it('does not let a non-payload property of the stored msg be rewritten through $', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
+            store[MERGE_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
 
             const write = function () { 'use strict'; store.$k.msg.meta.deep.n = 'TAMPERED' }
 
@@ -692,7 +692,7 @@ describe('store: reactive data store', function () {
 
         it('reports a nested write made through the $ msg payload, since it is the value', function () {
             const { store, log } = makeStore()
-            store[SET_ENTRY]('k', { payload: { deep: { n: 1 } } })
+            store[MERGE_ENTRY]('k', { payload: { deep: { n: 1 } } })
             log.length = 0
 
             store.$k.msg.payload.deep.n = 2
@@ -716,7 +716,7 @@ describe('store: reactive data store', function () {
             // a change node copies by reference unless deep copy is ticked, so msg.copy === msg.payload
             const { store } = makeStore({ clone: util.cloneMessage })
             const payload = { temp: 25 }
-            store[SET_ENTRY]('k', { payload, copy: payload, topic: 't' })
+            store[MERGE_ENTRY]('k', { payload, copy: payload, topic: 't' })
 
             Object.isFrozen(store.k).should.be.false()
             store.k.temp = 26
@@ -728,7 +728,7 @@ describe('store: reactive data store', function () {
             // msg.res is an object literal in Node-RED (createResponseWrapper), not a class instance,
             // so isReactable accepts it and nothing but an explicit exemption keeps it writable
             const paths = [
-                (store, msg) => store[SET_ENTRY]('k', msg),
+                (store, msg) => store[MERGE_ENTRY]('k', msg),
                 (store, msg) => store[SET_SERIES]('k', [msg]),
                 (store, msg) => store[APPEND_ENTRY]('k', msg)
             ]
@@ -1195,5 +1195,116 @@ describe('store: reactive data store', function () {
             const store = LocalFileSystem({ dir: tmpDir(), cache: true })
             should(attachToContext(realGlobal(store), {})).not.be.null()
         })
+    })
+})
+
+describe('store: MERGE_ENTRY', function () {
+    const merging = () => makeStore({ clone: util.cloneMessage })
+
+    it('merges a message onto the stored one, as the legacy datastore does', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1, topic: 'a', label: 'x' })
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.$k.msg.should.eql({ payload: 1, topic: 'b', label: 'x' })
+    })
+
+    it('keeps the value and adds no history for a message without a payload', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: { n: 1 } })
+        const value = store.k
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.k.should.equal(value)
+        store.$k.history.should.eql([])
+    })
+
+    it('records history for every message that carries a payload, even a repeated one', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: true })
+        store[MERGE_ENTRY]('k', { payload: true })
+        store[MERGE_ENTRY]('k', { payload: false })
+
+        store.$k.history.map((h) => h.value).should.eql([true, true])
+    })
+
+    it('does not add a payload key that no message had', function () {
+        const { store } = merging()
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        Object.keys(store.$k.msg).should.eql(['topic'])
+    })
+
+    it('merges onto a value a flow wrote directly', function () {
+        const { store } = merging()
+        store.k = 5
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        store.$k.msg.should.eql({ payload: 5, topic: 't' })
+    })
+
+    it('does not alias or freeze the message it is given', function () {
+        const { store } = merging()
+        const msg = { payload: { n: 1 }, nested: { a: 1 } }
+
+        store[MERGE_ENTRY]('k', msg)
+        msg.nested.a = 2
+
+        store.$k.msg.nested.a.should.equal(1)
+        Object.isFrozen(msg.nested).should.equal(false)
+    })
+
+    it('updates the timestamp when it keeps the value', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1 })
+        const before = store.$k.timestamp
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.$k.timestamp.should.be.above(before)
+    })
+
+    it('does not keep a series as the value when a message without a payload is merged onto it', function () {
+        const { store } = merging()
+        store[APPEND_ENTRY]('k', { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        should(store.k).be.undefined()
+        store.$k.msg.topic.should.equal('t')
+    })
+
+    it('reuses stored fields rather than cloning them again on every merge', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 'a', options: [{ label: 'one', value: 1 }] })
+        const options = store.$k.msg.options
+
+        store[MERGE_ENTRY]('k', { payload: 'b' })
+
+        store.$k.msg.options.should.equal(options)
+        Object.isFrozen(store.$k.msg.options).should.equal(true)
+    })
+
+    it('keeps stored fields in their original order, with payload last', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { topic: 'a', payload: 1, label: 'x' })
+
+        store[MERGE_ENTRY]('k', { topic: 'b', extra: true })
+
+        Object.keys(store.$k.msg).should.eql(['topic', 'label', 'extra', 'payload'])
+    })
+
+    it('reports each merge once', function () {
+        const { store, log } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1 })
+        log.length = 0
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        log.should.eql(['k'])
     })
 })

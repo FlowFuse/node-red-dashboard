@@ -1,7 +1,7 @@
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
-const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
+const MERGE_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/mergeEntry')
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -107,10 +107,15 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         return rec
     }
 
-    records[SET_ENTRY] = (prop, msg) => {
-        const { payload, ...rest } = msg
-        const rec = writeValue(prop, cloneValue(payload))
-        rec.msg = Object.freeze({ ...freezeOwned(cloneValue(rest)), payload: rec.value })
+    records[MERGE_ENTRY] = (prop, msg) => {
+        const current = records[prop]
+        const { payload, ...incoming } = msg
+        const { payload: storedPayload, ...stored } = current?.msg || {}
+        const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
+        const rec = keepValue ? current : writeValue(prop, cloneValue(payload))
+        const fields = { ...stored, ...freezeOwned(cloneValue(incoming)) }
+        rec.msg = Object.freeze('payload' in msg || (keepValue && 'payload' in current.msg) ? { ...fields, payload: rec.value } : fields)
+        rec.timestamp = now()
         emit(prop, rec, prop)
     }
 
@@ -237,4 +242,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY }
