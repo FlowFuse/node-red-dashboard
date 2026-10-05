@@ -34,4 +34,24 @@ describe('Node-RED Dashboard 2.0 - Editor: Sidebar tabs', () => {
             cy.get('.nrdb2-sb-tabs-list-header').should('not.exist')
         })
     })
+
+    it('adds a group under No tab without touching existing groups', () => {
+        cy.contains('.nrdb2-sb-pages-list-header .nrdb2-sb-title', /^Layout: Tabs$/).parent().find('a[title="Add Group"]').click({ force: true })
+        cy.get('#node-config-dialog-ok').click()
+        cy.get('#node-config-dialog-ok').should('not.exist')
+        cy.window().its('RED').should((RED) => {
+            const groups = []
+            RED.nodes.eachConfig((n) => {
+                if (n.type === 'ui-group' && n.page === 'dashboard-ui-page-tabs') {
+                    groups.push(n)
+                }
+            })
+            const added = groups.find((g) => !g.id.startsWith('dashboard-'))
+            expect(added.order).to.equal(5)
+            expect(added.tab || '').to.equal('')
+            expect(groups.filter((g) => g !== added && g.changed).map((g) => g.id)).to.deep.equal([])
+            const touchesAdded = (e) => (e.events || [e]).some((x) => x.node === added || (x.nodes || []).includes(added.id))
+            expect(RED.history.list().filter(touchesAdded)).to.have.length(2)
+        })
+    })
 })
