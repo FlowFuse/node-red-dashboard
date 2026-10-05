@@ -74,7 +74,7 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
             .find('.v-card-title').should('not.exist')
     })
 
-    it('should keep a tab selected when the active tab is hidden', () => {
+    it('should fall back when the active tab is hidden, without jumping back when it reappears', () => {
         cy.wait(1000)
         cy.reloadDashboard()
         cy.get('.nrdb-layout--tabs .v-tab').eq(1).click()
@@ -85,9 +85,10 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
         cy.get('.nrdb-layout--tabs .v-tab--selected').should('have.length', 1)
         cy.get('.v-window-item--active .nrdb-ui-group').should('have.length.at.least', 1)
 
-        cy.get('.nrdb-layout--tabs .v-tab').eq(0).click()
-        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-tabs-show-inbox'))
+        cy.request('POST', '/inject/dashboard-inject-tabs-show-inbox')
         cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
+        cy.wait(500)
+        cy.get('.nrdb-layout--tabs .v-tab--selected').should('have.length', 1).and('not.contain.text', 'Inbox')
     })
 })
 
@@ -109,6 +110,37 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs across redeploys', () => {
         cy.wait(3000)
         cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
         cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('have.class', 'v-tab--selected')
+    })
+
+    it('should keep the first tab when flows are redeployed before any tab is clicked', () => {
+        cy.wait(1000)
+        cy.reloadDashboard()
+        cy.get('.nrdb-layout--tabs .v-tab').eq(0).should('have.class', 'v-tab--selected')
+        // eslint-disable-next-line promise/catch-or-return
+        cy.request({ url: '/flows', headers: { 'Node-RED-API-Version': 'v2' } }).then((res) => {
+            return cy.deployFlow(res.body.rev, res.body.flows)
+        })
+        cy.wait(3000)
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(0).should('have.class', 'v-tab--selected')
+    })
+})
+
+describe('Node-RED Dashboard 2.0 - Layout: Tabs wizard', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-layouts')
+        cy.visit('/dashboard/tabs-wizard')
+    })
+
+    it('should select the revealed tab when the active tab is hidden and another shown together', () => {
+        cy.wait(1000)
+        cy.reloadDashboard()
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 1)
+        cy.request('POST', '/inject/dashboard-inject-tabs-wizard-next')
+        cy.wait(1000)
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 1).and('contain.text', 'Step 2')
+        cy.get('.nrdb-layout--tabs .v-tab--selected').should('have.length', 1)
+        cy.get('.v-window-item--active #nrdb-ui-group-dashboard-ui-group-wizard-step2').should('be.visible')
     })
 })
 
