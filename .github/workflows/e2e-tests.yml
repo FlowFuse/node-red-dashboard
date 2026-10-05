@@ -20,7 +20,7 @@ jobs:
       - name: Run Linting Tests
         run: npm run lint
       - name: Run Dashboard E2E (Cypress) Tests
-        uses: cypress-io/github-action@09090944bd8aaa2a517cefb6e38bf1aae336b42b # v7.4.3
+        uses: cypress-io/github-action@789d836053c5ca389c2905fc0c9f2909da778c46 # v7.4.5
         with:
           install: false
           config-file: cypress.config.js
