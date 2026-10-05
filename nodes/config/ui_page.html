@@ -85,7 +85,12 @@
                         { name: 'Desktop', px: 1024, cols: 12 }
                     ]
                 },
-                tabs: { value: [] },
+                tabs: {
+                    value: [],
+                    validate: function (tabs) {
+                        return this.layout !== 'tabs' || (tabs || []).every((tab) => tab.name?.trim())
+                    }
+                },
                 order: {
                     value: -1
                 },
@@ -133,6 +138,7 @@
                     } else {
                         $('#node-config-container-tabs').hide()
                     }
+                    validateTabNames()
                 })
 
                 const toggleTabsEmpty = function () {
@@ -144,6 +150,13 @@
                         $('#node-config-tabs-empty').hide()
                         tabsBorder.show()
                     }
+                }
+
+                const validateTabNames = function () {
+                    const isTabs = $('#node-config-input-layout').typedInput('value') === 'tabs'
+                    $('#node-config-list-tabs .node-input-tab-name').each(function () {
+                        $(this).toggleClass('input-error', isTabs && !$(this).val().trim())
+                    })
                 }
 
                 const tabsList = $('#node-config-list-tabs').editableList({
@@ -159,12 +172,17 @@
                             .attr('type', 'text')
                             .attr('placeholder', c_('label.tabName'))
                             .val(tab.name || '')
+                            .on('input', validateTabNames)
                             .appendTo(row)
 
                         toggleTabsEmpty()
+                        validateTabNames()
                         return row
                     },
-                    removeItem: toggleTabsEmpty
+                    removeItem: function () {
+                        toggleTabsEmpty()
+                        validateTabNames()
+                    }
                 })
 
                 $('<div>', { id: 'node-config-tabs-empty', class: 'nrdb2-layout-helptext' })
@@ -321,7 +339,7 @@
                     const row = $(this)
                     const tab = {
                         id: row.data('tab-id'),
-                        name: row.find('.node-input-tab-name').val()
+                        name: row.find('.node-input-tab-name').val().trim()
                     }
                     node.tabs.push(tab)
                 })

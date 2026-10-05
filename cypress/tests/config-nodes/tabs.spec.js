@@ -51,6 +51,26 @@ describe('Node-RED Dashboard 2.0 - Editor: Page tabs', () => {
             expect(tabs[2].id).to.be.a('string').and.not.be.oneOf(['', 'tab-compose', 'tab-inbox'])
         })
     })
+
+    it('flags a blank tab name and marks the page invalid when saved', () => {
+        editConfig('ui-page', 'dashboard-ui-page-tabs')
+        cy.get('#node-config-container-tabs .red-ui-editableList-addButton').click()
+        cy.get('.node-input-tab-name').eq(2).should('have.class', 'input-error')
+        cy.get('.node-input-tab-name').eq(2).type('   ')
+        cy.get('.node-input-tab-name').eq(2).should('have.class', 'input-error')
+        cy.get('#node-config-dialog-ok').click()
+        cy.get('#node-config-dialog-ok').should('not.exist')
+        cy.window().its('RED.nodes').invoke('node', 'dashboard-ui-page-tabs').its('valid').should('equal', false)
+
+        editConfig('ui-page', 'dashboard-ui-page-tabs')
+        cy.get('.node-input-tab-name').eq(2).type('Settings')
+        cy.get('.node-input-tab-name').eq(2).should('not.have.class', 'input-error')
+        cy.get('#node-config-dialog-ok').click()
+        cy.window().its('RED.nodes').invoke('node', 'dashboard-ui-page-tabs').its('valid').should('equal', true)
+        cy.window().its('RED.nodes').invoke('node', 'dashboard-ui-page-tabs').its('tabs').should((tabs) => {
+            expect(tabs.map((t) => t.name)).to.deep.equal(['Compose', 'Inbox', 'Settings'])
+        })
+    })
 })
 
 describe('Node-RED Dashboard 2.0 - Editor: Group tab', () => {
