@@ -73,7 +73,7 @@ A small collection of example dashboards, with links to more information about e
 
 ## Migrating from Node-RED Dashboard
 
-The original `node-red-dashboard` package was deprecated in June 2024, and FlowFuse Dashboard is its recommended replacement. Both can run side by side, so you can migrate in stages. The [migration service](https://flowfuse.com/platform/dashboard/) converts supported nodes, while some widgets and templates need manual changes. [Read the migration guide](/user/migration).
+The original `node-red-dashboard` package was deprecated in June 2024, and FlowFuse Dashboard (Node-RED Dashboard 2.0) is its recommended replacement. Both can run side by side, so you can migrate in stages. The [migration service](https://flowfuse.com/platform/dashboard/) converts supported nodes, while some widgets and templates need manual changes. [Read the migration guide](/user/migration).
 
 ## Recommended Tutorials
 
