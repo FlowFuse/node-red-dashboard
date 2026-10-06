@@ -2,8 +2,9 @@
     <div class="flowfuse-advert">
         <div>
             <h2>Elevate Node-RED with FlowFuse</h2>
-            <p>FlowFuse provides a complete platform to manage and scale your production Node-RED applications.</p>
+            <p>FlowFuse provides a complete platform to build, manage and scale your production Node-RED applications, with built-in AI to help your team move faster.</p>
             <ul>
+                <li>AI Assistance to Build Flows and Get Answers</li>
                 <li>Simplified Hosting and Maintenance</li>
                 <li>Centralized Management of your Node-RED Deployments</li>
                 <li>Built-in Version Control &amp; Robust Development Pipelines</li>
@@ -13,7 +14,7 @@
             <a href="https://flowfuse.com/product/why-flowfuse/">Learn More</a>
         </div>
         <div>
-            <img src="../assets/images/screenshot-flowfuse-applications.png" alt="Image of the FlowFuse Platform">
+            <img src="../assets/images/screenshot-flowfuse-home.png" alt="FlowFuse platform home showing hosted and remote instances alongside the FlowFuse Expert AI assistant">
         </div>
     </div>
 </template>
