@@ -54,107 +54,32 @@ hero:
   <h2>Available in Node-RED's Palette Manager</h2>
   <code v-if="!copied">@flowfuse/node-red-dashboard <CopyIcon @click="copy"/></code>
   <code v-else>copied!</code>
+  <p class="aka">Also known as Node-RED Dashboard 2.0 · Open source under Apache 2.0</p>
 </div>
 
-FlowFuse Dashboard, also known as Node-RED Dashboard 2.0, is an open-source collection of nodes for building interfaces in Node-RED. Display live data, collect user input and connect on-screen actions to your flows. Install it in your own Node-RED environment, or use it with the [FlowFuse platform](https://flowfuse.com/platform/dashboard/).
+## Get started
 
-## Install FlowFuse Dashboard
+1. In the Node-RED editor, open the menu and select **Manage Palette**.
+2. On the **Install** tab, search for `@flowfuse/node-red-dashboard` and install it. Note that this is not the deprecated `node-red-dashboard` package.
+3. Add a `ui-button` node to a flow and deploy. The base, page, group and theme are created for you, and your dashboard is available at `/dashboard`.
 
-Already running Node-RED? Install the package through the editor:
+Prefer the command line? Run `npm install @flowfuse/node-red-dashboard` in your Node-RED user directory (usually `~/.node-red`) and restart Node-RED. The [getting started guide](/getting-started) covers the rest.
 
-1. Open the menu in the top-right corner and select **Manage Palette**.
-2. Open the **Install** tab and search for `@flowfuse/node-red-dashboard`.
-3. Install that exact package. It is separate from the deprecated `node-red-dashboard` package.
-
-Prefer the command line? Run the following command from your Node-RED user directory, which is usually `~/.node-red`, then restart Node-RED:
-
-```bash
-npm install @flowfuse/node-red-dashboard
-```
-
-## Build your first dashboard
-
-Add a `ui-button` node to a flow, configure it and deploy. FlowFuse Dashboard can create the initial base, page, group and theme for you. Open the configured dashboard path on your Node-RED host. The default path is `/dashboard`.
-
-From there, add widgets and organize them into groups and pages. The [getting started guide](/getting-started) walks through the structure and layout options.
-
-## Choose widgets for your application
-
-Start with the widgets you need, connect them to your flow and configure how they display or accept data.
-
-| Capability | What you can do |
-| --- | --- |
-| Charts and gauges | Show changing measurements, compare values and make current conditions easy to read. |
-| Tables and text | Present records, status information and calculated values from your flows. |
-| Forms and controls | Collect information with forms and inputs, or send user actions into your flow with buttons, switches and sliders. |
-| Notifications and events | Give users feedback and react to dashboard activity in your flows. |
-| Custom interfaces | Use [`ui-template`](/nodes/widgets/ui-template) for custom HTML, Vue components, JavaScript and CSS when you need more than the standard widgets. |
-
-Data connections and processing belong in your Node-RED flows. FlowFuse Dashboard provides the interface that displays the results and captures user input. [Browse the widget reference](/nodes/widgets).
-
-Each page can use a Grid, Fixed, Notebook or Tabs layout, with configurable breakpoints for different screen sizes. [Explore layouts](/layouts/). When different users need to see different data, read the [multi-user guide](/user/multi-tenancy).
-
-## See what you can build
-
-### Start with interactive widgets
-
-Explore charts, gauges and a form that adds records to a table. The getting started blueprint shows how user input and displayed data work together. [Explore the starter blueprint](https://flowfuse.com/blueprints/getting-started/dashboard/)
-
-### Explore historical measurements
-
-Build a dashboard that stores and retrieves time-series data, following the flow from incoming measurements through PostgreSQL storage to the dashboard. [Build a historical data dashboard](https://flowfuse.com/blog/2025/08/time-series-dashboard-flowfuse-postgresql/)
-
-### Track defects and quality trends
-
-Create a view of production defects with summary values, a Pareto chart and filters for line, shift and date range. [Follow the quality monitoring tutorial](https://flowfuse.com/blog/2026/07/defect-and-quality-monitoring/)
-
-### Dashboard showcase
+## Dashboard Showcase
 
 A small collection of example dashboards, with links to more information about each one. If you have a dashboard you want to feature here, please get in touch!
 
 <DashboardExamples />
 
-## Moving from the original dashboard
+## Migrating from Dashboard 1.0
 
-The original `node-red-dashboard` package was deprecated in June 2024. FlowFuse Dashboard is a separately maintained project and is the recommended replacement.
+The original `node-red-dashboard` package was deprecated in June 2024, and FlowFuse Dashboard is its recommended replacement. Both can run side by side, so you can migrate in stages. The [migration service](https://flowfuse.com/platform/dashboard/) converts supported nodes, while some widgets and templates need manual changes. [Read the migration guide](/user/migration).
 
-| Area | Original dashboard | FlowFuse Dashboard |
-| --- | --- | --- |
-| Package | `node-red-dashboard` | `@flowfuse/node-red-dashboard` |
-| Project status | Deprecated | Actively maintained |
-| UI foundation | AngularJS | Vue and Vuetify |
-
-You can install FlowFuse Dashboard alongside the original package and migrate in stages. The [migration service](https://flowfuse.com/platform/dashboard/) can convert supported nodes, but some widgets and templates need manual changes. [Read the migration guide](/user/migration) and test the resulting flows before replacing a working dashboard.
-
-## Common questions
-
-### Is FlowFuse Dashboard free to use?
-
-Yes. The `@flowfuse/node-red-dashboard` package is open source under the Apache 2.0 license, and you can install it in your own Node-RED environment. FlowFuse hosting and platform services are separate from the package.
-
-### Is Node-RED Dashboard deprecated?
-
-The original `node-red-dashboard` package is deprecated. FlowFuse Dashboard, also known as Node-RED Dashboard 2.0, is its maintained successor. Node-RED itself is not deprecated.
-
-### Do I need a FlowFuse account?
-
-No. You can install the package into any self-managed Node-RED environment without a FlowFuse account.
-
-### Will my existing dashboard work without changes?
-
-Plan to review the migration. Supported nodes can be converted with the migration service, while other parts may need to be rebuilt. AngularJS templates need particular attention because FlowFuse Dashboard uses Vue. You can run both packages side by side while testing.
-
-### Can I use it on a phone or tablet?
-
-Yes. Layouts are responsive and support configurable breakpoints. Test your controls, charts and tables at the widths your users need, particularly with fixed layouts or custom templates.
-
-### Can different users see different data?
-
-Yes. Configure client-specific routing for the widgets that need it, and set up authentication when the application needs to identify users. See the [multi-user guide](/user/multi-tenancy).
-
-## Keep learning
+## Recommended Tutorials
 
 <RecommendedTutorials />
+
+## More Recommended Reading
 
 <RecommendedReading />
 
@@ -165,9 +90,53 @@ Yes. Configure client-specific routing for the widgets that need it, and set up 
     <div id="ebook-form"></div>
 </div>
 
-## Contribute to FlowFuse Dashboard
+## Common Questions
 
-FlowFuse Dashboard is developed in the open. Visit the [GitHub repository](https://github.com/FlowFuse/node-red-dashboard) to explore the project, report an issue or find out how to contribute.
+<div class="faq">
+
+<details>
+<summary>Is FlowFuse Dashboard free to use?</summary>
+
+Yes. The `@flowfuse/node-red-dashboard` package is open source under the Apache 2.0 license, and you can install it in any Node-RED environment. FlowFuse hosting and platform services are separate from the package.
+
+</details>
+
+<details>
+<summary>Is Node-RED Dashboard deprecated?</summary>
+
+The original `node-red-dashboard` package [is deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/). FlowFuse Dashboard, also known as Node-RED Dashboard 2.0, is its maintained successor. Node-RED itself is not deprecated.
+
+</details>
+
+<details>
+<summary>Do I need a FlowFuse account?</summary>
+
+No. You can install the package into any self-managed Node-RED environment without a FlowFuse account.
+
+</details>
+
+<details>
+<summary>Will my existing dashboard work without changes?</summary>
+
+Plan to review the migration. Supported nodes can be converted with the migration service, while other parts may need to be rebuilt. AngularJS templates need particular attention because FlowFuse Dashboard uses Vue.
+
+</details>
+
+<details>
+<summary>Can I use it on a phone or tablet?</summary>
+
+Yes. Layouts are responsive and support configurable breakpoints. You can also [install a dashboard on your phone](/user/pwa) as an app.
+
+</details>
+
+<details>
+<summary>Can different users see different data?</summary>
+
+Yes. Configure client-specific routing for the widgets that need it, and set up authentication when the application needs to identify users. See the [multi-user guide](/user/multi-tenancy).
+
+</details>
+
+</div>
 
 <FlowFuseAdvert />
 
@@ -190,6 +159,32 @@ FlowFuse Dashboard is developed in the open. Visit the [GitHub repository](https
   display: inline-flex;
   align-items: center;
   gap: 12px;
+}
+
+.cta-palette .aka {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+}
+
+.faq details {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  padding: 0 16px;
+  margin: 0 0 8px;
+  background-color: var(--vp-c-bg-soft);
+}
+
+.faq summary {
+  cursor: pointer;
+  margin: 0;
+  padding: 10px 0;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.faq details p {
+  margin: 4px 0 12px;
 }
 
 .icon {
