@@ -21,6 +21,11 @@ const videos = [
         title: 'Visualising Data in Node-RED & Dashboard',
         url: 'https://youtu.be/Ecno0EuLyKQ?si=AW2OUpVwJgQU_qli',
         image: 'https://website-data.s3.eu-west-1.amazonaws.com/Tutorial+Thumbnail+-+Data+Visualisation.jpg'
+    },
+    {
+        title: 'Writing Custom Templates - FlowFuse Dashboard',
+        url: 'https://www.youtube.com/watch?v=7bj_DFnRtU8&list=PLpcyqc7kNgp3TWYwWzC7iJtN8XtEhKqlY&index=3',
+        image: 'https://i.ytimg.com/vi/7bj_DFnRtU8/maxresdefault.jpg'
     }
 ]
 </script>
@@ -28,7 +33,7 @@ const videos = [
 <style scoped>
     .recommended-tutorials {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 16px;
     }
     .recommended-tutorials a {
