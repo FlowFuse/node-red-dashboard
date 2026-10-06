@@ -4,7 +4,7 @@
             <h2>Elevate Node-RED with FlowFuse</h2>
             <p>FlowFuse provides a complete platform to build, manage and scale your production Node-RED applications, with built-in AI to help your team move faster.</p>
             <ul>
-                <li>AI Assistance to Build Flows and Get Answers</li>
+                <li>AI Assistant to Build Dashboards from Natural Language</li>
                 <li>Simplified Hosting and Maintenance</li>
                 <li>Centralized Management of your Node-RED Deployments</li>
                 <li>Built-in Version Control &amp; Robust Development Pipelines</li>
@@ -13,7 +13,7 @@
             </ul>
             <a href="https://flowfuse.com/product/why-flowfuse/">Learn More</a>
         </div>
-        <div>
+        <div class="screenshot">
             <img src="../assets/images/screenshot-flowfuse-home.png" alt="FlowFuse platform home showing hosted and remote instances alongside the FlowFuse Expert AI assistant">
         </div>
     </div>
@@ -36,8 +36,29 @@
   color: var(--vp-c-flowfuse);
 }
 
-.flowfuse-advert img {
+.flowfuse-advert .screenshot {
+  align-self: start;
+  /* leave room for the reflection below the frame */
+  margin-bottom: 96px;
+}
 
+.flowfuse-advert img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 10px solid #1f2329;
+  border-radius: 14px;
+  box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.5);
+  -webkit-box-reflect: below 2px linear-gradient(transparent 75%, rgba(255, 255, 255, 0.18));
+}
+
+@media (max-width: 768px) {
+  .flowfuse-advert {
+    grid-template-columns: 1fr;
+  }
+  .flowfuse-advert .screenshot {
+    margin-bottom: 48px;
+  }
 }
 
 .flowfuse-advert a {
