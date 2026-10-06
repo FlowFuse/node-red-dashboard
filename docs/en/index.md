@@ -12,9 +12,9 @@ head:
     formId: '372e557c-9f90-48e8-81da-d7e462f8ef55'
   }); } ;}; checkHbspt()"]
 hero:
-  name: Node-RED Dashboard 2.0
-  text: by FlowFuse
-  tagline: Build dashboards and user interfaces from your Node-RED flows.
+  name: FlowFuse Dashboard
+  text: Build your own UI using Node-RED
+  tagline: An easy-to-use collection of nodes for Node-RED that provides tools to create data-driven applications, dashboards & data visualisations.
   image:
     src: /logo.png
     alt: FlowFuse Dashboard
