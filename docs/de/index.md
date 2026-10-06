@@ -21,7 +21,7 @@ hero:
       link: /de/getting-started
     - theme: alt
       text: Widget-Sammlung
-      link: /de/getting-started
+      link: /de/nodes/widgets
     - theme: alt
       text: Auf GitHub ansehen
       link: https://github.com/FlowFuse/node-red-dashboard

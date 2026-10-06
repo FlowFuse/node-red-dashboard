@@ -6,11 +6,6 @@
                 <PlayIcon class="play-icon" />
             </div>
         </a>
-        <a class="more">
-            <div class="overlay">
-                <label>...More Coming Soon!</label>
-            </div>
-        </a>
     </div>
 </template>
 
@@ -33,7 +28,7 @@ const videos = [
 <style scoped>
     .recommended-tutorials {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 16px;
     }
     .recommended-tutorials a {
@@ -68,10 +63,5 @@ const videos = [
         border-radius: 50%;
         padding: 6px;
         padding-left: 9px;
-    }
-    .recommended-tutorials .more {
-        pointer-events: none;
-        background-color: #EEF2FF;
-        border: 1px solid #818CF8;
     }
 </style>

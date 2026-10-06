@@ -1,7 +1,7 @@
 <template>
     <div class="flowfuse-advert">
         <div>
-            <h1>Elevate Node-RED with FlowFuse</h1>
+            <h2>Elevate Node-RED with FlowFuse</h2>
             <p>FlowFuse provides a complete platform to manage and scale your production Node-RED applications.</p>
             <ul>
                 <li>Simplified Hosting and Maintenance</li>
@@ -28,7 +28,10 @@
   gap: 36px;
 }
 
-.flowfuse-advert h1 {
+.flowfuse-advert h2 {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
   color: var(--vp-c-flowfuse);
 }
 
