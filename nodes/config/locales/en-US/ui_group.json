@@ -17,7 +17,9 @@
             "openDashboardSidebar": "Open Dashboard 2.0 Sidebar",
             "type": "Type",
             "typeDefault": "Default",
-            "typeDialog": "Dialog"
+            "typeDialog": "Dialog",
+            "tab": "Tab",
+            "noTab": "None (own tab)"
         }
     }
 }

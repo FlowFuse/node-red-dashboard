@@ -1,0 +1,15 @@
+name: Prepare release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  release-please:
+    uses: flowfuse/github-actions-workflows/.github/workflows/prepare_release.yml@prepare_release/v1
+    secrets:
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_APP_KEY: ${{ secrets.GH_BOT_APP_KEY }}
