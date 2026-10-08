@@ -28,7 +28,7 @@ controls:
         description: Allow control over whether or not the button is clickable.
 dynamic:
     Label:
-        payload: msg.ui_update.class
+        payload: msg.ui_update.label
         structure: ["String"]
     Thumb Label:
         payload: msg.ui_update.thumbLabel
