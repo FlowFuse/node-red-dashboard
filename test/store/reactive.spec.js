@@ -11,7 +11,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, FLUSH_SERIES } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -1278,6 +1278,18 @@ describe('store: MERGE_ENTRY', function () {
         store.$k.msg.topic.should.equal('t')
     })
 
+    it('keeps a replaced series\' messages as legacy does, without leaving their points writable', function () {
+        const { store, log } = merging()
+        store[APPEND_ENTRY]('k', { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
+
+        store[MERGE_ENTRY]('k', { payload: 'single' })
+        log.length = 0
+        try { store.$k.msg[0]._datapoint.y = 777 } catch (err) {}
+
+        store.$k.msg.should.eql({ 0: { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } }, payload: 'single' })
+        log.should.eql([])
+    })
+
     it('reuses stored fields rather than cloning them again on every merge', function () {
         const { store } = merging()
         store[MERGE_ENTRY]('k', { payload: 'a', options: [{ label: 'one', value: 1 }] })
@@ -1306,5 +1318,165 @@ describe('store: MERGE_ENTRY', function () {
         store[MERGE_ENTRY]('k', { topic: 'b' })
 
         log.should.eql(['k'])
+    })
+})
+
+describe('store: TRIM_SERIES', function () {
+    const point = (x, topic = 'a') => ({ payload: x, topic, _datapoint: { category: topic, x, y: x } })
+    const keepLatest = (max) => (msgs) => msgs.filter((m, i) => msgs.slice(i + 1).filter((n) => n.topic === m.topic).length < max)
+
+    function series (n, topicOf = () => 'a', opts = {}) {
+        const made = makeStore({ clone: util.cloneMessage, ...opts })
+        for (let i = 0; i < n; i++) {
+            made.store[APPEND_ENTRY]('c', point(i, topicOf(i)))
+        }
+        return made
+    }
+    const payloads = (store) => store.$c.msg.map((m) => m.payload)
+
+    it('leaves the stored series alone for 59 trims and rebuilds it on the 60th', function () {
+        const { store } = series(100)
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+        }
+        store.$c.msg.should.have.length(100)
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 59))
+
+        payloads(store).should.eql(Array.from({ length: 40 }, (_, i) => i + 60))
+    })
+
+    it('counts only trims that remove something towards the batch', function () {
+        const { store } = series(100)
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+            store[TRIM_SERIES]('c', (msgs) => msgs)
+        }
+
+        store.$c.msg.should.have.length(100)
+    })
+
+    it('applies pending trims on flush', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(3))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([7, 8, 9])
+    })
+
+    it('matches trimming after every message when points arrive out of order', function () {
+        const { store } = series(0)
+        store[SET_SERIES]('c', [])
+        for (const [x, cutoff] of [[100, 0], [1, 10], [50, 20]]) {
+            store[APPEND_ENTRY]('c', point(x))
+            store[TRIM_SERIES]('c', keepLatest(2))
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m._datapoint.x > cutoff))
+        }
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([100, 50])
+    })
+
+    it('applies every trim, not just the latest', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 1))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 3))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([0, 2, 4])
+    })
+
+    it('gives a position-based trim the positions a per-message trim would see', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m, i) => i > 0))
+        store[APPEND_ENTRY]('c', point(5))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m, i) => i > 0))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([2, 3, 4, 5])
+    })
+
+    it('keeps points appended after the last trim on flush', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 0))
+        store[APPEND_ENTRY]('c', point(5))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([1, 2, 3, 4, 5])
+    })
+
+    it('does not rebuild or report when trims remove nothing', function () {
+        const { store, log } = series(10)
+        log.length = 0
+
+        for (let i = 0; i < 60; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs)
+        }
+        store[FLUSH_SERIES]('c')
+
+        log.should.eql([])
+        payloads(store).should.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    })
+
+    it('drops pending trims when the series is replaced', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(1))
+        store[SET_SERIES]('c', [point(1), point(2)])
+
+        store[TRIM_SERIES]('c', keepLatest(1))
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([2])
+    })
+
+    it('drops pending trims when the entry is deleted', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(1))
+
+        delete store.c
+        store[APPEND_ENTRY]('c', point(1))
+        store[APPEND_ENTRY]('c', point(2))
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([1, 2])
+    })
+
+    it('ignores trims and flushes on an entry that is not a series', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store.k = 5
+
+        store[TRIM_SERIES]('k', () => [])
+        store[FLUSH_SERIES]('k')
+        store[FLUSH_SERIES]('missing')
+
+        store.k.should.equal(5)
+    })
+
+    it('does not clone on trims that do not rebuild', function () {
+        let clones = 0
+        const { store } = series(50, (i) => (i % 2 ? 'a' : 'b'), { clone: (v) => { clones++; return util.cloneMessage(v) } })
+        clones = 0
+
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', keepLatest(10))
+        }
+
+        clones.should.equal(0)
+    })
+
+    it('reports the rebuild once', function () {
+        const { store, log } = series(100)
+        log.length = 0
+
+        for (let i = 0; i < 60; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+        }
+
+        log.should.eql(['c'])
     })
 })

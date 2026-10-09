@@ -1,6 +1,6 @@
 const { isClientScoped } = require('../utils/index.js')
 
-const { attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES } = require('./reactive.js')
+const { attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES } = require('./reactive.js')
 
 const data = {}
 
@@ -12,8 +12,6 @@ let storeOptions = {}
 let storeEnabled = false
 let storeContext = null
 let storeBase = null
-const trimCounts = {}
-const TRIM_BATCH = 60
 let warned = false
 
 function warnOnce (node, problem) {
@@ -64,16 +62,28 @@ function replaceInStore (node, msgs) {
     if (!storeEnabled) return
     if (!Array.isArray(msgs) || msgs.some((m) => !m || typeof m !== 'object')) return
     try {
-        delete trimCounts[node.id]
         getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
-function trimInStore (node, msgs) {
+function trimInStore (node, trim) {
     if (!storeEnabled) return
-    trimCounts[node.id] = (trimCounts[node.id] || 0) + 1
-    if (trimCounts[node.id] < TRIM_BATCH) return
-    replaceInStore(node, msgs)
+    try {
+        getOrCreateStore(node.context().global)[TRIM_SERIES](node.id, trim)
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
+}
+
+function latestPerTopic (msgs, maxPoints) {
+    const counts = {}
+    const kept = []
+    for (let i = msgs.length - 1; i >= 0; i--) {
+        const topic = msgs[i].topic
+        counts[topic] = (counts[topic] || 0) + 1
+        if (counts[topic] <= maxPoints) {
+            kept.push(msgs[i])
+        }
+    }
+    return kept.reverse()
 }
 
 /**
@@ -144,7 +154,6 @@ const setters = {
         if (!storeEnabled) {
             return
         }
-        delete trimCounts[id]
         try {
             delete getOrCreateStore(storeContext)[id]
         } catch (err) { warnOnce(storeBase, `clearing the store entry for ${id} failed (${err.message}), so global.dashboardStore may still hold its old value`) }
@@ -201,29 +210,21 @@ const setters = {
             if (filteredMessages.length !== currentData.length) {
                 // no need for save operation to process messages - just apply them
                 data[node.id] = filteredMessages
-                trimInStore(node, filteredMessages)
             }
+        }
+        if (filterFunction) {
+            trimInStore(node, (msgs) => msgs.filter(filterFunction))
         }
     },
     keepLatestPerTopic (base, node, maxPoints) {
+        trimInStore(node, (msgs) => latestPerTopic(msgs, maxPoints))
         const currentData = data[node.id]
         if (!Array.isArray(currentData)) {
             return
         }
-        const counts = {}
-        const keep = []
-        let trimmed = false
-        for (let i = currentData.length - 1; i >= 0; i--) {
-            const topic = currentData[i].topic
-            counts[topic] = (counts[topic] || 0) + 1
-            if (counts[topic] <= maxPoints) {
-                keep[i] = true
-            } else {
-                trimmed = true
-            }
-        }
-        if (trimmed) {
-            setters.filter(base, node, (m, i) => keep[i])
+        const kept = latestPerTopic(currentData, maxPoints)
+        if (kept.length !== currentData.length) {
+            data[node.id] = kept
         }
     }
 }

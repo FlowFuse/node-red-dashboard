@@ -2,6 +2,7 @@ const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
 const datastore = require('../../nodes/store/data.js')
+const { APPEND_ENTRY, FLUSH_SERIES } = require('../../nodes/store/reactive.js')
 
 const warnings = []
 const RED = { util, plugins: { getByType: () => [] } }
@@ -403,67 +404,19 @@ describe('store: data.js chart writes', function () {
         global.get('dashboardStore')['chart-ok'].should.have.length(1)
     })
 
-    it('clears the trim batch even when the store cannot be reached', function () {
-        const global = fakeGlobal()
-        datastore.initStore(global, { node: { warn: () => {} } })
-        const node = fakeNode('chart-cleared', global)
-        for (let i = 0; i < 100; i++) {
-            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
-        }
-        for (let i = 0; i < 59; i++) {
-            datastore.filter(base, node, (m, idx) => idx > 0)
-        }
-
-        const realGet = global.get
-        global.get = () => { throw new Error('context store unavailable') }
-        datastore.clear(node.id)
-        global.get = realGet
-
-        for (let i = 0; i < 100; i++) {
-            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
-        }
-        const before = global.get('dashboardStore')['chart-cleared'].length
-        datastore.filter(base, node, (m, idx) => idx > 0)
-
-        global.get('dashboardStore')['chart-cleared'].should.have.length(before)
-    })
-
-    it('resets the trim batch even when the rebuild fails, so it does not retry on every trim', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('chart-stuck', global)
-        for (let i = 0; i < 100; i++) {
-            datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
-        }
-
-        const realGet = global.get
-        global.get = () => { throw new Error('context store unavailable') }
-        for (let i = 0; i < 60; i++) {
-            datastore.filter(base, node, (m, idx) => idx > 0)
-        }
-        global.get = realGet
-
-        // the counter was cleared despite the failure, so one more trim must not trigger a rebuild
-        const before = global.get('dashboardStore')['chart-stuck'].length
-        datastore.filter(base, node, (m, idx) => idx > 0)
-
-        global.get('dashboardStore')['chart-stuck'].should.have.length(before)
-    })
-
-    it('does not advance the batch when a trim removes nothing', function () {
+    it('leaves the stored series untouched when trims remove nothing', function () {
         const global = fakeGlobal()
         const node = fakeNode('chart-noop', global)
         for (let i = 0; i < 100; i++) {
             datastore.append(base, node, { payload: i, _datapoint: pt(i, i) })
         }
+        const before = global.get('dashboardStore')['$chart-noop'].msg
 
         for (let i = 0; i < 200; i++) {
             datastore.filter(base, node, () => true)
         }
-        for (let i = 0; i < 59; i++) {
-            datastore.filter(base, node, (m, idx) => idx > 0)
-        }
 
-        global.get('dashboardStore')['chart-noop'].should.have.length(100)
+        global.get('dashboardStore')['$chart-noop'].msg.should.eql(before)
     })
 
     it('still keeps the legacy chart series intact', function () {
@@ -711,17 +664,28 @@ describe('store: data.js failure reporting', function () {
         warnings.should.have.length(2)
     })
 
-    it('warns on a failing trim rebuild', function () {
+    it('warns on the widget when a trim cannot reach the store', function () {
         const global = fakeGlobal()
         const node = fakeNode('fail-5', global)
         datastore.initStore(global, {})
         for (let i = 0; i < 100; i++) datastore.append(base, node, { payload: i, _datapoint: { category: 'a', x: i, y: i } })
         global.get = unreachable
 
-        for (let i = 0; i < 60; i++) datastore.filter(base, node, (m, idx) => idx > 0)
+        datastore.filter(base, node, (m, idx) => idx > 0)
 
         warnings.should.have.length(1)
         warnings[0].should.startWith('fail-5: ')
+    })
+
+    it('throws a failing filter to the widget without reporting a store failure', function () {
+        const global = fakeGlobal()
+        const node = fakeNode('fail-6', global)
+        datastore.initStore(global, {})
+        datastore.append(base, node, { payload: 1, _datapoint: null })
+
+        should.throws(() => datastore.filter(base, node, (m) => m._datapoint.x > 0))
+
+        warnings.should.have.length(0)
     })
 })
 
@@ -881,5 +845,46 @@ describe('store: data.js merges into the store from the store itself', function 
         datastore.clear('merge-3')
 
         should(global.get('dashboardStore')['merge-3']).be.undefined()
+    })
+})
+
+describe('store: data.js trims the stored series itself', function () {
+    const point = (x, topic = 'a') => ({ payload: x, topic, _datapoint: { category: topic, x, y: x } })
+
+    afterEach(function () {
+        datastore.initStore(fakeGlobal(), {})
+    })
+
+    it('trims what the store holds, not a copy of the legacy result', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        const node = fakeNode('own-trim', global)
+        datastore.save(base, node, [])
+        for (let i = 0; i < 6; i++) {
+            datastore.append(base, node, point(i, i % 2 ? 'b' : 'a'))
+        }
+        global.get('dashboardStore')[APPEND_ENTRY]('own-trim', point('store-only'))
+
+        datastore.keepLatestPerTopic(base, node, 2)
+        global.get('dashboardStore')[FLUSH_SERIES]('own-trim')
+
+        global.get('dashboardStore')['$own-trim'].msg.map((m) => m.payload).should.eql([3, 4, 5, 'store-only'])
+        datastore.get('own-trim').map((m) => m.payload).should.eql([2, 3, 4, 5])
+    })
+
+    it('applies both a point limit and a time window', function () {
+        const global = fakeGlobal()
+        datastore.initStore(global, {})
+        const node = fakeNode('both-limits', global)
+        datastore.save(base, node, [])
+        for (let i = 0; i < 100; i++) {
+            datastore.append(base, node, point(i))
+            datastore.keepLatestPerTopic(base, node, 10)
+            datastore.filter(base, node, (m) => m._datapoint.x > i - 50)
+        }
+
+        global.get('dashboardStore')[FLUSH_SERIES]('both-limits')
+
+        global.get('dashboardStore')['$both-limits'].msg.map((m) => m.payload).should.eql(datastore.get('both-limits').map((m) => m.payload))
     })
 })
