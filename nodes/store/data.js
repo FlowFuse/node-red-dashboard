@@ -1,9 +1,83 @@
 const { isClientScoped } = require('../utils/index.js')
 
+const { attachToContext, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('./reactive.js')
+
 const data = {}
 
 const config = {
     RED: null
+}
+
+let storeOptions = {}
+let storeEnabled = false
+const trimCounts = {}
+const TRIM_BATCH = 60
+let warned = false
+
+function warnOnce (node, problem) {
+    if (warned) return
+    warned = true
+    node.warn(`Dashboard data store: ${problem}. Further store failures are not reported until the next full deploy or restart.`)
+}
+
+const attachOptions = () => ({ clone: config.RED.util.cloneMessage, ...storeOptions })
+
+function getOrCreateStore (globalContext) {
+    let unavailable = null
+    const store = attachToContext(globalContext, { ...attachOptions(), onUnavailable: (err) => { unavailable = err } })
+    if (!store) throw unavailable || new Error('global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values')
+    return store
+}
+
+function initStore (globalContext, opts) {
+    storeOptions = { ...opts }
+    storeEnabled = true
+    warned = false
+    return attachToContext(globalContext, attachOptions())
+}
+
+function disableStore () {
+    storeEnabled = false
+}
+
+function writeToStore (node, msg, stored) {
+    if (!storeEnabled) return
+    if (!msg || typeof msg !== 'object' || !('payload' in msg)) return
+    try {
+        getOrCreateStore(node.context().global)[SET_ENTRY](node.id, stored)
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
+}
+
+function appendToStore (node, msg) {
+    if (!storeEnabled) return
+    if (!msg || typeof msg !== 'object') return
+    try {
+        getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, msg)
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
+}
+
+function replaceInStore (node, msgs) {
+    if (!storeEnabled) return
+    if (!Array.isArray(msgs) || msgs.some((m) => !m || typeof m !== 'object')) return
+    try {
+        delete trimCounts[node.id]
+        getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
+    } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
+}
+
+function trimInStore (node, msgs) {
+    if (!storeEnabled) return
+    trimCounts[node.id] = (trimCounts[node.id] || 0) + 1
+    if (trimCounts[node.id] < TRIM_BATCH) return
+    replaceInStore(node, msgs)
+}
+
+function clearFromStore (node) {
+    if (!storeEnabled) return
+    delete trimCounts[node.id]
+    try {
+        delete getOrCreateStore(node.context().global)[node.id]
+    } catch (err) { warnOnce(node, `clearing a store entry failed (${err.message}), so global.dashboardStore may still hold this widget's old value`) }
 }
 
 /**
@@ -88,6 +162,7 @@ const setters = {
                 }
             }
             data[node.id] = filtered
+            replaceInStore(node, filtered)
         } else {
             if (canSaveInStore(base, node, msg)) {
                 const newMsg = stripMsg(msg)
@@ -95,6 +170,7 @@ const setters = {
                     ...data[node.id],
                     ...newMsg
                 }
+                writeToStore(node, msg, data[node.id])
             }
         }
     },
@@ -106,6 +182,7 @@ const setters = {
                 data[node.id] = []
             }
             data[node.id].push(config.RED.util.cloneMessage(msg))
+            appendToStore(node, msg)
         }
     },
     /**
@@ -121,6 +198,7 @@ const setters = {
             if (filteredMessages.length !== currentData.length) {
                 // no need for save operation to process messages - just apply them
                 data[node.id] = filteredMessages
+                trimInStore(node, filteredMessages)
             }
         }
     },
@@ -156,5 +234,8 @@ module.exports = {
     append: setters.append,
     filter: setters.filter,
     keepLatestPerTopic: setters.keepLatestPerTopic,
-    clear: setters.clear
+    clear: setters.clear,
+    clearFromStore,
+    initStore,
+    disableStore
 }
