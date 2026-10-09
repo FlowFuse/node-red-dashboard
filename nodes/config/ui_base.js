@@ -7,7 +7,7 @@ const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets, hasExtraProps } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -25,19 +25,6 @@ function join (...paths) {
  */
 function hasProperty (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop)
-}
-
-/**
- * Test whether a message has any properties other than ui_update, class, visible, enabled and _msgid
- * Properties with the value undefined are ignored
- * @param {*} msg
- * @returns true if other properties found
- */
-function hasExtraProps (message) {
-    const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
-    const keys = Object.keys(message).filter(key => message[key] !== undefined)
-
-    return keys.length > 0 && keys.some(key => !allowed.includes(key))
 }
 
 module.exports = function (RED) {

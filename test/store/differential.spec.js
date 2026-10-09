@@ -16,7 +16,7 @@ function fakeGlobal () {
 
 const runs = [
     ...Object.entries(scenarios).map(([name, steps]) => ({ name, steps })),
-    ...Array.from({ length: 200 }, (_, i) => ({ name: `seed ${i + 1}`, steps: generate(i + 1, 120) })),
+    ...Array.from({ length: 200 }, (_, i) => ({ name: `seed ${i + 1}`, steps: generate(i + 1, 180) })),
     ...Array.from({ length: 100 }, (_, i) => ({ name: `messy seed ${i + 1}`, steps: generateMessy(i + 1, 150) }))
 ]
 
@@ -28,6 +28,23 @@ function prepare (steps) {
     return { steps: prefixed, ids: [...new Set(prefixed.map((s) => s.id))] }
 }
 
+function scribble (value, seen = new Set()) {
+    if (!value || typeof value !== 'object' || seen.has(value)) {
+        return
+    }
+    seen.add(value)
+    for (const key of Object.keys(value)) {
+        if (value[key] && typeof value[key] === 'object') {
+            scribble(value[key], seen)
+        } else {
+            value[key] = 'scribbled'
+        }
+    }
+    if (Array.isArray(value)) {
+        value.push('scribbled')
+    }
+}
+
 function compareAfterEachStep (steps, ids) {
     const global = fakeGlobal()
     const warnings = []
@@ -36,9 +53,14 @@ function compareAfterEachStep (steps, ids) {
     const legacy = createLegacy(RED)
     let comparedWithData = 0
     for (const step of steps) {
-        runStep(datastore, step, { base, nodeFor })
-        runStep(legacy, step, { base, nodeFor })
+        const given = structuredClone(step)
+        runStep(datastore, given, { base, nodeFor })
+        runStep(legacy, structuredClone(step), { base, nodeFor })
         should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after ${step.op}`)
+        scribble(given)
+        should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after scribbling what ${step.op} was given`)
+        scribble(datastore.get(step.id))
+        should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after scribbling what get returned`)
         datastore.has(step.id).should.equal(legacy.has(step.id), `${step.id} after ${step.op}`)
         if (legacy.has(step.id)) {
             comparedWithData++

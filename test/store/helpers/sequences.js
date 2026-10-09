@@ -1,3 +1,5 @@
+const { hasExtraProps } = require('../../../nodes/utils/index.js')
+
 const pt = (x, y, category = 'a') => ({ category, x, y })
 
 function mulberry32 (seed) {
@@ -11,12 +13,6 @@ function mulberry32 (seed) {
 }
 
 const repeat = (n, make) => Array.from({ length: n }, (_, i) => make(i))
-
-function hasExtraProps (message) {
-    const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
-    const keys = Object.keys(message).filter((key) => message[key] !== undefined)
-    return keys.length > 0 && keys.some((key) => !allowed.includes(key))
-}
 
 const chartPoint = (x, topic) => {
     const msg = { payload: x, _datapoint: pt(x, x, topic || 'a') }
@@ -93,14 +89,19 @@ function generate (seed, length) {
             maxPoints: mode === 'points' || mode === 'both' ? 1 + Math.floor(rand() * 5) : undefined
         }
     }
-    const charts = { g1: chartConfig(), g3: chartConfig() }
+    const charts = { g1: chartConfig(), g3: chartConfig(), g5: chartConfig() }
     const steps = []
     for (let i = 0; i < length; i++) {
-        const id = pick(['g0', 'g1', 'g2', 'g3'])
+        const id = pick(['g0', 'g1', 'g2', 'g3', 'g4', 'g5'])
         const topic = pick(['a', 'b', undefined])
         const roll = rand()
+        const client = rand() < 0.4 ? { _client: { socketId: pick(['s1', 's2']) } } : {}
         if (roll < 0.03) {
             steps.push({ op: pick(['clear', 'remove']), id })
+        } else if (id === 'g4') {
+            steps.push({ op: roll < 0.5 ? 'input' : 'switchSave', id, type: 'ui-scoped', msg: { payload: Math.floor(rand() * 100), ...client } })
+        } else if (id === 'g5') {
+            steps.push({ op: 'chart', id, type: 'ui-scoped', msg: { ...chartPoint(i, topic), ...client }, ...charts[id], cutoffAt: i })
         } else if (id === 'g0') {
             const msg = {}
             if (rand() < 0.8) { msg.payload = Math.floor(rand() * 100) }
