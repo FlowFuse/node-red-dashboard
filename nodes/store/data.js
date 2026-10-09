@@ -118,6 +118,9 @@ const getters = {
     // given a widget id, return the latest msg received
     msg (id) {
         return config.RED.util.cloneMessage(data[id])
+    },
+    has (id) {
+        return !!data[id]
     }
 }
 
@@ -185,16 +188,39 @@ const setters = {
                 trimInStore(node, filteredMessages)
             }
         }
+    },
+    keepLatestPerTopic (base, node, maxPoints) {
+        const currentData = data[node.id]
+        if (!Array.isArray(currentData)) {
+            return
+        }
+        const counts = {}
+        const keep = []
+        let trimmed = false
+        for (let i = currentData.length - 1; i >= 0; i--) {
+            const topic = currentData[i].topic
+            counts[topic] = (counts[topic] || 0) + 1
+            if (counts[topic] <= maxPoints) {
+                keep[i] = true
+            } else {
+                trimmed = true
+            }
+        }
+        if (trimmed) {
+            setters.filter(base, node, (m, i) => keep[i])
+        }
     }
 }
 
 module.exports = {
     get: getters.msg,
+    has: getters.has,
     RED: getters.RED,
     setConfig: setters.setConfig,
     save: setters.save,
     append: setters.append,
     filter: setters.filter,
+    keepLatestPerTopic: setters.keepLatestPerTopic,
     clear: setters.clear,
     clearFromStore,
     initStore,
