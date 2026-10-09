@@ -711,6 +711,8 @@ describe('store: data.js failure reporting', function () {
 })
 
 describe('store: data reads that avoid cloning', function () {
+    const { util } = require('@node-red/util')
+    const base = { acceptsClientConfig: [] }
     let clones = 0
     const countingRED = {
         util: { ...util, cloneMessage: (m) => { clones++; return util.cloneMessage(m) } },
@@ -720,6 +722,7 @@ describe('store: data reads that avoid cloning', function () {
     const topicsAndPayloads = (id) => datastore.get(id).map((m) => `${m.topic}:${m.payload}`)
 
     beforeEach(function () {
+        datastore.disableStore()
         datastore.setConfig(countingRED)
     })
 
@@ -734,13 +737,13 @@ describe('store: data reads that avoid cloning', function () {
         })
 
         it('is true once a series exists, even an empty one', function () {
-            const node = fakeNode('has-2', fakeGlobal())
+            const node = { id: 'has-2', type: 'ui-chart' }
             datastore.save(base, node, [])
             datastore.has('has-2').should.equal(true)
         })
 
         it('does not clone', function () {
-            const node = fakeNode('has-3', fakeGlobal())
+            const node = { id: 'has-3', type: 'ui-chart' }
             for (let i = 0; i < 10; i++) datastore.append(base, node, pt('a', i))
             clones = 0
 
@@ -752,7 +755,7 @@ describe('store: data reads that avoid cloning', function () {
 
     describe('keepLatestPerTopic', function () {
         it('keeps the newest points of each topic, in their original order', function () {
-            const node = fakeNode('keep-1', fakeGlobal())
+            const node = { id: 'keep-1', type: 'ui-chart' }
             datastore.save(base, node, [])
             for (const [t, n] of [['a', 1], ['b', 1], ['a', 2], ['b', 2], ['a', 3], ['b', 3], ['a', 4]]) datastore.append(base, node, pt(t, n))
 
@@ -762,7 +765,7 @@ describe('store: data reads that avoid cloning', function () {
         })
 
         it('treats messages without a topic as one series', function () {
-            const node = fakeNode('keep-2', fakeGlobal())
+            const node = { id: 'keep-2', type: 'ui-chart' }
             datastore.save(base, node, [])
             for (let i = 1; i <= 4; i++) datastore.append(base, node, { payload: i })
 
@@ -772,7 +775,7 @@ describe('store: data reads that avoid cloning', function () {
         })
 
         it('leaves the series alone when no topic is over the limit', function () {
-            const node = fakeNode('keep-3', fakeGlobal())
+            const node = { id: 'keep-3', type: 'ui-chart' }
             datastore.save(base, node, [])
             for (let i = 1; i <= 3; i++) datastore.append(base, node, pt('a', i))
 
@@ -782,7 +785,7 @@ describe('store: data reads that avoid cloning', function () {
         })
 
         it('does nothing when the widget holds a single message rather than a series', function () {
-            const node = fakeNode('keep-4', fakeGlobal())
+            const node = { id: 'keep-4', type: 'ui-text' }
             datastore.save(base, node, { payload: 'x' })
 
             datastore.keepLatestPerTopic(base, node, 1)
@@ -791,7 +794,7 @@ describe('store: data reads that avoid cloning', function () {
         })
 
         it('does not clone the series', function () {
-            const node = fakeNode('keep-5', fakeGlobal())
+            const node = { id: 'keep-5', type: 'ui-chart' }
             datastore.save(base, node, [])
             for (let i = 0; i < 50; i++) datastore.append(base, node, pt(i % 2 ? 'a' : 'b', i))
             clones = 0
@@ -803,7 +806,7 @@ describe('store: data reads that avoid cloning', function () {
     })
 
     it('still returns a copy from get', function () {
-        const node = fakeNode('copy-1', fakeGlobal())
+        const node = { id: 'copy-1', type: 'ui-chart' }
         datastore.save(base, node, [])
         datastore.append(base, node, pt('a', 1))
 
