@@ -11,7 +11,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, FLUSH_SERIES } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -54,7 +54,7 @@ describe('store: reactive data store', function () {
 
         it('does not leave a msg describing the previous value after a flow write', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k1', { payload: 42, topic: 'boiler' })
+            store[MERGE_ENTRY]('k1', { payload: 42, topic: 'boiler' })
             store.$k1.msg.topic.should.equal('boiler')
 
             store.k1 = 99
@@ -75,7 +75,7 @@ describe('store: reactive data store', function () {
             const { store, log } = makeStore()
             const msg = { payload: 42, topic: 'sensor-A' }
 
-            store[SET_ENTRY]('gauge', msg)
+            store[MERGE_ENTRY]('gauge', msg)
 
             store.gauge.should.equal(42)
             store.$gauge.msg.should.eql({ payload: 42, topic: 'sensor-A' })
@@ -84,8 +84,8 @@ describe('store: reactive data store', function () {
 
         it('keeps history on the value, as a normal write does', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('gauge', { payload: 1 })
-            store[SET_ENTRY]('gauge', { payload: 2 })
+            store[MERGE_ENTRY]('gauge', { payload: 1 })
+            store[MERGE_ENTRY]('gauge', { payload: 2 })
 
             store.gauge.should.equal(2)
             store.$gauge.history.map((h) => h.value).should.eql([1])
@@ -94,7 +94,7 @@ describe('store: reactive data store', function () {
         it('clones the message it is given, so a caller reusing it cannot mutate stored state', function () {
             const { store } = makeStore()
             const msg = { payload: 1, nested: { a: 1 } }
-            store[SET_ENTRY]('k', msg)
+            store[MERGE_ENTRY]('k', msg)
 
             should(store.$k.msg).not.equal(msg)
             store.$k.msg.nested.should.not.equal(msg.nested)
@@ -106,7 +106,7 @@ describe('store: reactive data store', function () {
 
         it('serves the stored value as the payload of the stored msg', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
+            store[MERGE_ENTRY]('k', { payload: { n: 1 }, topic: 't' })
 
             store.$k.msg.payload.should.equal(store.$k.value)
             store.k.n.should.equal(1)
@@ -670,7 +670,7 @@ describe('store: reactive data store', function () {
 
         it('does not let the stored msg be rewritten through $', function () {
             const { store, log } = makeStore()
-            store[SET_ENTRY]('k', { payload: 42, topic: 'boiler' })
+            store[MERGE_ENTRY]('k', { payload: 42, topic: 'boiler' })
             log.length = 0
 
             const write = function () { 'use strict'; store.$k.msg.payload = 'TAMPERED' }
@@ -682,7 +682,7 @@ describe('store: reactive data store', function () {
 
         it('does not let a non-payload property of the stored msg be rewritten through $', function () {
             const { store } = makeStore()
-            store[SET_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
+            store[MERGE_ENTRY]('k', { payload: 1, meta: { deep: { n: 1 } } })
 
             const write = function () { 'use strict'; store.$k.msg.meta.deep.n = 'TAMPERED' }
 
@@ -692,7 +692,7 @@ describe('store: reactive data store', function () {
 
         it('reports a nested write made through the $ msg payload, since it is the value', function () {
             const { store, log } = makeStore()
-            store[SET_ENTRY]('k', { payload: { deep: { n: 1 } } })
+            store[MERGE_ENTRY]('k', { payload: { deep: { n: 1 } } })
             log.length = 0
 
             store.$k.msg.payload.deep.n = 2
@@ -716,7 +716,7 @@ describe('store: reactive data store', function () {
             // a change node copies by reference unless deep copy is ticked, so msg.copy === msg.payload
             const { store } = makeStore({ clone: util.cloneMessage })
             const payload = { temp: 25 }
-            store[SET_ENTRY]('k', { payload, copy: payload, topic: 't' })
+            store[MERGE_ENTRY]('k', { payload, copy: payload, topic: 't' })
 
             Object.isFrozen(store.k).should.be.false()
             store.k.temp = 26
@@ -728,7 +728,7 @@ describe('store: reactive data store', function () {
             // msg.res is an object literal in Node-RED (createResponseWrapper), not a class instance,
             // so isReactable accepts it and nothing but an explicit exemption keeps it writable
             const paths = [
-                (store, msg) => store[SET_ENTRY]('k', msg),
+                (store, msg) => store[MERGE_ENTRY]('k', msg),
                 (store, msg) => store[SET_SERIES]('k', [msg]),
                 (store, msg) => store[APPEND_ENTRY]('k', msg)
             ]
@@ -1195,5 +1195,288 @@ describe('store: reactive data store', function () {
             const store = LocalFileSystem({ dir: tmpDir(), cache: true })
             should(attachToContext(realGlobal(store), {})).not.be.null()
         })
+    })
+})
+
+describe('store: MERGE_ENTRY', function () {
+    const merging = () => makeStore({ clone: util.cloneMessage })
+
+    it('merges a message onto the stored one, as the legacy datastore does', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1, topic: 'a', label: 'x' })
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.$k.msg.should.eql({ payload: 1, topic: 'b', label: 'x' })
+    })
+
+    it('keeps the value and adds no history for a message without a payload', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: { n: 1 } })
+        const value = store.k
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.k.should.equal(value)
+        store.$k.history.should.eql([])
+    })
+
+    it('records history for every message that carries a payload, even a repeated one', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: true })
+        store[MERGE_ENTRY]('k', { payload: true })
+        store[MERGE_ENTRY]('k', { payload: false })
+
+        store.$k.history.map((h) => h.value).should.eql([true, true])
+    })
+
+    it('does not add a payload key that no message had', function () {
+        const { store } = merging()
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        Object.keys(store.$k.msg).should.eql(['topic'])
+    })
+
+    it('merges onto a value a flow wrote directly', function () {
+        const { store } = merging()
+        store.k = 5
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        store.$k.msg.should.eql({ payload: 5, topic: 't' })
+    })
+
+    it('does not alias or freeze the message it is given', function () {
+        const { store } = merging()
+        const msg = { payload: { n: 1 }, nested: { a: 1 } }
+
+        store[MERGE_ENTRY]('k', msg)
+        msg.nested.a = 2
+
+        store.$k.msg.nested.a.should.equal(1)
+        Object.isFrozen(msg.nested).should.equal(false)
+    })
+
+    it('updates the timestamp when it keeps the value', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1 })
+        const before = store.$k.timestamp
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        store.$k.timestamp.should.be.above(before)
+    })
+
+    it('does not keep a series as the value when a message without a payload is merged onto it', function () {
+        const { store } = merging()
+        store[APPEND_ENTRY]('k', { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
+
+        store[MERGE_ENTRY]('k', { topic: 't' })
+
+        should(store.k).be.undefined()
+        store.$k.msg.topic.should.equal('t')
+    })
+
+    it('keeps a replaced series\' messages as legacy does, without leaving their points writable', function () {
+        const { store, log } = merging()
+        store[APPEND_ENTRY]('k', { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
+
+        store[MERGE_ENTRY]('k', { payload: 'single' })
+        log.length = 0
+        try { store.$k.msg[0]._datapoint.y = 777 } catch (err) {}
+
+        store.$k.msg.should.eql({ 0: { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } }, payload: 'single' })
+        log.should.eql([])
+    })
+
+    it('reuses stored fields rather than cloning them again on every merge', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { payload: 'a', options: [{ label: 'one', value: 1 }] })
+        const options = store.$k.msg.options
+
+        store[MERGE_ENTRY]('k', { payload: 'b' })
+
+        store.$k.msg.options.should.equal(options)
+        Object.isFrozen(store.$k.msg.options).should.equal(true)
+    })
+
+    it('keeps stored fields in their original order, with payload last', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { topic: 'a', payload: 1, label: 'x' })
+
+        store[MERGE_ENTRY]('k', { topic: 'b', extra: true })
+
+        Object.keys(store.$k.msg).should.eql(['topic', 'label', 'extra', 'payload'])
+    })
+
+    it('reports each merge once', function () {
+        const { store, log } = merging()
+        store[MERGE_ENTRY]('k', { payload: 1 })
+        log.length = 0
+
+        store[MERGE_ENTRY]('k', { topic: 'b' })
+
+        log.should.eql(['k'])
+    })
+})
+
+describe('store: TRIM_SERIES', function () {
+    const point = (x, topic = 'a') => ({ payload: x, topic, _datapoint: { category: topic, x, y: x } })
+    const keepLatest = (max) => (msgs) => msgs.filter((m, i) => msgs.slice(i + 1).filter((n) => n.topic === m.topic).length < max)
+
+    function series (n, topicOf = () => 'a', opts = {}) {
+        const made = makeStore({ clone: util.cloneMessage, ...opts })
+        for (let i = 0; i < n; i++) {
+            made.store[APPEND_ENTRY]('c', point(i, topicOf(i)))
+        }
+        return made
+    }
+    const payloads = (store) => store.$c.msg.map((m) => m.payload)
+
+    it('leaves the stored series alone for 59 trims and rebuilds it on the 60th', function () {
+        const { store } = series(100)
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+        }
+        store.$c.msg.should.have.length(100)
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 59))
+
+        payloads(store).should.eql(Array.from({ length: 40 }, (_, i) => i + 60))
+    })
+
+    it('counts only trims that remove something towards the batch', function () {
+        const { store } = series(100)
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+            store[TRIM_SERIES]('c', (msgs) => msgs)
+        }
+
+        store.$c.msg.should.have.length(100)
+    })
+
+    it('applies pending trims on flush', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(3))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([7, 8, 9])
+    })
+
+    it('matches trimming after every message when points arrive out of order', function () {
+        const { store } = series(0)
+        store[SET_SERIES]('c', [])
+        for (const [x, cutoff] of [[100, 0], [1, 10], [50, 20]]) {
+            store[APPEND_ENTRY]('c', point(x))
+            store[TRIM_SERIES]('c', keepLatest(2))
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m._datapoint.x > cutoff))
+        }
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([100, 50])
+    })
+
+    it('applies every trim, not just the latest', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 1))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 3))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([0, 2, 4])
+    })
+
+    it('gives a position-based trim the positions a per-message trim would see', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m, i) => i > 0))
+        store[APPEND_ENTRY]('c', point(5))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m, i) => i > 0))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([2, 3, 4, 5])
+    })
+
+    it('keeps points appended after the last trim on flush', function () {
+        const { store } = series(5)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 0))
+        store[APPEND_ENTRY]('c', point(5))
+
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([1, 2, 3, 4, 5])
+    })
+
+    it('does not rebuild or report when trims remove nothing', function () {
+        const { store, log } = series(10)
+        log.length = 0
+
+        for (let i = 0; i < 60; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs)
+        }
+        store[FLUSH_SERIES]('c')
+
+        log.should.eql([])
+        payloads(store).should.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    })
+
+    it('drops pending trims when the series is replaced', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(1))
+        store[SET_SERIES]('c', [point(1), point(2)])
+
+        store[TRIM_SERIES]('c', keepLatest(1))
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([2])
+    })
+
+    it('drops pending trims when the entry is deleted', function () {
+        const { store } = series(10)
+        store[TRIM_SERIES]('c', keepLatest(1))
+
+        delete store.c
+        store[APPEND_ENTRY]('c', point(1))
+        store[APPEND_ENTRY]('c', point(2))
+        store[FLUSH_SERIES]('c')
+
+        payloads(store).should.eql([1, 2])
+    })
+
+    it('ignores trims and flushes on an entry that is not a series', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store.k = 5
+
+        store[TRIM_SERIES]('k', () => [])
+        store[FLUSH_SERIES]('k')
+        store[FLUSH_SERIES]('missing')
+
+        store.k.should.equal(5)
+    })
+
+    it('does not clone on trims that do not rebuild', function () {
+        let clones = 0
+        const { store } = series(50, (i) => (i % 2 ? 'a' : 'b'), { clone: (v) => { clones++; return util.cloneMessage(v) } })
+        clones = 0
+
+        for (let i = 0; i < 59; i++) {
+            store[TRIM_SERIES]('c', keepLatest(10))
+        }
+
+        clones.should.equal(0)
+    })
+
+    it('reports the rebuild once', function () {
+        const { store, log } = series(100)
+        log.length = 0
+
+        for (let i = 0; i < 60; i++) {
+            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
+        }
+
+        log.should.eql(['c'])
     })
 })

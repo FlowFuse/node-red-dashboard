@@ -234,7 +234,6 @@ function runStep (target, step, { base, nodeFor }) {
         target.clear(step.id)
     } else if (step.op === 'remove') {
         target.clear(step.id)
-        target.clearFromStore?.(node)
     }
 }
 

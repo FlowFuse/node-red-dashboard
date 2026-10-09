@@ -1,7 +1,10 @@
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
-const SET_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/setEntry')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
+const MERGE_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/mergeEntry')
+const TRIM_SERIES = Symbol.for('@flowfuse/node-red-dashboard/trimSeries')
+const FLUSH_SERIES = Symbol.for('@flowfuse/node-red-dashboard/flushSeries')
+const TRIM_BATCH = 60
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -11,6 +14,7 @@ class Entry {
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
+        this.trims = null
     }
 }
 
@@ -102,15 +106,22 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         }
         const wrapped = deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
+        rec.trims = null
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
 
-    records[SET_ENTRY] = (prop, msg) => {
-        const { payload, ...rest } = msg
-        const rec = writeValue(prop, cloneValue(payload))
-        rec.msg = Object.freeze({ ...freezeOwned(cloneValue(rest)), payload: rec.value })
+    records[MERGE_ENTRY] = (prop, msg) => {
+        const current = records[prop]
+        const { payload, ...incoming } = msg
+        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
+        const { payload: storedPayload, ...stored } = previous
+        const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
+        const rec = keepValue ? current : writeValue(prop, cloneValue(payload))
+        const fields = { ...stored, ...freezeOwned(cloneValue(incoming)) }
+        rec.msg = Object.freeze('payload' in msg || (keepValue && 'payload' in current.msg) ? { ...fields, payload: rec.value } : fields)
+        rec.timestamp = now()
         emit(prop, rec, prop)
     }
 
@@ -163,6 +174,43 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
         rec.msg.push(toStoredMessage(owned, stored))
         if (replaced) emit(prop, rec, prop)
+    }
+
+    const rebuildSeries = (prop, rec) => {
+        const { kept, seen } = rec.trims
+        rec.trims = null
+        const msgs = kept.concat(rec.msg.slice(seen))
+        if (msgs.length !== rec.msg.length) {
+            records[SET_SERIES](prop, msgs)
+        }
+    }
+
+    records[TRIM_SERIES] = (prop, trim) => {
+        const rec = records[prop]
+        if (!rec || !Array.isArray(rec.msg)) {
+            return
+        }
+        const pending = rec.trims || (rec.trims = { calls: 0, kept: [], seen: 0 })
+        for (let i = pending.seen; i < rec.msg.length; i++) {
+            pending.kept.push(rec.msg[i])
+        }
+        pending.seen = rec.msg.length
+        const before = pending.kept.length
+        pending.kept = trim(pending.kept)
+        if (pending.kept.length === before) {
+            return
+        }
+        pending.calls++
+        if (pending.calls >= TRIM_BATCH) {
+            rebuildSeries(prop, rec)
+        }
+    }
+
+    records[FLUSH_SERIES] = (prop) => {
+        const rec = records[prop]
+        if (rec?.trims) {
+            rebuildSeries(prop, rec)
+        }
     }
 
     const handler = {
@@ -237,4 +285,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, SET_ENTRY, APPEND_ENTRY, SET_SERIES }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, FLUSH_SERIES }
