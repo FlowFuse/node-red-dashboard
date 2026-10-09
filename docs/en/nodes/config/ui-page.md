@@ -7,6 +7,7 @@ props:
     Theme: Which FlowFuse Dashboard theme to use for this page. You can customise your own too.
     Layout: Which Layout Manager to render the widgets with
     Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this page in hte side navigation menu.</li><li><b>Interactivity</b> - Controls whether the item is disabled/enabled in the side navigation menu.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
+    Tabs: Only for the "Tabs" layout. The tabs on this page, in display order. Groups are assigned to a tab in their own config.
     Breakpoints: Configure the responsive breakpoints for your Dashboard, controlling how many columns render at different screen sizes. Not available for "Fixed" layouts.
 ---
 
