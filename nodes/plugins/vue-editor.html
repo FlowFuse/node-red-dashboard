@@ -1,0 +1,79 @@
+<script type="text/javascript">
+    /**
+     * Registers a "vue-sfc" language with Node-RED's Monaco code editor, used by ui-template.
+     * Up front this only registers the language id and Monaco's HTML language service for it. The tokenizer,
+     * Vue/Vuetify providers and Vuetify data are loaded from resources/vue-editor the first time an editor uses it.
+     */
+    (function () {
+        const PLUGIN_ID = 'ui-template-vue-editor'
+        const LANGUAGE_ID = 'vue-sfc'
+        const MODULE = '@flowfuse/node-red-dashboard'
+
+        /**
+         * Monaco asks MonacoEnvironment.getWorkerUrl/getWorker for a language worker using the language id as the
+         * label. Node-RED only knows its built-in labels, so map ours onto the html worker that serves it.
+         * Done on first use, when Node-RED has already set up MonacoEnvironment.
+         */
+        function shimWorkerLabel () {
+            const env = window.MonacoEnvironment
+            if (!env || env.vueSfcWorkerShim) {
+                return
+            }
+            for (const fn of ['getWorkerUrl', 'getWorker']) {
+                if (typeof env[fn] === 'function') {
+                    const original = env[fn]
+                    env[fn] = function (moduleId, label) {
+                        return original.call(this, moduleId, label === LANGUAGE_ID ? 'html' : label)
+                    }
+                }
+            }
+            env.vueSfcWorkerShim = true
+        }
+
+        function registerHtmlLanguageService (monaco) {
+            // Monaco 0.55 moved monaco.languages.html to monaco.html
+            const html = monaco.html?.registerHTMLLanguageService ? monaco.html : monaco.languages.html
+            if (!html?.registerHTMLLanguageService) {
+                return
+            }
+            const options = Object.assign({}, html.htmlDefaults?.options, { data: { useDefaultDataProvider: true } })
+            html.registerHTMLLanguageService(LANGUAGE_ID, options)
+        }
+
+        /**
+         * Registers the language if Monaco is loaded. Safe to call more than once.
+         * @returns {boolean} true when the vue-sfc language is available
+         */
+        function ensure () {
+            const monaco = window.monaco
+            if (!monaco?.languages?.register) {
+                return false
+            }
+            if (monaco.languages.getLanguages().some(l => l.id === LANGUAGE_ID)) {
+                return true
+            }
+            monaco.languages.register({ id: LANGUAGE_ID, aliases: ['Vue', LANGUAGE_ID], extensions: ['.vue'] })
+            try {
+                registerHtmlLanguageService(monaco)
+            } catch (err) {
+                console.warn('Dashboard: HTML language service not available for Vue templates', err)
+            }
+
+            const version = RED.nodes.registry?.getModule?.(MODULE)?.version
+            const query = version ? '?v=' + encodeURIComponent(version) : ''
+            const base = new URL('resources/' + MODULE + '/vue-editor/', document.baseURI)
+            monaco.languages.onLanguage(LANGUAGE_ID, function () {
+                shimWorkerLabel()
+                import(new URL('vue-sfc.mjs' + query, base).href)
+                    .then(m => m.activate(monaco, { dataUrl: new URL('vuetify.json' + query, base).href }))
+                    .catch(err => console.warn('Dashboard: could not load the Vue editor support', err))
+            })
+            return true
+        }
+
+        RED.plugins.registerPlugin(PLUGIN_ID, {
+            onadd: ensure,
+            ensure
+        })
+    })()
+</script>
