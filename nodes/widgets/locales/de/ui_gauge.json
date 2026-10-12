@@ -29,6 +29,11 @@
             "class": "Klasse",
             "units": "Einheiten",
             "icon": "Symbol",
+            "iconPosition": "Symbolposition",
+            "top": "Oben",
+            "bottom": "Unten",
+            "left": "Links",
+            "right": "Rechts",
             "defaults": "Standards"
         },
         "errors": {
