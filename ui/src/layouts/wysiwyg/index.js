@@ -139,6 +139,7 @@ export default {
 
             return NodeRedApi.deployChanges({
                 dashboard,
+                dashboardPath: this.$store.getters['ui/dashboards']?.[dashboard]?.path || 'dashboard',
                 page,
                 groups: currentPageGroups,
                 widgets: normalisedWidgets,
