@@ -71,9 +71,27 @@
             return true
         }
 
+        /**
+         * nr-assistant before 0.21.0 only gives ui-template Expert completions and its CodeLens for html,
+         * so keep ui-template on html when an older nr-assistant is installed.
+         */
+        function assistantSupportsVueSfc () {
+            const assistant = RED.plugins.getPlugin('flowfuse-nr-assistant')
+            return !assistant || assistant.supportsVueSfc === true
+        }
+
+        /**
+         * Registers the language if needed. Safe to call more than once.
+         * @returns {boolean} true when ui-template should use the vue-sfc language
+         */
+        function useVueSfc () {
+            return RED.editor.codeEditor?.editor?.type === 'monaco' && assistantSupportsVueSfc() && ensure()
+        }
+
         RED.plugins.registerPlugin(PLUGIN_ID, {
             onadd: ensure,
-            ensure
+            ensure,
+            useVueSfc
         })
     })()
 </script>

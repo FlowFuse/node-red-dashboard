@@ -184,9 +184,9 @@
                 const $templateScope = $('#node-input-templateScope')
 
                 // Monaco gets Vue/Vuetify syntax and completions from the ui-template-vue-editor plugin (nodes/plugins/vue-editor.html).
-                // ACE, or Monaco without the plugin, keeps the HTML mode.
+                // ACE, Monaco without the plugin, or an nr-assistant too old for vue-sfc keeps the HTML mode.
                 const vueEditor = RED.plugins.getPlugin('ui-template-vue-editor')
-                const htmlMode = RED.editor.codeEditor?.editor?.type === 'monaco' && vueEditor?.ensure?.() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
+                const htmlMode = vueEditor?.useVueSfc?.() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
 
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
