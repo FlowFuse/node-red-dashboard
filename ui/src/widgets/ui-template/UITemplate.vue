@@ -15,6 +15,9 @@ export default {
         state: { type: Object, default: () => ({}) }
     },
     created () {
+        // deliberately not reactive: these only memoize the generated component definition
+        this.componentDefinition = null
+        this.componentDefinitionKey = null
         this.$dataTracker(this.id, null, null, this.onDynamicProperties)
     },
     errorCaptured: (err, vm, info) => {
@@ -58,8 +61,10 @@ export default {
             const htmlDoc = parser.parseFromString(this.getProperty('format'), 'text/html')
 
             // Check whether the user has specified a fully defined Vue component, or _just_ raw HTML
+            // take the markup, not the element: the parsed document would otherwise be retained for as
+            // long as the generated component definition is cached
             const templates = htmlDoc.getElementsByTagName('template')
-            const template = templates.length ? templates[0] : this.getProperty('format')
+            const template = templates.length ? templates[0].innerHTML : this.getProperty('format')
 
             const head = []
 
@@ -116,10 +121,10 @@ export default {
 
             return { head, component, template }
         },
-        createVNode (head, component, template, parent) {
+        buildComponentDefinition (head, component, template, parent) {
             // Return a (VueJs VNode directly to create a virtual DOM.
             // A VueJs template will created here, even when the user specified raw HTML.
-            return h({
+            return {
                 props: ['id', 'props'],
                 inject: ['$socket', '$dataTracker'],
                 errorCaptured: (err, vm, info) => {
@@ -225,22 +230,37 @@ export default {
                     }
                 },
                 data: component ? component.data : null
-            }, {
-                id: parent.id,
-                props: parent.props
-            })
+            }
+        },
+        /**
+         * The component definition is cached and only rebuilt when the user's template actually
+         * changes. A fresh definition is a different component type to Vue, which would unmount and
+         * re-create the user's component (losing its state, and tearing down anything it teleports
+         * elsewhere) on every single re-render of this widget.
+         */
+        getComponentDefinition () {
+            const format = this.getProperty('format')
+            const scope = this.props?.templateScope
+            const key = `${scope}::${format}`
+            if (!this.componentDefinition || this.componentDefinitionKey !== key) {
+                // Call the method to parse the input (template or raw HTML) specified by the user
+                const { head, component, template } = this.parseCustomTemplate()
+                this.componentDefinition = this.buildComponentDefinition(head, component, template, this)
+                this.componentDefinitionKey = key
+            }
+            return this.componentDefinition
         }
     },
     render () {
-        // Call the method to parse the input (template or raw HTML) specified by the user
-        const { head, component, template } = this.parseCustomTemplate()
-
         // Create a virtual node which can be loaded by VueJs in the virtual DOM.
         // VueJs will detect automatically all changes to the previous virtual DOM,
         // and only do the necessary updates (avoiding a slow full refresh that way).
         // The custom Vue template will be injected in the core ui-template, in
         // in order to extend base functionality.
-        return this.createVNode(head, component, template, this)
+        return h(this.getComponentDefinition(), {
+            id: this.id,
+            props: this.props
+        })
     }
 }
 </script>
