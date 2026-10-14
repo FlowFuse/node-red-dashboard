@@ -112,10 +112,12 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         return rec
     }
 
+    const trimmedSeries = (rec) => rec.trims ? rec.trims.kept.concat(rec.msg.slice(rec.trims.seen)) : rec.msg
+
     records[MERGE_ENTRY] = (prop, msg) => {
         const current = records[prop]
         const { payload, ...incoming } = msg
-        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
+        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...trimmedSeries(current) })) : current?.msg || {}
         const { payload: storedPayload, ...stored } = previous
         const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
         const rec = keepValue ? current : writeValue(prop, cloneValue(payload))
@@ -177,9 +179,8 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     }
 
     const rebuildSeries = (prop, rec) => {
-        const { kept, seen } = rec.trims
+        const msgs = trimmedSeries(rec)
         rec.trims = null
-        const msgs = kept.concat(rec.msg.slice(seen))
         if (msgs.length !== rec.msg.length) {
             records[SET_SERIES](prop, msgs)
         }

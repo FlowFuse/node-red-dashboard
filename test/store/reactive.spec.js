@@ -1290,6 +1290,21 @@ describe('store: MERGE_ENTRY', function () {
         log.should.eql([])
     })
 
+    it('applies pending trims to a series before merging onto it, reporting once', function () {
+        const { store, log } = merging()
+        for (let x = 0; x < 5; x++) {
+            store[APPEND_ENTRY]('k', { payload: x, _datapoint: { category: 'a', x, y: x } })
+        }
+        store[TRIM_SERIES]('k', (msgs) => msgs.filter((m) => m._datapoint.x > 2))
+        log.length = 0
+
+        store[MERGE_ENTRY]('k', { topic: 'later' })
+
+        Object.keys(store.$k.msg).should.eql(['0', '1', 'topic'])
+        store.$k.msg[0].payload.should.equal(3)
+        log.should.eql(['k'])
+    })
+
     it('reuses stored fields rather than cloning them again on every merge', function () {
         const { store } = merging()
         store[MERGE_ENTRY]('k', { payload: 'a', options: [{ label: 'one', value: 1 }] })

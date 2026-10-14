@@ -2,6 +2,7 @@ const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
 const datastore = require('../../nodes/store/data.js')
+const { FLUSH_SERIES } = require('../../nodes/store/reactive.js')
 
 const createLegacy = require('./helpers/legacy-datastore.js')
 const { scenarios, generate, generateMessy, runStep } = require('./helpers/sequences.js')
@@ -45,6 +46,12 @@ function scribble (value, seen = new Set()) {
     }
 }
 
+function storeHolds (global, id) {
+    const store = global.get('dashboardStore')
+    store[FLUSH_SERIES](id)
+    return store['$' + id]?.msg
+}
+
 function compareAfterEachStep (steps, ids) {
     const global = fakeGlobal()
     const warnings = []
@@ -62,14 +69,33 @@ function compareAfterEachStep (steps, ids) {
         scribble(datastore.get(step.id))
         should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after scribbling what get returned`)
         datastore.has(step.id).should.equal(legacy.has(step.id), `${step.id} after ${step.op}`)
+        should(storeHolds(global, step.id)).eql(legacy.get(step.id), `store for ${step.id} after ${step.op}`)
         if (legacy.has(step.id)) {
             comparedWithData++
         }
     }
     for (const id of ids) {
         should(datastore.get(id)).eql(legacy.get(id), id)
+        should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
     }
     return { comparedWithData, warnings }
+}
+
+function compareAtEnd (steps, ids) {
+    const global = fakeGlobal()
+    const warnings = []
+    datastore.initStore(global, {})
+    const nodeFor = (id, type) => ({ id, type, context: () => ({ global }), warn: (m) => warnings.push(m) })
+    const legacy = createLegacy(RED)
+    for (const step of steps) {
+        runStep(datastore, structuredClone(step), { base, nodeFor })
+        runStep(legacy, structuredClone(step), { base, nodeFor })
+    }
+    const withData = ids.filter((id) => legacy.has(id))
+    for (const id of ids) {
+        should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
+    }
+    return { withData, warnings }
 }
 
 describe('store: differential against the legacy datastore', function () {
@@ -91,5 +117,25 @@ describe('store: differential against the legacy datastore', function () {
                 warnings.should.eql([])
             })
         }
+    })
+
+    describe('the store matches the legacy reference when only read at the end', function () {
+        let runsWithData = 0
+
+        for (const run of runs) {
+            it(run.name, function () {
+                const { steps, ids } = prepare(run.steps)
+                const { withData, warnings } = compareAtEnd(steps, ids)
+
+                if (withData.length) {
+                    runsWithData++
+                }
+                warnings.should.eql([])
+            })
+        }
+
+        it('compared stored data at the end of most runs', function () {
+            runsWithData.should.be.above(runs.length * 0.9)
+        })
     })
 })
