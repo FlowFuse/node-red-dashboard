@@ -11,6 +11,7 @@ import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
 import { getOrCreateClientId } from './util/client-id'
 import { nextReconnectInterval } from './util/reconnect-interval'
+import { notificationDisplayTime } from './util/notification-display-time'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -203,7 +204,7 @@ fetch('_setup')
                 if (dashboard?.showReconnectNotification) {
                 // send a notification/alert to the user to let them know the connection is live again
                     Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                        displayTime: dashboard?.notificationDisplayTime || 5, // default: 5 seconds
+                        displayTime: notificationDisplayTime(dashboard), // seconds, default: 5
                         allowDismiss: true,
                         showCountdown: true
                     })
