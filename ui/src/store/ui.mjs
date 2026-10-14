@@ -50,7 +50,7 @@ const getters = {
         return state.dashboards
     },
     dashboard (state) {
-        const dashboards = Object.keys(state.dashboards)
+        const dashboards = Object.keys(state.dashboards || {})
         const id = dashboards.length ? dashboards[0] : undefined
         return id ? state.dashboards[id] : undefined
     },

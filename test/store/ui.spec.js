@@ -191,3 +191,13 @@ describe('store: ui getters', function () {
         })
     })
 })
+
+describe('ui store - dashboard getter', function () {
+    it('returns undefined before any ui-config has arrived', function () {
+        const uiStore = require('../../ui/src/store/ui.mjs')
+        const getters = uiStore.default ? uiStore.default.getters : uiStore.getters
+        should(getters.dashboard({ dashboards: null })).be.undefined()
+        should(getters.dashboard({ dashboards: {} })).be.undefined()
+        getters.dashboard({ dashboards: { abc: { id: 'abc' } } }).should.deepEqual({ id: 'abc' })
+    })
+})
