@@ -60,6 +60,7 @@ const scenarios = {
         { op: 'chart', id: 'cr', msg: { payload: [] } },
         ...repeat(3, (i) => ({ op: 'chart', id: 'cr', msg: chartPoint(70 + i) }))
     ],
+    'chart-position-trims': repeat(150, (i) => [{ op: 'chart', id: 'pt', msg: chartPoint(i) }, { op: 'filterIndex', id: 'pt', skip: 1 }]).flat(),
     'chart-categorical': repeat(30, (i) => ({ op: 'chart', id: 'cc', categorical: true, msg: { payload: i, _datapoint: pt(['mon', 'tue', 'wed'][i % 3], i, 'sales') } })),
     'client-scoped': [
         { op: 'input', id: 'cs', type: 'ui-scoped', msg: { payload: 'everyone' } },
@@ -143,6 +144,7 @@ function generateMessy (seed, length) {
             steps.push({ op: pick(['clear', 'remove']), id })
         }
     }
+    steps.push({ op: 'switchSave', id: 'm0', msg: { topic: 'merged' } }, { op: 'switchSave', id: 'm1', msg: { topic: 'merged' } })
     return steps
 }
 
@@ -234,7 +236,6 @@ function runStep (target, step, { base, nodeFor }) {
         target.clear(step.id)
     } else if (step.op === 'remove') {
         target.clear(step.id)
-        target.clearFromStore?.(node)
     }
 }
 

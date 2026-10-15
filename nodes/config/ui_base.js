@@ -391,6 +391,7 @@ module.exports = function (RED) {
         try {
             let unavailable = null
             const store = datastore.initStore(node.context().global, {
+                node,
                 onUnavailable: (err) => { unavailable = err },
                 onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
             })
@@ -1157,7 +1158,6 @@ module.exports = function (RED) {
                         // widget has been removed from the Editor
                         // clear any data from datastore
                         datastore.clear(widgetNode.id)
-                        datastore.clearFromStore(widgetNode)
                     }
                     node.deregister(null, null, widgetNode)
                     done()
