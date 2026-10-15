@@ -93,7 +93,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (!rec) {
             rec = new Entry()
             records[prop] = rec
-        } else if (!Array.isArray(rec.value)) {
+        } else if (!Array.isArray(rec.value) && 'payload' in rec.msg) {
             // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
             rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
             if (rec.history.length > maxHistory) rec.history.shift()
@@ -122,7 +122,8 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
         const rec = keepValue ? current : writeValue(prop, cloneValue(payload))
         const fields = { ...stored, ...freezeOwned(cloneValue(incoming)) }
-        rec.msg = Object.freeze('payload' in msg || (keepValue && 'payload' in current.msg) ? { ...fields, payload: rec.value } : fields)
+        const hasPayload = 'payload' in msg || (keepValue && 'payload' in current.msg)
+        rec.msg = Object.freeze(hasPayload ? { ...fields, payload: rec.value } : fields)
         rec.timestamp = now()
         emit(prop, rec, prop)
     }

@@ -1221,6 +1221,18 @@ describe('store: MERGE_ENTRY', function () {
         store.$k.history.should.eql([])
     })
 
+    it('adds no history for a value that no message ever set', function () {
+        const { store } = merging()
+        store[MERGE_ENTRY]('k', { topic: 'a' })
+        store[MERGE_ENTRY]('u', { payload: undefined })
+
+        store[MERGE_ENTRY]('k', { payload: 1 })
+        store[MERGE_ENTRY]('u', { payload: 1 })
+
+        store.$k.history.should.eql([])
+        store.$u.history.map((h) => h.value).should.eql([undefined])
+    })
+
     it('records history for every message that carries a payload, even a repeated one', function () {
         const { store } = merging()
         store[MERGE_ENTRY]('k', { payload: true })
