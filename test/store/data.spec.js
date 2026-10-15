@@ -212,7 +212,7 @@ describe('store: data.js store options', function () {
     })
 })
 
-describe('store: data.js disabled store', function () {
+describe('store: data.js when global context cannot hold the store', function () {
     const cacheOffGlobal = () => ({
         gets: 0,
         get () { this.gets++; throw new Error('File Store cache disabled - only asynchronous access supported') },
@@ -223,34 +223,41 @@ describe('store: data.js disabled store', function () {
         datastore.initStore(fakeGlobal(), {})
     })
 
-    it('stops touching global context once the store is disabled', function () {
+    it('keeps writes off global context and reports no failures', function () {
         const global = cacheOffGlobal()
-        const scalar = fakeNode('w12', global)
-        const chart = fakeNode('w12-chart', global)
-        datastore.initStore(global, { node: { warn: () => {} } })
+        let contextCalls = 0
+        const offContext = (id) => ({ ...fakeNode(id, global), context: () => { contextCalls++; return { global } } })
+        const scalar = offContext('w12')
+        const chart = offContext('w12-chart')
+        should(datastore.initStore(global, { node: { warn: (m) => warnings.push(m) } })).be.null()
+        warnings.length = 0
         global.gets = 0
-        datastore.disableStore()
 
         datastore.save(base, scalar, { payload: 1 })
         datastore.append(base, chart, { _datapoint: { category: 'a', x: 1, y: 1 } })
         datastore.filter(base, chart, () => false)
+        datastore.keepLatestPerTopic(base, chart, 1)
         datastore.clear(scalar.id)
 
         global.gets.should.equal(0)
+        contextCalls.should.equal(0)
+        warnings.should.eql([])
     })
 
-    it('leaves the legacy datastore working while disabled', function () {
-        const global = cacheOffGlobal()
+    it('falls back when writing to global context throws', function () {
+        const global = { get: () => undefined, set () { throw new Error('read-only context') } }
         const node = fakeNode('w13', global)
-        datastore.disableStore()
+        should(() => datastore.initStore(global, {})).throw('read-only context')
+        warnings.length = 0
 
-        datastore.save(base, node, { payload: 'legacy still works' })
+        datastore.save(base, node, { payload: 'still works' })
 
-        datastore.get('w13').payload.should.equal('legacy still works')
+        warnings.should.eql([])
+        datastore.get('w13').payload.should.equal('still works')
     })
 
-    it('re-enables on a later initStore', function () {
-        datastore.disableStore()
+    it('goes back to global context on a later initStore', function () {
+        datastore.initStore(cacheOffGlobal(), {})
 
         const global = fakeGlobal()
         const node = fakeNode('w14', global)
@@ -462,10 +469,10 @@ describe('store: data.js chart writes', function () {
         })
     })
 
-    it('leaves the legacy series untouched when the store is disabled', function () {
+    it('leaves global context untouched when it cannot hold the store', function () {
         const global = fakeGlobal()
         const node = fakeNode('chart-off', global)
-        datastore.disableStore()
+        datastore.initStore({ get () { throw new Error('cache off') }, set () {} }, {})
         try {
             datastore.append(base, node, { payload: 1, _datapoint: pt(1, 1) })
             datastore.save(base, node, [{ payload: 2, _datapoint: pt(2, 2) }])
@@ -701,7 +708,7 @@ describe('store: data reads that avoid cloning', function () {
     const topicsAndPayloads = (id) => datastore.get(id).map((m) => `${m.topic}:${m.payload}`)
 
     beforeEach(function () {
-        datastore.disableStore()
+        datastore.initStore({ get () { throw new Error('cache off') }, set () {} }, {})
         datastore.setConfig(countingRED)
     })
 

@@ -396,12 +396,10 @@ module.exports = function (RED) {
                 onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
             })
             if (!store) {
-                datastore.disableStore()
-                node.warn('Dashboard data store disabled: the global context store doesn\'t hold objects by reference (e.g. cache: false), so live state can\'t work. Use the memory store or localfilesystem with cache: true.' + (unavailable ? ' Reading it failed with: ' + unavailable.message : ''))
+                node.warn('Dashboard data store: flows can\'t use global.dashboardStore, because the default context store doesn\'t keep values in memory (e.g. localfilesystem with cache: false). Dashboards still work normally. To use global.dashboardStore from flows, set contextStorage.default to memory, or localfilesystem with cache: true.' + (unavailable ? ' (Reason: ' + unavailable.message + ')' : ''))
             }
         } catch (err) {
-            datastore.disableStore()
-            node.warn('Dashboard data store disabled: could not initialise it in global context (' + err.message + ').')
+            node.warn('Dashboard data store: flows can\'t use global.dashboardStore, because saving it to global context failed (' + err.message + '). Dashboards still work normally.')
         }
 
         n.root = RED.settings.httpNodeRoot || '/'

@@ -1,6 +1,6 @@
 const { isClientScoped } = require('../utils/index.js')
 
-const { attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES } = require('./reactive.js')
+const { createDataStore, attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES } = require('./reactive.js')
 
 const data = {}
 
@@ -9,7 +9,7 @@ const config = {
 }
 
 let storeOptions = {}
-let storeEnabled = false
+let fallbackStore = null
 let storeContext = null
 let storeBase = null
 let warned = false
@@ -29,47 +29,52 @@ function getOrCreateStore (globalContext) {
     return store
 }
 
+function fallbackOrContextStore (node) {
+    return fallbackStore || getOrCreateStore(node ? node.context().global : storeContext)
+}
+
 function initStore (globalContext, { node, ...opts } = {}) {
     storeOptions = opts
-    storeEnabled = true
     storeContext = globalContext
     storeBase = node
     warned = false
-    return attachToContext(globalContext, attachOptions())
-}
-
-function disableStore () {
-    storeEnabled = false
+    let store = null
+    try {
+        store = attachToContext(globalContext, attachOptions())
+    } finally {
+        if (store) {
+            fallbackStore = null
+        } else if (!fallbackStore) {
+            fallbackStore = createDataStore(attachOptions())
+        }
+    }
+    return store
 }
 
 function writeToStore (node, msg) {
-    if (!storeEnabled) return
     if (!msg || typeof msg !== 'object') return
     try {
-        getOrCreateStore(node.context().global)[MERGE_ENTRY](node.id, msg)
+        fallbackOrContextStore(node)[MERGE_ENTRY](node.id, msg)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function appendToStore (node, msg) {
-    if (!storeEnabled) return
     if (!msg || typeof msg !== 'object') return
     try {
-        getOrCreateStore(node.context().global)[APPEND_ENTRY](node.id, msg)
+        fallbackOrContextStore(node)[APPEND_ENTRY](node.id, msg)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function replaceInStore (node, msgs) {
-    if (!storeEnabled) return
     if (!Array.isArray(msgs) || msgs.some((m) => !m || typeof m !== 'object')) return
     try {
-        getOrCreateStore(node.context().global)[SET_SERIES](node.id, msgs)
+        fallbackOrContextStore(node)[SET_SERIES](node.id, msgs)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function trimInStore (node, trim) {
-    if (!storeEnabled) return
     try {
-        getOrCreateStore(node.context().global)[TRIM_SERIES](node.id, trim)
+        fallbackOrContextStore(node)[TRIM_SERIES](node.id, trim)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
@@ -151,11 +156,8 @@ const setters = {
     // remove data associated to a given widget
     clear (id) {
         delete data[id]
-        if (!storeEnabled) {
-            return
-        }
         try {
-            delete getOrCreateStore(storeContext)[id]
+            delete fallbackOrContextStore()[id]
         } catch (err) { warnOnce(storeBase, `clearing the store entry for ${id} failed (${err.message}), so global.dashboardStore may still hold its old value`) }
     },
     /**
@@ -239,6 +241,5 @@ module.exports = {
     filter: setters.filter,
     keepLatestPerTopic: setters.keepLatestPerTopic,
     clear: setters.clear,
-    initStore,
-    disableStore
+    initStore
 }

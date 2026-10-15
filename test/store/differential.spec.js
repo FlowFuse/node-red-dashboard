@@ -15,6 +15,10 @@ function fakeGlobal () {
     return { get: (k) => m[k], set: (k, v) => { m[k] = v } }
 }
 
+function cacheOffGlobal () {
+    return { get () { throw new Error('File Store cache disabled - only asynchronous access supported') }, set () {} }
+}
+
 const runs = [
     ...Object.entries(scenarios).map(([name, steps]) => ({ name, steps })),
     ...Array.from({ length: 200 }, (_, i) => ({ name: `seed ${i + 1}`, steps: generate(i + 1, 180) })),
@@ -52,14 +56,16 @@ function storeHolds (global, id) {
     return store['$' + id]?.msg
 }
 
-function compareAfterEachStep (steps, ids) {
-    const global = fakeGlobal()
+function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
     const warnings = []
-    datastore.initStore(global, {})
+    const shared = datastore.initStore(global, {})
     const nodeFor = (id, type) => ({ id, type, context: () => ({ global }), warn: (m) => warnings.push(m) })
     const legacy = createLegacy(RED)
     let comparedWithData = 0
-    for (const step of steps) {
+    for (const [i, step] of steps.entries()) {
+        if (i === Math.floor(steps.length / 2)) {
+            datastore.initStore(global, {})
+        }
         const given = structuredClone(step)
         runStep(datastore, given, { base, nodeFor })
         runStep(legacy, structuredClone(step), { base, nodeFor })
@@ -69,16 +75,20 @@ function compareAfterEachStep (steps, ids) {
         scribble(datastore.get(step.id))
         should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after scribbling what get returned`)
         datastore.has(step.id).should.equal(legacy.has(step.id), `${step.id} after ${step.op}`)
-        should(storeHolds(global, step.id)).eql(legacy.get(step.id), `store for ${step.id} after ${step.op}`)
+        if (shared) {
+            should(storeHolds(global, step.id)).eql(legacy.get(step.id), `store for ${step.id} after ${step.op}`)
+        }
         if (legacy.has(step.id)) {
             comparedWithData++
         }
     }
     for (const id of ids) {
         should(datastore.get(id)).eql(legacy.get(id), id)
-        should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
+        if (shared) {
+            should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
+        }
     }
-    return { comparedWithData, warnings }
+    return { comparedWithData, warnings, shared }
 }
 
 function compareAtEnd (steps, ids) {
@@ -111,8 +121,22 @@ describe('store: differential against the legacy datastore', function () {
         for (const run of runs) {
             it(run.name, function () {
                 const { steps, ids } = prepare(run.steps)
-                const { comparedWithData, warnings } = compareAfterEachStep(steps, ids)
+                const { comparedWithData, warnings, shared } = compareAfterEachStep(steps, ids)
 
+                should(shared).not.be.null()
+                comparedWithData.should.be.above(0)
+                warnings.should.eql([])
+            })
+        }
+    })
+
+    describe('data.js matches the legacy reference when global context cannot hold the store', function () {
+        for (const run of runs) {
+            it(run.name, function () {
+                const { steps, ids } = prepare(run.steps)
+                const { comparedWithData, warnings, shared } = compareAfterEachStep(steps, ids, cacheOffGlobal())
+
+                should(shared).be.null()
                 comparedWithData.should.be.above(0)
                 warnings.should.eql([])
             })
