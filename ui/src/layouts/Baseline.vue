@@ -134,6 +134,7 @@ export default {
                 allowDismiss: false,
                 showCountdown: false
             },
+            unsubscribeAlerts: null,
             isMobile: false
         }
     },
@@ -285,13 +286,25 @@ export default {
     },
     beforeUnmount () {
         window.removeEventListener('resize', this.checkMobile)
+        if (this.unsubscribeAlerts) {
+            this.unsubscribeAlerts()
+            this.unsubscribeAlerts = null
+        }
     },
     methods: {
         checkMobile () {
             this.isMobile = window.innerWidth < 768
         },
         subscribeAlerts (context) {
-            Alerts.subscribe((title, description, color, alertOptions) => {
+            if (this.unsubscribeAlerts) {
+                this.unsubscribeAlerts()
+            }
+            this.unsubscribeAlerts = Alerts.subscribe((title, description, color, alertOptions) => {
+                if (title === null) {
+                    // Alerts.clear() - close whatever is currently showing
+                    this.$nextTick(() => context.close('cleared'))
+                    return
+                }
                 context.close()
                 this.alert = alertOptions
                 this.$nextTick(() => {
