@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.33.1](https://github.com/FlowFuse/node-red-dashboard/compare/v1.33.0...v1.33.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* "Connection Lost" notification remains on screen after reconnecting ([#2294](https://github.com/FlowFuse/node-red-dashboard/issues/2294)) ([f224fce](https://github.com/FlowFuse/node-red-dashboard/commit/f224fce6beb5c0af20e8188858f419eb7a84a683))
+
 ## [1.33.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.32.0...v1.33.0) (2026-10-06)
 
 
