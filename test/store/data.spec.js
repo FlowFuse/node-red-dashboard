@@ -584,6 +584,8 @@ describe('store: data.js client-scoped writes', function () {
 
 describe('store: data.js failure reporting', function () {
     const unreachable = () => { throw new Error('context store unavailable') }
+    const baseNode = { warn: (m) => warnings.push(`base: ${m}`) }
+    const SUFFIX = '. Further store failures are not reported until the next full deploy or restart.'
 
     beforeEach(function () {
         warnings.length = 0
@@ -593,111 +595,100 @@ describe('store: data.js failure reporting', function () {
         datastore.initStore(fakeGlobal(), {})
     })
 
-    it('warns once on the widget whose write failed, not once per write', function () {
+    it('warns once on the base node when the store cannot be reached, not once per call', function () {
         const global = fakeGlobal()
-        const node = fakeNode('fail-1')
-        datastore.initStore(global, {})
+        datastore.initStore(global, { node: baseNode })
         global.get = unreachable
 
-        datastore.save(base, node, { payload: 1 })
-        datastore.save(base, node, { payload: 2 })
+        datastore.save(base, fakeNode('fail-1'), { payload: 1 })
+        datastore.save(base, fakeNode('fail-1'), { payload: 2 })
         datastore.append(base, fakeNode('fail-1-chart'), { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
-        datastore.clear(node.id)
+        datastore.filter(base, fakeNode('fail-1-chart'), () => true)
+        datastore.clear('fail-1')
+        datastore.get('fail-1')
 
-        warnings.should.have.length(1)
-        warnings[0].should.equal('fail-1: Dashboard data store: a store write failed (context store unavailable), so global.dashboardStore may be out of date. Further store failures are not reported until the next full deploy or restart.')
+        warnings.should.eql([`base: Dashboard data store: saving fail-1 failed (context store unavailable)${SUFFIX}`])
     })
 
-    it('warns when an append fails', function () {
-        const global = fakeGlobal()
-        datastore.initStore(global, {})
-        global.get = unreachable
+    it('names the operation that failed', function () {
+        for (const [action, call] of [
+            ['saving', () => datastore.append(base, fakeNode('fail-a'), { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })],
+            ['trimming', () => datastore.keepLatestPerTopic(base, fakeNode('fail-a'), 1)],
+            ['clearing', () => datastore.clear('fail-a')],
+            ['reading', () => datastore.has('fail-a')]
+        ]) {
+            const global = fakeGlobal()
+            datastore.initStore(global, { node: baseNode })
+            global.get = unreachable
+            warnings.length = 0
 
-        datastore.append(base, fakeNode('fail-a'), { payload: 1, _datapoint: { category: 'a', x: 1, y: 1 } })
+            call()
 
-        warnings.should.have.length(1)
-        warnings[0].should.startWith('fail-a: Dashboard data store: a store write failed (context store unavailable)')
+            warnings.should.eql([`base: Dashboard data store: ${action} fail-a failed (context store unavailable)${SUFFIX}`])
+        }
     })
 
-    it('does not throw from clear when there is no base node to warn on', function () {
+    it('does not throw when there is no base node to warn on', function () {
         const global = fakeGlobal()
         datastore.initStore(global, {})
         global.get = unreachable
 
         should(() => datastore.clear('no-base')).not.throw()
-    })
-
-    it('warns on the base node when a clear fails, since a clear has no widget node', function () {
-        const global = fakeGlobal()
-        datastore.initStore(global, { node: { warn: (m) => warnings.push(`base: ${m}`) } })
-        global.get = unreachable
-
-        datastore.clear('fail-c')
-
-        warnings.should.have.length(1)
-        warnings[0].should.startWith('base: Dashboard data store: clearing the store entry for fail-c failed (context store unavailable), so global.dashboardStore may still hold its old value.')
+        should(() => datastore.save(base, fakeNode('no-base'), { payload: 1 })).not.throw()
     })
 
     it('explains a context store that stops holding the store by reference', function () {
         const m = {}
         let copying = false
         const global = { get: (k) => copying ? JSON.parse(JSON.stringify(m[k])) : m[k], set: (k, v) => { m[k] = v } }
-        datastore.initStore(global, {})
+        datastore.initStore(global, { node: baseNode })
         copying = true
 
         datastore.save(base, fakeNode('fail-r'), { payload: 1 })
 
-        warnings.should.have.length(1)
-        warnings[0].should.startWith('fail-r: Dashboard data store: a store write failed (global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values)')
+        warnings.should.eql([`base: Dashboard data store: saving fail-r failed (global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values)${SUFFIX}`])
     })
 
-    it('reads as empty and warns once on the base node when the store cannot be reached', function () {
+    it('reads as empty when the store cannot be reached', function () {
         const global = fakeGlobal()
-        datastore.initStore(global, { node: { warn: (m) => warnings.push(`base: ${m}`) } })
+        datastore.initStore(global, { node: baseNode })
         global.get = unreachable
 
         should(datastore.get('fail-2')).be.undefined()
         datastore.has('fail-2').should.equal(false)
-
-        warnings.should.eql(['base: Dashboard data store: reading fail-2 from the store failed (context store unavailable), so it reads as empty. Further store failures are not reported until the next full deploy or restart.'])
     })
 
     it('warns again after the next initStore', function () {
         const global = fakeGlobal()
-        datastore.initStore(global, {})
+        datastore.initStore(global, { node: baseNode })
         global.get = unreachable
         datastore.save(base, fakeNode('fail-3'), { payload: 1 })
 
         const fresh = fakeGlobal()
-        datastore.initStore(fresh, {})
+        datastore.initStore(fresh, { node: baseNode })
         fresh.get = unreachable
         datastore.save(base, fakeNode('fail-3'), { payload: 2 })
 
         warnings.should.have.length(2)
     })
 
-    it('warns on the widget when a trim cannot reach the store', function () {
-        const global = fakeGlobal()
-        const node = fakeNode('fail-5')
-        datastore.initStore(global, {})
-        for (let i = 0; i < 100; i++) datastore.append(base, node, { payload: i, _datapoint: { category: 'a', x: i, y: i } })
-        global.get = unreachable
-
-        datastore.filter(base, node, (m, idx) => idx > 0)
-
-        warnings.should.have.length(1)
-        warnings[0].should.startWith('fail-5: ')
-    })
-
     it('throws a failing filter to the widget without reporting a store failure', function () {
-        const global = fakeGlobal()
+        datastore.initStore(fakeGlobal(), { node: baseNode })
         const node = fakeNode('fail-6')
-        datastore.initStore(global, {})
         datastore.append(base, node, { payload: 1, _datapoint: null })
 
         should.throws(() => datastore.filter(base, node, (m) => m._datapoint.x > 0))
 
-        warnings.should.have.length(0)
+        warnings.should.eql([])
+    })
+
+    it('throws a message the store cannot copy to the widget without reporting a store failure', function () {
+        datastore.initStore(fakeGlobal(), { node: baseNode })
+        const unreadable = { get payload () { throw new Error('unreadable') } }
+
+        should.throws(() => datastore.save(base, fakeNode('fail-7'), unreadable), /unreadable/)
+
+        warnings.should.eql([])
     })
 })
 
