@@ -1,6 +1,6 @@
 const { isClientScoped } = require('../utils/index.js')
 
-const { createDataStore, attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES } = require('./reactive.js')
+const { createDataStore, attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES, ENTRY_MSG } = require('./reactive.js')
 
 const data = {}
 
@@ -29,8 +29,14 @@ function getOrCreateStore (globalContext) {
     return store
 }
 
-function fallbackOrContextStore (node) {
-    return fallbackStore || getOrCreateStore(node ? node.context().global : storeContext)
+function fallbackOrContextStore () {
+    return fallbackStore || getOrCreateStore(storeContext)
+}
+
+function storeOrWarn (id) {
+    try {
+        return fallbackOrContextStore()
+    } catch (err) { warnOnce(storeBase, `reading ${id} from the store failed (${err.message}), so it reads as empty`) }
 }
 
 function initStore (globalContext, { node, ...opts } = {}) {
@@ -54,27 +60,27 @@ function initStore (globalContext, { node, ...opts } = {}) {
 function writeToStore (node, msg) {
     if (!msg || typeof msg !== 'object') return
     try {
-        fallbackOrContextStore(node)[MERGE_ENTRY](node.id, msg)
+        fallbackOrContextStore()[MERGE_ENTRY](node.id, msg)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function appendToStore (node, msg) {
     if (!msg || typeof msg !== 'object') return
     try {
-        fallbackOrContextStore(node)[APPEND_ENTRY](node.id, msg)
+        fallbackOrContextStore()[APPEND_ENTRY](node.id, msg)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function replaceInStore (node, msgs) {
     if (!Array.isArray(msgs) || msgs.some((m) => !m || typeof m !== 'object')) return
     try {
-        fallbackOrContextStore(node)[SET_SERIES](node.id, msgs)
+        fallbackOrContextStore()[SET_SERIES](node.id, msgs)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
 function trimInStore (node, trim) {
     try {
-        fallbackOrContextStore(node)[TRIM_SERIES](node.id, trim)
+        fallbackOrContextStore()[TRIM_SERIES](node.id, trim)
     } catch (err) { warnOnce(node, `a store write failed (${err.message}), so global.dashboardStore may be out of date`) }
 }
 
@@ -141,10 +147,11 @@ const getters = {
     },
     // given a widget id, return the latest msg received
     msg (id) {
-        return config.RED.util.cloneMessage(data[id])
+        return config.RED.util.cloneMessage(storeOrWarn(id)?.[ENTRY_MSG](id))
     },
     has (id) {
-        return !!data[id]
+        const store = storeOrWarn(id)
+        return !!store && id in store
     }
 }
 

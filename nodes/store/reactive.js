@@ -3,7 +3,7 @@ const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
 const MERGE_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/mergeEntry')
 const TRIM_SERIES = Symbol.for('@flowfuse/node-red-dashboard/trimSeries')
-const FLUSH_SERIES = Symbol.for('@flowfuse/node-red-dashboard/flushSeries')
+const ENTRY_MSG = Symbol.for('@flowfuse/node-red-dashboard/entryMsg')
 const TRIM_BATCH = 60
 const NAMESPACE = 'dashboardStore'
 
@@ -42,7 +42,6 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
     if (!isReactable(value)) return value
     if (seen.has(value)) return seen.get(value)
     const proxy = new Proxy(value, {
-        get (t, p, r) { return Reflect.get(t, p, r) },
         set (t, p, v) {
             if (typeof p === 'symbol') return Reflect.set(t, p, v)
             // a push writes the new index then grows length; only a shrink is a change worth reporting
@@ -112,7 +111,13 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         return rec
     }
 
-    const trimmedSeries = (rec) => rec.trims ? rec.trims.kept.concat(rec.msg.slice(rec.trims.seen)) : rec.msg
+    const trimmedSeries = (rec) => rec.trims ? rec.trims.kept.concat(rec.msg.slice(rec.trims.seen)) : rec.msg.slice()
+    const msgOf = (rec) => Array.isArray(rec.msg) ? Object.freeze(trimmedSeries(rec)) : rec.msg
+
+    records[ENTRY_MSG] = (prop) => {
+        const rec = records[prop]
+        return rec ? msgOf(rec) : undefined
+    }
 
     records[MERGE_ENTRY] = (prop, msg) => {
         const current = records[prop]
@@ -179,14 +184,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (replaced) emit(prop, rec, prop)
     }
 
-    const rebuildSeries = (prop, rec) => {
-        const msgs = trimmedSeries(rec)
-        rec.trims = null
-        if (msgs.length !== rec.msg.length) {
-            records[SET_SERIES](prop, msgs)
-        }
-    }
-
     records[TRIM_SERIES] = (prop, trim) => {
         const rec = records[prop]
         if (!rec || !Array.isArray(rec.msg)) {
@@ -204,14 +201,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         }
         pending.calls++
         if (pending.calls >= TRIM_BATCH) {
-            rebuildSeries(prop, rec)
-        }
-    }
-
-    records[FLUSH_SERIES] = (prop) => {
-        const rec = records[prop]
-        if (rec?.trims) {
-            rebuildSeries(prop, rec)
+            records[SET_SERIES](prop, trimmedSeries(rec))
         }
     }
 
@@ -224,7 +214,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
                 if (!rec) return undefined
-                const msg = Array.isArray(rec.msg) ? Object.freeze(rec.msg.slice()) : rec.msg
+                const msg = msgOf(rec)
                 return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
@@ -287,4 +277,4 @@ function attachToContext (globalContext, opts = {}) {
     return store
 }
 
-module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, FLUSH_SERIES }
+module.exports = { createDataStore, attachToContext, NAMESPACE, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, ENTRY_MSG }
