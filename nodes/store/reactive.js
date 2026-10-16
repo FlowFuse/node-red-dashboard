@@ -125,8 +125,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...trimmedSeries(current) })) : current?.msg || {}
         const { payload: storedPayload, ...stored } = previous
         const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
-        const rec = keepValue ? current : writeValue(prop, cloneValue(payload))
-        const fields = { ...stored, ...freezeOwned(cloneValue(incoming)) }
+        const owned = freezeOwned(cloneValue(incoming))
+        const value = keepValue ? undefined : cloneValue(payload)
+        const rec = keepValue ? current : writeValue(prop, value)
+        const fields = { ...stored, ...owned }
         const hasPayload = 'payload' in msg || (keepValue && 'payload' in current.msg)
         rec.msg = Object.freeze(hasPayload ? { ...fields, payload: rec.value } : fields)
         rec.timestamp = now()
@@ -169,13 +171,13 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[APPEND_ENTRY] = (prop, msg) => {
         let rec = records[prop]
         const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
+        // the proxy clones on push, so points must not be cloned again here
+        const { _datapoint, ...rest } = msg
+        const owned = cloneValue(rest)
         if (!rec || replaced) {
             rec = writeValue(prop, [])
             rec.msg = []
         }
-        // the proxy clones on push, so points must not be cloned again here
-        const { _datapoint, ...rest } = msg
-        const owned = cloneValue(rest)
         const start = rec.value.length
         for (const p of pointsOf(_datapoint)) rec.value.push(p)
         const stored = toStoredDatapoint(rec.value, _datapoint, start, rec.value.length)

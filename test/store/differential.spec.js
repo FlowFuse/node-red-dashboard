@@ -56,13 +56,14 @@ function storeHolds (global, id) {
 
 function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
     const warnings = []
-    const shared = datastore.initStore(global, {})
+    const baseNode = { warn: (m) => warnings.push(m) }
+    const shared = datastore.initStore(global, { node: baseNode })
     const nodeFor = (id, type) => ({ id, type, context: () => ({ global }), warn: (m) => warnings.push(m) })
     const legacy = createLegacy(RED)
     let comparedWithData = 0
     for (const [i, step] of steps.entries()) {
         if (i === Math.floor(steps.length / 2)) {
-            datastore.initStore(global, {})
+            datastore.initStore(global, { node: baseNode })
         }
         const given = structuredClone(step)
         runStep(datastore, given, { base, nodeFor })
@@ -92,7 +93,7 @@ function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
 function compareAtEnd (steps, ids) {
     const global = fakeGlobal()
     const warnings = []
-    datastore.initStore(global, {})
+    datastore.initStore(global, { node: { warn: (m) => warnings.push(m) } })
     const nodeFor = (id, type) => ({ id, type, context: () => ({ global }), warn: (m) => warnings.push(m) })
     const legacy = createLegacy(RED)
     for (const step of steps) {

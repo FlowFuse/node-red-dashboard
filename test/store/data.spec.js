@@ -240,7 +240,7 @@ describe('store: data.js when global context cannot hold the store', function ()
     it('falls back when writing to global context throws', function () {
         const global = { get: () => undefined, set () { throw new Error('read-only context') } }
         const node = fakeNode('w13')
-        should(() => datastore.initStore(global, {})).throw('read-only context')
+        should(() => datastore.initStore(global, { node: { warn: (m) => warnings.push(m) } })).throw('read-only context')
         warnings.length = 0
 
         datastore.save(base, node, { payload: 'still works' })
@@ -421,6 +421,16 @@ describe('store: data.js chart writes', function () {
         }
 
         global.get('dashboardStore')['$chart-noop'].msg.should.eql(before)
+    })
+
+    it('ignores a filter call with no callback', function () {
+        storeGlobal()
+        const node = fakeNode('chart-nofilter')
+        datastore.append(base, node, { payload: 1, _datapoint: pt(1, 1) })
+
+        should(() => datastore.filter(base, node, undefined)).not.throw()
+
+        datastore.get('chart-nofilter').should.have.length(1)
     })
 
     it('keeps the trimmed chart series', function () {
@@ -680,6 +690,26 @@ describe('store: data.js failure reporting', function () {
         should.throws(() => datastore.filter(base, node, (m) => m._datapoint.x > 0))
 
         warnings.should.eql([])
+    })
+
+    it('leaves the stored message untouched when a save cannot be copied', function () {
+        datastore.initStore(fakeGlobal(), { node: baseNode })
+        const node = fakeNode('fail-8')
+        datastore.save(base, node, { payload: 1, topic: 't', label: 'L' })
+
+        should.throws(() => datastore.save(base, node, { payload: 2, meta: { get bad () { throw new Error('unreadable') } } }))
+
+        datastore.get('fail-8').should.eql({ payload: 1, topic: 't', label: 'L' })
+    })
+
+    it('leaves the stored message untouched when an append cannot be copied', function () {
+        datastore.initStore(fakeGlobal(), { node: baseNode })
+        const node = fakeNode('fail-9')
+        datastore.save(base, node, { payload: 1, topic: 't' })
+
+        should.throws(() => datastore.append(base, node, { payload: 2, meta: { get bad () { throw new Error('unreadable') } }, _datapoint: { x: 1, y: 2 } }))
+
+        datastore.get('fail-9').should.eql({ payload: 1, topic: 't' })
     })
 
     it('throws a message the store cannot copy to the widget without reporting a store failure', function () {
