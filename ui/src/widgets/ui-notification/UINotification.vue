@@ -50,6 +50,9 @@ export default {
         return {
             show: false,
             tik: 0,
+            closeAt: null, // epoch ms at which the countdown elapses
+            deferCloseWhileHidden: false, // inline alerts only: do not start a leave transition while the tab is hidden
+            closePending: false, // countdown elapsed while the tab was hidden; close once visible
             countdown: 0,
             timeouts: {
                 close: null,
@@ -109,7 +112,13 @@ export default {
         this.$dataTracker(this.id, this.onMsgInput, null, this.onDynamicProperties)
     },
     mounted () {
+        document.addEventListener('visibilitychange', this.onVisibilityChange)
         this.$emit('mounted', this)
+    },
+    beforeUnmount () {
+        document.removeEventListener('visibilitychange', this.onVisibilityChange)
+        clearTimeout(this.timeouts.close)
+        clearInterval(this.timeouts.step)
     },
     methods: {
         onDynamicProperties (msg) {
@@ -153,22 +162,75 @@ export default {
                 }
             }
         },
-        startCountdown (time) {
+        /**
+         * Show the notification with new content, or replace the content of an already visible
+         * notification, and (re)start the auto-close countdown. Used for the Dashboard's own inline
+         * alerts (connection lost / re-established), where each alert replaces the previous one.
+         */
+        showAlert (msg) {
+            if (msg.payload) {
+                this.$store.commit('data/bind', {
+                    widgetId: this.id,
+                    msg
+                })
+            }
+            this.show = true
+            this.stopCountdown()
+            if (this.displayTime > 0) {
+                this.startCountdown(this.displayTime * 1000, { deferCloseWhileHidden: true })
+            }
+        },
+        startCountdown (time, { deferCloseWhileHidden = false } = {}) {
             this.tik = (new Date()).getTime()
+            this.closeAt = this.tik + time
+            this.deferCloseWhileHidden = deferCloseWhileHidden
+            this.closePending = false
 
             this.timeouts.close = setTimeout(() => {
                 // close the notification after time has elapsed
-                this.close('timeout')
+                this.onCountdownElapsed()
             }, time)
 
             // update the progress bar every 100ms
             this.timeouts.step = setInterval(() => {
                 const tok = (new Date()).getTime()
-                // how many seconds have elapsed
-                const elapsed = (tok - this.tik) / 1000
-                // 100 = full bar, 0 = empty bar
-                this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
+                // 100 = full bar, 0 = empty bar (computed from the deadline so a throttled interval stays accurate)
+                this.countdown = Math.max(0, ((this.closeAt - tok) / time) * 100)
             }, 100)
+        },
+        stopCountdown () {
+            clearTimeout(this.timeouts.close)
+            clearInterval(this.timeouts.step)
+            this.tik = null
+            this.closeAt = null
+            this.deferCloseWhileHidden = false
+            this.closePending = false
+            this.timeouts.close = null
+            this.timeouts.step = null
+        },
+        onCountdownElapsed () {
+            if (this.deferCloseWhileHidden && typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+                // Browsers pause animation frames in hidden tabs, so a leave transition started now may
+                // never finish and the notification would stay on screen. Defer until the tab is visible.
+                // (Inline connection alerts only - flow-driven notifications keep their output timing.)
+                this.closePending = true
+                this.countdown = 0
+                clearInterval(this.timeouts.step)
+                this.timeouts.step = null
+                return
+            }
+            this.close('timeout')
+        },
+        onVisibilityChange () {
+            // inline connection alerts only - a flow-driven notification keeps whatever timing its own
+            // (possibly throttled) timer gives it, so its output msg is not brought forward
+            if (!this.deferCloseWhileHidden || document.visibilityState !== 'visible' || !this.show) {
+                return
+            }
+            // the countdown elapsed while hidden, or the (throttled) timer has not fired yet but is overdue
+            if (this.closePending || (this.closeAt !== null && Date.now() >= this.closeAt)) {
+                this.close('timeout')
+            }
         },
         close (payload) {
             this.show = false
@@ -179,11 +241,7 @@ export default {
                 payload
             })
 
-            clearTimeout(this.timeouts.close)
-            clearInterval(this.timeouts.step)
-            this.tik = null
-            this.timeouts.close = null
-            this.timeouts.step = null
+            this.stopCountdown()
         }
     }
 }
