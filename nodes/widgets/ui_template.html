@@ -149,6 +149,14 @@
                 height: { value: 0 },
                 head: { value: '' },
                 format: { value: defaultTemplate },
+                // number of errors the code editor reported when the edit dialog was last saved (set in oneditsave)
+                noerr: {
+                    value: 0,
+                    // two parameters, so Node-RED shows the returned message (a one-parameter validator's result is coerced to a boolean)
+                    validate: function (v, opt) {
+                        return !v ? true : c_('errors.invalid-template')
+                    }
+                },
                 storeOutMessages: { value: true },
                 passthru: { value: true },
                 resendOnRefresh: { value: true },
@@ -428,6 +436,7 @@
     <div class="form-row" style="margin-bottom:0px;">
         <label for="node-input-format" style="width:110px;"><i class="fa fa-copy"></i> <span data-i18n="ui-template.label.template"></span></label>
         <input type="hidden" id="node-input-format">
+        <input type="hidden" id="node-input-noerr">
         <button id="node-template-expand-editor" class="red-ui-button red-ui-button-small" style="float:right"><i class="fa fa-expand"></i></button>
     </div>
     <div class="form-row node-text-editor-row" style="display: block;">

@@ -18,6 +18,9 @@
             "template": "Template",
             "expand": "Expand",
             "resend": "Reload last value on refresh."
+        },
+        "errors": {
+            "invalid-template": "Error in template code"
         }
     }
 }
