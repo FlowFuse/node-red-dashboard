@@ -86,6 +86,9 @@ declare function __uiTemplate<D = {}, C = {}, M = {}>(component: {
 } & ThisType<UiTemplateInstance<D, C, M>>): void
 `
 
+// whitespace and comments, which Dashboard allows around a component (they aren't statements)
+const GAP = String.raw`(?:\s|\/\/[^\n]*(?:\n|$)|\/\*(?:[^*]|\*(?!\/))*\*\/)*`
+
 /**
  * Where a ui-template script is a component: Dashboard treats it as one when its only statement is
  * `export default { ... }`.
@@ -93,8 +96,8 @@ declare function __uiTemplate<D = {}, C = {}, M = {}>(component: {
  * @returns {{ open: number, close: number } | null} offsets (in body) of the object's `{` and `}`
  */
 export function findComponent (body) {
-    const head = /^(?:\s|\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)*export\s+default\s*(?=\{)/.exec(body)
-    const tail = /\}\s*;?\s*$/.exec(body)
+    const head = new RegExp(`^${GAP}export\\s+default\\s*(?=\\{)`).exec(body)
+    const tail = new RegExp(`\\}\\s*;?${GAP}$`).exec(body)
     return head && tail ? { open: head[0].length, close: tail.index } : null
 }
 

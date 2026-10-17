@@ -31,6 +31,20 @@ describe('vue-editor <script> support (ui-template code editor)', function () {
             body.slice(c.close + 1).should.equal('\n')
             should(script.findComponent('/* x */ export default {};')).not.be.null()
         })
+        it('allows // and /* */ comments before and after the component', function () {
+            const comments = ['// a {', '/* a { */', '/*\n * a {\n */']
+            for (const before of comments) {
+                for (const after of comments) {
+                    const body = `\n${before}\nexport default {}\n${after}\n`
+                    const c = script.findComponent(body)
+                    should(c).not.be.null()
+                    body.slice(c.open, c.close + 1).should.equal('{}')
+                }
+            }
+            for (const body of ['export default {} // bye', 'export default {}; /* bye */', '/* a */ export default {}\n// b\n/* c */']) {
+                should(script.findComponent(body)).not.be.null()
+            }
+        })
         it('treats anything else as raw JavaScript', function () {
             should(script.findComponent('const a = 1\nexport default {}')).be.null()
             should(script.findComponent('this.send({ payload: 1 })')).be.null()
