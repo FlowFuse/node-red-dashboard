@@ -27,13 +27,9 @@ function getOrCreateStore (globalContext) {
     return store
 }
 
-function fallbackOrContextStore () {
-    return fallbackStore || getOrCreateStore(storeContext)
-}
-
-function storeOrWarn (action, id) {
+function getStoreOrWarn (action, id) {
     try {
-        return fallbackOrContextStore()
+        return fallbackStore || getOrCreateStore(storeContext)
     } catch (err) { warnOnce(`${action} ${id} failed (${err.message})`) }
 }
 
@@ -108,10 +104,10 @@ const getters = {
     },
     // given a widget id, return the latest msg received
     msg (id) {
-        return config.RED.util.cloneMessage(storeOrWarn('reading', id)?.[ENTRY_MSG](id))
+        return config.RED.util.cloneMessage(getStoreOrWarn('reading', id)?.[ENTRY_MSG](id))
     },
     has (id) {
-        const store = storeOrWarn('reading', id)
+        const store = getStoreOrWarn('reading', id)
         return !!store && id in store
     }
 }
@@ -123,7 +119,7 @@ const setters = {
     },
     // remove data associated to a given widget
     clear (id) {
-        const store = storeOrWarn('clearing', id)
+        const store = getStoreOrWarn('clearing', id)
         if (store) {
             delete store[id]
         }
@@ -138,18 +134,18 @@ const setters = {
         if (Array.isArray(msg)) {
             const msgs = msg.filter((m) => canSaveInStore(base, node, m))
             if (msgs.every((m) => m && typeof m === 'object')) {
-                storeOrWarn('saving', node.id)?.[SET_SERIES](node.id, msgs)
+                getStoreOrWarn('saving', node.id)?.[SET_SERIES](node.id, msgs)
             }
         } else if (msg && typeof msg === 'object' && canSaveInStore(base, node, msg)) {
             const { ui_update: uiUpdate, ...rest } = msg
-            storeOrWarn('saving', node.id)?.[MERGE_ENTRY](node.id, rest)
+            getStoreOrWarn('saving', node.id)?.[MERGE_ENTRY](node.id, rest)
         }
     },
     // given a widget id, and msg, store in an array of history of values
     // useful for charting widgets
     append (base, node, msg) {
         if (msg && typeof msg === 'object' && canSaveInStore(base, node, msg)) {
-            storeOrWarn('saving', node.id)?.[APPEND_ENTRY](node.id, msg)
+            getStoreOrWarn('saving', node.id)?.[APPEND_ENTRY](node.id, msg)
         }
     },
     /**
@@ -160,11 +156,11 @@ const setters = {
      */
     filter (base, node, filterFunction) {
         if (filterFunction) {
-            storeOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => msgs.filter(filterFunction))
+            getStoreOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => msgs.filter(filterFunction))
         }
     },
     keepLatestPerTopic (base, node, maxPoints) {
-        storeOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => latestPerTopic(msgs, maxPoints))
+        getStoreOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => latestPerTopic(msgs, maxPoints))
     }
 }
 
