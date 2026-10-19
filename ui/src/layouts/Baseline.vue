@@ -292,10 +292,13 @@ export default {
         },
         subscribeAlerts (context) {
             Alerts.subscribe((title, description, color, alertOptions) => {
-                context.close()
+                // Apply the new display options, then show (or replace) the alert once the props have
+                // propagated to the widget. The widget is deliberately not closed first: toggling the
+                // snackbar off/on for every alert stacks up leave/enter transitions, which never complete
+                // while the tab is hidden and can leave the toast stuck on screen.
                 this.alert = alertOptions
                 this.$nextTick(() => {
-                    context.onMsgInput({
+                    context.showAlert({
                         payload: `<h3>${title}</h3><p>${description}</p>`,
                         color
                     })
