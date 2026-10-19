@@ -2,7 +2,7 @@ const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
 const datastore = require('../../nodes/store/data.js')
-const { APPEND_ENTRY, FLUSH_SERIES } = require('../../nodes/store/reactive.js')
+const { APPEND_ENTRY } = require('../../nodes/store/reactive.js')
 
 const warnings = []
 const RED = { util, plugins: { getByType: () => [] } }
@@ -866,7 +866,6 @@ describe('store: data.js trims the stored series itself', function () {
         global.get('dashboardStore')[APPEND_ENTRY]('own-trim', point('store-only'))
 
         datastore.keepLatestPerTopic(base, node, 2)
-        global.get('dashboardStore')[FLUSH_SERIES]('own-trim')
 
         global.get('dashboardStore')['$own-trim'].msg.map((m) => m.payload).should.eql([3, 4, 5, 'store-only'])
         datastore.get('own-trim').map((m) => m.payload).should.eql([2, 3, 4, 5])
@@ -882,8 +881,6 @@ describe('store: data.js trims the stored series itself', function () {
             datastore.keepLatestPerTopic(base, node, 10)
             datastore.filter(base, node, (m) => m._datapoint.x > i - 50)
         }
-
-        global.get('dashboardStore')[FLUSH_SERIES]('both-limits')
 
         global.get('dashboardStore')['$both-limits'].msg.map((m) => m.payload).should.eql(datastore.get('both-limits').map((m) => m.payload))
     })

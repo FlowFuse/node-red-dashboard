@@ -11,7 +11,7 @@ const Memory = require('@node-red/runtime/lib/nodes/context/memory.js')
 const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES, FLUSH_SERIES } = require('../../nodes/store/reactive.js')
+const { createDataStore, attachToContext, STORE, APPEND_ENTRY, SET_SERIES, MERGE_ENTRY, TRIM_SERIES } = require('../../nodes/store/reactive.js')
 
 function makeStore (opts = {}) {
     const log = []
@@ -1366,10 +1366,11 @@ describe('store: TRIM_SERIES', function () {
         for (let i = 0; i < 59; i++) {
             store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
         }
-        store.$c.msg.should.have.length(100)
+        store.c.should.have.length(100)
 
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 59))
 
+        store.c.should.have.length(40)
         payloads(store).should.eql(Array.from({ length: 40 }, (_, i) => i + 60))
     })
 
@@ -1380,15 +1381,14 @@ describe('store: TRIM_SERIES', function () {
             store[TRIM_SERIES]('c', (msgs) => msgs)
         }
 
-        store.$c.msg.should.have.length(100)
+        store.c.should.have.length(100)
     })
 
-    it('applies pending trims on flush', function () {
+    it('shows pending trims in the $ view before the series is rebuilt', function () {
         const { store } = series(10)
         store[TRIM_SERIES]('c', keepLatest(3))
 
-        store[FLUSH_SERIES]('c')
-
+        store.c.should.have.length(10)
         payloads(store).should.eql([7, 8, 9])
     })
 
@@ -1401,8 +1401,6 @@ describe('store: TRIM_SERIES', function () {
             store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m._datapoint.x > cutoff))
         }
 
-        store[FLUSH_SERIES]('c')
-
         payloads(store).should.eql([100, 50])
     })
 
@@ -1410,8 +1408,6 @@ describe('store: TRIM_SERIES', function () {
         const { store } = series(5)
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 1))
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 3))
-
-        store[FLUSH_SERIES]('c')
 
         payloads(store).should.eql([0, 2, 4])
     })
@@ -1422,17 +1418,13 @@ describe('store: TRIM_SERIES', function () {
         store[APPEND_ENTRY]('c', point(5))
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m, i) => i > 0))
 
-        store[FLUSH_SERIES]('c')
-
         payloads(store).should.eql([2, 3, 4, 5])
     })
 
-    it('keeps points appended after the last trim on flush', function () {
+    it('shows points appended after the last trim', function () {
         const { store } = series(5)
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 0))
         store[APPEND_ENTRY]('c', point(5))
-
-        store[FLUSH_SERIES]('c')
 
         payloads(store).should.eql([1, 2, 3, 4, 5])
     })
@@ -1444,7 +1436,6 @@ describe('store: TRIM_SERIES', function () {
         for (let i = 0; i < 60; i++) {
             store[TRIM_SERIES]('c', (msgs) => msgs)
         }
-        store[FLUSH_SERIES]('c')
 
         log.should.eql([])
         payloads(store).should.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -1456,7 +1447,6 @@ describe('store: TRIM_SERIES', function () {
         store[SET_SERIES]('c', [point(1), point(2)])
 
         store[TRIM_SERIES]('c', keepLatest(1))
-        store[FLUSH_SERIES]('c')
 
         payloads(store).should.eql([2])
     })
@@ -1468,18 +1458,16 @@ describe('store: TRIM_SERIES', function () {
         delete store.c
         store[APPEND_ENTRY]('c', point(1))
         store[APPEND_ENTRY]('c', point(2))
-        store[FLUSH_SERIES]('c')
 
         payloads(store).should.eql([1, 2])
     })
 
-    it('ignores trims and flushes on an entry that is not a series', function () {
+    it('ignores trims on an entry that is not a series', function () {
         const { store } = makeStore({ clone: util.cloneMessage })
         store.k = 5
 
         store[TRIM_SERIES]('k', () => [])
-        store[FLUSH_SERIES]('k')
-        store[FLUSH_SERIES]('missing')
+        store[TRIM_SERIES]('missing', () => [])
 
         store.k.should.equal(5)
     })

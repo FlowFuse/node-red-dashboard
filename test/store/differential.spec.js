@@ -2,7 +2,6 @@ const { util } = require('@node-red/util')
 const should = require('should') // eslint-disable-line no-unused-vars
 
 const datastore = require('../../nodes/store/data.js')
-const { FLUSH_SERIES } = require('../../nodes/store/reactive.js')
 
 const createLegacy = require('./helpers/legacy-datastore.js')
 const { scenarios, generate, generateMessy, runStep } = require('./helpers/sequences.js')
@@ -48,7 +47,6 @@ function scribble (value, seen = new Set()) {
 
 function storeHolds (global, id) {
     const store = global.get('dashboardStore')
-    store[FLUSH_SERIES](id)
     return store['$' + id]?.msg
 }
 
