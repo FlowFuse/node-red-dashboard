@@ -11,6 +11,7 @@ import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
 import { getOrCreateClientId } from './util/client-id'
 import { nextReconnectInterval } from './util/reconnect-interval'
+import { createConnectionAlerts } from './util/connection-alerts'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -175,6 +176,19 @@ fetch('_setup')
             query: { clientId, ...(editKey ? { editKey } : {}) }
         })
 
+        const connectionAlerts = createConnectionAlerts({
+            alerts: Alerts,
+            getDashboard: () => {
+                // the getter reads state.dashboards, which is null until the ui-config arrives
+                try {
+                    return store.getters['ui/dashboard']
+                } catch (_error) {
+                    return undefined
+                }
+            },
+            displayTime: (dashboard) => dashboard?.notificationDisplayTime || 5 // default: 5 seconds
+        })
+
         // handle final disconnection
         socket.on('disconnect', (reason) => {
             if (!disconnected) {
@@ -182,42 +196,19 @@ fetch('_setup')
                 disconnected = true
             }
 
-            const dashboard = store.getters['ui/dashboard']
-            if (dashboard?.showDisconnectNotification) {
-                // tell the user we're trying to connect
-                Alerts.emit('Connection Lost', 'Attempting to reconnect to server...', 'red', {
-                    displayTime: 0, // displayTime 0 persists notifications until another notification closes it
-                    allowDismiss: false,
-                    showCountdown: false
-                })
-            }
+            // tell the user we're trying to connect
+            connectionAlerts.onDisconnect()
             // attempt to reconnect
             reconnect()
         })
 
         socket.on('connect', () => {
-            // if we've just disconnected (i.e. aren't connecting for the first time)
-            if (disconnected) {
-                // check vuex store here
-                const dashboard = store.getters['ui/dashboard']
-                if (dashboard?.showReconnectNotification) {
-                // send a notification/alert to the user to let them know the connection is live again
-                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                        displayTime: dashboard?.notificationDisplayTime || 5, // default: 5 seconds
-                        allowDismiss: true,
-                        showCountdown: true
-                    })
-                } else {
-                    //, send a notification for 1 ms to close the disconnected notification
-                    Alerts.emit('Connected', 'Connection re-established.', '#1BC318', {
-                        displayTime: 0.001, // 1 ms
-                        allowDismiss: false,
-                        showCountdown: false
-                    })
-                }
-            }
+            const reconnected = disconnected
             disconnected = false
             clearTimeout(reconnectTO)
+            // notify the user only if we've just disconnected (i.e. aren't connecting for the first time),
+            // but always reconcile: a stale "Connection Lost" alert must never outlive the disconnection
+            connectionAlerts.onConnect(reconnected)
         })
 
         socket.on('connect_error', (err) => {
@@ -237,6 +228,18 @@ fetch('_setup')
             }
         })
 
+        /**
+         * Abort the reconnect pre-fetch if it never settles. A request left in flight when the window
+         * is frozen (minimised, device asleep) can hang indefinitely, and the retry loop is gated on
+         * `reconnecting`, which is only cleared when the request settles - without this the loop (and
+         * with it the removal of the "Connection Lost" alert) would stall for good.
+         */
+        function prefetchTimeout (ms = 10000) {
+            return typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+                ? { signal: AbortSignal.timeout(ms) }
+                : {}
+        }
+
         function reconnect () {
             if (disconnected && !reconnecting) {
                 reconnecting = true
@@ -244,7 +247,7 @@ fetch('_setup')
                  * fetch '_setup' as that is a short json file
                  * use redirect: 'manual' to stop any redirection to a login page in case it causes a CORS error
                  */
-                fetch('_setup', { redirect: 'manual', cache: 'no-cache' })
+                fetch('_setup', { redirect: 'manual', cache: 'no-cache', ...prefetchTimeout() })
                     .then(function (res) {
                         const contentType = res.headers?.get('content-type')
                         /** If the content type is not application/json then likely it is a login request,
@@ -273,6 +276,14 @@ fetch('_setup')
 
         // No give-up reload: the _setup pre-fetch handles auth-redirects, and reloading an unreachable server is useless.
         function tryConnect () {
+            if (socket.connected) {
+                // already live again (so socket.connect() would be a no-op and no 'connect' event would
+                // follow): stop retrying and make sure no stale alert is left on screen
+                disconnected = false
+                retryCount = 0
+                connectionAlerts.sync(true)
+                return
+            }
             socket.connect()
             const interval = nextReconnectInterval(retryCount)
             retryCount++
@@ -280,7 +291,16 @@ fetch('_setup')
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && disconnected && !reconnecting) {
+            if (document.visibilityState !== 'visible') {
+                return
+            }
+            // a window that was frozen (minimised, device asleep) can come back with the socket already
+            // live; clear any connection alert that outlived the disconnection
+            connectionAlerts.sync(socket.connected)
+            if (socket.connected) {
+                disconnected = false
+            }
+            if (disconnected && !reconnecting) {
                 clearTimeout(reconnectTO)
                 retryCount = 0
                 reconnect()
