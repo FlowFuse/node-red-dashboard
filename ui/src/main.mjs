@@ -11,6 +11,7 @@ import Alerts from './services/alerts.js'
 import Resize from './directives/resize.js'
 import { getOrCreateClientId } from './util/client-id'
 import { nextReconnectInterval } from './util/reconnect-interval'
+import { socketParser } from './util/socket-parser'
 
 // Vuetify
 import '@mdi/font/css/materialdesignicons.css'
@@ -172,6 +173,7 @@ fetch('_setup')
         const socket = io({
             ...setup.socketio,
             reconnection: false,
+            parser: socketParser,
             query: { clientId, ...(editKey ? { editKey } : {}) }
         })
 
