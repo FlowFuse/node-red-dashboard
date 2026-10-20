@@ -930,18 +930,17 @@ describe('store: data.js after a restart with a persistent context store', funct
         datastore.initStore(fakeGlobal(), {})
     })
 
-    it('reads restored values as messages holding only the payload', function () {
-        restored({ text: 'hello', rows: [{ id: 1 }] })
+    it('starts empty, as main does', function () {
+        restored({ text: 'hello', rows: [{ id: 1 }], chart: [{ category: 'a', x: 1, y: 1 }] })
 
-        datastore.has('text').should.equal(true)
-        datastore.get('text').should.eql({ payload: 'hello' })
-        datastore.get('rows').should.eql({ payload: [{ id: 1 }] })
+        datastore.has('text').should.equal(false)
+        should(datastore.get('text')).be.undefined()
+        datastore.has('rows').should.equal(false)
+        datastore.has('chart').should.equal(false)
     })
 
-    it('reads a restored chart as its points until the next point replaces it with a series', function () {
+    it('stores a chart\'s first point after a restart as a fresh series', function () {
         restored({ chart: [{ category: 'a', x: 1, y: 1 }] })
-
-        datastore.get('chart').should.eql({ payload: [{ category: 'a', x: 1, y: 1 }] })
 
         datastore.append(base, fakeNode('chart'), { payload: 2, _datapoint: { category: 'a', x: 2, y: 2 } })
 

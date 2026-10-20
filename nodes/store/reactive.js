@@ -249,7 +249,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 const injected = new WeakMap()
 
 // Inject the store into global context once. On redeploy the existing store is reused;
-// after a restart with a persistent context store, existing plain data is rehydrated.
+// after a restart it starts fresh and plain data a flow put in its place is copied in.
 // Returns null when the context store can't hold a live proxy: a cache-off store serves
 // only async access so a sync get throws, and a serialising store hands back a copy.
 function attachToContext (globalContext, opts = {}) {
@@ -269,7 +269,7 @@ function attachToContext (globalContext, opts = {}) {
     const previous = injected.get(globalContext)
 
     const store = createDataStore(opts)
-    if (isReactable(existing) && !Array.isArray(existing)) {
+    if (previous && isReactable(existing) && !Array.isArray(existing)) {
         for (const [k, v] of Object.entries(existing)) store[k] = v
     }
     globalContext.set(namespace, store)

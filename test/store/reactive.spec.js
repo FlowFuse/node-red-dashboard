@@ -963,9 +963,11 @@ describe('store: reactive data store', function () {
     })
 
     describe('attachToContext', function () {
-        it('does not rehydrate an array into numeric keys', function () {
-            const m = { dashboardStore: ['a', 'b'] }
+        it('does not copy an array a flow put in its place into numeric keys', function () {
+            const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            attachToContext(g, {})
+            m.dashboardStore = ['a', 'b']
 
             const store = attachToContext(g, {})
 
@@ -973,18 +975,22 @@ describe('store: reactive data store', function () {
             JSON.stringify(store).should.equal('{}')
         })
 
-        it('does not spread a class instance into keys', function () {
-            const m = { dashboardStore: new Date() }
+        it('does not spread a class instance a flow put in its place into keys', function () {
+            const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            attachToContext(g, {})
+            m.dashboardStore = new Date()
 
             const store = attachToContext(g, {})
 
             Object.keys(store).should.eql([])
         })
 
-        it('rehydrates an object a function node left at the namespace', function () {
-            const m = { dashboardStore: fnNodeObject('({ robot: "PLAIN", count: 3 })') }
+        it('copies in an object a function node put in its place', function () {
+            const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            attachToContext(g, {})
+            m.dashboardStore = fnNodeObject('({ robot: "PLAIN", count: 3 })')
 
             const store = attachToContext(g, {})
 
@@ -992,9 +998,11 @@ describe('store: reactive data store', function () {
             store.count.should.equal(3)
         })
 
-        it('still rehydrates a plain object', function () {
-            const m = { dashboardStore: { robot: { temp: 20 }, count: 3 } }
+        it('copies in a plain object a flow put in its place', function () {
+            const m = {}
             const g = { get: (k) => m[k], set: (k, v) => { m[k] = v } }
+            attachToContext(g, {})
+            m.dashboardStore = { robot: { temp: 20 }, count: 3 }
 
             const store = attachToContext(g, {})
 
@@ -1036,8 +1044,9 @@ describe('store: reactive data store', function () {
             should(second).equal(first)
         })
 
-        it('rehydrates around existing plain data and rewires reactivity', function () {
+        it('rewires reactivity around plain data a flow put in its place', function () {
             const g = fakeGlobal()
+            attachToContext(g)
             g.set('dashboardStore', { a: 5, robot: { temp: 1 } })
             const log = []
             const store = attachToContext(g, { onChange: (k, e, p) => log.push(p) })
@@ -1086,13 +1095,14 @@ describe('store: reactive data store', function () {
             warned.should.equal(0)
         })
 
-        it('does not warn when a restart rehydrates plain data it never injected', function () {
+        it('starts fresh after a restart, without warning, rather than restoring plain data it never injected', function () {
             const g = fakeGlobal()
             g.set('dashboardStore', { widget: 'from disk' }) // what a persistent context store hands back
             let warned = 0
             const store = attachToContext(g, { onReplaced: () => { warned++ } })
             warned.should.equal(0)
-            store.widget.should.equal('from disk')
+            should(store.widget).be.undefined()
+            should(g.get('dashboardStore')).equal(store)
         })
 
         const replacements = [
