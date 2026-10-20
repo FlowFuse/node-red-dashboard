@@ -3,6 +3,7 @@ const http = require('http')
 const os = require('os')
 const path = require('path')
 
+const { types } = require('util')
 const vm = require('vm')
 
 const LocalFileSystem = require('@node-red/runtime/lib/nodes/context/localfilesystem.js')
@@ -1312,7 +1313,7 @@ describe('store: MERGE_ENTRY', function () {
         log.should.eql([])
     })
 
-    it('applies pending trims to a series before merging onto it, reporting once', function () {
+    it('merges onto the trimmed series, reporting once', function () {
         const { store, log } = merging()
         for (let x = 0; x < 5; x++) {
             store[APPEND_ENTRY]('k', { payload: x, _datapoint: { category: 'a', x, y: x } })
@@ -1414,35 +1415,23 @@ describe('store: TRIM_SERIES', function () {
     }
     const payloads = (store) => store.$c.msg.map((m) => m.payload)
 
-    it('leaves the stored series alone for 59 trims and rebuilds it on the 60th', function () {
+    it('applies each trim to the stored series straight away', function () {
         const { store } = series(100)
-        for (let i = 0; i < 59; i++) {
-            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
-        }
-        store.c.should.have.length(100)
 
-        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 59))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 9))
 
-        store.c.should.have.length(40)
-        payloads(store).should.eql(Array.from({ length: 40 }, (_, i) => i + 60))
+        store.c.should.have.length(90)
+        payloads(store).should.eql(Array.from({ length: 90 }, (_, i) => i + 10))
     })
 
-    it('counts only trims that remove something towards the batch', function () {
-        const { store } = series(100)
-        for (let i = 0; i < 59; i++) {
-            store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
-            store[TRIM_SERIES]('c', (msgs) => msgs)
-        }
-
-        store.c.should.have.length(100)
-    })
-
-    it('shows pending trims in the $ view before the series is rebuilt', function () {
+    it('keeps the value and the stored messages in step after a trim', function () {
         const { store } = series(10)
+
         store[TRIM_SERIES]('c', keepLatest(3))
 
-        store.c.should.have.length(10)
+        store.c.map((p) => p.x).should.eql([7, 8, 9])
         payloads(store).should.eql([7, 8, 9])
+        store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
     })
 
     it('matches trimming after every message when points arrive out of order', function () {
@@ -1494,7 +1483,7 @@ describe('store: TRIM_SERIES', function () {
         payloads(store).should.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     })
 
-    it('drops pending trims when the series is replaced', function () {
+    it('trims the replacing series, not the old one', function () {
         const { store } = series(10)
         store[TRIM_SERIES]('c', keepLatest(1))
         store[SET_SERIES]('c', [point(1), point(2)])
@@ -1504,7 +1493,7 @@ describe('store: TRIM_SERIES', function () {
         payloads(store).should.eql([2])
     })
 
-    it('drops pending trims when the entry is deleted', function () {
+    it('starts a fresh series after the entry is deleted', function () {
         const { store } = series(10)
         store[TRIM_SERIES]('c', keepLatest(1))
 
@@ -1525,9 +1514,53 @@ describe('store: TRIM_SERIES', function () {
         store.k.should.equal(5)
     })
 
-    it('does not clone on trims that do not rebuild', function () {
+    it('trims the oldest points', function () {
+        const { store } = series(10)
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 3))
+
+        store.c.map((p) => p.x).should.eql([4, 5, 6, 7, 8, 9])
+        store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
+    })
+
+    it('trims points from the middle of the series', function () {
+        const { store } = series(10, (i) => (i % 2 ? 'a' : 'b'))
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.topic === 'a' || m.payload > 6))
+
+        store.c.map((p) => p.x).should.eql([1, 3, 5, 7, 8, 9])
+        store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
+    })
+
+    it('trims multi-point messages and messages without points exactly', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        const two = (x) => ({ payload: x, topic: 'm', _datapoint: [{ category: 'a', x, y: 1 }, { category: 'b', x, y: 2 }] })
+        store[SET_SERIES]('c', [two(1), { payload: 'none', topic: 'n' }, two(2), point(3), two(4)])
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.slice(1))
+        store.c.map((p) => p.x).should.eql([2, 2, 3, 4, 4])
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload !== 3))
+        store.c.map((p) => p.x).should.eql([2, 2, 4, 4])
+        store.$c.msg.map((m) => m.payload).should.eql(['none', 2, 4])
+    })
+
+    it('trims without cloning', function () {
         let clones = 0
         const { store } = series(50, (i) => (i % 2 ? 'a' : 'b'), { clone: (v) => { clones++; return util.cloneMessage(v) } })
+        clones = 0
+
+        store[TRIM_SERIES]('c', keepLatest(10))
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.topic === 'a'))
+
+        clones.should.equal(0)
+        store.c.should.have.length(10)
+    })
+
+    it('does not clone on trims that remove nothing', function () {
+        let clones = 0
+        const { store } = series(50, (i) => (i % 2 ? 'a' : 'b'), { clone: (v) => { clones++; return util.cloneMessage(v) } })
+        store[TRIM_SERIES]('c', keepLatest(10))
         clones = 0
 
         for (let i = 0; i < 59; i++) {
@@ -1537,7 +1570,7 @@ describe('store: TRIM_SERIES', function () {
         clones.should.equal(0)
     })
 
-    it('reports the rebuild once', function () {
+    it('reports each trim that removes something once', function () {
         const { store, log } = series(100)
         log.length = 0
 
@@ -1545,6 +1578,197 @@ describe('store: TRIM_SERIES', function () {
             store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > i))
         }
 
-        log.should.eql(['c'])
+        log.should.eql(Array(60).fill('c'))
+    })
+})
+
+describe('store: series points', function () {
+    const point = (x, topic = 'a') => ({ payload: x, topic, _datapoint: { category: topic, x, y: x } })
+
+    function series (n, topicOf = () => 'a', opts = {}) {
+        const made = makeStore({ clone: util.cloneMessage, ...opts })
+        for (let i = 0; i < n; i++) {
+            made.store[APPEND_ENTRY]('c', point(i, topicOf(i)))
+        }
+        return made
+    }
+
+    const storedMsgs = (store) => {
+        let msgs
+        store[TRIM_SERIES]('c', (given) => { msgs = given; return given })
+        return msgs
+    }
+
+    it('links stored messages to plain points', function () {
+        const { store } = series(3)
+
+        types.isProxy(storedMsgs(store)[0]._datapoint).should.equal(false)
+        types.isProxy(store.c[0]).should.equal(true)
+    })
+
+    it('links a saved series\' messages to plain points', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store[SET_SERIES]('c', [point(1), { payload: [2, 3], _datapoint: [{ category: 'a', x: 2, y: 2 }, { category: 'b', x: 2, y: 3 }] }])
+
+        const msgs = storedMsgs(store)
+
+        types.isProxy(msgs[0]._datapoint).should.equal(false)
+        types.isProxy(msgs[1]._datapoint[0]).should.equal(false)
+    })
+
+    it('keeps proxies out of the stored points after nested reads and writes', function () {
+        const { store } = series(1)
+        store.c[0].meta = { a: { b: 1 } }
+
+        store.c[0].meta.a.b = 2
+
+        const dp = storedMsgs(store)[0]._datapoint
+        types.isProxy(dp.meta).should.equal(false)
+        types.isProxy(dp.meta.a).should.equal(false)
+        dp.meta.a.b.should.equal(2)
+    })
+
+    it('reports a write with the point\'s position after a trim', function () {
+        const { store, log } = series(5)
+        store.c[3].y.should.equal(3)
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 1))
+        log.length = 0
+
+        store.c[1].y = 30
+
+        log.should.eql(['c.1.y'])
+    })
+
+    it('moves the timestamp on a trim', function () {
+        const { store } = series(5)
+        const before = store.$c.timestamp
+
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 1))
+
+        store.$c.timestamp.should.be.above(before)
+    })
+
+    it('reads the same proxy for a point each time', function () {
+        const { store } = series(3)
+
+        store.c[1].should.equal(store.c[1])
+    })
+
+    it('reports a write through a point and shows it in the stored message', function () {
+        const { store, log } = series(3)
+        log.length = 0
+
+        store.c[0].y = 50
+
+        log.should.eql(['c.0.y'])
+        store[ENTRY_MSG]('c')[0]._datapoint.y.should.equal(50)
+    })
+
+    it('reports a nested write through a point', function () {
+        const { store, log } = series(1)
+        store.c[0].meta = { a: 1 }
+        log.length = 0
+
+        store.c[0].meta.a = 2
+
+        log.should.eql(['c.0.meta.a'])
+    })
+
+    it('stores a copy of a point pushed through the value', function () {
+        const { store } = series(1)
+        const p = { category: 'a', x: 9, y: 9 }
+
+        store.c.push(p)
+        p.y = 999
+
+        store.c[1].y.should.equal(9)
+    })
+
+    it('links the $ view to the live points, including multi-point messages', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store[SET_SERIES]('c', [
+            { payload: [1, 2], _datapoint: [{ category: 'a', x: 1, y: 1 }, { category: 'b', x: 1, y: 2 }] },
+            { payload: 'none' },
+            { payload: 3, _datapoint: { category: 'a', x: 2, y: 3 } }
+        ])
+
+        const msg = store.$c.msg
+
+        msg[0]._datapoint[0].should.equal(store.c[0])
+        msg[0]._datapoint[1].should.equal(store.c[1])
+        should(msg[1]._datapoint).be.undefined()
+        msg[2]._datapoint.should.equal(store.c[2])
+    })
+
+    it('reports a write through a $ view point', function () {
+        const { store, log } = series(2)
+        log.length = 0
+
+        store.$c.msg[1]._datapoint.y = 77
+
+        log.should.eql(['c.1.y'])
+        store.c[1].y.should.equal(77)
+    })
+
+    it('keeps a series proxy held across a trim live', function () {
+        const { store, log } = series(5)
+        const held = store.c
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 1))
+        log.length = 0
+
+        held[0].y = 40
+
+        log.should.eql(['c.0.y'])
+        store.c[0].y.should.equal(40)
+        held.should.have.length(3)
+    })
+
+    it('stops a series proxy reporting once the series is replaced', function () {
+        const { store, log } = series(2)
+        const held = store.c
+        store[SET_SERIES]('c', [point(5)])
+        log.length = 0
+
+        held[0].y = 1
+
+        log.should.eql([])
+    })
+
+    it('stops a series proxy reporting once the entry is deleted', function () {
+        const { store, log } = series(2)
+        const held = store.c
+        delete store.c
+        log.length = 0
+
+        held[0].y = 1
+
+        log.should.eql([])
+    })
+
+    it('reads a point a flow has frozen', function () {
+        const { store } = series(2)
+        store.c[0].meta = { a: 1 }
+
+        Object.freeze(store.c[0])
+
+        store.c[0].x.should.equal(0)
+        store.c[0].meta.a.should.equal(1)
+    })
+
+    it('reads a series a flow has frozen', function () {
+        const { store } = series(2)
+
+        Object.freeze(store.c)
+
+        store.c.map((p) => p.x).should.eql([0, 1])
+    })
+
+    it('gives trim callbacks the stored messages with plain points', function () {
+        const { store } = series(2)
+        let seen
+
+        store[TRIM_SERIES]('c', (msgs) => { seen = msgs[0]._datapoint; return msgs })
+
+        types.isProxy(seen).should.equal(false)
     })
 })

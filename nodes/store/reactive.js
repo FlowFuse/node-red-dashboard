@@ -4,7 +4,6 @@ const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
 const MERGE_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/mergeEntry')
 const TRIM_SERIES = Symbol.for('@flowfuse/node-red-dashboard/trimSeries')
 const ENTRY_MSG = Symbol.for('@flowfuse/node-red-dashboard/entryMsg')
-const TRIM_BATCH = 60
 const NAMESPACE = 'dashboardStore'
 
 class Entry {
@@ -14,7 +13,7 @@ class Entry {
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
-        this.trims = null
+        this.plainPoints = undefined
     }
 }
 
@@ -38,15 +37,15 @@ function deepClone (v, seen = new WeakMap()) {
     return out
 }
 
-function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
+function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnRead = false) {
     if (!isReactable(value)) return value
     if (seen.has(value)) return seen.get(value)
-    const proxy = new Proxy(value, {
+    const traps = {
         set (t, p, v) {
             if (typeof p === 'symbol') return Reflect.set(t, p, v)
             // a push writes the new index then grows length; only a shrink is a change worth reporting
             const shrank = p === 'length' && Array.isArray(t) && v < t.length
-            t[p] = deepReactive(clone(v), notify, `${path}.${String(p)}`, clone)
+            t[p] = wrapOnRead ? clone(v) : deepReactive(clone(v), notify, `${path}.${String(p)}`, clone)
             if (p !== 'length') notify(`${path}.${String(p)}`)
             else if (shrank) notify(path)
             return true
@@ -57,10 +56,23 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap()) {
             if (existed) notify(`${path}.${String(p)}`)
             return ok
         }
-    })
+    }
+    if (wrapOnRead) {
+        traps.get = (t, p, r) => {
+            const v = Reflect.get(t, p, r)
+            const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
+            if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
+                return v
+            }
+            return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
+        }
+    }
+    const proxy = new Proxy(value, traps)
     // registered before walking children so a cycle resolves to this proxy instead of recursing
     seen.set(value, proxy)
-    for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone, seen)
+    if (!wrapOnRead) {
+        for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone, seen)
+    }
     return proxy
 }
 
@@ -87,7 +99,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[STORE] = true
 
     // returns the record without notifying, so a caller can finish writing it before onChange fires
-    const writeValue = (prop, value) => {
+    const writeValue = (prop, value, wrapOnRead = false) => {
         let rec = records[prop]
         if (!rec) {
             rec = new Entry()
@@ -99,20 +111,33 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         }
         const notify = (path) => {
             // a replaced value keeps its proxies alive; they must not report into the record any more
-            if (rec.value !== wrapped) return
+            if (wrapOnRead ? rec.plainPoints !== value : rec.value !== wrapped) return
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        const wrapped = deepReactive(value, notify, prop, cloneValue)
+        const wrapped = deepReactive(value, notify, prop, cloneValue, new WeakMap(), wrapOnRead)
         rec.value = wrapped
-        rec.trims = null
+        rec.plainPoints = wrapOnRead ? value : undefined
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
 
-    const trimmedSeries = (rec) => rec.trims ? rec.trims.kept.concat(rec.msg.slice(rec.trims.seen)) : rec.msg.slice()
-    const msgOf = (rec) => Array.isArray(rec.msg) ? Object.freeze(trimmedSeries(rec)) : rec.msg
+    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
+    const pointCount = (d) => (d === undefined || d === null) ? 0 : (Array.isArray(d) ? d.length : 1)
+    const msgOf = (rec) => Array.isArray(rec.msg) ? Object.freeze(rec.msg.slice()) : rec.msg
+
+    const messagesWithLivePoints = (rec) => {
+        let i = 0
+        return Object.freeze(rec.msg.map((m) => {
+            const n = pointCount(m._datapoint)
+            if (n === 0) {
+                return m
+            }
+            const livePoints = Array.from({ length: n }, () => rec.value[i++])
+            return Object.freeze({ ...m, _datapoint: Array.isArray(m._datapoint) ? Object.freeze(livePoints) : livePoints[0] })
+        }))
+    }
 
     records[ENTRY_MSG] = (prop) => {
         const rec = records[prop]
@@ -122,7 +147,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[MERGE_ENTRY] = (prop, msg) => {
         const current = records[prop]
         const { payload, ...incoming } = msg
-        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...trimmedSeries(current) })) : current?.msg || {}
+        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
         const { payload: storedPayload, ...stored } = previous
         const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
         const owned = freezeOwned(cloneValue(incoming))
@@ -134,8 +159,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         rec.timestamp = now()
         emit(prop, rec, prop)
     }
-
-    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
 
     const toStoredDatapoint = (series, datapoint, start, end) => {
         if (end === start) return undefined
@@ -159,9 +182,9 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             for (const p of pointsOf(datapoint)) points.push(p)
             return { msg, owned, datapoint, start, end: points.length }
         })
-        const rec = writeValue(prop, points)
+        const rec = writeValue(prop, points, true)
         rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
-            const stored = toStoredDatapoint(rec.value, datapoint, start, end)
+            const stored = toStoredDatapoint(points, datapoint, start, end)
             if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
             return toStoredMessage(owned, stored)
         })
@@ -175,12 +198,12 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
         if (!rec || replaced) {
-            rec = writeValue(prop, [])
+            rec = writeValue(prop, [], true)
             rec.msg = []
         }
         const start = rec.value.length
         for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = toStoredDatapoint(rec.value, _datapoint, start, rec.value.length)
+        const stored = toStoredDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
         if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
         rec.msg.push(toStoredMessage(owned, stored))
         if (replaced) emit(prop, rec, prop)
@@ -191,20 +214,37 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (!rec || !Array.isArray(rec.msg)) {
             return
         }
-        const pending = rec.trims || (rec.trims = { calls: 0, kept: [], seen: 0 })
-        for (let i = pending.seen; i < rec.msg.length; i++) {
-            pending.kept.push(rec.msg[i])
-        }
-        pending.seen = rec.msg.length
-        const before = pending.kept.length
-        pending.kept = trim(pending.kept)
-        if (pending.kept.length === before) {
+        const msgs = trim(rec.msg)
+        if (msgs.length === rec.msg.length) {
             return
         }
-        pending.calls++
-        if (pending.calls >= TRIM_BATCH) {
-            records[SET_SERIES](prop, trimmedSeries(rec))
+        const points = rec.plainPoints
+        const removedMessages = rec.msg.length - msgs.length
+        if (msgs.length === 0 || msgs[0] === rec.msg[removedMessages]) {
+            let removedPoints = 0
+            for (let i = 0; i < removedMessages; i++) {
+                removedPoints += pointCount(rec.msg[i]._datapoint)
+            }
+            points.splice(0, removedPoints)
+        } else {
+            let readAt = 0
+            let writeAt = 0
+            let nextKept = 0
+            for (const m of rec.msg) {
+                const n = pointCount(m._datapoint)
+                if (m === msgs[nextKept]) {
+                    nextKept++
+                    for (let k = 0; k < n; k++) {
+                        points[writeAt++] = points[readAt + k]
+                    }
+                }
+                readAt += n
+            }
+            points.length = writeAt
         }
+        writeValue(prop, points, true)
+        rec.msg = msgs
+        emit(prop, rec, prop)
     }
 
     const handler = {
@@ -216,7 +256,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
                 if (!rec) return undefined
-                const msg = msgOf(rec)
+                const msg = Array.isArray(rec.msg) ? messagesWithLivePoints(rec) : rec.msg
                 return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
@@ -238,7 +278,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             const rec = target[prop]
             const existed = prop in target
             const ok = delete target[prop]
-            if (rec) rec.value = undefined
+            if (rec) {
+                rec.value = undefined
+                rec.plainPoints = undefined
+            }
             if (existed) emit(prop, undefined, prop)
             return ok
         }
