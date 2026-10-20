@@ -1,9 +1,67 @@
 const { isClientScoped } = require('../utils/index.js')
 
-const data = {}
+const { createDataStore, attachToContext, MERGE_ENTRY, APPEND_ENTRY, SET_SERIES, TRIM_SERIES, ENTRY_MSG } = require('./reactive.js')
 
 const config = {
     RED: null
+}
+
+let storeOptions = {}
+let fallbackStore = null
+let storeContext = null
+let storeBase = null
+let warned = false
+
+function warnOnce (problem) {
+    if (warned || !storeBase) return
+    warned = true
+    storeBase.warn(`Dashboard data store: ${problem}. Further store failures are not reported until the next full deploy or restart.`)
+}
+
+const attachOptions = () => ({ clone: config.RED.util.cloneMessage, ...storeOptions })
+
+function getOrCreateStore (globalContext) {
+    let unavailable = null
+    const store = attachToContext(globalContext, { ...attachOptions(), onUnavailable: (err) => { unavailable = err } })
+    if (!store) throw unavailable || new Error('global context saved a copy of the store rather than the store itself, which happens with context stores that serialise values')
+    return store
+}
+
+function getStoreOrWarn (action, id) {
+    try {
+        return fallbackStore || getOrCreateStore(storeContext)
+    } catch (err) { warnOnce(`${action} ${id} failed (${err.message})`) }
+}
+
+function initStore (globalContext, { node, ...opts } = {}) {
+    storeOptions = opts
+    storeContext = globalContext
+    storeBase = node
+    warned = false
+    let store = null
+    try {
+        store = attachToContext(globalContext, attachOptions())
+    } finally {
+        if (store) {
+            fallbackStore = null
+        } else if (!fallbackStore) {
+            fallbackStore = createDataStore(attachOptions())
+        }
+    }
+    return store
+}
+
+function latestPerTopic (msgs, maxPoints) {
+    const counts = {}
+    const kept = []
+    for (let i = msgs.length - 1; i >= 0; i--) {
+        const topic = msgs[i].topic
+        counts[topic] = (counts[topic] || 0) + 1
+        if (counts[topic] <= maxPoints) {
+            kept.push(msgs[i])
+        }
+    }
+    return kept.reverse()
 }
 
 /**
@@ -40,26 +98,17 @@ function canSaveInStore (base, node, msg) {
     return checks.length === 0 || !checks.includes(false)
 }
 
-// Strip msg of properties that are not needed for storage
-function stripMsg (msg) {
-    const newMsg = config.RED.util.cloneMessage(msg)
-
-    // don't need to store ui_updates in the datastore, as this is handled in statestore
-    delete newMsg.ui_update
-
-    return newMsg
-}
-
 const getters = {
     RED () {
         return config.RED
     },
     // given a widget id, return the latest msg received
     msg (id) {
-        return config.RED.util.cloneMessage(data[id])
+        return config.RED.util.cloneMessage(getStoreOrWarn('reading', id)?.[ENTRY_MSG](id))
     },
     has (id) {
-        return !!data[id]
+        const store = getStoreOrWarn('reading', id)
+        return !!store && id in store
     }
 }
 
@@ -70,7 +119,10 @@ const setters = {
     },
     // remove data associated to a given widget
     clear (id) {
-        delete data[id]
+        const store = getStoreOrWarn('clearing', id)
+        if (store) {
+            delete store[id]
+        }
     },
     /**
      *
@@ -80,32 +132,20 @@ const setters = {
      */
     save (base, node, msg) {
         if (Array.isArray(msg)) {
-            /// need to check msg by msg
-            const filtered = []
-            for (const m of msg) {
-                if (canSaveInStore(base, node, m)) {
-                    filtered.push(config.RED.util.cloneMessage(m))
-                }
+            const msgs = msg.filter((m) => canSaveInStore(base, node, m))
+            if (msgs.every((m) => m && typeof m === 'object')) {
+                getStoreOrWarn('saving', node.id)?.[SET_SERIES](node.id, msgs)
             }
-            data[node.id] = filtered
-        } else {
-            if (canSaveInStore(base, node, msg)) {
-                const newMsg = stripMsg(msg)
-                data[node.id] = {
-                    ...data[node.id],
-                    ...newMsg
-                }
-            }
+        } else if (msg && typeof msg === 'object' && canSaveInStore(base, node, msg)) {
+            const { ui_update: uiUpdate, ...rest } = msg
+            getStoreOrWarn('saving', node.id)?.[MERGE_ENTRY](node.id, rest)
         }
     },
     // given a widget id, and msg, store in an array of history of values
     // useful for charting widgets
     append (base, node, msg) {
-        if (canSaveInStore(base, node, msg)) {
-            if (!data[node.id]) {
-                data[node.id] = []
-            }
-            data[node.id].push(config.RED.util.cloneMessage(msg))
+        if (msg && typeof msg === 'object' && canSaveInStore(base, node, msg)) {
+            getStoreOrWarn('saving', node.id)?.[APPEND_ENTRY](node.id, msg)
         }
     },
     /**
@@ -115,35 +155,12 @@ const setters = {
      * @param {(msg) => Boolean} filterFunction
      */
     filter (base, node, filterFunction) {
-        const currentData = data[node.id]
-        if (filterFunction && Array.isArray(currentData) && currentData.length) {
-            const filteredMessages = currentData.filter(filterFunction)
-            if (filteredMessages.length !== currentData.length) {
-                // no need for save operation to process messages - just apply them
-                data[node.id] = filteredMessages
-            }
+        if (filterFunction) {
+            getStoreOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => msgs.filter(filterFunction))
         }
     },
     keepLatestPerTopic (base, node, maxPoints) {
-        const currentData = data[node.id]
-        if (!Array.isArray(currentData)) {
-            return
-        }
-        const counts = {}
-        const keep = []
-        let trimmed = false
-        for (let i = currentData.length - 1; i >= 0; i--) {
-            const topic = currentData[i].topic
-            counts[topic] = (counts[topic] || 0) + 1
-            if (counts[topic] <= maxPoints) {
-                keep[i] = true
-            } else {
-                trimmed = true
-            }
-        }
-        if (trimmed) {
-            setters.filter(base, node, (m, i) => keep[i])
-        }
+        getStoreOrWarn('trimming', node.id)?.[TRIM_SERIES](node.id, (msgs) => latestPerTopic(msgs, maxPoints))
     }
 }
 
@@ -156,5 +173,6 @@ module.exports = {
     append: setters.append,
     filter: setters.filter,
     keepLatestPerTopic: setters.keepLatestPerTopic,
-    clear: setters.clear
+    clear: setters.clear,
+    initStore
 }
