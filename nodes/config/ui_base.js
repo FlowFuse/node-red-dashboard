@@ -34,6 +34,8 @@ module.exports = function (RED) {
     datastore.setConfig(RED)
     statestore.setConfig(RED)
 
+    let warnedStoreUnavailable = false
+
     /**
      * @typedef {import('socket.io').Socket} Socket
      * @typedef {import('socket.io').Server} Server
@@ -395,7 +397,8 @@ module.exports = function (RED) {
                 onUnavailable: (err) => { unavailable = err },
                 onReplaced: () => node.warn('global.dashboardStore was replaced by a flow since the last deploy, discarding the stored value of every widget. The store has been re-created. To write your own data, set global.dashboardStore.<key> rather than replacing global.dashboardStore itself.')
             })
-            if (!store) {
+            if (!store && !warnedStoreUnavailable) {
+                warnedStoreUnavailable = true
                 node.warn('Dashboard data store: flows can\'t use global.dashboardStore, because the default context store doesn\'t keep values in memory (e.g. localfilesystem with cache: false). Dashboards still work normally. To use global.dashboardStore from flows, set contextStorage.default to memory, or localfilesystem with cache: true.' + (unavailable ? ' (Reason: ' + unavailable.message + ')' : ''))
             }
         } catch (err) {

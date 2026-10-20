@@ -159,6 +159,17 @@ describe('ui-base config node: cache-off context store', function () {
         touched.set.should.equal(0)
     })
 
+    it('warns once per start, not on every full deploy', async function () {
+        await helper.load(nodeImports, flow)
+
+        await helper.setFlows(flow, 'full')
+
+        const warned = helper.log().args.filter((args) =>
+            args[0].level === helper.log().WARN && /doesn't keep values in memory/.test(args[0].msg)
+        )
+        warned.should.have.length(1)
+    })
+
     it('stops the write path instead of throwing on every message', async function () {
         await helper.load(nodeImports, flow)
         const text = helper.getNode('node-ui-text')
