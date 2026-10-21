@@ -123,6 +123,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         return rec
     }
 
+    const builtMessage = (point) => ({ payload: point?.y, topic: point?.category, _datapoint: point })
     const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
     const pointCount = (d) => (d === undefined || d === null) ? 0 : (Array.isArray(d) ? d.length : 1)
 
@@ -270,6 +271,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
+            if (Array.isArray(target[prop]?.msg) && Array.isArray(value)) {
+                records[SET_SERIES](prop, value.map(builtMessage))
+                return true
+            }
             const rec = writeValue(prop, cloneValue(value))
             emit(prop, rec, prop)
             return true
