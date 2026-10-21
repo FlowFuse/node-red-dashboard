@@ -30,14 +30,23 @@
             env.vueSfcWorkerShim = true
         }
 
+        /** Newer Node-RED versions register HTML-like languages itself, including the worker mapping */
+        function nodeRedRegistersHtmlLanguages () {
+            return typeof RED.editor?.codeEditor?.monaco?.registerHTMLLanguage === 'function'
+        }
+
         function registerHtmlLanguageService (monaco) {
+            const options = { data: { useDefaultDataProvider: true } }
+            if (nodeRedRegistersHtmlLanguages()) {
+                RED.editor.codeEditor.monaco.registerHTMLLanguage(LANGUAGE_ID, options)
+                return
+            }
             // Monaco 0.55 moved monaco.languages.html to monaco.html
             const html = monaco.html?.registerHTMLLanguageService ? monaco.html : monaco.languages.html
             if (!html?.registerHTMLLanguageService) {
                 return
             }
-            const options = Object.assign({}, html.htmlDefaults?.options, { data: { useDefaultDataProvider: true } })
-            html.registerHTMLLanguageService(LANGUAGE_ID, options)
+            html.registerHTMLLanguageService(LANGUAGE_ID, Object.assign({}, html.htmlDefaults?.options, options))
         }
 
         /**
@@ -63,7 +72,9 @@
             const query = version ? '?v=' + encodeURIComponent(version) : ''
             const base = new URL('resources/' + MODULE + '/vue-editor/', document.baseURI)
             monaco.languages.onLanguage(LANGUAGE_ID, function () {
-                shimWorkerLabel()
+                if (!nodeRedRegistersHtmlLanguages()) {
+                    shimWorkerLabel()
+                }
                 import(new URL('vue-sfc.mjs' + query, base).href)
                     .then(m => m.activate(monaco, { dataUrl: new URL('vuetify.json' + query, base).href }))
                     .catch(err => console.warn('Dashboard: could not load the Vue editor support', err))

@@ -8,6 +8,8 @@
  *    are tokenized with JavaScript embedded; <script> and <style> blocks embed JavaScript/TypeScript and CSS/SCSS/Less)
  *  - Vue and Vuetify completion and hover for tags, props, events, slots and directives, using Vuetify's
  *    web-types data for the Vuetify version bundled with the Dashboard (see scripts/build-vue-editor-data.js)
+ *  - on Node-RED versions that support it, JavaScript and CSS in <script> and <style> blocks, with Dashboard's
+ *    `this` types (vue-script.mjs)
  *
  * The HTML language service (completion, hover, formatting, folding from Monaco's html worker) is registered by
  * the plugin itself, because it has to be in place before the language is first used.
@@ -603,6 +605,14 @@ export function activate (monaco, { dataUrl }) {
             }
         }
     })
+
+    // JavaScript and CSS in <script> and <style> blocks come from Node-RED (newer versions), which this adds
+    // Dashboard's `this` types to. Loaded with the same cache-busting query as this module.
+    if (typeof globalThis.RED?.editor?.codeEditor?.monaco?.registerEmbeddedLanguages === 'function') {
+        import(new URL('./vue-script.mjs' + new URL(import.meta.url).search, import.meta.url).href)
+            .then(script => script.activate(monaco, { languageId: LANGUAGE_ID }))
+            .catch(err => console.warn('vue-sfc: could not load <script> support', err))
+    }
 
     return { ready }
 }
