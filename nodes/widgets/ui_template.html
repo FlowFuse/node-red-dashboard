@@ -183,6 +183,11 @@
                 const that = this
                 const $templateScope = $('#node-input-templateScope')
 
+                // Monaco gets Vue/Vuetify syntax and completions from the ui-template-vue-editor plugin (nodes/plugins/vue-editor.html).
+                // ACE, Monaco without the plugin, or an nr-assistant too old for vue-sfc keeps the HTML mode.
+                const vueEditor = RED.plugins.getPlugin('ui-template-vue-editor')
+                const htmlMode = vueEditor?.useVueSfc?.() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
+
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
                 if (RED.nodes.subflow(this.z)) {
@@ -239,15 +244,15 @@
                         break
                     case 'widget:ui':
                         $('#template-row-ui').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     case 'widget:page':
                         $('#template-row-page').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     default:
                         $('#template-row-group, #template-row-class').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     }
                     resize.call(that)
@@ -255,7 +260,7 @@
 
                 this.editor = RED.editor.createEditor({
                     id: 'node-input-format-editor',
-                    mode: 'ace/mode/html',
+                    mode: htmlMode,
                     value: $('#node-input-format').val()
                 })
 
@@ -263,7 +268,7 @@
                     url: 'uitemplates', // where to get the data from
                     type: 'ui-template', // the type of object the library is for
                     editor: this.editor, // the field name the main text body goes to
-                    mode: 'ace/mode/html',
+                    mode: htmlMode,
                     fields: ['name']
                 })
 
@@ -275,7 +280,7 @@
                     e.preventDefault()
                     const value = that.editor.getValue()
                     RED.editor.editText({
-                        mode: $templateScope.val() === 'global' ? 'css' : 'html',
+                        mode: $templateScope.val() === 'global' ? 'css' : htmlMode.replace('ace/mode/', ''),
                         value,
                         width: 'Infinity',
                         cursor: that.editor.getCursorPosition(),

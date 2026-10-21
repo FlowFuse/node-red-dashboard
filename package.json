@@ -31,15 +31,17 @@
     ],
     "files": [
         "dist/*",
-        "nodes/*"
+        "nodes/*",
+        "resources/*"
     ],
     "scripts": {
-        "build": "vite build",
-        "build:dev": "cross-env NODE_ENV=development vite build --mode development",
+        "build": "npm run build:vue-editor && vite build",
+        "build:dev": "npm run build:vue-editor && cross-env NODE_ENV=development vite build --mode development",
+        "build:vue-editor": "node scripts/build-vue-editor-data.js",
         "cy:open": "cypress open",
         "cy:run": "cypress run",
         "cy:server": "node-red -u ./cypress/fixtures/user-dir/ -p 1881",
-        "dev": "cross-env NODE_ENV=development vite build --mode development --watch",
+        "dev": "npm run build:vue-editor && cross-env NODE_ENV=development vite build --mode development --watch",
         "dev:prod": "vite build --watch",
         "docs:build": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
@@ -157,6 +159,9 @@
             "ui-event": "nodes/widgets/ui_event.js",
             "ui-control": "nodes/widgets/ui_control.js",
             "ui-progress": "nodes/widgets/ui_progress.js"
+        },
+        "plugins": {
+            "ui-template-vue-editor": "nodes/plugins/vue-editor.html"
         }
     },
     "overrides": {
