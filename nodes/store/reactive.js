@@ -5,6 +5,8 @@ const MERGE_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/mergeEntry')
 const TRIM_SERIES = Symbol.for('@flowfuse/node-red-dashboard/trimSeries')
 const ENTRY_MSG = Symbol.for('@flowfuse/node-red-dashboard/entryMsg')
 const NAMESPACE = 'dashboardStore'
+const SERIES_METHODS = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin'])
+const RETURNS_ARRAY = new Set(['sort', 'reverse', 'fill', 'copyWithin'])
 
 class Entry {
     constructor () {
@@ -138,8 +140,20 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     const wrapSeries = (prop, rec, points, notify) => {
         const isCurrent = () => rec.plainPoints === points
         const deleteOther = deleteReported(notify, prop)
-        return new Proxy(points, {
-            get: readWrapped(notify, prop, cloneValue, new WeakMap()),
+        const readPoint = readWrapped(notify, prop, cloneValue, new WeakMap())
+        const proxy = new Proxy(points, {
+            get (t, p, r) {
+                if (!SERIES_METHODS.has(p)) {
+                    return readPoint(t, p, r)
+                }
+                return (...args) => {
+                    if (!isCurrent()) {
+                        const result = Array.prototype[p].apply(points, argsWithCopies(p, args))
+                        return RETURNS_ARRAY.has(p) ? proxy : result
+                    }
+                    return runSeriesMethod(prop, rec, p, args)
+                }
+            },
             set (t, p, v) {
                 if (typeof p === 'symbol') return Reflect.set(t, p, v)
                 if (!isIndex(p) && p !== 'length') {
@@ -168,12 +182,86 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
                 return true
             }
         })
+        return proxy
+    }
+
+    const argsWithCopies = (name, args) => {
+        if (name === 'push' || name === 'unshift') {
+            return args.map(cloneValue)
+        }
+        if (name === 'splice') {
+            return [...args.slice(0, 2), ...args.slice(2).map(cloneValue)]
+        }
+        if (name === 'fill') {
+            return [cloneValue(args[0]), ...args.slice(1)]
+        }
+        return args
+    }
+
+    const runSeriesMethod = (prop, rec, name, args) => {
+        const points = rec.plainPoints
+        const before = name === 'fill' || name === 'copyWithin' ? points.slice() : null
+        const result = Array.prototype[name].apply(points, argsWithCopies(name, args))
+        if (before) {
+            for (let i = 0; i < points.length; i++) {
+                if (points[i] !== before[i]) {
+                    points[i] = cloneValue(points[i])
+                }
+            }
+        }
+        const msgs = messagesAfterEdgeChange(rec, name, args.length, result)
+        if (msgs) {
+            commitMessages(prop, rec, msgs)
+        } else {
+            syncMessagesToPoints(prop, rec)
+        }
+        return RETURNS_ARRAY.has(name) ? rec.value : result
+    }
+
+    const isPoint = (p) => p !== undefined && p !== null
+
+    // push, unshift, pop and shift only touch an edge, so the messages there can change without a full rebuild
+    const messagesAfterEdgeChange = (rec, name, added, removed) => {
+        const msgs = rec.msg
+        const points = rec.plainPoints
+        const last = msgs[msgs.length - 1]
+        if (name === 'push') {
+            const pushed = points.slice(points.length - added)
+            if (!pushed.every(isPoint) || (last && pointCount(last._datapoint) === 0)) {
+                return null
+            }
+            msgs.push(...pushed.map(storedMessageFor))
+            return msgs
+        }
+        if (name === 'unshift') {
+            const unshifted = points.slice(0, added)
+            if (!unshifted.every(isPoint)) {
+                return null
+            }
+            msgs.unshift(...unshifted.map(storedMessageFor))
+            return msgs
+        }
+        if (name === 'pop' && last?._datapoint === removed && (msgs.length === 1 || pointCount(msgs[msgs.length - 2]._datapoint) > 0)) {
+            msgs.pop()
+            return msgs
+        }
+        if (name === 'shift' && msgs.length > 0 && msgs[0]._datapoint === removed) {
+            msgs.shift()
+            return msgs
+        }
+        return null
+    }
+
+    const commitMessages = (prop, rec, msgs) => {
+        writeValue(prop, rec.plainPoints, true)
+        rec.msg = msgs
+        emit(prop, rec, prop)
     }
 
     const removeGaps = (points) => {
         let writeAt = 0
         for (let readAt = 0; readAt < points.length; readAt++) {
-            if (points[readAt] !== undefined && points[readAt] !== null) {
+            if (isPoint(points[readAt])) {
                 points[writeAt++] = points[readAt]
             }
         }
@@ -207,14 +295,11 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     const replaceOneMessage = (prop, rec, i, replaced) => {
         const point = rec.plainPoints[i]
         const owner = rec.msg[i]
-        if (!owner || point === undefined || point === null || owner._datapoint !== replaced || (i > 0 && pointCount(rec.msg[i - 1]._datapoint) === 0)) {
+        if (!owner || !isPoint(point) || owner._datapoint !== replaced || (i > 0 && pointCount(rec.msg[i - 1]._datapoint) === 0)) {
             return false
         }
-        const msgs = rec.msg
-        msgs[i] = storedMessageFor(point)
-        writeValue(prop, rec.plainPoints, true)
-        rec.msg = msgs
-        emit(prop, rec, prop)
+        rec.msg[i] = storedMessageFor(point)
+        commitMessages(prop, rec, rec.msg)
         return true
     }
 
@@ -239,9 +324,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             }
         }
         synced.push(...trailingWithoutPoints)
-        writeValue(prop, points, true)
-        rec.msg = synced
-        emit(prop, rec, prop)
+        commitMessages(prop, rec, synced)
     }
 
     const builtMessage = (point) => ({ payload: point?.y, topic: point?.category, _datapoint: point })
