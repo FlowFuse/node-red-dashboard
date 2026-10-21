@@ -37,6 +37,28 @@ function deepClone (v, seen = new WeakMap()) {
     return out
 }
 
+function readWrapped (notify, path, clone, seen) {
+    return (t, p, r) => {
+        const v = Reflect.get(t, p, r)
+        const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
+        if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
+            return v
+        }
+        return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
+    }
+}
+
+function deleteReported (notify, path) {
+    return (t, p) => {
+        const existed = p in t
+        const ok = delete t[p]
+        if (existed) {
+            notify(`${path}.${String(p)}`)
+        }
+        return ok
+    }
+}
+
 function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnRead = false) {
     if (!isReactable(value)) return value
     if (seen.has(value)) return seen.get(value)
@@ -50,22 +72,10 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnR
             else if (shrank) notify(path)
             return true
         },
-        deleteProperty (t, p) {
-            const existed = p in t
-            const ok = delete t[p]
-            if (existed) notify(`${path}.${String(p)}`)
-            return ok
-        }
+        deleteProperty: deleteReported(notify, path)
     }
     if (wrapOnRead) {
-        traps.get = (t, p, r) => {
-            const v = Reflect.get(t, p, r)
-            const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
-            if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
-                return v
-            }
-            return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
-        }
+        traps.get = readWrapped(notify, path, clone, seen)
     }
     const proxy = new Proxy(value, traps)
     // registered before walking children so a cycle resolves to this proxy instead of recursing
@@ -115,12 +125,123 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        const wrapped = deepReactive(value, notify, prop, cloneValue, new WeakMap(), wrapOnRead)
+        const wrapped = wrapOnRead ? wrapSeries(prop, rec, value, notify) : deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
         rec.plainPoints = wrapOnRead ? value : undefined
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
+    }
+
+    const isIndex = (p) => typeof p === 'string' && /^(0|[1-9]\d*)$/.test(p)
+
+    const wrapSeries = (prop, rec, points, notify) => {
+        const isCurrent = () => rec.plainPoints === points
+        const deleteOther = deleteReported(notify, prop)
+        return new Proxy(points, {
+            get: readWrapped(notify, prop, cloneValue, new WeakMap()),
+            set (t, p, v) {
+                if (typeof p === 'symbol') return Reflect.set(t, p, v)
+                if (!isIndex(p) && p !== 'length') {
+                    t[p] = cloneValue(v)
+                    notify(`${prop}.${p}`)
+                    return true
+                }
+                const replaced = t[p]
+                t[p] = p === 'length' ? v : cloneValue(v)
+                if (!isCurrent()) {
+                    return true
+                }
+                if (p === 'length' || !replaceOneMessage(prop, rec, Number(p), replaced)) {
+                    syncMessagesToPoints(prop, rec)
+                }
+                return true
+            },
+            deleteProperty (t, p) {
+                if (!isIndex(p) || !isCurrent()) {
+                    return deleteOther(t, p)
+                }
+                if (p in t) {
+                    t.splice(Number(p), 1)
+                    syncMessagesToPoints(prop, rec)
+                }
+                return true
+            }
+        })
+    }
+
+    const removeGaps = (points) => {
+        let writeAt = 0
+        for (let readAt = 0; readAt < points.length; readAt++) {
+            if (points[readAt] !== undefined && points[readAt] !== null) {
+                points[writeAt++] = points[readAt]
+            }
+        }
+        points.length = writeAt
+    }
+
+    const indexMessagesByPoint = (msgs) => {
+        const messageOfPoint = new Map()
+        const messagesWithoutPointsBefore = new Map()
+        let withoutPoints = []
+        for (const msg of msgs) {
+            const msgPoints = pointsOf(msg._datapoint)
+            if (msgPoints.length === 0) {
+                withoutPoints.push(msg)
+                continue
+            }
+            messagesWithoutPointsBefore.set(msg, withoutPoints)
+            withoutPoints = []
+            for (const point of msgPoints) {
+                messageOfPoint.set(point, msg)
+            }
+        }
+        return { messageOfPoint, messagesWithoutPointsBefore, trailingWithoutPoints: withoutPoints }
+    }
+
+    const storedMessageFor = (point) => {
+        const { _datapoint, ...fields } = builtMessage(point)
+        return toStoredMessage(cloneValue(fields), point)
+    }
+
+    const replaceOneMessage = (prop, rec, i, replaced) => {
+        const point = rec.plainPoints[i]
+        const owner = rec.msg[i]
+        if (!owner || point === undefined || point === null || owner._datapoint !== replaced || (i > 0 && pointCount(rec.msg[i - 1]._datapoint) === 0)) {
+            return false
+        }
+        const msgs = rec.msg
+        msgs[i] = storedMessageFor(point)
+        writeValue(prop, rec.plainPoints, true)
+        rec.msg = msgs
+        emit(prop, rec, prop)
+        return true
+    }
+
+    const syncMessagesToPoints = (prop, rec) => {
+        const points = rec.plainPoints
+        removeGaps(points)
+        const { messageOfPoint, messagesWithoutPointsBefore, trailingWithoutPoints } = indexMessagesByPoint(rec.msg)
+        const kept = new Set()
+        const synced = []
+        let i = 0
+        while (i < points.length) {
+            const msg = messageOfPoint.get(points[i])
+            const msgPoints = msg && !kept.has(msg) ? pointsOf(msg._datapoint) : []
+            const stillWhole = msgPoints.length > 0 && msgPoints.every((point, k) => points[i + k] === point)
+            if (stillWhole) {
+                kept.add(msg)
+                synced.push(...messagesWithoutPointsBefore.get(msg), msg)
+                i += msgPoints.length
+            } else {
+                synced.push(storedMessageFor(points[i]))
+                i++
+            }
+        }
+        synced.push(...trailingWithoutPoints)
+        writeValue(prop, points, true)
+        rec.msg = synced
+        emit(prop, rec, prop)
     }
 
     const builtMessage = (point) => ({ payload: point?.y, topic: point?.category, _datapoint: point })
@@ -197,16 +318,20 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[APPEND_ENTRY] = (prop, msg) => {
         let rec = records[prop]
         const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
-        // the proxy clones on push, so points must not be cloned again here
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
         if (!rec || replaced) {
             rec = writeValue(prop, [], true)
             rec.msg = []
         }
-        const start = rec.value.length
-        for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = toStoredDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
+        const points = rec.plainPoints
+        const start = points.length
+        for (const p of pointsOf(_datapoint)) {
+            points.push(cloneValue(p))
+            rec.timestamp = now()
+            emit(prop, rec, `${prop}.${points.length - 1}`)
+        }
+        const stored = toStoredDatapoint(points, _datapoint, start, points.length)
         if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
         rec.msg.push(toStoredMessage(owned, stored))
         if (replaced) emit(prop, rec, prop)
