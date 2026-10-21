@@ -54,6 +54,16 @@ function storeHolds (global, id) {
     return store['$' + id]?.msg
 }
 
+function seriesInStep (global, id) {
+    const store = global.get('dashboardStore')
+    const msgs = store['$' + id]?.msg
+    if (!Array.isArray(msgs)) {
+        return
+    }
+    const points = msgs.flatMap((m) => (m._datapoint === undefined || m._datapoint === null) ? [] : [].concat(m._datapoint))
+    should(store[id]).eql(points, `value of ${id} matches its messages' points`)
+}
+
 function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
     const warnings = []
     const baseNode = { warn: (m) => warnings.push(m) }
@@ -76,6 +86,7 @@ function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
         datastore.has(step.id).should.equal(legacy.has(step.id), `${step.id} after ${step.op}`)
         if (shared) {
             should(storeHolds(global, step.id)).eql(legacy.get(step.id), `store for ${step.id} after ${step.op}`)
+            seriesInStep(global, step.id)
         }
         if (legacy.has(step.id)) {
             comparedWithData++
@@ -85,6 +96,7 @@ function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
         should(datastore.get(id)).eql(legacy.get(id), id)
         if (shared) {
             should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
+            seriesInStep(global, id)
         }
     }
     return { comparedWithData, warnings, shared }
@@ -103,6 +115,7 @@ function compareAtEnd (steps, ids) {
     const withData = ids.filter((id) => legacy.has(id))
     for (const id of ids) {
         should(storeHolds(global, id)).eql(legacy.get(id), `store for ${id}`)
+        seriesInStep(global, id)
     }
     return { withData, warnings }
 }

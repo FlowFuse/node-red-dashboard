@@ -361,7 +361,7 @@ describe('store: data.js chart writes', function () {
         store['$chart-clear'].msg.should.eql([])
     })
 
-    it('does not rebuild the stored series until the batch is reached', function () {
+    it('trims the stored series on every filter', function () {
         const global = storeGlobal()
         const node = fakeNode('chart-3')
         for (let i = 0; i < 100; i++) {
@@ -373,11 +373,11 @@ describe('store: data.js chart writes', function () {
         }
 
         liveStore(global, 'canary-3').should.equal('live')
-        global.get('dashboardStore')['chart-3'].should.have.length(100)
+        global.get('dashboardStore')['chart-3'].should.have.length(41)
         datastore.get('chart-3').should.have.length(41)
     })
 
-    it('rebuilds the stored series on the batch boundary', function () {
+    it('trims value and messages together', function () {
         const global = storeGlobal()
         const node = fakeNode('chart-batch')
         for (let i = 0; i < 100; i++) {
