@@ -1362,16 +1362,19 @@ describe('store: MERGE_ENTRY', function () {
 describe('store: ENTRY_MSG', function () {
     const point = (x) => ({ payload: x, topic: 'a', _datapoint: { category: 'a', x, y: x } })
 
-    it('reads a stored message without building a new object', function () {
+    it('reads a stored message as a copy the caller owns', function () {
         const { store } = makeStore({ clone: util.cloneMessage })
-        store[MERGE_ENTRY]('k', { payload: 1, topic: 't' })
-        store[MERGE_ENTRY]('k', { payload: 2 })
+        store[MERGE_ENTRY]('k', { payload: 1, topic: 't', meta: { a: 1 } })
 
-        store[ENTRY_MSG]('k').should.equal(store[ENTRY_MSG]('k'))
-        store[ENTRY_MSG]('k').should.eql({ payload: 2, topic: 't' })
+        const msg = store[ENTRY_MSG]('k')
+        msg.meta.a = 2
+        msg.payload = 99
+
+        store[ENTRY_MSG]('k').should.eql({ topic: 't', meta: { a: 1 }, payload: 1 })
+        store[ENTRY_MSG]('k').should.not.equal(msg)
     })
 
-    it('reads a series with pending trims applied, as a frozen copy', function () {
+    it('reads a trimmed series as a copy the caller owns', function () {
         const { store } = makeStore({ clone: util.cloneMessage })
         for (let x = 0; x < 5; x++) {
             store[APPEND_ENTRY]('c', point(x))
@@ -1379,20 +1382,21 @@ describe('store: ENTRY_MSG', function () {
         store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m.payload > 2))
 
         const msgs = store[ENTRY_MSG]('c')
+        msgs[0]._datapoint.y = 999
+        msgs.push({ payload: 'extra' })
 
-        msgs.map((m) => m.payload).should.eql([3, 4])
-        Object.isFrozen(msgs).should.equal(true)
-        store[ENTRY_MSG]('c').should.not.equal(msgs)
+        msgs.slice(0, 2).map((m) => m.payload).should.eql([3, 4])
+        store.c[0].y.should.equal(3)
+        store[ENTRY_MSG]('c').should.have.length(2)
     })
 
     it('matches the $ view', function () {
         const { store } = makeStore({ clone: util.cloneMessage })
         store[APPEND_ENTRY]('c', point(1))
-        store[TRIM_SERIES]('c', (msgs) => msgs)
         store[MERGE_ENTRY]('k', { payload: 1 })
 
         store[ENTRY_MSG]('c').should.eql(store.$c.msg)
-        store[ENTRY_MSG]('k').should.equal(store.$k.msg)
+        store[ENTRY_MSG]('k').should.eql(store.$k.msg)
     })
 
     it('reads nothing for a missing entry', function () {

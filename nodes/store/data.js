@@ -104,7 +104,7 @@ const getters = {
     },
     // given a widget id, return the latest msg received
     msg (id) {
-        return config.RED.util.cloneMessage(getStoreOrWarn('reading', id)?.[ENTRY_MSG](id))
+        return getStoreOrWarn('reading', id)?.[ENTRY_MSG](id)
     },
     has (id) {
         const store = getStoreOrWarn('reading', id)

@@ -125,7 +125,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
     const pointCount = (d) => (d === undefined || d === null) ? 0 : (Array.isArray(d) ? d.length : 1)
-    const msgOf = (rec) => Array.isArray(rec.msg) ? Object.freeze(rec.msg.slice()) : rec.msg
 
     const messagesWithLivePoints = (rec) => {
         let i = 0
@@ -141,7 +140,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[ENTRY_MSG] = (prop) => {
         const rec = records[prop]
-        return rec ? msgOf(rec) : undefined
+        if (!rec) {
+            return undefined
+        }
+        return clone(rec.msg)
     }
 
     records[MERGE_ENTRY] = (prop, msg) => {
