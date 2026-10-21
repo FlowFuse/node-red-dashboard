@@ -108,6 +108,7 @@
         "should-sinon": "^0.0.6",
         "sinon": "^21.0.0",
         "socket.io-client": "^4.8.1",
+        "socket.io-parser": "~4.2.6",
         "sort-package-json": "^2.15.1",
         "svgo": "^4.0.0",
         "vite": "^6.4.4",
