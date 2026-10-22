@@ -1,4 +1,4 @@
-const { pointsOf, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints } = require('./series.js')
+const { pointsOf, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages } = require('./series.js')
 
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
@@ -39,6 +39,28 @@ function deepClone (v, seen = new WeakMap()) {
     return out
 }
 
+function readWrapped (notify, path, clone, seen) {
+    return (t, p, r) => {
+        const v = Reflect.get(t, p, r)
+        const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
+        if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
+            return v
+        }
+        return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
+    }
+}
+
+function deleteReported (notify, path) {
+    return (t, p) => {
+        const existed = p in t
+        const ok = delete t[p]
+        if (existed) {
+            notify(`${path}.${String(p)}`)
+        }
+        return ok
+    }
+}
+
 function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnRead = false) {
     if (!isReactable(value)) return value
     if (seen.has(value)) return seen.get(value)
@@ -52,22 +74,10 @@ function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnR
             else if (shrank) notify(path)
             return true
         },
-        deleteProperty (t, p) {
-            const existed = p in t
-            const ok = delete t[p]
-            if (existed) notify(`${path}.${String(p)}`)
-            return ok
-        }
+        deleteProperty: deleteReported(notify, path)
     }
     if (wrapOnRead) {
-        traps.get = (t, p, r) => {
-            const v = Reflect.get(t, p, r)
-            const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
-            if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
-                return v
-            }
-            return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
-        }
+        traps.get = readWrapped(notify, path, clone, seen)
     }
     const proxy = new Proxy(value, traps)
     // registered before walking children so a cycle resolves to this proxy instead of recursing
@@ -117,12 +127,68 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        const wrapped = deepReactive(value, notify, prop, cloneValue, new WeakMap(), wrapOnRead)
+        const wrapped = wrapOnRead ? wrapSeries(prop, rec, value, notify) : deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
         rec.plainPoints = wrapOnRead ? value : undefined
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
+    }
+
+    const storedMessageFor = (datapoint) => {
+        const { _datapoint, ...fields } = builtMessage(datapoint)
+        return toStoredMessage(cloneValue(fields), Array.isArray(datapoint) ? Object.freeze(datapoint.slice()) : datapoint)
+    }
+
+    const commitMessages = (prop, rec, msgs) => {
+        writeValue(prop, rec.plainPoints, true)
+        rec.msg = msgs
+        emit(prop, rec, prop)
+    }
+
+    const relink = (prop, rec, from, to, fresh) => {
+        commitMessages(prop, rec, relinkMessages(rec.plainPoints, rec.msg, { from, to, fresh, clone: cloneValue, toMessage: storedMessageFor }))
+    }
+
+    const isIndex = (p) => typeof p === 'string' && /^(0|[1-9]\d*)$/.test(p)
+
+    const wrapSeries = (prop, rec, points, notify) => {
+        const isCurrent = () => rec.plainPoints === points
+        const deleteOther = deleteReported(notify, prop)
+        return new Proxy(points, {
+            get: readWrapped(notify, prop, cloneValue, new WeakMap()),
+            set (t, p, v) {
+                if (typeof p === 'symbol') return Reflect.set(t, p, v)
+                if (!isIndex(p) && p !== 'length') {
+                    t[p] = cloneValue(v)
+                    notify(`${prop}.${p}`)
+                    return true
+                }
+                const oldLength = t.length
+                const value = p === 'length' ? v : cloneValue(v)
+                t[p] = value
+                if (!isCurrent()) {
+                    return true
+                }
+                if (p === 'length') {
+                    relink(prop, rec, Math.min(oldLength, t.length), t.length, new Set())
+                } else {
+                    const i = Number(p)
+                    relink(prop, rec, Math.min(i, oldLength), i + 1, new Set([value]))
+                }
+                return true
+            },
+            deleteProperty (t, p) {
+                if (!isIndex(p) || !isCurrent()) {
+                    return deleteOther(t, p)
+                }
+                if (p in t) {
+                    delete t[p]
+                    relink(prop, rec, Number(p), Number(p) + 1, new Set())
+                }
+                return true
+            }
+        })
     }
 
     records[ENTRY_MSG] = (prop) => {
@@ -178,16 +244,20 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[APPEND_ENTRY] = (prop, msg) => {
         let rec = records[prop]
         const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
-        // the proxy clones on push, so points must not be cloned again here
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
         if (!rec || replaced) {
             rec = writeValue(prop, [], true)
             rec.msg = []
         }
-        const start = rec.value.length
-        for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = storedDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
+        const points = rec.plainPoints
+        const start = points.length
+        for (const p of pointsOf(_datapoint)) {
+            points.push(cloneValue(p))
+            rec.timestamp = now()
+            emit(prop, rec, `${prop}.${points.length - 1}`)
+        }
+        const stored = storedDatapoint(points, _datapoint, start, points.length)
         if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
         rec.msg.push(toStoredMessage(owned, stored))
         if (replaced) emit(prop, rec, prop)
