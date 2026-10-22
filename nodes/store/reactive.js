@@ -1,3 +1,6 @@
+const { preparedSeries, SeriesEntry } = require('./series.js')
+const { isReactable, deepClone, deepReactive, deepFreeze, freezeOwned } = require('./utils.js')
+
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
@@ -13,82 +16,7 @@ class Entry {
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
-        this.plainPoints = undefined
     }
-}
-
-// only plain objects and arrays are deep-watched; Buffers, Dates, class instances etc. are opaque leaves
-function isReactable (v) {
-    if (Array.isArray(v)) return true
-    if (v === null || typeof v !== 'object') return false
-    const proto = Object.getPrototypeOf(v)
-    return proto === null || Object.getPrototypeOf(proto) === null
-}
-
-// reads through proxies (structuredClone rejects them); production injects RED.util.cloneMessage
-function deepClone (v, seen = new WeakMap()) {
-    if (v === null || typeof v !== 'object') return v
-    if (Buffer.isBuffer(v)) return Buffer.from(v)
-    if (v instanceof Date) return new Date(v)
-    if (seen.has(v)) return seen.get(v)
-    const out = Array.isArray(v) ? [] : {}
-    seen.set(v, out)
-    for (const k of Object.keys(v)) out[k] = deepClone(v[k], seen)
-    return out
-}
-
-function deepReactive (value, notify, path, clone, seen = new WeakMap(), wrapOnRead = false) {
-    if (!isReactable(value)) return value
-    if (seen.has(value)) return seen.get(value)
-    const traps = {
-        set (t, p, v) {
-            if (typeof p === 'symbol') return Reflect.set(t, p, v)
-            // a push writes the new index then grows length; only a shrink is a change worth reporting
-            const shrank = p === 'length' && Array.isArray(t) && v < t.length
-            t[p] = wrapOnRead ? clone(v) : deepReactive(clone(v), notify, `${path}.${String(p)}`, clone)
-            if (p !== 'length') notify(`${path}.${String(p)}`)
-            else if (shrank) notify(path)
-            return true
-        },
-        deleteProperty (t, p) {
-            const existed = p in t
-            const ok = delete t[p]
-            if (existed) notify(`${path}.${String(p)}`)
-            return ok
-        }
-    }
-    if (wrapOnRead) {
-        traps.get = (t, p, r) => {
-            const v = Reflect.get(t, p, r)
-            const descriptor = typeof p === 'symbol' ? undefined : Object.getOwnPropertyDescriptor(t, p)
-            if (!descriptor || (!descriptor.writable && !descriptor.configurable)) {
-                return v
-            }
-            return deepReactive(v, notify, `${path}.${p}`, clone, seen, true)
-        }
-    }
-    const proxy = new Proxy(value, traps)
-    // registered before walking children so a cycle resolves to this proxy instead of recursing
-    seen.set(value, proxy)
-    if (!wrapOnRead) {
-        for (const k of Object.keys(value)) value[k] = deepReactive(value[k], notify, `${path}.${k}`, clone, seen)
-    }
-    return proxy
-}
-
-function deepFreeze (v) {
-    if (!isReactable(v) || Object.isFrozen(v)) return v
-    Object.freeze(v)
-    for (const k of Object.keys(v)) deepFreeze(v[k])
-    return v
-}
-
-function freezeOwned (owned, except) {
-    for (const k of Object.keys(owned)) {
-        if (k === except || k === 'req' || k === 'res') continue
-        deepFreeze(owned[k])
-    }
-    return owned
 }
 
 function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = Date.now } = {}) {
@@ -98,44 +26,57 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[STORE] = true
 
+    const storeProps = { cloneValue, emit, now, entryFor: (prop) => records[prop] }
+
+    const snapshot = (rec) => {
+        // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
+        if (Array.isArray(rec.value) || !('payload' in rec.msg)) {
+            return
+        }
+        rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
+        if (rec.history.length > maxHistory) {
+            rec.history.shift()
+        }
+    }
+
     // returns the record without notifying, so a caller can finish writing it before onChange fires
-    const writeValue = (prop, value, wrapOnRead = false) => {
+    const writeValue = (prop, value) => {
         let rec = records[prop]
-        if (!rec) {
+        if (rec instanceof SeriesEntry) {
+            const history = rec.history
+            rec = new Entry()
+            rec.history = history
+            records[prop] = rec
+        } else if (rec) {
+            snapshot(rec)
+        } else {
             rec = new Entry()
             records[prop] = rec
-        } else if (!Array.isArray(rec.value) && 'payload' in rec.msg) {
-            // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-            rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
-            if (rec.history.length > maxHistory) rec.history.shift()
         }
         const notify = (path) => {
             // a replaced value keeps its proxies alive; they must not report into the record any more
-            if (wrapOnRead ? rec.plainPoints !== value : rec.value !== wrapped) return
+            if (records[prop] !== rec || rec.value !== wrapped) return
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        const wrapped = deepReactive(value, notify, prop, cloneValue, new WeakMap(), wrapOnRead)
+        const wrapped = deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
-        rec.plainPoints = wrapOnRead ? value : undefined
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
     }
 
-    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
-    const pointCount = (d) => (d === undefined || d === null) ? 0 : (Array.isArray(d) ? d.length : 1)
-
-    const messagesWithLivePoints = (rec) => {
-        let i = 0
-        return Object.freeze(rec.msg.map((m) => {
-            const n = pointCount(m._datapoint)
-            if (n === 0) {
-                return m
-            }
-            const livePoints = Array.from({ length: n }, () => rec.value[i++])
-            return Object.freeze({ ...m, _datapoint: Array.isArray(m._datapoint) ? Object.freeze(livePoints) : livePoints[0] })
-        }))
+    const seriesAt = (prop) => {
+        const current = records[prop]
+        if (current instanceof SeriesEntry) {
+            return current
+        }
+        if (current) {
+            snapshot(current)
+        }
+        const entry = new SeriesEntry(prop, storeProps, current ? current.history : [])
+        records[prop] = entry
+        return entry
     }
 
     records[ENTRY_MSG] = (prop) => {
@@ -149,9 +90,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[MERGE_ENTRY] = (prop, msg) => {
         const current = records[prop]
         const { payload, ...incoming } = msg
-        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
+        const isSeries = current instanceof SeriesEntry
+        const previous = isSeries ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
         const { payload: storedPayload, ...stored } = previous
-        const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
+        const keepValue = current && !isSeries && !('payload' in msg)
         const owned = freezeOwned(cloneValue(incoming))
         const value = keepValue ? undefined : cloneValue(payload)
         const rec = keepValue ? current : writeValue(prop, value)
@@ -162,91 +104,27 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         emit(prop, rec, prop)
     }
 
-    const toStoredDatapoint = (series, datapoint, start, end) => {
-        if (end === start) return undefined
-        return Array.isArray(datapoint) ? Object.freeze(series.slice(start, end)) : series[start]
-    }
-
-    const toStoredMessage = (owned, datapoint) => {
-        freezeOwned(owned, '_datapoint')
-        if (datapoint !== undefined) owned._datapoint = datapoint
-        else deepFreeze(owned._datapoint)
-        return Object.freeze(owned)
-    }
-
     records[SET_SERIES] = (prop, msgs) => {
-        const points = []
-        const parts = msgs.map((msg) => {
-            const { _datapoint, ...rest } = msg
-            const owned = cloneValue(rest)
-            const datapoint = cloneValue(_datapoint)
-            const start = points.length
-            for (const p of pointsOf(datapoint)) points.push(p)
-            return { msg, owned, datapoint, start, end: points.length }
-        })
-        const rec = writeValue(prop, points, true)
-        rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
-            const stored = toStoredDatapoint(points, datapoint, start, end)
-            if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
-            return toStoredMessage(owned, stored)
-        })
-        emit(prop, rec, prop)
+        const prepared = preparedSeries(msgs, cloneValue)
+        seriesAt(prop).replaceAll(prepared)
     }
 
     records[APPEND_ENTRY] = (prop, msg) => {
-        let rec = records[prop]
-        const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
-        // the proxy clones on push, so points must not be cloned again here
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
-        if (!rec || replaced) {
-            rec = writeValue(prop, [], true)
-            rec.msg = []
+        const replaced = prop in records && !(records[prop] instanceof SeriesEntry)
+        const entry = seriesAt(prop)
+        entry.append(owned, _datapoint, '_datapoint' in msg)
+        if (replaced) {
+            emit(prop, entry, prop)
         }
-        const start = rec.value.length
-        for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = toStoredDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
-        if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
-        rec.msg.push(toStoredMessage(owned, stored))
-        if (replaced) emit(prop, rec, prop)
     }
 
     records[TRIM_SERIES] = (prop, trim) => {
         const rec = records[prop]
-        if (!rec || !Array.isArray(rec.msg)) {
-            return
+        if (rec instanceof SeriesEntry) {
+            rec.trim(trim)
         }
-        const msgs = trim(rec.msg)
-        if (msgs.length === rec.msg.length) {
-            return
-        }
-        const points = rec.plainPoints
-        const removedMessages = rec.msg.length - msgs.length
-        if (msgs.length === 0 || msgs[0] === rec.msg[removedMessages]) {
-            let removedPoints = 0
-            for (let i = 0; i < removedMessages; i++) {
-                removedPoints += pointCount(rec.msg[i]._datapoint)
-            }
-            points.splice(0, removedPoints)
-        } else {
-            let readAt = 0
-            let writeAt = 0
-            let nextKept = 0
-            for (const m of rec.msg) {
-                const n = pointCount(m._datapoint)
-                if (m === msgs[nextKept]) {
-                    nextKept++
-                    for (let k = 0; k < n; k++) {
-                        points[writeAt++] = points[readAt + k]
-                    }
-                }
-                readAt += n
-            }
-            points.length = writeAt
-        }
-        writeValue(prop, points, true)
-        rec.msg = msgs
-        emit(prop, rec, prop)
     }
 
     const handler = {
@@ -258,7 +136,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
                 if (!rec) return undefined
-                const msg = Array.isArray(rec.msg) ? messagesWithLivePoints(rec) : rec.msg
+                const msg = rec instanceof SeriesEntry ? rec.linkedMessages() : rec.msg
                 return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
@@ -282,7 +160,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             const ok = delete target[prop]
             if (rec) {
                 rec.value = undefined
-                rec.plainPoints = undefined
             }
             if (existed) emit(prop, undefined, prop)
             return ok

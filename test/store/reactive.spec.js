@@ -1776,3 +1776,70 @@ describe('store: series points', function () {
         types.isProxy(seen).should.equal(false)
     })
 })
+
+describe('store: series entries', function () {
+    const pt = (x, category = 'a') => ({ category, x, y: x })
+    const built = (p) => ({ payload: p.y, topic: p.category, _datapoint: p })
+    const uncopiable = () => makeStore({ clone: (v) => { if (v && v.uncopiable) throw new Error('cannot copy'); return util.cloneMessage(v) } })
+
+    it('keeps history when a value becomes a series and back', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store.v = 1
+        store[APPEND_ENTRY]('v', { payload: 2, _datapoint: pt(2) })
+
+        store.v = 3
+        store.v = 4
+
+        store.$v.history.map((h) => h.value).should.eql([1, 3])
+    })
+
+    it('keeps history when a series replaces a value', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store.v = 1
+
+        store[SET_SERIES]('v', [built(pt(2))])
+
+        store.$v.history.map((h) => h.value).should.eql([1])
+    })
+
+    it('stops an old value proxy reporting once the key becomes a series', function () {
+        const { store, log } = makeStore({ clone: util.cloneMessage })
+        store.v = { a: 1 }
+        const held = store.v
+        store[SET_SERIES]('v', [built(pt(2))])
+        log.length = 0
+
+        held.a = 2
+
+        log.should.eql([])
+    })
+
+    it('leaves a value unchanged when an appended message cannot be copied', function () {
+        const { store } = uncopiable()
+        store.c = 1
+
+        should(() => store[APPEND_ENTRY]('c', { payload: 2, uncopiable: true, _datapoint: pt(2) })).throw('cannot copy')
+
+        store[ENTRY_MSG]('c').should.eql({ payload: 1 })
+        store.$c.history.should.eql([])
+    })
+
+    it('stores a message with a very large number of points', function () {
+        const { store } = makeStore()
+        const points = Array.from({ length: 200000 }, (_, i) => pt(i))
+
+        store[SET_SERIES]('c', [{ payload: 'many', _datapoint: points }])
+
+        store.c.should.have.length(200000)
+    })
+
+    it('leaves a value unchanged when a series for its key cannot be copied', function () {
+        const { store } = uncopiable()
+        store.v = 1
+
+        should(() => store[SET_SERIES]('v', [built(pt(2)), { payload: 3, uncopiable: true, _datapoint: pt(3) }])).throw('cannot copy')
+
+        store[ENTRY_MSG]('v').should.eql({ payload: 1 })
+        store.$v.history.should.eql([])
+    })
+})
