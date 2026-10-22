@@ -45,6 +45,25 @@ function normalizeClientId (raw) {
     return (raw === undefined || raw === null || raw === '') ? undefined : String(raw)
 }
 
+const CLIENT_TARGETS = {
+    socketId: (conn) => conn.id,
+    clientId: (conn) => conn._clientId
+}
+
+function clientTargets (msg) {
+    return Object.entries(CLIENT_TARGETS)
+        .map(([field, connValue]) => ({ value: normalizeClientId(msg?._client?.[field]), connValue }))
+        .filter((target) => target.value !== undefined)
+}
+
+function isClientScoped (msg) {
+    return clientTargets(msg).length > 0
+}
+
+function matchesClient (conn, msg) {
+    return clientTargets(msg).every((target) => target.value === target.connValue(conn))
+}
+
 /**
  * Adds socket/client data to a msg payload, if enabled
  *
@@ -134,5 +153,7 @@ module.exports = {
     getTopic,
     addConnectionCredentials,
     normalizeClientId,
+    isClientScoped,
+    matchesClient,
     getThirdPartyWidgets
 }

@@ -38,6 +38,17 @@ Provide custom JS and HTML (including any [Vuetify components](https://vuetifyjs
 
 <DynamicPropsTable/>
 
+## Code Editor
+
+When Node-RED uses its default Monaco code editor, the template editor understands Vue templates:
+
+- Vue syntax is highlighted, including directives (`v-if`, `v-for`, ...), bindings (`:prop`), events (`@click`), slots (`#activator`) and `{{ }}` expressions, which are highlighted as JavaScript.
+- Typing `<v-` suggests Vuetify components. Inside a Vuetify tag, you get suggestions for its props, bound props (`:`), events (`@`) and, on a `<template>` inside a component, that component's slots (`#`). Props with a fixed set of values, such as `variant`, suggest those values.
+- Hovering over a Vuetify component, prop, event or slot shows its type, default and description, with a link to the Vuetify API docs.
+- With a Node-RED version that supports code in `<script>` and `<style>` blocks, you also get JavaScript completion, hover information, parameter hints and error checking inside `<script>`, and CSS completion, checking and colour previews inside `<style>`. `this` knows your component's `data`, `computed` and `methods`, as well as what Dashboard adds, such as `this.send()`, `this.msg` and `this.$socket`.
+
+The component information matches the version of Vuetify that ships with the Dashboard and is loaded from Node-RED itself, so it works offline. Editors using ACE keep the plain HTML mode.
+
 ## Writing Custom Widgets
 
 UI Template will parse different tags and render them into Dashboard. The available tags are:

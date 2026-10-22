@@ -87,6 +87,34 @@ const getters = {
             })
         }
     },
+    tabsByPage: (state, getters) => (pageId) => {
+        if (state.groups) {
+            const groupsOnPage = getters.groupsByPage(pageId)
+                .filter((g) => {
+                    return ('visible' in g ? g.visible : true) && g.groupType !== 'dialog'
+                })
+                .sort((a, b) => {
+                    return a.order - b.order
+                })
+            const pageTabs = state.pages?.[pageId]?.tabs || []
+            const tabs = pageTabs
+                .map((t) => {
+                    return { id: t.id, name: t.name, groups: groupsOnPage.filter((g) => g.tab === t.id) }
+                })
+                .filter((t) => {
+                    return t.groups.length > 0
+                })
+            const untabbed = groupsOnPage
+                .filter((g) => {
+                    return !pageTabs.some((t) => t.id === g.tab)
+                })
+                .map((g) => {
+                    return { id: g.id, name: g.name, groups: [g] }
+                })
+            return [...tabs, ...untabbed]
+        }
+        return []
+    },
     widgetsByPage: (state) => (pageId) => {
         if (state.widgets) {
             const widgetsOnPage = Object.values(state.widgets)

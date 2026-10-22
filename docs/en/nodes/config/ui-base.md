@@ -5,6 +5,7 @@ props:
     App Icon: Allows you to set a custom icon for your application. Provide the URL to the App Icon, which will be displayed as the app icon and in the browser tab.
     Include Page Path in Label: The side navigation lists all available Pages for the Dashboard. By default, this will just show the page name, but this option allows you to also show the page's path.
     Side Navigation Style: The style the side navigation menu should use (default, fixed, icon, temporary, none)
+    Notification Display Time: Number of seconds the "Connected" notification is shown after the Dashboard reconnects. Set to 0 to keep it open until dismissed.
 ---
 
 <script setup>

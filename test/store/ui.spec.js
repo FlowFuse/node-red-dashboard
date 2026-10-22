@@ -114,4 +114,80 @@ describe('store: ui getters', function () {
             orderOf(widgets).should.eql(['a', 'b', 's'])
         })
     })
+
+    describe('tabsByPage', function () {
+        function tabsOf (groups, tabs) {
+            const state = {
+                pages: { p1: { id: 'p1', layout: 'tabs', tabs } },
+                groups: Object.fromEntries(groups.map((g) => [g.id, { page: 'p1', visible: true, ...g }]))
+            }
+            const getters = { groupsByPage: ui.getters.groupsByPage(state) }
+            return ui.getters.tabsByPage(state, getters)('p1').map((t) => ({ id: t.id, name: t.name, groups: t.groups.map((g) => g.id) }))
+        }
+
+        it('renders one tab per group when the page defines no tabs', function () {
+            tabsOf([
+                { id: 'g2', name: 'B', order: 2 },
+                { id: 'g1', name: 'A', order: 1 }
+            ]).should.eql([
+                { id: 'g1', name: 'A', groups: ['g1'] },
+                { id: 'g2', name: 'B', groups: ['g2'] }
+            ])
+        })
+
+        it('keeps groups with order 0 first, as the Tabs layout always has', function () {
+            tabsOf([
+                { id: 'g1', name: 'B', order: 1 },
+                { id: 'g0', name: 'A', order: 0 },
+                { id: 'g2', name: 'C', order: 2 }
+            ]).map((t) => t.id).should.eql(['g0', 'g1', 'g2'])
+        })
+
+        it('renders groups sharing a tab id in one tab, ordered by group order', function () {
+            tabsOf([
+                { id: 'g2', name: 'Attachments', order: 2, tab: 't1' },
+                { id: 'g1', name: 'Compose', order: 1, tab: 't1' }
+            ], [{ id: 't1', name: 'Compose' }]).should.eql([
+                { id: 't1', name: 'Compose', groups: ['g1', 'g2'] }
+            ])
+        })
+
+        it('orders tabs by the page tab list, not by group order', function () {
+            tabsOf([
+                { id: 'g1', name: 'A', order: 1, tab: 't2' },
+                { id: 'g2', name: 'B', order: 2, tab: 't1' }
+            ], [{ id: 't1', name: 'First' }, { id: 't2', name: 'Second' }]).map((t) => t.id).should.eql(['t1', 't2'])
+        })
+
+        it('omits tabs with no visible groups', function () {
+            tabsOf([
+                { id: 'g1', name: 'A', order: 1, tab: 't1', visible: false },
+                { id: 'g2', name: 'B', order: 2, tab: 't2' }
+            ], [{ id: 't1', name: 'Hidden' }, { id: 't2', name: 'Shown' }]).map((t) => t.id).should.eql(['t2'])
+        })
+
+        it('excludes dialog groups', function () {
+            tabsOf([
+                { id: 'g1', name: 'A', order: 1, tab: 't1' },
+                { id: 'g2', name: 'Dialog', order: 2, tab: 't1', groupType: 'dialog' }
+            ], [{ id: 't1', name: 'Tab' }]).should.eql([
+                { id: 't1', name: 'Tab', groups: ['g1'] }
+            ])
+        })
+
+        it('gives a group pointing at an unknown tab its own tab', function () {
+            tabsOf([
+                { id: 'g1', name: 'Orphan', order: 1, tab: 'deleted' }
+            ], [{ id: 't1', name: 'Tab' }]).should.eql([
+                { id: 'g1', name: 'Orphan', groups: ['g1'] }
+            ])
+        })
+
+        it('places untabbed groups after the page tabs', function () {
+            tabsOf([
+                { id: 'g1', name: 'Loose', order: 1 },
+                { id: 'g2', name: 'B', order: 2, tab: 't1' }
+            ], [{ id: 't1', name: 'Tab' }]).map((t) => t.id).should.eql(['t1', 'g1'])
+        })
+    })
 })

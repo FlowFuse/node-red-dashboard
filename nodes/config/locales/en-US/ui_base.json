@@ -62,7 +62,9 @@
             "expand": "Expand",
             "delete": "Delete",
             "spacer": "Add Spacer",
-            "unattachedGroups": "Unattached Groups"
+            "unattachedGroups": "Unattached Groups",
+            "noTab": "No tab",
+            "editTabs": "Edit Tabs"
         },
         "themes": {
             "header": "Themes",

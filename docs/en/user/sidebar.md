@@ -16,6 +16,8 @@ The Dashboard 2.0 sidebar tab is added to the Node-RED sidebar. It is designed t
 
 Provides an overview of all pages, links, groups and widgets configured for the respective Dashboard. From here you can re-order, re-group and edit any of these elements. There are also shortcuts to "+ Link", "+ Page" and "+ Group" to quickly add new structural elements to the Dashboard.
 
+Pages using the [Tabs](../layouts/types/tabs.md) layout with tabs defined show a level for each tab, plus a "No tab" row for groups without one. Drag groups between tabs, or drag tabs to reorder them.
+
 ### Theming
 
 Every page in the Dashboard can have a different theme applied to it. This tab provides an overview of all themes defined on the Dashboard, and allows you to edit or create new themes.

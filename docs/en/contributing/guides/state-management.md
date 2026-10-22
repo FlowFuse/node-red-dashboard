@@ -108,6 +108,16 @@ datastore.get(node.id)
 
 This ensures, on refresh of the client, or when new clients connect after data has been generated, that the state is presented consistently.
 
+`get` returns a copy, so changing it does not change what is stored. Copying a long history is expensive, so avoid calling it on every message.
+
+#### `datastore.has`
+
+Checks whether any data is stored for a widget, without copying it:
+
+```js
+datastore.has(node.id)
+```
+
 #### `datastore.append`
 
 With `.append`, we can store multiple messages against the same widget, representing a history of state, rather than a single point reference to the _last_ value only.
@@ -121,6 +131,16 @@ datastore.append(base, node, msg)
 - `msg`: The message that was received by the node
 
 This is used in `ui-chart` to store the history of data points, where each data point could have been an individual message received by the widget.
+
+#### `datastore.keepLatestPerTopic`
+
+Trims an appended history to the most recent `maxPoints` messages for each `msg.topic`, without copying it:
+
+```js
+datastore.keepLatestPerTopic(base, node, maxPoints)
+```
+
+This is used in `ui-chart` to apply its "remove older points" limit to each line.
 
 #### `datastore.clear`
 

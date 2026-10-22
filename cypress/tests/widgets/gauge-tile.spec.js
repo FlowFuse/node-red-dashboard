@@ -34,6 +34,13 @@ describe('Node-RED Dashboard 2.0 - Gauges - Tile', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div > label').should('have.text', '80-something') // env var value
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div').should('have.css', 'background-color', 'rgb(255, 255, 0)') // yellow
     })
+    it('clicking the tile should not change the value restored on reload', () => {
+        cy.clickAndWait(cy.get('button').contains('button35'))
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div'))
+        cy.reloadDashboard()
+        cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div > label').should('have.text', '35')
+        cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div').should('have.css', 'background-color', 'rgb(0, 255, 0)')
+    })
     it('inject 100 should display Segment 5 (no label, white)', () => {
         cy.clickAndWait(cy.get('button').contains('button100'))
         cy.get('#nrdb-ui-widget-dashboard-ui-gauge-tile > div > label').should('have.text', '') // no label is displayed

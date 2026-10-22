@@ -6,11 +6,6 @@
                 <PlayIcon class="play-icon" />
             </div>
         </a>
-        <a class="more">
-            <div class="overlay">
-                <label>...More Coming Soon!</label>
-            </div>
-        </a>
     </div>
 </template>
 
@@ -26,6 +21,11 @@ const videos = [
         title: 'Visualising Data in Node-RED & Dashboard',
         url: 'https://youtu.be/Ecno0EuLyKQ?si=AW2OUpVwJgQU_qli',
         image: 'https://website-data.s3.eu-west-1.amazonaws.com/Tutorial+Thumbnail+-+Data+Visualisation.jpg'
+    },
+    {
+        title: 'Writing Custom Templates - FlowFuse Dashboard',
+        url: 'https://www.youtube.com/watch?v=7bj_DFnRtU8&list=PLpcyqc7kNgp3TWYwWzC7iJtN8XtEhKqlY&index=3',
+        image: 'https://i.ytimg.com/vi/7bj_DFnRtU8/maxresdefault.jpg'
     }
 ]
 </script>
@@ -68,10 +68,5 @@ const videos = [
         border-radius: 50%;
         padding: 6px;
         padding-left: 9px;
-    }
-    .recommended-tutorials .more {
-        pointer-events: none;
-        background-color: #EEF2FF;
-        border: 1px solid #818CF8;
     }
 </style>
