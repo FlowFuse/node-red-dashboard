@@ -26,7 +26,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[STORE] = true
 
-    const seriesStore = { clone: cloneValue, emit, now, entryFor: (prop) => records[prop] }
+    const storeProps = { cloneValue, emit, now, entryFor: (prop) => records[prop] }
 
     const snapshot = (rec) => {
         // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
@@ -74,7 +74,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (current) {
             snapshot(current)
         }
-        const entry = new SeriesEntry(prop, seriesStore, current ? current.history : [])
+        const entry = new SeriesEntry(prop, storeProps, current ? current.history : [])
         records[prop] = entry
         return entry
     }

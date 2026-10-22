@@ -1814,14 +1814,23 @@ describe('store: series entries', function () {
         log.should.eql([])
     })
 
-    it('leaves the series unchanged when an appended message cannot be copied', function () {
+    it('leaves a value unchanged when an appended message cannot be copied', function () {
         const { store } = uncopiable()
-        store[APPEND_ENTRY]('c', { payload: 0, _datapoint: pt(0) })
+        store.c = 1
 
-        should(() => store[APPEND_ENTRY]('c', { payload: 1, uncopiable: true, _datapoint: pt(1) })).throw('cannot copy')
+        should(() => store[APPEND_ENTRY]('c', { payload: 2, uncopiable: true, _datapoint: pt(2) })).throw('cannot copy')
 
-        store.c.should.have.length(1)
-        store[ENTRY_MSG]('c').should.have.length(1)
+        store[ENTRY_MSG]('c').should.eql({ payload: 1 })
+        store.$c.history.should.eql([])
+    })
+
+    it('stores a message with a very large number of points', function () {
+        const { store } = makeStore()
+        const points = Array.from({ length: 200000 }, (_, i) => pt(i))
+
+        store[SET_SERIES]('c', [{ payload: 'many', _datapoint: points }])
+
+        store.c.should.have.length(200000)
     })
 
     it('leaves a value unchanged when a series for its key cannot be copied', function () {

@@ -85,11 +85,11 @@ describe('store: series', function () {
     })
 
     describe('linkLivePoints', function () {
-        it('pairs each message with the points at its positions', function () {
+        it('pairs each message with the live points at its positions', function () {
             const msgs = [msg(0, pt(0)), msg('none'), msg(1, [pt(1), pt(1, 'b')])]
             const live = ['L0', 'L1', 'L2']
 
-            const linked = linkLivePoints(msgs, (i) => live[i])
+            const linked = linkLivePoints(msgs, live)
 
             linked[0]._datapoint.should.equal('L0')
             linked[1].should.equal(msgs[1])
@@ -99,7 +99,7 @@ describe('store: series', function () {
         it('freezes the list, each linked message and a multi-point list', function () {
             const msgs = [msg(0, pt(0)), msg(1, [pt(1), pt(1, 'b')])]
 
-            const linked = linkLivePoints(msgs, (i) => ({ i }))
+            const linked = linkLivePoints(msgs, [{ i: 0 }, { i: 1 }, { i: 2 }])
 
             Object.isFrozen(linked).should.equal(true)
             Object.isFrozen(linked[0]).should.equal(true)
@@ -110,7 +110,7 @@ describe('store: series', function () {
             const p = pt(0)
             const msgs = [msg(0, p)]
 
-            linkLivePoints(msgs, () => 'live')
+            linkLivePoints(msgs, ['live'])
 
             msgs[0]._datapoint.should.equal(p)
         })

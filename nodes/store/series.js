@@ -47,15 +47,15 @@ function compactTrimmed (points, msgs, kept) {
     points.length = writeAt
 }
 
-function linkLivePoints (msgs, pointAt) {
+function linkLivePoints (msgs, livePoints) {
     let i = 0
     return Object.freeze(msgs.map((m) => {
         const n = pointCount(m._datapoint)
         if (n === 0) {
             return m
         }
-        const livePoints = Array.from({ length: n }, () => pointAt(i++))
-        return Object.freeze({ ...m, _datapoint: Array.isArray(m._datapoint) ? Object.freeze(livePoints) : livePoints[0] })
+        const linked = Array.from({ length: n }, () => livePoints[i++])
+        return Object.freeze({ ...m, _datapoint: Array.isArray(m._datapoint) ? Object.freeze(linked) : linked[0] })
     }))
 }
 
@@ -77,16 +77,18 @@ function preparedSeries (msgs, clone) {
         const owned = clone(rest)
         const datapoint = clone(_datapoint)
         const start = points.length
-        points.push(...pointsOf(datapoint))
+        for (const point of pointsOf(datapoint)) {
+            points.push(point)
+        }
         return { owned, datapoint, hasDatapoint: '_datapoint' in msg, start, end: points.length }
     })
     return { points, parts }
 }
 
 class SeriesEntry {
-    constructor (key, store, history) {
+    constructor (key, storeProps, history) {
         this.key = key
-        this.store = store
+        this.storeProps = storeProps
         this.points = []
         this.msg = []
         this.quality = 'GOOD'
@@ -96,26 +98,26 @@ class SeriesEntry {
 
     wrap () {
         const points = this.points
-        this.value = deepReactive(points, (path) => this.notify(points, path), this.key, this.store.clone, new WeakMap(), true)
-        this.timestamp = this.store.now()
+        this.value = deepReactive(points, (path) => this.notify(points, path), this.key, this.storeProps.cloneValue, new WeakMap(), true)
+        this.timestamp = this.storeProps.now()
     }
 
     // a proxy taken before the key was replaced, deleted or re-seeded must not report
     isCurrent (points) {
-        return this.store.entryFor(this.key) === this && this.points === points
+        return this.storeProps.entryFor(this.key) === this && this.points === points
     }
 
     notify (points, path) {
         if (!this.isCurrent(points)) {
             return
         }
-        this.timestamp = this.store.now()
-        this.store.emit(this.key, this, path)
+        this.timestamp = this.storeProps.now()
+        this.storeProps.emit(this.key, this, path)
     }
 
     commit () {
         this.wrap()
-        this.store.emit(this.key, this, this.key)
+        this.storeProps.emit(this.key, this, this.key)
     }
 
     replaceAll ({ points, parts }) {
@@ -138,7 +140,7 @@ class SeriesEntry {
         }
         const stored = storedDatapoint(this.points, datapoint, start, this.points.length)
         if (stored === undefined && hasDatapoint) {
-            owned._datapoint = this.store.clone(datapoint)
+            owned._datapoint = this.storeProps.cloneValue(datapoint)
         }
         this.msg.push(toStoredMessage(owned, stored))
     }
@@ -154,7 +156,7 @@ class SeriesEntry {
     }
 
     linkedMessages () {
-        return linkLivePoints(this.msg, (i) => this.value[i])
+        return linkLivePoints(this.msg, this.value)
     }
 }
 
