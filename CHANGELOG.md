@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.34.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.33.0...v1.34.0) (2026-10-22)
+
+
+### Features
+
+* script and style support in the ui-template code editor ([#2291](https://github.com/FlowFuse/node-red-dashboard/issues/2291)) ([215bca8](https://github.com/FlowFuse/node-red-dashboard/commit/215bca8463faaab8acb15b7c31357fd87658ab2f))
+* Vue and Vuetify editing in the ui-template code editor ([#2290](https://github.com/FlowFuse/node-red-dashboard/issues/2290)) ([c0be053](https://github.com/FlowFuse/node-red-dashboard/commit/c0be053478c523feab2ea7b303b4d45df03ed00d))
+
+
+### Bug Fixes
+
+* "Connection Lost" notification remains on screen after reconnecting ([#2294](https://github.com/FlowFuse/node-red-dashboard/issues/2294)) ([f224fce](https://github.com/FlowFuse/node-red-dashboard/commit/f224fce6beb5c0af20e8188858f419eb7a84a683))
+* [2318] Dashboard keeps disconnecting when a widget's history has more than 10 Buffers ([#2323](https://github.com/FlowFuse/node-red-dashboard/issues/2323)) ([3fd73a8](https://github.com/FlowFuse/node-red-dashboard/commit/3fd73a87c074fa36245c67eae11d3d0ca2a920e7))
+
 ## [1.33.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.32.0...v1.33.0) (2026-10-06)
 
 
