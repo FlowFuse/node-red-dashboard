@@ -325,6 +325,8 @@ export default {
                 // widget background
                 colors.surface = this.theme.colors.groupBg
 
+                this.$vuetify.theme.themes.nrdb.dark = getContrast(this.theme.colors.bgPage) === '#ffffff'
+
                 // sizes
                 sizes['--page-padding'] = this.theme.sizes.pagePadding
                 sizes['--group-gap'] = this.theme.sizes.groupGap

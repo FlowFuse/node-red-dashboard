@@ -40,6 +40,30 @@ async function getTopic (RED, config, wNode, msg) {
     return topic
 }
 
+function normalizeClientId (raw) {
+    if (Array.isArray(raw)) { raw = raw[0] }
+    return (raw === undefined || raw === null || raw === '') ? undefined : String(raw)
+}
+
+const CLIENT_TARGETS = {
+    socketId: (conn) => conn.id,
+    clientId: (conn) => conn._clientId
+}
+
+function clientTargets (msg) {
+    return Object.entries(CLIENT_TARGETS)
+        .map(([field, connValue]) => ({ value: normalizeClientId(msg?._client?.[field]), connValue }))
+        .filter((target) => target.value !== undefined)
+}
+
+function isClientScoped (msg) {
+    return clientTargets(msg).length > 0
+}
+
+function matchesClient (conn, msg) {
+    return clientTargets(msg).every((target) => target.value === target.connValue(conn))
+}
+
 /**
  * Adds socket/client data to a msg payload, if enabled
  *
@@ -60,7 +84,8 @@ function addConnectionCredentials (RED, msg, conn, config) {
                 ...item._client,
                 ...{
                     socketId: conn.id,
-                    socketIp: conn.handshake?.address
+                    socketIp: conn.handshake?.address,
+                    clientId: normalizeClientId(conn.handshake?.query?.clientId)
                 }
             }
             return item
@@ -127,5 +152,8 @@ module.exports = {
     appendTopic,
     getTopic,
     addConnectionCredentials,
+    normalizeClientId,
+    isClientScoped,
+    matchesClient,
     getThirdPartyWidgets
 }

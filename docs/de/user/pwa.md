@@ -42,4 +42,4 @@ Um den Namen anzupassen, wählen Sie "Einstellungen bearbeiten" in der Dashboard
 
 ### Icon
 
-Sie können das App-Symbol Ihres Dashboards personalisieren, um das Branding zu verbessern und es leicht erkennbar zu machen. Um das Symbol anzupassen, fügen Sie einfach eine URL zum Bild im App-Symbolfeld unter der ui-base-Konfiguration hinzu. Für detaillierte Anweisungen besuchen Sie die [UI Base Dokumentation](/en/nodes/config/ui-base.html#application-icon).
+Sie können das App-Symbol Ihres Dashboards personalisieren, um das Branding zu verbessern und es leicht erkennbar zu machen. Um das Symbol anzupassen, fügen Sie einfach eine URL zum Bild im App-Symbolfeld unter der ui-base-Konfiguration hinzu. Für detaillierte Anweisungen besuchen Sie die [UI Base Dokumentation](/de/nodes/config/ui-base.html#application-icon).

@@ -30,7 +30,7 @@ Jede Gruppe wird innerhalb einer `ui-page` als Teil eines [Layouts](../../contri
 
 ## Typ
 
-Definiert, wie die Gruppe angezeigt wird. Entweder als reguläre (**Standard**) Gruppe oder als **Dialog** Gruppe. Eine 'Standard' Gruppe ist standardmäßig sichtbar, während eine 'Dialog' Gruppe manuell mit dem `ui-control` Knoten ausgelöst werden muss ([siehe Dokumentation](/en/nodes/widgets/ui-control.html#show-hide)). Sie können zwischen diesen beiden Optionen basierend auf Ihren Layoutanforderungen wählen.
+Definiert, wie die Gruppe angezeigt wird. Entweder als reguläre (**Standard**) Gruppe oder als **Dialog** Gruppe. Eine 'Standard' Gruppe ist standardmäßig sichtbar, während eine 'Dialog' Gruppe manuell mit dem `ui-control` Knoten ausgelöst werden muss ([siehe Dokumentation](/de/nodes/widgets/ui-control.html#show-hide)). Sie können zwischen diesen beiden Optionen basierend auf Ihren Layoutanforderungen wählen.
 
 ### Standardgruppen
 

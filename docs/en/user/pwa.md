@@ -43,4 +43,4 @@ To customize the name, select "Edit Settings" in the Dashboard 2.0 sidebar. Then
 
 ### Icon
 
-You can personalize your Dashboard's App Icon to enhance branding and make it easily recognizable. To customize the icon, simply add a URL to the image in the App Icon field under the ui-base configuration. For detailed instructions, visit the [UI Base documentation](/en/nodes/config/ui-base.html#application-icon).
+You can personalize your Dashboard's App Icon to enhance branding and make it easily recognizable. To customize the icon, simply add a URL to the image in the App Icon field under the ui-base configuration. For detailed instructions, visit the [UI Base documentation](/nodes/config/ui-base.html#application-icon).

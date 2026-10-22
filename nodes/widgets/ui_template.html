@@ -149,6 +149,14 @@
                 height: { value: 0 },
                 head: { value: '' },
                 format: { value: defaultTemplate },
+                // number of errors the code editor reported when the edit dialog was last saved (set in oneditsave)
+                noerr: {
+                    value: 0,
+                    // two parameters, so Node-RED shows the returned message (a one-parameter validator's result is coerced to a boolean)
+                    validate: function (v, opt) {
+                        return !v ? true : c_('errors.invalid-template')
+                    }
+                },
                 storeOutMessages: { value: true },
                 passthru: { value: true },
                 resendOnRefresh: { value: true },
@@ -182,6 +190,11 @@
                 }
                 const that = this
                 const $templateScope = $('#node-input-templateScope')
+
+                // Monaco gets Vue/Vuetify syntax and completions from the ui-template-vue-editor plugin (nodes/plugins/vue-editor.html).
+                // ACE, Monaco without the plugin, or an nr-assistant too old for vue-sfc keeps the HTML mode.
+                const vueEditor = RED.plugins.getPlugin('ui-template-vue-editor')
+                const htmlMode = vueEditor?.useVueSfc?.() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
 
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
@@ -239,15 +252,15 @@
                         break
                     case 'widget:ui':
                         $('#template-row-ui').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     case 'widget:page':
                         $('#template-row-page').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     default:
                         $('#template-row-group, #template-row-class').show()
-                        that.editor.getSession().setMode('ace/mode/html')
+                        that.editor.getSession().setMode(htmlMode)
                         break
                     }
                     resize.call(that)
@@ -255,7 +268,7 @@
 
                 this.editor = RED.editor.createEditor({
                     id: 'node-input-format-editor',
-                    mode: 'ace/mode/html',
+                    mode: htmlMode,
                     value: $('#node-input-format').val()
                 })
 
@@ -263,7 +276,7 @@
                     url: 'uitemplates', // where to get the data from
                     type: 'ui-template', // the type of object the library is for
                     editor: this.editor, // the field name the main text body goes to
-                    mode: 'ace/mode/html',
+                    mode: htmlMode,
                     fields: ['name']
                 })
 
@@ -275,7 +288,7 @@
                     e.preventDefault()
                     const value = that.editor.getValue()
                     RED.editor.editText({
-                        mode: $templateScope.val() === 'global' ? 'css' : 'html',
+                        mode: $templateScope.val() === 'global' ? 'css' : htmlMode.replace('ace/mode/', ''),
                         value,
                         width: 'Infinity',
                         cursor: that.editor.getCursorPosition(),
@@ -423,6 +436,7 @@
     <div class="form-row" style="margin-bottom:0px;">
         <label for="node-input-format" style="width:110px;"><i class="fa fa-copy"></i> <span data-i18n="ui-template.label.template"></span></label>
         <input type="hidden" id="node-input-format">
+        <input type="hidden" id="node-input-noerr">
         <button id="node-template-expand-editor" class="red-ui-button red-ui-button-small" style="float:right"><i class="fa fa-expand"></i></button>
     </div>
     <div class="form-row node-text-editor-row" style="display: block;">

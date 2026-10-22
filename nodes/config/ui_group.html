@@ -14,7 +14,8 @@
             className: { value: '' },
             visible: { value: true },
             disabled: { value: false },
-            groupType: { value: 'default' }
+            groupType: { value: 'default' },
+            tab: { value: '' }
         },
         label: function () {
             const page = RED.nodes.node(this.page)?.name || ''
@@ -48,6 +49,42 @@
             }
 
             $('#node-config-input-groupType').val(this.groupType || 'default')
+
+            let selectedTab = this.tab || ''
+            const renderTabs = function () {
+                const page = RED.nodes.node($('#node-config-input-page').val())
+                const tabs = page?.tabs || []
+                const select = $('#node-config-input-tab').empty()
+
+                $('<option>')
+                    .val('')
+                    .text(RED._('@flowfuse/node-red-dashboard/ui-group:ui-group.label.noTab'))
+                    .appendTo(select)
+                tabs.forEach(function (tab) {
+                    $('<option>')
+                        .val(tab.id)
+                        .text(tab.name)
+                        .appendTo(select)
+                })
+
+                if (tabs.some((tab) => tab.id === selectedTab)) {
+                    select.val(selectedTab)
+                } else {
+                    select.val('')
+                }
+
+                if (page?.layout === 'tabs') {
+                    $('#node-config-row-tab').show()
+                } else {
+                    $('#node-config-row-tab').hide()
+                }
+            }
+
+            $('#node-config-input-tab').on('change', function () {
+                selectedTab = $(this).val()
+            })
+            $('#node-config-input-page').on('change', renderTabs)
+            renderTabs()
         },
         oneditsave: function () {
             // convert string to boolean
@@ -77,6 +114,10 @@
     <div class="form-row">
         <label for="node-config-input-page"><i class="fa fa-bookmark"></i> <span data-i18n="ui-group.label.page"></label>
         <input type="text" id="node-config-input-page">
+    </div>
+    <div class="form-row" id="node-config-row-tab">
+        <label for="node-config-input-tab"><i class="fa fa-folder-o"></i> <span data-i18n="ui-group.label.tab"></span></label>
+        <select id="node-config-input-tab" style="width: 70%;"></select>
     </div>
     <div class="form-row">
         <label for="node-config-input-groupType"><i class="fa fa-window-restore"></i> <span data-i18n="ui-group.label.type"></label>

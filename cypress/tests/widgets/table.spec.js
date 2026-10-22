@@ -10,6 +10,16 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-default').find('.v-data-table-footer').should('not.exist')
     })
 
+    it('renders the provided data when a fixed widget size (not auto) is configured', () => {
+        // with a fixed size the table was clamped to a single grid row, hiding all but the first row
+        const widget = '#nrdb-ui-widget-dashboard-ui-table-fixed-height'
+        cy.get(widget).find('tbody tr').should('have.length', 5)
+        // a row beyond the first should be visible - i.e. not clipped into a single-row-high table
+        cy.get(widget).find('tbody tr').eq(3).should('be.visible')
+        // the table should fill the widget's fixed height rather than collapse to a single row
+        cy.get(widget).find('.nrdb-table').invoke('outerHeight').should('be.greaterThan', 150)
+    })
+
     it('render the provided data, with a pagination limit if defined', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-max-rows').find('tbody tr').should('have.length', 2)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-max-rows').find('tbody .v-selection-control').should('have.length', 0)
@@ -53,5 +63,19 @@ describe('Node-RED Dashboard 2.0 - Tables', () => {
         cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(2).should('have.text', fixedString)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(3).should('have.text', fixedString)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-table-buttons-string-value').find('button').eq(4).should('have.text', fixedString)
+    })
+
+    it('formats datetime/date/time columns instead of showing the raw epoch', () => {
+        // the row's timestamp is 2025-06-15T12:00:00Z — midday keeps the year 2025 in every timezone
+        const epoch = '1749988800000'
+        const cells = () => cy.get('#nrdb-ui-widget-dashboard-ui-table-dates').find('tbody tr').eq(0).find('td')
+        cy.get('#nrdb-ui-widget-dashboard-ui-table-dates').find('tbody tr').should('have.length', 1)
+        // datetime + date columns render a human date, not the epoch number
+        cells().eq(0).should('contain.text', '2025').and('not.contain.text', epoch)
+        cells().eq(1).should('contain.text', '2025').and('not.contain.text', epoch)
+        // time column renders a clock value
+        cells().eq(2).invoke('text').should('match', /\d{1,2}:\d{2}/)
+        // a plain text column still shows the raw value, confirming only date-typed columns format
+        cells().eq(3).should('contain.text', epoch)
     })
 })

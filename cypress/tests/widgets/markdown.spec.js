@@ -27,17 +27,20 @@ describe('Node-RED Dashboard 2.0 - Markdown', () => {
 
     // this markdown node has a full mermaid chart defined on msg.payload
     it('allow for full mermaid charts to be defined by msg', () => {
+        // Mermaid renders asynchronously and can take longer than Cypress's 4s default on slower
+        // or busy systems, so extend the timeout on the SVG-node assertions specifically.
+        const MERMAID_TIMEOUT = 30000
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-graph-E'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node', { timeout: MERMAID_TIMEOUT }).should('have.length', 5)
         cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').eq(4).should('have.text', 'E')
 
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-graph-F'))
-        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node', { timeout: MERMAID_TIMEOUT }).should('have.length', 5)
         cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').eq(4).should('have.text', 'F')
 
         cy.reloadDashboard()
 
-        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').should('have.length', 5)
+        cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node', { timeout: MERMAID_TIMEOUT }).should('have.length', 5)
         cy.get('#nrdb-ui-widget-dashboard-ui-markdown-2').find('.nodes .node').eq(4).should('have.text', 'F')
     })
 })

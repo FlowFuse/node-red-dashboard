@@ -7,7 +7,7 @@ colors:
     Groups - Background: The background color of any groups rendered on the page
     Groups - Outline: The color of the border of any groups rendered on the page
 sizes:
-    Row Height: How tall a single row (unit of height) should render in the Dashboard. Options here are Default (48px), Comfortable (36px) and Compact (32px).
+    Row Height: How tall a single row (unit of height) should render in the Dashboard. Options here are Default (48px), Comfortable (38px) and Compact (32px).
     Page Padding: The spacing that surrounds all of the groups on a page. Applicable for Grid & Fixed layouts and Notebook layouts where the screen width is narrower than 1024px.</br></br>You can define the padding for each side of the page separately by using <a href="https://www.w3schools.com/css/css_padding.asp#:~:text=Padding%20%2D%20Shorthand%20Property" target="_blank">CSS Shorthand notation</a>
     Group Gap: "The gap between each group in a layout. Default: 12px"
     Group Border Radius: "The border radius of the surrounding of each group on a page. Default: 4px"
@@ -20,6 +20,22 @@ sizes:
 # Config: UI Theme `ui-theme`
 
 Each page can be assigned a theme, which will be used to render the page. The theme is a collection of colors that control the look and feel of the widgets.
+
+## Presets
+
+Dashboard ships with five built-in presets: **Light**, **Dark**, **Dracula**, **Nord**, and **Sepia**. A preset fills in all five colors and the sizes in one step, giving you a complete color scheme without setting each value individually.
+
+<img src="/images/theme-presets.png" alt="The Preset dropdown in a ui-theme node" width="350"/>
+
+- **Pick a preset:** open a `ui-theme` node and choose from the **Preset** dropdown. Every color updates at once.
+- **Customize:** change any individual color and the dropdown switches to **Custom**, keeping the rest of the scheme intact. Adjusting sizes does not change the preset.
+- **Set the default for new themes:** in the Dashboard sidebar, the **Theme preset** control next to **+ Theme** sets which preset new themes start from. New dashboards start on **Light**.
+
+### Dark themes
+
+When a theme's page background is dark, the dashboard automatically adapts its supporting elements — input fields, borders, charts, and gauges — so nothing sits light against a dark background. This is driven by the page background color, so it applies to **any** dark theme you build, not only the built-in dark presets.
+
+The bundled presets were chosen to meet WCAG AA contrast for text and icons.
 
 ## Colors
 
@@ -48,4 +64,4 @@ Colors here were chosen to make it easier to differentiate between the different
 ![Default (Left), Comfortable (Middle), Compact (Right) row height comparisons for a UI Table element](/images/node-examples/ui-theme-row-height.png "Default (Left), Comfortable (Middle), Compact (Right) row height comparisons for a UI Table element"){data-zoomable}
 _Default (Left), Comfortable (Middle), Compact (Right) row height comparisons for a UI Table element_
 
-The Row Height controls how tall a single row (unit of height) should render in the Dashboard. Options here are Default (48px), Comfortable (36px) and Compact (32px).
+The Row Height controls how tall a single row (unit of height) should render in the Dashboard. Options here are Default (48px), Comfortable (38px) and Compact (32px).

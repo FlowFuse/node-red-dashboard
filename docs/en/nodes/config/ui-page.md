@@ -7,6 +7,7 @@ props:
     Theme: Which FlowFuse Dashboard theme to use for this page. You can customise your own too.
     Layout: Which Layout Manager to render the widgets with
     Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this page in hte side navigation menu.</li><li><b>Interactivity</b> - Controls whether the item is disabled/enabled in the side navigation menu.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
+    Tabs: Only for the "Tabs" layout. The tabs on this page, in display order. Groups are assigned to a tab in their own config.
     Breakpoints: Configure the responsive breakpoints for your Dashboard, controlling how many columns render at different screen sizes. Not available for "Fixed" layouts.
 ---
 
@@ -16,6 +17,8 @@ props:
 # Config: UI Page `ui-page`
 
 Each page will be rendered in a navigation drawer within the UI, and can be accessed via the navigation bar at the top of the page. See [Layouts](../../contributing/guides/layouts) for more information on how layouts work.
+
+A page holds any number of [groups](./ui-group.md), arranged by its [Layout](../../layouts/index.md). If you're coming from the original Node-RED Dashboard, a page is the equivalent of a `ui-tab` — to render your groups as switchable tabs, use the [Tabs](../../layouts/types/tabs.md) layout.
 
 ## Properties
 

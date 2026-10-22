@@ -77,7 +77,7 @@
         "type": "function",
         "z": "node-red-tab-helper-api",
         "name": "function 2",
-        "func": "global.set('msg', undefined)\nreturn msg;",
+        "func": "global.set('msg', undefined)\nglobal.set('connectTopic', undefined)\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

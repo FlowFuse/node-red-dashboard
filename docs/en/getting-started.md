@@ -61,8 +61,8 @@ If you're looking to host Node-RED, we recommend using [FlowFuse](https://flowfu
 Each Dashboard is a collection of widgets (e.g. charts, buttons, forms) that can be configured and arranged in our own User Interface. The hierarchy of a Dashboard is as follows:
 
 - **Base** - Defines the base URL (e.g. `/dashboard`) for your Dashboard.
-- **Page** - A given page that a visitor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
-- **Group** - A collection of widgets. Rendered onto a page.
+- **Page** - A given page that a visitor can navigate to, URL will extend the base, e.g. `/dashboard/page1`. A page can contain any number of groups, laid out according to its chosen [Layout](./layouts/index.md). Each page can also have a defined, unique, Theme which controls the styling of all groups/widgets on the page.
+- **Group** - A collection of widgets. Rendered onto a page. A page can have as many groups as you need, each with its own width and order.
 - **Widget** - A single widget (e.g. chart, button, form) created in Dashboard.
 
 ## Adding your first widgets
@@ -104,13 +104,12 @@ In this example, the _"Third Party Widgets"_ page is the default page.
 
 ### Layout Options
 
-Currently, we have three different options for a page's layout:
+Currently, we have four different options for a page's layout:
 
 - **Grid:** ([docs](https://dashboard.flowfuse.com/layouts/types/grid.html)) The default layout for a page. It uses a 12-column grid structure to layout the groups. The widths of each group or widget defines the number of columns they will render in. So, a "width" of 6" would render to 50% of the screen. Grid layouts are entirely responsive, and will adjust to the size of the screen.
 - **Fixed:** ([docs](https://dashboard.flowfuse.com/layouts/types/fixed.html)) Each component will render at a _fixed_ width, no matter what the screen size is. The "width" property is converted a fixed pixel value (multiples of 48px by default).
 - **Notebook:** ([docs](https://dashboard.flowfuse.com/layouts/types/notebook.html)) This layout will stretch to 100% width, up to a maximum width of 1024px, and will centrally align. It's particularly useful for storytelling (e.g. articles/blogs) or analysis type user interfaces (e.g. Jupyter Notebooks), where you want the user to digest content in a particular order through scrolling.
 - **Tabs:** ([docs](https://dashboard.flowfuse.com/layouts/types/tabs.html)) This layout organizes content into separate tabbed sections, allowing users to switch between different views or content categories without leaving the page. Each tab can contain multiple groups and widgets, and it’s specially useful for organizing large amounts of information into easily digestible segments. The "Tabs" layout ensures better navigation and a cleaner UI when multiple content categories need to be displayed in a single view.
-
 
 ### Navigation Sidebar
 
@@ -152,7 +151,7 @@ In FlowFuse Dashboard we can configure a given node type to ["Accept Client Data
 <img data-zoomable style="max-width: 400px; margin: auto;" src="/images/dashboard-sidebar-clientdata.png" alt="Screenshot of an example 'Client Data' tab"/>
 <em>Screenshot of an example "Client Data" tab</em>
 
-If "Include Client Data" is toggled on, then _all_ `msg` objects emitted from _all_ nodes will contain a `msg._client` object, which will at a minimum detail the `socketId` for the connected client. It is possible to add on more data to this object, such as a username, email address, or other unique identifier with Dashboard plugins, e.g. the [FlowFuse User Plugin](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/).
+If "Include Client Data" is toggled on, then _all_ `msg` objects emitted from _all_ nodes will contain a `msg._client` object, which will at a minimum detail the `clientId` and `socketId` for the connected client. It is possible to add on more data to this object, such as a username, email address, or other unique identifier with Dashboard plugins, e.g. the [FlowFuse User Plugin](https://flowfuse.com/blog/2024/04/displaying-logged-in-users-on-dashboard/).
 
 The "Accept Client Data" table allow configuration over which node types will pay attention to any provided `msg._client` information. Any `msg` sent _to_ one of these nodes can include a `msg._client` value to specify a particular connection (e.g. username, socket ID) that the data should be sent to, rather than to all clients.
 

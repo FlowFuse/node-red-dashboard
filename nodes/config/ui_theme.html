@@ -9,11 +9,11 @@
             // colors
             colors: {
                 value: {
-                    surface: '#ffffff',
-                    primary: '#0094CE',
-                    bgPage: '#eeeeee',
+                    surface: '#fcfcfd',
+                    primary: '#0d74ce',
+                    bgPage: '#f9f9fb',
                     groupBg: '#ffffff',
-                    groupOutline: '#cccccc'
+                    groupOutline: '#d9d9e0'
                 }
             },
             // sizes
@@ -35,13 +35,13 @@
             if (!this.colors) {
                 this.colors = {}
                 // set default values
-                this.colors.surface = '#ffffff'
-                this.colors.primary = '#0094CE'
+                this.colors.surface = '#fcfcfd'
+                this.colors.primary = '#0d74ce'
                 // pages
-                this.colors.bgPage = '#eeeeee'
+                this.colors.bgPage = '#f9f9fb'
                 // groups
                 this.colors.groupBg = '#ffffff'
-                this.colors.groupOutline = '#cccccc'
+                this.colors.groupOutline = '#d9d9e0'
             }
 
             if (!this.sizes) {
@@ -93,24 +93,63 @@
                 })
                 wrapper.css('background-color', colorPicker.val())
             })
+
+            const presets = window.NRDB_THEME_PRESETS
+            const presetSelect = $('#nrdb-theme-preset')
+            const presetColorKeys = ['surface', 'primary', 'bgPage', 'groupBg', 'groupOutline']
+            const presetName = (key) => RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.themes.presets.' + key)
+            let applyingPreset = false
+            if (presets) {
+                Object.keys(presets.presets).forEach((key) => {
+                    presetSelect.append($('<option>').val(key).text(presetName(key)))
+                })
+            }
+            presetSelect.append($('<option>').val('custom').text(RED._('@flowfuse/node-red-dashboard/ui-theme:ui-theme.label.custom')))
+            const matchPreset = function () {
+                if (!presets) { return 'custom' }
+                for (const key of Object.keys(presets.presets)) {
+                    const c = presets.presets[key].colors
+                    if (presetColorKeys.every((k) => ($('#node-config-input-' + k).val() || '').toLowerCase() === (c[k] || '').toLowerCase())) {
+                        return key
+                    }
+                }
+                return 'custom'
+            }
+            const applyPreset = function (key) {
+                const def = presets && presets.presets[key]
+                if (!def) { return }
+                applyingPreset = true
+                Object.keys(def.colors).forEach((k) => $('#node-config-input-' + k).val(def.colors[k]).trigger('change'))
+                Object.keys(def.sizes).forEach((k) => $('#node-config-input-' + k).val(def.sizes[k]))
+                applyingPreset = false
+            }
+            presetSelect.val(matchPreset())
+            presetSelect.on('change', function () {
+                const key = presetSelect.val()
+                if (key === 'custom') { return }
+                applyPreset(key)
+            })
+            presetColorKeys.forEach((k) => {
+                $('#node-config-input-' + k).on('change input', function () {
+                    if (!applyingPreset) { presetSelect.val('custom') }
+                })
+            })
         },
         oneditsave: function () {
-            // update our config values from the input values
+            const colors = {}
             Object.keys(this.colors).forEach((color) => {
-                // set the value of the input
-                this.colors[color] = $('#node-config-input-' + color).val()
+                colors[color] = $('#node-config-input-' + color).val()
             })
+            this.colors = colors
 
-            // update our config values from the input values
+            const sizes = {}
             Object.keys(this.sizes).forEach((size) => {
-                // get the value of the key
                 let value = $('#node-config-input-' + size).val()
                 // value is a number, add `px` to the end
                 value += (parseFloat(value).toString() === value) ? 'px' : ''
-
-                // set the value of the input
-                this.sizes[size] = value
+                sizes[size] = value
             })
+            this.sizes = sizes
         },
         label: function () {
             return `${this.name}` || 'UI Theme'
@@ -122,6 +161,10 @@
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></label>
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+    <div class="form-row">
+        <label for="nrdb-theme-preset"><i class="fa fa-paint-brush"></i> <span data-i18n="ui-theme.label.preset"></span></label>
+        <select id="nrdb-theme-preset"></select>
     </div>
     <h3 style="margin: 0; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px;" data-i18n="ui-theme.label.colors"></h3>
     <div class="form-row" style="margin-bottom: 3px;">

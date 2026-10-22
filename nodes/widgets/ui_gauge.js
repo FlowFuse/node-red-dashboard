@@ -10,6 +10,7 @@ module.exports = function (RED) {
         const group = RED.nodes.getNode(config.group)
 
         const evts = {
+            onAction: true,
             beforeSend: async function (msg) {
                 const updates = msg.ui_update
                 if (updates) {

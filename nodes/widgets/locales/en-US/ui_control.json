@@ -7,7 +7,8 @@
         "events": {
             "all": "All Events",
             "change": "Page/Tab Change Events Only",
-            "connect": "Connection Events Only"
+            "connect": "Connection Events Only",
+            "clients": "Client Presence Events Only"
         }
     }
   }

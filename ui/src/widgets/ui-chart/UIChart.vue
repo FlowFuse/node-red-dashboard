@@ -11,6 +11,8 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { mapState } from 'vuex'
 
+import { resolveThemeColorToRgb } from '../../util.mjs'
+
 import axisHelper from './helpers/axis.helper'
 import chartJStoECharts from './helpers/chartJsToECharts.js'
 import * as pieCharts from './helpers/pie.helper'
@@ -34,7 +36,7 @@ export default {
             },
             chartUpdateDebounceTimeout: null,
             tooltipDataset: [],
-            dynamicChartOptions: [], // an array of chart options updates received this session
+            mergedChartOptions: null, // the merged set of all ui_update.chartOptions passed in
             resizeObserver: null
         }
     },
@@ -160,6 +162,8 @@ export default {
 
         // merge in any updates provided via ui_update.chartOptions
         const chartOptions = this.chartOptions
+        // save in mergedChartOptions so they can be re-applied later if necessary
+        this.mergedChartOptions = chartOptions
         if (chartOptions) {
             // pass the options to the chart
             chart.setOption(chartOptions)
@@ -189,12 +193,13 @@ export default {
                 return
             }
             if (updates.chartOptions) {
+                // updates.chartOptions contains the full set of all options applied
+                // save them in case we have to re-apply
+                this.mergedChartOptions = updates.chartOptions
                 // merge the updates into the chart
                 if (this.chart) {
                     this.chart.setOption(updates.chartOptions)
                 }
-                // add these options to the array of previous updates received this session
-                this.dynamicChartOptions.push(updates.chartOptions)
             }
         },
         generateChartOptions () {
@@ -215,6 +220,8 @@ export default {
                 if (this.props.textColorDefault !== undefined) {
                     if (this.props.textColorDefault === false) {
                         textColor = this.props.textColor[0]
+                    } else if (this.$vuetify.theme.current.dark) {
+                        textColor = resolveThemeColorToRgb(this.$refs.chart, 'on-group-background', { fallback: textColor })
                     }
                 }
             }
@@ -222,6 +229,8 @@ export default {
                 if (this.props.gridColorDefault !== undefined) {
                     if (this.props.gridColorDefault === false) {
                         gridColor = this.props.gridColor[0]
+                    } else if (this.$vuetify.theme.current.dark) {
+                        gridColor = resolveThemeColorToRgb(this.$refs.chart, 'on-group-background', { alpha: 0.12, fallback: gridColor })
                     }
                 }
             }
@@ -428,15 +437,11 @@ export default {
                     // Also re-apply if this is a radial (pie or doughnut) chart as the radius for these are re-calculated
                     // when adding data, which may remove any radius applied via msg.ui_update.
                     if (this.chart.getOption().series.length > seriesCount || this.props.xAxisType === 'radial') {
-                        // update the chart first from options applied in previous sessions
-                        const chartOptions = this.chartOptions
+                        // re-apply chart options previously passed in
+                        const chartOptions = this.mergedChartOptions
                         if (chartOptions) {
                             this.chart.setOption(chartOptions)
                         }
-                        // then from this session
-                        this.dynamicChartOptions.forEach((options) => {
-                            this.chart.setOption(options)
-                        })
                     }
                 }
             }
@@ -509,13 +514,14 @@ export default {
             // determine what type of msg we have
             if (Array.isArray(msg) && msg.length > 0) {
                 // we have received an array of messages (loading from stored history)
-                msg.forEach((m, i) => {
-                    const p = m.payload
-                    const d = m._datapoint // server-side we compute a chart friendly format
-                    const label = d.category
-                    if (label !== null && label !== undefined) {
-                        this.addPoints(p, d, label, options)
-                    }
+                msg.forEach((m) => {
+                    const datapoints = Array.isArray(m._datapoint) ? m._datapoint : [m._datapoint]
+                    datapoints.forEach((d) => {
+                        const label = d.category
+                        if (label !== null && label !== undefined) {
+                            this.addPoints(m.payload, d, label, options)
+                        }
+                    })
                 })
             } else if (Array.isArray(payload) && msg.payload.length > 0) {
                 // we have received a message with an array of data points
@@ -630,7 +636,7 @@ export default {
                         top: this.hasTitle ? 40 : 0, // account for the title
                         itemStyle: {
                             borderWidth: 2,
-                            borderColor: '#fff'
+                            borderColor: resolveThemeColorToRgb(this.$refs.chart, 'group-background', { fallback: '#fff' })
                         }
                     }
                     if (this.props.showLegend) {

@@ -44,6 +44,16 @@
 import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+function normalizeBinary (val) {
+    if (val instanceof ArrayBuffer) {
+        return Array.from(new Uint8Array(val))
+    }
+    if (ArrayBuffer.isView(val)) {
+        return Array.from(new Uint8Array(val.buffer, val.byteOffset, val.byteLength))
+    }
+    return val
+}
+
 export default {
     name: 'DBUISwitch',
     inject: ['$socket', '$dataTracker'],
@@ -115,9 +125,10 @@ export default {
                     return val
                 } else if (typeof (val) === 'object') {
                     // don't make a decision either way, unless it matches, exactly, the defined on/off values
-                    if (JSON.stringify(val) === JSON.stringify(this.props.evaluated.on)) {
+                    const target = JSON.stringify(normalizeBinary(val))
+                    if (target === JSON.stringify(normalizeBinary(this.props.evaluated.on))) {
                         return true
-                    } else if (JSON.stringify(val) === JSON.stringify(this.props.evaluated.off)) {
+                    } else if (target === JSON.stringify(normalizeBinary(this.props.evaluated.off))) {
                         return false
                     }
                 } else if (this.props.evaluated) {

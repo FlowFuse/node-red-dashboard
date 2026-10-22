@@ -34,7 +34,7 @@
             @dragenter.prevent
         >
             <!-- <div style="font-size: small; background-color: aquamarine;">w.props.height: {{ w.props.height }}</div> -->
-            <component :is="w.component" :id="w.id" ref="widget-content" :props="w.props" :state="w.state" :style="`grid-row-end: span ${w.props.height}`" />
+            <component :is="w.component" :id="w.id" ref="widget-content" :props="w.props" :state="w.state" :style="`grid-row-end: span ${effectiveHeight(w)}`" />
             <div
                 v-if="resizable && !groupDragging" ref="widget-resize-view"
                 class="nrdb-resizable nrdb-resizable-widget"
@@ -117,15 +117,8 @@ export default {
         widgetStyles () {
             return (widget) => {
                 const styles = {}
-                let height = widget.props.height
+                const height = this.effectiveHeight(widget)
                 const width = widget.props.width
-                if (widget.type === 'ui-form') {
-                    // form is unique in that height is defined by the number of fields
-                    // so, if the size is set to "auto", we need to set the height/rows to the number of fields, +2 for label and submission buttons
-                    if (height === null || height === 0) {
-                        height = (widget.props.options.length / (widget.props.splitLayout ? 2 : 1)) + 2
-                    }
-                }
                 styles['grid-row-end'] = `span ${height}`
                 styles['grid-template-rows'] = `repeat(${height}, var(--widget-row-height))`
                 styles['grid-column-end'] = `span min(${this.getWidgetWidth(+width)}, var(--layout-columns))`
@@ -134,6 +127,21 @@ export default {
         }
     },
     methods: {
+        effectiveHeight (widget) {
+            const height = widget.props.height
+            if (!height || Number(height) === 0) {
+                if (widget.type === 'ui-form') {
+                    return (widget.props.options.length / (widget.props.splitLayout ? 2 : 1)) + 2
+                }
+                if (widget.type === 'ui-chart') {
+                    return 8
+                }
+                if (widget.type === 'ui-gauge' && widget.props.gtype === 'gauge-34') {
+                    return 3
+                }
+            }
+            return height
+        },
         getWidgetClass (widget) {
             const classes = []
             // ensure each widget has a class for its type

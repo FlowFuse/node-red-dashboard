@@ -3,6 +3,7 @@ description: Group your widgets effectively in FlowFuse Dashboard for better org
 props:
     Name: Descriptive name for this group, will show in the Node-RED Editor and as a label in the Dashboard.
     Page: The Page (<code>ui-page</code>) that this group will render on.
+    Tab: Only for pages using the "Tabs" layout. Which of the page's tabs this group renders in. "None" renders the group as its own tab.
     Type: Controls whether the group appears as a default group or as a dialog, which needs to be triggered manually using ui-control. You can choose between 'Default' and 'Dialog' types.
     Size: The width and height of the group. Height will always be reinforced by this value, the height is generally a <i>minimum</i> height, and will extend to fit its content.
     Class: Any custom CSS classes you wish to add to the Group.

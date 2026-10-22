@@ -1,3 +1,15 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
+const siteUrl = 'https://dashboard.flowfuse.com/'
+
+// keep in line with the canonical URLs, which use the .html form
+function toCanonicalPath (relativePath) {
+    return relativePath
+        .replace(/index\.md$/, '')
+        .replace(/\.md$/, '.html')
+}
+
 const defaultMetaDescription = 'Discover the features and benefits of Node-RED Dashboard 2.0, designed to streamline and enhance your Node-RED experience.'
 
 export default {
@@ -44,16 +56,27 @@ export default {
                 }
             ]
         ],
-        transformPageData (pageData) {
-            const canonicalUrl = `https://dashboard.flowfuse.com/${pageData.relativePath}`
-                .replace(/index\.md$/, '')
-                .replace(/\.md$/, '.html')
+        transformPageData (pageData, { siteConfig }) {
+            const canonicalUrl = siteUrl + toCanonicalPath(pageData.relativePath)
 
             pageData.frontmatter.head ??= []
             pageData.frontmatter.head.push([
                 'link',
                 { rel: 'canonical', href: canonicalUrl }
             ])
+
+            // link English and German versions only when both pages exist
+            const isGerman = pageData.relativePath.startsWith('de/')
+            const enPath = isGerman ? pageData.relativePath.slice(3) : pageData.relativePath
+            const dePath = `de/${enPath}`
+            if (fs.existsSync(path.join(siteConfig.srcDir, dePath)) && fs.existsSync(path.join(siteConfig.srcDir, 'en', enPath))) {
+                const enUrl = siteUrl + toCanonicalPath(enPath)
+                pageData.frontmatter.head.push(
+                    ['link', { rel: 'alternate', hreflang: 'en', href: enUrl }],
+                    ['link', { rel: 'alternate', hreflang: 'de', href: siteUrl + toCanonicalPath(dePath) }],
+                    ['link', { rel: 'alternate', hreflang: 'x-default', href: enUrl }]
+                )
+            }
 
             const metaDescription =
         pageData.frontmatter.description === undefined
@@ -87,7 +110,15 @@ export default {
             }
         },
         sitemap: {
-            hostname: 'https://dashboard.flowfuse.com'
+            hostname: 'https://dashboard.flowfuse.com',
+            // cleanUrls drops .html from sitemap entries; match the canonical URLs instead
+            transformItems: (items) => items.map((item) => {
+                const url = item.url
+                if (url === '' || url.endsWith('/') || /\.[a-z]+$/.test(url)) {
+                    return item
+                }
+                return { ...item, url: `${url}.html` }
+            })
         },
         lastUpdated: true
     }

@@ -541,7 +541,7 @@ Any such message should always contain the series name and type for each series.
 ## Building Custom Charts
 For even further customisataion such as rendering charts we don't yet support, you can use a UI Template node.
 
-Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/en/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
+Currently, although not ideal, we do need to load the ChartJS library from a CDN, and then watch for the file to have been loaded before we can use it, as per the [Loading External Dependencies](/nodes/widgets/ui-template.html#loading-external-dependencies) details in the UI Template documentation.
 
 ### Example: Static Data
 

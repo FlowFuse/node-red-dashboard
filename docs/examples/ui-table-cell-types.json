@@ -76,6 +76,13 @@
                 "type": "color",
                 "width": "",
                 "align": "center"
+            },
+            {
+                "title": "Date & Time",
+                "key": "timestamp",
+                "type": "datetime",
+                "width": "",
+                "align": "start"
             }
         ],
         "x": 490,
@@ -99,7 +106,7 @@
         "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "[{\"columnA\":\"Hello\",\"columnB\":\"World\",\"link\":\"https://news.bbc.co.uk\",\"progress\":76,\"color\":\"#FF0000\",\"array\":[6,7,9,2,4],\"boolean\":true},{\"columnA\":\"Hey\",\"columnB\":\"Globe\",\"link\":\"https://flowfuse.com\",\"progress\":56,\"color\":\"#24aa69\",\"array\":[1,3,6,3,5],\"boolean\":false}]",
+        "payload": "[{\"columnA\":\"Hello\",\"columnB\":\"World\",\"link\":\"https://news.bbc.co.uk\",\"progress\":76,\"color\":\"#FF0000\",\"array\":[6,7,9,2,4],\"boolean\":true,\"timestamp\":1710484200000},{\"columnA\":\"Hey\",\"columnB\":\"Globe\",\"link\":\"https://flowfuse.com\",\"progress\":56,\"color\":\"#24aa69\",\"array\":[1,3,6,3,5],\"boolean\":false,\"timestamp\":1735689540000}]",
         "payloadType": "json",
         "x": 350,
         "y": 60,

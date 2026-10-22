@@ -94,7 +94,8 @@
     .nrdb2-sb-unattached-groups-list li {
         padding: 0;
         border-bottom: 0;
-        background-color: #ffefef;
+        background-color: var(--red-ui-secondary-background);
+        border-left: 3px solid var(--red-ui-border-color-error);
     }
     .nrdb2-sb-list-header {
         display: flex;
@@ -166,8 +167,18 @@
         opacity: 0.5;
     }
     /* indent the groups */
-    .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
+    .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron,
+    .nrdb2-sb-tabs-list-header .nrdb2-sb-list-chevron {
         margin-left: 1.5rem;
+    }
+    .nrdb2-sb-tab-group-list-container .nrdb2-sb-groups-list-header .nrdb2-sb-list-chevron {
+        margin-left: 3rem;
+    }
+    .nrdb2-sb-tab-group-list-container .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
+        margin-left: 5rem;
+    }
+    .nrdb2-sb-tab-group-list-container .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon.nrdb2-sb-widget-icon-img {
+        margin-left: 4.85rem;
     }
     /* indent the widgets */
     .nrdb2-sb-widgets-list-header .nrdb2-sb-widget-icon {
@@ -246,15 +257,15 @@
         text-align: center;
         border-left-width: 0;
         border-right-width: 0;
-        background-color: #f9f9f9;
+        background-color: var(--red-ui-secondary-background);
     }
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
-        border: 1px dashed #c4c4c4;
+        border: 1px dashed var(--red-ui-secondary-border-color);
     }
     div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
     div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
        /* content: "empty";  TODO: localized properly? */
-        color: #d2d2d2;
+        color: var(--red-ui-tertiary-text-color);
         font-style: italic;
     }
     ol.nrdb2-sb-group-list li:last-child ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty {
@@ -911,7 +922,36 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         return pageNode
     }
 
-    function createThemeNode ({ name } = {}) {
+    const THEME_PRESETS = {
+        version: 1,
+        presets: {
+            light: {
+                colors: { surface: '#fcfcfd', primary: '#0d74ce', bgPage: '#f9f9fb', groupBg: '#ffffff', groupOutline: '#d9d9e0' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            dark: {
+                colors: { surface: '#18191b', primary: '#0d74ce', bgPage: '#111113', groupBg: '#212225', groupOutline: '#363a3f' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            dracula: {
+                colors: { surface: '#21222c', primary: '#bd93f9', bgPage: '#282a36', groupBg: '#343746', groupOutline: '#44475a' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            nord: {
+                colors: { surface: '#3b4252', primary: '#88c0d0', bgPage: '#2e3440', groupBg: '#3b4252', groupOutline: '#4c566a' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            },
+            sepia: {
+                colors: { surface: '#f2e5bc', primary: '#af3a03', bgPage: '#ebdbb2', groupBg: '#fbf1c7', groupOutline: '#d5c4a1' },
+                sizes: { density: 'default', pagePadding: '12px', groupGap: '12px', groupBorderRadius: '4px', widgetGap: '12px' }
+            }
+        }
+    }
+    window.NRDB_THEME_PRESETS = THEME_PRESETS
+
+    let themePreset = Object.keys(THEME_PRESETS.presets)[0]
+
+    function createThemeNode ({ name, preset = 'light' } = {}) {
         if (RED._db2debug) { console.log('dashboard 2: ui_base.html: createThemeNode', name) }
         const theme = RED.nodes.getType('ui-theme')
         let themeName = name
@@ -919,10 +959,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             // get all themes and determine the next theme number
             const entries = getConfigNodesByType(['ui-theme']) || []
             let counter = entries.length + 1
-            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('label.theme') + ` ${counter}`
+            themeName = counter === 1 ? c_('themes.defaultTheme') : c_('themes.theme') + ` ${counter}`
             while (entries.find(e => e.name === themeName)) {
                 counter++
-                themeName = c_('label.theme') + ` ${counter}`
+                themeName = c_('themes.theme') + ` ${counter}`
             }
         }
         const themeNode = {
@@ -931,6 +971,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             type: 'ui-theme',
             ...mapDefaults(theme.defaults),
             name: themeName || c_('themes.defaultTheme')
+        }
+        const presetDef = THEME_PRESETS.presets[preset]
+        if (presetDef) {
+            themeNode.colors = { ...presetDef.colors }
+            themeNode.sizes = { ...presetDef.sizes }
         }
         return themeNode
     }
@@ -1386,7 +1431,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
      * @param {Object[]} groups - The list of groups to add to the list
      * @param {DashboardItemLookup} widgetsByGroup - The lookup of widgets by group
      */
-    function addGroupOrderingList (pageId, container, groups, widgetsByGroup) {
+    function addGroupOrderingList (pageId, container, groups, widgetsByGroup, tabId) {
         // sort groups by order
         groups.sort((a, b) => a.order - b.order)
 
@@ -1397,7 +1442,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         }
 
         // ordered list of groups to live within a container (e.g. page list item)
-        const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list' }).appendTo(container).editableList({
+        const groupsOL = $('<ol>', { class: 'nrdb2-sb-group-list', 'data-page': pageId, 'data-tab': tabId }).appendTo(container).editableList({
             sortable: '.nrdb2-sb-groups-list-header',
             addButton: false,
             height: 'auto',
@@ -1406,12 +1451,21 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 if (!group || !group.id) {
                     // this is a new group that's been added and we need to setup the basics
                     const history = []
-                    const newGroup = createGroupNode({ order: i + 1 })
+                    let order = i + 1
+                    if (tabId !== undefined) {
+                        RED.nodes.eachConfig((n) => {
+                            if (n.type === 'ui-group' && n.page === pageId) {
+                                order = Math.max(order, (n.order || 0) + 1)
+                            }
+                        })
+                    }
+                    const newGroup = createGroupNode({ order })
                     addNode(newGroup, history)
                     assignPage(newGroup, page, history)
                     recordEvents(history)
                     RED.editor.editConfig('', newGroup.type, newGroup.id)
                     group = toDashboardItem(newGroup)
+                    container.data('data', group)
                 }
 
                 const widgets = widgetsByGroup[group.id] || []
@@ -1441,11 +1495,18 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 addRowStateOptions(actions, group)
 
                 const events = []
-                updateItemOrder(groupsOL.editableList('items'), events)
+                if (tabId === undefined) {
+                    updateItemOrder(groupsOL.editableList('items'), events)
+                }
                 // add our changes to NR history and trigger whether or not we need to redeploy
                 recordEvents(events)
             },
             sortItems: function (items) {
+                if (tabId !== undefined) {
+                    scheduleGroupSync(pageId)
+                    return
+                }
+
                 // track any changes
                 const events = []
 
@@ -1455,13 +1516,16 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     const widget = dbItem?.node || {}
                     if (widget.page !== pageId) {
                         const oldPageId = widget.page
+                        const changes = { page: oldPageId }
                         widget.page = pageId
+                        if (widget.tab) {
+                            changes.tab = widget.tab
+                            widget.tab = ''
+                        }
                         events.push({
                             t: 'edit',
                             node: widget,
-                            changes: {
-                                page: oldPageId
-                            },
+                            changes,
                             dirty: widget.changed,
                             changed: widget.dirty
                         })
@@ -1490,13 +1554,111 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         div.nrdb2-sb-group-list-container ol.nrdb2-sb-group-list.red-ui-editableList-list.ui-sortable:empty::before,
         div.nrdb2-sb-widget-list-container ol.nrdb2-sb-widget-list.red-ui-editableList-list.ui-sortable:empty::before {
             content: "${localizedEmptyText}";
-            color: #d2d2d2;
+            color: var(--red-ui-tertiary-text-color);
             font-style: italic;
         }
     `
         styleSheet.insertRule(rule, styleSheet.cssRules.length)
 
         return groupsOL
+    }
+
+    function syncPageGroups (pageId, events) {
+        const tabIds = RED.nodes.node(pageId).tabs.map((t) => t.id)
+        const items = []
+        $(`.nrdb2-layout-order-editor ol.nrdb2-sb-group-list[data-page="${pageId}"]`).each(function () {
+            const tabId = $(this).attr('data-tab')
+            $(this).editableList('items').each(function () {
+                const group = this.data('data')?.node || {}
+                const changes = {}
+                if (group.page !== pageId) {
+                    changes.page = group.page
+                    group.page = pageId
+                }
+                const currentTab = 'page' in changes || tabIds.includes(group.tab) ? group.tab || '' : ''
+                if (currentTab !== tabId) {
+                    changes.tab = group.tab
+                    group.tab = tabId
+                }
+                if (Object.keys(changes).length > 0) {
+                    events.push(createEditHistoryEvent(group, changes))
+                }
+                items.push(this)
+            })
+        })
+        updateItemOrder($(items), events)
+    }
+
+    // a drag between two lists fires sortItems on both, so batch them into one history event
+    const pendingGroupSyncs = new Set()
+    function scheduleGroupSync (pageId) {
+        if (pendingGroupSyncs.size === 0) {
+            setTimeout(function () {
+                const events = []
+                pendingGroupSyncs.forEach((id) => syncPageGroups(id, events))
+                pendingGroupSyncs.clear()
+                recordEvents(events)
+            }, 0)
+        }
+        pendingGroupSyncs.add(pageId)
+    }
+
+    function addTabGroupsRow (container, pageId, tab, groups, widgetsByGroup) {
+        const titleRow = $('<div>', { class: 'nrdb2-sb-list-header nrdb2-sb-tabs-list-header' }).appendTo(container)
+        const handle = $('<i class="nrdb2-sb-list-handle nrdb2-sb-tab-list-handle fa fa-bars"></i>').appendTo(titleRow)
+        if (!tab.id) {
+            handle.css('visibility', 'hidden')
+        }
+        const chevron = $('<i class="fa fa-angle-down nrdb2-sb-list-chevron">', { style: 'width:10px;' }).appendTo(titleRow)
+        $('<i>', { class: 'nrdb2-sb-icon fa fa-folder-o' }).appendTo(titleRow)
+        $('<span>', { class: 'nrdb2-sb-title' }).text(tab.name).appendTo(titleRow)
+        $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} ${c_('layout.groups')}`).appendTo(titleRow)
+
+        const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
+        const btnGroup = $('<div>', { class: 'nrdb2-sb-list-header-button-group' }).appendTo(actions)
+        $(`<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button" title="${c_('layout.editTabs')}"><i class="fa fa-cog"></i></a>`)
+            .on('click', function (evt) {
+                RED.editor.editConfig('', 'ui-page', pageId)
+                evt.stopPropagation()
+                evt.preventDefault()
+            })
+            .appendTo(btnGroup)
+
+        const groupsList = $('<div>', { class: 'nrdb2-sb-group-list-container nrdb2-sb-tab-group-list-container' }).appendTo(container)
+        titleRow.click(titleToggle(tab.id, groupsList, chevron))
+        return addGroupOrderingList(pageId, groupsList, groups, widgetsByGroup, tab.id)
+    }
+
+    function addTabOrderingList (pageId, container, groups, widgetsByGroup) {
+        const page = RED.nodes.node(pageId)
+        const tabIds = page.tabs.map((t) => t.id)
+
+        $('<ol>', { class: 'nrdb2-sb-tab-list' }).appendTo(container).editableList({
+            sortable: '.nrdb2-sb-tabs-list-header',
+            addButton: false,
+            height: 'auto',
+            addItem: function (container, i, tab) {
+                const tabGroups = groups.filter((g) => g.node.tab === tab.id)
+                addTabGroupsRow(container, pageId, tab, tabGroups, widgetsByGroup)
+            },
+            sortItems: function (items) {
+                const oldTabs = page.tabs
+                const tabs = []
+                items.each((i, el) => {
+                    tabs.push(el.data('data'))
+                })
+                if (tabs.some((t, i) => t.id !== oldTabs[i]?.id)) {
+                    const events = [createEditHistoryEvent(page, { tabs: oldTabs })]
+                    page.tabs = tabs
+                    syncPageGroups(pageId, events)
+                    recordEvents(events)
+                }
+            }
+        }).editableList('addItems', page.tabs)
+
+        const untabbed = groups.filter((g) => !tabIds.includes(g.node.tab))
+        const untabbedContainer = $('<div>', { class: 'nrdb2-sb-untabbed-groups' }).appendTo(container)
+        return addTabGroupsRow(untabbedContainer, pageId, { id: '', name: c_('layout.noTab') }, untabbed, widgetsByGroup)
     }
 
     /**
@@ -1602,7 +1764,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         const content = $('.nrdb2-layout-order-editor > .red-ui-editableList .nrdb2-sb-group-list-container')
         return {
             content,
-            chevrons: content.parent().find('div.nrdb2-sb-pages-list-header > .nrdb2-sb-list-chevron')
+            chevrons: content.parent().find('div.nrdb2-sb-pages-list-header > .nrdb2-sb-list-chevron, div.nrdb2-sb-tabs-list-header > .nrdb2-sb-list-chevron')
         }
     }
     const collapseLayoutItems = function ({ chevrons, content }) {
@@ -1851,7 +2013,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                     $('<span>', { class: 'nrdb2-sb-info' }).text(`${groups.length} ${c_('layout.groups')}`).appendTo(titleRow)
                     // adds groups within this page
                     titleRow.click(titleToggle(item.id, groupsList, chevron))
-                    const groupsOL = addGroupOrderingList(item.id, groupsList, groups, widgetsByGroup)
+                    const groupsOL = item.node.layout === 'tabs' && item.node.tabs?.length > 0 ? addTabOrderingList(item.id, groupsList, groups, widgetsByGroup) : addGroupOrderingList(item.id, groupsList, groups, widgetsByGroup)
 
                     // page - actions
                     const actions = $('<div>', { class: 'nrdb2-sb-list-header-actions' }).appendTo(titleRow)
@@ -1945,11 +2107,32 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         // button group
         const buttonGroup = $('<div>', { class: 'nrdb2-sb-list-button-group' }).appendTo(themeHeader)
 
-        // add theme button
+        const presetKeys = Object.keys(THEME_PRESETS.presets)
+        const presetLabel = (k) => c_('themes.presets.' + k)
+        const themePresetButton = $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"></a>').appendTo(buttonGroup)
+        function renderThemePresetButton () {
+            themePresetButton.text(presetLabel(themePreset) + ' ')
+            $('<i class="fa fa-caret-down"></i>').appendTo(themePresetButton)
+        }
+        renderThemePresetButton()
+        const themePresetTooltip = RED.popover.tooltip(themePresetButton, c_('themes.presetHint'))
+        themePresetButton.click(function (evt) {
+            evt.preventDefault()
+            themePresetTooltip.close(true)
+            RED.popover.menu({
+                options: presetKeys.map((key) => ({
+                    label: presetLabel(key),
+                    onselect: function () { themePreset = key; renderThemePresetButton() }
+                }))
+            }).show({ target: themePresetButton })
+        })
         $('<a href="#" class="editor-button editor-button-small nr-db-sb-list-header-button"><i class="fa fa-plus"></i> ' + c_('themes.theme') + '</a>')
             .click(function (evt) {
-                themesOL.editableList('addItem')
                 evt.preventDefault()
+                const theme = createThemeNode({ preset: themePreset })
+                addNode(theme)
+                themesOL.editableList('addItem', theme)
+                RED.editor.editConfig('', theme.type, theme.id)
             })
             .appendTo(buttonGroup)
 

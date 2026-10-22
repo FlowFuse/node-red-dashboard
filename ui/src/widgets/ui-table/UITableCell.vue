@@ -32,12 +32,17 @@
     <template v-else-if="type === 'image'">
         <v-img :src="value" />
     </template>
+    <template v-else-if="type === 'datetime' || type === 'date' || type === 'time'">
+        {{ formattedDate }}
+    </template>
     <template v-else>
         {{ value }}
     </template>
 </template>
 
 <script>
+import dateHelper from './helpers/date.helper'
+
 export default {
     name: 'UITableCell',
     props: {
@@ -80,6 +85,9 @@ export default {
             set (value) {
                 this.$emit('update:modelValue', value)
             }
+        },
+        formattedDate () {
+            return dateHelper.formatCellDate(this.value, { format: this.type })
         }
     },
     methods: {

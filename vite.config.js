@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa'
  */
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js'
@@ -31,8 +31,8 @@ export default defineConfig({
             manifest: false,
 
             injectManifest: {
-                maximumFileSizeToCacheInBytes: process.env.NODE_ENV === 'development' ? 6000000 : 3350000,
-                globPatterns: ['**/*.{js,css,html,svg,png,ico,ttf,eot,woff,woff2}']
+                maximumFileSizeToCacheInBytes: mode === 'development' ? 6000000 : 3350000,
+                globPatterns: mode === 'development' ? [] : ['**/*.{js,css,html,svg,png,ico,ttf,eot,woff,woff2}']
             },
 
             devOptions: {
@@ -45,7 +45,7 @@ export default defineConfig({
     ],
     root: 'ui',
     build: {
-        minify: process.env.NODE_ENV === 'development' ? false : undefined,
+        minify: mode === 'development' ? false : undefined,
         outDir: '../dist',
         emptyOutDir: true,
         rollupOptions: {
@@ -60,4 +60,4 @@ export default defineConfig({
         }
     },
     base: './'
-})
+}))

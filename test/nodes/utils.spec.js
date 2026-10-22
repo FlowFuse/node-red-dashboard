@@ -39,4 +39,58 @@ describe('utils', function () {
             widgets['widget-b'].src.should.equal('ui-widget.js')
         })
     })
+
+    describe('normalizeClientId', function () {
+        it('returns a plain string id unchanged', function () {
+            utils.normalizeClientId('abc').should.equal('abc')
+        })
+        it('collapses a duplicated (array) query param to the first value', function () {
+            utils.normalizeClientId(['abc', 'def']).should.equal('abc')
+        })
+        it('returns undefined for missing or empty ids', function () {
+            should(utils.normalizeClientId(undefined)).be.undefined()
+            should(utils.normalizeClientId(null)).be.undefined()
+            should(utils.normalizeClientId('')).be.undefined()
+        })
+    })
+
+    describe('isClientScoped', function () {
+        it('is false for a msg with no client targeting', function () {
+            utils.isClientScoped({ payload: 1 }).should.be.false()
+            utils.isClientScoped({ payload: 1, _client: {} }).should.be.false()
+            utils.isClientScoped(undefined).should.be.false()
+        })
+        it('is true for a socketId-targeted msg', function () {
+            utils.isClientScoped({ _client: { socketId: 's1' } }).should.be.true()
+        })
+        it('is true for a clientId-targeted msg', function () {
+            utils.isClientScoped({ _client: { clientId: 'c1' } }).should.be.true()
+        })
+        it('ignores ids that normalize away', function () {
+            utils.isClientScoped({ _client: { clientId: '' } }).should.be.false()
+            utils.isClientScoped({ _client: { socketId: null } }).should.be.false()
+        })
+    })
+
+    describe('matchesClient', function () {
+        const conn = { id: 's1', _clientId: 'c1' }
+
+        it('matches any connection when the msg is not targeted', function () {
+            utils.matchesClient(conn, { payload: 1 }).should.be.true()
+        })
+        it('matches on socketId', function () {
+            utils.matchesClient(conn, { _client: { socketId: 's1' } }).should.be.true()
+            utils.matchesClient(conn, { _client: { socketId: 's2' } }).should.be.false()
+        })
+        it('matches on clientId', function () {
+            utils.matchesClient(conn, { _client: { clientId: 'c1' } }).should.be.true()
+            utils.matchesClient(conn, { _client: { clientId: 'c2' } }).should.be.false()
+        })
+        it('normalizes a clientId sent as a duplicated query param', function () {
+            utils.matchesClient(conn, { _client: { clientId: ['c1', 'c2'] } }).should.be.true()
+        })
+        it('requires every targeted field to match', function () {
+            utils.matchesClient(conn, { _client: { socketId: 's1', clientId: 'c2' } }).should.be.false()
+        })
+    })
 })

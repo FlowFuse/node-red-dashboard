@@ -365,7 +365,7 @@
         "z": "node-red-tab-forms",
         "name": "",
         "ui": "dashboard-ui-base",
-        "events": "all",
+        "events": "connect",
         "x": 120,
         "y": 640,
         "wires": [
@@ -751,9 +751,33 @@
                 "2ef2b0e5846b5fd1",
                 "31287d1f6fa8a0b7",
                 "f79478230b25922a",
-                "68ecd321adc91b99"
+                "68ecd321adc91b99",
+                "forms-connect-marker"
             ]
         ]
+    },
+    {
+        "id": "forms-connect-marker",
+        "type": "change",
+        "z": "node-red-tab-forms",
+        "name": "ui-control connect marker",
+        "rules": [
+            {
+                "t": "set",
+                "p": "connectTopic",
+                "pt": "global",
+                "to": "forms-connect-ready",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 75,
+        "y": 340,
+        "wires": [[]]
     },
     {
         "id": "bcf9325de95813c3",

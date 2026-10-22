@@ -63,10 +63,12 @@ module.exports = function (RED) {
                 const ago = (removeOlder * removeOlderUnit) * 1000 // milliseconds ago
                 const cutOff = (new Date()).getTime() - ago
                 const filterFn = (msg) => {
-                    let timestamp = msg._datapoint.x
+                    // msg._datapoint may be a single point or, in the case of multiple series in one msg, an array
+                    // if it is an array then all the elements will have the same timestamp so use the first one
+                    let timestamp = Array.isArray(msg._datapoint) ? msg._datapoint[0]?.x : msg._datapoint.x
                     // is x already a millisecond timestamp?
-                    if (typeof (msg._datapoint.x) === 'string') {
-                        timestamp = (new Date(msg._datapoint.x)).getTime()
+                    if (typeof (timestamp) === 'string') {
+                        timestamp = (new Date(timestamp)).getTime()
                     }
                     return timestamp > cutOff
                 }
@@ -165,6 +167,8 @@ module.exports = function (RED) {
                         // Deep merge new options in with old
                         const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
                         statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
+                        // pass the full set to the clients so they don't need to do the merge
+                        msg.ui_update.chartOptions = mergedOptions
                     }
                 }
 
@@ -226,7 +230,7 @@ module.exports = function (RED) {
             },
             onInput: function (msg, send, done) {
                 // use our own custom onInput in order to store history of msg payloads
-                if (!datastore.get(node.id)) {
+                if (!datastore.has(node.id)) {
                     datastore.save(base, node, [])
                 }
                 // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
@@ -264,33 +268,7 @@ module.exports = function (RED) {
                         const maxPoints = parseInt(config.removeOlderPoints)
 
                         if (maxPoints && config.removeOlderPoints) {
-                            // account for multiple lines?
-                            // client-side does this for _each_ line
-                            // remove older points using datastore.filter instead of saving the whole array
-                            const lineCounts = {}
-                            const _msg = datastore.get(node.id) || []
-
-                            // determine which message objects to keep (latest maxPoints per label)
-                            const keepIndexes = []
-                            let doFiltering = false
-                            for (let i = _msg.length - 1; i >= 0; i--) {
-                                const m = _msg[i]
-                                const label = m.topic
-                                lineCounts[label] = lineCounts[label] || 0
-                                if (lineCounts[label] < maxPoints) {
-                                    keepIndexes[i] = true
-                                    lineCounts[label]++
-                                } else {
-                                    doFiltering = true
-                                }
-                            }
-
-                            // filter the datastore to only keep the selected messages
-                            if (doFiltering) {
-                                datastore.filter(base, node, (m, i) => {
-                                    return keepIndexes[i]
-                                })
-                            }
+                            datastore.keepLatestPerTopic(base, node, maxPoints)
                         }
 
                         if (config.xAxisType === 'time' && config.removeOlder && config.removeOlderUnit) {

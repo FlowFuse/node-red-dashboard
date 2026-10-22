@@ -283,8 +283,8 @@ main {
     margin-top: 0;
     margin-bottom: 0;
 }
-.nrdb-ui-markdown code {
-    background: #f3f3f3; /* should use theme variable? */
+.nrdb-ui-markdown :not(pre) > code {
+    background: rgba(var(--v-theme-on-group-background), 0.08);
     font-size: 0.85rem;
 }
 .nrdb-ui-markdown pre code {
@@ -295,8 +295,8 @@ main {
 }
 .nrdb-ui-markdown blockquote {
     padding-left: 1em;
-    border-left: 4px solid #d1d1d1; /* should use theme variable? */
-    color: gray; /* should use theme variable? */
+    border-left: 4px solid rgba(var(--v-theme-on-group-background), 0.2);
+    color: rgba(var(--v-theme-on-group-background), 0.6);
 }
 .nrdb-ui-markdown table {
     border-collapse: collapse;
@@ -309,11 +309,11 @@ main {
 .nrdb-ui-markdown table th {
     font-weight: bold;
     padding: 0.5em 0.5em;
-    border: 1px solid #d1d1d1; /* should use theme variable? */
+    border: 1px solid rgba(var(--v-theme-on-group-background), 0.2);
 }
 .nrdb-ui-markdown table td {
     padding: 0.5em 0.5em;
-    border: 1px solid #d1d1d1; /* should use theme variable? */
+    border: 1px solid rgba(var(--v-theme-on-group-background), 0.2);
 }
 
 /**

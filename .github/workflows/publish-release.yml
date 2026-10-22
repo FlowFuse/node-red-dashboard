@@ -13,9 +13,9 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
       - name: Install Dependencies
@@ -28,13 +28,47 @@ jobs:
         uses: JS-DevTools/npm-publish@0fd2f4369c5d6bcfcde6091a7c527d810b9b5c3f # v4.1.5
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}
-      - name: getVersion
+
+  update-nr-catalogue:
+    name: Update Node-RED Catalogue
+    needs: [publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install jq
+        shell: bash
+        run: command -v jq || (sudo apt-get update && sudo apt-get install -y jq)
+      - name: Get package version
         id: getVersion
         shell: bash
         run: |
-          VERSION=$(npm info . --json version | sed -e 's/"//g')
+          VERSION=$(jq -r .version package.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-      - uses: flowfuse/github-actions-workflows/actions/update-nr-flows@v0.76.0
+      - name: Update Node-RED Catalogue
+        uses: flowfuse/github-actions-workflows/actions/update-nr-flows@update-nr-flows/v1
         with:
           package: '@flowfuse/node-red-dashboard'
           version: ${{ steps.getVersion.outputs.version }}
+
+  notify-slack:
+    name: Notify about release failure
+    needs: [publish, update-nr-catalogue]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notify Slack
+      uses: FlowFuse/github-actions-workflows/actions/slack_notification@slack_notification/v1
+      with:
+        bot-token: ${{ secrets.SLACK_GHBOT_TOKEN }}
+        mode: channel
+        blocks: |
+          [
+            { "type": "header", "text": { "type": "plain_text", "text": ":x: ${{ github.workflow }} workflow failed", "emoji": true } },
+            { "type": "divider" },
+            { "type": "section", "text": { "type": "mrkdwn", "text": "<${{ github.server_url }}/${{ github.repository }}/actions/workflows/publish-release.yml|${{ github.workflow }}> workflow failed to complete successfully." } },
+            { "type": "section", "text": { "type": "mrkdwn", "text": "*Workflow run:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View>" } }
+          ]

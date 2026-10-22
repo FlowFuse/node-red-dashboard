@@ -4,9 +4,10 @@ const path = require('path')
 const axios = require('axios')
 
 const v = require('../../package.json').version
+const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -59,6 +60,7 @@ module.exports = function (RED) {
         ioServer: null,
         /** @type {Object.<string, Socket>} */
         connections: {},
+        clientStore: createClientStore(),
         settings: {},
         contribs: {}
     }
@@ -223,7 +225,6 @@ module.exports = function (RED) {
                     lang: 'en',
                     scope: './',
                     description: config.name,
-                    theme_color: '#ffffff',
                     icons: [
                         { src: hasAppIcon ? config.appIcon : 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
                         { src: hasAppIcon ? config.appIcon : 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -413,6 +414,7 @@ module.exports = function (RED) {
                 socket.on('widget-action', onAction.bind(null, socket))
                 socket.on('widget-change', onChange.bind(null, socket))
                 socket.on('widget-load', onLoad.bind(null, socket))
+                socket.on('disconnect', () => uiShared.clientStore.disconnect(socket._clientId, socket.id))
             }
         }
         /** @type {NodeJS.Timeout} */
@@ -467,11 +469,7 @@ module.exports = function (RED) {
                 }
             }
             // conduct the core check too
-            if (msg._client?.socketId) {
-                // if a particular socketid has been defined,
-                // we only send comms on the connection that matches that id
-                checks.push(msg._client?.socketId === conn.id)
-            }
+            checks.push(matchesClient(conn, msg))
             // ensure all checks validate sending this
             return !checks.length || !checks.includes(false)
         }
@@ -591,6 +589,7 @@ module.exports = function (RED) {
             socket.on('disconnect', reason => {
                 cleanupEventHandlers(socket)
                 delete uiShared.connections[socket.id]
+                uiShared.clientStore.disconnect(socket._clientId, socket.id)
                 node.log(`Disconnected ${socket.id} due to ${reason}`)
             })
         }
@@ -605,6 +604,9 @@ module.exports = function (RED) {
 
             // node.connections[socket.id] = socket // store the connection for later use
             uiShared.connections[socket.id] = socket // store the connection for later use
+
+            socket._clientId = normalizeClientId(socket.handshake?.query?.clientId)
+            uiShared.clientStore.connect(socket._clientId, socket.id)
 
             emitConfig(socket)
 
@@ -846,6 +848,9 @@ module.exports = function (RED) {
         node.on('close', (removed, done) => {
             uiShared.ioServer?.off('connection', onConnection)
             for (const conn of Object.values(uiShared.connections)) {
+                if (removed && conn._baseId === node.id) {
+                    uiShared.clientStore.dropSocket(conn._clientId, conn.id)
+                }
                 cleanupEventHandlers(conn)
             }
             close(node, function (err) {

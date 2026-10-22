@@ -40,8 +40,9 @@ describe('Node-RED Dashboard 2.0 - Templates (Single Page CSS)', () => {
         cy.visit('/dashboard/page1')
         cy.get('body').should('have.css', 'background-color', 'rgb(0, 0, 0)')
 
-        cy.clickAndWait(cy.get('[data-nav="dashboard-ui-page-2"]'))
-        cy.url().should('include', '/dashboard/page2')
+        cy.get('[data-nav="dashboard-ui-page-2"]').should('be.visible')
+        cy.get('[data-nav="dashboard-ui-page-2"]').click({ force: true })
+        cy.location('pathname').should('include', '/dashboard/page2')
         cy.get('body').should('not.have.css', 'background-color', 'rgb(0, 0, 0)')
     })
 
