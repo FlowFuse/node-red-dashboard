@@ -35,6 +35,7 @@ module.exports = function createLegacy (RED) {
     }
 
     return {
+        legacy: true,
         get (id) {
             return RED.util.cloneMessage(data[id])
         },

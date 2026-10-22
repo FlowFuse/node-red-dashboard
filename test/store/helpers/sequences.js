@@ -61,6 +61,21 @@ const scenarios = {
         ...repeat(3, (i) => ({ op: 'chart', id: 'cr', msg: chartPoint(70 + i) }))
     ],
     'chart-position-trims': repeat(150, (i) => [{ op: 'chart', id: 'pt', msg: chartPoint(i) }, { op: 'filterIndex', id: 'pt', skip: 1 }]).flat(),
+    'chart-flow-writes': [
+        ...repeat(6, (i) => ({ op: 'chart', id: 'fw', msg: chartPoint(i, ['a', 'b'][i % 2]) })),
+        { op: 'flow', id: 'fw', action: 'push', point: pt(10, 10, 'a') },
+        { op: 'flow', id: 'fw', action: 'shift' },
+        { op: 'flow', id: 'fw', action: 'splice', index: 1, count: 1, point: pt(11, 11, 'b') },
+        { op: 'flow', id: 'fw', action: 'unshift', point: pt(-1, -1, 'a') },
+        { op: 'flow', id: 'fw', action: 'pop' },
+        { op: 'flow', id: 'fw', action: 'sort' },
+        { op: 'flow', id: 'fw', action: 'edit', index: 0, y: 99 },
+        { op: 'flow', id: 'fw', action: 'set', index: 1, point: pt(12, 12, 'a') },
+        { op: 'flow', id: 'fw', action: 'set', index: 40, point: pt(13, 13, 'b') },
+        ...repeat(3, (i) => ({ op: 'chart', id: 'fw', msg: chartPoint(20 + i, 'a'), maxPoints: 3 })),
+        { op: 'flow', id: 'fw', action: 'replace', points: [pt(30, 30, 'a'), pt(31, 31, 'b')] },
+        { op: 'chart', id: 'fw', msg: chartPoint(32, 'a') }
+    ],
     'chart-categorical': repeat(30, (i) => ({ op: 'chart', id: 'cc', categorical: true, msg: { payload: i, _datapoint: pt(['mon', 'tue', 'wed'][i % 3], i, 'sales') } })),
     'client-scoped': [
         { op: 'input', id: 'cs', type: 'ui-scoped', msg: { payload: 'everyone' } },
@@ -128,6 +143,12 @@ function generateMessy (seed, length) {
         const id = pick(['m0', 'm1'])
         const roll = rand()
         const x = Math.floor(rand() * 200)
+        if (rand() < 0.15) {
+            const action = pick(['push', 'unshift', 'pop', 'shift', 'splice', 'sort', 'edit', 'set', 'replace'])
+            const point = pt(x, x, pick(['a', 'b']))
+            steps.push({ op: 'flow', id, action, point, points: [point, pt(x + 1, x + 1, 'a')], index: Math.floor(rand() * 4), count: Math.floor(rand() * 3), y: x })
+            continue
+        }
         if (roll < 0.45) {
             steps.push({ op: 'chart', id, msg: chartPoint(x, pick(['a', 'b', undefined])) })
         } else if (roll < 0.6) {
@@ -185,6 +206,57 @@ function chartInput (target, base, node, step) {
     }
 }
 
+const builtMessage = (point) => ({ payload: point.y, topic: point.category, _datapoint: point })
+
+function onePointPerMessage (msgs) {
+    return Array.isArray(msgs) && msgs.every((m) => m._datapoint && typeof m._datapoint === 'object' && !Array.isArray(m._datapoint))
+}
+
+// the reference applies a flow write to the stored messages directly, as a chart message would leave them
+function flowWrite (target, base, node, step, flowStore) {
+    const msgs = target.get(step.id)
+    if (!onePointPerMessage(msgs)) {
+        return
+    }
+    const added = step.point ? [step.point] : []
+    if (!target.legacy) {
+        const chart = flowStore[step.id]
+        if (step.action === 'replace') {
+            flowStore[step.id] = step.points
+        } else if (step.action === 'sort') {
+            chart.sort((a, b) => b.x - a.x)
+        } else if (step.action === 'splice') {
+            chart.splice(step.index, step.count, ...added)
+        } else if (step.action === 'edit') {
+            if (chart[step.index]) {
+                chart[step.index].y = step.y
+            }
+        } else if (step.action === 'set') {
+            chart[step.index] = step.point
+        } else {
+            chart[step.action](...added)
+        }
+        return
+    }
+    let next = msgs
+    if (step.action === 'replace') {
+        next = step.points.map(builtMessage)
+    } else if (step.action === 'sort') {
+        next.sort((a, b) => b._datapoint.x - a._datapoint.x)
+    } else if (step.action === 'splice') {
+        next.splice(step.index, step.count, ...added.map(builtMessage))
+    } else if (step.action === 'edit') {
+        if (next[step.index]) {
+            next[step.index]._datapoint.y = step.y
+        }
+    } else if (step.action === 'set') {
+        next[Math.min(step.index, next.length)] = builtMessage(step.point)
+    } else {
+        next[step.action](...added.map(builtMessage))
+    }
+    target.save(base, node, next)
+}
+
 function changeInput (target, base, node, step) {
     const msg = target.get(step.id) || {}
     if (step.client) {
@@ -210,7 +282,7 @@ function tableInput (target, base, node, step) {
     target.save(base, node, { ...step.msg, payload })
 }
 
-function runStep (target, step, { base, nodeFor }) {
+function runStep (target, step, { base, nodeFor, flowStore }) {
     const node = nodeFor(step.id, step.type || 'ui-test')
     if (step.op === 'input') {
         if (hasExtraProps(step.msg)) {
@@ -236,6 +308,10 @@ function runStep (target, step, { base, nodeFor }) {
         target.clear(step.id)
     } else if (step.op === 'remove') {
         target.clear(step.id)
+    } else if (step.op === 'flow') {
+        if (flowStore) {
+            flowWrite(target, base, node, step, flowStore)
+        }
     }
 }
 

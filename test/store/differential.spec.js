@@ -76,8 +76,9 @@ function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
             datastore.initStore(global, { node: baseNode })
         }
         const given = structuredClone(step)
-        runStep(datastore, given, { base, nodeFor })
-        runStep(legacy, structuredClone(step), { base, nodeFor })
+        const flowStore = shared ? global.get('dashboardStore') : null
+        runStep(datastore, given, { base, nodeFor, flowStore })
+        runStep(legacy, structuredClone(step), { base, nodeFor, flowStore })
         should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after ${step.op}`)
         scribble(given)
         should(datastore.get(step.id)).eql(legacy.get(step.id), `${step.id} after scribbling what ${step.op} was given`)
@@ -105,12 +106,13 @@ function compareAfterEachStep (steps, ids, global = fakeGlobal()) {
 function compareAtEnd (steps, ids) {
     const global = fakeGlobal()
     const warnings = []
-    datastore.initStore(global, { node: { warn: (m) => warnings.push(m) } })
+    const shared = datastore.initStore(global, { node: { warn: (m) => warnings.push(m) } })
     const nodeFor = (id, type) => ({ id, type, context: () => ({ global }), warn: (m) => warnings.push(m) })
     const legacy = createLegacy(RED)
     for (const step of steps) {
-        runStep(datastore, structuredClone(step), { base, nodeFor })
-        runStep(legacy, structuredClone(step), { base, nodeFor })
+        const flowStore = shared ? global.get('dashboardStore') : null
+        runStep(datastore, structuredClone(step), { base, nodeFor, flowStore })
+        runStep(legacy, structuredClone(step), { base, nodeFor, flowStore })
     }
     const withData = ids.filter((id) => legacy.has(id))
     for (const id of ids) {

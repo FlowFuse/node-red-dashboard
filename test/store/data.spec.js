@@ -274,6 +274,16 @@ describe('store: data.js chart writes', function () {
         return global.get('dashboardStore')?.[id]
     }
 
+    it('serves the rebuilt messages after a flow pushes a point', function () {
+        const global = storeGlobal()
+        const node = fakeNode('chart-flow')
+        datastore.append(base, node, { payload: 1, topic: 'a', _datapoint: pt(1, 1) })
+
+        global.get('dashboardStore')['chart-flow'].push(pt(2, 2))
+
+        datastore.get('chart-flow').map((m) => m.payload).should.eql([1, 2])
+    })
+
     it('mirrors a chart append into the store', function () {
         const global = storeGlobal()
         const node = fakeNode('chart-1')
