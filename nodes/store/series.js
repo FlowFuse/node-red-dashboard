@@ -12,6 +12,10 @@ function pointCount (datapoint) {
     return Array.isArray(datapoint) ? datapoint.length : 1
 }
 
+function builtMessage (point) {
+    return { payload: point?.y, topic: point?.category, _datapoint: point }
+}
+
 function storedDatapoint (points, datapoint, start, end) {
     if (end === start) {
         return undefined
@@ -57,4 +61,4 @@ function linkLivePoints (msgs, pointAt) {
     }))
 }
 
-module.exports = { pointsOf, pointCount, storedDatapoint, compactTrimmed, linkLivePoints }
+module.exports = { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints }

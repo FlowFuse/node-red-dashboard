@@ -1,4 +1,4 @@
-const { pointsOf, storedDatapoint, compactTrimmed, linkLivePoints } = require('./series.js')
+const { pointsOf, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints } = require('./series.js')
 
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
@@ -229,6 +229,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop === '__proto__' || prop === 'constructor' || prop === 'toJSON') return true
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
+            if (Array.isArray(target[prop]?.msg) && Array.isArray(value)) {
+                records[SET_SERIES](prop, value.map(builtMessage))
+                return true
+            }
             const rec = writeValue(prop, cloneValue(value))
             emit(prop, rec, prop)
             return true
