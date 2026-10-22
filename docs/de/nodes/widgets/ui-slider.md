@@ -28,7 +28,7 @@ controls:
         description: Ermöglicht die Steuerung darüber, ob der Button anklickbar ist oder nicht.
 dynamic:
     Beschriftung:
-        payload: msg.ui_update.class
+        payload: msg.ui_update.label
         structure: ["String"]
     Daumenbeschriftung:
         payload: msg.ui_update.thumbLabel
