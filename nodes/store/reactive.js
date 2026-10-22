@@ -1,3 +1,5 @@
+const { pointsOf, storedDatapoint, compactTrimmed, linkLivePoints } = require('./series.js')
+
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
 const APPEND_ENTRY = Symbol.for('@flowfuse/node-red-dashboard/appendEntry')
 const SET_SERIES = Symbol.for('@flowfuse/node-red-dashboard/setSeries')
@@ -123,21 +125,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         return rec
     }
 
-    const pointsOf = (d) => (d === undefined || d === null) ? [] : (Array.isArray(d) ? d : [d])
-    const pointCount = (d) => (d === undefined || d === null) ? 0 : (Array.isArray(d) ? d.length : 1)
-
-    const messagesWithLivePoints = (rec) => {
-        let i = 0
-        return Object.freeze(rec.msg.map((m) => {
-            const n = pointCount(m._datapoint)
-            if (n === 0) {
-                return m
-            }
-            const livePoints = Array.from({ length: n }, () => rec.value[i++])
-            return Object.freeze({ ...m, _datapoint: Array.isArray(m._datapoint) ? Object.freeze(livePoints) : livePoints[0] })
-        }))
-    }
-
     records[ENTRY_MSG] = (prop) => {
         const rec = records[prop]
         if (!rec) {
@@ -162,11 +149,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         emit(prop, rec, prop)
     }
 
-    const toStoredDatapoint = (series, datapoint, start, end) => {
-        if (end === start) return undefined
-        return Array.isArray(datapoint) ? Object.freeze(series.slice(start, end)) : series[start]
-    }
-
     const toStoredMessage = (owned, datapoint) => {
         freezeOwned(owned, '_datapoint')
         if (datapoint !== undefined) owned._datapoint = datapoint
@@ -186,7 +168,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         })
         const rec = writeValue(prop, points, true)
         rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
-            const stored = toStoredDatapoint(points, datapoint, start, end)
+            const stored = storedDatapoint(points, datapoint, start, end)
             if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
             return toStoredMessage(owned, stored)
         })
@@ -205,7 +187,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         }
         const start = rec.value.length
         for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = toStoredDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
+        const stored = storedDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
         if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
         rec.msg.push(toStoredMessage(owned, stored))
         if (replaced) emit(prop, rec, prop)
@@ -220,31 +202,8 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         if (msgs.length === rec.msg.length) {
             return
         }
-        const points = rec.plainPoints
-        const removedMessages = rec.msg.length - msgs.length
-        if (msgs.length === 0 || msgs[0] === rec.msg[removedMessages]) {
-            let removedPoints = 0
-            for (let i = 0; i < removedMessages; i++) {
-                removedPoints += pointCount(rec.msg[i]._datapoint)
-            }
-            points.splice(0, removedPoints)
-        } else {
-            let readAt = 0
-            let writeAt = 0
-            let nextKept = 0
-            for (const m of rec.msg) {
-                const n = pointCount(m._datapoint)
-                if (m === msgs[nextKept]) {
-                    nextKept++
-                    for (let k = 0; k < n; k++) {
-                        points[writeAt++] = points[readAt + k]
-                    }
-                }
-                readAt += n
-            }
-            points.length = writeAt
-        }
-        writeValue(prop, points, true)
+        compactTrimmed(rec.plainPoints, rec.msg, msgs)
+        writeValue(prop, rec.plainPoints, true)
         rec.msg = msgs
         emit(prop, rec, prop)
     }
@@ -258,7 +217,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
                 if (!rec) return undefined
-                const msg = Array.isArray(rec.msg) ? messagesWithLivePoints(rec) : rec.msg
+                const msg = Array.isArray(rec.msg) ? linkLivePoints(rec.msg, (i) => rec.value[i]) : rec.msg
                 return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
