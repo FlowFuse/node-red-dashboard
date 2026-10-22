@@ -210,6 +210,8 @@ function preparedSeries (msgs, clone) {
     return { points, parts }
 }
 
+const MUTATORS = new Set(['copyWithin', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'])
+
 function isIndex (key) {
     return typeof key === 'string' && /^(0|[1-9]\d*)$/.test(key)
 }
@@ -223,6 +225,10 @@ class SeriesHandler {
     }
 
     get (points, key, receiver) {
+        if (MUTATORS.has(key)) {
+            const entry = this.entry
+            return (...args) => entry.runMethod(points, key, args, receiver)
+        }
         return this.readPoint(points, key, receiver)
     }
 
@@ -342,6 +348,15 @@ class SeriesEntry {
         }
         delete points[i]
         this.relink({ from: i, to: i + 1, fresh: new Set() })
+    }
+
+    runMethod (points, name, args, receiver) {
+        const copies = args.map((arg) => this.store.clone(arg))
+        const result = Array.prototype[name].apply(points, copies)
+        if (this.isCurrent(points)) {
+            this.relink({ from: 0, to: points.length, fresh: new Set(copies) })
+        }
+        return result === points ? receiver : result
     }
 
     writeOther (points, key, value) {
