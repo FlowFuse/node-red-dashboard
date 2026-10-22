@@ -1,3 +1,5 @@
+const { deepReactive, deepFreeze, freezeOwned } = require('./utils.js')
+
 function pointsOf (datapoint) {
     if (datapoint === undefined || datapoint === null) {
         return []
@@ -57,4 +59,103 @@ function linkLivePoints (msgs, pointAt) {
     }))
 }
 
-module.exports = { pointsOf, pointCount, storedDatapoint, compactTrimmed, linkLivePoints }
+function toStoredMessage (owned, datapoint) {
+    freezeOwned(owned, '_datapoint')
+    if (datapoint !== undefined) {
+        owned._datapoint = datapoint
+    } else {
+        deepFreeze(owned._datapoint)
+    }
+    return Object.freeze(owned)
+}
+
+// copies every message before the entry changes, so one that can't be copied leaves the store as it was
+function preparedSeries (msgs, clone) {
+    const points = []
+    const parts = msgs.map((msg) => {
+        const { _datapoint, ...rest } = msg
+        const owned = clone(rest)
+        const datapoint = clone(_datapoint)
+        const start = points.length
+        points.push(...pointsOf(datapoint))
+        return { owned, datapoint, hasDatapoint: '_datapoint' in msg, start, end: points.length }
+    })
+    return { points, parts }
+}
+
+class SeriesEntry {
+    constructor (key, store, history) {
+        this.key = key
+        this.store = store
+        this.points = []
+        this.msg = []
+        this.quality = 'GOOD'
+        this.history = history
+        this.wrap()
+    }
+
+    wrap () {
+        const points = this.points
+        this.value = deepReactive(points, (path) => this.notify(points, path), this.key, this.store.clone, new WeakMap(), true)
+        this.timestamp = this.store.now()
+    }
+
+    // a proxy taken before the key was replaced, deleted or re-seeded must not report
+    isCurrent (points) {
+        return this.store.entryFor(this.key) === this && this.points === points
+    }
+
+    notify (points, path) {
+        if (!this.isCurrent(points)) {
+            return
+        }
+        this.timestamp = this.store.now()
+        this.store.emit(this.key, this, path)
+    }
+
+    commit () {
+        this.wrap()
+        this.store.emit(this.key, this, this.key)
+    }
+
+    replaceAll ({ points, parts }) {
+        this.points = points
+        this.msg = parts.map(({ owned, datapoint, hasDatapoint, start, end }) => {
+            const stored = storedDatapoint(points, datapoint, start, end)
+            if (stored === undefined && hasDatapoint) {
+                owned._datapoint = datapoint
+            }
+            return toStoredMessage(owned, stored)
+        })
+        this.commit()
+    }
+
+    append (owned, datapoint, hasDatapoint) {
+        const start = this.points.length
+        // the proxy clones on push, so points must not be cloned again here
+        for (const point of pointsOf(datapoint)) {
+            this.value.push(point)
+        }
+        const stored = storedDatapoint(this.points, datapoint, start, this.points.length)
+        if (stored === undefined && hasDatapoint) {
+            owned._datapoint = this.store.clone(datapoint)
+        }
+        this.msg.push(toStoredMessage(owned, stored))
+    }
+
+    trim (keep) {
+        const kept = keep(this.msg)
+        if (kept.length === this.msg.length) {
+            return
+        }
+        compactTrimmed(this.points, this.msg, kept)
+        this.msg = kept
+        this.commit()
+    }
+
+    linkedMessages () {
+        return linkLivePoints(this.msg, (i) => this.value[i])
+    }
+}
+
+module.exports = { pointsOf, pointCount, storedDatapoint, compactTrimmed, linkLivePoints, toStoredMessage, preparedSeries, SeriesEntry }

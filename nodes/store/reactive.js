@@ -1,4 +1,4 @@
-const { pointsOf, storedDatapoint, compactTrimmed, linkLivePoints } = require('./series.js')
+const { preparedSeries, SeriesEntry } = require('./series.js')
 const { isReactable, deepClone, deepReactive, deepFreeze, freezeOwned } = require('./utils.js')
 
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
@@ -16,7 +16,6 @@ class Entry {
         this.quality = 'GOOD'
         this.timestamp = 0
         this.history = []
-        this.plainPoints = undefined
     }
 }
 
@@ -27,29 +26,57 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
 
     records[STORE] = true
 
+    const seriesStore = { clone: cloneValue, emit, now, entryFor: (prop) => records[prop] }
+
+    const snapshot = (rec) => {
+        // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
+        if (Array.isArray(rec.value) || !('payload' in rec.msg)) {
+            return
+        }
+        rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
+        if (rec.history.length > maxHistory) {
+            rec.history.shift()
+        }
+    }
+
     // returns the record without notifying, so a caller can finish writing it before onChange fires
-    const writeValue = (prop, value, wrapOnRead = false) => {
+    const writeValue = (prop, value) => {
         let rec = records[prop]
-        if (!rec) {
+        if (rec instanceof SeriesEntry) {
+            const history = rec.history
+            rec = new Entry()
+            rec.history = history
+            records[prop] = rec
+        } else if (rec) {
+            snapshot(rec)
+        } else {
             rec = new Entry()
             records[prop] = rec
-        } else if (!Array.isArray(rec.value) && 'payload' in rec.msg) {
-            // snapshotting a whole array on every write (e.g. a table's rows) would blow up memory
-            rec.history.push(Object.freeze({ value: deepFreeze(cloneValue(rec.value)), timestamp: rec.timestamp }))
-            if (rec.history.length > maxHistory) rec.history.shift()
         }
         const notify = (path) => {
             // a replaced value keeps its proxies alive; they must not report into the record any more
-            if (wrapOnRead ? rec.plainPoints !== value : rec.value !== wrapped) return
+            if (records[prop] !== rec || rec.value !== wrapped) return
             rec.timestamp = now()
             emit(prop, rec, path)
         }
-        const wrapped = deepReactive(value, notify, prop, cloneValue, new WeakMap(), wrapOnRead)
+        const wrapped = deepReactive(value, notify, prop, cloneValue)
         rec.value = wrapped
-        rec.plainPoints = wrapOnRead ? value : undefined
         rec.msg = Object.freeze({ payload: wrapped })
         rec.timestamp = now()
         return rec
+    }
+
+    const seriesAt = (prop) => {
+        const current = records[prop]
+        if (current instanceof SeriesEntry) {
+            return current
+        }
+        if (current) {
+            snapshot(current)
+        }
+        const entry = new SeriesEntry(prop, seriesStore, current ? current.history : [])
+        records[prop] = entry
+        return entry
     }
 
     records[ENTRY_MSG] = (prop) => {
@@ -63,9 +90,10 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
     records[MERGE_ENTRY] = (prop, msg) => {
         const current = records[prop]
         const { payload, ...incoming } = msg
-        const previous = Array.isArray(current?.msg) ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
+        const isSeries = current instanceof SeriesEntry
+        const previous = isSeries ? freezeOwned(cloneValue({ ...current.msg })) : current?.msg || {}
         const { payload: storedPayload, ...stored } = previous
-        const keepValue = current && !Array.isArray(current.msg) && !('payload' in msg)
+        const keepValue = current && !isSeries && !('payload' in msg)
         const owned = freezeOwned(cloneValue(incoming))
         const value = keepValue ? undefined : cloneValue(payload)
         const rec = keepValue ? current : writeValue(prop, value)
@@ -76,63 +104,27 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
         emit(prop, rec, prop)
     }
 
-    const toStoredMessage = (owned, datapoint) => {
-        freezeOwned(owned, '_datapoint')
-        if (datapoint !== undefined) owned._datapoint = datapoint
-        else deepFreeze(owned._datapoint)
-        return Object.freeze(owned)
-    }
-
     records[SET_SERIES] = (prop, msgs) => {
-        const points = []
-        const parts = msgs.map((msg) => {
-            const { _datapoint, ...rest } = msg
-            const owned = cloneValue(rest)
-            const datapoint = cloneValue(_datapoint)
-            const start = points.length
-            for (const p of pointsOf(datapoint)) points.push(p)
-            return { msg, owned, datapoint, start, end: points.length }
-        })
-        const rec = writeValue(prop, points, true)
-        rec.msg = parts.map(({ msg, owned, datapoint, start, end }) => {
-            const stored = storedDatapoint(points, datapoint, start, end)
-            if (stored === undefined && '_datapoint' in msg) owned._datapoint = datapoint
-            return toStoredMessage(owned, stored)
-        })
-        emit(prop, rec, prop)
+        const prepared = preparedSeries(msgs, cloneValue)
+        seriesAt(prop).replaceAll(prepared)
     }
 
     records[APPEND_ENTRY] = (prop, msg) => {
-        let rec = records[prop]
-        const replaced = !!rec && !(Array.isArray(rec.value) && Array.isArray(rec.msg))
-        // the proxy clones on push, so points must not be cloned again here
         const { _datapoint, ...rest } = msg
         const owned = cloneValue(rest)
-        if (!rec || replaced) {
-            rec = writeValue(prop, [], true)
-            rec.msg = []
+        const replaced = prop in records && !(records[prop] instanceof SeriesEntry)
+        const entry = seriesAt(prop)
+        entry.append(owned, _datapoint, '_datapoint' in msg)
+        if (replaced) {
+            emit(prop, entry, prop)
         }
-        const start = rec.value.length
-        for (const p of pointsOf(_datapoint)) rec.value.push(p)
-        const stored = storedDatapoint(rec.plainPoints, _datapoint, start, rec.value.length)
-        if (stored === undefined && '_datapoint' in msg) owned._datapoint = cloneValue(_datapoint)
-        rec.msg.push(toStoredMessage(owned, stored))
-        if (replaced) emit(prop, rec, prop)
     }
 
     records[TRIM_SERIES] = (prop, trim) => {
         const rec = records[prop]
-        if (!rec || !Array.isArray(rec.msg)) {
-            return
+        if (rec instanceof SeriesEntry) {
+            rec.trim(trim)
         }
-        const msgs = trim(rec.msg)
-        if (msgs.length === rec.msg.length) {
-            return
-        }
-        compactTrimmed(rec.plainPoints, rec.msg, msgs)
-        writeValue(prop, rec.plainPoints, true)
-        rec.msg = msgs
-        emit(prop, rec, prop)
     }
 
     const handler = {
@@ -144,7 +136,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) {
                 const rec = target[prop.slice(1)]
                 if (!rec) return undefined
-                const msg = Array.isArray(rec.msg) ? linkLivePoints(rec.msg, (i) => rec.value[i]) : rec.msg
+                const msg = rec instanceof SeriesEntry ? rec.linkedMessages() : rec.msg
                 return Object.freeze({ value: rec.value, msg, quality: rec.quality, timestamp: rec.timestamp, history: Object.freeze(rec.history.slice()) })
             }
             const rec = target[prop]
@@ -168,7 +160,6 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             const ok = delete target[prop]
             if (rec) {
                 rec.value = undefined
-                rec.plainPoints = undefined
             }
             if (existed) emit(prop, undefined, prop)
             return ok
