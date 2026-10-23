@@ -1889,6 +1889,282 @@ describe('store: flow writes to a series', function () {
         store[ENTRY_MSG]('c').should.eql({ payload: 42 })
     })
 
+    const built = (p) => ({ payload: p.y, topic: p.category, _datapoint: p })
+    const xs = (store) => store.c.map((p) => p.x)
+    const payloads = (store) => store[ENTRY_MSG]('c').map((m) => m.payload)
+    const units = (store) => store[ENTRY_MSG]('c').map((m) => m.unit)
+    const uncopiable = () => makeStore({ clone: (v) => { if (v && v.uncopiable) throw new Error('cannot copy'); return util.cloneMessage(v) } })
+
+    it('keeps original fields for points that survive a write past the end', function () {
+        const { store } = series(3)
+
+        store.c[10] = pt(30)
+
+        xs(store).should.eql([0, 1, 2, 30])
+        units(store).should.eql(['C', 'C', 'C', undefined])
+        store[ENTRY_MSG]('c')[3].should.eql(built(pt(30)))
+    })
+
+    it('builds a message for a point assigned over another', function () {
+        const { store } = series(3)
+
+        store.c[1] = pt(9)
+
+        xs(store).should.eql([0, 9, 2])
+        units(store).should.eql(['C', undefined, 'C'])
+    })
+
+    it('drops messages when a flow shortens the series', function () {
+        const { store } = series(3)
+
+        store.c.length = 1
+
+        payloads(store).should.eql([0])
+    })
+
+    it('removes a point a flow deletes', function () {
+        const { store } = series(3)
+
+        delete store.c[1]
+
+        xs(store).should.eql([0, 2])
+        payloads(store).should.eql([0, 2])
+    })
+
+    it('removes a point a flow sets to null', function () {
+        const { store } = series(3)
+
+        store.c[0] = null
+
+        xs(store).should.eql([1, 2])
+        payloads(store).should.eql([1, 2])
+    })
+
+    it('stores a copy of a point a flow writes', function () {
+        const { store } = series(3)
+        const p = pt(9)
+
+        store.c[1] = p
+        p.y = 999
+
+        store.c[1].y.should.equal(9)
+    })
+
+    it('reports each single write once', function () {
+        const { store, log } = series(3)
+
+        store.c[0] = pt(5)
+
+        log.should.eql(['c'])
+    })
+
+    it('re-wraps the series on a write', function () {
+        const { store } = series(3)
+        const before = store.$c.timestamp
+
+        store.c[1] = pt(9)
+
+        store.$c.timestamp.should.be.above(before)
+        store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
+    })
+
+    it('reports a write to a property of the series that is not an index', function () {
+        const { store, log } = series(3)
+
+        store.c.label = 'temps'
+
+        log.should.eql(['c.label'])
+        store.c.label.should.equal('temps')
+        payloads(store).should.eql([0, 1, 2])
+    })
+
+    it('keeps reporting nested writes inside a point', function () {
+        const { store, log } = series(3)
+
+        store.c[0].y = 5
+
+        log.should.eql(['c.0.y'])
+        store[ENTRY_MSG]('c')[0]._datapoint.y.should.equal(5)
+    })
+
+    it('does not relink on the chart\'s own appends', function () {
+        const { store, log } = series(3)
+        store.c[3] = pt(30)
+        log.length = 0
+
+        store[APPEND_ENTRY]('c', { payload: 4, topic: 'a', unit: 'C', _datapoint: pt(4) })
+
+        store[ENTRY_MSG]('c')[4].unit.should.equal('C')
+        log.should.eql(['c.4'])
+    })
+
+    const methods = [
+        ['push', (c) => c.push(pt(9)), 4, [0, 1, 2, 9], ['C', 'C', 'C', undefined]],
+        ['unshift', (c) => c.unshift(pt(9)), 4, [9, 0, 1, 2], [undefined, 'C', 'C', 'C']],
+        ['pop', (c) => c.pop().x, 2, [0, 1], ['C', 'C']],
+        ['shift', (c) => c.shift().x, 0, [1, 2], ['C', 'C']],
+        ['splice', (c) => c.splice(1, 1, pt(9)).map((p) => p.x), [1], [0, 9, 2], ['C', undefined, 'C']],
+        ['sort', (c) => c.sort((a, b) => b.x - a.x)[0].x, 2, [2, 1, 0], ['C', 'C', 'C']],
+        ['reverse', (c) => c.reverse()[0].x, 2, [2, 1, 0], ['C', 'C', 'C']],
+        ['fill', (c) => c.fill(pt(9)).length, 3, [9, 9, 9], [undefined, undefined, undefined]],
+        ['copyWithin', (c) => c.copyWithin(0, 2).length, 3, [2, 1, 2], [undefined, 'C', 'C']]
+    ]
+    methods.forEach(([name, run, returned, x, unit]) => {
+        it(`runs ${name} as one operation, keeping the messages of points it keeps`, function () {
+            const { store, log } = series(3)
+
+            should(run(store.c)).eql(returned)
+
+            xs(store).should.eql(x)
+            units(store).should.eql(unit)
+            log.should.eql(['c'])
+            store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
+        })
+    })
+
+    it('returns the array a method was called on', function () {
+        const { store } = series(3)
+        const c = store.c
+
+        c.sort((a, b) => b.x - a.x).should.equal(c)
+        c.reverse().should.equal(c)
+    })
+
+    it('copies points passed to a method, once', function () {
+        let copies = 0
+        const { store } = makeStore({ clone: (v) => { if (v && v.counted) copies++; return util.cloneMessage(v) } })
+        store[SET_SERIES]('c', [built(pt(0))])
+        const p = { ...pt(1), counted: true }
+
+        store.c.push(p)
+        p.y = 999
+
+        store.c[1].y.should.equal(1)
+        copies.should.equal(1)
+    })
+
+    it('gives each position its own point after fill and copyWithin', function () {
+        const { store } = series(3)
+
+        store.c.fill(pt(9))
+        store.c.copyWithin(0, 2)
+        store.c[0].y = 1
+
+        store.c.map((p) => p.y).should.eql([1, 9, 9])
+    })
+
+    it('gives a copied point its own object when it came from a multi-point message', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store[SET_SERIES]('c', [built(pt(0)), built(pt(1)), { payload: 'm', topic: 'm', _datapoint: [pt(2), pt(3)] }])
+
+        store.c.copyWithin(0, 3)
+        store.c[0].x = 99
+
+        store.c.map((p) => p.x).should.eql([99, 1, 2, 3])
+    })
+
+    it('passes plain points to a sort comparator', function () {
+        const { store } = series(3)
+        const proxied = []
+
+        store.c.sort((a, b) => {
+            proxied.push(types.isProxy(a), types.isProxy(b))
+            return a.x - b.x
+        })
+
+        proxied.should.not.containEql(true)
+    })
+
+    it('stays aligned when a sort comparator writes the series', function () {
+        const { store } = series(4)
+        let wrote = false
+
+        store.c.sort((a, b) => {
+            if (!wrote) {
+                wrote = true
+                store.c[0].y = 99
+            }
+            return b.x - a.x
+        })
+
+        store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
+    })
+
+    it('leaves the series unchanged when a point passed to a method cannot be copied', function () {
+        const { store } = uncopiable()
+        store[SET_SERIES]('c', [built(pt(0))])
+
+        should(() => store.c.push(pt(1), { uncopiable: true })).throw('cannot copy')
+
+        xs(store).should.eql([0])
+        payloads(store).should.eql([0])
+    })
+
+    it('returns undefined from pop and shift on an empty series', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store[SET_SERIES]('c', [])
+
+        should(store.c.pop()).be.undefined()
+        should(store.c.shift()).be.undefined()
+
+        store[ENTRY_MSG]('c').should.eql([])
+    })
+
+    it('keeps a held series reference working across trims', function () {
+        const { store } = series(3)
+        const held = store.c
+        store[APPEND_ENTRY]('c', { payload: 3, topic: 'a', _datapoint: pt(3) })
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m._datapoint.x > 0))
+
+        held.push(pt(9))
+
+        xs(store).should.eql([1, 2, 3, 9])
+        store[ENTRY_MSG]('c').map((m) => m._datapoint.x).should.eql([1, 2, 3, 9])
+    })
+
+    it('stays aligned when a trim follows a flow shift', function () {
+        const { store } = series(3)
+
+        store.c.shift()
+        store[APPEND_ENTRY]('c', { payload: 3, topic: 'a', _datapoint: pt(3) })
+        store[TRIM_SERIES]('c', (msgs) => msgs.filter((m) => m._datapoint.x > 1))
+
+        xs(store).should.eql([2, 3])
+        store[ENTRY_MSG]('c').map((m) => m._datapoint.x).should.eql([2, 3])
+    })
+
+    it('ignores writes and methods through a series proxy taken before the key was replaced', function () {
+        const { store, log } = series(3)
+        const held = store.c
+        store[SET_SERIES]('c', [built(pt(5))])
+        log.length = 0
+
+        held[0] = pt(9)
+        delete held[1]
+        held.push(pt(9))
+
+        payloads(store).should.eql([5])
+        log.should.eql([])
+    })
+
+    it('handles loops over 5,000 points in under a second', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store[SET_SERIES]('c', Array.from({ length: 5000 }, (_, i) => built(pt(i))))
+        const c = store.c
+        const started = Date.now()
+
+        for (let i = 0; i < c.length; i++) {
+            c[i] = { ...c[i], y: c[i].y * 2 }
+        }
+        for (let i = 0; i < 2000; i++) {
+            c.push(pt(5000 + i))
+            c.shift()
+        }
+
+        Date.now().should.be.below(started + 1000)
+        store[ENTRY_MSG]('c').map((m) => m._datapoint.x).should.eql(c.map((p) => p.x))
+    })
+
     it('leaves a non-series key alone when given an array', function () {
         const { store } = makeStore({ clone: util.cloneMessage })
         store.k = 1

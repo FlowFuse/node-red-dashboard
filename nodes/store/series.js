@@ -63,6 +63,106 @@ function linkLivePoints (msgs, livePoints) {
     }))
 }
 
+function isPoint (item) {
+    return item !== undefined && item !== null && !Array.isArray(item)
+}
+
+function owns (msg, point) {
+    return msg !== undefined && isPoint(point) && msg._datapoint === point
+}
+
+function indexMessagesByPoint (msgs) {
+    const messageOfPoint = new Map()
+    const messagesWithoutPointsBefore = new Map()
+    let withoutPoints = []
+    for (const msg of msgs) {
+        const msgPoints = pointsOf(msg._datapoint)
+        if (msgPoints.length === 0) {
+            withoutPoints.push(msg)
+            continue
+        }
+        messagesWithoutPointsBefore.set(msg, withoutPoints)
+        withoutPoints = []
+        for (const point of msgPoints) {
+            messageOfPoint.set(point, msg)
+        }
+    }
+    return { messageOfPoint, messagesWithoutPointsBefore, trailingWithoutPoints: withoutPoints }
+}
+
+function unchangedEnds (points, msgs, end) {
+    let start = 0
+    while (start < end && start < points.length && owns(msgs[start], points[start])) {
+        start++
+    }
+    let msgEnd = end
+    let pointEnd = points.length
+    while (msgEnd > start && pointEnd > start && owns(msgs[msgEnd - 1], points[pointEnd - 1])) {
+        msgEnd--
+        pointEnd--
+    }
+    return { start, msgEnd, pointEnd }
+}
+
+function endOfMessagesWithPoints (msgs) {
+    let end = msgs.length
+    while (end > 0 && pointCount(msgs[end - 1]._datapoint) === 0) {
+        end--
+    }
+    return end
+}
+
+function relinkMiddle (items, msgs, { fresh, clone }) {
+    const { messageOfPoint, messagesWithoutPointsBefore, trailingWithoutPoints } = indexMessagesByPoint(msgs)
+    const used = new Set()
+    const points = []
+    const messages = []
+    let i = 0
+    while (i < items.length) {
+        const item = items[i]
+        const msg = used.has(item) ? undefined : messageOfPoint.get(item)
+        const msgPoints = msg ? pointsOf(msg._datapoint) : []
+        if (msgPoints.length > 0 && msgPoints.every((point, k) => items[i + k] === point && !used.has(point))) {
+            points.push(...msgPoints)
+            messages.push(...messagesWithoutPointsBefore.get(msg), msg)
+            msgPoints.forEach((point) => used.add(point))
+            i += msgPoints.length
+            continue
+        }
+        const needsCopy = typeof item === 'object' && (used.has(item) || (!fresh.has(item) && !messageOfPoint.has(item)))
+        const point = needsCopy ? clone(item) : item
+        used.add(point)
+        points.push(point)
+        messages.push(storedMessageFor(point, clone))
+        i++
+    }
+    messages.push(...trailingWithoutPoints)
+    return { points, messages }
+}
+
+function relinkMessages (points, msgs, { fresh, clone }) {
+    const end = endOfMessagesWithPoints(msgs)
+    const { start, msgEnd, pointEnd } = unchangedEnds(points, msgs, end)
+    const middle = relinkMiddle(points.slice(start, pointEnd).filter(isPoint), msgs.slice(start, msgEnd), { fresh, clone })
+    replaceRange(points, start, pointEnd, middle.points)
+    replaceRange(msgs, start, msgEnd, middle.messages)
+}
+
+function replaceRange (list, start, end, items) {
+    if (items.length === end - start) {
+        items.forEach((item, k) => { list[start + k] = item })
+        return
+    }
+    const tail = list.slice(end)
+    list.length = start
+    for (const item of items) {
+        list.push(item)
+    }
+    for (const item of tail) {
+        list.push(item)
+    }
+}
+
 function toStoredMessage (owned, datapoint) {
     freezeOwned(owned, '_datapoint')
     if (datapoint !== undefined) {
@@ -71,6 +171,11 @@ function toStoredMessage (owned, datapoint) {
         deepFreeze(owned._datapoint)
     }
     return Object.freeze(owned)
+}
+
+function storedMessageFor (point, clone) {
+    const { _datapoint, ...fields } = builtMessage(point)
+    return toStoredMessage(clone(fields), point)
 }
 
 // copies every message before the entry changes, so one that can't be copied leaves the store as it was
@@ -89,6 +194,43 @@ function preparedSeries (msgs, clone) {
     return { points, parts }
 }
 
+const MUTATORS = new Set(['copyWithin', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'])
+
+function isIndex (key) {
+    return typeof key === 'string' && /^(0|[1-9]\d*)$/.test(key)
+}
+
+class SeriesHandler {
+    constructor (entry, points) {
+        this.entry = entry
+        this.reader = deepReactive(points, (path) => entry.notify(points, path), entry.key, entry.storeProps.cloneValue, new WeakMap(), true)
+    }
+
+    get (points, key, receiver) {
+        if (MUTATORS.has(key)) {
+            const entry = this.entry
+            return (...args) => entry.runMethod(points, key, args, receiver)
+        }
+        return Reflect.get(this.reader, key, receiver)
+    }
+
+    set (points, key, value) {
+        if (isIndex(key) || key === 'length') {
+            this.entry.writeIndex(points, key, value)
+            return true
+        }
+        return Reflect.set(this.reader, key, value)
+    }
+
+    deleteProperty (points, key) {
+        if (isIndex(key)) {
+            this.entry.deleteIndex(points, Number(key))
+            return true
+        }
+        return Reflect.deleteProperty(this.reader, key)
+    }
+}
+
 class SeriesEntry {
     constructor (key, storeProps, history) {
         this.key = key
@@ -101,8 +243,7 @@ class SeriesEntry {
     }
 
     wrap () {
-        const points = this.points
-        this.value = deepReactive(points, (path) => this.notify(points, path), this.key, this.storeProps.cloneValue, new WeakMap(), true)
+        this.value = new Proxy(this.points, new SeriesHandler(this, this.points))
         this.timestamp = this.storeProps.now()
     }
 
@@ -138,9 +279,10 @@ class SeriesEntry {
 
     append (owned, datapoint, hasDatapoint) {
         const start = this.points.length
-        // the proxy clones on push, so points must not be cloned again here
         for (const point of pointsOf(datapoint)) {
-            this.value.push(point)
+            this.points.push(this.storeProps.cloneValue(point))
+            this.timestamp = this.storeProps.now()
+            this.storeProps.emit(this.key, this, `${this.key}.${this.points.length - 1}`)
         }
         const stored = storedDatapoint(this.points, datapoint, start, this.points.length)
         if (stored === undefined && hasDatapoint) {
@@ -162,6 +304,38 @@ class SeriesEntry {
     linkedMessages () {
         return linkLivePoints(this.msg, this.value)
     }
+
+    writeIndex (points, key, value) {
+        const copy = key === 'length' ? value : this.storeProps.cloneValue(value)
+        points[key] = copy
+        if (this.isCurrent(points)) {
+            this.relink(new Set([copy]))
+        }
+    }
+
+    deleteIndex (points, i) {
+        if (!(i in points)) {
+            return
+        }
+        delete points[i]
+        if (this.isCurrent(points)) {
+            this.relink(new Set())
+        }
+    }
+
+    runMethod (points, name, args, receiver) {
+        const copies = args.map((arg) => this.storeProps.cloneValue(arg))
+        const result = Array.prototype[name].apply(points, copies)
+        if (this.isCurrent(points)) {
+            this.relink(new Set(copies))
+        }
+        return result === points ? receiver : result
+    }
+
+    relink (fresh) {
+        relinkMessages(this.points, this.msg, { fresh, clone: this.storeProps.cloneValue })
+        this.commit()
+    }
 }
 
-module.exports = { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, toStoredMessage, preparedSeries, SeriesEntry }
+module.exports = { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, toStoredMessage, preparedSeries, SeriesEntry }

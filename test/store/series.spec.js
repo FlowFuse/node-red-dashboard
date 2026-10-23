@@ -1,6 +1,6 @@
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints } = require('../../nodes/store/series.js')
+const { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages } = require('../../nodes/store/series.js')
 
 const pt = (x, category = 'a') => ({ category, x, y: x })
 const msg = (payload, datapoint) => datapoint === undefined ? { payload } : { payload, _datapoint: datapoint }
@@ -122,6 +122,129 @@ describe('store: series', function () {
             linkLivePoints(msgs, ['live'])
 
             msgs[0]._datapoint.should.equal(p)
+        })
+    })
+    describe('relinkMessages', function () {
+        const clone = (v) => (v && typeof v === 'object') ? structuredClone(v) : v
+        const relink = (points, msgs, opts = {}) => {
+            relinkMessages(points, msgs, { fresh: new Set(), clone, ...opts })
+            return msgs
+        }
+        const chart = (n) => {
+            const points = Array.from({ length: n }, (_, i) => pt(i))
+            return { points, msgs: points.map((p, i) => ({ payload: i, _datapoint: p })) }
+        }
+        const owners = (msgs) => msgs.map((m) => 'topic' in m ? 'built' : m.payload)
+
+        it('returns the same messages when nothing changed', function () {
+            const { points, msgs } = chart(3)
+
+            const result = relink(points, msgs)
+
+            result.forEach((m, i) => m.should.equal(msgs[i]))
+        })
+
+        it('drops the message of a removed point', function () {
+            const { points, msgs } = chart(3)
+            points.splice(1, 1)
+
+            owners(relink(points, msgs)).should.eql([0, 2])
+        })
+
+        it('builds a message for a new point', function () {
+            const { points, msgs } = chart(2)
+            const p = pt(9)
+            points.push(p)
+
+            const result = relink(points, msgs, { fresh: new Set([p]) })
+
+            owners(result).should.eql([0, 1, 'built'])
+            result[2]._datapoint.should.equal(p)
+        })
+
+        it('keeps every message through a reorder', function () {
+            const { points, msgs } = chart(3)
+            points.reverse()
+
+            owners(relink(points, msgs)).should.eql([2, 1, 0])
+        })
+
+        it('builds messages for the surviving points of a split multi-point message', function () {
+            const points = [pt(0, 'a'), pt(0, 'b')]
+            const msgs = [{ payload: 'm', _datapoint: Object.freeze(points.slice()) }]
+            points.pop()
+
+            const result = relink(points, msgs)
+
+            owners(result).should.eql(['built'])
+            result[0]._datapoint.should.equal(points[0])
+        })
+
+        it('keeps a message without points with the next message that has points', function () {
+            const { points, msgs } = chart(2)
+            const withRider = [msgs[0], { payload: 'r' }, msgs[1]]
+
+            owners(relink(points.slice(), withRider)).should.eql([0, 'r', 1])
+            owners(relink([points[0]], withRider)).should.eql([0])
+        })
+
+        it('moves a message without points with its message when they are reordered', function () {
+            const { points, msgs } = chart(2)
+            const withRider = [{ payload: 'r' }, ...msgs]
+            points.reverse()
+
+            owners(relink(points, withRider)).should.eql([1, 'r', 0])
+        })
+
+        it('keeps trailing messages without points at the end', function () {
+            const { points, msgs } = chart(1)
+            points.push(pt(9))
+
+            owners(relink(points, [...msgs, { payload: 'r' }], { fresh: new Set([points[1]]) })).should.eql([0, 'built', 'r'])
+        })
+
+        it('removes holes, null, undefined and arrays', function () {
+            const { points, msgs } = chart(5)
+            delete points[0]
+            points[1] = null
+            points[2] = undefined
+            points[3] = [pt(8), pt(9)]
+
+            const result = relink(points, msgs)
+
+            points.map((p) => p.x).should.eql([4])
+            owners(result).should.eql([4])
+        })
+
+        it('copies a point that appears twice, keeping the message at the first position', function () {
+            const { points, msgs } = chart(3)
+            points[2] = points[0]
+
+            const result = relink(points, msgs)
+
+            points[2].should.not.equal(points[0])
+            points[2].should.eql(points[0])
+            owners(result).should.eql([0, 1, 'built'])
+        })
+
+        it('keeps a message once when its point appears twice in a reordered series', function () {
+            const { points, msgs } = chart(3)
+            points.splice(0, 3, points[1], points[0], points[1])
+
+            const result = relink(points, msgs)
+
+            owners(result).should.eql([1, 0, 'built'])
+            points[2].should.not.equal(points[0])
+        })
+
+        it('copies a point another position still owns', function () {
+            const { points, msgs } = chart(3)
+            points.copyWithin(0, 2)
+
+            const result = relink(points, msgs)
+
+            points[0].should.not.equal(points[2])
+            owners(result).should.eql(['built', 1, 2])
         })
     })
 })
