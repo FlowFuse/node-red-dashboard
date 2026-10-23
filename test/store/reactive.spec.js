@@ -1843,3 +1843,58 @@ describe('store: series entries', function () {
         store.$v.history.should.eql([])
     })
 })
+
+describe('store: flow writes to a series', function () {
+    const pt = (x, category = 'a') => ({ category, x, y: x })
+
+    function series (n) {
+        const made = makeStore({ clone: util.cloneMessage })
+        for (let i = 0; i < n; i++) {
+            made.store[APPEND_ENTRY]('c', { payload: i, topic: 'a', unit: 'C', _datapoint: pt(i) })
+        }
+        made.log.length = 0
+        return made
+    }
+
+    it('rebuilds the messages when a flow replaces the key', function () {
+        const { store } = series(3)
+
+        store.c = [pt(9, 'b')]
+
+        store[ENTRY_MSG]('c').should.eql([{ payload: 9, topic: 'b', _datapoint: pt(9, 'b') }])
+        store.$c.msg[0]._datapoint.should.equal(store.c[0])
+    })
+
+    it('clears the series when a flow sets it to []', function () {
+        const { store } = series(3)
+
+        store.c = []
+
+        store[ENTRY_MSG]('c').should.eql([])
+    })
+
+    it('reports a replacement once', function () {
+        const { store, log } = series(3)
+
+        store.c = [pt(9), pt(10)]
+
+        log.should.eql(['c'])
+    })
+
+    it('still turns a series into a plain value when given a non-array', function () {
+        const { store } = series(3)
+
+        store.c = 42
+
+        store[ENTRY_MSG]('c').should.eql({ payload: 42 })
+    })
+
+    it('leaves a non-series key alone when given an array', function () {
+        const { store } = makeStore({ clone: util.cloneMessage })
+        store.k = 1
+
+        store.k = [1, 2]
+
+        store[ENTRY_MSG]('k').should.eql({ payload: [1, 2] })
+    })
+})

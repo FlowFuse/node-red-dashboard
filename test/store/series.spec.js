@@ -1,6 +1,6 @@
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { pointsOf, pointCount, storedDatapoint, compactTrimmed, linkLivePoints } = require('../../nodes/store/series.js')
+const { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints } = require('../../nodes/store/series.js')
 
 const pt = (x, category = 'a') => ({ category, x, y: x })
 const msg = (payload, datapoint) => datapoint === undefined ? { payload } : { payload, _datapoint: datapoint }
@@ -27,6 +27,15 @@ describe('store: series', function () {
             pointsOf(points).should.equal(points)
             pointCount(points).should.equal(2)
             pointCount([]).should.equal(0)
+        })
+    })
+
+    describe('builtMessage', function () {
+        it('takes payload from y and topic from category', function () {
+            const p = pt(4, 'b')
+
+            builtMessage(p).should.eql({ payload: 4, topic: 'b', _datapoint: p })
+            builtMessage(p)._datapoint.should.equal(p)
         })
     })
 
