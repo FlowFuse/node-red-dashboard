@@ -67,7 +67,7 @@ function isPoint (item) {
     return item !== undefined && item !== null && !Array.isArray(item)
 }
 
-function owns (msg, point) {
+function isSamePoint (msg, point) {
     return msg !== undefined && isPoint(point) && msg._datapoint === point
 }
 
@@ -92,12 +92,12 @@ function indexMessagesByPoint (msgs) {
 
 function unchangedEnds (points, msgs, end) {
     let start = 0
-    while (start < end && start < points.length && owns(msgs[start], points[start])) {
+    while (start < end && start < points.length && isSamePoint(msgs[start], points[start])) {
         start++
     }
     let msgEnd = end
     let pointEnd = points.length
-    while (msgEnd > start && pointEnd > start && owns(msgs[msgEnd - 1], points[pointEnd - 1])) {
+    while (msgEnd > start && pointEnd > start && isSamePoint(msgs[msgEnd - 1], points[pointEnd - 1])) {
         msgEnd--
         pointEnd--
     }
