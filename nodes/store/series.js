@@ -120,7 +120,7 @@ function relinkMiddle (items, msgs, { fresh, clone }) {
     let i = 0
     while (i < items.length) {
         const item = items[i]
-        const msg = used.has(item) ? undefined : messageOfPoint.get(item)
+        const msg = messageOfPoint.get(item)
         const msgPoints = msg ? pointsOf(msg._datapoint) : []
         if (msgPoints.length > 0 && msgPoints.every((point, k) => items[i + k] === point && !used.has(point))) {
             points.push(...msgPoints)
@@ -208,8 +208,7 @@ class SeriesHandler {
 
     get (points, key, receiver) {
         if (MUTATORS.has(key)) {
-            const entry = this.entry
-            return (...args) => entry.runMethod(points, key, args, receiver)
+            return (...args) => this.entry.runMethod(points, key, args, receiver)
         }
         return Reflect.get(this.reader, key, receiver)
     }
@@ -306,8 +305,8 @@ class SeriesEntry {
     }
 
     writeIndex (points, key, value) {
-        const copy = key === 'length' ? value : this.storeProps.cloneValue(value)
-        points[key] = copy
+        const copy = key === 'length' ? Math.min(value, points.length) : this.storeProps.cloneValue(value)
+        points[key === 'length' ? key : Math.min(Number(key), points.length)] = copy
         if (this.isCurrent(points)) {
             this.relink(new Set([copy]))
         }
@@ -338,4 +337,4 @@ class SeriesEntry {
     }
 }
 
-module.exports = { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, toStoredMessage, preparedSeries, SeriesEntry }
+module.exports = { isPoint, pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, toStoredMessage, preparedSeries, SeriesEntry }

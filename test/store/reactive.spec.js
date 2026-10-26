@@ -1968,6 +1968,30 @@ describe('store: flow writes to a series', function () {
         store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
     })
 
+    it('drops holes, null, undefined and arrays when a flow replaces the key', function () {
+        const { store } = series(3)
+        const points = [pt(0), null, undefined, [pt(5), pt(6)], pt(1)]
+        points[7] = pt(2)
+
+        store.c = points
+        store[TRIM_SERIES]('c', (msgs) => msgs.slice(1))
+        store.c.push(pt(9))
+
+        xs(store).should.eql([1, 2, 9])
+        store[ENTRY_MSG]('c').map((m) => m._datapoint.x).should.eql([1, 2, 9])
+    })
+
+    it('appends a point written far past the end without walking the gap', function () {
+        const { store } = series(3)
+        const started = Date.now()
+
+        store.c[1e8] = pt(9)
+        store.c.length = 1e8
+
+        Date.now().should.be.below(started + 200)
+        xs(store).should.eql([0, 1, 2, 9])
+    })
+
     it('reports a write to a property of the series that is not an index', function () {
         const { store, log } = series(3)
 
@@ -2007,7 +2031,7 @@ describe('store: flow writes to a series', function () {
         ['sort', (c) => c.sort((a, b) => b.x - a.x)[0].x, 2, [2, 1, 0], ['C', 'C', 'C']],
         ['reverse', (c) => c.reverse()[0].x, 2, [2, 1, 0], ['C', 'C', 'C']],
         ['fill', (c) => c.fill(pt(9)).length, 3, [9, 9, 9], [undefined, undefined, undefined]],
-        ['copyWithin', (c) => c.copyWithin(0, 2).length, 3, [2, 1, 2], [undefined, 'C', 'C']]
+        ['copyWithin', (c) => c.copyWithin(0, 1).length, 3, [1, 2, 2], ['C', undefined, 'C']]
     ]
     methods.forEach(([name, run, returned, x, unit]) => {
         it(`runs ${name} as one operation, keeping the messages of points it keeps`, function () {

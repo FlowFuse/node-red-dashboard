@@ -1,4 +1,4 @@
-const { builtMessage, preparedSeries, SeriesEntry } = require('./series.js')
+const { isPoint, builtMessage, preparedSeries, SeriesEntry } = require('./series.js')
 const { isReactable, deepClone, deepReactive, deepFreeze, freezeOwned } = require('./utils.js')
 
 const STORE = Symbol.for('@flowfuse/node-red-dashboard/store')
@@ -149,7 +149,7 @@ function createDataStore ({ maxHistory = 5, onChange, clone = deepClone, now = D
             if (prop.startsWith('$')) return true // '$' is reserved for the read-only meta view
 
             if (target[prop] instanceof SeriesEntry && Array.isArray(value)) {
-                records[SET_SERIES](prop, value.map(builtMessage))
+                records[SET_SERIES](prop, value.filter(isPoint).map(builtMessage))
                 return true
             }
             const rec = writeValue(prop, cloneValue(value))
