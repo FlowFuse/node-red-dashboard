@@ -104,7 +104,11 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
     ```
 7.  In your forked dashboard repository (on Github), switch to the new branch and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
+## TypeScript
 
+TypeScript is optional. In `/ui`, new files can be written as `.ts` (or `<script lang="ts">` in `.vue` files), and existing files can be converted when you're working in them, or left as JavaScript. If you edit a file that's already TypeScript, keep it TypeScript.
+
+Run `npm run typecheck` to check types. It also runs as part of `npm run lint`.
 
 ## Running Documentation Locally
 
