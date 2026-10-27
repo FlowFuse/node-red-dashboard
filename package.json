@@ -159,9 +159,6 @@
             "ui-event": "nodes/widgets/ui_event.js",
             "ui-control": "nodes/widgets/ui_control.js",
             "ui-progress": "nodes/widgets/ui_progress.js"
-        },
-        "plugins": {
-            "ui-template-vue-editor": "nodes/plugins/vue-editor.html"
         }
     },
     "overrides": {
