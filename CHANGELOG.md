@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.34.1](https://github.com/FlowFuse/node-red-dashboard/compare/v1.34.0...v1.34.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* [2332] Load the ui-template Vue editor without a plugin so Node-RED 3.0 starts ([#2333](https://github.com/FlowFuse/node-red-dashboard/issues/2333)) ([4c5f821](https://github.com/FlowFuse/node-red-dashboard/commit/4c5f8215d321fc99f30af8168fdbb5c43130a435))
+
 ## [1.34.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.33.0...v1.34.0) (2026-10-22)
 
 
