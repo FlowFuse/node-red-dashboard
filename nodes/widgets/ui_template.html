@@ -9,6 +9,83 @@
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
 
+        const VUE_SFC_LANGUAGE_ID = 'vue-sfc'
+        const MODULE = '@flowfuse/node-red-dashboard'
+
+        // Node-RED only knows its built-in Monaco worker labels, so map ours onto the html worker
+        function shimWorkerLabel () {
+            const env = window.MonacoEnvironment
+            if (!env || env.vueSfcWorkerShim) {
+                return
+            }
+            for (const fn of ['getWorkerUrl', 'getWorker']) {
+                if (typeof env[fn] === 'function') {
+                    const original = env[fn]
+                    env[fn] = function (moduleId, label) {
+                        return original.call(this, moduleId, label === VUE_SFC_LANGUAGE_ID ? 'html' : label)
+                    }
+                }
+            }
+            env.vueSfcWorkerShim = true
+        }
+
+        function nodeRedRegistersHtmlLanguages () {
+            return typeof RED.editor?.codeEditor?.monaco?.registerHTMLLanguage === 'function'
+        }
+
+        function registerHtmlLanguageService (monaco) {
+            const options = { data: { useDefaultDataProvider: true } }
+            if (nodeRedRegistersHtmlLanguages()) {
+                RED.editor.codeEditor.monaco.registerHTMLLanguage(VUE_SFC_LANGUAGE_ID, options)
+                return
+            }
+            // Monaco 0.55 moved monaco.languages.html to monaco.html
+            const html = monaco.html?.registerHTMLLanguageService ? monaco.html : monaco.languages.html
+            if (!html?.registerHTMLLanguageService) {
+                return
+            }
+            html.registerHTMLLanguageService(VUE_SFC_LANGUAGE_ID, Object.assign({}, html.htmlDefaults?.options, options))
+        }
+
+        function ensureVueSfcLanguage () {
+            const monaco = window.monaco
+            if (!monaco?.languages?.register) {
+                return false
+            }
+            if (monaco.languages.getLanguages().some(l => l.id === VUE_SFC_LANGUAGE_ID)) {
+                return true
+            }
+            monaco.languages.register({ id: VUE_SFC_LANGUAGE_ID, aliases: ['Vue', VUE_SFC_LANGUAGE_ID], extensions: ['.vue'] })
+            try {
+                registerHtmlLanguageService(monaco)
+            } catch (err) {
+                console.warn('Dashboard: HTML language service not available for Vue templates', err)
+            }
+
+            const version = RED.nodes.registry?.getModule?.(MODULE)?.version
+            const query = version ? '?v=' + encodeURIComponent(version) : ''
+            const base = new URL('resources/' + MODULE + '/vue-editor/', document.baseURI)
+            monaco.languages.onLanguage(VUE_SFC_LANGUAGE_ID, function () {
+                if (!nodeRedRegistersHtmlLanguages()) {
+                    shimWorkerLabel()
+                }
+                import(new URL('vue-sfc.mjs' + query, base).href)
+                    .then(m => m.activate(monaco, { dataUrl: new URL('vuetify.json' + query, base).href }))
+                    .catch(err => console.warn('Dashboard: could not load the Vue editor support', err))
+            })
+            return true
+        }
+
+        // nr-assistant before 0.21.0 only gives ui-template Expert completions and its CodeLens for html
+        function assistantSupportsVueSfc () {
+            const assistant = RED.plugins.getPlugin('flowfuse-nr-assistant')
+            return !assistant || assistant.supportsVueSfc === true
+        }
+
+        function useVueSfc () {
+            return RED.editor.codeEditor?.editor?.type === 'monaco' && assistantSupportsVueSfc() && ensureVueSfcLanguage()
+        }
+
         const template = []
 
         template.push('<template>')
@@ -191,10 +268,7 @@
                 const that = this
                 const $templateScope = $('#node-input-templateScope')
 
-                // Monaco gets Vue/Vuetify syntax and completions from the ui-template-vue-editor plugin (nodes/plugins/vue-editor.html).
-                // ACE, Monaco without the plugin, or an nr-assistant too old for vue-sfc keeps the HTML mode.
-                const vueEditor = RED.plugins.getPlugin('ui-template-vue-editor')
-                const htmlMode = vueEditor?.useVueSfc?.() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
+                const htmlMode = useVueSfc() ? 'ace/mode/vue-sfc' : 'ace/mode/html'
 
                 // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
                 // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)

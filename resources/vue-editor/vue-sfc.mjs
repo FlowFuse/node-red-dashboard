@@ -2,7 +2,7 @@
 /**
  * Vue single file component support for Node-RED's Monaco code editor, used by the ui-template node.
  *
- * Loaded on demand by nodes/plugins/vue-editor.html the first time an editor uses the `vue-sfc` language.
+ * Loaded on demand by nodes/widgets/ui_template.html the first time an editor uses the `vue-sfc` language.
  * It provides:
  *  - a Monarch tokenizer for Vue templates (directives, bindings, events, slots and {{ }} interpolation
  *    are tokenized with JavaScript embedded; <script> and <style> blocks embed JavaScript/TypeScript and CSS/SCSS/Less)
