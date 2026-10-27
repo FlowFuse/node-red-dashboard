@@ -1,6 +1,6 @@
 const should = require('should') // eslint-disable-line no-unused-vars
 
-const { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages } = require('../../nodes/store/series.js')
+const { pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, unchangedEnds } = require('../../nodes/store/series.js')
 
 const pt = (x, category = 'a') => ({ category, x, y: x })
 const msg = (payload, datapoint) => datapoint === undefined ? { payload } : { payload, _datapoint: datapoint }
@@ -203,17 +203,18 @@ describe('store: series', function () {
             owners(relink(points, [...msgs, { payload: 'r' }], { fresh: new Set([points[1]]) })).should.eql([0, 'built', 'r'])
         })
 
-        it('removes holes, null, undefined and arrays', function () {
-            const { points, msgs } = chart(5)
+        it('removes holes, null, undefined, arrays and primitives', function () {
+            const { points, msgs } = chart(6)
             delete points[0]
             points[1] = null
             points[2] = undefined
             points[3] = [pt(8), pt(9)]
+            points[4] = 4
 
             const result = relink(points, msgs)
 
-            points.map((p) => p.x).should.eql([4])
-            owners(result).should.eql([4])
+            points.map((p) => p.x).should.eql([5])
+            owners(result).should.eql([5])
         })
 
         it('copies a point that appears twice, keeping the message at the first position', function () {
@@ -245,6 +246,36 @@ describe('store: series', function () {
 
             points[0].should.not.equal(points[2])
             owners(result).should.eql(['built', 1, 2])
+        })
+    })
+
+    describe('unchangedEnds', function () {
+        const pairs = (n) => {
+            const points = Array.from({ length: n * 2 }, (_, i) => pt(i))
+            const msgs = Array.from({ length: n }, (_, i) => msg(i, Object.freeze(points.slice(i * 2, i * 2 + 2))))
+            return { points, msgs }
+        }
+
+        it('steps over multi-point messages whose points are unchanged', function () {
+            const { points, msgs } = pairs(4)
+            points[4] = pt(9)
+
+            unchangedEnds(points, msgs, msgs.length).should.eql({ msgStart: 2, pointStart: 4, msgEnd: 3, pointEnd: 6 })
+        })
+
+        it('steps over a message without points only together with the message after it', function () {
+            const { points, msgs } = pairs(3)
+            const withRiders = [msgs[0], msg('r1'), msgs[1], msg('r2'), msgs[2]]
+            points[2] = pt(9)
+
+            unchangedEnds(points, withRiders, withRiders.length).should.eql({ msgStart: 1, pointStart: 2, msgEnd: 3, pointEnd: 4 })
+        })
+
+        it('does not let the two ends overlap', function () {
+            const { points, msgs } = pairs(2)
+            points.splice(2, 0, ...points.slice(0, 2))
+
+            unchangedEnds(points, msgs, msgs.length).should.eql({ msgStart: 1, pointStart: 2, msgEnd: 1, pointEnd: 4 })
         })
     })
 })

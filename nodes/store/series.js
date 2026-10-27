@@ -64,11 +64,19 @@ function linkLivePoints (msgs, livePoints) {
 }
 
 function isPoint (item) {
-    return item !== undefined && item !== null && !Array.isArray(item)
+    return typeof item === 'object' && item !== null && !Array.isArray(item)
 }
 
-function isSamePoint (msg, point) {
-    return msg !== undefined && isPoint(point) && msg._datapoint === point
+function holdsPointsAt (datapoint, points, at) {
+    if (!Array.isArray(datapoint)) {
+        return points[at] === datapoint
+    }
+    for (let k = 0; k < datapoint.length; k++) {
+        if (points[at + k] !== datapoint[k]) {
+            return false
+        }
+    }
+    return true
 }
 
 function indexMessagesByPoint (msgs) {
@@ -91,17 +99,31 @@ function indexMessagesByPoint (msgs) {
 }
 
 function unchangedEnds (points, msgs, end) {
-    let start = 0
-    while (start < end && start < points.length && isSamePoint(msgs[start], points[start])) {
-        start++
+    let msgStart = 0
+    let pointStart = 0
+    for (let k = 0, at = 0; k < end; k++) {
+        const n = pointCount(msgs[k]._datapoint)
+        if (n === 0) {
+            continue
+        }
+        if (!holdsPointsAt(msgs[k]._datapoint, points, at)) {
+            break
+        }
+        at += n
+        msgStart = k + 1
+        pointStart = at
     }
     let msgEnd = end
     let pointEnd = points.length
-    while (msgEnd > start && pointEnd > start && isSamePoint(msgs[msgEnd - 1], points[pointEnd - 1])) {
-        msgEnd--
-        pointEnd--
+    for (let k = end - 1; k >= msgStart; k--) {
+        const n = pointCount(msgs[k]._datapoint)
+        if (n > 0 && (pointEnd - n < pointStart || !holdsPointsAt(msgs[k]._datapoint, points, pointEnd - n))) {
+            break
+        }
+        msgEnd = k
+        pointEnd -= n
     }
-    return { start, msgEnd, pointEnd }
+    return { msgStart, pointStart, msgEnd, pointEnd }
 }
 
 function endOfMessagesWithPoints (msgs) {
@@ -129,7 +151,7 @@ function relinkMiddle (items, msgs, { fresh, clone }) {
             i += msgPoints.length
             continue
         }
-        const needsCopy = typeof item === 'object' && (used.has(item) || (!fresh.has(item) && !messageOfPoint.has(item)))
+        const needsCopy = used.has(item) || (!fresh.has(item) && !messageOfPoint.has(item))
         const point = needsCopy ? clone(item) : item
         used.add(point)
         points.push(point)
@@ -142,10 +164,10 @@ function relinkMiddle (items, msgs, { fresh, clone }) {
 
 function relinkMessages (points, msgs, { fresh, clone }) {
     const end = endOfMessagesWithPoints(msgs)
-    const { start, msgEnd, pointEnd } = unchangedEnds(points, msgs, end)
-    const middle = relinkMiddle(points.slice(start, pointEnd).filter(isPoint), msgs.slice(start, msgEnd), { fresh, clone })
-    replaceRange(points, start, pointEnd, middle.points)
-    replaceRange(msgs, start, msgEnd, middle.messages)
+    const { msgStart, pointStart, msgEnd, pointEnd } = unchangedEnds(points, msgs, end)
+    const middle = relinkMiddle(points.slice(pointStart, pointEnd).filter(isPoint), msgs.slice(msgStart, msgEnd), { fresh, clone })
+    replaceRange(points, pointStart, pointEnd, middle.points)
+    replaceRange(msgs, msgStart, msgEnd, middle.messages)
 }
 
 function replaceRange (list, start, end, items) {
@@ -337,4 +359,4 @@ class SeriesEntry {
     }
 }
 
-module.exports = { isPoint, pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, toStoredMessage, preparedSeries, SeriesEntry }
+module.exports = { isPoint, pointsOf, pointCount, builtMessage, storedDatapoint, compactTrimmed, linkLivePoints, relinkMessages, unchangedEnds, toStoredMessage, preparedSeries, SeriesEntry }

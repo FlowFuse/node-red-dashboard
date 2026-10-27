@@ -1940,6 +1940,16 @@ describe('store: flow writes to a series', function () {
         payloads(store).should.eql([1, 2])
     })
 
+    it('removes a primitive a flow writes or pushes', function () {
+        const { store } = series(3)
+
+        store.c[0] = 5
+        store.c.push(6)
+
+        xs(store).should.eql([1, 2])
+        payloads(store).should.eql([1, 2])
+    })
+
     it('stores a copy of a point a flow writes', function () {
         const { store } = series(3)
         const p = pt(9)
@@ -1968,10 +1978,10 @@ describe('store: flow writes to a series', function () {
         store.$c.msg.forEach((m, i) => m._datapoint.should.equal(store.c[i]))
     })
 
-    it('drops holes, null, undefined and arrays when a flow replaces the key', function () {
+    it('drops holes, null, undefined, arrays and primitives when a flow replaces the key', function () {
         const { store } = series(3)
-        const points = [pt(0), null, undefined, [pt(5), pt(6)], pt(1)]
-        points[7] = pt(2)
+        const points = [pt(0), null, undefined, [pt(5), pt(6)], 4, 'x', pt(1)]
+        points[9] = pt(2)
 
         store.c = points
         store[TRIM_SERIES]('c', (msgs) => msgs.slice(1))
