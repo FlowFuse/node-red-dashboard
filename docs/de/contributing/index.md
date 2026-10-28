@@ -104,11 +104,7 @@ Eine [VitePress](https://vitepress.dev/) Dokumentationsseite, die zur Erstellung
     ```
 7.  Wechseln Sie in Ihrem geforkten Dashboard-Repository (auf Github) zum neuen Branch und [erstellen Sie eine Pull-Anfrage](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
-## TypeScript
 
-TypeScript ist optional. In `/ui` können neue Dateien als `.ts` (oder mit `<script lang="ts">` in `.vue`-Dateien) geschrieben werden, und bestehende Dateien können bei der Bearbeitung umgestellt oder als JavaScript belassen werden. Wenn Sie eine Datei bearbeiten, die bereits TypeScript ist, behalten Sie TypeScript bei.
-
-Führen Sie `npm run typecheck` aus, um die Typen zu prüfen. Es läuft auch als Teil von `npm run lint`.
 
 ## Dokumentation lokal ausführen
 
