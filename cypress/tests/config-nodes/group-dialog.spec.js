@@ -41,6 +41,14 @@ describe('Node-RED Dashboard 2.0 - Group: Dialog "Receive messages while closed"
         cy.get('#nrdb-ui-widget-dashboard-ui-table-keep').should('exist').and('not.be.visible')
     })
 
+    it('lets clicks pass through the closed dialog to the page behind it', () => {
+        cy.get('.nrdb-dialog--keep-loaded .v-overlay__content').should(($content) => {
+            const rect = $content[0].getBoundingClientRect()
+            const el = $content[0].ownerDocument.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+            expect(el.closest('.nrdb-dialog--keep-loaded')).to.equal(null)
+        })
+    })
+
     it('does not load a dialog without the setting until it is opened', () => {
         cy.clickAndWait(cy.get('button').contains('Send Default'), 500)
         cy.get('#nrdb-ui-widget-dashboard-ui-table-default').should('not.exist')

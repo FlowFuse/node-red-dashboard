@@ -29,7 +29,7 @@
             <span class="property-type">boolean</span>
         </dt>
         <dd>
-            Dialog groups only. Loads the dialog's widgets with the page and keeps them loaded while the dialog is closed, so messages sent while it is closed, including messages sent to a single client, show when it opens.
+            Dialog groups only. Keeps the dialog's widgets loaded while it is closed, so messages sent after the page has loaded, including messages sent to a single client, show when it opens. Widgets keep their state between openings and run while hidden, for example audio set to autoplay starts when the page loads.
         </dd>
         <dt>
             Size

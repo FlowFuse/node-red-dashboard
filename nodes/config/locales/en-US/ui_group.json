@@ -19,7 +19,7 @@
             "typeDefault": "Default",
             "typeDialog": "Dialog",
             "keepLoaded": "Receive messages while closed",
-            "keepLoadedTip": "Loads the dialog's widgets with the page so messages sent while it's closed, including to a single client, show when it opens.",
+            "keepLoadedTip": "Keeps the dialog's widgets loaded so messages sent after the page loads show when it opens. Widgets keep their state and run while hidden.",
             "tab": "Tab",
             "noTab": "None (own tab)"
         }
