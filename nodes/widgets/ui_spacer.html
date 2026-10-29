@@ -35,24 +35,11 @@
             label: function () { return `${this.name || c_('label.spacer')} (${this.width}x${this.height})` },
             labelStyle: function () { return this.name ? 'node_label_italic' : '' },
             oneditprepare: function () {
-                // if this groups parent is a subflow template, set the node-config-input-width and node-config-input-height up
-                // as typedInputs and hide the elementSizer (as it doesn't make sense for subflow templates)
-                if (RED.nodes.subflow(this.z)) {
-                    // change inputs from hidden to text & display them
-                    $('#node-config-input-width').attr('type', 'text')
-                    $('#node-config-input-height').attr('type', 'text')
-                    $('div.form-row.nr-db-ui-element-hide-in-subflow').hide()
-                    $('div.form-row.nr-db-ui-element-show-in-subflow').show()
-                } else {
-                    // not in a subflow, use the elementSizer
-                    $('div.form-row.nr-db-ui-element-hide-in-subflow').show()
-                    $('div.form-row.nr-db-ui-element-show-in-subflow').hide()
-                    $('#node-config-input-size').elementSizer({
-                        width: '#node-config-input-width',
-                        height: '#node-config-input-height',
-                        group: '#node-config-input-group'
-                    })
-                }
+                $('#node-config-input-size').elementSizer({
+                    width: '#node-config-input-width',
+                    height: '#node-config-input-height',
+                    group: '#node-config-input-group'
+                })
                 // use jQuery UI tooltip to convert the plain old title attribute to a nice tooltip
                 $('.ui-node-popover-title').tooltip({
                     show: {
@@ -75,21 +62,12 @@
         <label for="node-config-input-group"><i class="fa fa-table"></i> <span data-i18n="ui-spacer.label.group"></span></label>
         <input type="text" id="node-config-input-group">
     </div>
-    <div class="form-row nr-db-ui-element-hide-in-subflow">
+    <div class="form-row">
         <label><i class="fa fa-object-group"></i> <span data-i18n="ui-base.label.size">Size</label>
-        <button class="editor-button" id="node-config-input-size"></button>
-    </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows-h"></i> <span data-i18n="ui-base.label.width">Width</label>
         <input type="hidden" id="node-config-input-width">
-    </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows-v"></i> <span data-i18n="ui-base.label.height">Height</label>
         <input type="hidden" id="node-config-input-height">
-    </div>
-    <div class="form-row nr-db-ui-element-show-in-subflow">
-        <label><i class="fa fa-arrows"></i> <span data-i18n="ui-base.label.order">Order</label>
-        <input type="text" id="node-input-config-order">
+        <input type="hidden" id="node-config-input-order">
+        <button class="editor-button" id="node-config-input-size"></button>
     </div>
     <div class="form-row">
         <label for="node-config-input-className"><i class="fa fa-code"></i> <span data-i18n="ui-spacer.label.class"></span></label>
