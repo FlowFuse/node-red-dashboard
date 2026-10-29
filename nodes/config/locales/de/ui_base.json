@@ -2,6 +2,9 @@
     "ui-base": {
         "auto": "auto",
         "label": {
+            "width": "Breite",
+            "height": "Höhe",
+            "order": "Reihenfolge",
             "uiName": "UI-Name",
             "path": "Pfad",
             "pathDisabledNote": "Diese Option ist derzeit deaktiviert und noch in Entwicklung.",

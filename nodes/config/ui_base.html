@@ -2454,6 +2454,10 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 return RED._(`@flowfuse/node-red-dashboard/ui-base:ui-base.${x}`)
             }
 
+            if (this.options.group && this._createSubflowInputs()) {
+                return
+            }
+
             const thisWidget = this
             let gridWidth = 6
             const width = parseInt($(this.options.width).val() || 0)
@@ -2643,6 +2647,38 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 })
                 container.fadeIn(200)
             })
+        },
+        _createSubflowInputs: function () {
+            const getEditStack = RED.editor.getEditStack
+            const node = getEditStack ? getEditStack().at(-1) : null
+            const z = getEditStack ? node?.z : RED.workspaces.active()
+            if (!RED.nodes.subflow(z)) {
+                return false
+            }
+
+            const prefix = this.options.width.replace(/^#/, '').replace(/width$/, '')
+            const sizeRow = this.element.closest('.form-row')
+            const rowClass = `${sizeRow.attr('class')} nr-db-ui-element-subflow-row`
+            const labelContent = (icon, key) => [$('<i>', { class: `fa ${icon}` }), ' ', $('<span>').text(c_(`label.${key}`))]
+            const createRow = (icon, key, input) => $('<div>', { class: rowClass })
+                .append($('<label>').append(labelContent(icon, key)))
+                .append(input.attr('type', 'text'))
+
+            this.element.hide()
+            sizeRow.addClass('nr-db-ui-element-subflow-row')
+            const sizeLabel = sizeRow.children('label').first().empty().append(labelContent('fa-arrows-h', 'width'))
+            $(this.options.width).attr('type', 'text').insertAfter(sizeLabel)
+
+            const heightRow = createRow('fa-arrows-v', 'height', $(this.options.height)).insertAfter(sizeRow)
+
+            let orderInput = $(`#${prefix}order`)
+            if (!orderInput.length && node && hasProperty(node._def.defaults, 'order')) {
+                orderInput = $('<input>', { id: `${prefix}order` }).val(node.order)
+            }
+            if (orderInput.length) {
+                createRow('fa-arrows', 'order', orderInput).insertAfter(heightRow)
+            }
+            return true
         }
     })
 })()
