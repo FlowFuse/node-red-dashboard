@@ -5,6 +5,7 @@ props:
     Page: The Page (<code>ui-page</code>) that this group will render on.
     Tab: Only for pages using the "Tabs" layout. Which of the page's tabs this group renders in. "None" renders the group as its own tab.
     Type: Controls whether the group appears as a default group or as a dialog, which needs to be triggered manually using ui-control. You can choose between 'Default' and 'Dialog' types.
+    Receive messages while closed: Dialog groups only. Keeps the dialog's widgets loaded while it is closed, so messages sent after the page has loaded, including messages sent to a single client, show when it opens. Widgets keep their state between openings and run while hidden, for example audio set to autoplay starts when the page loads.
     Size: The width and height of the group. Height will always be reinforced by this value, the height is generally a <i>minimum</i> height, and will extend to fit its content.
     Class: Any custom CSS classes you wish to add to the Group.
     Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this group.</li><li><b>Interactivity</b> - Controls whether the group and its contents are disabled/enabled when the page is loaded.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
