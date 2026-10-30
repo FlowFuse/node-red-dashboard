@@ -56,7 +56,7 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
     ```bash
     npm run build
     ```
-   Alternatively, use `npm run build:dev` to build a developer version or use `npm run dev` to build a developer version and watch for changes (hot reload)
+   Alternatively, use `npm run build:dev` to build a developer version or use `npm run dev` to build a developer version and watch for changes (hot reload), including recompiling any TypeScript in `/nodes`
 
 
 ### Install into Node-RED
@@ -86,7 +86,8 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
       - This assumes Node-RED is installed at `~/.node-red` and you have `@flowfuse/node-red-dashboard` installed in that folder (as per step 3 above)
    - **Dashboard/UI:** For Dashboard/UI changes, see `/ui` - changes here will require a rebuild of the Dashboard's UI, which can be done by running `npm run build` (as per Step 5. in "Clone & Build the Repository").
       - For convenience you can use `npm run watch:dashboard` which will auto-rebuild after dashboard UI changes 
-   - The two watch commands are combined into one command under `npm run watch`
+   - **TypeScript in `/nodes`:** `.ts` files compile to `.js` next to them. `npm run watch:nodes` recompiles on change.
+   - `npm run dev` runs `watch:dashboard` and `watch:nodes` together, and `npm run watch` adds `watch:node-red`
 
 2. **Refresh Browser:** Refresh the dashboard in the browser on `http(s)://your_hostname_or_ip_address:1880/dashboard`
 3. **Develop:** Repeat step 1 to 2 over and over again, until you're satisfied with your results.
@@ -106,9 +107,9 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
 
 ## TypeScript
 
-TypeScript is optional. In `/ui`, new files can be written as `.ts` (or `<script lang="ts">` in `.vue` files), and existing files can be converted when you're working in them, or left as JavaScript. If you edit a file that's already TypeScript, keep it TypeScript.
+TypeScript is optional. New files can be written as `.ts` (or `<script lang="ts">` in `.vue` files), and existing files can be converted when you're working in them, or left as JavaScript. If you edit a file that's already TypeScript, keep it TypeScript.
 
-TypeScript isn't supported in `/nodes` yet, since it needs a compile step that hasn't been added.
+In `/nodes`, a `.ts` file compiles to a `.js` file next to it, so `require` paths and `package.json` stay the same. The compiled file is built on `npm install` and `npm test` (or `npm run build:nodes`), and isn't committed: add its path to the root `.gitignore` when you convert or create a file. `npm run watch` recompiles on change.
 
 Run `npm run typecheck` to check types. It also runs as part of `npm run lint`.
 
