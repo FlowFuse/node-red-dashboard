@@ -105,6 +105,23 @@ describe('ui-event node', function () {
         msg.should.have.property('payload', '$pageview')
     })
 
+    it('should not send connected clients\' socket ids in the ui-config', async function () {
+        await helper.load(nodeImports, flow)
+        base = helper.getNode('config-ui-base')
+        const first = connectFakeClient(base, 'fake-conn-1')
+        const second = connectFakeClient(base, 'fake-conn-2')
+        socketIds.push(first.id, second.id)
+
+        const config = new Promise((resolve) => {
+            first.once('ui-config', (id, payload) => resolve(JSON.stringify(payload)))
+        })
+        await helper.setFlows(renamedFlow('changed'), 'nodes')
+
+        const sent = await config
+        sent.should.not.containEql(first.id)
+        sent.should.not.containEql(second.id)
+    })
+
     it('should keep exactly one ui-event listener per connected client across repeated deploys', async function () {
         await helper.load(nodeImports, flow)
         base = helper.getNode('config-ui-base')
