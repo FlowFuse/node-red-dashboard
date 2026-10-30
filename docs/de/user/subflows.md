@@ -91,10 +91,12 @@ Um dann auf diese in den Kindknoten zuzugreifen, in unserem Fall dem `ui-slider`
 
 ##### Größenanpassung
 
-Beim Festlegen der Größe eines Widget-Knotens wie ui-text oder ui-button innerhalb eines Subflows werden Ihnen stattdessen Texteingabefelder für Breite und Höhe angezeigt
+Beim Festlegen der Größe eines Widget-Knotens wie ui-text oder ui-button innerhalb eines Subflows werden Ihnen stattdessen Texteingabefelder für Breite, Höhe und Reihenfolge angezeigt
 anstelle des üblichen Größenanpassungs-Widgets. Dies soll das externe Setzen der Werte über die Subflow-Instanzeigenschaften mit der `${variable_name}`-Syntax ermöglichen.
 
 HINWEIS: Sie können die Breite und Höhe des Widgets immer noch auf `0` setzen, um die automatische Größenanpassung zu ermöglichen.
+
+HINWEIS: In Node-RED-Versionen vor `4.0.0` zeigen Widgets von Drittanbietern nur Breite und Höhe an. Die Reihenfolge wird angezeigt, wenn der Bearbeitungsdialog des Widgets ein eigenes Eingabefeld dafür enthält.
 
 ## Anpassung des Erscheinungsbildes
 

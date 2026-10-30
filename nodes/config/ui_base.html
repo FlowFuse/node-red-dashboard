@@ -2672,6 +2672,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             const heightRow = createRow('fa-arrows-v', 'height', $(this.options.height)).insertAfter(sizeRow)
 
             let orderInput = $(`#${prefix}order`)
+            // Node-RED < 4.0 has no getEditStack, so without an order input in the template there is no node to read order from
             if (!orderInput.length && node && hasProperty(node._def.defaults, 'order')) {
                 orderInput = $('<input>', { id: `${prefix}order` }).val(node.order)
             }
