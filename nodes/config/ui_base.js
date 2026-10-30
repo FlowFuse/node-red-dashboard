@@ -553,8 +553,16 @@ module.exports = function (RED) {
                             socket.removeAllListeners(eventName)
                         } catch (_error) { /* do nothing */ }
                     }
+                    delete widget._onSocketHandlers?.[socket.id]
                 }
             })
+        }
+
+        function addWidgetSocketHandler (socket, widget, eventName, handler) {
+            widget._onSocketHandlers = widget._onSocketHandlers || {}
+            widget._onSocketHandlers[socket.id] = widget._onSocketHandlers[socket.id] || {}
+            widget._onSocketHandlers[socket.id][eventName] = handler.bind(null, socket)
+            socket.on(eventName, widget._onSocketHandlers[socket.id][eventName])
         }
 
         function setupEventHandlers (socket, onConnection) {
@@ -576,9 +584,7 @@ module.exports = function (RED) {
                                 handler(socket)
                             }
                         } else {
-                            widget._onSocketHandlers = widget._onSocketHandlers || {}
-                            widget._onSocketHandlers[eventName] = handler.bind(null, socket)
-                            socket.on(eventName, widget._onSocketHandlers[eventName])
+                            addWidgetSocketHandler(socket, widget, eventName, handler)
                         }
                     }
                     registered.push(widget.type)
@@ -1052,6 +1058,18 @@ module.exports = function (RED) {
             // map widgets on a group-by-group basis
             if (widgetNode && widgetConfig && !node.ui.widgets.has(widget.id)) {
                 node.ui.widgets.set(widget.id, widget)
+                if (widget.hooks?.onSocket) {
+                    for (const socket of Object.values(uiShared.connections)) {
+                        if (socket._baseId !== node.id) {
+                            continue
+                        }
+                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            if (eventName !== 'connection') {
+                                addWidgetSocketHandler(socket, widget, eventName, handler)
+                            }
+                        }
+                    }
+                }
             }
 
             /**
@@ -1176,8 +1194,9 @@ module.exports = function (RED) {
                         // loop over events
                         for (const [eventName] of Object.entries(widget.hooks.onSocket)) {
                             // remove the listener for this event
-                            if (widget._onSocketHandlers) {
-                                socket.off(eventName, widget._onSocketHandlers[eventName])
+                            const handler = widget._onSocketHandlers?.[socket.id]?.[eventName]
+                            if (handler) {
+                                socket.off(eventName, handler)
                             }
                         }
                     }
