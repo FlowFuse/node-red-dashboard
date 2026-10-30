@@ -122,6 +122,20 @@ describe('ui-event node', function () {
         sent.should.not.containEql(second.id)
     })
 
+    it('should drop the ui-event handler from connected clients when the node is removed', async function () {
+        await helper.load(nodeImports, flow)
+        base = helper.getNode('config-ui-base')
+        const socket = connectFakeClient(base, 'fake-conn-1')
+        socketIds.push(socket.id)
+
+        await helper.setFlows(renamedFlow('changed'), 'nodes')
+        socket.listenerCount('ui-event').should.equal(1)
+
+        await helper.setFlows(flow.filter(n => n.id !== 'node-ui-event'), 'nodes')
+        socket.listenerCount('ui-event').should.equal(0)
+        should(socket._widgetSocketHandlers?.['node-ui-event']).be.undefined()
+    })
+
     it('should keep exactly one ui-event listener per connected client across repeated deploys', async function () {
         await helper.load(nodeImports, flow)
         base = helper.getNode('config-ui-base')

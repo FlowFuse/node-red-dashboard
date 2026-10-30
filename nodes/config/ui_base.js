@@ -1198,6 +1198,7 @@ module.exports = function (RED) {
                                 socket.off(eventName, handler)
                             }
                         }
+                        delete socket._widgetSocketHandlers?.[widget.id]
                     }
                 }
                 node.ui.widgets.delete(widgetNode.id)
