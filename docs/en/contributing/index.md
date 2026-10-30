@@ -108,6 +108,8 @@ A [VitePress](https://vitepress.dev/) documentation site that is used to generat
 
 TypeScript is optional. In `/ui`, new files can be written as `.ts` (or `<script lang="ts">` in `.vue` files), and existing files can be converted when you're working in them, or left as JavaScript. If you edit a file that's already TypeScript, keep it TypeScript.
 
+TypeScript isn't supported in `/nodes` yet, since it needs a compile step that hasn't been added.
+
 Run `npm run typecheck` to check types. It also runs as part of `npm run lint`.
 
 ## Running Documentation Locally
