@@ -2682,6 +2682,91 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             return true
         }
     })
+
+    // node-red-dashboard (Dashboard 1) registers its own $.fn.elementSizer, so pick the sizer per node being edited
+    const dashboardSizer = $.fn.elementSizer
+    let otherSizer = null
+    RED.events.on('editor:open', function () {
+        if ($.fn.elementSizer !== dashboardSizer) {
+            otherSizer = $.fn.elementSizer
+        }
+        const node = RED.editor.getEditStack?.().at(-1)
+        const isDashboardNode = !node?._def || node._def.set?.module === '@flowfuse/node-red-dashboard' || node._def.defaults?.group?.type === 'ui-group'
+        $.fn.elementSizer = (otherSizer && !isDashboardNode) ? otherSizer : dashboardSizer
+    })
+
+    $.widget('nodereddashboard.elementSizerByNum', {
+        _create: function () {
+            const thisWidget = this
+            const hasHeight = this.options.has_height
+            const pos = this.options.pos
+            const container = $('<div>').css({
+                position: 'absolute',
+                background: 'var(--red-ui-secondary-background, white)',
+                padding: '10px 10px 10px 10px',
+                border: '1px solid var(--red-ui-primary-border-color, grey)',
+                zIndex: '20',
+                borderRadius: '4px',
+                display: 'none',
+                width: hasHeight ? '15%' : '6%'
+            }).appendTo(document.body)
+            const box = $('<div>').css({
+                fontSize: '13px',
+                color: 'var(--red-ui-tertiary-text-color, #aaa)',
+                float: 'left',
+                paddingTop: '1px'
+            }).appendTo(container)
+
+            const width = $(this.options.width).val()
+            const height = hasHeight ? $(this.options.height).val() : undefined
+            const widthInput = $('<input type="number" min="1">')
+                .css('width', hasHeight ? '40%' : '100%')
+                .val(width > 0 ? width : 1)
+                .appendTo(box)
+            if (this.options.groupNode) {
+                widthInput.attr('max', this.options.groupNode.width)
+            }
+            let heightInput
+            if (hasHeight) {
+                $('<span>').text(' x ').appendTo(box)
+                heightInput = $('<input type="number" min="1">')
+                    .css('width', '40%')
+                    .val(height > 0 ? height : 1)
+                    .appendTo(box)
+            }
+
+            let closeTimer
+            const close = function () {
+                const w = widthInput.val()
+                const h = hasHeight ? heightInput.val() : undefined
+                thisWidget.options.label.text(w + (hasHeight ? (' x ' + h) : ''))
+                $(thisWidget.options.width).val(w).change()
+                if (hasHeight) {
+                    $(thisWidget.options.height).val(h).change()
+                }
+                thisWidget.destroy()
+                container.remove()
+            }
+            container.keypress(function (e) {
+                if (e.which === 13) {
+                    container.fadeOut(100, close)
+                }
+            })
+            container.on('mouseleave', function () {
+                closeTimer = setTimeout(function () {
+                    container.fadeOut(200, close)
+                }, 100)
+            })
+            container.on('mouseenter', function () {
+                clearTimeout(closeTimer)
+            })
+            container.css({
+                top: (pos.top - 10) + 'px',
+                left: (pos.left + 10) + 'px'
+            })
+            container.fadeIn(200)
+        }
+    })
 })()
 </script>
 

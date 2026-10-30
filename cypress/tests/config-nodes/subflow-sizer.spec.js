@@ -69,6 +69,16 @@ function addContribNodes () {
     cy.window().its('RED.nodes').invoke('node', 'test-contrib-out').its('z').should('equal', 'sizer-tab')
 }
 
+function registerOtherSizer () {
+    cy.window().then((win) => {
+        win.$.widget('nodereddashboard.elementSizer', {
+            _create: function () {
+                this.element.addClass('other-sizer')
+            }
+        })
+    })
+}
+
 function edit (id) {
     cy.window().then((win) => {
         win.RED.editor.edit(win.RED.nodes.node(id))
@@ -182,6 +192,46 @@ describe('Node-RED Dashboard 2.0 - Editor: element sizer in subflows', () => {
         cy.window().its('RED.nodes').invoke('node', 'sizer-spacer-in').its('order').should((order) => {
             expect(Number(order)).to.equal(6)
         })
+    })
+
+    it('keeps the subflow inputs for a core widget when another package redefines elementSizer', () => {
+        registerOtherSizer()
+        edit('sizer-gauge-in')
+        cy.get('.other-sizer').should('not.exist')
+        cy.get('.nr-db-ui-element-subflow-row').should('have.length', 3)
+    })
+
+    it('keeps the subflow inputs for a contrib node when another package redefines elementSizer', () => {
+        registerOtherSizer()
+        edit('test-contrib-in')
+        cy.get('.other-sizer').should('not.exist')
+        cy.get('.nr-db-ui-element-subflow-row').should('have.length', 3)
+    })
+
+    it('leaves the other elementSizer for nodes that are not dashboard nodes', () => {
+        cy.window().then((win) => {
+            registerContribType(win, 'test-other', {
+                group: { value: '' },
+                width: { value: 0 },
+                height: { value: 0 }
+            })
+            win.RED.nodes.import([
+                { id: 'test-other-in', type: 'test-other', group: '', width: 3, height: 1, x: 300, y: 180, wires: [] }
+            ])
+        })
+        registerOtherSizer()
+        edit('test-other-in')
+        cy.get('#node-input-size').should('have.class', 'other-sizer')
+    })
+
+    it('sets the size by number from the sizer popup', () => {
+        edit('sizer-gauge-out')
+        cy.get('#node-input-size').trigger('mousedown')
+        cy.contains('div', /^3 x 3$/).click()
+        cy.get('body > div input[type=number]').first().clear()
+        cy.get('body > div input[type=number]').first().type('4{enter}')
+        cy.get('#node-input-width').should('have.value', '4')
+        cy.get('#node-input-size').should('have.text', '4 x 3')
     })
 
     it('hides ui-audio subflow inputs in text-to-speech mode without duplicating them', () => {
