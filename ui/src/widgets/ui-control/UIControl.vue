@@ -32,7 +32,7 @@ export default {
         this.routeChanged()
         const vue = this
         // listen for messages
-        this.$socket.on('ui-control:' + this.id, (msg) => {
+        this.$socket.on('ui-control:' + this.id, async (msg) => {
             const payload = msg.payload
 
             function set (type, id, prop, value) {
@@ -53,6 +53,7 @@ export default {
                 }
             }
 
+            let navigation = Promise.resolve()
             if ('page' in payload) {
                 let page = payload.tab || payload.page
                 const query = payload.query
@@ -68,7 +69,7 @@ export default {
                     } else {
                         // navigate to the tab/page
                         try {
-                            this.$router.push({ name: `Page:${pages[page].name}` })
+                            navigation = this.$router.push({ name: `Page:${pages[page].name}` })
                         } catch (err) {
                             console.error(err)
                         }
@@ -105,7 +106,7 @@ export default {
                         }
                         // navigate to the tab/page
                         try {
-                            this.$router.push({ name: `Page:${page}` })
+                            navigation = this.$router.push({ name: `Page:${page}` })
                         } catch (err) {
                             console.error(err)
                         }
@@ -117,7 +118,7 @@ export default {
                 }
                 // navigate to the tab/page
                 try {
-                    this.$router.push({
+                    navigation = this.$router.push({
                         name: `Page:${page}`,
                         query
                     })
@@ -131,6 +132,10 @@ export default {
             payload.pages?.hide?.forEach(pageId => set('page', pageId, 'visible', false))
             payload.pages?.disable?.forEach(pageId => set('page', pageId, 'disabled', true))
             payload.pages?.enable?.forEach(pageId => set('page', pageId, 'disabled', false))
+
+            // dialog groups only exist on their own page, so let a page change render first
+            await navigation.catch(() => {})
+            await this.$nextTick()
 
             // Groups
             const handleVisibility = (id, group, visibility) => {
@@ -168,6 +173,11 @@ export default {
     },
     methods: {
         routeChanged () {
+            // only the "all" and "change" outputs use page changes (older nodes have no events setting)
+            const events = this.props.events
+            if (events && events !== 'all' && events !== 'change') {
+                return
+            }
             const pages = Object.values(this.pages).sort((a, b) => {
                 return a.order - b.order
             })

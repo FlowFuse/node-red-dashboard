@@ -226,6 +226,81 @@ module.exports = function (RED) {
             return nodeIds
         }
 
+        // build a ui-control payload from the actions configured in the editor
+        function payloadFromActions (actions, msg) {
+            const navigation = { next: '+1', prev: '-1', refresh: '' }
+            const payload = {}
+            const add = (key, verb, identifier) => {
+                payload[key] = payload[key] || {}
+                payload[key][verb] = payload[key][verb] || []
+                payload[key][verb].push(identifier)
+            }
+            // a msg value can name a page, a group or a widget, so work out which
+            const addFromMsg = (verb, identifier) => {
+                identifier = String(identifier)
+                if (allPageNodes[identifier]) {
+                    return add('pages', verb, identifier)
+                }
+                if (allGroupNodes[identifier]) {
+                    return add('groups', verb, identifier)
+                }
+                if (allWidgetNodes[identifier]) {
+                    return add('widgets', verb, identifier)
+                }
+                const parts = identifier.split(/(?<!\\):/).map(part => part.replace(/\\:/g, ':'))
+                if (parts.length === 2) {
+                    // "page:group" or "group:widget", depending on what the first part is
+                    const isPage = allPageNodes[parts[0]] || Object.values(allPageNodes).some(n => n.name === parts[0])
+                    return add(isPage ? 'groups' : 'widgets', verb, identifier)
+                }
+                if (parts.length === 3) {
+                    return add('widgets', verb, identifier) // "page:group:widget"
+                }
+                const matches = [
+                    Object.values(allPageNodes).some(n => n.name === identifier) && 'pages',
+                    Object.values(allGroupNodes).some(n => n.name === identifier) && 'groups',
+                    Object.values(allWidgetNodes).some(n => n.name === identifier) && 'widgets'
+                ].filter(Boolean)
+                if (matches.length > 1) {
+                    throw new Error(`'${identifier}' names more than one of a page, group and widget, use an id`)
+                }
+                if (!matches.length) {
+                    throw new Error(`No page, group or widget found with id or name '${identifier}'`)
+                }
+                add(matches[0], verb, identifier)
+            }
+
+            for (const { action, targetType, target } of actions) {
+                if (action === 'navigate') {
+                    if (targetType in navigation) {
+                        payload.page = navigation[targetType]
+                    } else {
+                        // a msg value may be a name, "+1", "-1", "" or an index, as for msg.payload.page
+                        const value = targetType === 'msg' ? RED.util.getMessageProperty(msg, target) : target
+                        if (value === undefined || value === null) {
+                            throw new Error(`msg.${target} is not set`)
+                        }
+                        const pageNode = allPageNodes[value]
+                        if (targetType === 'page' && !pageNode) {
+                            throw new Error(`No page found with id '${target}'`)
+                        }
+                        payload.page = pageNode ? pageNode.name : value
+                    }
+                } else if (targetType === 'msg') {
+                    const value = RED.util.getMessageProperty(msg, target)
+                    if (value === undefined || value === null) {
+                        throw new Error(`msg.${target} is not set`)
+                    }
+                    for (const v of [].concat(value)) {
+                        addFromMsg(action, v)
+                    }
+                } else {
+                    add(targetType + 's', action, target)
+                }
+            }
+            return payload
+        }
+
         function emit (msg) {
             ui.emit('ui-control:' + node.id, msg, node)
         }
@@ -234,6 +309,14 @@ module.exports = function (RED) {
             onInput: function (msg, send, done) {
                 const wNode = RED.nodes.getNode(node.id)
                 // handle the logic here of what to do when input is received
+
+                if (config.inputMode === 'actions') {
+                    // the msg only triggers the actions chosen in the editor
+                    msg.payload = payloadFromActions(config.actions || [], msg)
+                }
+
+                // resolve every section before emitting, so the UI only ever sees ids
+                let changed = false
 
                 if (typeof msg.payload !== 'object') {
                     msg.payload = { page: msg.payload }
@@ -251,7 +334,7 @@ module.exports = function (RED) {
                     // "" to refresh the page
                     // ensure consistency in payload format
                         msg.payload.page = page
-                        emit(msg)
+                        changed = true
                     } else {
                         let pageFound = false
                         // check we have a valid tab/page name
@@ -260,14 +343,16 @@ module.exports = function (RED) {
                                 if (n.name === page) {
                                     // ensure consistency in payload format
                                     msg.payload.page = page
-                                    // send a message to the ui to switch to this tab
-                                    emit(msg)
+                                    // tell the ui to switch to this tab
+                                    changed = true
                                     pageFound = true
                                 }
                             }
                         })
                         if (!pageFound) {
                             node.error("No page with the name '" + page + "' found")
+                            delete msg.payload.page
+                            delete msg.payload.tab
                         }
                     }
                 }
@@ -287,14 +372,14 @@ module.exports = function (RED) {
                         pages.enable = updateStateStore('page', pages.enable, msg, 'disabled', false)
                     }
                     if ('disable' in pages) {
-                        pages.disable = updateStateStore('page', pages.disable, msg, 'disabled', false)
+                        pages.disable = updateStateStore('page', pages.disable, msg, 'disabled', true)
                     }
 
                     // Ensure consistency in payload format, and only send the ids of the pages to be updated
                     msg.payload.pages = pages
 
                     // Send all the page ids to the front end, in order to action on them there
-                    emit(msg)
+                    changed = true
                 }
 
                 // show or hide ui groups
@@ -319,7 +404,7 @@ module.exports = function (RED) {
 
                     // Send all the group ids to the front end, in order to action on them there.
                     // The page information (id or name) is not required in the frontend, because the group ids are unique.
-                    emit(msg)
+                    changed = true
 
                     // send specific visible/hidden commands via SocketIO here,
                     // so all logic stays server-side
@@ -348,7 +433,7 @@ module.exports = function (RED) {
 
                     // Send all the widget ids to the front end, in order to action on them there.
                     // The page/group information (id or name) is not required in the frontend, because the widget ids are unique.
-                    emit(msg)
+                    changed = true
 
                     // send specific visible/hidden commands via SocketIO here,
                     // so all logic stays server-side
@@ -356,6 +441,10 @@ module.exports = function (RED) {
                 }
 
                 if ('url' in msg.payload) {
+                    changed = true
+                }
+
+                if (changed) {
                     emit(msg)
                 }
             },
@@ -402,6 +491,11 @@ module.exports = function (RED) {
                     }
                 }
             }
+        }
+
+        if (config.events === 'none') {
+            // no output wanted, so don't add socket listeners for every connected client
+            delete evts.onSocket
         }
 
         // inform the dashboard UI that we are adding this node
