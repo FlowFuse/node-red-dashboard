@@ -28,6 +28,17 @@
         <dd>If enabled, the button will emit a message on pointerup event with the given payload. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.</dd>
         <dt>Enable Click event <span class="property-type">bool</span></dt>
         <dd>If enabled, the button will emit a click event, which fires when both the up and down events occur over the button. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.</dd>
+        <dt>Payload (click) <span class="property-type">navigate | popup | modal</span></dt>
+        <dd>As well as the usual value types, the click payload can make the button act in the dashboard itself:
+            <ul>
+                <li><b>navigate</b> - go to a page, or Back, Previous page or Next page</li>
+                <li><b>popup</b> - open a dialog group. Clicking outside it or pressing Esc closes it</li>
+                <li><b>modal</b> - open a dialog group that only closes with its close button</li>
+            </ul>
+            A dialog group on another page opens after the dashboard switches to that page. The button still sends
+            a message, with <code>msg.payload</code> set to the page or group name, or to <code>back</code>,
+            <code>prev</code> or <code>next</code>. "Emulate Button Click" sends that message but does not
+            navigate or open the dialog, use a <code>ui-control</code> node for that.</dd>
         <dt>Emulate Button Click <span class="property-type">bool</span></dt>
         <dd>If enabled, any received message will trigger a button click, emitting the relevant payload and topic. Note, requires the "Enable Click event" to be enabled</dd>
         <dt>Background Color<span class="property-type">string</span></dt>

@@ -30,6 +30,9 @@ props:
     Enable click event:
         description: Enables the capturing of click events on the button, i.e.g when both the pointerdown and pointerup events occur whilst the mouse stays inside the button. The output will contain <code>msg._event</code> which details the <i>type</i> of interaction causing the event.
         dynamic: false
+    Payload:
+        description: The <code>msg.payload</code> sent on click. As well as the usual value types, <i>navigate</i>, <i>popup</i> and <i>modal</i> make the button go to a page or open a dialog group. See <a href="#navigation-and-dialogs">Navigation and dialogs</a>.
+        dynamic: false
     Emulate Button Click: If enabled, any received message will trigger a button click, emitting the relevant payload and topic.
 controls:
     enabled:
@@ -92,6 +95,20 @@ Adds a clickable button to your dashboard.
 ## Controls
 
 <ControlsTable/>
+
+## Navigation and dialogs
+
+The click payload can make the button act in the dashboard without any extra nodes:
+
+- **navigate**: go to a page picked from the list, or to *Back*, *Previous page* or *Next page*. Previous and next wrap around, the same as `ui-control`'s `"-1"` and `"+1"`.
+- **popup**: open a [dialog group](../config/ui-group.md). Clicking outside it or pressing Esc closes it.
+- **modal**: open a dialog group that only closes with its close button.
+
+The lists only show pages and dialog groups of the dashboard the button is in. If a dialog group is on another page, the dashboard switches to that page first and then opens it.
+
+The button still sends its message, so a flow can react to the click. `msg.payload` is set to the page or group name, or to `back`, `prev` or `next`.
+
+"Emulate Button Click" sends the message for a received `msg`, but doesn't navigate or open the dialog, because the click happens in the browser. Use a [`ui-control`](./ui-control.md) node to navigate or open a dialog from a flow.
 
 ## Example
 
