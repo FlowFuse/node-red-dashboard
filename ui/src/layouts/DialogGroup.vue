@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
+    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :eager="group.keepLoaded" :class="{'nrdb-dialog--keep-loaded': group.keepLoaded}" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
         <v-card>
             <template v-if="group.showTitle" #title>
                 {{ group.name }}
@@ -90,3 +90,13 @@ export default {
     }
 }
 </script>
+
+<style>
+.nrdb-dialog--keep-loaded:has(> .v-overlay__content[style*="display: none"]) {
+    visibility: hidden;
+}
+.nrdb-dialog--keep-loaded > .v-overlay__content[style*="display: none"] {
+    display: flex !important;
+    visibility: hidden;
+}
+</style>

@@ -19,6 +19,13 @@
         "ecmaVersion": 2022
     },
     "ignorePatterns": ["dist/", "*.svg", "*.xml"],
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".mjs", ".js", ".json", ".node", ".ts"]
+            }
+        }
+    },
     "rules": {
         // Inbuilt
         "indent": ["error", 4],
@@ -88,6 +95,9 @@
                 "commonjs": false
             },
             "parserOptions": {
+                "parser": {
+                    "ts": "@typescript-eslint/parser"
+                },
                 "sourceType": "module",
                 "ecmaVersion": 2022
             },
@@ -138,6 +148,18 @@
                 // plugin:n
                 "promise/always-return": "off",
                 "promise/catch-or-return": "off"
+            }
+        },
+
+        {
+            "files": "*.ts",
+            "parser": "@typescript-eslint/parser",
+            "plugins": ["@typescript-eslint"],
+            "rules": {
+                "no-undef": "off",
+                "no-redeclare": "off",
+                "no-unused-vars": "off",
+                "@typescript-eslint/no-unused-vars": "error"
             }
         }
     ]
