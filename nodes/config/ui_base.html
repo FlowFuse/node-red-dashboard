@@ -2447,7 +2447,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     /**
      * jQuery widget to provide a selector for the sizing (width & height) of a widget & group
      */
-    $.widget('nodereddashboard.elementSizer', {
+    $.widget('nodereddashboard.ffElementSizer', {
         _create: function () {
             // convert to i18 text
             function c_ (x) {
@@ -2537,7 +2537,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                             return
                         }
                     }
-                    $(thisWidget).elementSizerByNum({
+                    $(thisWidget).ffElementSizerByNum({
                         width: thisWidget.options.width,
                         height: thisWidget.options.height,
                         groupNode,
@@ -2683,19 +2683,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         }
     })
 
-    // node-red-dashboard (Dashboard 1) registers its own $.fn.elementSizer, so pick the sizer per node being edited
-    const dashboardSizer = $.fn.elementSizer
-    let otherSizer = null
-    RED.events.on('editor:open', function () {
-        if ($.fn.elementSizer !== dashboardSizer) {
-            otherSizer = $.fn.elementSizer
-        }
-        const node = RED.editor.getEditStack?.().at(-1)
-        const isDashboardNode = !node?._def || node._def.set?.module === '@flowfuse/node-red-dashboard' || node._def.defaults?.group?.type === 'ui-group'
-        $.fn.elementSizer = (otherSizer && !isDashboardNode) ? otherSizer : dashboardSizer
-    })
-
-    $.widget('nodereddashboard.elementSizerByNum', {
+    $.widget('nodereddashboard.ffElementSizerByNum', {
         _create: function () {
             const thisWidget = this
             const hasHeight = this.options.has_height
@@ -2767,6 +2755,43 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             container.fadeIn(200)
         }
     })
+
+    function isDashboardNode (options) {
+        const node = RED.editor.getEditStack?.().at(-1)
+        if (node?._def) {
+            return node._def.set?.module === '@flowfuse/node-red-dashboard' || node._def.defaults?.group?.type === 'ui-group'
+        }
+        // Node-RED < 4.0 has no getEditStack, so fall back to the type of the selected group
+        const group = options?.groupNode || RED.nodes.node($(options?.group).val())
+        return group?.type === 'ui-group'
+    }
+
+    // node-red-dashboard (Dashboard 1) registers these same names, so route each call to its sizer or ours regardless of load order
+    function deprecatedSizer (oldName, newName) {
+        let otherSizer = $.fn[oldName] || null
+        let warned = false
+        function sizer (...args) {
+            if (otherSizer && !isDashboardNode(args[0])) {
+                return otherSizer.apply(this, args)
+            }
+            if (!warned) {
+                warned = true
+                console.warn(`[@flowfuse/node-red-dashboard] $.fn.${oldName} is deprecated and will be removed, use $.fn.${newName} instead`)
+            }
+            return $.fn[newName].apply(this, args)
+        }
+        Object.defineProperty($.fn, oldName, {
+            configurable: true,
+            get () {
+                return sizer
+            },
+            set (fn) {
+                otherSizer = fn
+            }
+        })
+    }
+    deprecatedSizer('elementSizer', 'ffElementSizer')
+    deprecatedSizer('elementSizerByNum', 'ffElementSizerByNum')
 })()
 </script>
 

@@ -79,6 +79,51 @@ function registerOtherSizer () {
     })
 }
 
+function registerOtherSizerByNum () {
+    cy.window().then((win) => {
+        win.$.widget('nodereddashboard.elementSizerByNum', {
+            _create: function () {
+                this.element.addClass('other-sizer-by-num')
+            }
+        })
+    })
+}
+
+function addOtherNode () {
+    cy.window().then((win) => {
+        registerContribType(win, 'test-other', {
+            group: { value: '' },
+            width: { value: 0 },
+            height: { value: 0 }
+        })
+        win.RED.nodes.import([
+            { id: 'test-other-in', type: 'test-other', group: '', width: 3, height: 1, x: 300, y: 180, wires: [] }
+        ])
+    })
+}
+
+function openSizerByNum () {
+    cy.window().then((win) => {
+        win.$('#node-input-size').elementSizerByNum({
+            width: '#node-input-width',
+            height: '#node-input-height',
+            pos: { top: 0, left: 0 },
+            label: win.$('#node-input-size'),
+            has_height: true
+        })
+    })
+}
+
+function spyOnWarn () {
+    cy.window().then((win) => {
+        cy.spy(win.console, 'warn').as('warn')
+    })
+}
+
+function deprecationWarnings (warn, name) {
+    return warn.getCalls().filter((call) => String(call.args[0]).includes(`$.fn.${name} is deprecated`))
+}
+
 function edit (id) {
     cy.window().then((win) => {
         win.RED.editor.edit(win.RED.nodes.node(id))
@@ -209,19 +254,53 @@ describe('Node-RED Dashboard 2.0 - Editor: element sizer in subflows', () => {
     })
 
     it('leaves the other elementSizer for nodes that are not dashboard nodes', () => {
-        cy.window().then((win) => {
-            registerContribType(win, 'test-other', {
-                group: { value: '' },
-                width: { value: 0 },
-                height: { value: 0 }
-            })
-            win.RED.nodes.import([
-                { id: 'test-other-in', type: 'test-other', group: '', width: 3, height: 1, x: 300, y: 180, wires: [] }
-            ])
-        })
+        addOtherNode()
         registerOtherSizer()
         edit('test-other-in')
         cy.get('#node-input-size').should('have.class', 'other-sizer')
+    })
+
+    it('warns once that elementSizer is deprecated when a contrib node calls it', () => {
+        spyOnWarn()
+        edit('test-contrib-in')
+        cy.get('#node-dialog-cancel').click()
+        edit('test-contrib-out')
+        cy.get('@warn').should((warn) => {
+            const calls = deprecationWarnings(warn, 'elementSizer')
+            expect(calls).to.have.length(1)
+            expect(calls[0].args[0]).to.include('use $.fn.ffElementSizer instead')
+        })
+    })
+
+    it('does not warn when a core widget uses the sizer', () => {
+        spyOnWarn()
+        edit('sizer-gauge-in')
+        cy.get('.nr-db-ui-element-subflow-row').should('have.length', 3)
+        cy.get('@warn').should((warn) => {
+            expect(deprecationWarnings(warn, 'elementSizer')).to.have.length(0)
+        })
+    })
+
+    it('leaves the other elementSizerByNum for nodes that are not dashboard nodes', () => {
+        addOtherNode()
+        registerOtherSizerByNum()
+        edit('test-other-in')
+        openSizerByNum()
+        cy.get('#node-input-size').should('have.class', 'other-sizer-by-num')
+    })
+
+    it('uses the dashboard elementSizerByNum for dashboard nodes and warns it is deprecated', () => {
+        registerOtherSizerByNum()
+        spyOnWarn()
+        edit('test-contrib-out')
+        openSizerByNum()
+        cy.get('#node-input-size').should('not.have.class', 'other-sizer-by-num')
+        cy.get('body > div input[type=number]').should('have.length', 2)
+        cy.get('@warn').should((warn) => {
+            const calls = deprecationWarnings(warn, 'elementSizerByNum')
+            expect(calls).to.have.length(1)
+            expect(calls[0].args[0]).to.include('use $.fn.ffElementSizerByNum instead')
+        })
     })
 
     it('sets the size by number from the sizer popup', () => {

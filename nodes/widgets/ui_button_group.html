@@ -45,7 +45,7 @@
             return this.name || (~this.label.indexOf('{{') ? null : this.label) || 'button group'
         },
         oneditprepare: function () {
-            $('#node-input-size').elementSizer({
+            $('#node-input-size').ffElementSizer({
                 width: '#node-input-width',
                 height: '#node-input-height',
                 group: '#node-input-group'
