@@ -1063,6 +1063,7 @@ module.exports = function (RED) {
                             continue
                         }
                         for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            // the client is already connected, so firing its connection hook would send a false "connect"
                             if (eventName !== 'connection') {
                                 addWidgetSocketHandler(socket, widget, eventName, handler)
                             }
