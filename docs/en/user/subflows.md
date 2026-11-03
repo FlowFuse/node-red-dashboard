@@ -91,10 +91,12 @@ To then access this in the child nodes, in our case the `ui-slider`, we can set 
 
 ##### Sizing
 
-When setting the size of a widget node like ui-text or ui-button within a subflow you will be presented with text input fields for width and height instead
+When setting the size of a widget node like ui-text or ui-button within a subflow you will be presented with text input fields for width, height and order instead
 of the usual sizer widget. This is to permit setting the values externally via the subflow instance properties using the `${variable_name}` syntax.
 
 NOTE: You can still set the widget width and height to `0` to make the it perform auto sizing.
+
+NOTE: On Node-RED versions before `4.0.0`, third-party widgets only show width and height. Order is shown if the widget's edit dialog includes its own order input.
 
 ## Customising Appearance
 

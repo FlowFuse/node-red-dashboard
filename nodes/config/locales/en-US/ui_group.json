@@ -18,6 +18,8 @@
             "type": "Type",
             "typeDefault": "Default",
             "typeDialog": "Dialog",
+            "keepLoaded": "Receive messages while closed",
+            "keepLoadedTip": "Keeps the dialog's widgets loaded so messages sent after the page loads show when it opens. Widgets keep their state and run while hidden.",
             "tab": "Tab",
             "noTab": "None (own tab)"
         }
