@@ -49,9 +49,9 @@ describe('ui-control node', function () {
 
     /**
      * Load a flow, add a fake socket connection, send a msg into the ui-control node
-     * and resolve with the payloads it emitted to the UI (or reject with the node error)
+     * and resolve with the payloads it emitted to the UI and the node error, if any
      */
-    async function sendToControl (controlNode, msg) {
+    async function runControl (controlNode, msg) {
         const flow = [controlNode, button, ...testFlow1]
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
@@ -67,10 +67,15 @@ describe('ui-control node', function () {
         // ui-base runs the input handler asynchronously, give it a moment
         await new Promise(resolve => setTimeout(resolve, 50))
         // the test helper spies on node.error
-        if (node.error.called) {
-            throw node.error.args[0][0]
+        return { payloads: emitted(), error: node.error.called ? node.error.args[0][0] : null }
+    }
+
+    async function sendToControl (controlNode, msg) {
+        const { payloads, error } = await runControl(controlNode, msg)
+        if (error) {
+            throw error
         }
-        return emitted()
+        return payloads
     }
 
     describe('output "None"', function () {
@@ -188,6 +193,22 @@ describe('ui-control node', function () {
                 pages: { enable: ['config-ui-page'] },
                 groups: { show: ['config-ui-group'] }
             })
+        })
+
+        it('still emits the sections that were stored when a later section fails', async function () {
+            const { payloads, error } = await runControl(control('ctl'), {
+                payload: { pages: { hide: ['Page 1'] }, groups: { show: ['typo'] } }
+            })
+            should(error).match(/No group found/)
+            payloads.should.eql([{ pages: { hide: ['config-ui-page'] } }])
+        })
+
+        it('navigates to page index 0 instead of refreshing', async function () {
+            for (const payload of [0, { page: 0 }]) {
+                const payloads = await sendToControl(control('ctl'), { payload })
+                payloads[0].should.have.property('page', 0)
+                helper.unload()
+            }
         })
 
         it('stores a disabled page as disabled', async function () {

@@ -32,7 +32,7 @@ export default {
         this.routeChanged()
         const vue = this
         // listen for messages
-        this.$socket.on('ui-control:' + this.id, async (msg) => {
+        const handle = async (msg) => {
             const payload = msg.payload
 
             function set (type, id, prop, value) {
@@ -166,6 +166,11 @@ export default {
                     window.location.href = payload.url
                 }
             }
+        }
+        // a message that waits for navigation must not be overtaken by the next one
+        let queue = Promise.resolve()
+        this.$socket.on('ui-control:' + this.id, (msg) => {
+            queue = queue.then(() => handle(msg)).catch(err => console.error(err))
         })
     },
     unmounted () {

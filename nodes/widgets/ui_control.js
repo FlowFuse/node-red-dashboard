@@ -324,7 +324,7 @@ module.exports = function (RED) {
 
                 // switch to tab name (or number)
                 if ('tab' in msg.payload || 'page' in msg.payload) {
-                    let page = msg.payload.page || msg.payload.tab
+                    let page = msg.payload.page ?? msg.payload.tab
 
                     page = (page === undefined) ? '' : page
 
@@ -357,91 +357,108 @@ module.exports = function (RED) {
                     }
                 }
 
-                // show/hide or enable/disable tabs
-                if ('tabs' in msg.payload || 'pages' in msg.payload) {
-                    const pages = msg.payload.pages || msg.payload.tabs
+                const resolved = new Set()
+                try {
+                    // show/hide or enable/disable tabs
+                    if ('tabs' in msg.payload || 'pages' in msg.payload) {
+                        const pages = msg.payload.pages || msg.payload.tabs
 
-                    // const pMap = RED.nodes.forEach
-                    if ('show' in pages) {
-                        pages.show = updateStateStore('page', pages.show, msg, 'visible', true)
-                    }
-                    if ('hide' in pages) {
-                        pages.hide = updateStateStore('page', pages.hide, msg, 'visible', false)
-                    }
-                    if ('enable' in pages) {
-                        pages.enable = updateStateStore('page', pages.enable, msg, 'disabled', false)
-                    }
-                    if ('disable' in pages) {
-                        pages.disable = updateStateStore('page', pages.disable, msg, 'disabled', true)
-                    }
+                        // const pMap = RED.nodes.forEach
+                        if ('show' in pages) {
+                            pages.show = updateStateStore('page', pages.show, msg, 'visible', true)
+                        }
+                        if ('hide' in pages) {
+                            pages.hide = updateStateStore('page', pages.hide, msg, 'visible', false)
+                        }
+                        if ('enable' in pages) {
+                            pages.enable = updateStateStore('page', pages.enable, msg, 'disabled', false)
+                        }
+                        if ('disable' in pages) {
+                            pages.disable = updateStateStore('page', pages.disable, msg, 'disabled', true)
+                        }
 
-                    // Ensure consistency in payload format, and only send the ids of the pages to be updated
-                    msg.payload.pages = pages
+                        // Ensure consistency in payload format, and only send the ids of the pages to be updated
+                        msg.payload.pages = pages
+                        resolved.add('pages')
 
-                    // Send all the page ids to the front end, in order to action on them there
-                    changed = true
-                }
-
-                // show or hide ui groups
-                if ('groups' in msg.payload || 'group' in msg.payload) {
-                    const groups = msg.payload.groups || msg.payload.group
-
-                    if ('show' in groups) {
-                        groups.show = updateStateStore('group', groups.show, msg, 'visible', true)
-                    }
-                    if ('hide' in groups) {
-                        groups.hide = updateStateStore('group', groups.hide, msg, 'visible', false)
-                    }
-                    if ('enable' in groups) {
-                        groups.enable = updateStateStore('group', groups.enable, msg, 'disabled', false)
-                    }
-                    if ('disable' in groups) {
-                        groups.disable = updateStateStore('group', groups.disable, msg, 'disabled', true)
+                        // Send all the page ids to the front end, in order to action on them there
+                        changed = true
                     }
 
-                    // ensure consistency in payload format
-                    msg.payload.groups = groups
+                    // show or hide ui groups
+                    if ('groups' in msg.payload || 'group' in msg.payload) {
+                        const groups = msg.payload.groups || msg.payload.group
 
-                    // Send all the group ids to the front end, in order to action on them there.
-                    // The page information (id or name) is not required in the frontend, because the group ids are unique.
-                    changed = true
+                        if ('show' in groups) {
+                            groups.show = updateStateStore('group', groups.show, msg, 'visible', true)
+                        }
+                        if ('hide' in groups) {
+                            groups.hide = updateStateStore('group', groups.hide, msg, 'visible', false)
+                        }
+                        if ('enable' in groups) {
+                            groups.enable = updateStateStore('group', groups.enable, msg, 'disabled', false)
+                        }
+                        if ('disable' in groups) {
+                            groups.disable = updateStateStore('group', groups.disable, msg, 'disabled', true)
+                        }
 
-                    // send specific visible/hidden commands via SocketIO here,
-                    // so all logic stays server-side
-                    wNode.send({ payload: 'input' })
-                }
+                        // ensure consistency in payload format
+                        msg.payload.groups = groups
+                        resolved.add('groups')
 
-                // show or hide ui widgets
-                if ('widgets' in msg.payload || 'widget' in msg.payload) {
-                    const widgets = msg.payload.widgets || msg.payload.widget
+                        // Send all the group ids to the front end, in order to action on them there.
+                        // The page information (id or name) is not required in the frontend, because the group ids are unique.
+                        changed = true
 
-                    if ('show' in widgets) {
-                        widgets.show = updateStateStore('widget', widgets.show, msg, 'visible', true)
+                        // send specific visible/hidden commands via SocketIO here,
+                        // so all logic stays server-side
+                        wNode.send({ payload: 'input' })
                     }
-                    if ('hide' in widgets) {
-                        widgets.hide = updateStateStore('widget', widgets.hide, msg, 'visible', false)
+
+                    // show or hide ui widgets
+                    if ('widgets' in msg.payload || 'widget' in msg.payload) {
+                        const widgets = msg.payload.widgets || msg.payload.widget
+
+                        if ('show' in widgets) {
+                            widgets.show = updateStateStore('widget', widgets.show, msg, 'visible', true)
+                        }
+                        if ('hide' in widgets) {
+                            widgets.hide = updateStateStore('widget', widgets.hide, msg, 'visible', false)
+                        }
+                        if ('enable' in widgets) {
+                            widgets.enable = updateStateStore('widget', widgets.enable, msg, 'enabled', true)
+                        }
+                        if ('disable' in widgets) {
+                            widgets.disable = updateStateStore('widget', widgets.disable, msg, 'enabled', false)
+                        }
+
+                        // ensure consistency in payload format
+                        msg.payload.widgets = widgets
+                        resolved.add('widgets')
+
+                        // Send all the widget ids to the front end, in order to action on them there.
+                        // The page/group information (id or name) is not required in the frontend, because the widget ids are unique.
+                        changed = true
+
+                        // send specific visible/hidden commands via SocketIO here,
+                        // so all logic stays server-side
+                        wNode.send({ payload: 'input' })
                     }
-                    if ('enable' in widgets) {
-                        widgets.enable = updateStateStore('widget', widgets.enable, msg, 'enabled', true)
+
+                    if ('url' in msg.payload) {
+                        changed = true
                     }
-                    if ('disable' in widgets) {
-                        widgets.disable = updateStateStore('widget', widgets.disable, msg, 'enabled', false)
+                } catch (err) {
+                    // completed sections are already in the state store, so send them to open browsers too
+                    for (const key of ['pages', 'tabs', 'groups', 'group', 'widgets', 'widget', 'url']) {
+                        if (!resolved.has(key)) {
+                            delete msg.payload[key]
+                        }
                     }
-
-                    // ensure consistency in payload format
-                    msg.payload.widgets = widgets
-
-                    // Send all the widget ids to the front end, in order to action on them there.
-                    // The page/group information (id or name) is not required in the frontend, because the widget ids are unique.
-                    changed = true
-
-                    // send specific visible/hidden commands via SocketIO here,
-                    // so all logic stays server-side
-                    wNode.send({ payload: 'input' })
-                }
-
-                if ('url' in msg.payload) {
-                    changed = true
+                    if (changed) {
+                        emit(msg)
+                    }
+                    throw err
                 }
 
                 if (changed) {
