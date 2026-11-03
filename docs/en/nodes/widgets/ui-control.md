@@ -1,6 +1,10 @@
 ---
 {
     "description": "Dynamically control elements on your dashboard through ui-control for FlowFuse Dashboard.",
+    "props": {
+        "Output": "Which events the node sends from its output. <b>None</b>, the default for new nodes, removes the output. See the <a href=\"#events-list\">Events List</a>.",
+        "On input": "<b>Use msg.payload</b> controls the Dashboard with the payloads described below. <b>Run the actions below</b> ignores <code>msg.payload</code>, and any incoming msg runs the actions set up in the node."
+    },
     "events": [
         {
             "event": "$pageview",
@@ -28,8 +32,33 @@ This widget doesn't render any content into your Dashboard. Instead, it provides
 Functionality is generally divided into two main features:
 
 - **Navigation**: Force the user to move to a new page
-- **Display**: Show/Hide groups and pages
-- **Disability**: Enable/Disable groups and pages, this still shows them, but prevents interaction
+- **Display**: Show/Hide pages, groups and widgets
+- **Disability**: Enable/Disable pages, groups and widgets, this still shows them, but prevents interaction
+
+Controls can be sent in `msg.payload`, or set up in the node as [actions](#actions).
+
+## Properties
+
+<PropsTable/>
+
+## Actions <AddedIn version="1.35.0" />
+
+With **On input** set to **Run the actions below**, each incoming msg runs the list of actions set up in the node. Each action has a target:
+
+| Action | Targets |
+| --- | --- |
+| Navigate | A page, next page, previous page, refresh, or a `msg` property |
+| Show, Hide | A page, group or widget, or a `msg` property. Opens or closes a dialog group. |
+| Enable, Disable | A page, group or widget, or a `msg` property |
+
+Pages, groups and widgets picked from the list are stored by id, so renaming them doesn't break the node. If one is deleted, the node is marked as invalid in the editor.
+
+A `msg` property target is read from the incoming msg:
+
+- **Navigate** takes the same values as `msg.payload` in [Change Page](#change-page): a page name or id, `"+1"`, `"-1"`, `""` or an index. A missing property is reported as an error.
+- **Show, Hide, Enable and Disable** take an id or name, or an array of them. `"<Page>:<Group>"`, `"<Group>:<Widget>"` and `"<Page>:<Group>:<Widget>"` are also accepted. A name used by more than one page, group or widget is reported as an error, so use an id instead.
+
+Actions run together as one change, grouped by type, rather than one at a time in the listed order. So "Hide X" then "Show X" leaves X hidden, and only the last Navigate action is used.
 
 ## Controls List
 
@@ -51,6 +80,9 @@ msg.payload = '<Page Name>'
 msg.payload = {
     page: '<Page Name>',
 }
+
+// Index of the page, starting from 0
+msg.payload = 2
 ```
 
 With the object format, you can also specify query parameters with which to load the page:
@@ -107,7 +139,7 @@ msg.payload = {
 
 ### Show/Hide
 
-You can programmatically show/hide groups and pages with the following payload into `ui-control`:
+You can programmatically show/hide pages, groups and widgets with the following payload into `ui-control`. Showing or hiding a dialog group opens or closes the dialog.
 
 ```js
 msg.payload = {
@@ -128,6 +160,13 @@ msg.payload = {
                {page: '<Page Name>', group: '<Group Name>'},
                {page: '<Page Id>', group: '<Group Name>'}],
         hide: ['<Group Id>']
+    },
+    widgets: {
+        show: ['<Widget Name>',
+               '<Widget Id>',
+               '<Group Name>:<Widget Name>',
+               '<Page Name>:<Group Name>:<Widget Name>'],
+        hide: ['<Widget Id>']
     }
 }
 ```
@@ -159,6 +198,8 @@ _Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups`
 ## Events List
 
 In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Node-RED Dashboard here too.
+
+The **Output** property chooses which of these events are sent. Set it to **None** when the node is only used to send commands. The node then has no output and doesn't listen for events from each connected client. <AddedIn version="1.35.0" />
 
 ### Connection Status
 
