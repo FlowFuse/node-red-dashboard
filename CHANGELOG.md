@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.35.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.34.1...v1.35.0) (2026-11-03)
+
+
+### Features
+
+* [1944] Let dialog groups receive messages while closed ([#2342](https://github.com/FlowFuse/node-red-dashboard/issues/2342)) ([3c3976e](https://github.com/FlowFuse/node-red-dashboard/commit/3c3976e37426e7bd0b85343dfd7431cd13847538))
+* [2343] Contrib dashboard nodes get Width/Height/Order inputs in subflows   ([#2344](https://github.com/FlowFuse/node-red-dashboard/issues/2344)) ([be2d2c1](https://github.com/FlowFuse/node-red-dashboard/commit/be2d2c1a9690e26bb897c024b55721e2251b481f))
+* [2343] Deprecate elementSizer in favor of ffElementSizer ([#2358](https://github.com/FlowFuse/node-red-dashboard/issues/2358)) ([f6b9d1c](https://github.com/FlowFuse/node-red-dashboard/commit/f6b9d1c37ede423e733a65d1d2b7b62c792be3bb))
+
+
+### Bug Fixes
+
+* [1371] Re-attach custom socket handlers to open tabs after deploy ([#2347](https://github.com/FlowFuse/node-red-dashboard/issues/2347)) ([2e6a06c](https://github.com/FlowFuse/node-red-dashboard/commit/2e6a06c6e888a52ddef241f7f5faff8df588a8b6))
+
 ## [1.34.1](https://github.com/FlowFuse/node-red-dashboard/compare/v1.34.0...v1.34.1) (2026-10-27)
 
 
