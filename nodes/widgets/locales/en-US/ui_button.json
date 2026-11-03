@@ -28,6 +28,7 @@
             "navPrev": "Previous page",
             "navNext": "Next page",
             "noDialogGroups": "No dialog groups found",
+            "missingTarget": "__id__ (missing)",
             "enablePointerup": "Enable pointerup event",
             "enablePointerdown": "Enable pointerdown event",
             "buttonColor": "Background",

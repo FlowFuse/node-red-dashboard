@@ -23,6 +23,8 @@
 import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+import { uiAction } from '../../util/ui-action.js'
+
 export default {
     name: 'DBUIButton',
     inject: ['$socket', '$dataTracker'],
@@ -85,50 +87,7 @@ export default {
             const msg = this.messages[this.id] || {}
             msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
-            this.uiAction(this.props.payloadType, this.props.payload)
-        },
-        // navigate between pages or open a dialog group, without a round trip to Node-RED
-        async uiAction (type, target) {
-            if (!target || !['navigate', 'popup', 'modal'].includes(type)) {
-                return
-            }
-            const pages = Object.values(this.$store.state.ui.pages || {}).sort((a, b) => a.order - b.order)
-            const goTo = async (page) => {
-                if (page && page.id !== this.$route.meta.id) {
-                    await this.$router.push({ name: `Page:${page.name}` })
-                }
-            }
-            try {
-                if (type === 'navigate') {
-                    if (target === '_back') {
-                        this.$router.back()
-                        return
-                    }
-                    const index = pages.findIndex(p => p.id === this.$route.meta.id)
-                    if (target === '_next') {
-                        await goTo(pages[(index + 1) % pages.length])
-                    } else if (target === '_prev') {
-                        await goTo(pages[(index - 1 + pages.length) % pages.length])
-                    } else {
-                        await goTo(this.$store.state.ui.pages?.[target])
-                    }
-                    return
-                }
-                const group = this.$store.state.ui.groups?.[target]
-                if (!group || group.groupType !== 'dialog') {
-                    return
-                }
-                // a dialog group only renders on its own page, so go there first
-                await goTo(this.$store.state.ui.pages?.[group.page])
-                this.$store.commit('ui/setProperty', {
-                    item: 'group',
-                    itemId: target,
-                    property: 'showDialog',
-                    value: `true-${Date.now()}${type === 'modal' ? '-modal' : ''}`
-                })
-            } catch (err) {
-                console.error(err)
-            }
+            uiAction(this, this.props.payloadType, this.props.payload)
         },
         pointerdown: function ($evt) {
             if (!this.props.enablePointerdown) {

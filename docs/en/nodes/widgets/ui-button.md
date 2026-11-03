@@ -100,11 +100,13 @@ Adds a clickable button to your dashboard.
 
 The click payload can make the button act in the dashboard without any extra nodes:
 
-- **navigate**: go to a page picked from the list, or to *Back*, *Previous page* or *Next page*. Previous and next wrap around, the same as `ui-control`'s `"-1"` and `"+1"`.
+- **navigate**: go to a page picked from the list, or to *Back*, *Previous page* or *Next page*. Previous and next follow the pages in the navigation menu, skipping hidden pages, disabled pages and links, and wrap around. Back returns to the previous dashboard page, and does nothing if the dashboard was just opened.
 - **popup**: open a [dialog group](../config/ui-group.md). Clicking outside it or pressing Esc closes it.
 - **modal**: open a dialog group that only closes with its close button.
 
 The lists only show pages and dialog groups of the dashboard the button is in. If a dialog group is on another page, the dashboard switches to that page first and then opens it.
+
+If the page or dialog group a button points at is deleted, the node is marked as invalid in the editor and the list shows it as missing.
 
 The button still sends its message, so a flow can react to the click. `msg.payload` is set to the page or group name, or to `back`, `prev` or `next`.
 
