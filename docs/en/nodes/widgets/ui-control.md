@@ -41,7 +41,7 @@ Controls can be sent in `msg.payload`, or set up in the node as [actions](#actio
 
 <PropsTable/>
 
-## Actions <AddedIn version="1.35.0" />
+## Actions <AddedIn version="1.36.0" />
 
 With **On input** set to **Run the actions below**, each incoming msg runs the list of actions set up in the node. Each action has a target:
 
@@ -199,7 +199,7 @@ _Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups`
 
 In addition to `ui-control` taking input to _control_ the UI, we have also maintained support for all events emitted by `ui-control` from Node-RED Dashboard here too.
 
-The **Output** property chooses which of these events are sent. Set it to **None** when the node is only used to send commands. The node then has no output and doesn't listen for events from each connected client. <AddedIn version="1.35.0" />
+The **Output** property chooses which of these events are sent. Set it to **None** when the node is only used to send commands. The node then has no output and doesn't listen for events from each connected client. <AddedIn version="1.36.0" />
 
 ### Connection Status
 
