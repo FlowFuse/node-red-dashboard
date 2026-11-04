@@ -229,4 +229,49 @@ describe('ui-button node', function () {
         msg.should.have.property('payload').and.be.a.Number()
         msg.payload.should.be.approximately(Date.now(), 500) // within 0.5 second
     })
+
+    describe('navigate, popup and modal payloads', function () {
+        // the UI does the navigation, the msg reports where it went
+        const dialogGroup = {
+            id: 'config-ui-dialog-group',
+            type: 'ui-group',
+            name: 'Settings dialog',
+            page: 'config-ui-page',
+            groupType: 'dialog'
+        }
+
+        async function clickWith (payloadType, payload) {
+            const copyOfFlow = JSON.parse(JSON.stringify(flow))
+            const buttonDefinition = copyOfFlow.find(n => n.id === 'node-ui-button')
+            buttonDefinition.payloadType = payloadType
+            buttonDefinition.payload = payload
+            copyOfFlow.push(dialogGroup)
+            await helper.load(nodeImports, copyOfFlow)
+            const hNode = helper.getNode('helper-node')
+            const inputPromise = on(hNode, 'input')
+            helper.getNode('node-ui-button').receive({})
+            return inputPromise
+        }
+
+        it('sends the page name for a page', async function () {
+            const msg = await clickWith('navigate', 'config-ui-page')
+            msg.should.have.property('payload', 'Page 1')
+        })
+
+        it('sends back, prev or next for the relative options', async function () {
+            for (const [payload, expected] of [['_back', 'back'], ['_prev', 'prev'], ['_next', 'next']]) {
+                const msg = await clickWith('navigate', payload)
+                msg.should.have.property('payload', expected)
+                helper.unload()
+            }
+        })
+
+        it('sends the dialog group name for popup and modal', async function () {
+            for (const type of ['popup', 'modal']) {
+                const msg = await clickWith(type, 'config-ui-dialog-group')
+                msg.should.have.property('payload', 'Settings dialog')
+                helper.unload()
+            }
+        })
+    })
 })

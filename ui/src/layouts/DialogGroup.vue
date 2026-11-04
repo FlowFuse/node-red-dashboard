@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :eager="group.keepLoaded" :class="{'nrdb-dialog--keep-loaded': group.keepLoaded}" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
+    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :persistent="persistent" :eager="group.keepLoaded" :class="{'nrdb-dialog--keep-loaded': group.keepLoaded}" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
         <v-card>
             <template v-if="group.showTitle" #title>
                 {{ group.name }}
@@ -31,6 +31,7 @@ export default {
     data () {
         return {
             isActive: false,
+            persistent: false,
             windowWidth: window.innerWidth
         }
     },
@@ -98,7 +99,11 @@ export default {
             this.windowWidth = window.innerWidth
         },
         applyDialogState (val) {
-            this.isActive = val.split('-')[0] === 'true'
+            const parts = val.split('-')
+            const state = parts[0] === 'true'
+            // "modal" only closes via its close button
+            this.persistent = state && parts[2] === 'modal'
+            this.isActive = state
         },
         setDialogState (state) {
             this.$store.commit('ui/setProperty', {
