@@ -982,7 +982,8 @@ module.exports = function (RED) {
                 }
                 const parent = RED.nodes.getNode(widgetConfig.z)
                 if (parent && parent.TYPE === 'subflow') {
-                    const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')
+                    // sort order set in the editor's layout manager (`key` is the legacy format)
+                    const orderEnv = parent.subflowInstance.env?.find(e => e.name === 'DB2_SF_ORDER' || e.key === 'DB2_SF_ORDER')
                     let order = parseInt(orderEnv?.value)
                     if (isNaN(order)) {
                         order = 0
