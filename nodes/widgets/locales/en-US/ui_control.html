@@ -1,6 +1,22 @@
 
 <script type="text/html" data-help-name="ui-control">
     <p>Allows dynamic control of the Dashboard.</p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Output</dt>
+        <dd>Which events the node sends from its output, see the Events List below. <b>None</b> removes the output. Use it when the node is only sent commands.</dd>
+        <dt>On input</dt>
+        <dd><b>Use msg.payload</b> controls the Dashboard with the payloads in the Controls List below. <b>Run the actions below</b> ignores <code>msg.payload</code>, and any incoming msg runs the actions set up in the node.</dd>
+    </dl>
+    <h3>Actions</h3>
+    <p>Each action has a target picked from the selected dashboard, or read from a <code>msg</code> property:</p>
+    <ul>
+        <li><b>Navigate</b> - a page, next page, previous page or refresh. A <code>msg</code> property can hold a page name or id, <code>"+1"</code>, <code>"-1"</code>, <code>""</code> or a page index.</li>
+        <li><b>Show/Hide</b> - a page, group or widget. Opens or closes a dialog group.</li>
+        <li><b>Enable/Disable</b> - a page, group or widget.</li>
+    </ul>
+    <p>For Show, Hide, Enable and Disable, a <code>msg</code> property can hold an id or name, or an array of them. <code>"Page:Group"</code>, <code>"Group:Widget"</code> and <code>"Page:Group:Widget"</code> are also accepted. A name used by more than one page, group or widget is an error, so use an id instead.</p>
+    <p>Actions run together as one change, grouped by type, rather than in the listed order. "Hide X" then "Show X" leaves X hidden, and only the last Navigate is used.</p>
     <h3>Controls List</h3>
     <h4>Navigation</h4>
     <p>Control which page is shown to a user, by programmatically changing the page.</p>
@@ -20,8 +36,8 @@
         <li><code>""</code></li>
         <li><code>{"page":""}</code></li>
     </ul>
-    <h4>Show/Hide Pages & Groups</h4>
-    <p>Dashboard pages & groups can be shown and hidden by sending a <code>msg.payload</code> object with the format
+    <h4>Show/Hide Pages & Groups & Widgets</h4>
+    <p>Dashboard pages & groups & widgets can be shown and hidden by sending a <code>msg.payload</code> object with the format below. Showing or hiding a dialog group opens or closes the dialog.
     <pre>msg.payload = {
     pages: {
         show: ['&lt;Page Name&gt;',
@@ -40,6 +56,13 @@
                {page: '&lt;Page Name&gt;', group: '&lt;Group Name&gt;'},
                {page: '&lt;Page Id&gt;', group: '&lt;Group Name&gt;'}],
         hide: ['&lt;Group Name&gt;']
+    },
+    widgets: {
+        show: ['&lt;Widget Name&gt;',
+               '&lt;Widget Id&gt;',
+               '&lt;Group Name&gt;:&lt;Widget Name&gt;',
+               '&lt;Page Name&gt;:&lt;Group Name&gt;:&lt;Widget Name&gt;'],
+        hide: ['&lt;Widget Id&gt;']
     }
 }</pre>
     <h4>Enable/Disable Pages & Groups & Widgets</h4>

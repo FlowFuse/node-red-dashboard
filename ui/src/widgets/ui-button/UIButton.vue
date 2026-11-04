@@ -23,6 +23,8 @@
 import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+import { uiAction } from '../../util/ui-action.js'
+
 export default {
     name: 'DBUIButton',
     inject: ['$socket', '$dataTracker'],
@@ -85,6 +87,7 @@ export default {
             const msg = this.messages[this.id] || {}
             msg._event = evt
             this.$socket.emit('widget-action', this.id, msg)
+            uiAction(this, this.props.payloadType, this.props.payload)
         },
         pointerdown: function ($evt) {
             if (!this.props.enablePointerdown) {

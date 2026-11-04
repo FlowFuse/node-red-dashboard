@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :eager="group.keepLoaded" :class="{'nrdb-dialog--keep-loaded': group.keepLoaded}" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
+    <v-dialog v-if="group.groupType === 'dialog'" v-model="isActive" :persistent="persistent" :eager="group.keepLoaded" :class="{'nrdb-dialog--keep-loaded': group.keepLoaded}" :attach="`nrdb-ui-group-${group.id}`" :style="dialogStyles">
         <v-card>
             <template v-if="group.showTitle" #title>
                 {{ group.name }}
@@ -31,6 +31,7 @@ export default {
     data () {
         return {
             isActive: false,
+            persistent: false,
             windowWidth: window.innerWidth
         }
     },
@@ -68,24 +69,49 @@ export default {
         }
     },
     watch: {
-        showDialogState: {
-            handler (val) {
-                const state = val.split('-')[0] === 'true'
-                // Close the dialog if it's already opened by ui-control
-                if (state === this.isActive) {
-                    this.isActive = !this.isActive
-                }
-                this.isActive = state
+        showDialogState (val) {
+            this.applyDialogState(val)
+        },
+        isActive (val) {
+            // keep the store in step when the user closes the dialog, so the next "show" is a real change
+            if (!val && this.showDialogState?.startsWith('true')) {
+                this.setDialogState(false)
             }
         }
     },
     mounted () {
         // on resize handler for window resizing
         window.addEventListener('resize', this.onResize)
+        // a show can arrive before this page has rendered (e.g. navigate + show in one go)
+        if (this.showDialogState) {
+            this.applyDialogState(this.showDialogState)
+        }
+    },
+    beforeUnmount () {
+        window.removeEventListener('resize', this.onResize)
+        // leaving the page closes the dialog, don't reopen it on return
+        if (this.isActive) {
+            this.setDialogState(false)
+        }
     },
     methods: {
         onResize () {
             this.windowWidth = window.innerWidth
+        },
+        applyDialogState (val) {
+            const parts = val.split('-')
+            const state = parts[0] === 'true'
+            // "modal" only closes via its close button
+            this.persistent = state && parts[2] === 'modal'
+            this.isActive = state
+        },
+        setDialogState (state) {
+            this.$store.commit('ui/setProperty', {
+                item: 'group',
+                itemId: this.group.id,
+                property: 'showDialog',
+                value: `${state}-${Date.now()}`
+            })
         }
     }
 }
