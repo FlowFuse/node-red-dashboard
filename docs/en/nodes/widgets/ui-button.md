@@ -66,6 +66,7 @@ dynamic:
     import { ref } from 'vue'
 
     import ExampleButtonHold from '../../../examples/ui-button-hold.json'
+    import AddedIn from '../../../components/AddedIn.vue'
 
     import TryDemo from "./../../../components/TryDemo.vue"
     import FlowViewer from '../../../components/FlowViewer.vue'
@@ -96,7 +97,7 @@ Adds a clickable button to your dashboard.
 
 <ControlsTable/>
 
-## Navigation and dialogs
+## Navigation and dialogs <AddedIn version="1.36.0" />
 
 The click payload can make the button act in the dashboard without any extra nodes:
 
