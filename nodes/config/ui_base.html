@@ -130,7 +130,7 @@
     }
     .nrdb2-sb-list-header-actions {
         position: absolute;
-        gap: 4px; 
+        gap: 4px;
         right: 1rem;
         display: flex;
         gap: 4px;
@@ -155,7 +155,7 @@
     .nrdb2-sb-list-header:hover {
         background-color: var(--red-ui-secondary-background-hover, --ff-grey-100);
     }
-    .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle, 
+    .nrdb2-sb-list-header:hover .nrdb2-sb-list-handle,
     .nrdb2-sb-list-header:hover .nrdb2-sb-list-header-button-group {
         opacity: 1;
     }
@@ -377,6 +377,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     const sidebarContainer = '<div style="position: relative; height: 100%;"></div>'
     const sidebarContentTemplate = $('<div id="ff-node-red-dashboard"></div>').appendTo(sidebarContainer)
     const sidebar = $(sidebarContentTemplate)
+    const SUBFLOW_ORDER_ENV = 'DB2_SF_ORDER'
 
     // convert to i18 text
     function c_ (x) {
@@ -386,6 +387,23 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     function hasProperty (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop)
     }
+
+    function findSubflowOrderEnv (env) {
+        if (!Array.isArray(env)) { return undefined }
+        return env.find(e => e && (e.name === SUBFLOW_ORDER_ENV || e.key === SUBFLOW_ORDER_ENV))
+    }
+
+    function migrateSubflowOrderEnv (node) {
+        if (!node || !/^subflow:.+/.test(node.type) || !Array.isArray(node.env)) { return }
+        const index = node.env.findIndex(e => e && e.key === SUBFLOW_ORDER_ENV && e.name !== SUBFLOW_ORDER_ENV)
+        if (index !== -1) {
+            // rebuild the entry the way Node-RED's edit dialog writes it (property order and string value),
+            // because Node-RED compares the env as JSON: any difference marks the node as changed on "Done"
+            const { value, type } = node.env[index]
+            node.env[index] = { name: SUBFLOW_ORDER_ENV, value: String(value ?? ''), type: type || 'str' }
+        }
+    }
+
     function debounce (func, wait, immediate) {
         let timeout
         return function () {
@@ -533,7 +551,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         if (hasProperty(node, 'link')) { item.link = node.link }
         if (hasProperty(node, 'theme')) { item.theme = node.theme }
         if (hasProperty(node, 'env') && Array.isArray(node.env) && /subflow:.+/.test(node.type)) {
-            const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+            const envOrder = findSubflowOrderEnv(node.env)
             if (envOrder) {
                 item.order = envOrder.value
             }
@@ -611,11 +629,13 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
                 dbItem.order = newOrder
                 if (dbItem.isSubflowInstance) {
                     node.env = node.env || []
-                    const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+                    migrateSubflowOrderEnv(node)
+                    const envOrder = findSubflowOrderEnv(node.env)
+                    // store a string like Node-RED's edit dialog does, otherwise "Done" without changes marks the node as changed
                     if (envOrder) {
-                        envOrder.value = newOrder
+                        envOrder.value = String(newOrder)
                     } else {
-                        node.env.push({ key: 'DB2_SF_ORDER', value: '' + newOrder, type: 'str' }) // db2 sort order
+                        node.env.push({ name: SUBFLOW_ORDER_ENV, value: String(newOrder), type: 'str' }) // db2 sort order
                     }
                 } else {
                     node.order = newOrder
@@ -624,7 +644,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             const getNodeOrder = () => {
                 let order = dbItem.order // node.order
                 if (dbItem.isSubflowInstance && node.env) {
-                    const envOrder = node.env.find(e => e.key === 'DB2_SF_ORDER')
+                    const envOrder = findSubflowOrderEnv(node.env)
                     if (envOrder) { order = envOrder.value }
                 }
                 if (typeof order === 'string') { order = parseInt(order) }
@@ -1201,7 +1221,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             if (!refresh && node.type.startsWith('subflow:')) {
                 // lets see if it has env vars linked to a `ui-` config or it has a DB2_SF_ORDER sort order key?
                 const subflowId = node.type.split(':')[1]
-                if (node.env && node.env.find(e => e.type?.startsWith('ui-') || node.env.find(e => e.key === 'DB2_SF_ORDER'))) {
+                if (node.env && (node.env.some(e => e.type?.startsWith('ui-')) || findSubflowOrderEnv(node.env))) {
                     refresh = true
                 }
                 if (!refresh) {
@@ -1228,6 +1248,8 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     const checkDuplicateUiBasesDebounced = debounce(checkDuplicateUiBases, 25)
     RED.events.on('nodes:add', function (node) {
         if (RED._db2debug) { console.log('nodes:add', node) }
+        // subflow instances from flows saved by older versions (on load, import or paste)
+        migrateSubflowOrderEnv(node)
         if (node.dirty && node.type && node.type.startsWith('ui-')) {
             if (RED._db2debug) { console.log('nodes:add - this is a ui- node! queuing a call to refreshSidebarEditors') }
             // debounce the call to refreshSidebarEditors as multiple events can be fired in quick succession
@@ -2861,7 +2883,7 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
         <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showReconnectNotification">
         <label style="width:auto" for="node-config-input-showReconnectNotification"><span data-i18n="ui-base.label.showReconnect"></span></label>
     </div>
-    <div class="form-row form-row-flex" style="align-items: center;">   
+    <div class="form-row form-row-flex" style="align-items: center;">
         <input style="width: 50px; margin-left: 75px;" type="number" id="node-config-input-notificationDisplayTime">
         <label style="width:auto" for="node-config-input-notificationDisplayTime"><span data-i18n="ui-base.label.notificationDisplayTime"></span></label>
     </div>
