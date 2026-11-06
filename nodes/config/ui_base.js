@@ -7,7 +7,7 @@ const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets, getFlowsUrl } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -1252,7 +1252,7 @@ module.exports = function (RED) {
                 return res.status(500).json({ error: 'Error processing https settings' })
             }
         }
-        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        const url = getFlowsUrl(host, port, httpAdminRoot, scheme)
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
