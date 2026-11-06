@@ -63,7 +63,7 @@ If you're looking to build your own bespoke templates, checkout our useful [UI T
 
 ### Build with Markdown & Mermaid
 
-The new `ui-markdown` widget allows you to build rich, interactive applications using [Markdown](https://www.markdownguide.org/) and [Mermaid Charts](https://mermaid.js.org/). You can use Markdown templates to build your UI, and populate it with your own, dynamic data, and then use Mermaid to display dynamic charts and diagrams.
+The `ui-markdown` widget allows you to build rich, interactive applications using [Markdown](https://www.markdownguide.org/) and [Mermaid Charts](https://mermaid.js.org/). You can use Markdown templates to build your UI, and populate it with your own, dynamic data, and then use Mermaid to display dynamic charts and diagrams.
 
 ## Community and Contribution
 

@@ -222,8 +222,6 @@ Wir haben versucht, das Thema in Dashboard 2.0 benutzerfreundlicher zu gestalten
 ![Beispiel für das Bearbeiten eines Themas](/images/theme-config.png "Beispiel für das Bearbeiten eines Themas"){data-zoomable}
 _Beispiel der im Node-RED Editor freigelegten Eigenschaften beim Definieren eines Themas_
 
-Wir haben Pläne, diese Themenkonfiguration weiter auszubauen, sodass Sie auch Rasterabstände, Schriftarten usw. definieren können.
-
 Jede weitere Anpassung des gesamten Layouts und Themas des Dashboards erfordert benutzerdefiniertes CSS, das über den `ui_template`-Knoten injiziert werden kann.
 
 ## Layouts
@@ -236,11 +234,12 @@ Dashboard 2.0 folgt einer ähnlichen Architektur wie Dashboard 1.0 zur Verwaltun
 | `ui-tab` | `ui-page` | Zusätzlich zu einer Umbenennung hier haben wir auch die Unterstützung für eine `ui-page` hinzugefügt, um ein definiertes "Thema" zu haben (gesteuert durch unsere neuen `ui-theme`-Konfigurationsknoten). Jede `ui-page` hat auch eine neue _"Layout"_ Option, die seitenweise eingestellt werden kann. |
 | `ui-group` | `ui-group` | Derzeit kein "Zusammenklappen"-Verhalten, aber andere Funktionalität ist gleich. |
 
-Wir haben derzeit drei Layouts in Dashboard 2.0 verfügbar:
+Wir haben derzeit vier Layouts in Dashboard 2.0 verfügbar:
 
 - [**Raster**](../layouts/types/grid.md) - Modelliert mit dem CSS-`grid`-Layout, ist dies das Standardlayout und verwendet einen festen 12-Spalten-Ansatz, bei dem der Inhalt horizontal mit der Bildschirmbreite skaliert wird, was es viel freundlicher für reaktionsfähige Layouts macht.
-- [**Fest**](../layouts/types/fixed.md) - Dies verwendet ein CSS-Flex-Layout und ist das ähnlichste, was wir derzeit zum einzigen Layout in Dashboard 1.0 haben. Verbesserungen sind hier erforderlich, um die "Pack"-Natur des Layouts zu verbessern.
+- [**Fest**](../layouts/types/fixed.md) - Dies verwendet ein CSS-Flex-Layout und ist das ähnlichste, was wir derzeit zum einzigen Layout in Dashboard 1.0 haben.
 - [**Notizbuch**](../layouts/types/notebook.md) - Nachahmung eines Jupyter-Notizbuch-Layouts, bietet dies Inhalte mit einer maximalen Breite, skaliert mit mobilen Geräten und ermöglicht es, Inhalte vertikal zu stapeln.
+- [**Tabs**](../layouts/types/tabs.md) - Rendert die Gruppen einer Seite in einer Registerkartenansicht, mit einer oder mehreren Gruppen pro Tab.
 
 ## Drittanbieter-Widgets
 

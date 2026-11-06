@@ -17,12 +17,12 @@
     },
     "contributors": [
         {
-            "name": "Pez Cuckow",
-            "url": "https://github.com/pezmc"
-        },
-        {
             "name": "Steve McLaughlin",
             "url": "https://github.com/Steve-Mcl"
+        },
+        {
+            "name": "Noley Holland",
+            "url": "https://github.com/n-lark"
         }
     ],
     "files": [
