@@ -232,7 +232,7 @@ Dashboard 2.0 folgt einer ähnlichen Architektur wie Dashboard 1.0 zur Verwaltun
 
 | Dashboard 1.0 | Dashboard 2.0 | Unterschied |
 | --- | --- | --- |
-| `ui-base` | `ui-base` | Wir haben dies als Konfigurationsknoten in Dashboard 2.0 freigelegt, wo eine `ui-page` einem übergeordneten `ui-base` zugewiesen wird. Obwohl noch nicht unterstützt, möchten wir schließlich _mehrere_ Basis-Dashboards in derselben Node-RED-Instanz unterstützen. |
+| `ui-base` | `ui-base` | Wir haben dies als Konfigurationsknoten in Dashboard 2.0 freigelegt, wo eine `ui-page` einem übergeordneten `ui-base` zugewiesen wird. Pro Node-RED-Instanz wird nur ein `ui-base` unterstützt. |
 | `ui-tab` | `ui-page` | Zusätzlich zu einer Umbenennung hier haben wir auch die Unterstützung für eine `ui-page` hinzugefügt, um ein definiertes "Thema" zu haben (gesteuert durch unsere neuen `ui-theme`-Konfigurationsknoten). Jede `ui-page` hat auch eine neue _"Layout"_ Option, die seitenweise eingestellt werden kann. |
 | `ui-group` | `ui-group` | Derzeit kein "Zusammenklappen"-Verhalten, aber andere Funktionalität ist gleich. |
 
@@ -241,8 +241,6 @@ Wir haben derzeit drei Layouts in Dashboard 2.0 verfügbar:
 - [**Raster**](../layouts/types/grid.md) - Modelliert mit dem CSS-`grid`-Layout, ist dies das Standardlayout und verwendet einen festen 12-Spalten-Ansatz, bei dem der Inhalt horizontal mit der Bildschirmbreite skaliert wird, was es viel freundlicher für reaktionsfähige Layouts macht.
 - [**Fest**](../layouts/types/fixed.md) - Dies verwendet ein CSS-Flex-Layout und ist das ähnlichste, was wir derzeit zum einzigen Layout in Dashboard 1.0 haben. Verbesserungen sind hier erforderlich, um die "Pack"-Natur des Layouts zu verbessern.
 - [**Notizbuch**](../layouts/types/notebook.md) - Nachahmung eines Jupyter-Notizbuch-Layouts, bietet dies Inhalte mit einer maximalen Breite, skaliert mit mobilen Geräten und ermöglicht es, Inhalte vertikal zu stapeln.
-
-Wir haben auch zukünftige Pläne, die Injektion von Drittanbieter-Layouts und sogar clientseitig bearbeitbare Layouts (z.B. Drag-and-Drop-Layout-Design) zu unterstützen.
 
 ## Drittanbieter-Widgets
 
