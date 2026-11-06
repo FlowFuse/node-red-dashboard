@@ -3,6 +3,20 @@
         function hasProperty (obj, prop) {
             return Object.prototype.hasOwnProperty.call(obj, prop)
         }
+        const validateTypedInput = hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }
+        // navigate/popup/modal payloads point at a page or dialog group that must still exist
+        function validatePayload (v, opt) {
+            const type = $('#node-input-payloadType').val() || this.payloadType
+            if (type === 'navigate') {
+                const n = RED.nodes.node(v)
+                return ['_back', '_prev', '_next'].includes(v) || (!!n && n.type === 'ui-page')
+            }
+            if (type === 'popup' || type === 'modal') {
+                const n = RED.nodes.node(v)
+                return !!n && n.type === 'ui-group' && n.groupType === 'dialog'
+            }
+            return validateTypedInput.call(this, v, opt)
+        }
         RED.nodes.registerType('ui-button', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.light'),
@@ -30,7 +44,7 @@
                 className: { value: '' },
                 icon: { value: '' },
                 iconPosition: { value: 'left' },
-                payload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }) },
+                payload: { value: '', validate: validatePayload },
                 payloadType: { value: 'str' },
                 topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
                 topicType: { value: 'msg' },
@@ -66,10 +80,61 @@
                     group: '#node-input-group'
                 })
 
+                const node = this
+                // navigate/popup/modal options are scoped to the dashboard of the selected group
+                function clickTypes () {
+                    const groupNode = RED.nodes.node($('#node-input-group').val() || node.group)
+                    const pageNode = groupNode && RED.nodes.node(groupNode.page)
+                    const uiId = pageNode && pageNode.ui
+                    const pages = []
+                    const dialogs = []
+                    RED.nodes.eachConfig(function (n) {
+                        if (n.type === 'ui-page' && (!uiId || n.ui === uiId)) {
+                            pages.push(n)
+                        }
+                    })
+                    pages.sort((a, b) => (a.order || 0) - (b.order || 0))
+                    RED.nodes.eachConfig(function (n) {
+                        if (n.type === 'ui-group' && n.groupType === 'dialog') {
+                            const p = RED.nodes.node(n.page)
+                            if (!uiId || (p && p.ui === uiId)) {
+                                dialogs.push({ value: n.id, label: (p ? (p.name || p.path) + ' / ' : '') + (n.name || n.id) })
+                            }
+                        }
+                    })
+                    const navigateOptions = [
+                        { value: '_back', label: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.navBack') },
+                        { value: '_prev', label: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.navPrev') },
+                        { value: '_next', label: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.navNext') }
+                    ].concat(pages.map(p => ({ value: p.id, label: (p.name || p.id) + (p.path ? ' (' + p.path + ')' : '') })))
+                    const dialogOptions = dialogs.length ? dialogs : [{ value: '', label: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.noDialogGroups') }]
+                    // keep a deleted target selectable, otherwise typedInput silently swaps it for the first option
+                    const missing = { value: node.payload, label: RED._('@flowfuse/node-red-dashboard/ui-button:ui-button.label.missingTarget', { id: node.payload }) }
+                    if (node.payloadType === 'navigate' && node.payload && !navigateOptions.some(o => o.value === node.payload)) {
+                        navigateOptions.push(missing)
+                    }
+                    if ((node.payloadType === 'popup' || node.payloadType === 'modal') && node.payload && !dialogs.some(o => o.value === node.payload)) {
+                        dialogOptions.push(missing)
+                    }
+                    return ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global',
+                        { value: 'navigate', label: 'navigate', icon: 'fa fa-share', options: navigateOptions },
+                        { value: 'popup', label: 'popup', icon: 'fa fa-window-restore', options: dialogOptions },
+                        { value: 'modal', label: 'modal', icon: 'fa fa-window-maximize', options: dialogOptions }
+                    ]
+                }
+
                 $('#node-input-payload').typedInput({
                     default: 'str',
                     typeField: $('#node-input-payloadType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
+                    types: clickTypes()
+                })
+                $('#node-input-group').on('change', function () {
+                    const $payload = $('#node-input-payload')
+                    const type = $payload.typedInput('type')
+                    const value = $payload.typedInput('value')
+                    $payload.typedInput('types', clickTypes())
+                    $payload.typedInput('type', type)
+                    $payload.typedInput('value', value)
                 })
 
                 $('#node-input-topic').typedInput({
