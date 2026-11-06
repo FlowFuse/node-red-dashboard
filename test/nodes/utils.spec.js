@@ -5,14 +5,13 @@ const utils = require('../../nodes/utils/index.js')
 describe('utils', function () {
     describe('getFlowsUrl', function () {
         const cases = [
-            ['::', 'http://', '/admin/', 'http://[::1]:1880/admin/flows'],
+            ['::', 'http://', '/admin/', 'http://[::]:1880/admin/flows'],
             ['::1', 'http://', '/admin/', 'http://[::1]:1880/admin/flows'],
             ['2001:db8::1', 'http://', '/admin/', 'http://[2001:db8::1]:1880/admin/flows'],
-            ['0.0.0.0', 'http://', '/', 'http://127.0.0.1:1880/flows'],
+            ['0.0.0.0', 'http://', '/', 'http://0.0.0.0:1880/flows'],
             ['127.0.0.1', 'http://', '/', 'http://127.0.0.1:1880/flows'],
             ['localhost', 'http://', '/admin/', 'http://localhost:1880/admin/flows'],
-            [undefined, 'http://', '/', 'http://localhost:1880/flows'],
-            ['::', 'https://', '/admin/', 'https://[::1]:1880/admin/flows'],
+            ['::', 'https://', '/admin/', 'https://[::]:1880/admin/flows'],
             ['localhost', 'http://', 'admin/', 'http://localhost:1880/admin/flows']
         ]
         cases.forEach(([host, scheme, root, expected]) => {

@@ -149,12 +149,6 @@ function getThirdPartyWidgets (directory) {
 }
 
 function getFlowsUrl (host, port, httpAdminRoot, scheme) {
-    host = host || 'localhost'
-    if (host === '::') {
-        host = '::1'
-    } else if (host === '0.0.0.0') {
-        host = '127.0.0.1'
-    }
     const hostname = isIPv6(host) ? `[${host}]` : host
     return scheme + (`${hostname}:${port}/${httpAdminRoot}flows`).replace('//', '/')
 }
