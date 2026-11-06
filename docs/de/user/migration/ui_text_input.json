@@ -29,8 +29,8 @@
         },
         {
             "property": "tooltip",
-            "changes": -1,
-            "notes": "<a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/393\" target=\"_blank\">Problem #393</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "mode",

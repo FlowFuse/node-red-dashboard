@@ -38,8 +38,8 @@
         },
         {
             "property": "interpolate",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/384' target='_blank'>Problem #384</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "x-axis limit",

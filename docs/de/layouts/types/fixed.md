@@ -4,11 +4,9 @@ description: Erfahren Sie, wie Sie das feste Layout im Node-RED Dashboard 2.0 f�
 
 # Layout: Fest
 
-_Hinweis: Dieses Layout benötigt noch Arbeit, um es flexibler und praktischer zu machen. Es wird empfohlen, vorerst ein anderes Layout zu verwenden._
-
 Jede "Einheit" hat eine feste Breite, was das einzige verfügbare Layout im Dashboard 1.0 war.
 
-Es ist als Flexbox-Layout aufgebaut, mit einer einzigen Reihe von Widgets. Die Breite jeder Gruppe ist eine feste Pixelgröße, berechnet als die "Breite"-Eigenschaft einer Gruppe, multipliziert mit 90px (wobei unsere Standardzeilenhöhe 45px beträgt).
+Es ist als Flexbox-Layout aufgebaut, mit einer einzigen Reihe von Widgets. Die Breite jeder Gruppe ist eine feste Pixelgröße, berechnet als die "Breite"-Eigenschaft einer Gruppe, multipliziert mit der doppelten Zeilenhöhe (96px bei der Standardzeilenhöhe von 48px).
 
 Die Gruppen selbst folgen demselben Muster wie alle anderen Layouts, wobei eine Gruppe mit der Breite "6" 6 "Spalten" hätte, mit entsprechend dimensionierten Widgets, sodass ein Widget der Größe "3 x 1" 50% der Gruppenbreite einnehmen würde.
 

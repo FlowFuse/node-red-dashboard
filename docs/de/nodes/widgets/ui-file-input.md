@@ -46,7 +46,7 @@ Das Datei-Upload-Widget ermöglicht es Benutzern, Dateien zu Node-RED hochzulade
 
 ## Aktuelle Einschränkungen
 
-_Derzeit_ ist das Datei-Upload-Widget durch eine maximale Dateigröße begrenzt, die durch die Websocket-Verbindung definiert wird. Der Standardwert hier beträgt 5 MB. Dies kann erhöht werden, indem die `maxHttpBufferSize`-Eigenschaft in der `settings.js`-Datei im Node-RED-Installationsverzeichnis geändert wird:
+Das Datei-Upload-Widget ist durch eine maximale Dateigröße begrenzt, die durch die Websocket-Verbindung definiert wird. Der Standardwert hier beträgt 5 MB. Dies kann erhöht werden, indem die `maxHttpBufferSize`-Eigenschaft in der `settings.js`-Datei im Node-RED-Installationsverzeichnis geändert wird:
 
 ```
 dashboard: {
@@ -55,8 +55,6 @@ dashboard: {
 ```
 
 Lesen Sie mehr über die Dashboard-Konfiguration in der `settings.js` [hier](/de/user/settings.html#maxhttpbuffersize).
-
-Beachten Sie, dass wir planen, dieses Verhalten zu verbessern, indem wir Dateien in kleinere Teile aufteilen und sie auf der Serverseite wieder zusammensetzen. Dies wird es ermöglichen, größere Dateien hochzuladen und wird in einer zukünftigen Version implementiert.
 
 ## Beispiel
 

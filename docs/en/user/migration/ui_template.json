@@ -34,8 +34,8 @@
         },
         {
             "property": "passthru",
-            "changes": -1,
-            "notes": "<a href='https://github.com/FlowFuse/node-red-dashboard/issues/354' target='_blank'>Issue #354</a>"
+            "changes": null,
+            "notes": null
         },
         {
             "property": "reload on refresh",
