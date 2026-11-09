@@ -123,5 +123,14 @@ describe('ui-base config node', function () {
                 '[@flowfuse/node-red-dashboard] $.fn.elementSizer is deprecated and will be removed, use $.fn.ffElementSizer instead'
             ])
         })
+
+        it('should stop logging new node types after 100 have been reported', async function () {
+            for (let i = 0; i < 100; i++) {
+                await helper.request().post(endpoint).send({ name: 'elementSizer', type: `cap-node-${i}` }).expect(204)
+            }
+            helper.log().resetHistory()
+            await helper.request().post(endpoint).send({ name: 'elementSizer', type: 'cap-node-over' }).expect(204)
+            deprecationWarnings().should.have.length(0)
+        })
     })
 })
