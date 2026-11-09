@@ -2791,14 +2791,20 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     // node-red-dashboard (Dashboard 1) registers these same names, so route each call to its sizer or ours regardless of load order
     function deprecatedSizer (oldName, newName) {
         let otherSizer = $.fn[oldName] || null
-        let warned = false
+        const reported = new Set()
         function sizer (...args) {
             if (otherSizer && !isDashboardNode(args[0])) {
                 return otherSizer.apply(this, args)
             }
-            if (!warned) {
-                warned = true
-                console.warn(`[@flowfuse/node-red-dashboard] $.fn.${oldName} is deprecated and will be removed, use $.fn.${newName} instead`)
+            const type = RED.editor.getEditStack?.().at(-1)?.type
+            if (!reported.has(type)) {
+                reported.add(type)
+                $.ajax({
+                    url: 'dashboard/api/v1/deprecated-sizer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name: oldName, type })
+                })
             }
             return $.fn[newName].apply(this, args)
         }

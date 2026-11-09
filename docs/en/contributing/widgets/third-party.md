@@ -187,7 +187,7 @@ oneditprepare: function () {
 
 When the node is inside a subflow, the sizer shows Width, Height, and Order text inputs instead, so they can be set with `${ENV}` subflow properties. This requires the `group` option.
 
-_Note: `elementSizer` and `elementSizerByNum` are deprecated. They still work but log a warning. Switch to `ffElementSizer` and `ffElementSizerByNum`. The old names are shared with Node-RED Dashboard 1.0, which can replace them depending on load order._
+_Note: `elementSizer` and `elementSizerByNum` are deprecated. They still work but log a warning in the Node-RED log. Switch to `ffElementSizer` and `ffElementSizerByNum`. The old names are shared with Node-RED Dashboard 1.0, which can replace them depending on load order._
 
 ## Guides
 

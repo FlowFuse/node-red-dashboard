@@ -1483,4 +1483,25 @@ module.exports = function (RED) {
 
         return res.status(200).json(editConfig)
     })
+
+    const deprecatedSizers = {
+        elementSizer: 'ffElementSizer',
+        elementSizerByNum: 'ffElementSizerByNum'
+    }
+    const reportedSizers = new Set()
+    const maxReportedSizers = 100
+    RED.httpAdmin.post('/dashboard/api/v1/deprecated-sizer', RED.auth.needsPermission('flows.read'), function (req, res) {
+        const { name, type } = req.body || {}
+        if (!deprecatedSizers[name]) {
+            return res.sendStatus(400)
+        }
+        const nodeType = typeof type === 'string' ? type : null
+        const key = `${name}:${nodeType}`
+        if (!reportedSizers.has(key) && reportedSizers.size < maxReportedSizers) {
+            reportedSizers.add(key)
+            const usedBy = nodeType ? ` (used by ${JSON.stringify(nodeType)})` : ''
+            RED.log.warn(`[@flowfuse/node-red-dashboard] $.fn.${name} is deprecated and will be removed, use $.fn.${deprecatedSizers[name]} instead${usedBy}`)
+        }
+        res.sendStatus(204)
+    })
 }
