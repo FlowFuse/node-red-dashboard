@@ -114,14 +114,12 @@ function openSizerByNum () {
     })
 }
 
-function spyOnWarn () {
-    cy.window().then((win) => {
-        cy.spy(win.console, 'warn').as('warn')
-    })
+function spyOnReports () {
+    cy.intercept('POST', '**/dashboard/api/v1/deprecated-sizer', cy.spy().as('report'))
 }
 
-function deprecationWarnings (warn, name) {
-    return warn.getCalls().filter((call) => String(call.args[0]).includes(`$.fn.${name} is deprecated`))
+function deprecationReports (report, name) {
+    return report.getCalls().map((call) => call.args[0].body).filter((body) => body.name === name)
 }
 
 function edit (id) {
@@ -260,24 +258,20 @@ describe('Node-RED Dashboard 2.0 - Editor: element sizer in subflows', () => {
         cy.get('#node-input-size').should('have.class', 'other-sizer')
     })
 
-    it('warns once that elementSizer is deprecated when a contrib node calls it', () => {
-        spyOnWarn()
+    it('reports elementSizer as deprecated when a contrib node calls it', () => {
+        spyOnReports()
         edit('test-contrib-in')
-        cy.get('#node-dialog-cancel').click()
-        edit('test-contrib-out')
-        cy.get('@warn').should((warn) => {
-            const calls = deprecationWarnings(warn, 'elementSizer')
-            expect(calls).to.have.length(1)
-            expect(calls[0].args[0]).to.include('use $.fn.ffElementSizer instead')
+        cy.get('@report').should((report) => {
+            expect(deprecationReports(report, 'elementSizer')).to.deep.equal([{ name: 'elementSizer', type: 'test-contrib' }])
         })
     })
 
-    it('does not warn when a core widget uses the sizer', () => {
-        spyOnWarn()
+    it('does not report when a core widget uses the sizer', () => {
+        spyOnReports()
         edit('sizer-gauge-in')
         cy.get('.nr-db-ui-element-subflow-row').should('have.length', 3)
-        cy.get('@warn').should((warn) => {
-            expect(deprecationWarnings(warn, 'elementSizer')).to.have.length(0)
+        cy.get('@report').should((report) => {
+            expect(deprecationReports(report, 'elementSizer')).to.have.length(0)
         })
     })
 
@@ -289,17 +283,15 @@ describe('Node-RED Dashboard 2.0 - Editor: element sizer in subflows', () => {
         cy.get('#node-input-size').should('have.class', 'other-sizer-by-num')
     })
 
-    it('uses the dashboard elementSizerByNum for dashboard nodes and warns it is deprecated', () => {
+    it('uses the dashboard elementSizerByNum for dashboard nodes and reports it as deprecated', () => {
         registerOtherSizerByNum()
-        spyOnWarn()
+        spyOnReports()
         edit('test-contrib-out')
         openSizerByNum()
         cy.get('#node-input-size').should('not.have.class', 'other-sizer-by-num')
         cy.get('body > div input[type=number]').should('have.length', 2)
-        cy.get('@warn').should((warn) => {
-            const calls = deprecationWarnings(warn, 'elementSizerByNum')
-            expect(calls).to.have.length(1)
-            expect(calls[0].args[0]).to.include('use $.fn.ffElementSizerByNum instead')
+        cy.get('@report').should((report) => {
+            expect(deprecationReports(report, 'elementSizerByNum')).to.deep.equal([{ name: 'elementSizerByNum', type: 'test-contrib' }])
         })
     })
 
