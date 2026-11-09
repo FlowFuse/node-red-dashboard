@@ -105,6 +105,25 @@ describe('store: ui getters', function () {
             orderOf(widgets).should.eql(['c', 'b', 'a'])
         })
 
+        it('sinks a widget with a string "0" order to the end, the same as a numeric 0 (#2367)', function () {
+            const widgets = [
+                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: '0' } },
+                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: '2' } },
+                { id: 'c', type: 'ui-text', props: { group: 'g1' }, layout: { order: '1' } },
+                { id: 'd', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } }
+            ]
+            orderOf(widgets).should.eql(['c', 'b', 'a', 'd'])
+        })
+
+        it('sinks a subflow widget with a string "0" order to the end of its subflow (#2367)', function () {
+            const widgets = [
+                { id: 'zero', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '0' } },
+                { id: 'two', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '2' } },
+                { id: 'one', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '1' } }
+            ]
+            orderOf(widgets).should.eql(['one', 'two', 'zero'])
+        })
+
         it('sinks a subflow with an unset/zero order to the end', function () {
             const widgets = [
                 { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: 1 } },

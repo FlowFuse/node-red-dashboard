@@ -161,7 +161,7 @@ const getters = {
                     subflowUnits[subflowId].widgets.push(w)
                 } else {
                     units.push({
-                        order: w.layout?.order || Number.MAX_SAFE_INTEGER,
+                        order: Number(w.layout?.order) || Number.MAX_SAFE_INTEGER,
                         widgets: [w]
                     })
                 }
@@ -171,8 +171,8 @@ const getters = {
             units.forEach((unit) => {
                 if (unit.widgets.length > 1) {
                     unit.widgets.sort((a, b) => {
-                        const aOrder = a.layout?.order || Number.MAX_SAFE_INTEGER
-                        const bOrder = b.layout?.order || Number.MAX_SAFE_INTEGER
+                        const aOrder = Number(a.layout?.order) || Number.MAX_SAFE_INTEGER
+                        const bOrder = Number(b.layout?.order) || Number.MAX_SAFE_INTEGER
                         return aOrder - bOrder
                     })
                 }
