@@ -96,41 +96,50 @@ describe('store: ui getters', function () {
             orderOf(widgets, 'g1').should.eql(['a'])
         })
 
-        it('sinks widgets with an unset/zero order to the end', function () {
+        it('sorts a widget with order 0 first, like the editor layout manager', function () {
             const widgets = [
-                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } },
-                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: 2 } },
+                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: 2 } },
+                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } },
                 { id: 'c', type: 'ui-text', props: { group: 'g1' }, layout: { order: 1 } }
             ]
-            orderOf(widgets).should.eql(['c', 'b', 'a'])
+            orderOf(widgets).should.eql(['b', 'c', 'a'])
         })
 
-        it('sinks a widget with a string "0" order to the end, the same as a numeric 0 (#2367)', function () {
+        it('sorts a string "0" order the same as a numeric 0 (#2367)', function () {
             const widgets = [
-                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: '0' } },
-                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: '2' } },
+                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: '2' } },
+                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } },
                 { id: 'c', type: 'ui-text', props: { group: 'g1' }, layout: { order: '1' } },
-                { id: 'd', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } }
+                { id: 'd', type: 'ui-text', props: { group: 'g1' }, layout: { order: '0' } }
             ]
-            orderOf(widgets).should.eql(['c', 'b', 'a', 'd'])
+            orderOf(widgets).should.eql(['b', 'd', 'c', 'a'])
         })
 
-        it('sinks a subflow widget with a string "0" order to the end of its subflow (#2367)', function () {
+        it('sorts subflow widgets with a mix of numeric and string orders (#2367)', function () {
             const widgets = [
-                { id: 'zero', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '0' } },
+                { id: 'zero', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: 0 } },
                 { id: 'two', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '2' } },
-                { id: 'one', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '1' } }
+                { id: 'one', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '1' } },
+                { id: 'three', type: 'ui-text', props: { group: 'g1', subflow: { id: 'sf1', order: 1 } }, layout: { order: '3' } }
             ]
-            orderOf(widgets).should.eql(['one', 'two', 'zero'])
+            orderOf(widgets).should.eql(['zero', 'one', 'two', 'three'])
         })
 
-        it('sinks a subflow with an unset/zero order to the end', function () {
+        it('sorts a subflow with order 0 first', function () {
             const widgets = [
                 { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: { order: 1 } },
                 { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: 2 } },
                 { id: 's', type: 'ui-template', props: { group: 'g1', templateScope: 'local', subflow: { id: 'sf1', order: 0 } }, layout: { order: 1 } }
             ]
-            orderOf(widgets).should.eql(['a', 'b', 's'])
+            orderOf(widgets).should.eql(['s', 'a', 'b'])
+        })
+
+        it('sinks a widget with no order to the end', function () {
+            const widgets = [
+                { id: 'a', type: 'ui-text', props: { group: 'g1' }, layout: {} },
+                { id: 'b', type: 'ui-text', props: { group: 'g1' }, layout: { order: 0 } }
+            ]
+            orderOf(widgets).should.eql(['b', 'a'])
         })
     })
 
