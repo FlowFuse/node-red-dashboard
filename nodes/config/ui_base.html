@@ -2791,16 +2791,21 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     // node-red-dashboard (Dashboard 1) registers these same names, so route each call to its sizer or ours regardless of load order
     function deprecatedSizer (oldName, newName) {
         let otherSizer = $.fn[oldName] || null
+        const reported = new Set()
         function sizer (...args) {
             if (otherSizer && !isDashboardNode(args[0])) {
                 return otherSizer.apply(this, args)
             }
-            $.ajax({
-                url: 'dashboard/api/v1/deprecated-sizer',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ name: oldName, type: RED.editor.getEditStack?.().at(-1)?.type })
-            })
+            const type = RED.editor.getEditStack?.().at(-1)?.type
+            if (!reported.has(type)) {
+                reported.add(type)
+                $.ajax({
+                    url: 'dashboard/api/v1/deprecated-sizer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name: oldName, type })
+                })
+            }
             return $.fn[newName].apply(this, args)
         }
         Object.defineProperty($.fn, oldName, {

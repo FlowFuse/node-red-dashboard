@@ -258,9 +258,11 @@ describe('Node-RED Dashboard 2.0 - Editor: element sizer in subflows', () => {
         cy.get('#node-input-size').should('have.class', 'other-sizer')
     })
 
-    it('reports elementSizer as deprecated when a contrib node calls it', () => {
+    it('reports elementSizer as deprecated once per node type when a contrib node calls it', () => {
         spyOnReports()
         edit('test-contrib-in')
+        cy.get('#node-dialog-cancel').click()
+        edit('test-contrib-out')
         cy.get('@report').should((report) => {
             expect(deprecationReports(report, 'elementSizer')).to.deep.equal([{ name: 'elementSizer', type: 'test-contrib' }])
         })

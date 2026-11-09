@@ -85,4 +85,43 @@ describe('ui-base config node', function () {
             orders.should.deepEqual({ 'named order': 2, 'legacy order': 1, 'no order': 0 })
         })
     })
+
+    describe('deprecated sizer endpoint', function () {
+        const endpoint = '/dashboard/api/v1/deprecated-sizer'
+
+        function deprecationWarnings () {
+            return helper.log().args
+                .map(args => args[0])
+                .filter(event => event.level === helper.log().WARN && String(event.msg).includes('is deprecated'))
+                .map(event => event.msg)
+        }
+
+        beforeEach(async function () {
+            await helper.load(nodeImports, testFlow1)
+        })
+
+        it('should reject an unknown sizer name', async function () {
+            await helper.request().post(endpoint).send({ name: 'notASizer', type: 'unknown-name-node' }).expect(400)
+            deprecationWarnings().should.have.length(0)
+        })
+
+        it('should log once per sizer name and node type', async function () {
+            await helper.request().post(endpoint).send({ name: 'elementSizer', type: 'once-node-a' }).expect(204)
+            await helper.request().post(endpoint).send({ name: 'elementSizer', type: 'once-node-a' }).expect(204)
+            await helper.request().post(endpoint).send({ name: 'elementSizerByNum', type: 'once-node-a' }).expect(204)
+            await helper.request().post(endpoint).send({ name: 'elementSizer', type: 'once-node-b' }).expect(204)
+            deprecationWarnings().should.deepEqual([
+                '[@flowfuse/node-red-dashboard] $.fn.elementSizer is deprecated and will be removed, use $.fn.ffElementSizer instead (used by "once-node-a")',
+                '[@flowfuse/node-red-dashboard] $.fn.elementSizerByNum is deprecated and will be removed, use $.fn.ffElementSizerByNum instead (used by "once-node-a")',
+                '[@flowfuse/node-red-dashboard] $.fn.elementSizer is deprecated and will be removed, use $.fn.ffElementSizer instead (used by "once-node-b")'
+            ])
+        })
+
+        it('should log without a node type when none is sent', async function () {
+            await helper.request().post(endpoint).send({ name: 'elementSizer' }).expect(204)
+            deprecationWarnings().should.deepEqual([
+                '[@flowfuse/node-red-dashboard] $.fn.elementSizer is deprecated and will be removed, use $.fn.ffElementSizer instead'
+            ])
+        })
+    })
 })
