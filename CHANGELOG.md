@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.36.1](https://github.com/FlowFuse/node-red-dashboard/compare/v1.36.0...v1.36.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* [2367] Sort widgets with order 0 first, matching the editor ([#2368](https://github.com/FlowFuse/node-red-dashboard/issues/2368)) ([5c0db09](https://github.com/FlowFuse/node-red-dashboard/commit/5c0db09cd52ab3dcd35decd6ecd989f353339818))
+* Log elementSizer deprecation to the Node-RED log ([#2369](https://github.com/FlowFuse/node-red-dashboard/issues/2369)) ([96f0179](https://github.com/FlowFuse/node-red-dashboard/commit/96f017905aab1324a506aa35e0acfa8a1302ca62))
+
+## [1.36.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.35.0...v1.36.0) (2026-11-05)
+
+
+### Features
+
+* [2352] Add navigate, popup and modal click actions to ui-button ([#2353](https://github.com/FlowFuse/node-red-dashboard/issues/2353)) ([d8dbed3](https://github.com/FlowFuse/node-red-dashboard/commit/d8dbed3e27cbef4f3a120bfe60994a2efc8ccec0))
+* Simplify navigate, show, hide, enable, disable by adding design time options to ui-control ([#2351](https://github.com/FlowFuse/node-red-dashboard/issues/2351)) ([1fb54c7](https://github.com/FlowFuse/node-red-dashboard/commit/1fb54c788d92881866d126f31631b7b98195acc2))
+
+
+### Bug Fixes
+
+* [2363] Keep subflow instance layout order when editing the instance ([#2364](https://github.com/FlowFuse/node-red-dashboard/issues/2364)) ([7438aad](https://github.com/FlowFuse/node-red-dashboard/commit/7438aadf15ca8162c7fee3f3964c951a46f335e6))
+
 ## [1.35.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.34.1...v1.35.0) (2026-11-03)
 
 
