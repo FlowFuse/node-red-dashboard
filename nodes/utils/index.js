@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { isIPv6 } = require('net')
 const path = require('path')
 
 function asyncEvaluateNodeProperty (RED, value, type, node, msg) {
@@ -147,7 +148,13 @@ function getThirdPartyWidgets (directory) {
     return contribs
 }
 
+function getFlowsUrl (host, port, httpAdminRoot, scheme) {
+    const hostname = isIPv6(host) ? `[${host}]` : host
+    return scheme + (`${hostname}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+}
+
 module.exports = {
+    getFlowsUrl,
     asyncEvaluateNodeProperty,
     appendTopic,
     getTopic,
