@@ -35,7 +35,8 @@ const state = () => ({
     /** @type {Widgets} */
     groups: null,
     /** @type {Widgets} */
-    widgets: null
+    widgets: null,
+    selectedTab: null
 })
 
 function sortOrder (order) {
@@ -241,6 +242,9 @@ const mutations = {
     },
     widgets (state, widgets) {
         state.widgets = widgets
+    },
+    selectedTab (state, tab) {
+        state.selectedTab = tab
     },
     widgetState (state, data) {
         const wId = data.widgetId

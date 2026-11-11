@@ -54,13 +54,15 @@
     target: '_blank'
 }</pre>
     <h3>Ereignisliste</h3>
-    <p>Wenn ein Browser-Client eine Verbindung herstellt oder die Verbindung verliert, den Tab wechselt oder eine Gruppe erweitert oder reduziert, gibt dieser Knoten eine <code>msg</code> aus, die Folgendes enthält:</p>
+    <p>Wenn ein Browser-Client eine Verbindung herstellt oder die Verbindung verliert, die Seite wechselt oder in einem Tabs-Layout den Tab wechselt, gibt dieser Knoten eine <code>msg</code> aus, die Folgendes enthält:</p>
     <ul>
-    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i> oder <i>group</i>.
+    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i> oder <i>tab</i>.
     <li><code>socketid</code> - die ID des Sockets (dies ändert sich jedes Mal, wenn der Browser die Seite neu lädt).
     <li><code>socketip</code> - die IP-Adresse, von der die Verbindung stammt.
-    <li><code>tab</code> - die Nummer des Tabs. (nur für 'change'-Ereignis).
-    <li><code>name</code> - der Name des Tabs. (nur für 'change'-Ereignis).
+    <li><code>tab</code> - der Index der Seite bei 'change', oder des Tabs unter den angezeigten Tabs bei 'tab'.
+    <li><code>name</code> - der Name der Seite bei 'change', oder des Tabs bei 'tab'.
+    <li><code>id</code> - die ID des Tabs, oder der Gruppe bei einer Gruppe ohne Tab. (nur für 'tab'-Ereignis).
+    <li><code>page</code> - der Name der Seite, auf der sich der Tab befindet. (nur für 'tab'-Ereignis).
     </ul>
     <p>Optional - nur Verbindungsereignisse melden - nützlich, um das erneute Senden von Daten an einen neuen Client auszulösen, ohne andere Ereignisse filtern zu müssen.</p>
 </script>

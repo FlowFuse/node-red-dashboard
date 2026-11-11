@@ -68,7 +68,7 @@ Currently, we support the following controls:
 
 You can programmatically force navigation with the following payloads with `ui-control`:
 
-#### Change Page
+#### Page Change
 
 Explicitly choose the page you want to navigate to:
 
@@ -229,9 +229,9 @@ msg = {
 }
 ```
 
-### Change Tab/Page
+### Change Page
 
-When a user changes the active tab or page, the `ui-control` node will emit:
+When a user changes the active page, the `ui-control` node will emit:
 
 ```js
 msg = {
@@ -242,6 +242,26 @@ msg = {
     name: '<Page Name>'
 }
 ```
+
+### Tab Change <AddedIn version="1.37.0" />
+
+When a user changes the active tab on a page using the [Tabs](../../layouts/types/tabs.md) layout, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'tab',
+    tab: '<Tab Index>',
+    id: '<Tab Id>',
+    name: '<Tab Name>',
+    page: '<Page Name>'
+}
+```
+
+`tab` is the position among the tabs currently shown, so it shifts when a tab is hidden. Use `id` to identify a tab. For a group that isn't assigned to a tab, `id` is the group's id.
+
+This is also sent for the first tab when the page opens.
+
+> **Note:** `tab` events fire under **Page/Tab Change Events Only** and **All Events**. Their payload is distinct from `change`, so existing flows switching on `msg.payload` are unaffected.
 
 ### Client Presence <AddedIn version="1.32.0" />
 

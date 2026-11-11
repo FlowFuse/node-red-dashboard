@@ -23,6 +23,8 @@ Groups in the same tab render side-by-side with their titles, as in the [Grid](.
 
 To hide a tab, hide all of its groups with `ui-control`.
 
+To react when a user changes tab, use the [`tab` event](../../nodes/widgets/ui-control.md#tab-change) from `ui-control`.
+
 Note that it's not currently possible to navigate to a page with a a particular tab open. The page will always open with the first tab selected.
 
 ## Controlling Width & Columns

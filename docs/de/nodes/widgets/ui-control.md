@@ -175,9 +175,9 @@ msg = {
 }
 ```
 
-### Tab-/Seitenwechsel
+### Seitenwechsel
 
-Wenn ein Benutzer den aktiven Tab oder die Seite wechselt, sendet der `ui-control`-Knoten:
+Wenn ein Benutzer die aktive Seite wechselt, sendet der `ui-control`-Knoten:
 
 ```js
 msg = {
@@ -188,3 +188,23 @@ msg = {
     name: '<Seitenname>'
 }
 ```
+
+### Tab-Wechsel <AddedIn version="1.37.0" />
+
+Wenn ein Benutzer auf einer Seite mit dem [Tabs](../../layouts/types/tabs.md)-Layout den aktiven Tab wechselt, sendet der `ui-control`-Knoten:
+
+```js
+msg = {
+    payload: 'tab',
+    tab: '<Tab-Index>',
+    id: '<Tab-ID>',
+    name: '<Tab-Name>',
+    page: '<Seitenname>'
+}
+```
+
+`tab` ist die Position unter den aktuell angezeigten Tabs und verschiebt sich, wenn ein Tab ausgeblendet wird. Verwenden Sie `id`, um einen Tab zu identifizieren. Bei einer Gruppe ohne Tab ist `id` die ID der Gruppe.
+
+Dies wird auch für den ersten Tab gesendet, wenn die Seite geöffnet wird.
+
+> **Hinweis:** `tab`-Ereignisse werden bei **Nur Seiten-/Tab-Wechselereignisse** und **Alle Ereignisse** gesendet. Ihr Payload unterscheidet sich von `change`, sodass bestehende Flows, die nach `msg.payload` verzweigen, nicht betroffen sind.

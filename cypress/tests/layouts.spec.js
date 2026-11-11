@@ -92,6 +92,48 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
     })
 })
 
+describe('Node-RED Dashboard 2.0 - Layout: Tabs events', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-layouts', [
+            { mode: 'merge', id: 'dashboard-ui-control-tabs', data: { wires: [['dashboard-fn-store-tab']] } },
+            {
+                mode: 'append',
+                data: {
+                    id: 'dashboard-fn-store-tab',
+                    type: 'function',
+                    z: 'node-red-tab-layouts',
+                    func: "if (msg.payload === 'tab') {\n    global.set('msg', msg)\n}\nreturn msg;",
+                    outputs: 1,
+                    wires: [[]]
+                }
+            }
+        ])
+        cy.resetContext()
+        cy.visit('/dashboard/tabs')
+    })
+
+    it('emits a tab event for the first tab when the page opens', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.checkOutput('msg.tab', 0)
+        cy.checkOutput('msg.page', 'Layout: Tabs')
+    })
+
+    it('emits a tab event when a tab is clicked', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).click()
+        cy.checkOutput('msg.id', 'tab-inbox')
+        cy.checkOutput('msg.tab', 1)
+        cy.checkOutput('msg.name', 'Inbox')
+    })
+
+    it('emits the group id for a group without a tab', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(2).click()
+        cy.checkOutput('msg.id', 'dashboard-ui-group-tabs-loose')
+        cy.checkOutput('msg.name', 'Loose')
+    })
+})
+
 describe('Node-RED Dashboard 2.0 - Layout: Tabs across redeploys', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')
