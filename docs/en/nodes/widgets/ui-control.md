@@ -68,7 +68,7 @@ Currently, we support the following controls:
 
 You can programmatically force navigation with the following payloads with `ui-control`:
 
-#### Page Change
+#### Change Page
 
 Explicitly choose the page you want to navigate to:
 
@@ -229,7 +229,7 @@ msg = {
 }
 ```
 
-### Change Page
+### Page Change
 
 When a user changes the active page, the `ui-control` node will emit:
 
