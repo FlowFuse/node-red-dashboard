@@ -228,8 +228,6 @@ We have tried to make theming in FlowFuse Dashboard more low-code friendly, by p
 ![Example of editing a theme](/images/theme-config.png "Example of editing a theme"){data-zoomable}
 _Example of the properties exposed in the Node-RED Editor when defining a theme_
 
-We have plans to extend this theming configuration further, such that you can also define grid spacing, fonts, etc.
-
 Any further customisation of the overall layout and theme of the Dashboard will require custom CSS, which can be injected via the `ui_template` node.
 
 ## Layouts
@@ -238,17 +236,16 @@ FlowFuse Dashboard follows a similar architecture to Node-RED Dashboard for mana
 
 | Node-RED Dashboard | FlowFuse Dashboard | Difference |
 | --- | --- | --- |
-| `ui-base` | `ui-base` | We've exposed this as a config node in FlowFuse Dashboard, where a `ui-page` is assigned a parent `ui-base`. Whilst not yet supported, eventually, we wish to support _multiple_ base Dashboards in the same Node-RED instance. |
+| `ui-base` | `ui-base` | We've exposed this as a config node in FlowFuse Dashboard, where a `ui-page` is assigned a parent `ui-base`. Only one `ui-base` is supported per Node-RED instance. |
 | `ui-tab` | `ui-page` | In addition to a renaming here, we've also added support for a `ui-page` to have a defined "Theme" (driven by our new `ui-theme` config nodes). Each `ui-page` also has a new _"Layout"_ option, which can be set on a page-by-page basis. |
 | `ui-group` | `ui-group` | Currently no "collapse" behaviour, but other functionality is the same. |
 
-We currently have three layouts available in FlowFuse Dashboard:
+We currently have four layouts available in FlowFuse Dashboard:
 
 - [**Grid**](../layouts/types/grid.md) - Modelled with CSS's `grid` layout, this is the default layout, and uses a fixed 12 column approach, whereby content will scale horizontally with screen width, making it far more friendly for responsive layouts.
-- [**Fixed**](../layouts/types/fixed.md) - This uses a CSS Flex Layout and is the most similar we currently have to the only layout in Node-RED Dashboard. Improvements are required here to improve the "packing" nature of the layout though.
+- [**Fixed**](../layouts/types/fixed.md) - This uses a CSS Flex Layout and is the most similar we currently have to the only layout in Node-RED Dashboard.
 - [**Notebook**](../layouts/types/notebook.md) - Mimicking a Jupyter Notebook layout, this provides content with a maximum width, scales with mobile devices, and allows for content to be stacked vertically.
-
-We also have future plans to support injection of third-party layouts, and even client-side editable layouts (e.g. drag-and-drop layout design).
+- [**Tabs**](../layouts/types/tabs.md) - Renders a page's groups in a tabbed view, with one or more groups per tab.
 
 ## Third-Party Widgets
 

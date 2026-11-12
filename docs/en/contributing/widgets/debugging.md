@@ -13,7 +13,7 @@ _Screenshot of the FlowFuse Dashboard Debugging Tool_
 
 This tooling is particularly useful when you're building your own custom integrations, and developing on core Dashboard widgets too.
 
-We're hoping to grow some of the scope of what this tooling provides, but for now, it will display the current `props` for a given widget, which is defined by Node-RED configurtion, but will also include the overriden values from the `msg` object (e.g. `msg.options` can override the `Options` property for a `ui-dropdown`).
+It displays the current `props` for a given widget, which is defined by Node-RED configurtion, but will also include the overriden values from the `msg` object (e.g. `msg.options` can override the `Options` property for a `ui-dropdown`).
 
 ## Message History
 
