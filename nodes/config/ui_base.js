@@ -7,7 +7,7 @@ const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets, getFlowsUrl } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -1252,7 +1252,7 @@ module.exports = function (RED) {
                 return res.status(500).json({ error: 'Error processing https settings' })
             }
         }
-        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        const url = getFlowsUrl(host, port, httpAdminRoot, scheme)
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
@@ -1482,5 +1482,26 @@ module.exports = function (RED) {
         baseNode.ui.meta.wysiwyg.page = pageNode.id
 
         return res.status(200).json(editConfig)
+    })
+
+    const deprecatedSizers = {
+        elementSizer: 'ffElementSizer',
+        elementSizerByNum: 'ffElementSizerByNum'
+    }
+    const reportedSizers = new Set()
+    const maxReportedSizers = 100
+    RED.httpAdmin.post('/dashboard/api/v1/deprecated-sizer', RED.auth.needsPermission('flows.read'), function (req, res) {
+        const { name, type } = req.body || {}
+        if (!deprecatedSizers[name]) {
+            return res.sendStatus(400)
+        }
+        const nodeType = typeof type === 'string' ? type : null
+        const key = `${name}:${nodeType}`
+        if (!reportedSizers.has(key) && reportedSizers.size < maxReportedSizers) {
+            reportedSizers.add(key)
+            const usedBy = nodeType ? ` (used by ${JSON.stringify(nodeType)})` : ''
+            RED.log.warn(`[@flowfuse/node-red-dashboard] $.fn.${name} is deprecated and will be removed, use $.fn.${deprecatedSizers[name]} instead${usedBy}`)
+        }
+        res.sendStatus(204)
     })
 }

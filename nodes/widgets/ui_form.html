@@ -88,7 +88,7 @@
                     formOptionsList.each(function (i) {
                         const formOption = $(this)
                         const formOptionType = formOption.find('.node-input-option-type').val()
-                        if (formOptionType === 'dropdown') {
+                        if (formOptionType === 'dropdown' || formOptionType === 'multiselect') {
                             const label = formOption.find('.node-input-option-label').val()
                             const key = formOption.find('.node-input-option-key').val()
                             dropdowns.push({ label, key })
@@ -122,6 +122,7 @@
                     { val: 'checkbox', text: c_('label.checkbox') },
                     { val: 'switch', text: c_('label.switch') },
                     { val: 'dropdown', text: c_('label.dropdown') },
+                    { val: 'multiselect', text: c_('label.multiselect') },
                     { val: 'date', text: c_('label.date') },
                     { val: 'time', text: c_('label.time') }
                 ]
@@ -355,7 +356,13 @@
                         required: option.find('.node-input-option-required').is(':checked'),
                         rows: parseInt(option.find('.node-input-option-rows').val())
                     }
-                    node.formValue[o.key] = o.type === 'checkbox' || o.type === 'switch' ? false : ''
+                    if (o.type === 'checkbox' || o.type === 'switch') {
+                        node.formValue[o.key] = false
+                    } else if (o.type === 'multiselect') {
+                        node.formValue[o.key] = []
+                    } else {
+                        node.formValue[o.key] = ''
+                    }
                     node.options.push(o)
                 })
 

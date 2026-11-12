@@ -89,13 +89,15 @@
     target: '_blank'
 }</pre>
     <h3>Events List</h3>
-    <p>When any browser client connects or loses connection, changes tab, or expands or collapses a group this node will emit a <code>msg</code> containing:</p>
+    <p>When any browser client connects, loses connection, changes page, or changes tab in a Tabs layout, this node will emit a <code>msg</code> containing:</p>
     <ul>
-    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>group</i>.
+    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>tab</i>.
     <li><code>socketid</code> - the ID of the socket (this will change every time the browser reloads the page).
     <li><code>socketip</code> - the ip address from where the connection originated.
-    <li><code>tab</code> - the number of the tab (only for 'change' event).
-    <li><code>name</code> - the name of the tab (only for 'change' event).
+    <li><code>tab</code> - the index of the page for 'change', or of the tab among the tabs shown for 'tab'.
+    <li><code>name</code> - the name of the page for 'change', or of the tab for 'tab'.
+    <li><code>id</code> - the id of the tab, or of the group for a group without a tab (only for 'tab' event).
+    <li><code>page</code> - the name of the page the tab is on (only for 'tab' event).
     </ul>
     <p>Optional - report only connect events - useful to use to trigger a resend of data to a new client without needing to filter out other events.</p>
 </script>

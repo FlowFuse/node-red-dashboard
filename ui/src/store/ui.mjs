@@ -35,8 +35,17 @@ const state = () => ({
     /** @type {Widgets} */
     groups: null,
     /** @type {Widgets} */
-    widgets: null
+    widgets: null,
+    selectedTab: null
 })
+
+function sortOrder (order) {
+    const value = Number(order ?? NaN)
+    if (isNaN(value)) {
+        return Number.MAX_SAFE_INTEGER
+    }
+    return value
+}
 
 // getters
 const getters = {
@@ -153,7 +162,7 @@ const getters = {
                 if (subflowId) {
                     if (!subflowUnits[subflowId]) {
                         subflowUnits[subflowId] = {
-                            order: w.props.subflow.order || Number.MAX_SAFE_INTEGER,
+                            order: sortOrder(w.props.subflow.order),
                             widgets: []
                         }
                         units.push(subflowUnits[subflowId])
@@ -161,7 +170,7 @@ const getters = {
                     subflowUnits[subflowId].widgets.push(w)
                 } else {
                     units.push({
-                        order: w.layout?.order || Number.MAX_SAFE_INTEGER,
+                        order: sortOrder(w.layout?.order),
                         widgets: [w]
                     })
                 }
@@ -171,8 +180,8 @@ const getters = {
             units.forEach((unit) => {
                 if (unit.widgets.length > 1) {
                     unit.widgets.sort((a, b) => {
-                        const aOrder = a.layout?.order || Number.MAX_SAFE_INTEGER
-                        const bOrder = b.layout?.order || Number.MAX_SAFE_INTEGER
+                        const aOrder = sortOrder(a.layout?.order)
+                        const bOrder = sortOrder(b.layout?.order)
                         return aOrder - bOrder
                     })
                 }
@@ -233,6 +242,9 @@ const mutations = {
     },
     widgets (state, widgets) {
         state.widgets = widgets
+    },
+    selectedTab (state, tab) {
+        state.selectedTab = tab
     },
     widgetState (state, data) {
         const wId = data.widgetId
