@@ -20,6 +20,12 @@
         <dd>
             Bestimmt die Aktion, die ausgeführt wird, wenn neue Daten eintreffen, und ob die neuen Daten an das Diagramm angehängt oder die vorhandenen Inhalte ersetzt werden.
         </dd>
+        <dt>Eindeutiger Schlüssel <span class="property-type">str</span></dt>
+        <dd>
+            Optional, wird nur verwendet, wenn die Aktion "anhängen" ist. Der Name einer Eigenschaft, die jede Zeile eindeutig identifiziert, z.B. <code>id</code>.
+            Eine eingehende Zeile, deren Wert für diese Eigenschaft mit einer vorhandenen Zeile übereinstimmt, ersetzt diese Zeile an ihrer Position, anstatt angehängt zu werden.
+            Zeilen ohne diese Eigenschaft werden immer angehängt.
+        </dd>
         <dt>Breakpoint <span class="property-type">str | num</span></dt>
         <dd>
             Steuert, wann eine Tabelle stattdessen als Karte gerendert wird, wobei jede Spalte aus einer Zeile als Zeile in einer größeren, eine Zeile enthaltenden Karte für einen einzelnen Eintrag gerendert wird. Der Breakpoint wird basierend auf der <b>Breite der Tabelle</b> gemessen, nicht auf der Breite des Bildschirms.

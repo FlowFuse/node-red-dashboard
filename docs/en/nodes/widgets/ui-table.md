@@ -5,6 +5,8 @@ props:
     Size: Controls the width of the button with respect to the parent group. Maximum value is the width of the group.
     Label: The text shown above the table, labelling what the table is showing.
     Max Rows: Defines the maximum number of data-rows to render in the table. Excess rows will be available through pagination control. Set to "0" for no pagination.
+    Action: Determines what happens when new data arrives. "Append" adds the new rows to the existing rows, "Replace" replaces all existing rows with the new rows.
+    Unique Key: Only used when "Action" is "Append". The name of a property that uniquely identifies each row (e.g. "id"). Incoming rows that match an existing row on this property will replace that row instead of being appended. See <a href="#updating-rows">Updating Rows</a>.
     Breakpoint: Controls when a table will render, instead, as a card, with each column from a row rendering as a row in a larger, contain a row, for a single entry.The breakpoint is measured based on the <b>width of the table</b>, not the width of the screen.
     Selection: Provides three options for table interaction - "None", "Click" and "Checkbox"
     Show Search: Defines whether or not to show a search bar above the table. Will permit searching and filtering across all columns.
@@ -65,6 +67,42 @@ You can also send a single piece of data to append to the existing table, in thi
     "colC": 3
 }
 ```
+
+### Updating Rows <AddedIn version="1.37.0" />
+
+When "Action" is set to "Append", you can also update rows that are already in the table, without needing to send the full table again. To do this, set the "Unique Key" property to the name of a property that uniquely identifies each row, e.g. `id`.
+
+With a "Unique Key" of `id`, and the following data already in the table:
+
+```json
+[{
+    "id": 1,
+    "name": "Pump",
+    "status": "Running"
+}, {
+    "id": 2,
+    "name": "Fan",
+    "status": "Running"
+}]
+```
+
+Sending the following `msg.payload`:
+
+```json
+[{
+    "id": 2,
+    "name": "Fan",
+    "status": "Stopped"
+}, {
+    "id": 3,
+    "name": "Valve",
+    "status": "Open"
+}]
+```
+
+will update the "Fan" row in place, and append a new row for "Valve". A single object can be sent too.
+
+Rows are matched using strict equality, so `1` and `"1"` are treated as different values. Rows that do not have a value for the "Unique Key" property are always appended.
 
 ### Clear Data
 

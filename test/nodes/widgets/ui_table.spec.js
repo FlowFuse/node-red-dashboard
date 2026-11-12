@@ -262,6 +262,24 @@ describe('ui-table node', function () {
             widget.props.should.have.property('action', 'append')
         })
     })
+    describe('uniqueKey property', function () {
+        it('should default uniqueKey to an empty string if not set', async function () {
+            await helper.load(nodeImports, flow)
+            verifyFlowLoaded(helper, flow)
+            const base = helper.getNode('config-ui-base')
+            const widget = base.ui.widgets.get('node-ui-table')
+            widget.props.should.have.property('uniqueKey', '')
+        })
+        it('should trim whitespace from uniqueKey', async function () {
+            const updatedFlow = JSON.parse(JSON.stringify(flow))
+            updatedFlow[0].uniqueKey = ' id '
+            await helper.load(nodeImports, updatedFlow)
+            verifyFlowLoaded(helper, updatedFlow)
+            const base = helper.getNode('config-ui-base')
+            const widget = base.ui.widgets.get('node-ui-table')
+            widget.props.should.have.property('uniqueKey', 'id')
+        })
+    })
     describe('className property', function () {
         it('should accept class name', async function () {
             const updatedFlow = JSON.parse(JSON.stringify(flow))
@@ -301,6 +319,9 @@ describe('ui-table node', function () {
     })
 
     describe('datastore', function () {
+        beforeEach(function () {
+            datastore.clear('node-ui-table')
+        })
         it('should append data on input when action is append', async function () {
             const updatedFlow = JSON.parse(JSON.stringify(flow))
             await helper.load(nodeImports, updatedFlow)
@@ -338,6 +359,58 @@ describe('ui-table node', function () {
             existingData.should.be.an.Object()
             existingData.payload.should.be.an.Array().and.have.length(1)
             existingData.payload[0].should.deepEqual({ col1: 'r2c1', col2: 'r2c2' })
+        })
+        it('should update rows with a matching unique key when action is append', async function () {
+            const updatedFlow = JSON.parse(JSON.stringify(flow))
+            updatedFlow[0].uniqueKey = 'id'
+            await helper.load(nodeImports, updatedFlow)
+            verifyFlowLoaded(helper, updatedFlow)
+            const node = helper.getNode('node-ui-table')
+            node.receive({ payload: [{ id: 1, col1: 'r1c1' }, { id: 2, col1: 'r2c1' }] })
+            node.receive({ payload: [{ id: 1, col1: 'r1c1-updated' }, { id: 3, col1: 'r3c1' }] })
+            node.receive({ payload: { id: 2, col1: 'r2c1-updated' } })
+            const existingData = datastore.get('node-ui-table')
+            existingData.payload.should.deepEqual([
+                { id: 1, col1: 'r1c1-updated' },
+                { id: 2, col1: 'r2c1-updated' },
+                { id: 3, col1: 'r3c1' }
+            ])
+        })
+        it('should append rows with a matching key when no unique key is set', async function () {
+            const updatedFlow = JSON.parse(JSON.stringify(flow))
+            await helper.load(nodeImports, updatedFlow)
+            verifyFlowLoaded(helper, updatedFlow)
+            const node = helper.getNode('node-ui-table')
+            node.receive({ payload: { id: 1, col1: 'r1c1' } })
+            node.receive({ payload: { id: 1, col1: 'r1c1-updated' } })
+            const existingData = datastore.get('node-ui-table')
+            existingData.payload.should.deepEqual([
+                { id: 1, col1: 'r1c1' },
+                { id: 1, col1: 'r1c1-updated' }
+            ])
+        })
+        it('should ignore the unique key when action is replace', async function () {
+            const updatedFlow = JSON.parse(JSON.stringify(flow))
+            updatedFlow[0].action = 'replace'
+            updatedFlow[0].uniqueKey = 'id'
+            await helper.load(nodeImports, updatedFlow)
+            verifyFlowLoaded(helper, updatedFlow)
+            const node = helper.getNode('node-ui-table')
+            node.receive({ payload: [{ id: 1, col1: 'r1c1' }, { id: 2, col1: 'r2c1' }] })
+            node.receive({ payload: [{ id: 1, col1: 'r1c1-updated' }] })
+            const existingData = datastore.get('node-ui-table')
+            existingData.payload.should.deepEqual([{ id: 1, col1: 'r1c1-updated' }])
+        })
+        it('should clear rows on an empty array when a unique key is set', async function () {
+            const updatedFlow = JSON.parse(JSON.stringify(flow))
+            updatedFlow[0].uniqueKey = 'id'
+            await helper.load(nodeImports, updatedFlow)
+            verifyFlowLoaded(helper, updatedFlow)
+            const node = helper.getNode('node-ui-table')
+            node.receive({ payload: [{ id: 1, col1: 'r1c1' }] })
+            node.receive({ payload: [] })
+            const existingData = datastore.get('node-ui-table')
+            existingData.payload.should.deepEqual([])
         })
         it('should format non-array object payload into array containing object', async function () {
             const updatedFlow = JSON.parse(JSON.stringify(flow))
