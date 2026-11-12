@@ -504,6 +504,19 @@ module.exports = function (RED) {
                                 msg = addConnectionCredentials(RED, msg, conn, ui)
                                 wNode.send(msg)
                             }
+                        } else if (evt === 'tab') {
+                            const wNode = RED.nodes.getNode(node.id)
+                            if (wNode && payload && wNode.send) {
+                                let msg = {
+                                    payload: 'tab',
+                                    tab: payload.tab,
+                                    id: payload.id,
+                                    name: payload.name,
+                                    page: payload.page
+                                }
+                                msg = addConnectionCredentials(RED, msg, conn, ui)
+                                wNode.send(msg)
+                            }
                         }
                     }
                 }
