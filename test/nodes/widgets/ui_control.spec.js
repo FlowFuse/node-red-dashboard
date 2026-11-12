@@ -106,6 +106,36 @@ describe('ui-control node', function () {
         })
     })
 
+    describe('tab events', function () {
+        async function sendTabEvent (events) {
+            const flow = [control('ctl-tab', { events, wires: [['helper-node']] }), { id: 'helper-node', type: 'helper', z: 'tab-id' }, ...testFlow1]
+            await helper.load(nodeImports, flow)
+            const received = []
+            helper.getNode('helper-node').on('input', msg => received.push(msg))
+            const widget = helper.getNode('config-ui-base').ui.widgets.get('ctl-tab')
+            widget.hooks.onSocket['ui-control']({ id: 'fake-conn-id' }, 'ctl-tab', 'tab', { tab: 1, id: 'tab-inbox', name: 'Inbox', page: 'Mail' })
+            await new Promise(resolve => setTimeout(resolve, 50))
+            return received
+        }
+
+        it('sends a tab msg when a client changes tab', async function () {
+            const received = await sendTabEvent('change')
+            received.should.have.length(1)
+            received[0].should.containDeep({ payload: 'tab', tab: 1, id: 'tab-inbox', name: 'Inbox', page: 'Mail' })
+        })
+
+        it('sends a tab msg for all events', async function () {
+            const received = await sendTabEvent('all')
+            received.should.have.length(1)
+            received[0].should.have.property('payload', 'tab')
+        })
+
+        it('does not send tab msgs for connection events only', async function () {
+            const received = await sendTabEvent('connect')
+            received.should.have.length(0)
+        })
+    })
+
     describe('actions configured in the editor', function () {
         it('ignores the configured actions when using msg.payload', async function () {
             const node = control('ctl', {

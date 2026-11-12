@@ -15,7 +15,7 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        ...mapState('ui', ['pages', 'groups', 'widgets']),
+        ...mapState('ui', ['pages', 'groups', 'widgets', 'selectedTab']),
         ...mapGetters('ui', ['findBy', 'pageById'])
     },
     watch: {
@@ -24,6 +24,12 @@ export default {
                 // this only fire if we switch between two pages of the same layout type,
                 // the full component isn't torn down, so we can watch for changes
                 this.routeChanged()
+            }
+        },
+        selectedTab: {
+            immediate: true,
+            handler (tab) {
+                this.tabChanged(tab)
             }
         }
     },
@@ -177,10 +183,24 @@ export default {
         this.$socket.off('ui-control')
     },
     methods: {
-        routeChanged () {
-            // only the "all" and "change" outputs use page changes (older nodes have no events setting)
+        sendsChanges () {
+            // only the "all" and "change" outputs use page and tab changes (older nodes have no events setting)
             const events = this.props.events
-            if (events && events !== 'all' && events !== 'change') {
+            return !events || events === 'all' || events === 'change'
+        },
+        tabChanged (tab) {
+            if (!tab || tab.pageId !== this.$route.meta.id || !this.sendsChanges()) {
+                return
+            }
+            this.$socket.emit('ui-control', this.id, 'tab', {
+                tab: tab.index,
+                id: tab.id,
+                name: tab.name,
+                page: this.pages[tab.pageId].name
+            })
+        },
+        routeChanged () {
+            if (!this.sendsChanges()) {
                 return
             }
             const pages = Object.values(this.pages).sort((a, b) => {
