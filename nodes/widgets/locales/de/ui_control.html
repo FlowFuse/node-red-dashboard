@@ -31,6 +31,17 @@
         hide: ['&lt;Gruppenname&gt;']
     }
 }</pre>
+    <h4>Tabs anzeigen/verbergen</h4>
+    <p>Die Tabs einer Seite mit dem Tabs-Layout können mit <code>pageTabs</code> angezeigt und verborgen werden, da <code>tabs</code> ein Alias für <code>pages</code> ist. Ein Tab-Name allein trifft auf den ersten Tab mit diesem Namen auf einer beliebigen Seite zu.</p>
+    <pre>msg.payload = {
+    pageTabs: {
+        show: ['&lt;Tab-Name&gt;',
+               '&lt;Tab-ID&gt;',
+               '&lt;Seitenname&gt;:&lt;Tab-Name&gt;',
+               {page: '&lt;Seitenname&gt;', tab: '&lt;Tab-Name&gt;'}],
+        hide: ['&lt;Seitenname&gt;:&lt;Tab-Name&gt;']
+    }
+}</pre>
     <h4>Seiten & Gruppen aktivieren/deaktivieren</h4>
     <p>Dashboard-Seiten & Gruppen können deaktiviert & wieder aktiviert werden, indem ein <code>msg.payload</code>-Objekt mit dem Format gesendet wird:
     <pre>msg.payload = {

@@ -139,6 +139,17 @@ export default {
             payload.pages?.disable?.forEach(pageId => set('page', pageId, 'disabled', true))
             payload.pages?.enable?.forEach(pageId => set('page', pageId, 'disabled', false))
 
+            // Tabs, stored as a list of hidden tab ids on their page
+            const setTabVisibility = ({ page, tab }, visible) => {
+                if (!vue.pages?.[page]) {
+                    return
+                }
+                const hiddenTabs = (vue.pages[page].hiddenTabs || []).filter(id => id !== tab)
+                set('page', page, 'hiddenTabs', visible ? hiddenTabs : [...hiddenTabs, tab])
+            }
+            payload.pageTabs?.show?.forEach(tab => setTabVisibility(tab, true))
+            payload.pageTabs?.hide?.forEach(tab => setTabVisibility(tab, false))
+
             // dialog groups only exist on their own page, so let a page change render first
             await navigation.catch(() => {})
             await this.$nextTick()

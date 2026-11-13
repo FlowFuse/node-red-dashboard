@@ -535,6 +535,106 @@
         ]
     },
     {
+        "id": "dashboard-inject-tabs-hide-inbox-tab",
+        "type": "inject",
+        "z": "node-red-tab-layouts",
+        "name": "Hide Inbox tab",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"pageTabs\":{\"hide\":[\"dashboard-ui-page-tabs:Inbox\"]}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-inject-tabs-show-inbox-tab",
+        "type": "inject",
+        "z": "node-red-tab-layouts",
+        "name": "Show Inbox tab",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"pageTabs\":{\"show\":[\"dashboard-ui-page-tabs:Inbox\"]}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 460,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-inject-tabs-hide-compose-tab",
+        "type": "inject",
+        "z": "node-red-tab-layouts",
+        "name": "Hide Compose tab",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"pageTabs\":{\"hide\":[\"tab-compose\"]}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-inject-tabs-show-compose-tab",
+        "type": "inject",
+        "z": "node-red-tab-layouts",
+        "name": "Show Compose tab",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"pageTabs\":{\"show\":[\"tab-compose\"]}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 540,
+        "wires": [
+            [
+                "dashboard-ui-control-tabs"
+            ]
+        ]
+    },
+    {
         "id": "dashboard-ui-control-tabs",
         "type": "ui-control",
         "z": "node-red-tab-layouts",

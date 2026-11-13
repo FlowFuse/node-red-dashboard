@@ -12,10 +12,10 @@
     <p>Each action has a target picked from the selected dashboard, or read from a <code>msg</code> property:</p>
     <ul>
         <li><b>Navigate</b> - a page, next page, previous page or refresh. A <code>msg</code> property can hold a page name or id, <code>"+1"</code>, <code>"-1"</code>, <code>""</code> or a page index.</li>
-        <li><b>Show/Hide</b> - a page, group or widget. Opens or closes a dialog group.</li>
+        <li><b>Show/Hide</b> - a page, tab, group or widget. Opens or closes a dialog group.</li>
         <li><b>Enable/Disable</b> - a page, group or widget.</li>
     </ul>
-    <p>For Show, Hide, Enable and Disable, a <code>msg</code> property can hold an id or name, or an array of them. <code>"Page:Group"</code>, <code>"Group:Widget"</code> and <code>"Page:Group:Widget"</code> are also accepted. A name used by more than one page, group or widget is an error, so use an id instead.</p>
+    <p>For Show, Hide, Enable and Disable, a <code>msg</code> property can hold an id or name, or an array of them. <code>"Page:Group"</code>, <code>"Group:Widget"</code> and <code>"Page:Group:Widget"</code> are also accepted. A name used by more than one page, group or widget is an error, so use an id instead. A <code>msg</code> property can't name a tab, use <code>msg.payload.pageTabs</code> instead.</p>
     <p>Actions run together as one change, grouped by type, rather than in the listed order. "Hide X" then "Show X" leaves X hidden, and only the last Navigate is used.</p>
     <h3>Controls List</h3>
     <h4>Navigation</h4>
@@ -65,6 +65,17 @@
         hide: ['&lt;Widget Id&gt;']
     }
 }</pre>
+    <h4>Show/Hide Tabs</h4>
+    <p>The tabs of a page using the Tabs layout can be shown and hidden with <code>pageTabs</code>, because <code>tabs</code> is an alias for <code>pages</code>. A tab name on its own matches the first tab with that name on any page.</p>
+    <pre>msg.payload = {
+    pageTabs: {
+        show: ['&lt;Tab Name&gt;',
+               '&lt;Tab Id&gt;',
+               '&lt;Page Name&gt;:&lt;Tab Name&gt;',
+               {page: '&lt;Page Name&gt;', tab: '&lt;Tab Name&gt;'}],
+        hide: ['&lt;Page Name&gt;:&lt;Tab Name&gt;']
+    }
+}</pre>
     <h4>Enable/Disable Pages & Groups & Widgets</h4>
     <p>Dashboard pages & groups & widgets can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format</p>
     <pre>msg.payload = {
@@ -77,7 +88,7 @@
         disable: ['&lt;Group Name&gt;']
     }
 }</pre>
-    <p>When a (page, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
+    <p>When a (page, tab, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
     <h4>External URL</h4>
     <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
     <pre>msg.payload = {

@@ -226,6 +226,88 @@ module.exports = function (RED) {
             return nodeIds
         }
 
+        /**
+         * Show or hide tabs of pages using the Tabs layout. Tabs aren't nodes, they are listed in
+         * the "tabs" property of their page, so the ids of hidden tabs are stored on the page.
+         * @param {Array<string|Object>} identifiers - "tabName", "tabId", "pageName:tabName", "pageId:tabName" or { page, tab }
+         * @param {Object} msg - the received msg
+         * @param {boolean} visible - whether to show or hide the tabs
+         * @returns {Array<{page: string, tab: string}>} the page and tab ids of the identified tabs
+         */
+        function updateTabs (identifiers, msg, visible) {
+            const identified = []
+
+            identifiers.forEach(identifier => {
+                let identifierObj = {}
+
+                if (typeof identifier === 'string') {
+                    // split on colons that are not escaped, as for groups and widgets
+                    const parts = identifier.split(/(?<!\\):/).map(part => part.replace(/\\:/g, ':'))
+                    switch (parts.length) {
+                    case 1:
+                        identifierObj.tab = parts[0]
+                        break
+                    case 2:
+                        identifierObj.page = parts[0]
+                        identifierObj.tab = parts[1]
+                        break
+                    default:
+                        throw new Error('The "pageTabs" string contains more than 2 parts, perhaps due to unescaped colon(s)?')
+                    }
+                } else if (identifier && typeof identifier === 'object') {
+                    identifierObj = identifier
+                } else {
+                    throw new Error("The 'tab' identifier must be a string or an object")
+                }
+
+                if (typeof identifierObj.tab !== 'string') {
+                    throw new Error("The 'tab' identifier must contain a tab id or name")
+                }
+
+                let pageNodes = Object.values(allPageNodes)
+                if (typeof identifierObj.page === 'string') {
+                    const pageNode = allPageNodes[identifierObj.page] || pageNodes.find(page => page.name === identifierObj.page)
+                    if (!pageNode) {
+                        throw new Error(`No page found with id or name '${identifierObj.page}'`)
+                    }
+                    pageNodes = [pageNode]
+                }
+
+                // look for a tab with that id first, then for a tab with that name
+                let found
+                for (const prop of ['id', 'name']) {
+                    for (const pageNode of pageNodes) {
+                        const tab = (pageNode.tabs || []).find(t => t[prop] === identifierObj.tab)
+                        if (tab) {
+                            found = { pageNode, tab }
+                            break
+                        }
+                    }
+                    if (found) {
+                        break
+                    }
+                }
+
+                if (!found) {
+                    if (typeof identifierObj.page === 'string') {
+                        throw new Error(`No tab found with id or name '${identifierObj.tab}' on page '${identifierObj.page}'`)
+                    }
+                    throw new Error(`No tab found with id or name '${identifierObj.tab}'`)
+                }
+
+                identified.push(found)
+            })
+
+            return identified.map(({ pageNode, tab }) => {
+                const hiddenTabs = (statestore.getProperty(pageNode.id, 'hiddenTabs') || []).filter(id => id !== tab.id)
+                if (!visible) {
+                    hiddenTabs.push(tab.id)
+                }
+                statestore.set(ui, pageNode, msg, 'hiddenTabs', hiddenTabs)
+                return { page: pageNode.id, tab: tab.id }
+            })
+        }
+
         // build a ui-control payload from the actions configured in the editor
         function payloadFromActions (actions, msg) {
             const navigation = { next: '+1', prev: '-1', refresh: '' }
@@ -294,6 +376,9 @@ module.exports = function (RED) {
                     for (const v of [].concat(value)) {
                         addFromMsg(action, v)
                     }
+                } else if (targetType === 'tab') {
+                    // the editor stores a tab as "<page id>:<tab id>", and "tabs" is an alias for "pages"
+                    add('pageTabs', action, target)
                 } else {
                     add(targetType + 's', action, target)
                 }
@@ -385,6 +470,23 @@ module.exports = function (RED) {
                         changed = true
                     }
 
+                    // show or hide tabs on pages using the Tabs layout
+                    if ('pageTabs' in msg.payload) {
+                        const pageTabs = msg.payload.pageTabs
+
+                        if ('show' in pageTabs) {
+                            pageTabs.show = updateTabs(pageTabs.show, msg, true)
+                        }
+                        if ('hide' in pageTabs) {
+                            pageTabs.hide = updateTabs(pageTabs.hide, msg, false)
+                        }
+
+                        // ensure consistency in payload format, and only send the page and tab ids to the front end
+                        msg.payload.pageTabs = pageTabs
+                        resolved.add('pageTabs')
+                        changed = true
+                    }
+
                     // show or hide ui groups
                     if ('groups' in msg.payload || 'group' in msg.payload) {
                         const groups = msg.payload.groups || msg.payload.group
@@ -450,7 +552,7 @@ module.exports = function (RED) {
                     }
                 } catch (err) {
                     // completed sections are already in the state store, so send them to open browsers too
-                    for (const key of ['pages', 'tabs', 'groups', 'group', 'widgets', 'widget', 'url']) {
+                    for (const key of ['pages', 'tabs', 'pageTabs', 'groups', 'group', 'widgets', 'widget', 'url']) {
                         if (!resolved.has(key)) {
                             delete msg.payload[key]
                         }
