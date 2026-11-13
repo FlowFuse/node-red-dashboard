@@ -47,6 +47,20 @@ function sortOrder (order) {
     return value
 }
 
+/**
+ * The groups rendered by a Tabs layout page: visible groups that aren't dialogs, in group order
+ * @returns {PageGroups}
+ */
+function tabLayoutGroups (getters, pageId) {
+    return getters.groupsByPage(pageId)
+        .filter((g) => {
+            return ('visible' in g ? g.visible : true) && g.groupType !== 'dialog'
+        })
+        .sort((a, b) => {
+            return a.order - b.order
+        })
+}
+
 // getters
 const getters = {
     id: (state) => {
@@ -98,13 +112,7 @@ const getters = {
     },
     tabsByPage: (state, getters) => (pageId) => {
         if (state.groups) {
-            const groupsOnPage = getters.groupsByPage(pageId)
-                .filter((g) => {
-                    return ('visible' in g ? g.visible : true) && g.groupType !== 'dialog'
-                })
-                .sort((a, b) => {
-                    return a.order - b.order
-                })
+            const groupsOnPage = tabLayoutGroups(getters, pageId)
             const pageTabs = state.pages?.[pageId]?.tabs || []
             const tabs = pageTabs
                 .map((t) => {
@@ -113,6 +121,10 @@ const getters = {
                 .filter((t) => {
                     return t.groups.length > 0
                 })
+            if (state.pages?.[pageId]?.untabbedGroups === 'above') {
+                // groups without a tab are rendered above the tab bar instead, see untabbedGroupsByPage
+                return tabs
+            }
             const untabbed = groupsOnPage
                 .filter((g) => {
                     return !pageTabs.some((t) => t.id === g.tab)
@@ -123,6 +135,21 @@ const getters = {
             return [...tabs, ...untabbed]
         }
         return []
+    },
+    /**
+     * The groups without a tab that a Tabs layout page renders above its tab bar
+     * @returns {PageGroups} the groups to render above the tab bar, or none if the page renders them as tabs
+     */
+    untabbedGroupsByPage: (state, getters) => (pageId) => {
+        const page = state.pages?.[pageId]
+        if (!state.groups || page?.untabbedGroups !== 'above') {
+            return []
+        }
+        const pageTabs = page.tabs || []
+        return tabLayoutGroups(getters, pageId)
+            .filter((g) => {
+                return !pageTabs.some((t) => t.id === g.tab)
+            })
     },
     widgetsByPage: (state) => (pageId) => {
         if (state.widgets) {

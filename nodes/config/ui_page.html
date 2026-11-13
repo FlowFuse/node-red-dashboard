@@ -91,6 +91,7 @@
                         return this.layout !== 'tabs' || (tabs || []).every((tab) => tab.name?.trim())
                     }
                 },
+                untabbedGroups: { value: 'tabs' },
                 order: {
                     value: -1
                 },
@@ -313,6 +314,11 @@
                     this.disabled = false
                     $('#node-config-input-disabled').val('false')
                 }
+
+                // backwards compatibility - pages from before this option render groups without a tab as tabs
+                if (this.untabbedGroups !== 'above') {
+                    $('#node-config-input-untabbedGroups').val('tabs')
+                }
             },
             oneditsave: function () {
                 const node = this
@@ -408,6 +414,13 @@
         </div>
         <div class="form-row">
             <ol id="node-config-list-tabs"></ol>
+        </div>
+        <div class="form-row">
+            <label for="node-config-input-untabbedGroups"><i class="w-16 fa fa-object-group"></i> <span data-i18n="ui-page.label.untabbedGroups"></span></label>
+            <select id="node-config-input-untabbedGroups" style="width: 70%;">
+                <option value="tabs" data-i18n="ui-page.label.untabbedGroupsTabs"></option>
+                <option value="above" data-i18n="ui-page.label.untabbedGroupsAbove"></option>
+            </select>
         </div>
     </div>
     <div class="form-row" id="text-row-class">

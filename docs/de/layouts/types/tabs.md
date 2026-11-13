@@ -16,6 +16,15 @@ Um auf einen Tab-Wechsel zu reagieren, verwenden Sie das [`tab`-Ereignis](../../
 
 Beachten Sie, dass es derzeit nicht möglich ist, zu einer Seite mit einem bestimmten geöffneten Tab zu navigieren. Die Seite wird immer mit dem ersten ausgewählten Tab geöffnet.
 
+## Gruppen über den Tabs <AddedIn version="1.37.0" />
+
+Um einige Gruppen unabhängig vom ausgewählten Tab sichtbar zu halten, z. B. eine Kopfzeile mit Status oder Bedienelementen:
+
+1. Setzen Sie in der `ui-page`-Konfiguration **No tab** auf "Groups render above the tabs".
+2. Lassen Sie den **Tab** dieser Gruppen auf "None".
+
+Die Gruppen ohne Tab werden dann über der Tab-Leiste nebeneinander mit ihren Titeln gerendert, wie im [Grid](./grid.md)-Layout, anstatt einen eigenen Tab zu erhalten. Sie werden beim `tab`-Index der [`ui-control`-Tab-Ereignisse](../../nodes/widgets/ui-control.md#tab-wechsel) nicht mitgezählt. Haben alle Gruppen der Seite keinen Tab, wird die Tab-Leiste nicht angezeigt.
+
 ## Steuerung von Breite & Spalten
 
 Jeder Tab wird immer die volle Breite des Bildschirms rendern. Die "Breite" jeder Gruppe definiert dann die Anzahl der Spalten, die innerhalb des Tabs verfügbar sein werden.

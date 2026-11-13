@@ -64,9 +64,10 @@
                 const tabs = page?.tabs || []
                 const select = $('#node-config-input-tab').empty()
 
+                const noTab = page?.untabbedGroups === 'above' ? 'noTabAbove' : 'noTab'
                 $('<option>')
                     .val('')
-                    .text(RED._('@flowfuse/node-red-dashboard/ui-group:ui-group.label.noTab'))
+                    .text(RED._('@flowfuse/node-red-dashboard/ui-group:ui-group.label.' + noTab))
                     .appendTo(select)
                 tabs.forEach(function (tab) {
                     $('<option>')

@@ -19,13 +19,22 @@ Rather than rendering groups side-by-side (as per Fixed and Grid layouts) or abo
 
 You can also drag groups between tabs, and reorder tabs, in the Dashboard 2.0 sidebar's [Layout](../../user/sidebar.md#layout) tab.
 
-Groups in the same tab render side-by-side with their titles, as in the [Grid](./grid.md) layout. Any group without a tab still gets a tab of its own, placed after the page's tabs.
+Groups in the same tab render side-by-side with their titles, as in the [Grid](./grid.md) layout. Any group without a tab still gets a tab of its own, placed after the page's tabs, unless the page [renders these groups above the tabs](#groups-above-the-tabs).
 
 To hide a tab, hide all of its groups with `ui-control`.
 
 To react when a user changes tab, use the [`tab` event](../../nodes/widgets/ui-control.md#tab-change) from `ui-control`.
 
 Note that it's not currently possible to navigate to a page with a a particular tab open. The page will always open with the first tab selected.
+
+## Groups Above the Tabs <AddedIn version="1.37.0" />
+
+To keep some groups visible whichever tab is selected, e.g. a header with status or controls:
+
+1. In the `ui-page` config, set **No tab** to "Groups render above the tabs".
+2. Leave the **Tab** of those groups set to "None".
+
+The groups without a tab then render above the tab bar, side-by-side with their titles as in the [Grid](./grid.md) layout, instead of getting a tab of their own. They aren't counted in the `tab` index of [`ui-control` tab events](../../nodes/widgets/ui-control.md#tab-change). If every group on the page is without a tab, the tab bar isn't shown.
 
 ## Controlling Width & Columns
 

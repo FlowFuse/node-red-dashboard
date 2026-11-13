@@ -8,6 +8,7 @@ props:
     Layout: Which Layout Manager to render the widgets with
     Default State: <ul><li><b>Visibility</b> - Defines the default visibility of this page in hte side navigation menu.</li><li><b>Interactivity</b> - Controls whether the item is disabled/enabled in the side navigation menu.</li></ul><p>Both of these can be overridden by the user at runtime using a <code>ui-control</code> node.</p>
     Tabs: Only for the "Tabs" layout. The tabs on this page, in display order. Groups are assigned to a tab in their own config.
+    No tab: Only for the "Tabs" layout. Where groups that aren't assigned to one of the page's tabs render. By default each of them gets its own tab. "Groups render above the tabs" shows them above the tab bar instead. See <a href="/layouts/types/tabs.html#groups-above-the-tabs">Groups Above the Tabs</a>.
     Breakpoints: Configure the responsive breakpoints for your Dashboard, controlling how many columns render at different screen sizes. Not available for "Fixed" layouts.
 ---
 

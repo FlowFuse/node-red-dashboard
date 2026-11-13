@@ -92,6 +92,36 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
     })
 })
 
+describe('Node-RED Dashboard 2.0 - Layout: Tabs with groups above the tabs', () => {
+    it('should render groups without a tab above the tab bar, whichever tab is selected', () => {
+        cy.deployFixture('dashboard-layouts', [
+            { mode: 'merge', id: 'dashboard-ui-page-tabs', data: { untabbedGroups: 'above' } }
+        ])
+        cy.visit('/dashboard/tabs')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 2)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(0).should('contain.text', 'Compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('contain.text', 'Inbox')
+        cy.get('.nrdb-layout--tabs-untabbed .nrdb-ui-group').should('have.length', 1)
+        cy.get('.nrdb-layout--tabs-untabbed #nrdb-ui-group-dashboard-ui-group-tabs-loose').should('be.visible')
+            .find('.v-card-title').should('have.text', 'Loose')
+
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).click()
+        cy.get('.v-window-item--active #nrdb-ui-group-dashboard-ui-group-tabs-inbox').should('be.visible')
+        cy.get('.nrdb-layout--tabs-untabbed #nrdb-ui-group-dashboard-ui-group-tabs-loose').should('be.visible')
+    })
+
+    it('should not render a tab bar when every group is above the tabs', () => {
+        cy.deployFixture('dashboard-layouts', [
+            { mode: 'merge', id: 'dashboard-ui-page-tabs-legacy', data: { untabbedGroups: 'above' } }
+        ])
+        cy.visit('/dashboard/tabs-legacy')
+        cy.get('.nrdb-layout--tabs-untabbed .nrdb-ui-group').should('have.length', 2)
+        cy.get('.nrdb-layout--tabs-untabbed .nrdb-ui-group').eq(0).find('.v-card-title').should('have.text', 'Legacy A')
+        cy.get('.nrdb-layout--tabs-untabbed .nrdb-ui-group').eq(1).find('.v-card-title').should('have.text', 'Legacy B')
+        cy.get('.nrdb-layout--tabs .v-tabs').should('not.exist')
+    })
+})
+
 describe('Node-RED Dashboard 2.0 - Layout: Tabs events', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts', [

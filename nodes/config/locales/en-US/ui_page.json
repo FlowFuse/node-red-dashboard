@@ -29,7 +29,10 @@
             "openDashboardSidebar": "Open Dashboard 2.0 Sidebar",
             "addTab": "tab",
             "tabName": "Tab name",
-            "tabsEmpty": "Add tabs here to render multiple groups per tab, then set the tab in each group's settings."
+            "tabsEmpty": "Add tabs here to render multiple groups per tab, then set the tab in each group's settings.",
+            "untabbedGroups": "No tab",
+            "untabbedGroupsTabs": "Each group gets its own tab",
+            "untabbedGroupsAbove": "Groups render above the tabs"
         },
         "error": {
             "registeringConfig": "Error registering config. No parent ui-base node found for ui-page node: __pageName__",
