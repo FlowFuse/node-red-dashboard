@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.37.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.36.1...v1.37.0) (2026-11-13)
+
+
+### Features
+
+* [2319] Add an optional input field to ui-notification ([#2381](https://github.com/FlowFuse/node-red-dashboard/issues/2381)) ([9cc9ba0](https://github.com/FlowFuse/node-red-dashboard/commit/9cc9ba0af54660be9d5ead316ad555da7ee155eb))
+* [2372] Emit a ui-control event on tab change ([#2378](https://github.com/FlowFuse/node-red-dashboard/issues/2378)) ([ab8b4ce](https://github.com/FlowFuse/node-red-dashboard/commit/ab8b4cea86f99ab901e8d1608a631105bb5baff8))
+* add multiple-selection dropdown element to ui-form ([#2374](https://github.com/FlowFuse/node-red-dashboard/issues/2374)) ([9323ac0](https://github.com/FlowFuse/node-red-dashboard/commit/9323ac0c0d673b7406487dce83f95ab6f6d1eb24))
+
+
+### Bug Fixes
+
+* handle IPv6 hosts when saving dashboard layouts ([#2365](https://github.com/FlowFuse/node-red-dashboard/issues/2365)) ([593aac5](https://github.com/FlowFuse/node-red-dashboard/commit/593aac575c1fc95eb359e42916a17134ed3586dd))
+
 ## [1.36.1](https://github.com/FlowFuse/node-red-dashboard/compare/v1.36.0...v1.36.1) (2026-11-10)
 
 
