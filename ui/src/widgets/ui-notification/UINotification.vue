@@ -1,6 +1,7 @@
 <template>
     <v-snackbar
         v-model="show"
+        attach
         class="nrdb-ui-notification"
         vertical
         multi-line
@@ -14,6 +15,18 @@
         <div v-if="!raw">{{ value }}</div>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else v-html="value" />
+        <v-text-field
+            v-if="showInput"
+            ref="input"
+            v-model="inputValue"
+            class="nrdb-ui-notification-input"
+            :type="inputType"
+            :label="inputLabel"
+            :rules="inputRules"
+            variant="outlined"
+            hide-details="auto"
+            @keydown.enter="close('confirm_clicked')"
+        />
         <template v-if="allowDismiss || allowConfirm" #actions>
             <v-btn
                 v-if="allowDismiss"
@@ -50,6 +63,7 @@ export default {
         return {
             show: false,
             tik: 0,
+            inputValue: '',
             countdown: 0,
             timeouts: {
                 close: null,
@@ -102,6 +116,28 @@ export default {
         },
         showCountdown () {
             return this.getProperty('showCountdown')
+        },
+        showInput () {
+            return this.getProperty('showInput')
+        },
+        inputType () {
+            return this.getProperty('inputType')
+        },
+        inputLabel () {
+            return this.getProperty('inputLabel')
+        },
+        inputRules () {
+            if (this.inputType === 'email') {
+                return [v => !v || /^[^\s@]+@[^\s@]+$/.test(v) || 'E-mail must be valid']
+            } else {
+                return []
+            }
+        },
+        inputPayload () {
+            if (this.inputType !== 'number') {
+                return this.inputValue
+            }
+            return this.inputValue === '' ? null : Number(this.inputValue)
         }
     },
     created () {
@@ -126,6 +162,9 @@ export default {
             this.updateDynamicProperty('position', updates.position)
             this.updateDynamicProperty('raw', updates.raw)
             this.updateDynamicProperty('showCountdown', updates.showCountdown)
+            this.updateDynamicProperty('showInput', updates.showInput)
+            this.updateDynamicProperty('inputType', updates.inputType)
+            this.updateDynamicProperty('inputLabel', updates.inputLabel)
         },
         onMsgInput (msg) {
             // Make sure the last msg (that has a payload, containing the notification content) is being stored
@@ -140,6 +179,10 @@ export default {
                 // If msg.show is true or msg.payload contains a notification title, the notification popup need to be showed (if currently hidden)
                 if (!this.show) {
                     this.show = true
+                    this.inputValue = ''
+                    this.$nextTick(() => {
+                        this.$refs.input?.focus()
+                    })
 
                     // If a display time has been specified, close the notification automatically after that time
                     if (this.displayTime > 0) {
@@ -170,10 +213,11 @@ export default {
                 this.countdown = 100 - (elapsed / parseFloat(this.displayTime)) * 100
             }, 100)
         },
-        close (payload) {
+        close (reason) {
             this.show = false
 
             const msg = this.messages[this.id] || {}
+            const payload = reason === 'confirm_clicked' && this.showInput ? this.inputPayload : reason
             this.$socket.emit('widget-action', this.id, {
                 ...msg,
                 payload
@@ -202,6 +246,11 @@ export default {
 }
 .nrdb-ui-notification .v-snackbar__content {
     padding: 8px 12px;
+}
+
+.nrdb-ui-notification-input {
+    margin-top: 8px;
+    min-width: 200px;
 }
 
 .nrdb-ui-notification-countdown {

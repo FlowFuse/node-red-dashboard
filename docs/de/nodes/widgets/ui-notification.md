@@ -10,6 +10,9 @@ props:
     Manuelle Schließung zulassen - Button-Beschriftung: Wenn <i>"Manuelle Schließung zulassen"</i> aktiviert ist, ist dies die Beschriftung für den Button.
     Manuelle Bestätigung zulassen: Zeigt einen Button für Benutzer an, um die Benachrichtigung zu <b>bestätigen</b>. Andernfalls wird sie nur nach dem Timeout geschlossen.
     Manuelle Bestätigung zulassen - Button-Beschriftung: Wenn <i>"Manuelle Bestätigung zulassen"</i> aktiviert ist, ist dies die Beschriftung für den Button.
+    Eingabefeld anzeigen: Zeigt ein Eingabefeld in der Benachrichtigung an. Bei Bestätigung wird der eingegebene Wert als <code>msg.payload</code> anstelle von <code>"confirm_clicked"</code> gesendet.
+    Eingabefeld anzeigen - Eingabetyp: Der HTML-Eingabetyp des Feldes, z. B. <code>text</code>, <code>number</code> oder <code>email</code>.
+    Eingabefeld anzeigen - Eingabebeschriftung: Optionale Beschriftung des Eingabefeldes.
     Rohdaten akzeptieren: Ob Sie rohes HTML übergeben, das clientseitig verarbeitet werden soll.
     Klasse: Fügt dem Widget CSS-Klassen hinzu
 dynamic:
@@ -46,6 +49,15 @@ dynamic:
     Countdown-Leiste anzeigen:
         payload: msg.ui_update.showCountdown
         structure: ["Boolean"]
+    Eingabefeld anzeigen:
+        payload: msg.ui_update.showInput
+        structure: ["Boolean"]
+    Eingabetyp:
+        payload: msg.ui_update.inputType
+        structure: ["String"]
+    Eingabebeschriftung:
+        payload: msg.ui_update.inputLabel
+        structure: ["String"]
 controls:
     anzeigen:
         example: true | false
@@ -87,6 +99,10 @@ Diese Benachrichtigung wurde mit einem `msg.payload` von:
 ```html
 <h3>Generierte Benachrichtigung</h3><p>Dies ist benutzerdefiniertes HTML, das in <b>Node-RED</b> eingefügt wurde</p>
 ```
+
+### Eingabe anfordern
+
+Aktivieren Sie "Eingabefeld anzeigen", um ein Eingabefeld in der Benachrichtigung anzuzeigen. Bei Bestätigung, über die Bestätigungsschaltfläche oder Enter, enthält `msg.payload` den eingegebenen Wert als String, bzw. als Zahl beim Typ `number` (`null` wenn leer). Beim Schließen oder nach dem Timeout wird weiterhin `"dismiss_clicked"` bzw. `"timeout"` gesendet.
 
 ### An alle Clients senden
 
