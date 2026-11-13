@@ -28,6 +28,11 @@ module.exports = function (RED) {
             config.visible = (config.visible === 'true' || config.visible === true)
         }
 
+        // ensure we have a valid target, defaulting to opening the link in the same tab
+        if (!['_self', '_blank'].includes(config.target)) {
+            config.target = '_self'
+        }
+
         const ui = RED.nodes.getNode(config.ui)
 
         // register self
