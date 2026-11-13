@@ -178,10 +178,18 @@ export default {
                 // if we are running on a proxy, we need to change ui.path to whatever our proxy has been configured as
                 ui.path = this.setup.basePath
 
+                const name = `${ui.id}_debug`
+                if (!ui.allowDebugView) {
+                    // the Debug View may have been disabled since the route was added
+                    if (this.$router?.hasRoute(name)) {
+                        this.$router.removeRoute(name)
+                    }
+                    return
+                }
                 const path = (ui.path + '/_debug').replace(/\/\//g, '/')
                 this.$router?.addRoute({
                     path,
-                    name: `${ui.id}_debug`,
+                    name,
                     component: DebugView,
                     meta: {
                         dashboard: ui.id // the dashboard id - to simplify determining which dashboard we're on
