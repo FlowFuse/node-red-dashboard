@@ -10,6 +10,9 @@ props:
     Allow Manual Dismissal - Button Label: If <i>"Allow Manual Dismissal"</i> is enabled, this is the label for the button.
     Allow Manual Confirmation: Show a button for users to <b>confirm</b> the notification. Otherwise, will only close after Timeout.
     Allow Manual Confirmation - Button Label: If <i>"Allow Manual Confirmation"</i> is enabled, this is the label for the button.
+    Show Input: Show an input field in the notification. When the user confirms, the entered value is sent as <code>msg.payload</code> instead of <code>"confirm_clicked"</code>.
+    Show Input - Input Type: The HTML input type for the field, e.g. <code>text</code>, <code>number</code> or <code>email</code>.
+    Show Input - Input Label: Optional label shown in the input field.
     Accept Raw: Whether you're passing in raw HTML that should be processed client-side.
     Class: Appends CSS classes to the widget
 dynamic:
@@ -46,6 +49,15 @@ dynamic:
     Show countdown bar:
         payload: msg.ui_update.showCountdown
         structure: ["Boolean"]
+    Show input:
+        payload: msg.ui_update.showInput
+        structure: ["Boolean"]
+    Input type:
+        payload: msg.ui_update.inputType
+        structure: ["String"]
+    Input label:
+        payload: msg.ui_update.inputLabel
+        structure: ["String"]
 controls:
     show:
         example: true | false
@@ -87,6 +99,10 @@ This notification was created using a `msg.payload` of:
 ```html
 <h3>Generated Notification</h3><p>This is custom HTML injected into <b>Node-RED</b></p>
 ```
+
+### Requesting input
+
+Enable "Show Input" to display an input field in the notification. When confirmed, via the confirm button or Enter, `msg.payload` contains the entered value as a string, or as a number for the `number` type (`null` if empty). Dismissing or timing out still sends `"dismiss_clicked"` or `"timeout"`.
 
 ### Sending to all clients
 

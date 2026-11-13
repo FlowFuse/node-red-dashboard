@@ -24,8 +24,8 @@
         },
         {
             "property": "format",
-            "changes": -1,
-            "notes": "<a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/390\" target=\"_blank\">Issue #390</a>"
+            "changes": -2,
+            "notes": "Format the output with a JSONata expression in the Value field. Format templates are not supported."
         },
         {
             "property": "layout",

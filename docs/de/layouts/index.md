@@ -60,5 +60,5 @@ Eine zusätzliche Option, die auf Gruppenbasis verfügbar ist, ist, ob der Name 
 
 Obwohl wir angemessene Anpassungsstufen bieten, gibt es einige Bereiche, die derzeit nicht konfigurierbar sind:
 
-- **Zeilenhöhe:** Eine einzelne Einheit der Höhe ist derzeit auf 48px festgelegt. Dies kann derzeit nicht geändert werden. Dies betrifft auch das "Feste" Layout, bei dem eine einzelne Einheit der Breite durch diesen Wert bestimmt wird.
+- **Zeilenhöhe:** Eine einzelne Einheit der Höhe wird durch die Option "Zeilenhöhe" des Themes festgelegt (standardmäßig 48px). Dies betrifft auch das "Feste" Layout, bei dem eine einzelne Einheit der Breite durch diesen Wert bestimmt wird.
 - **Gruppenabstand:** Der Abstand, der den gesamten Inhalt der Gruppe umschließt, oben als <span style="color: blue;">blauer</span> Raum dargestellt.

@@ -159,6 +159,36 @@ module.exports = function(RED) {
 }
 ```
 
+### Widget Size <AddedIn version="1.35.0" />
+
+Use `ffElementSizer` to add the size picker to your node's edit dialog. Include `width`, `height` and `order` in your node's `defaults`, and add the inputs to your edit template:
+
+```html
+<div class="form-row">
+    <label><i class="fa fa-object-group"></i> Size</label>
+    <input type="hidden" id="node-input-width">
+    <input type="hidden" id="node-input-height">
+    <input type="hidden" id="node-input-order">
+    <button class="editor-button" id="node-input-size"></button>
+</div>
+```
+
+Then call it in `oneditprepare`:
+
+```js
+oneditprepare: function () {
+    $('#node-input-size').ffElementSizer({
+        width: '#node-input-width',
+        height: '#node-input-height',
+        group: '#node-input-group'
+    })
+}
+```
+
+When the node is inside a subflow, the sizer shows Width, Height, and Order text inputs instead, so they can be set with `${ENV}` subflow properties. This requires the `group` option.
+
+_Note: `elementSizer` and `elementSizerByNum` are deprecated. They still work but log a warning in the Node-RED log. Switch to `ffElementSizer` and `ffElementSizerByNum`. The old names are shared with Node-RED Dashboard 1.0, which can replace them depending on load order._
+
 ## Guides
 
 The below are guides and examples on building third-party widgets. We also have the "Useful Guides" Section in the left navigation which provide more generalized development guides when contributing to FlowFuse Dashboard.

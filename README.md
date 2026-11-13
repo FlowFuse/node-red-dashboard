@@ -42,7 +42,7 @@ The nodes provided integrate seamlessly with any of the existing nodes and flows
     <em style="display: block; text-align: center;">Example of data visualisations in FlowFuse Dashboard</em>
 </div>
 
-No dashboard is complete without data visualisation. FlowFuse Dashboard provides a core `ui-chart` widget to provide a simple, yet powerful way to visualise your data. It supports a wide range of chart types, including line, bar and scatter, with more planned for the near future.
+No dashboard is complete without data visualisation. FlowFuse Dashboard provides a core `ui-chart` widget to provide a simple, yet powerful way to visualise your data. It supports line, area, bar, scatter, pie, doughnut and histogram charts.
 
 ### Flexible Customisation
 
@@ -63,28 +63,19 @@ If you're looking to build your own bespoke templates, checkout our useful [UI T
 
 ### Build with Markdown & Mermaid
 
-The new `ui-markdown` widget allows you to build rich, interactive applications using [Markdown](https://www.markdownguide.org/) and [Mermaid Charts](https://mermaid.js.org/). You can use Markdown templates to build your UI, and populate it with your own, dynamic data, and then use Mermaid to display dynamic charts and diagrams.
+The `ui-markdown` widget allows you to build rich, interactive applications using [Markdown](https://www.markdownguide.org/) and [Mermaid Charts](https://mermaid.js.org/). You can use Markdown templates to build your UI, and populate it with your own, dynamic data, and then use Mermaid to display dynamic charts and diagrams.
 
-## Project Planning
+## Community and Contribution
 
-### Community and Contribution
-
-As an open-source project, FlowFuse Dashboard openly welcomes all forms of contributions, whether those are ideas, bug reports, or code contributions through Pull Requests. 
+As an open-source project, FlowFuse Dashboard openly welcomes all forms of contributions, whether those are ideas, bug reports, or code contributions through Pull Requests.
 
 We strongly believe in the power of community. If you have suggestions, feedback, or features you'd like to see, please open a [GitHub issue](https://github.com/FlowFuse/node-red-dashboard/issues/new/choose). We also highly encourage open-source contributions.
-
-### Roadmap
-
-We are constantly reviewing the priority of our backlog, and have multiple public project management boards where you can keep an eye on what we're working on, and what's coming up next:
-
-- [Activity Tracker](https://github.com/orgs/FlowFuse/projects/15/views/1): See what's being actively worked on, what's up next, and if there are any "Blocked" items you could help with.
-- [Node-RED Dashboard Feature Parity](https://github.com/orgs/FlowFuse/projects/15/views/5): We haven't quite yet achieved 100% feature parity with the original Node-RED Dashboard, and this board tracks the progress and priority of those features.
 
 ## Motivation
 
 The original [Node-RED Dashboard](https://github.com/node-red/node-red-dashboard) has served us well for many years, providing an intuitive way to create live dashboards for Node-RED flows. However, the original Dashboard is based on Angular v1, which is no longer actively maintained. We identified the need for a secure, updated, and innovative successor.
 
-FlowFuse Dashboard was re-built from the ground up, learning from the popular features and feedback of Node-RED Dashboard. It will carry the legacy forward, adapting to future needs while keeping the essence of open-source and community-driven development intact. The project will is licensed under Apache 2.0.
+FlowFuse Dashboard was re-built from the ground up, learning from the popular features and feedback of Node-RED Dashboard. It will carry the legacy forward, adapting to future needs while keeping the essence of open-source and community-driven development intact. The project is licensed under Apache 2.0.
 
 ## Release process
 

@@ -2,6 +2,7 @@
     "ui-form": {
         "label": {
             "dropdown": "Dropdown",
+            "multiselect": "Dropdown (Mehrfachauswahl)",
             "group": "Gruppe",
             "size": "Größe",
             "width": "Breite",

@@ -4,14 +4,91 @@
         function c_ (x) {
             return RED._('@flowfuse/node-red-dashboard/ui-control:ui-control.' + x)
         }
-    
+
+        const ACTIONS = ['navigate', 'show', 'hide', 'enable', 'disable']
+        const NAV_TYPES = ['next', 'prev', 'refresh']
+
+        function configNodes (type, uiId) {
+            const list = []
+            RED.nodes.eachConfig(function (n) {
+                if (n.type !== type) {
+                    return
+                }
+                const page = type === 'ui-group' ? RED.nodes.node(n.page) : n
+                if (!uiId || (page && page.ui === uiId)) {
+                    list.push(n)
+                }
+            })
+            return list
+        }
+
+        // is an action row complete and does its page/group still exist?
+        function validRow (row) {
+            if (row.targetType === 'msg') {
+                return !!row.target && RED.utils.validatePropertyExpression(row.target)
+            }
+            if (row.targetType === 'page' || row.targetType === 'group') {
+                const n = RED.nodes.node(row.target)
+                return !!n && n.type === 'ui-' + row.targetType
+            }
+            if (row.targetType === 'widget') {
+                const n = RED.nodes.node(row.target)
+                return !!n && !!n.group
+            }
+            return row.action === 'navigate' && NAV_TYPES.includes(row.targetType)
+        }
+
+        function targetTypes (action, uiId) {
+            const pages = configNodes('ui-page', uiId).sort((a, b) => (a.order || 0) - (b.order || 0)).map(n => ({ value: n.id, label: n.name || n.id }))
+            const page = { value: 'page', label: 'page', icon: 'fa fa-file-o', options: pages }
+            if (action === 'navigate') {
+                return [page,
+                    { value: 'next', label: c_('nav.next'), icon: 'fa fa-step-forward', hasValue: false },
+                    { value: 'prev', label: c_('nav.prev'), icon: 'fa fa-step-backward', hasValue: false },
+                    { value: 'refresh', label: c_('nav.refresh'), icon: 'fa fa-refresh', hasValue: false },
+                    'msg']
+            }
+            const groups = configNodes('ui-group', uiId).map(function (n) {
+                const p = RED.nodes.node(n.page)
+                return { value: n.id, label: (p ? (p.name || p.id) + ' / ' : '') + (n.name || n.id) + (n.groupType === 'dialog' ? ' (dialog)' : '') }
+            })
+            const groupIds = new Set(configNodes('ui-group', uiId).map(g => g.id))
+            const widgets = []
+            RED.nodes.eachNode(function (n) {
+                // widgets are the ui-* nodes that sit in a group of this dashboard
+                if (n.type.startsWith('ui-') && n.group && groupIds.has(n.group)) {
+                    const g = RED.nodes.node(n.group)
+                    const p = g && RED.nodes.node(g.page)
+                    const name = n.name || n.label || n.id
+                    widgets.push({ value: n.id, label: (p ? (p.name || p.id) + ' / ' : '') + (g.name || g.id) + ' / ' + name + ' (' + n.type.replace(/^ui-/, '') + ')' })
+                }
+            })
+            widgets.sort((a, b) => a.label.localeCompare(b.label))
+            return [page,
+                { value: 'group', label: 'group', icon: 'fa fa-object-group', options: groups },
+                { value: 'widget', label: 'widget', icon: 'fa fa-cube', options: widgets },
+                'msg']
+        }
+
         RED.nodes.registerType('ui-control', {
             category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
             color: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.colors.darkest'),
             defaults: {
                 name: { value: '' },
                 ui: { type: 'ui-base', value: '', required: true },
-                events: { value: 'all' }
+                events: { value: 'none' },
+                // new nodes have no output, older nodes without this property keep the 1 below
+                outputs: { value: 0 },
+                inputMode: { value: 'payload' },
+                actions: {
+                    value: [],
+                    validate: function (v) {
+                        if (this.inputMode !== 'actions') {
+                            return true
+                        }
+                        return Array.isArray(v) && v.every(validRow)
+                    }
+                }
             },
             inputs: 1,
             outputs: 1,
@@ -24,11 +101,87 @@
             oneditprepare: function () {
                 const node = this
                 const sel = $('#node-input-events')
-                for (const name of ['all', 'change', 'connect', 'clients']) {
+                for (const name of ['none', 'all', 'change', 'connect', 'clients']) {
                     const text = c_('events.' + name)
                     $('<option/>').val(name).text(text).appendTo(sel)
                 }
-                $(sel).val(node.events)
+                $(sel).val(node.events).on('change', function () {
+                    $('#node-input-outputs').val($(this).val() === 'none' ? 0 : 1)
+                })
+
+                $('#node-input-inputMode').on('change', function () {
+                    $('.form-row-actions').toggle($(this).val() === 'actions')
+                }).trigger('change')
+
+                const uiId = () => $('#node-input-ui').val()
+
+                const $list = $('#node-input-actions-container').css({ 'min-height': '150px', 'min-width': '450px' }).editableList({
+                    addItem: function (container, i, row) {
+                        row.action = row.action || 'hide'
+                        row.targetType = row.targetType || 'group'
+                        container.css({ display: 'flex', gap: '6px', 'align-items': 'center' })
+                        const $action = $('<select/>', { class: 'ui-control-action', style: 'width: 110px;' }).appendTo(container)
+                        ACTIONS.forEach(a => $('<option/>').val(a).text(c_('action.' + a)).appendTo($action))
+                        const $target = $('<input/>', { type: 'text', class: 'ui-control-target', style: 'width: 100%;' }).appendTo(
+                            $('<div/>', { style: 'flex-grow: 1;' }).appendTo(container))
+
+                        $action.val(row.action)
+                        $target.typedInput({ types: targetTypes(row.action, uiId()), default: row.targetType })
+                        $target.typedInput('type', row.targetType)
+                        $target.typedInput('value', row.target || '')
+
+                        const updateTip = () => $action.attr('title', c_('tip.' + $action.val()))
+                        $action.on('change', function () {
+                            const type = $target.typedInput('type')
+                            const value = $target.typedInput('value')
+                            const types = targetTypes($action.val(), uiId())
+                            $target.typedInput('types', types)
+                            // keep the target when it still makes sense for the new action
+                            if (types.some(t => (t.value || t) === type)) {
+                                $target.typedInput('type', type)
+                                $target.typedInput('value', value)
+                            }
+                            updateTip()
+                        })
+                        updateTip()
+                    },
+                    removable: true,
+                    sortable: true
+                })
+                ;(node.actions || []).forEach(row => $list.editableList('addItem', Object.assign({}, row)))
+
+                // page/group lists are scoped to the chosen dashboard
+                $('#node-input-ui').on('change', function () {
+                    $list.editableList('items').each(function () {
+                        const $target = $(this).find('.ui-control-target')
+                        const type = $target.typedInput('type')
+                        const value = $target.typedInput('value')
+                        $target.typedInput('types', targetTypes($(this).find('.ui-control-action').val(), uiId()))
+                        $target.typedInput('type', type)
+                        $target.typedInput('value', value)
+                    })
+                })
+            },
+            oneditsave: function () {
+                const actions = []
+                $('#node-input-actions-container').editableList('items').each(function () {
+                    const $target = $(this).find('.ui-control-target')
+                    const targetType = $target.typedInput('type')
+                    const row = { action: $(this).find('.ui-control-action').val(), targetType }
+                    if (!NAV_TYPES.includes(targetType)) {
+                        row.target = $target.typedInput('value')
+                    }
+                    actions.push(row)
+                })
+                this.actions = actions
+            },
+            oneditresize: function (size) {
+                const rows = $('#dialog-form>div:not(.form-row-actions)')
+                let height = size.height
+                for (let i = 0; i < rows.length; i++) {
+                    height -= $(rows[i]).outerHeight(true)
+                }
+                $('#node-input-actions-container').editableList('height', Math.max(150, height - 40))
             }
         })
     })()
@@ -47,5 +200,16 @@
         <label for="node-input-events"><i class="fa fa-sign-out"></i> <span data-i18n="ui-control.label.output"></span></label>
         <select id="node-input-events" style="width:70%;">
         </select>
+        <input type="hidden" id="node-input-outputs">
+    </div>
+    <div class="form-row">
+        <label for="node-input-inputMode"><i class="fa fa-sign-in"></i> <span data-i18n="ui-control.label.onInput"></span></label>
+        <select id="node-input-inputMode" style="width:70%;">
+            <option value="payload" data-i18n="ui-control.inputMode.payload"></option>
+            <option value="actions" data-i18n="ui-control.inputMode.actions"></option>
+        </select>
+    </div>
+    <div class="form-row form-row-actions node-input-actions-container-row">
+        <ol id="node-input-actions-container"></ol>
     </div>
 </script>

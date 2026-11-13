@@ -45,7 +45,11 @@ module.exports = function (RED) {
                 break
             }
 
-            if (payloadType === 'flow' || payloadType === 'global') {
+            if (payloadType === 'navigate' || payloadType === 'popup' || payloadType === 'modal') {
+                // the UI performs the action, the msg reports where it went
+                const target = RED.nodes.getNode(payload)
+                payload = target ? target.name : (payload || '').replace(/^_/, '')
+            } else if (payloadType === 'flow' || payloadType === 'global') {
                 try {
                     const parts = RED.util.normalisePropertyExpression(payload)
                     if (parts.length === 0) {

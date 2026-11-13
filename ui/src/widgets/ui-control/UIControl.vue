@@ -15,7 +15,7 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        ...mapState('ui', ['pages', 'groups', 'widgets']),
+        ...mapState('ui', ['pages', 'groups', 'widgets', 'selectedTab']),
         ...mapGetters('ui', ['findBy', 'pageById'])
     },
     watch: {
@@ -25,6 +25,12 @@ export default {
                 // the full component isn't torn down, so we can watch for changes
                 this.routeChanged()
             }
+        },
+        selectedTab: {
+            immediate: true,
+            handler (tab) {
+                this.tabChanged(tab)
+            }
         }
     },
     mounted () {
@@ -32,7 +38,7 @@ export default {
         this.routeChanged()
         const vue = this
         // listen for messages
-        this.$socket.on('ui-control:' + this.id, (msg) => {
+        const handle = async (msg) => {
             const payload = msg.payload
 
             function set (type, id, prop, value) {
@@ -53,6 +59,7 @@ export default {
                 }
             }
 
+            let navigation = Promise.resolve()
             if ('page' in payload) {
                 let page = payload.tab || payload.page
                 const query = payload.query
@@ -68,7 +75,7 @@ export default {
                     } else {
                         // navigate to the tab/page
                         try {
-                            this.$router.push({ name: `Page:${pages[page].name}` })
+                            navigation = this.$router.push({ name: `Page:${pages[page].name}` })
                         } catch (err) {
                             console.error(err)
                         }
@@ -105,7 +112,7 @@ export default {
                         }
                         // navigate to the tab/page
                         try {
-                            this.$router.push({ name: `Page:${page}` })
+                            navigation = this.$router.push({ name: `Page:${page}` })
                         } catch (err) {
                             console.error(err)
                         }
@@ -117,7 +124,7 @@ export default {
                 }
                 // navigate to the tab/page
                 try {
-                    this.$router.push({
+                    navigation = this.$router.push({
                         name: `Page:${page}`,
                         query
                     })
@@ -131,6 +138,10 @@ export default {
             payload.pages?.hide?.forEach(pageId => set('page', pageId, 'visible', false))
             payload.pages?.disable?.forEach(pageId => set('page', pageId, 'disabled', true))
             payload.pages?.enable?.forEach(pageId => set('page', pageId, 'disabled', false))
+
+            // dialog groups only exist on their own page, so let a page change render first
+            await navigation.catch(() => {})
+            await this.$nextTick()
 
             // Groups
             const handleVisibility = (id, group, visibility) => {
@@ -161,13 +172,37 @@ export default {
                     window.location.href = payload.url
                 }
             }
+        }
+        // a message that waits for navigation must not be overtaken by the next one
+        let queue = Promise.resolve()
+        this.$socket.on('ui-control:' + this.id, (msg) => {
+            queue = queue.then(() => handle(msg)).catch(err => console.error(err))
         })
     },
     unmounted () {
         this.$socket.off('ui-control')
     },
     methods: {
+        sendsChanges () {
+            // only the "all" and "change" outputs use page and tab changes (older nodes have no events setting)
+            const events = this.props.events
+            return !events || events === 'all' || events === 'change'
+        },
+        tabChanged (tab) {
+            if (!tab || tab.pageId !== this.$route.meta.id || !this.sendsChanges()) {
+                return
+            }
+            this.$socket.emit('ui-control', this.id, 'tab', {
+                tab: tab.index,
+                id: tab.id,
+                name: tab.name,
+                page: this.pages[tab.pageId].name
+            })
+        },
         routeChanged () {
+            if (!this.sendsChanges()) {
+                return
+            }
             const pages = Object.values(this.pages).sort((a, b) => {
                 return a.order - b.order
             })
