@@ -144,9 +144,9 @@ describe('store: ui getters', function () {
     })
 
     describe('tabsByPage', function () {
-        function tabsOf (groups, tabs) {
+        function tabsOf (groups, tabs, hiddenTabs) {
             const state = {
-                pages: { p1: { id: 'p1', layout: 'tabs', tabs } },
+                pages: { p1: { id: 'p1', layout: 'tabs', tabs, hiddenTabs } },
                 groups: Object.fromEntries(groups.map((g) => [g.id, { page: 'p1', visible: true, ...g }]))
             }
             const getters = { groupsByPage: ui.getters.groupsByPage(state) }
@@ -208,6 +208,17 @@ describe('store: ui getters', function () {
                 { id: 'g1', name: 'Orphan', order: 1, tab: 'deleted' }
             ], [{ id: 't1', name: 'Tab' }]).should.eql([
                 { id: 'g1', name: 'Orphan', groups: ['g1'] }
+            ])
+        })
+
+        it('omits tabs hidden with ui-control, along with their groups', function () {
+            tabsOf([
+                { id: 'g1', name: 'A', order: 1, tab: 't1' },
+                { id: 'g2', name: 'B', order: 2, tab: 't2' },
+                { id: 'g3', name: 'Loose', order: 3 }
+            ], [{ id: 't1', name: 'First' }, { id: 't2', name: 'Second' }], ['t1']).should.eql([
+                { id: 't2', name: 'Second', groups: ['g2'] },
+                { id: 'g3', name: 'Loose', groups: ['g3'] }
             ])
         })
 

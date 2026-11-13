@@ -124,6 +124,28 @@ msg.payload = {
 
 _Hinweis:_ `pages` kann wie im Dashboard 1.0 durch `tabs` ersetzt werden und `groups` kann auch wie im Dashboard 1.0 durch `group` ersetzt werden.
 
+#### Tabs anzeigen/ausblenden <AddedIn version="1.37.0" />
+
+Auf einer Seite mit dem [Tabs](../../layouts/types/tabs.md)-Layout können Sie die auf der Seite definierten Tabs anzeigen oder ausblenden. Da `tabs` bereits ein Alias für `pages` ist, verwenden Tabs den Schlüssel `pageTabs`:
+
+```js
+msg.payload = {
+    pageTabs: {
+        show: ['<Tab-Name>',
+               '<Tab-ID>',
+               '<Seitenname>:<Tab-Name>',
+               '<Seiten-ID>:<Tab-Name>',
+               {tab: '<Tab-Name>'},
+               {page: '<Seitenname>', tab: '<Tab-Name>'}],
+        hide: ['<Seitenname>:<Tab-Name>']
+    }
+}
+```
+
+Ein Tab-Name allein trifft auf den ersten Tab mit diesem Namen auf einer beliebigen Seite zu. Geben Sie daher die Seite mit an, wenn mehrere Seiten einen Tab mit diesem Namen haben. Ein Doppelpunkt in einem Seiten- oder Tab-Namen wird mit einem Backslash maskiert, z. B. `'Layout\\: Tabs:Inbox'`.
+
+Das Ausblenden eines Tabs blendet den Tab und alle seine Gruppen aus. War er der ausgewählte Tab, wird der erste verbleibende Tab ausgewählt. Wird er wieder angezeigt, erscheint er an seiner Stelle in der Tab-Liste der Seite. Gruppen ohne Tab werden als eigener Tab angezeigt, blenden Sie diese daher mit `groups` an oder aus.
+
 ### Aktivieren/Deaktivieren
 
 Sie können Gruppen und Seiten programmatisch mit der folgenden Nutzlast in `ui-control` aktivieren/deaktivieren:

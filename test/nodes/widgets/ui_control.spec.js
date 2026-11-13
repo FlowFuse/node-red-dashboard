@@ -51,8 +51,8 @@ describe('ui-control node', function () {
      * Load a flow, add a fake socket connection, send a msg into the ui-control node
      * and resolve with the payloads it emitted to the UI and the node error, if any
      */
-    async function runControl (controlNode, msg) {
-        const flow = [controlNode, button, ...testFlow1]
+    async function runControl (controlNode, msg, extraNodes = []) {
+        const flow = [controlNode, button, ...extraNodes, ...testFlow1]
         await helper.load(nodeImports, flow)
         verifyFlowLoaded(helper, flow)
         const base = helper.getNode('config-ui-base')
@@ -70,8 +70,8 @@ describe('ui-control node', function () {
         return { payloads: emitted(), error: node.error.called ? node.error.args[0][0] : null }
     }
 
-    async function sendToControl (controlNode, msg) {
-        const { payloads, error } = await runControl(controlNode, msg)
+    async function sendToControl (controlNode, msg, extraNodes) {
+        const { payloads, error } = await runControl(controlNode, msg, extraNodes)
         if (error) {
             throw error
         }
@@ -245,6 +245,116 @@ describe('ui-control node', function () {
             await sendToControl(control('ctl'), { payload: { pages: { disable: ['Page 1'] } } })
             const statestore = require('../../../nodes/store/state.js')
             statestore.getProperty('config-ui-page', 'disabled').should.be.true()
+        })
+    })
+
+    describe('tabs', function () {
+        const statestore = require('../../../nodes/store/state.js')
+
+        function tabsPage (id, name, tabs) {
+            return { id, type: 'ui-page', name, ui: 'config-ui-base', path: '/' + id, layout: 'tabs', theme: 'config-ui-theme', tabs }
+        }
+
+        const pages = [
+            tabsPage('page-mail', 'Mail', [{ id: 'tab-inbox', name: 'Inbox' }, { id: 'tab-mail-settings', name: 'Settings' }]),
+            tabsPage('page-admin', 'Admin', [{ id: 'tab-users', name: 'Users' }, { id: 'tab-admin-settings', name: 'Settings' }])
+        ]
+
+        beforeEach(function () {
+            pages.forEach(page => statestore.reset(page.id))
+        })
+
+        it('resolves tab names, ids and objects to page and tab ids', async function () {
+            const payloads = await sendToControl(control('ctl'), {
+                payload: {
+                    pageTabs: {
+                        hide: ['Inbox', 'tab-users', 'Admin:Settings', { page: 'page-mail', tab: 'Settings' }]
+                    }
+                }
+            }, pages)
+            payloads.should.eql([{
+                pageTabs: {
+                    hide: [
+                        { page: 'page-mail', tab: 'tab-inbox' },
+                        { page: 'page-admin', tab: 'tab-users' },
+                        { page: 'page-admin', tab: 'tab-admin-settings' },
+                        { page: 'page-mail', tab: 'tab-mail-settings' }
+                    ]
+                }
+            }])
+        })
+
+        it('matches a tab name without a page to the first page with that tab', async function () {
+            const payloads = await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Settings'] } } }, pages)
+            payloads[0].pageTabs.hide.should.eql([{ page: 'page-mail', tab: 'tab-mail-settings' }])
+        })
+
+        it('does not treat pageTabs as pages', async function () {
+            const payloads = await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Inbox'] } } }, pages)
+            payloads[0].should.not.have.property('pages')
+            should(statestore.getProperty('page-mail', 'visible')).be.undefined()
+        })
+
+        it('stores the hidden tabs on their page so new clients get them', async function () {
+            await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Mail:Inbox', 'Mail:Settings', 'Mail:Inbox'] } } }, pages)
+            statestore.getProperty('page-mail', 'hiddenTabs').should.eql(['tab-mail-settings', 'tab-inbox'])
+            should(statestore.getProperty('page-admin', 'hiddenTabs')).be.undefined()
+            helper.unload()
+
+            await sendToControl(control('ctl'), { payload: { pageTabs: { show: ['Mail:Inbox'] } } }, pages)
+            statestore.getProperty('page-mail', 'hiddenTabs').should.eql(['tab-mail-settings'])
+        })
+
+        it('sends the hidden tabs with the page in the ui-config', async function () {
+            await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Mail:Inbox'] } } }, pages)
+            const base = helper.getNode('config-ui-base')
+            const socket = base.uiShared.connections['fake-conn-id']
+            base.requestEmitConfig()
+            // the config emit is debounced
+            await new Promise(resolve => setTimeout(resolve, 400))
+            const config = socket.emit.args.filter(args => args[0] === 'ui-config').pop()[2]
+            config.pages['page-mail'].should.have.property('hiddenTabs').eql(['tab-inbox'])
+            config.pages['page-admin'].should.not.have.property('hiddenTabs')
+        })
+
+        it('reports a tab that does not exist', async function () {
+            await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Outbox'] } } }, pages)
+                .should.be.rejectedWith(/No tab found with id or name 'Outbox'/)
+        })
+
+        it('reports a tab that is not on the given page', async function () {
+            await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Admin:Inbox'] } } }, pages)
+                .should.be.rejectedWith(/No tab found with id or name 'Inbox' on page 'Admin'/)
+        })
+
+        it('reports a page that does not exist', async function () {
+            await sendToControl(control('ctl'), { payload: { pageTabs: { hide: ['Nope:Inbox'] } } }, pages)
+                .should.be.rejectedWith(/No page found with id or name 'Nope'/)
+        })
+
+        it('does not store any tab when one of them is not found', async function () {
+            const { error } = await runControl(control('ctl'), { payload: { pageTabs: { hide: ['Inbox', 'Outbox'] } } }, pages)
+            should(error).match(/No tab found/)
+            should(statestore.getProperty('page-mail', 'hiddenTabs')).be.undefined()
+        })
+
+        it('shows and hides tabs from the actions configured in the editor', async function () {
+            const node = control('ctl', {
+                inputMode: 'actions',
+                actions: [
+                    { action: 'hide', targetType: 'tab', target: 'page-mail:tab-inbox' },
+                    { action: 'show', targetType: 'tab', target: 'page-admin:tab-users' },
+                    { action: 'hide', targetType: 'group', target: 'config-ui-group' }
+                ]
+            })
+            const payloads = await sendToControl(node, {}, pages)
+            payloads.should.eql([{
+                pageTabs: {
+                    hide: [{ page: 'page-mail', tab: 'tab-inbox' }],
+                    show: [{ page: 'page-admin', tab: 'tab-users' }]
+                },
+                groups: { hide: ['config-ui-group'] }
+            }])
         })
     })
 })
