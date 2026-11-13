@@ -13,7 +13,28 @@
                 />
             </div>
 
-            <v-tabs v-model="tab" show-arrows>
+            <!-- Groups without a tab, when the page renders them above the tab bar -->
+            <div v-if="untabbedGroups.length > 0" class="nrdb-layout--tabs-grid nrdb-layout--tabs-untabbed">
+                <div
+                    v-for="g in untabbedGroups"
+                    :id="'nrdb-ui-group-' + g.id"
+                    :key="g.id"
+                    class="nrdb-ui-group" :class="getGroupClass(g)"
+                    :disabled="g.disabled === true ? 'disabled' : null"
+                    :style="`grid-column-end: span min(${ g.width }, var(--layout-columns)`"
+                >
+                    <v-card variant="outlined" class="bg-group-background">
+                        <template v-if="g.showTitle" #title>
+                            {{ g.name }}
+                        </template>
+                        <template #text>
+                            <widget-group :group="g" :widgets="widgetsByGroup(g.id)" />
+                        </template>
+                    </v-card>
+                </div>
+            </div>
+
+            <v-tabs v-if="tabs.length > 0" v-model="tab" show-arrows>
                 <v-tab v-for="t in tabs" :key="t.id" :value="t.id">{{ t.name }}</v-tab>
             </v-tabs>
 
@@ -99,9 +120,12 @@ export default {
     computed: {
         ...mapState('ui', ['groups', 'widgets', 'pages']),
         ...mapState('data', ['properties']),
-        ...mapGetters('ui', ['groupsByPage', 'tabsByPage', 'widgetsByGroup', 'widgetsByPage']),
+        ...mapGetters('ui', ['groupsByPage', 'tabsByPage', 'untabbedGroupsByPage', 'widgetsByGroup', 'widgetsByPage']),
         tabs () {
             return this.tabsByPage(this.$route.meta.id)
+        },
+        untabbedGroups () {
+            return this.untabbedGroupsByPage(this.$route.meta.id)
         },
         dialogGroups () {
             const groups = this.groupsByPage(this.$route.meta.id).filter((g) => g.groupType === 'dialog')
@@ -187,6 +211,10 @@ export default {
     display: grid;
     grid-template-columns: repeat(var(--layout-columns), 1fr);
     gap: var(--group-gap);
+}
+
+.nrdb-layout--tabs-untabbed {
+    margin-bottom: var(--group-gap);
 }
 
 .v-card {

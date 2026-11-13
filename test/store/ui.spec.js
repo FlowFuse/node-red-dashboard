@@ -144,9 +144,9 @@ describe('store: ui getters', function () {
     })
 
     describe('tabsByPage', function () {
-        function tabsOf (groups, tabs) {
+        function tabsOf (groups, tabs, untabbedGroups) {
             const state = {
-                pages: { p1: { id: 'p1', layout: 'tabs', tabs } },
+                pages: { p1: { id: 'p1', layout: 'tabs', tabs, untabbedGroups } },
                 groups: Object.fromEntries(groups.map((g) => [g.id, { page: 'p1', visible: true, ...g }]))
             }
             const getters = { groupsByPage: ui.getters.groupsByPage(state) }
@@ -216,6 +216,50 @@ describe('store: ui getters', function () {
                 { id: 'g1', name: 'Loose', order: 1 },
                 { id: 'g2', name: 'B', order: 2, tab: 't1' }
             ], [{ id: 't1', name: 'Tab' }]).map((t) => t.id).should.eql(['t1', 'g1'])
+        })
+
+        it('leaves out untabbed groups when the page renders them above the tabs', function () {
+            tabsOf([
+                { id: 'g1', name: 'Loose', order: 1 },
+                { id: 'g2', name: 'B', order: 2, tab: 't1' }
+            ], [{ id: 't1', name: 'Tab' }], 'above').should.eql([
+                { id: 't1', name: 'Tab', groups: ['g2'] }
+            ])
+        })
+    })
+
+    describe('untabbedGroupsByPage', function () {
+        function untabbedOf (groups, tabs, untabbedGroups) {
+            const state = {
+                pages: { p1: { id: 'p1', layout: 'tabs', tabs, untabbedGroups } },
+                groups: Object.fromEntries(groups.map((g) => [g.id, { page: 'p1', visible: true, ...g }]))
+            }
+            const getters = { groupsByPage: ui.getters.groupsByPage(state) }
+            return ui.getters.untabbedGroupsByPage(state, getters)('p1').map((g) => g.id)
+        }
+
+        it('returns the visible groups without a tab, in group order, when the page renders them above the tabs', function () {
+            untabbedOf([
+                { id: 'g3', name: 'Second', order: 3 },
+                { id: 'g1', name: 'Tabbed', order: 1, tab: 't1' },
+                { id: 'g2', name: 'First', order: 2 },
+                { id: 'g4', name: 'Hidden', order: 4, visible: false },
+                { id: 'g5', name: 'Dialog', order: 5, groupType: 'dialog' },
+                { id: 'g6', name: 'Orphan', order: 6, tab: 'deleted' }
+            ], [{ id: 't1', name: 'Tab' }], 'above').should.eql(['g2', 'g3', 'g6'])
+        })
+
+        it('returns every visible group when the page defines no tabs', function () {
+            untabbedOf([
+                { id: 'g2', name: 'B', order: 2 },
+                { id: 'g1', name: 'A', order: 1 }
+            ], undefined, 'above').should.eql(['g1', 'g2'])
+        })
+
+        it('returns no groups when the page renders them as tabs, the default', function () {
+            const groups = [{ id: 'g1', name: 'Loose', order: 1 }]
+            untabbedOf(groups, [], undefined).should.eql([])
+            untabbedOf(groups, [], 'tabs').should.eql([])
         })
     })
 })
