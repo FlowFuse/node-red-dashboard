@@ -49,6 +49,42 @@ describe('Node-RED Dashboard 2.0 - Notification', () => {
         cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-notify').find('button'))
         cy.get('.nrdb-ui-notification-input input').should('have.value', '')
     })
+
+    it('shows at the configured center position', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-notify').find('button'))
+        cy.get('.nrdb-ui-notification').should(($el) => {
+            const rect = $el[0].getBoundingClientRect()
+            const win = $el[0].ownerDocument.defaultView
+            expect(rect.top).to.be.lessThan(50)
+            expect(win.innerHeight - rect.bottom).to.be.lessThan(50)
+        })
+        cy.get('.nrdb-ui-notification .v-snackbar__wrapper').should(($el) => {
+            const rect = $el[0].getBoundingClientRect()
+            const win = $el[0].ownerDocument.defaultView
+            expect(Math.abs((rect.left + rect.right) / 2 - win.innerWidth / 2)).to.be.lessThan(30)
+            expect(Math.abs((rect.top + rect.bottom) / 2 - win.innerHeight / 2)).to.be.lessThan(50)
+        })
+    })
+})
+
+describe('Node-RED Dashboard 2.0 - Notification at top right', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-notifications', [
+            { mode: 'merge', id: 'dashboard-ui-notification', data: { position: 'top right' } }
+        ])
+        cy.visit('/dashboard/page1')
+        cy.wait(1000)
+    })
+
+    it('shows at the configured top right position', () => {
+        cy.clickAndWait(cy.get('#nrdb-ui-widget-dashboard-ui-button-notify').find('button'))
+        cy.get('.nrdb-ui-notification .v-snackbar__wrapper').should(($el) => {
+            const rect = $el[0].getBoundingClientRect()
+            const win = $el[0].ownerDocument.defaultView
+            expect(win.innerWidth - rect.right).to.be.lessThan(40)
+            expect(rect.top).to.be.lessThan(120)
+        })
+    })
 })
 
 describe('Node-RED Dashboard 2.0 - Notification without input', () => {
