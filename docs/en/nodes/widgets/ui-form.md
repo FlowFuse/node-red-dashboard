@@ -12,7 +12,7 @@ props:
             <ul>
                 <li>Label: A label shown in the form row.</li>
                 <li>Name: The name of the form element, which will be used as the key in the <code>msg.payload</code> object.</li>
-                <li>Type: The type of input to display. Options - <code>text | multiline | password | email | number | checkbox | switch | date | time</code></li>
+                <li>Type: The type of input to display. Options - <code>text | multiline | password | email | number | checkbox | switch | dropdown | multiselect | date | time</code></li>
                 <li>Required: Whether the form element is required to be filled in before the form can be submitted.</li>
         dynamic: true
     Buttons: The text shown on each of the form's buttons. If "cancel" text is left empty, then no cancel button will be shown.
@@ -177,6 +177,18 @@ If you want to override the configuration for your `ui-form`, and provide detail
     "type": "dropdown",
     "label": "Dropdown",
     "key": "selection"
+}
+```
+
+#### Element: Multiple-selection Dropdown
+
+Works like the dropdown element, but allows more than one option to be selected. The value in `msg.payload` is an array of the selected option values (an empty array if nothing is selected). When a `msg.payload` is sent to the form to pre-populate it, a single value is treated as a one-item array. The options are defined in the same way as for a regular dropdown.
+
+```json
+{
+    "type": "multiselect",
+    "label": "Toppings",
+    "key": "toppings"
 }
 ```
 

@@ -149,9 +149,3 @@ Hier ist eine Liste der Drittanbieter-Widgets, von denen wir wissen, um es Ihnen
 - [@omrid01/table-tabulator](https://flows.nodered.org/node/@omrid01/node-red-dashboard-2-table-tabulator): Bietet ein reichhaltiges Tabellen-Widget für das Dashboard, das die beliebte [Tabulator](http://tabulator.info/) JavaScript-Bibliothek erweitert.
 - [@revolutionpi/hmi](https://flows.nodered.org/node/@revolutionpi/node-red-dashboard-2-hmi): Ein anpassbarer runder Button, der nach industriellen HMI-Drucktasten gestaltet ist.
 - [@cgjgh/ui-scheduler](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-scheduler): Ein Planer-Widget für die UI-basierte Zeitplanverwaltung.
-
-### In Entwicklung
-
-Die folgenden sind eine Liste von Knoten, von denen wir wissen, dass sie in aktiver Entwicklung sind, aber noch nicht im Node-RED Palette Manager veröffentlicht wurden.
-
-- [@bartbutenaers/ui-svg](https://github.com/bartbutenaers/node-red-dashboard-2-ui-svg/tree/master): Fügt Ihrem Dashboard ein SVG-Widget hinzu, mit dynamischen Steuerungen über das Plotten und Styling.

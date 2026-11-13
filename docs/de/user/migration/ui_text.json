@@ -24,8 +24,8 @@
         },
         {
             "property": "format",
-            "changes": -1,
-            "notes": "<a href=\"https://github.com/FlowFuse/node-red-dashboard/issues/390\" target=\"_blank\">Problem #390</a>"
+            "changes": -2,
+            "notes": "Formatieren Sie die Ausgabe mit einem JSONata-Ausdruck im Feld Wert. Format-Vorlagen werden nicht unterstützt."
         },
         {
             "property": "layout",

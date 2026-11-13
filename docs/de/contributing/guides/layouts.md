@@ -18,7 +18,7 @@ Die Navigationshierarchie der Dashboard-Benutzeroberfläche ist wie folgt:
 
 `/Layouts/Baseline.vue` definiert die Grundstruktur einer Seite (Header und linke Navigationsleiste). Andere Layouts können dann diese Basis erweitern und definieren, _wie_ die Widgets innerhalb des Standard-`<slot></slot>` der Basis gerendert werden.
 
-Diese Liste von Basislayouts wird wahrscheinlich im Laufe der Zeit wachsen und umfasst derzeit nur eine _sehr_ einfache Startervorlage (Seitenleiste und Header).
+Derzeit gibt es nur ein Basislayout, eine _sehr_ einfache Startervorlage (Seitenleiste und Header).
 
 ## Hinzufügen eines neuen Layout-Managers
 

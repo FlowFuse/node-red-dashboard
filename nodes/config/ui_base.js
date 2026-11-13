@@ -7,7 +7,7 @@ const v = require('../../package.json').version
 const { createClientStore } = require('../store/clients.js')
 const datastore = require('../store/data.js')
 const statestore = require('../store/state.js')
-const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets, hasExtraProps } = require('../utils/index.js')
+const { appendTopic, addConnectionCredentials, matchesClient, normalizeClientId, getThirdPartyWidgets, hasExtraProps, getFlowsUrl } = require('../utils/index.js')
 
 // from: https://stackoverflow.com/a/28592528/3016654
 function join (...paths) {
@@ -561,6 +561,13 @@ module.exports = function (RED) {
             })
         }
 
+        function addWidgetSocketHandler (socket, widget, eventName, handler) {
+            socket._widgetSocketHandlers = socket._widgetSocketHandlers || {}
+            socket._widgetSocketHandlers[widget.id] = socket._widgetSocketHandlers[widget.id] || {}
+            socket._widgetSocketHandlers[widget.id][eventName] = handler.bind(null, socket)
+            socket.on(eventName, socket._widgetSocketHandlers[widget.id][eventName])
+        }
+
         function setupEventHandlers (socket, onConnection) {
             socket.on('widget-send', onSend.bind(null, socket))
             socket.on('widget-action', onAction.bind(null, socket))
@@ -580,9 +587,7 @@ module.exports = function (RED) {
                                 handler(socket)
                             }
                         } else {
-                            widget._onSocketHandlers = widget._onSocketHandlers || {}
-                            widget._onSocketHandlers[eventName] = handler.bind(null, socket)
-                            socket.on(eventName, widget._onSocketHandlers[eventName])
+                            addWidgetSocketHandler(socket, widget, eventName, handler)
                         }
                     }
                     registered.push(widget.type)
@@ -981,7 +986,8 @@ module.exports = function (RED) {
                 }
                 const parent = RED.nodes.getNode(widgetConfig.z)
                 if (parent && parent.TYPE === 'subflow') {
-                    const orderEnv = parent.subflowInstance.env?.find(e => e.key === 'DB2_SF_ORDER')
+                    // sort order set in the editor's layout manager (`key` is the legacy format)
+                    const orderEnv = parent.subflowInstance.env?.find(e => e.name === 'DB2_SF_ORDER' || e.key === 'DB2_SF_ORDER')
                     let order = parseInt(orderEnv?.value)
                     if (isNaN(order)) {
                         order = 0
@@ -1056,6 +1062,19 @@ module.exports = function (RED) {
             // map widgets on a group-by-group basis
             if (widgetNode && widgetConfig && !node.ui.widgets.has(widget.id)) {
                 node.ui.widgets.set(widget.id, widget)
+                if (widget.hooks?.onSocket) {
+                    for (const socket of Object.values(uiShared.connections)) {
+                        if (socket._baseId !== node.id) {
+                            continue
+                        }
+                        for (const [eventName, handler] of Object.entries(widget.hooks.onSocket)) {
+                            // the client is already connected, so firing its connection hook would send a false "connect"
+                            if (eventName !== 'connection') {
+                                addWidgetSocketHandler(socket, widget, eventName, handler)
+                            }
+                        }
+                    }
+                }
             }
 
             /**
@@ -1180,10 +1199,12 @@ module.exports = function (RED) {
                         // loop over events
                         for (const [eventName] of Object.entries(widget.hooks.onSocket)) {
                             // remove the listener for this event
-                            if (widget._onSocketHandlers) {
-                                socket.off(eventName, widget._onSocketHandlers[eventName])
+                            const handler = socket._widgetSocketHandlers?.[widget.id]?.[eventName]
+                            if (handler) {
+                                socket.off(eventName, handler)
                             }
                         }
+                        delete socket._widgetSocketHandlers?.[widget.id]
                     }
                 }
                 node.ui.widgets.delete(widgetNode.id)
@@ -1235,7 +1256,7 @@ module.exports = function (RED) {
                 return res.status(500).json({ error: 'Error processing https settings' })
             }
         }
-        const url = scheme + (`${host}:${port}/${httpAdminRoot}flows`).replace('//', '/')
+        const url = getFlowsUrl(host, port, httpAdminRoot, scheme)
         console.log('url', url)
         // get request body
         const dashboardId = req.params.dashboardId
@@ -1465,5 +1486,26 @@ module.exports = function (RED) {
         baseNode.ui.meta.wysiwyg.page = pageNode.id
 
         return res.status(200).json(editConfig)
+    })
+
+    const deprecatedSizers = {
+        elementSizer: 'ffElementSizer',
+        elementSizerByNum: 'ffElementSizerByNum'
+    }
+    const reportedSizers = new Set()
+    const maxReportedSizers = 100
+    RED.httpAdmin.post('/dashboard/api/v1/deprecated-sizer', RED.auth.needsPermission('flows.read'), function (req, res) {
+        const { name, type } = req.body || {}
+        if (!deprecatedSizers[name]) {
+            return res.sendStatus(400)
+        }
+        const nodeType = typeof type === 'string' ? type : null
+        const key = `${name}:${nodeType}`
+        if (!reportedSizers.has(key) && reportedSizers.size < maxReportedSizers) {
+            reportedSizers.add(key)
+            const usedBy = nodeType ? ` (used by ${JSON.stringify(nodeType)})` : ''
+            RED.log.warn(`[@flowfuse/node-red-dashboard] $.fn.${name} is deprecated and will be removed, use $.fn.${deprecatedSizers[name]} instead${usedBy}`)
+        }
+        res.sendStatus(204)
     })
 }

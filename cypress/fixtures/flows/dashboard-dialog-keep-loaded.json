@@ -1,0 +1,301 @@
+[
+    {
+        "id": "node-red-tab-dialogs",
+        "type": "tab",
+        "label": "Dialogs",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dashboard-ui-button-send-keep",
+        "type": "ui-button",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-controls",
+        "name": "",
+        "label": "Send Keep",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[{\"col\":\"a\"},{\"col\":\"b\"},{\"col\":\"c\"}]",
+        "payloadType": "json",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 40,
+        "wires": [
+            [
+                "dashboard-ui-table-keep"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-send-default",
+        "type": "ui-button",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-controls",
+        "name": "",
+        "label": "Send Default",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "[{\"col\":\"a\"},{\"col\":\"b\"},{\"col\":\"c\"}]",
+        "payloadType": "json",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "dashboard-ui-table-default"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-open-keep",
+        "type": "ui-button",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-controls",
+        "name": "",
+        "label": "Open Keep",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"show\":[\"Dialog Keep\"]}}",
+        "payloadType": "json",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-button-open-default",
+        "type": "ui-button",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-controls",
+        "name": "",
+        "label": "Open Default",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"groups\":{\"show\":[\"Dialog Default\"]}}",
+        "payloadType": "json",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "dashboard-ui-control"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-control",
+        "type": "ui-control",
+        "z": "node-red-tab-dialogs",
+        "name": "",
+        "ui": "dashboard-ui-base",
+        "events": "change",
+        "x": 400,
+        "y": 140,
+        "wires": [
+            [
+                "connect-marker"
+            ]
+        ]
+    },
+    {
+        "id": "connect-marker",
+        "type": "change",
+        "z": "node-red-tab-dialogs",
+        "name": "ui-control change marker",
+        "rules": [
+            {
+                "t": "set",
+                "p": "connectTopic",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-keep",
+        "type": "ui-table",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-dialog-keep",
+        "name": "",
+        "label": "",
+        "action": "replace",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "mobileBreakpoint": 300,
+        "mobileBreakpointType": "px",
+        "x": 400,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-markdown-keep",
+        "type": "ui-markdown",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-dialog-keep",
+        "name": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "content": "```mermaid\ngraph LR\n  Start --> Process --> Finish\n```",
+        "className": "",
+        "x": 400,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-table-default",
+        "type": "ui-table",
+        "z": "node-red-tab-dialogs",
+        "group": "dashboard-ui-group-dialog-default",
+        "name": "",
+        "label": "",
+        "action": "replace",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "x": 400,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dashboard-ui-group-controls",
+        "type": "ui-group",
+        "name": "Controls",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "dashboard-ui-group-dialog-keep",
+        "type": "ui-group",
+        "name": "Dialog Keep",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "dialog",
+        "keepLoaded": true
+    },
+    {
+        "id": "dashboard-ui-group-dialog-default",
+        "type": "ui-group",
+        "name": "Dialog Default",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "dialog"
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-table"
+        ]
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    }
+]

@@ -30,6 +30,9 @@
                 dismissText: { value: c_('label.defaultDismissText') },
                 allowConfirm: { value: false },
                 confirmText: { value: c_('label.defaultConfirmText') },
+                showInput: { value: false },
+                inputType: { value: 'text' },
+                inputLabel: { value: '' },
                 raw: { value: false },
                 className: { value: '' },
                 name: { value: '' }
@@ -63,6 +66,21 @@
                         $('#node-notification-confirmText').show()
                     } else {
                         $('#node-notification-confirmText').hide()
+                    }
+                })
+
+                if (!this.inputType) {
+                    $('#node-input-inputType').val('text')
+                }
+
+                $('#node-input-showInput').on('change', function () {
+                    const showInput = $('#node-input-showInput').is(':checked')
+                    if (showInput) {
+                        $('#node-notification-inputType').show()
+                        $('#node-notification-inputLabel').show()
+                    } else {
+                        $('#node-notification-inputType').hide()
+                        $('#node-notification-inputLabel').hide()
                     }
                 })
 
@@ -139,6 +157,29 @@
     <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-confirmText">
         <label for="node-input-confirmText"><i class="fa fa-check"></i> <span data-i18n="ui-notification.label.confirmText"></span></label>
         <input type="text" id="node-input-confirmText" data-i18n="[placeholder]ui-notification.label.defaultConfirmText">
+    </div>
+    <div class="form-row form-row-flex" id="node-notification-showInput">
+        <input type="checkbox" id="node-input-showInput">
+        <label for="node-input-showInput" data-i18n="ui-notification.label.showInput"></label>
+    </div>
+    <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-inputType">
+        <label for="node-input-inputType"><i class="fa fa-keyboard-o"></i> <span data-i18n="ui-notification.label.inputType"></span></label>
+        <select id="node-input-inputType">
+            <option value="text" data-i18n="ui-notification.option.textInput"></option>
+            <option value="email" data-i18n="ui-notification.option.email"></option>
+            <option value="password" data-i18n="ui-notification.option.password"></option>
+            <option value="number" data-i18n="ui-notification.option.number"></option>
+            <option value="color" data-i18n="ui-notification.option.color"></option>
+            <option value="datetime-local" data-i18n="ui-notification.option.datetime"></option>
+            <option value="date" data-i18n="ui-notification.option.date"></option>
+            <option value="time" data-i18n="ui-notification.option.time"></option>
+            <option value="week" data-i18n="ui-notification.option.week"></option>
+            <option value="month" data-i18n="ui-notification.option.month"></option>
+        </select>
+    </div>
+    <div class="form-row form-row-flex" style="margin-left: 32px;" id="node-notification-inputLabel">
+        <label for="node-input-inputLabel"><i class="fa fa-tag"></i> <span data-i18n="ui-notification.label.inputLabel"></span></label>
+        <input type="text" id="node-input-inputLabel">
     </div>
     <div class="form-row form-row-flex" id="node-toast-raw">
         <input type="checkbox" id="node-input-raw" style="display:inline-block; width:auto; vertical-align:baseline;">

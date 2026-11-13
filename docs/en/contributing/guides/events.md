@@ -165,4 +165,4 @@ Within the `ui-config`, the `widgets` property is an array of `Widget` objects. 
 - **id**: The id assigned by Node-RED to uniquely identify that node in the editor
 - **props**: The collection of properties that the user can define within the Editor for that node
 - **component** - The respective Vue component required for rendering, added front-end (in App.vue)
-- **state** - Contains value defining the visual and interactive "state" of a widget, e.g. `enabled: true` or `visible: false` (`visible: ` not yet supported)
+- **state** - Contains value defining the visual and interactive "state" of a widget, e.g. `enabled: true` or `visible: false`

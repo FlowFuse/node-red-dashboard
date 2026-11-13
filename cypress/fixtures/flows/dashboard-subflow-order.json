@@ -1,0 +1,156 @@
+[
+    {
+        "id": "subflow-order-tab",
+        "type": "tab",
+        "label": "Subflow Order",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "subflow-order-sf",
+        "type": "subflow",
+        "name": "Order Subflow",
+        "info": "",
+        "in": [],
+        "out": [],
+        "env": [
+            {
+                "name": "group",
+                "type": "ui-group",
+                "value": "",
+                "ui": {
+                    "type": "conf-types"
+                }
+            },
+            {
+                "name": "label",
+                "type": "str",
+                "value": ""
+            }
+        ]
+    },
+    {
+        "id": "subflow-order-text",
+        "type": "ui-text",
+        "z": "subflow-order-sf",
+        "group": "${group}",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "${label}",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 200,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "subflow-order-instance-1",
+        "type": "subflow:subflow-order-sf",
+        "z": "subflow-order-tab",
+        "name": "subflow 1",
+        "env": [
+            {
+                "name": "group",
+                "value": "dashboard-ui-group",
+                "type": "conf-type"
+            },
+            {
+                "name": "label",
+                "value": "subflow 1",
+                "type": "str"
+            },
+            {
+                "key": "DB2_SF_ORDER",
+                "value": 1,
+                "type": "str"
+            }
+        ],
+        "x": 120,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "subflow-order-instance-2",
+        "type": "subflow:subflow-order-sf",
+        "z": "subflow-order-tab",
+        "name": "subflow 2",
+        "env": [
+            {
+                "name": "group",
+                "value": "dashboard-ui-group",
+                "type": "conf-type"
+            },
+            {
+                "name": "label",
+                "value": "subflow 2",
+                "type": "str"
+            },
+            {
+                "key": "DB2_SF_ORDER",
+                "value": 2,
+                "type": "str"
+            }
+        ],
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "dashboard-ui-base",
+        "type": "ui-base",
+        "name": "UI Name",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ]
+    },
+    {
+        "id": "dashboard-ui-page-1",
+        "type": "ui-page",
+        "name": "Page 1",
+        "ui": "dashboard-ui-base",
+        "path": "/page1",
+        "icon": "",
+        "layout": "grid",
+        "theme": "dashboard-ui-theme",
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": false
+    },
+    {
+        "id": "dashboard-ui-theme",
+        "type": "ui-theme",
+        "name": "Theme Name",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        }
+    },
+    {
+        "id": "dashboard-ui-group",
+        "type": "ui-group",
+        "name": "Group 1",
+        "page": "dashboard-ui-page-1",
+        "width": "6",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    }
+]

@@ -130,7 +130,17 @@ export default {
                 this.selectedTab = tabs.some((t) => t.id === this.tab) ? this.tab : tabs[0].id
             }
             this.tab = this.selectedTab
+        },
+        selectedTab (id) {
+            const index = this.tabs.findIndex((t) => t.id === id)
+            if (index === -1) {
+                return
+            }
+            this.$store.commit('ui/selectedTab', { pageId: this.$route.meta.id, index, id, name: this.tabs[index].name })
         }
+    },
+    beforeUnmount () {
+        this.$store.commit('ui/selectedTab', null)
     },
     methods: {
         getWidgetClass (widget) {
