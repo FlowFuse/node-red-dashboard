@@ -450,6 +450,23 @@ describe('store: reactive data store', function () {
             store.robot.temp.should.equal(25)
         })
 
+        it('returns false rather than throwing when a flow deletes an array length', function () {
+            const { store } = makeStore()
+            store.list = [1, 2]
+
+            ;(delete store.list.length).should.equal(false)
+            store.list.should.eql([1, 2])
+        })
+
+        it('ignores rather than throws when a flow adds to an object it froze', function () {
+            const { store } = makeStore()
+            store.cfg = { a: 1 }
+            Object.freeze(store.cfg)
+
+            store.cfg.b = 2
+            store.cfg.should.eql({ a: 1 })
+        })
+
         it('fires on array push, deep item mutation, and clear', function () {
             const { store, log } = makeStore()
             store.series = []
