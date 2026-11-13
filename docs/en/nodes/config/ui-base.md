@@ -6,6 +6,7 @@ props:
     Include Page Path in Label: The side navigation lists all available Pages for the Dashboard. By default, this will just show the page name, but this option allows you to also show the page's path.
     Side Navigation Style: The style the side navigation menu should use (default, fixed, icon, temporary, none)
     Notification Display Time: Number of seconds the "Connected" notification is shown after the Dashboard reconnects. Set to 0 to keep it open until dismissed.
+    Allow Debug View: Makes the built-in Debug View available at `/dashboard/_debug`. Off by default for new Dashboards.
 ---
 
 <script setup>
@@ -44,6 +45,17 @@ _Example of how the 'App Icon' appears when installed onto an iPhone_
 It is possible to install any FlowFuse Dashboard applications as a Progressive Web App onto a desktop or mobile device, giving the appearance and user-experience of a native mobile application. You can read more about that functionality [here](../../user/pwa.md).
 
 The "Allow Install" option provides the capability to enable/disable the option to "Install" your Dashboard as an application. If you are using FlowFuse authentication, this is not recommended, as the PWA workers cache content separate from authentication sessions.
+
+## Allow Debug View <AddedIn version="1.37.0" />
+
+FlowFuse Dashboard includes a [Debug View](../../contributing/widgets/debugging.md), available at `/dashboard/_debug`, that shows the configuration, message history and dynamic properties of every page, group and widget in your Dashboard.
+
+As this exposes the inner workings of your Dashboard to anyone who can open it, the "Allow Debug View" option controls whether it is available:
+
+- **Enabled:** The Debug View can be opened at `/dashboard/_debug`.
+- **Disabled:** `/dashboard/_debug` redirects to the Dashboard's first page, like any other unknown path, and the data the Debug View loads from Node-RED is no longer served.
+
+The option is disabled by default for new Dashboards. Dashboards created before the option existed keep the Debug View enabled until it is turned off.
 
 ## Header Style Options <AddedIn version="1.10.0" />
 

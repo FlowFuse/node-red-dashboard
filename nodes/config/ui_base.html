@@ -462,6 +462,9 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             },
             allowInstall: {
                 value: false
+            },
+            allowDebugView: {
+                value: false
             }
         },
         label: function () {
@@ -515,6 +518,11 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
             if (typeof this.allowInstall === 'undefined') {
                 this.allowInstall = true
                 $('#node-config-input-allowInstall').prop('checked', true)
+            }
+            // backward compatibility for the debug view, which was always available before this option existed
+            if (typeof this.allowDebugView === 'undefined') {
+                this.allowDebugView = true
+                $('#node-config-input-allowDebugView').prop('checked', true)
             }
         },
         onpaletteadd: function () {
@@ -2897,5 +2905,12 @@ async function showDashboardWysiwygEditor (pageId, baseId) {
     <div class="form-row form-row-flex" style="align-items: center;">
         <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-showDisconnectNotification">
         <label style="width:auto" for="node-config-input-showDisconnectNotification"><span data-i18n="ui-base.label.showDisconnect"></span></label>
+    </div>
+    <div class="form-row" style="margin-bottom: 0;">
+        <label style="font-weight: 600; width: auto;" data-i18n="ui-base.label.debugging"></label>
+    </div>
+    <div class="form-row form-row-flex" style="align-items: center;">
+        <input style="margin: 8px 0 10px 16px; width:20px;" type="checkbox" id="node-config-input-allowDebugView">
+        <label style="width:auto" for="node-config-input-allowDebugView"><span data-i18n="ui-base.label.allowDebugView"></span></label>
     </div>
 </script>

@@ -48,7 +48,9 @@
             "myGroup": "My Group",
             "empty": "empty",
             "allowInstall": "Allow App Installation",
-            "installation": "Installation Options"
+            "installation": "Installation Options",
+            "debugging": "Debug Options",
+            "allowDebugView": "Allow Debug View"
 
         },
         "layout": {
