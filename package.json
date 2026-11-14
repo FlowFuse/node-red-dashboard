@@ -25,6 +25,7 @@
             "url": "https://github.com/n-lark"
         }
     ],
+    "type": "module",
     "files": [
         "dist/*",
         "nodes/*",
