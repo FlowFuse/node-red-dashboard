@@ -42,7 +42,7 @@
 
         <dt>Properties <span class="property-type">string</span></dt>
         <dd>
-            <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array, which will plot multiple data points from a single msg object.</p>
+            <p><b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots. You can also provide a JSON array of keys, which will plot multiple data points from a single msg object, or a JSON object that maps each key to the label to show for its series, e.g. <code>{"temp": "Temperature"}</code>.</p>
             <p><b>X:</b> Defines which data to use when rendering the x-value of any data point.</p>
             <p><b>Y:</b> Defines how to render the y-value of any data point.</p>
         </dd>

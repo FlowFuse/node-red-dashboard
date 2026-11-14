@@ -53,6 +53,23 @@ module.exports = function (RED) {
         }
 
         /**
+         * A JSON series can be an array of keys, e.g. ["temp", "humidity"], or an object
+         * that maps each key to the label to show for that series, e.g. { "temp": "Temperature" }
+         */
+        function isSeriesMap (series) {
+            return series !== null && typeof series === 'object' && !Array.isArray(series)
+        }
+
+        function getSeriesLabel (series, key) {
+            const label = series[key]
+            if ((typeof label === 'string' && label !== '') || typeof label === 'number') {
+                return String(label)
+            }
+            // no usable label provided, fall back to the key itself
+            return key
+        }
+
+        /**
          * Given the config of the chart, clear "old" data points
          */
         function clearOldPoints () {
@@ -147,9 +164,13 @@ module.exports = function (RED) {
                     if (config.categoryType === 'json') {
                         // we can produce multiple datapoints from a single object/value here
                         const points = []
-                        series.forEach((s) => {
-                            if (hasProperty(p, s)) {
-                                const datapoint = addToChart(p, s)
+                        const keys = isSeriesMap(series) ? Object.keys(series) : series
+                        keys.forEach((key) => {
+                            if (hasProperty(p, key)) {
+                                const datapoint = addToChart(p, key)
+                                if (isSeriesMap(series)) {
+                                    datapoint.category = getSeriesLabel(series, key)
+                                }
                                 points.push(datapoint)
                             }
                         })
@@ -182,8 +203,15 @@ module.exports = function (RED) {
                 // function to process a data point being appended to a line/scatter chart
                 function addToChart (payload, series) {
                     const datapoint = {}
+                    // the key(s) used to read y-values from the payload
+                    let keys = series
                     // we group/categorize data by "series"
                     datapoint.category = series
+                    if (isSeriesMap(series)) {
+                        // read values using the keys, but group them by their labels
+                        keys = Object.keys(series)
+                        datapoint.category = keys.map((key) => getSeriesLabel(series, key))
+                    }
 
                     // construct our datapoint
                     if (typeof payload === 'number' || typeof payload === 'string') {
@@ -207,10 +235,10 @@ module.exports = function (RED) {
                             // evaluate the x-axis property
                             x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         }
-                        if (Array.isArray(series)) {
+                        if (Array.isArray(keys)) {
                             // if the series is an array then y should be an array too, even if only of length 1
-                            y = series.map((s) => {
-                                return getProperty(payload, s)
+                            y = keys.map((key) => {
+                                return getProperty(payload, key)
                             })
                         } else {
                             if (config.categoryType === 'json') {
