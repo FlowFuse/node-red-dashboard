@@ -48,6 +48,7 @@
 <script>
 
 import UITableCell from './UITableCell.vue'
+import { mergeRows } from './helpers/rows.helper.js'
 
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
@@ -173,7 +174,17 @@ export default {
         onMsgInput (msg) {
             const value = this.formatPayload(msg?.payload)
             if (this.props.action === 'append') {
-                this.localData = value && value?.length > 0 ? [...this.localData || [], ...value] : value
+                if (value && value?.length > 0) {
+                    // rows updated via the unique key keep their position, so a clicked
+                    // row stays selected when it is replaced by an updated version
+                    const selectedIndex = this.selected ? (this.localData || []).indexOf(this.selected) : -1
+                    this.localData = mergeRows(this.localData, value, this.props.uniqueKey)
+                    if (selectedIndex >= 0) {
+                        this.selected = this.localData[selectedIndex]
+                    }
+                } else {
+                    this.localData = value
+                }
             } else {
                 // Deselect all selected rows when the table is filled with new rows, but only when
                 // that behaviour is explicit required (or when not specified for older nodes)

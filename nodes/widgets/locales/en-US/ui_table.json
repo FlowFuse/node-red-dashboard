@@ -24,6 +24,8 @@
             "action": "Action",
             "append": "Append",
             "replace": "Replace",
+            "uniqueKey": "Unique Key",
+            "uniqueKeyPlaceholder": "optional, e.g. id",
             "deselect": "Deselect",
             "deselectRows": "Deselect all rows when the table is filled",
             "className": "Class",
