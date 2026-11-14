@@ -115,6 +115,19 @@ module.exports = function(RED) {
                 }
             },
             /**
+             * onEmitConfig - called when the UI configuration is about to be sent to a client
+             * @param {object} socket - SocketIO connection object to the client
+             * @param {object} config - The UI configuration object that will be sent
+             * @param {object} msg - A msg object, populated with connection credentials by `addConnectionCredentials`
+             * @returns {object} - The (potentially modified) UI configuration object
+             */
+            onEmitConfig: (socket, config, msg) => {
+                // modify config in any way you like
+                // e.g. config.myCustomProperty = "Hello World"
+                // You can also use data from msg, e.g. msg._client.socketIp
+                return config
+            },
+            /**
              * onInput - called when a node receives a message
              * @param {object} msg - Node-RED msg object
              * @returns {object} - Returns Node-RED msg object
