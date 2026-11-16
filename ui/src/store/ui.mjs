@@ -106,7 +106,12 @@ const getters = {
                     return a.order - b.order
                 })
             const pageTabs = state.pages?.[pageId]?.tabs || []
+            // tabs hidden with ui-control
+            const hiddenTabs = state.pages?.[pageId]?.hiddenTabs || []
             const tabs = pageTabs
+                .filter((t) => {
+                    return !hiddenTabs.includes(t.id)
+                })
                 .map((t) => {
                     return { id: t.id, name: t.name, groups: groupsOnPage.filter((g) => g.tab === t.id) }
                 })
