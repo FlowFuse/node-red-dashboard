@@ -467,6 +467,14 @@ describe('store: reactive data store', function () {
             store.cfg.should.eql({ a: 1 })
         })
 
+        it('ignores rather than throws when a flow adds a key to a store it made non-extensible', function () {
+            const { store } = makeStore()
+            Object.preventExtensions(store)
+
+            store.added = 1
+            ;('added' in store).should.equal(false)
+        })
+
         it('fires on array push, deep item mutation, and clear', function () {
             const { store, log } = makeStore()
             store.series = []

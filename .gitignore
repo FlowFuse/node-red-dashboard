@@ -153,6 +153,10 @@ docs/.vitepress/cache/
 /resources/vue-editor/vuetify.json
 
 # Compiled from nodes/**/*.ts
+/nodes/store/clients.js
+/nodes/store/data.js
+/nodes/store/reactive.js
 /nodes/store/series.js
+/nodes/store/state.js
 /nodes/store/types.js
 /nodes/store/utils.js
