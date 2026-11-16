@@ -27,6 +27,15 @@ module.exports = function (RED) {
                             // dynamically set "allowDismiss" property
                             statestore.set(ui, node, msg, 'allowDismiss', updates.allowDismiss)
                         }
+                        if (typeof updates.showInput !== 'undefined') {
+                            statestore.set(ui, node, msg, 'showInput', updates.showInput)
+                        }
+                        if (typeof updates.inputType !== 'undefined') {
+                            statestore.set(ui, node, msg, 'inputType', updates.inputType)
+                        }
+                        if (typeof updates.inputLabel !== 'undefined') {
+                            statestore.set(ui, node, msg, 'inputLabel', updates.inputLabel)
+                        }
                         if (typeof updates.color !== 'undefined') {
                             // dynamically set "color" property
                             statestore.set(ui, node, msg, 'color', updates.color)
