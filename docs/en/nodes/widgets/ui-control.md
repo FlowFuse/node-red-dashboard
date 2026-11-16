@@ -172,7 +172,7 @@ msg.payload = {
 ```
 _Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups` can also be subbed with `group` as per Node-RED Dashboard.
 
-#### Show/Hide Tabs <AddedIn version="1.37.0" />
+#### Show/Hide Tabs <AddedIn version="1.38.0" />
 
 On a page using the [Tabs](../../layouts/types/tabs.md) layout, you can show or hide the tabs defined on the page. Because `tabs` is already an alias for `pages`, tabs use the `pageTabs` key:
 
