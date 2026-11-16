@@ -124,7 +124,7 @@ msg.payload = {
 
 _Hinweis:_ `pages` kann wie im Dashboard 1.0 durch `tabs` ersetzt werden und `groups` kann auch wie im Dashboard 1.0 durch `group` ersetzt werden.
 
-#### Tabs anzeigen/ausblenden <AddedIn version="1.37.0" />
+#### Tabs anzeigen/ausblenden <AddedIn version="1.38.0" />
 
 Auf einer Seite mit dem [Tabs](../../layouts/types/tabs.md)-Layout können Sie die auf der Seite definierten Tabs anzeigen oder ausblenden. Da `tabs` bereits ein Alias für `pages` ist, verwenden Tabs den Schlüssel `pageTabs`:
 
