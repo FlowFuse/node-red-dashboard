@@ -21,6 +21,12 @@
         <dd>Ob eine Schaltfläche angezeigt werden soll, mit der der Benutzer die Benachrichtigung bestätigen kann.</dd>
         <dt>Rohdaten akzeptieren <span class="property-type">boolean</span></dt>
         <dd>Ob Sie rohes HTML übergeben, das clientseitig verarbeitet werden soll.</dd>
+        <dt>Eingabefeld anzeigen <span class="property-type">boolean</span></dt>
+        <dd>Ob ein Eingabefeld angezeigt werden soll. Bei Bestätigung wird der eingegebene Wert als <code>msg.payload</code> gesendet.</dd>
+        <dt>Eingabetyp <span class="property-type">string</span></dt>
+        <dd>Der HTML-Eingabetyp des Feldes, z. B. <code>text</code>, <code>number</code>, <code>email</code>.</dd>
+        <dt>Eingabebeschriftung <span class="property-type">string</span></dt>
+        <dd>Optionale Beschriftung des Eingabefeldes.</dd>
     </dl>
     <h3>Dynamische Eigenschaften (Eingaben)</h3>
     <p>Jede der folgenden Eigenschaften kann an ein <code>msg.ui_update</code> angehängt werden, um Eigenschaften dieses Knotens zur Laufzeit zu überschreiben oder festzulegen.</p>
@@ -74,5 +80,17 @@
     <dl class="message-properties">
         <dt class="optional">showCountdown<span class="property-type">boolean</span></dt>
         <dd>Ob eine abnehmende Fortschrittsleiste angezeigt werden soll, um die verbleibende Zeit anzuzeigen.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">showInput<span class="property-type">boolean</span></dt>
+        <dd>Ob ein Eingabefeld angezeigt werden soll.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">inputType<span class="property-type">string</span></dt>
+        <dd>Der HTML-Eingabetyp des Feldes.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">inputLabel<span class="property-type">string</span></dt>
+        <dd>Die Beschriftung des Eingabefeldes.</dd>
     </dl>
 </script>
