@@ -24,6 +24,6 @@ If you want to link to external resources from your Dashboard, you can do so wit
 
 To add a link to your Dashboard, you can use the Dashboard 2.0 side panel in the Node-RED editor. Click the `+ Link` button to add a new item to the list. You can then configure the link with the relevant properties.
 
-## Opening Links in a New Tab <AddedIn version="1.37.0" />
+## Opening Links in a New Tab <AddedIn version="1.38.0" />
 
 By default, selecting a link replaces the Dashboard with the linked page in the same browser tab. Set the "Open In" property to "New tab" to open the link in a new browser tab instead, so the Dashboard stays open.
