@@ -21,7 +21,7 @@ You can also drag groups between tabs, and reorder tabs, in the Dashboard 2.0 si
 
 Groups in the same tab render side-by-side with their titles, as in the [Grid](./grid.md) layout. Any group without a tab still gets a tab of its own, placed after the page's tabs.
 
-To hide a tab, hide all of its groups with `ui-control`.
+To show or hide a tab, use [`pageTabs`](../../nodes/widgets/ui-control.md#show-hide-tabs) with `ui-control`.
 
 To react when a user changes tab, use the [`tab` event](../../nodes/widgets/ui-control.md#tab-change) from `ui-control`.
 

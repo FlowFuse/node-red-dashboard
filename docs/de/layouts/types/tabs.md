@@ -12,6 +12,8 @@ Anstatt jede Gruppe nebeneinander (wie bei festen und Rasterlayouts) oder übere
 ![Tabs Layout](../../../assets/images/layout-tabs.gif){data-zoomable}
 *Eine Beispiel-Benutzeroberfläche, die mit dem "Tabs"-Layout gerendert wurde, wobei jede "Gruppe" als Tab angezeigt wird.*
 
+Um einen Tab anzuzeigen oder auszublenden, verwenden Sie [`pageTabs`](../../nodes/widgets/ui-control.md#tabs-anzeigen-ausblenden) mit `ui-control`.
+
 Um auf einen Tab-Wechsel zu reagieren, verwenden Sie das [`tab`-Ereignis](../../nodes/widgets/ui-control.md#tab-wechsel) von `ui-control`.
 
 Beachten Sie, dass es derzeit nicht möglich ist, zu einer Seite mit einem bestimmten geöffneten Tab zu navigieren. Die Seite wird immer mit dem ersten ausgewählten Tab geöffnet.
