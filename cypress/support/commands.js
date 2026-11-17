@@ -112,6 +112,9 @@ Cypress.Commands.add('deployFixture', (fixture, overrides) => {
             console.log(flows)
             return deployFlow(rev, flows)
         })
+    // ui-base re-emits ui-config 300ms after a deploy, which re-mounts any page loaded before then
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
 })
 
 Cypress.Commands.add('resetContext', () => {
