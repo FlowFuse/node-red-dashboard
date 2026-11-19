@@ -16,7 +16,7 @@ Um auf einen Tab-Wechsel zu reagieren, verwenden Sie das [`tab`-Ereignis](../../
 
 Beachten Sie, dass es derzeit nicht möglich ist, zu einer Seite mit einem bestimmten geöffneten Tab zu navigieren. Die Seite wird immer mit dem ersten ausgewählten Tab geöffnet.
 
-## Gruppen über den Tabs <AddedIn version="1.37.0" />
+## Gruppen über den Tabs <AddedIn version="1.38.0" />
 
 Um einige Gruppen unabhängig vom ausgewählten Tab sichtbar zu halten, z. B. eine Kopfzeile mit Status oder Bedienelementen:
 
