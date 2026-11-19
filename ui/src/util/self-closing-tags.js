@@ -45,12 +45,25 @@ function expandSelfClosingTags (html) {
         // scan to the end of the start tag, skipping quoted attribute values
         let j = lt + nameMatch[0].length
         let quote = null
+        // true while inside an unquoted attribute value (`href=/foo/`), where a trailing `/` belongs to the value
+        let unquoted = false
+        let afterEquals = false
         while (j < len) {
             const c = html[j]
             if (quote) {
                 if (c === quote) quote = null
-            } else if (c === '"' || c === "'") {
-                quote = c
+            } else if (unquoted) {
+                if (/\s/.test(c)) unquoted = false
+                else if (c === '>') break
+            } else if (afterEquals && /\s/.test(c)) {
+                // whitespace between `=` and the value
+            } else if (afterEquals) {
+                afterEquals = false
+                if (c === '"' || c === "'") quote = c
+                else if (c === '>') break
+                else unquoted = true
+            } else if (c === '=') {
+                afterEquals = true
             } else if (c === '>') {
                 break
             }
@@ -63,7 +76,7 @@ function expandSelfClosingTags (html) {
         }
         const tag = html.slice(lt, j + 1)
         const lower = name.toLowerCase()
-        const selfClosed = html[j - 1] === '/' && !VOID_ELEMENTS.has(lower)
+        const selfClosed = html[j - 1] === '/' && !unquoted && !VOID_ELEMENTS.has(lower)
         if (selfClosed) {
             out += tag.slice(0, -2) + '></' + name + '>'
             i = j + 1
@@ -71,7 +84,7 @@ function expandSelfClosingTags (html) {
         }
         out += tag
         i = j + 1
-        if (RAW_TEXT_ELEMENTS.has(lower) && html[j - 1] !== '/') {
+        if (RAW_TEXT_ELEMENTS.has(lower) && !selfClosed) {
             const close = new RegExp('</' + lower + '[\\s/>]', 'i')
             const m = close.exec(html.slice(i))
             const stop = m ? i + m.index : len

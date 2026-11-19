@@ -25,6 +25,14 @@ describe('expandSelfClosingTags', function () {
         expandSelfClosingTags(src2).should.equal(src2)
     })
 
+    it('does not treat a trailing "/" of an unquoted attribute value as self-closing', function () {
+        const src = '<a href=/foo/>link</a>'
+        expandSelfClosingTags(src).should.equal(src)
+        const src2 = '<a href = /foo/ >link</a>'
+        expandSelfClosingTags(src2).should.equal(src2)
+        expandSelfClosingTags('<v-btn label=ok />').should.equal('<v-btn label=ok ></v-btn>')
+    })
+
     it('does not touch comments, scripts or styles', function () {
         const src = '<!-- <v-btn /> --><script>const a = "<x />"</script><style>a::after{content:"<y />"}</style>'
         expandSelfClosingTags(src).should.equal(src)
