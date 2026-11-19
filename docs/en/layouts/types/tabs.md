@@ -27,7 +27,7 @@ To react when a user changes tab, use the [`tab` event](../../nodes/widgets/ui-c
 
 Note that it's not currently possible to navigate to a page with a a particular tab open. The page will always open with the first tab selected.
 
-## Groups Above the Tabs <AddedIn version="1.37.0" />
+## Groups Above the Tabs <AddedIn version="1.38.0" />
 
 To keep some groups visible whichever tab is selected, e.g. a header with status or controls:
 
