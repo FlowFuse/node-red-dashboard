@@ -2,6 +2,7 @@
 
 import { h } from 'vue'
 
+import { expandSelfClosingTags } from '../../util/self-closing-tags.js'
 import VueParser from '../../util/vue.acorn.js'
 
 import { mapState } from 'vuex' // eslint-disable-line import/order
@@ -58,7 +59,7 @@ export default {
         },
         parseCustomTemplate () {
             const parser = new DOMParser()
-            const htmlDoc = parser.parseFromString(this.getProperty('format'), 'text/html')
+            const htmlDoc = parser.parseFromString(expandSelfClosingTags(this.getProperty('format')), 'text/html')
 
             // Check whether the user has specified a fully defined Vue component, or _just_ raw HTML
             // take the markup, not the element: the parsed document would otherwise be retained for as
