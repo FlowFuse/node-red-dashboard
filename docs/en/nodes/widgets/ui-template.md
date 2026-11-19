@@ -57,6 +57,24 @@ UI Template will parse different tags and render them into Dashboard. The availa
 - `<script>` - Any JavaScript code in here will be executed when the widget is loaded. You can also [define a full VueJS component](#building-full-vue-components) here.
 - `<style>` - Any CSS code in here will be injected into the Dashboard.
 
+::: warning
+Styles are injected into the `<head>` of the Dashboard page and apply globally, not just to this widget. The `scoped` attribute (`<style scoped>`) is ignored. To avoid affecting other widgets, give your elements a unique class name or id and prefix your CSS selectors with it.
+:::
+
+For example, to namespace your classes:
+
+```html
+<template>
+    <div class="my-widget">
+        <div class="band">Hello</div>
+    </div>
+</template>
+
+<style>
+.my-widget .band { background: lightblue; }
+</style>
+```
+
 ### Working with Variables
 
 Any variables that you want to render into your `<template />` are done so in one of two ways:
