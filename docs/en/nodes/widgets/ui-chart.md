@@ -212,6 +212,17 @@ You can group data together into multiple lines using the `Series` property. A c
 
 If you want a single piece of data to plot multiple lines, you can set the `Series` property to `JSON`, and then provide an array of keys (e.g. `["key1", "key2"]`), which will plot a data point for each key provided, from a single data point.
 
+By default, each series is named after its key. If your keys aren't very readable, you can provide an object instead of an array, where each key is mapped to the label you want to show for that series, for example:
+
+```json
+{
+    "temp": "Temperature",
+    "sensor.humidity": "Humidity"
+}
+```
+
+This will plot `temp` as a series named "Temperature", and the nested value `sensor.humidity` as a series named "Humidity". If a key is mapped to an empty value, the key itself is used as the series name.
+
 
 ### Scatter Charts
 
