@@ -8,6 +8,8 @@ Dashboard 2.0 verfügt über ein integriertes Debugging-Tool, um die für jedes 
 
 Um zu den Tools zu gelangen, gehen Sie zu `<Ihr-Host>:<Ihr-Port>/dashboard/_debug`.
 
+Die Debug-Ansicht ist nur verfügbar, wenn die Option "Debug-Ansicht erlauben" in den `ui-base`-Einstellungen Ihres Dashboards aktiviert ist. Für neue Dashboards ist sie standardmäßig deaktiviert.
+
 ![Debugging-Tool](/images/debug-example.png "Debugging-Tool"){data-zoomable}
 _Screenshot des Dashboard 2.0 Debugging-Tools_
 

@@ -1,6 +1,8 @@
 /* eslint-disable no-template-curly-in-string */
+const http = require('http')
+
 const helper = require('node-red-node-test-helper')
-const should = require('should') // eslint-disable-line no-unused-vars
+const should = require('should')
 
 // load test 1 standard test data (base, page, group, theme) plus a text widget
 const { testData1 } = require('../fixtures/index.js')
@@ -83,6 +85,75 @@ describe('ui-base config node', function () {
                 }
             }
             orders.should.deepEqual({ 'named order': 2, 'legacy order': 1, 'no order': 0 })
+        })
+    })
+
+    describe('debug view endpoints', function () {
+        const textWidget = { id: 'debug-view-text', type: 'ui-text', z: 'tab-id', group: 'config-ui-group', name: '', label: 'Text', format: '{{msg.payload}}', layout: 'row-spread', wires: [] }
+        const datastoreEndpoint = `/ui/_debug/datastore/${textWidget.id}`
+        const statestoreEndpoint = `/ui/_debug/statestore/${textWidget.id}`
+
+        function flowWithDebugView (allowDebugView) {
+            const flow = JSON.parse(JSON.stringify([{ id: 'tab-id', type: 'tab', label: 'Flow 1' }, textWidget, ...testFlow1]))
+            if (allowDebugView !== undefined) {
+                flow.find(n => n.id === 'config-ui-base').allowDebugView = allowDebugView
+            }
+            return flow
+        }
+
+        // the dashboard is served by Node-RED's httpNode app, not the httpAdmin app that helper.request() targets
+        function get (path) {
+            const app = helper.getNode('config-ui-base').uiShared.app
+            return new Promise((resolve, reject) => {
+                const server = http.createServer(app).listen(0, '127.0.0.1', () => {
+                    http.get({ host: '127.0.0.1', port: server.address().port, path }, (res) => {
+                        let data = ''
+                        res.on('data', (chunk) => { data += chunk })
+                        res.on('end', () => {
+                            server.close()
+                            resolve({ status: res.statusCode, body: res.statusCode === 200 && data ? JSON.parse(data) : undefined })
+                        })
+                    }).on('error', (err) => {
+                        server.close()
+                        reject(err)
+                    })
+                })
+            })
+        }
+
+        it('should serve the debug endpoints for dashboards created before the option existed', async function () {
+            await helper.load(nodeImports, flowWithDebugView())
+            const base = helper.getNode('config-ui-base')
+            base.ui.dashboards.get('config-ui-base').should.have.property('allowDebugView', true)
+            base.stores.data.save(base, helper.getNode(textWidget.id), { payload: 'hello' })
+
+            const datastore = await get(datastoreEndpoint)
+            datastore.should.have.property('status', 200)
+            datastore.body.should.have.property('payload', 'hello')
+            should(await get(statestoreEndpoint)).have.property('status', 200)
+        })
+
+        it('should serve the debug endpoints when the Debug View is allowed', async function () {
+            await helper.load(nodeImports, flowWithDebugView(true))
+            should(await get(datastoreEndpoint)).have.property('status', 200)
+            should(await get(statestoreEndpoint)).have.property('status', 200)
+        })
+
+        it('should not serve the debug endpoints when the Debug View is not allowed', async function () {
+            await helper.load(nodeImports, flowWithDebugView(false))
+            should(await get(datastoreEndpoint)).have.property('status', 404)
+            should(await get(statestoreEndpoint)).have.property('status', 404)
+        })
+
+        it('should follow the option when the ui-base is redeployed', async function () {
+            await helper.load(nodeImports, flowWithDebugView(true))
+            should(await get(datastoreEndpoint)).have.property('status', 200)
+
+            await helper.setFlows(flowWithDebugView(false), 'nodes')
+            should(await get(datastoreEndpoint)).have.property('status', 404)
+
+            await helper.setFlows(flowWithDebugView(true), 'nodes')
+            should(await get(datastoreEndpoint)).have.property('status', 200)
         })
     })
 

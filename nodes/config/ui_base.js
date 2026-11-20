@@ -99,6 +99,10 @@ module.exports = function (RED) {
             config.allowInstall = true
         }
 
+        if (!('allowDebugView' in config)) {
+            config.allowDebugView = true
+        }
+
         // The headerContent replaces the old (boolean) showPageTitle
         if (!('headerContent' in config)) {
             const showPageTitle = ('showPageTitle' in config) ? config.showPageTitle : true
@@ -113,6 +117,9 @@ module.exports = function (RED) {
         // expose these properties at runtime
         node.acceptsClientConfig = config.acceptsClientConfig // which node types can be scoped to a specific client
         node.includeClientData = config.includeClientData // whether to include client data in msg payloads
+
+        // the routes below are only registered once, so they read this setting on each request to follow re-deploys
+        uiShared.allowDebugView = config.allowDebugView
 
         // eventually check if we have routes used, so we can support multiple base UIs
         if (!uiShared.app) {
@@ -200,12 +207,19 @@ module.exports = function (RED) {
                 return res.json(resp)
             })
 
-            // debugging endpoints
-            uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, (req, res) => {
+            // debugging endpoints, only available when the Debug View is allowed
+            const debugViewMiddleware = (req, res, next) => {
+                if (!uiShared.allowDebugView) {
+                    return res.sendStatus(404)
+                }
+                next()
+            }
+
+            uiShared.app.get(config.path + '/_debug/datastore/:itemid', uiShared.httpMiddleware, debugViewMiddleware, (req, res) => {
                 return res.json(datastore.get(req.params.itemid))
             })
 
-            uiShared.app.get(config.path + '/_debug/statestore/:itemid', uiShared.httpMiddleware, (req, res) => {
+            uiShared.app.get(config.path + '/_debug/statestore/:itemid', uiShared.httpMiddleware, debugViewMiddleware, (req, res) => {
                 return res.json(statestore.getAll(req.params.itemid))
             })
 

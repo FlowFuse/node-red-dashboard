@@ -46,7 +46,9 @@
             "notificationDisplayTime": "Anzeigedauer der Benachrichtigung (Sekunden)",
             "myDashboard": "Mein Dashboard",
             "myGroup": "Meine Gruppe",
-            "empty": "leer"
+            "empty": "leer",
+            "debugging": "Debug-Optionen",
+            "allowDebugView": "Debug-Ansicht erlauben"
         },
         "layout": {
             "pages": "Seiten",
