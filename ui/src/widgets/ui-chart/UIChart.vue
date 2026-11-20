@@ -361,6 +361,17 @@ export default {
                     // Default y-max when no data is present
                     options.yAxis.max = 1
                 }
+                // Apply x-axis limits (only supported for a linear x-axis)
+                if (this.props.xAxisType === 'linear') {
+                    const xmin = parseFloat(this.props.xmin)
+                    const xmax = parseFloat(this.props.xmax)
+                    if (!isNaN(xmin)) {
+                        options.xAxis.min = xmin
+                    }
+                    if (!isNaN(xmax)) {
+                        options.xAxis.max = xmax
+                    }
+                }
                 // ensure that vertical grid lines correspond to data points in a line chart of type category
                 if (this.chartType === 'line' && this.props.xAxisType === 'category') {
                     options.xAxis.boundaryGap = false

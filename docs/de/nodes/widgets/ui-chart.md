@@ -17,6 +17,7 @@ props:
         Definiert, wie die Werte auf der Achse angezeigt werden, wenn der X-Achsentyp <code>'Zeitachse'</code> ist.
         Siehe <a target="_blank" href="https://moment.github.io/luxon/#/formatting?id=table-of-tokens">hier</a> für eine Übersicht über alle verfügbaren Luxon-Token.
     X-Achsenlimit: Alle Daten, die vor dem spezifischen Zeitlimit (für Zeitdiagramme) liegen oder bei denen es mehr Datenpunkte als das angegebene Limit gibt, werden aus dem Diagramm entfernt.
+    X-Achse Min/Max: Optionale feste Unter- und Obergrenze der x-Achse, verfügbar wenn der X-Achsentyp <code>Linear</code> ist. Lassen Sie einen Wert leer, damit sich dieses Ende der Achse an die Daten anpasst.
     Eigenschaften:
         <b>Serien:</b> Steuert, wie Sie die Datenströme in dieses Widget einfügen möchten. Der Standard ist <code>msg.topic</code>, wobei separate Themen in ihren jeweiligen Plots zu einer neuen Linie/Balken führen.</br>
         <b>X:</b> Definiert, welche Daten beim Rendern des x-Wertes eines Datenpunktes verwendet werden sollen.</br>
@@ -199,6 +200,10 @@ Was zu folgendem führt:
 
 ![Beispiel eines gerenderten Streudiagramms mit einer "Linearen" x-Achse und in "Serien" gruppierten Daten](/images/node-examples/ui-chart-scatter-series.png "Beispiel eines gerenderten Streudiagramms mit einer 'Linearen' x-Achse und in 'Serien' gruppierten Daten"){data-zoomable}
 *Beispiel eines gerenderten Streudiagramms mit einer "Linearen" x-Achse und in "Serien" gruppierten Daten.*
+
+#### Festen Bereich der X-Achse festlegen <AddedIn version="1.38.0" />
+
+Standardmäßig passt sich eine "Lineare" x-Achse an die empfangenen Daten an. Wenn die x-Achse stattdessen einen festen Bereich behalten soll (zum Beispiel bei Messwerten, die immer innerhalb bekannter Grenzen liegen), setzen Sie die Werte "min." und/oder "max." in der Zeile "X-Achse" der Diagrammkonfiguration. Datenpunkte außerhalb des Bereichs werden nicht gezeichnet. Bleibt ein Wert leer, passt sich dieses Ende der Achse an die Daten an.
 
 
 ### Balkendiagramme
