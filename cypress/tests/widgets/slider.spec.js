@@ -27,6 +27,7 @@ describe('Node-RED Dashboard 2.0 - Slider', () => {
 
     it('emits a value, and updates, when clicked', () => {
         cy.resetContext()
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 25)
         cy.clickAndWait(cy.get('.v-slider__container'))
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 60) // halfway between 20 and 100
         cy.checkOutput('msg.payload', 60)
@@ -40,6 +41,7 @@ describe('Node-RED Dashboard 2.0 - Slider (Dynamic Properties)', () => {
     })
 
     it('include "labels"', () => {
+        cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 25)
         // first set the slider to a known value
         cy.clickAndWait(cy.get('.v-slider__container'))
         cy.get('#nrdb-ui-widget-dashboard-ui-slider').find('.v-slider-thumb').should('have.attr', 'aria-valuenow', 60) // halfway between 20 and 100

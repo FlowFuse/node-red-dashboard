@@ -30,8 +30,8 @@
         },
         "tip": {
             "navigate": "Go to a page. A msg property can hold a page name or id, \"+1\" (next), \"-1\" (previous), \"\" (refresh) or a page index.",
-            "show": "Show a page, group or widget. Opens a dialog group.",
-            "hide": "Hide a page, group or widget. Closes a dialog group.",
+            "show": "Show a page, tab, group or widget. Opens a dialog group.",
+            "hide": "Hide a page, tab, group or widget. Closes a dialog group.",
             "enable": "Enable a page, group or widget",
             "disable": "Disable a page, group or widget"
         }
