@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.38.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.37.0...v1.38.0) (2026-11-20)
+
+
+### Features
+
+* [1125] Let ui-link open in a new browser tab ([#2380](https://github.com/FlowFuse/node-red-dashboard/issues/2380)) ([e3dd1ba](https://github.com/FlowFuse/node-red-dashboard/commit/e3dd1ba3e8d463a7d43076c122900719dccc19e1))
+* [2376] Show and hide tabs with ui-control ([#2382](https://github.com/FlowFuse/node-red-dashboard/issues/2382)) ([ba1ac24](https://github.com/FlowFuse/node-red-dashboard/commit/ba1ac24df33bc67a06f8093bbaa7a120bab33539))
+
+
+### Bug Fixes
+
+* **ui-template:** expand self-closed custom tags before HTML parsing ([#2389](https://github.com/FlowFuse/node-red-dashboard/issues/2389)) ([8b68ad6](https://github.com/FlowFuse/node-red-dashboard/commit/8b68ad6520ea82082bdb58d33221d5e9dc652dac))
+
 ## [1.37.0](https://github.com/FlowFuse/node-red-dashboard/compare/v1.36.1...v1.37.0) (2026-11-13)
 
 
