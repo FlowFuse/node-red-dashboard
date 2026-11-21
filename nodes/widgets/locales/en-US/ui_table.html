@@ -21,6 +21,12 @@
             Determines the action taken when new data arrives, and whether the new data is appended
             to the chart, or replaces the existing contents.
         </dd>
+        <dt>Unique Key <span class="property-type">str</span></dt>
+        <dd>
+            Optional, only used when Action is "append". The name of a property that uniquely identifies each row, e.g. <code>id</code>.
+            An incoming row whose value for this property matches an existing row replaces that row in place, instead of being appended.
+            Rows without this property are always appended.
+        </dd>
         <dt>Breakpoint <span class="property-type">str | num</span></dt>
         <dd>
             Controls when a table will render, instead, as a card, with each column from a row rendering
