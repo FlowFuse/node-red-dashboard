@@ -71,6 +71,7 @@
         "title": "Tile",
         "units": "",
         "icon": "home",
+        "iconPosition": "top",
         "prefix": "",
         "suffix": "%",
         "segments": [
@@ -286,5 +287,117 @@
         "x": 100,
         "y": 180,
         "wires": []
+    },
+    {
+        "id": "dashboard-ui-gauge-tile-update-icon",
+        "type": "ui-button",
+        "z": "node-red-tab-gauges",
+        "group": "dashboard-ui-group",
+        "name": "Update Tile Icon",
+        "label": "Update Tile Icon",
+        "order": 10,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-gauge-tile-change-icon"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-gauge-tile-change-icon",
+        "type": "change",
+        "z": "node-red-tab-gauges",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.icon",
+                "pt": "msg",
+                "to": "earth",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 240,
+        "wires": [
+            [
+                "dashboard-ui-gauge-tile"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-gauge-tile-update-icon-pos",
+        "type": "ui-button",
+        "z": "node-red-tab-gauges",
+        "group": "dashboard-ui-group",
+        "name": "Update Tile Icon Position",
+        "label": "Update Tile Icon Position",
+        "order": 11,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-gauge-tile-change-icon-pos"
+            ]
+        ]
+    },
+    {
+        "id": "dashboard-ui-gauge-tile-change-icon-pos",
+        "type": "change",
+        "z": "node-red-tab-gauges",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_update.iconPosition",
+                "pt": "msg",
+                "to": "left",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 280,
+        "wires": [
+            [
+                "dashboard-ui-gauge-tile"
+            ]
+        ]
     }
 ]

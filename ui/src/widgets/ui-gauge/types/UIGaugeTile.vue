@@ -1,6 +1,7 @@
 <template>
-    <div class="nrdb-ui-gauge-tile" :style="{'background-color': segment.color, 'color': segment.textColor}" @click="onClick">
-        <label>{{ segment.text }}</label>
+    <div class="nrdb-ui-gauge-tile" :class="`nrdb-ui-gauge-tile--icon-${iconPosition}`" :style="{'background-color': segment.color, 'color': segment.textColor}" @click="onClick">
+        <v-icon v-if="mdiIcon" class="nrdb-ui-gauge-tile-icon" :icon="mdiIcon" />
+        <label v-if="segment.text">{{ segment.text }}</label>
         <span v-if="props.alwaysShowTitle" class="nrdb-ui-gauge-tile-floating-label" :style="floatingPosition">{{ props.label }}</span>
     </div>
 </template>
@@ -40,6 +41,17 @@ export default {
                 textColor: segment?.textColor ?? 'var(--v-theme-on-primary)',
                 from: segment?.from ?? 0
             }
+        },
+        mdiIcon () {
+            const icon = this.props.icon
+            if (!icon) {
+                return ''
+            }
+            return 'mdi-' + icon.replace(/^mdi-/, '')
+        },
+        iconPosition () {
+            const allowed = ['top', 'bottom', 'left', 'right']
+            return allowed.includes(this.props.iconPosition) ? this.props.iconPosition : 'top'
         },
         floatingPosition () {
             const pos = this.props.floatingTitlePosition
@@ -93,6 +105,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 2cqmin;
     container-type: size;
     font-weight: bold;
     transition: 0.15s background-color;
@@ -104,6 +117,17 @@ export default {
         font-size: min(16cqw, max(40cqmin, .5rem));
         line-height: normal;
     }
+}
+
+.nrdb-ui-gauge-tile--icon-top { flex-direction: column; }
+.nrdb-ui-gauge-tile--icon-bottom { flex-direction: column-reverse; }
+.nrdb-ui-gauge-tile--icon-left { flex-direction: row; }
+.nrdb-ui-gauge-tile--icon-right { flex-direction: row-reverse; }
+
+.nrdb-ui-gauge-tile-icon {
+    font-size: min(24cqw, max(50cqmin, 1rem)) !important;
+    width: auto;
+    height: auto;
 }
 
 .nrdb-ui-gauge-tile-floating-label {
