@@ -193,7 +193,14 @@ module.exports = function (RED) {
                         datapoint.x = config.xAxisPropertyType === 'msg' || config.xAxisPropertyType === 'str'
                             ? evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                             : (new Date()).getTime()
+                        // for a single (non-array) payload, honour a y-axis property of type 'msg' (e.g. msg.value)
                         datapoint.y = payload
+                        if (!Array.isArray(msg.payload) && config.yAxisPropertyType === 'msg') {
+                            const y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            if (typeof y !== 'undefined') {
+                                datapoint.y = y
+                            }
+                        }
                     } else if (typeof payload === 'object') {
                         // let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         let x = null
