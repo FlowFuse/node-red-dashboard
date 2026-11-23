@@ -24,6 +24,8 @@
             "action": "Aktion",
             "append": "Anhängen",
             "replace": "Ersetzen",
+            "uniqueKey": "Eindeutiger Schlüssel",
+            "uniqueKeyPlaceholder": "optional, z.B. id",
             "deselect": "Auswahl aufheben",
             "deselectRows": "Gesamte Auswahl aufheben, wenn die Tabelle gefüllt ist"
         },

@@ -94,6 +94,7 @@
                 mobileBreakpoint: { value: 'sm' },
                 mobileBreakpointType: { value: 'defaults' },
                 action: { value: 'append' },
+                uniqueKey: { value: '' },
                 className: { value: '' }
             },
             inputs: 1,
@@ -118,6 +119,11 @@
                     // The behaviour in existing nodes was to deselect all items
                     $('#node-input-deselect').prop('checked', true)
                 }
+                // the unique key is only used when appending rows
+                $('#node-input-action').on('change', function () {
+                    $('#ui-table-uniqueKey-row').toggle($(this).val() === 'append')
+                }).trigger('change')
+
                 $('#node-input-size').ffElementSizer({
                     width: '#node-input-width',
                     height: '#node-input-height',
@@ -341,6 +347,10 @@
             <option value="append" data-i18n="ui-table.label.append"></option>
             <option value="replace" data-i18n="ui-table.label.replace"></option>
         </select>
+    </div>
+    <div class="form-row" id="ui-table-uniqueKey-row">
+        <label for="node-input-uniqueKey"><i class="fa fa-key"></i> <span data-i18n="ui-table.label.uniqueKey"></span></label>
+        <input type="text" id="node-input-uniqueKey" data-i18n="[placeholder]ui-table.label.uniqueKeyPlaceholder">
     </div>
     <div class="form-row">
         <label for="node-input-mobileBreakpoint"><i class="fa fa-mobile"></i> <span data-i18n="ui-table.label.mobileBreakpoint"></label>
