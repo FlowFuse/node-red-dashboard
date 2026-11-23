@@ -164,6 +164,17 @@ Sie können Daten in mehrere Linien gruppieren, indem Sie die Eigenschaft `Serie
 
 Wenn Sie möchten, dass ein einzelnes Datenstück mehrere Linien darstellt, können Sie die Eigenschaft `Serien` auf `JSON` setzen und dann ein Array von Schlüsseln bereitstellen (z.B. `["key1", "key2"]`), das einen Datenpunkt für jeden bereitgestellten Schlüssel aus einem einzelnen Datenpunkt darstellt.
 
+Standardmäßig wird jede Serie nach ihrem Schlüssel benannt. Wenn Ihre Schlüssel nicht gut lesbar sind, können Sie anstelle eines Arrays ein Objekt angeben, in dem jedem Schlüssel die Bezeichnung zugeordnet wird, die für diese Serie angezeigt werden soll, z.B.:
+
+```json
+{
+    "temp": "Temperatur",
+    "sensor.humidity": "Luftfeuchtigkeit"
+}
+```
+
+Dadurch wird `temp` als Serie mit dem Namen "Temperatur" und der verschachtelte Wert `sensor.humidity` als Serie mit dem Namen "Luftfeuchtigkeit" dargestellt. Wenn einem Schlüssel ein leerer Wert zugeordnet ist, wird der Schlüssel selbst als Name der Serie verwendet.
+
 
 ### Streudiagramme
 
