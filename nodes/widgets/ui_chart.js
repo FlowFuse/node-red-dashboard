@@ -186,21 +186,19 @@ module.exports = function (RED) {
                     datapoint.category = series
 
                     // construct our datapoint
-                    if (typeof payload === 'number' || typeof payload === 'string') {
+                    // when y is configured as a msg property, a single (non-array) value takes y from that property,
+                    // regardless of what (or whether) msg.payload holds
+                    const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(msg.payload) && typeof payload !== 'object'
+                    if (typeof payload === 'number' || typeof payload === 'string' || yFromMsg) {
                         // do we have an x-property defined - if not, we're assuming time series
                         // since key would attempt to evaluate a property on a number, we don't do evaluation when
                         // x-axis is type is 'key' (only when it's 'msg' or 'str')
                         datapoint.x = config.xAxisPropertyType === 'msg' || config.xAxisPropertyType === 'str'
                             ? evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                             : (new Date()).getTime()
-                        // for a single (non-array) payload, honour a y-axis property of type 'msg' (e.g. msg.value)
-                        datapoint.y = payload
-                        if (!Array.isArray(msg.payload) && config.yAxisPropertyType === 'msg') {
-                            const y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
-                            if (typeof y !== 'undefined') {
-                                datapoint.y = y
-                            }
-                        }
+                        datapoint.y = yFromMsg
+                            ? evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                            : payload
                     } else if (typeof payload === 'object') {
                         // let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         let x = null

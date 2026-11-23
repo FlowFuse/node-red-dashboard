@@ -70,4 +70,9 @@ describe('ui-chart node', function () {
         const dp = await datapointFor({ yAxisProperty: 'value', yAxisPropertyType: 'msg' }, { topic: 'a', payload: '7', value: 3 })
         dp.y.should.equal(3)
     })
+
+    it('uses the configured msg property for the y value when msg.payload is not set', async function () {
+        const dp = await datapointFor({ yAxisProperty: 'value', yAxisPropertyType: 'msg' }, { topic: 'a', value: 3 })
+        dp.y.should.equal(3)
+    })
 })
