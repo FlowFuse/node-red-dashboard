@@ -21,6 +21,19 @@
                     item-title="label"
                     item-value="value"
                 />
+                <v-select
+                    v-else-if="row.type === 'multiselect'"
+                    v-model="input[row.key]"
+                    class="nrdb-ui-widget"
+                    :label="formattedLabel(row)"
+                    :class="{'active': state}"
+                    hide-details="auto" :rules="rules(row)"
+                    color="primary" variant="outlined"
+                    multiple chips closable-chips
+                    :items="filteredDropdownOptions(row.key)"
+                    item-title="label"
+                    item-value="value"
+                />
                 <v-switch
                     v-else-if="row.type === 'switch'"
                     v-model="input[row.key]"
@@ -53,6 +66,8 @@
 
 <script>
 import { mapState } from 'vuex' // eslint-disable-line import/order
+
+import { hasValue, toMultiValue } from './form-values.js'
 
 export default {
     name: 'DBUIForm',
@@ -109,6 +124,8 @@ export default {
                     if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = false
                     }
+                } else if (opt.type === 'multiselect') {
+                    this.input[opt.key] = toMultiValue(this.input[opt.key])
                 } else if (opt.type === 'number') {
                     if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
                         this.input[opt.key] = null
@@ -147,7 +164,7 @@ export default {
             if (row.required) {
                 // is required
                 return [(v) => {
-                    return (v !== null && v !== undefined && v !== '' && (row.type === 'number' ? !Number.isNaN(v) : true)) || row.label + ' is required'
+                    return hasValue(row.type, v) || row.label + ' is required'
                 }]
             } else {
                 // no rules
@@ -161,7 +178,8 @@ export default {
             if (msg.payload) {
                 const payload = msg.payload
                 for (const key in payload) {
-                    this.input[key] = payload[key]
+                    const row = this.options.find(opt => opt.key === key)
+                    this.input[key] = row?.type === 'multiselect' ? toMultiValue(payload[key]) : payload[key]
                 }
                 this.$nextTick(() => { this.validate() })
             }

@@ -18,7 +18,7 @@ The navigational hierarchy of the Dashboard UI is as follows:
 
 `/Layouts/Baseline.vue` defines the basic structure of a page (header and left-side navigation drawer). Other layouts then can extend this baseline and define _how_ the widgets are rendered within the baseline's default `<slot></slot>`.
 
-This list of baseline layouts will likely grow in time, and for now, just includes a _very_ basic starter template (side navigation and header).
+There is currently one baseline layout, a _very_ basic starter template (side navigation and header).
 
 ## Adding a new Layout Manager
 

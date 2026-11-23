@@ -23,6 +23,12 @@
         <dd>Whether or not to show a button that will allow the user to confirm the notification.</dd>
         <dt>Accept Raw <span class="property-type">boolean</span></dt>
         <dd>Whether you're passing in raw HTML that should be processed client-side.</dd>
+        <dt>Show Input <span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show an input field. When confirmed, the entered value is sent as <code>msg.payload</code>.</dd>
+        <dt>Input Type <span class="property-type">string</span></dt>
+        <dd>The HTML input type for the field, e.g. <code>text</code>, <code>number</code>, <code>email</code>.</dd>
+        <dt>Input Label <span class="property-type">string</span></dt>
+        <dd>Optional label shown in the input field.</dd>
     </dl>
     <h3>Dynamic Properties (Inputs)</h3>
     <p>Any of the following can be appended to a <code>msg.ui_update</code> in order to override or set properties on this node at runtime.</p>
@@ -76,5 +82,17 @@
     <dl class="message-properties">
         <dt class="optional">showCountdown<span class="property-type">boolean</span></dt>
         <dd>Whether or not to show a reducing progress bar to indicate the time remaining.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">showInput<span class="property-type">boolean</span></dt>
+        <dd>Whether or not to show an input field.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">inputType<span class="property-type">string</span></dt>
+        <dd>The HTML input type for the field.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional">inputLabel<span class="property-type">string</span></dt>
+        <dd>The label shown in the input field.</dd>
     </dl>
 </script>

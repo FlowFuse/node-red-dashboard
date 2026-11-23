@@ -124,6 +124,28 @@ msg.payload = {
 
 _Hinweis:_ `pages` kann wie im Dashboard 1.0 durch `tabs` ersetzt werden und `groups` kann auch wie im Dashboard 1.0 durch `group` ersetzt werden.
 
+#### Tabs anzeigen/ausblenden <AddedIn version="1.38.0" />
+
+Auf einer Seite mit dem [Tabs](../../layouts/types/tabs.md)-Layout können Sie die auf der Seite definierten Tabs anzeigen oder ausblenden. Da `tabs` bereits ein Alias für `pages` ist, verwenden Tabs den Schlüssel `pageTabs`:
+
+```js
+msg.payload = {
+    pageTabs: {
+        show: ['<Tab-Name>',
+               '<Tab-ID>',
+               '<Seitenname>:<Tab-Name>',
+               '<Seiten-ID>:<Tab-Name>',
+               {tab: '<Tab-Name>'},
+               {page: '<Seitenname>', tab: '<Tab-Name>'}],
+        hide: ['<Seitenname>:<Tab-Name>']
+    }
+}
+```
+
+Ein Tab-Name allein trifft auf den ersten Tab mit diesem Namen auf einer beliebigen Seite zu. Geben Sie daher die Seite mit an, wenn mehrere Seiten einen Tab mit diesem Namen haben. Ein Doppelpunkt in einem Seiten- oder Tab-Namen wird mit einem Backslash maskiert, z. B. `'Layout\\: Tabs:Inbox'`.
+
+Das Ausblenden eines Tabs blendet den Tab und alle seine Gruppen aus. War er der ausgewählte Tab, wird der erste verbleibende Tab ausgewählt. Wird er wieder angezeigt, erscheint er an seiner Stelle in der Tab-Liste der Seite. Gruppen ohne Tab werden als eigener Tab angezeigt, blenden Sie diese daher mit `groups` an oder aus.
+
 ### Aktivieren/Deaktivieren
 
 Sie können Gruppen und Seiten programmatisch mit der folgenden Nutzlast in `ui-control` aktivieren/deaktivieren:
@@ -175,9 +197,9 @@ msg = {
 }
 ```
 
-### Tab-/Seitenwechsel
+### Seitenwechsel
 
-Wenn ein Benutzer den aktiven Tab oder die Seite wechselt, sendet der `ui-control`-Knoten:
+Wenn ein Benutzer die aktive Seite wechselt, sendet der `ui-control`-Knoten:
 
 ```js
 msg = {
@@ -188,3 +210,23 @@ msg = {
     name: '<Seitenname>'
 }
 ```
+
+### Tab-Wechsel <AddedIn version="1.37.0" />
+
+Wenn ein Benutzer auf einer Seite mit dem [Tabs](../../layouts/types/tabs.md)-Layout den aktiven Tab wechselt, sendet der `ui-control`-Knoten:
+
+```js
+msg = {
+    payload: 'tab',
+    tab: '<Tab-Index>',
+    id: '<Tab-ID>',
+    name: '<Tab-Name>',
+    page: '<Seitenname>'
+}
+```
+
+`tab` ist die Position unter den aktuell angezeigten Tabs und verschiebt sich, wenn ein Tab ausgeblendet wird. Verwenden Sie `id`, um einen Tab zu identifizieren. Bei einer Gruppe ohne Tab ist `id` die ID der Gruppe.
+
+Dies wird auch für den ersten Tab gesendet, wenn die Seite geöffnet wird.
+
+> **Hinweis:** `tab`-Ereignisse werden bei **Nur Seiten-/Tab-Wechselereignisse** und **Alle Ereignisse** gesendet. Ihr Payload unterscheidet sich von `change`, sodass bestehende Flows, die nach `msg.payload` verzweigen, nicht betroffen sind.

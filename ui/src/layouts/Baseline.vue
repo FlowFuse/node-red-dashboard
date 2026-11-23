@@ -43,6 +43,8 @@
                                 :prepend-icon="`mdi-${page.icon?.replace(/^mdi-/, '') || 'home'}`"
                                 :title="getPageLabel(page)"
                                 :href="page.type === 'ui-link' ? page.path : null"
+                                :target="opensInNewTab(page) ? '_blank' : null"
+                                :rel="opensInNewTab(page) ? 'noopener' : null"
                                 :to="page.type === 'ui-page' ? { name: page.route.name } : null"
                                 :data-nav="page.id"
                                 @click="closeNavigationDrawer()"
@@ -342,6 +344,9 @@ export default {
             }
 
             return page.name + (this.dashboard.showPathInSidebar ? ` (${page.path})` : '')
+        },
+        opensInNewTab (page) {
+            return page.type === 'ui-link' && page.target === '_blank'
         },
         handleNavigationClick () {
             if (this.effectiveNavigationStyle === 'fixed') {

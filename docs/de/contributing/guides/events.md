@@ -165,4 +165,4 @@ Innerhalb der `ui-config` ist die `widgets`-Eigenschaft ein Array von `Widget`-O
 - **id**: Die von Node-RED zugewiesene ID, um diesen Knoten im Editor eindeutig zu identifizieren
 - **props**: Die Sammlung von Eigenschaften, die der Benutzer im Editor für diesen Knoten definieren kann
 - **component** - Die jeweilige Vue-Komponente, die für das Rendering erforderlich ist, hinzugefügt im Frontend (in App.vue)
-- **state** - Enthält Werte, die den visuellen und interaktiven "Zustand" eines Widgets definieren, z.B. `enabled: true` oder `visible: false` (`visible:` wird noch nicht unterstützt)
+- **state** - Enthält Werte, die den visuellen und interaktiven "Zustand" eines Widgets definieren, z.B. `enabled: true` oder `visible: false`

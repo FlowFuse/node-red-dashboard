@@ -12,10 +12,10 @@
     <p>Each action has a target picked from the selected dashboard, or read from a <code>msg</code> property:</p>
     <ul>
         <li><b>Navigate</b> - a page, next page, previous page or refresh. A <code>msg</code> property can hold a page name or id, <code>"+1"</code>, <code>"-1"</code>, <code>""</code> or a page index.</li>
-        <li><b>Show/Hide</b> - a page, group or widget. Opens or closes a dialog group.</li>
+        <li><b>Show/Hide</b> - a page, tab, group or widget. Opens or closes a dialog group.</li>
         <li><b>Enable/Disable</b> - a page, group or widget.</li>
     </ul>
-    <p>For Show, Hide, Enable and Disable, a <code>msg</code> property can hold an id or name, or an array of them. <code>"Page:Group"</code>, <code>"Group:Widget"</code> and <code>"Page:Group:Widget"</code> are also accepted. A name used by more than one page, group or widget is an error, so use an id instead.</p>
+    <p>For Show, Hide, Enable and Disable, a <code>msg</code> property can hold an id or name, or an array of them. <code>"Page:Group"</code>, <code>"Group:Widget"</code> and <code>"Page:Group:Widget"</code> are also accepted. A name used by more than one page, group or widget is an error, so use an id instead. A <code>msg</code> property can't name a tab, use <code>msg.payload.pageTabs</code> instead.</p>
     <p>Actions run together as one change, grouped by type, rather than in the listed order. "Hide X" then "Show X" leaves X hidden, and only the last Navigate is used.</p>
     <h3>Controls List</h3>
     <h4>Navigation</h4>
@@ -65,6 +65,17 @@
         hide: ['&lt;Widget Id&gt;']
     }
 }</pre>
+    <h4>Show/Hide Tabs</h4>
+    <p>The tabs of a page using the Tabs layout can be shown and hidden with <code>pageTabs</code>, because <code>tabs</code> is an alias for <code>pages</code>. A tab name on its own matches the first tab with that name on any page.</p>
+    <pre>msg.payload = {
+    pageTabs: {
+        show: ['&lt;Tab Name&gt;',
+               '&lt;Tab Id&gt;',
+               '&lt;Page Name&gt;:&lt;Tab Name&gt;',
+               {page: '&lt;Page Name&gt;', tab: '&lt;Tab Name&gt;'}],
+        hide: ['&lt;Page Name&gt;:&lt;Tab Name&gt;']
+    }
+}</pre>
     <h4>Enable/Disable Pages & Groups & Widgets</h4>
     <p>Dashboard pages & groups & widgets can be disabled & re-enabled by sending a <code>msg.payload</code> object with the format</p>
     <pre>msg.payload = {
@@ -77,7 +88,7 @@
         disable: ['&lt;Group Name&gt;']
     }
 }</pre>
-    <p>When a (page, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
+    <p>When a (page, tab, group or widget) name contains a colon <code>:</code>, that needs to be escaped using backslashes <code>\\</code>. </p>
     <h4>External URL</h4>
     <p>It is possible to trigger navigation to an external site, away from your Dashboard by passing in a URL string.</p>
     <pre>msg.payload = {
@@ -89,13 +100,15 @@
     target: '_blank'
 }</pre>
     <h3>Events List</h3>
-    <p>When any browser client connects or loses connection, changes tab, or expands or collapses a group this node will emit a <code>msg</code> containing:</p>
+    <p>When any browser client connects, loses connection, changes page, or changes tab in a Tabs layout, this node will emit a <code>msg</code> containing:</p>
     <ul>
-    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>group</i>.
+    <li><code>payload</code> - <i>connect</i>, <i>lost</i>, <i>change</i>, or <i>tab</i>.
     <li><code>socketid</code> - the ID of the socket (this will change every time the browser reloads the page).
     <li><code>socketip</code> - the ip address from where the connection originated.
-    <li><code>tab</code> - the number of the tab (only for 'change' event).
-    <li><code>name</code> - the name of the tab (only for 'change' event).
+    <li><code>tab</code> - the index of the page for 'change', or of the tab among the tabs shown for 'tab'.
+    <li><code>name</code> - the name of the page for 'change', or of the tab for 'tab'.
+    <li><code>id</code> - the id of the tab, or of the group for a group without a tab (only for 'tab' event).
+    <li><code>page</code> - the name of the page the tab is on (only for 'tab' event).
     </ul>
     <p>Optional - report only connect events - useful to use to trigger a resend of data to a new client without needing to filter out other events.</p>
 </script>

@@ -92,6 +92,91 @@ describe('Node-RED Dashboard 2.0 - Layout: Tabs', () => {
     })
 })
 
+describe('Node-RED Dashboard 2.0 - Layout: Tabs shown/hidden with ui-control', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-layouts')
+        cy.visit('/dashboard/tabs')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
+    })
+
+    afterEach(() => {
+        // hidden tabs are kept in the state store, so show them again for the next test
+        cy.request('POST', '/inject/dashboard-inject-tabs-show-inbox-tab')
+        cy.request('POST', '/inject/dashboard-inject-tabs-show-compose-tab')
+    })
+
+    it('hides a tab and its groups, and shows it again in its place', () => {
+        cy.request('POST', '/inject/dashboard-inject-tabs-hide-inbox-tab')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 2)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(0).should('contain.text', 'Compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('contain.text', 'Loose')
+        cy.get('#nrdb-ui-group-dashboard-ui-group-tabs-inbox').should('not.exist')
+
+        cy.request('POST', '/inject/dashboard-inject-tabs-show-inbox-tab')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 3)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('contain.text', 'Inbox')
+        cy.get('.nrdb-layout--tabs .v-tab--selected').should('contain.text', 'Compose')
+    })
+
+    it('selects the first remaining tab when the selected tab is hidden', () => {
+        cy.get('.v-window-item--active .nrdb-ui-group').should('have.length', 2)
+        cy.request('POST', '/inject/dashboard-inject-tabs-hide-compose-tab')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 2)
+        cy.get('.nrdb-layout--tabs .v-tab--selected').should('have.length', 1).and('contain.text', 'Inbox')
+        cy.get('.v-window-item--active #nrdb-ui-group-dashboard-ui-group-tabs-inbox').should('exist')
+    })
+
+    it('keeps the tab hidden for clients that open the page later', () => {
+        cy.request('POST', '/inject/dashboard-inject-tabs-hide-inbox-tab')
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 2)
+        cy.reload()
+        cy.get('.nrdb-layout--tabs .v-tab').should('have.length', 2)
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).should('contain.text', 'Loose')
+    })
+})
+
+describe('Node-RED Dashboard 2.0 - Layout: Tabs events', () => {
+    beforeEach(() => {
+        cy.deployFixture('dashboard-layouts', [
+            { mode: 'merge', id: 'dashboard-ui-control-tabs', data: { wires: [['dashboard-fn-store-tab']] } },
+            {
+                mode: 'append',
+                data: {
+                    id: 'dashboard-fn-store-tab',
+                    type: 'function',
+                    z: 'node-red-tab-layouts',
+                    func: "if (msg.payload === 'tab') {\n    global.set('msg', msg)\n}\nreturn msg;",
+                    outputs: 1,
+                    wires: [[]]
+                }
+            }
+        ])
+        cy.resetContext()
+        cy.visit('/dashboard/tabs')
+    })
+
+    it('emits a tab event for the first tab when the page opens', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.checkOutput('msg.tab', 0)
+        cy.checkOutput('msg.page', 'Layout: Tabs')
+    })
+
+    it('emits a tab event when a tab is clicked', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(1).click()
+        cy.checkOutput('msg.id', 'tab-inbox')
+        cy.checkOutput('msg.tab', 1)
+        cy.checkOutput('msg.name', 'Inbox')
+    })
+
+    it('emits the group id for a group without a tab', () => {
+        cy.checkOutput('msg.id', 'tab-compose')
+        cy.get('.nrdb-layout--tabs .v-tab').eq(2).click()
+        cy.checkOutput('msg.id', 'dashboard-ui-group-tabs-loose')
+        cy.checkOutput('msg.name', 'Loose')
+    })
+})
+
 describe('Node-RED Dashboard 2.0 - Layout: Tabs across redeploys', () => {
     beforeEach(() => {
         cy.deployFixture('dashboard-layouts')

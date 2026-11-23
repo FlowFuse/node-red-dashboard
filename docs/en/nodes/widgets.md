@@ -156,9 +156,3 @@ Here is a list of the third-party widgets we're aware of to make it easier to fi
 - [@cgjgh/ui-scheduler](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-scheduler): A scheduler widget for UI-based schedule management.
 - [@cgjgh/ui-state-timeline](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-state-timeline): A State Timeline node to visualize the history of state changes over time, making it easy to track and analyze how a device, process, or variable has changed states throughout a given period.
 - [@cgjgh/ui-slide-confirm](https://flows.nodered.org/node/@cgjgh/node-red-dashboard-2-ui-slide-confirm): A Slide to Confirm widget for preventing accidental user actions.
-
-### In-Development
-
-The following are a list of nodes that we've been made aware of, are in active development, but have not yet been published to the Node-RED Palette Manager.
-
-- [@bartbutenaers/ui-svg](https://github.com/bartbutenaers/node-red-dashboard-2-ui-svg/tree/master): Adds an SVG widget to your Dashboard, with dynamic controls over plotting and styling.

@@ -60,5 +60,5 @@ An additional option available on a group-by-group basis is whether or not to sh
 
 Whilst we do offer reasonable levels of customization, there are some areas not currently configurable:
 
-- **Row Height:** A single unit of height is currently fixed at 48px. This cannot be changed at this time. This also affects the "Fixed" layout, where a single unit of width is driven by this value.
+- **Row Height:** A single unit of height is set by the theme's "Row Height" option (48px by default). This also affects the "Fixed" layout, where a single unit of width is driven by this value.
 - **Group Padding:** The spacing that encapsulates the full group's content, depicted above as the <span style="color: blue;">blue</span> space.

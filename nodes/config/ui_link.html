@@ -22,10 +22,15 @@
             order: {
                 value: -1
             },
+            target: { value: '_self' },
             visible: { value: true },
             disabled: { value: false }
         },
         oneditprepare: function () {
+            // links created before the target option existed open in the same tab
+            if (!['_self', '_blank'].includes(this.target)) {
+                $('#node-config-input-target').val('_self')
+            }
             // handle Node-RED's dislike for booleans on dropdowns
             if (this.visible === undefined || this.visible === true) {
                 this.visible = true
@@ -80,6 +85,13 @@
     <div class="form-row">
         <label for="node-config-input-path"><i class="w-16 fa fa-link"></i> <span data-i18n="ui-link.label.path"></label>
         <input type="text" id="node-config-input-path">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-target"><i class="w-16 fa fa-external-link"></i> <span data-i18n="ui-link.label.target"></label>
+        <select id="node-config-input-target">
+            <option value="_self" data-i18n="ui-link.label.sameTab"></option>
+            <option value="_blank" data-i18n="ui-link.label.newTab"></option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-config-input-icon"><i class="w-16 fa fa-home"></i> <span data-i18n="ui-link.label.icon"></label>

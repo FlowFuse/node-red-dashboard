@@ -13,7 +13,7 @@ _Screenshot des Dashboard 2.0 Debugging-Tools_
 
 Dieses Tool ist besonders nützlich, wenn Sie Ihre eigenen benutzerdefinierten Integrationen erstellen und auch an den Kern-Dashboard-Widgets entwickeln.
 
-Wir hoffen, den Umfang dessen, was dieses Tool bietet, zu erweitern, aber vorerst zeigt es die aktuellen `props` für ein gegebenes Widget an, die durch die Node-RED-Konfiguration definiert sind, aber auch die überschriebenen Werte aus dem `msg`-Objekt enthalten (z.B. kann `msg.options` die `Options`-Eigenschaft für ein `ui-dropdown` überschreiben).
+Es zeigt die aktuellen `props` für ein gegebenes Widget an, die durch die Node-RED-Konfiguration definiert sind, aber auch die überschriebenen Werte aus dem `msg`-Objekt enthalten (z.B. kann `msg.options` die `Options`-Eigenschaft für ein `ui-dropdown` überschreiben).
 
 ## Nachrichtenverlauf
 

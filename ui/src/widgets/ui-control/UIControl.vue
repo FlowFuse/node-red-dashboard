@@ -15,7 +15,7 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        ...mapState('ui', ['pages', 'groups', 'widgets']),
+        ...mapState('ui', ['pages', 'groups', 'widgets', 'selectedTab']),
         ...mapGetters('ui', ['findBy', 'pageById'])
     },
     watch: {
@@ -24,6 +24,12 @@ export default {
                 // this only fire if we switch between two pages of the same layout type,
                 // the full component isn't torn down, so we can watch for changes
                 this.routeChanged()
+            }
+        },
+        selectedTab: {
+            immediate: true,
+            handler (tab) {
+                this.tabChanged(tab)
             }
         }
     },
@@ -133,6 +139,17 @@ export default {
             payload.pages?.disable?.forEach(pageId => set('page', pageId, 'disabled', true))
             payload.pages?.enable?.forEach(pageId => set('page', pageId, 'disabled', false))
 
+            // Tabs, stored as a list of hidden tab ids on their page
+            const setTabVisibility = ({ page, tab }, visible) => {
+                if (!vue.pages?.[page]) {
+                    return
+                }
+                const hiddenTabs = (vue.pages[page].hiddenTabs || []).filter(id => id !== tab)
+                set('page', page, 'hiddenTabs', visible ? hiddenTabs : [...hiddenTabs, tab])
+            }
+            payload.pageTabs?.show?.forEach(tab => setTabVisibility(tab, true))
+            payload.pageTabs?.hide?.forEach(tab => setTabVisibility(tab, false))
+
             // dialog groups only exist on their own page, so let a page change render first
             await navigation.catch(() => {})
             await this.$nextTick()
@@ -177,10 +194,24 @@ export default {
         this.$socket.off('ui-control')
     },
     methods: {
-        routeChanged () {
-            // only the "all" and "change" outputs use page changes (older nodes have no events setting)
+        sendsChanges () {
+            // only the "all" and "change" outputs use page and tab changes (older nodes have no events setting)
             const events = this.props.events
-            if (events && events !== 'all' && events !== 'change') {
+            return !events || events === 'all' || events === 'change'
+        },
+        tabChanged (tab) {
+            if (!tab || tab.pageId !== this.$route.meta.id || !this.sendsChanges()) {
+                return
+            }
+            this.$socket.emit('ui-control', this.id, 'tab', {
+                tab: tab.index,
+                id: tab.id,
+                name: tab.name,
+                page: this.pages[tab.pageId].name
+            })
+        },
+        routeChanged () {
+            if (!this.sendsChanges()) {
                 return
             }
             const pages = Object.values(this.pages).sort((a, b) => {

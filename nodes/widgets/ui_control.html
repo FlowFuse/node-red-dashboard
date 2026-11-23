@@ -7,6 +7,7 @@
 
         const ACTIONS = ['navigate', 'show', 'hide', 'enable', 'disable']
         const NAV_TYPES = ['next', 'prev', 'refresh']
+        const TAB_ACTIONS = ['show', 'hide']
 
         function configNodes (type, uiId) {
             const list = []
@@ -34,6 +35,12 @@
             if (row.targetType === 'widget') {
                 const n = RED.nodes.node(row.target)
                 return !!n && !!n.group
+            }
+            if (row.targetType === 'tab') {
+                // stored as "<page id>:<tab id>", tabs can only be shown or hidden
+                const [pageId, tabId] = (row.target || '').split(':')
+                const page = RED.nodes.node(pageId)
+                return TAB_ACTIONS.includes(row.action) && !!page && page.type === 'ui-page' && page.layout === 'tabs' && (page.tabs || []).some(t => t.id === tabId)
             }
             return row.action === 'navigate' && NAV_TYPES.includes(row.targetType)
         }
@@ -64,10 +71,19 @@
                 }
             })
             widgets.sort((a, b) => a.label.localeCompare(b.label))
-            return [page,
+            const types = [page,
                 { value: 'group', label: 'group', icon: 'fa fa-object-group', options: groups },
-                { value: 'widget', label: 'widget', icon: 'fa fa-cube', options: widgets },
-                'msg']
+                { value: 'widget', label: 'widget', icon: 'fa fa-cube', options: widgets }]
+            if (TAB_ACTIONS.includes(action)) {
+                // the tabs of pages using the Tabs layout
+                const tabs = configNodes('ui-page', uiId)
+                    .filter(n => n.layout === 'tabs')
+                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                    .flatMap(n => (n.tabs || []).map(t => ({ value: n.id + ':' + t.id, label: (n.name || n.id) + ' / ' + (t.name || t.id) })))
+                types.push({ value: 'tab', label: 'tab', icon: 'fa fa-folder-o', options: tabs })
+            }
+            types.push('msg')
+            return types
         }
 
         RED.nodes.registerType('ui-control', {

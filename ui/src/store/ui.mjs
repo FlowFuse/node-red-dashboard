@@ -35,7 +35,8 @@ const state = () => ({
     /** @type {Widgets} */
     groups: null,
     /** @type {Widgets} */
-    widgets: null
+    widgets: null,
+    selectedTab: null
 })
 
 function sortOrder (order) {
@@ -105,7 +106,12 @@ const getters = {
                     return a.order - b.order
                 })
             const pageTabs = state.pages?.[pageId]?.tabs || []
+            // tabs hidden with ui-control
+            const hiddenTabs = state.pages?.[pageId]?.hiddenTabs || []
             const tabs = pageTabs
+                .filter((t) => {
+                    return !hiddenTabs.includes(t.id)
+                })
                 .map((t) => {
                     return { id: t.id, name: t.name, groups: groupsOnPage.filter((g) => g.tab === t.id) }
                 })
@@ -241,6 +247,9 @@ const mutations = {
     },
     widgets (state, widgets) {
         state.widgets = widgets
+    },
+    selectedTab (state, tab) {
+        state.selectedTab = tab
     },
     widgetState (state, data) {
         const wId = data.widgetId

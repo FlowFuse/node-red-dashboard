@@ -32,7 +32,7 @@ This widget doesn't render any content into your Dashboard. Instead, it provides
 Functionality is generally divided into two main features:
 
 - **Navigation**: Force the user to move to a new page
-- **Display**: Show/Hide pages, groups and widgets
+- **Display**: Show/Hide pages, tabs, groups and widgets
 - **Disability**: Enable/Disable pages, groups and widgets, this still shows them, but prevents interaction
 
 Controls can be sent in `msg.payload`, or set up in the node as [actions](#actions).
@@ -48,15 +48,15 @@ With **On input** set to **Run the actions below**, each incoming msg runs the l
 | Action | Targets |
 | --- | --- |
 | Navigate | A page, next page, previous page, refresh, or a `msg` property |
-| Show, Hide | A page, group or widget, or a `msg` property. Opens or closes a dialog group. |
+| Show, Hide | A page, [tab](#show-hide-tabs), group or widget, or a `msg` property. Opens or closes a dialog group. |
 | Enable, Disable | A page, group or widget, or a `msg` property |
 
-Pages, groups and widgets picked from the list are stored by id, so renaming them doesn't break the node. If one is deleted, the node is marked as invalid in the editor.
+Pages, tabs, groups and widgets picked from the list are stored by id, so renaming them doesn't break the node. If one is deleted, the node is marked as invalid in the editor.
 
 A `msg` property target is read from the incoming msg:
 
 - **Navigate** takes the same values as `msg.payload` in [Change Page](#change-page): a page name or id, `"+1"`, `"-1"`, `""` or an index. A missing property is reported as an error.
-- **Show, Hide, Enable and Disable** take an id or name, or an array of them. `"<Page>:<Group>"`, `"<Group>:<Widget>"` and `"<Page>:<Group>:<Widget>"` are also accepted. A name used by more than one page, group or widget is reported as an error, so use an id instead.
+- **Show, Hide, Enable and Disable** take an id or name, or an array of them. `"<Page>:<Group>"`, `"<Group>:<Widget>"` and `"<Page>:<Group>:<Widget>"` are also accepted. A name used by more than one page, group or widget is reported as an error, so use an id instead. A `msg` property can't name a tab, use [`msg.payload.pageTabs`](#show-hide-tabs) instead.
 
 Actions run together as one change, grouped by type, rather than one at a time in the listed order. So "Hide X" then "Show X" leaves X hidden, and only the last Navigate action is used.
 
@@ -172,6 +172,28 @@ msg.payload = {
 ```
 _Note:_ `pages` can be subbed with `tabs` as per Node-RED Dashboard and `groups` can also be subbed with `group` as per Node-RED Dashboard.
 
+#### Show/Hide Tabs <AddedIn version="1.38.0" />
+
+On a page using the [Tabs](../../layouts/types/tabs.md) layout, you can show or hide the tabs defined on the page. Because `tabs` is already an alias for `pages`, tabs use the `pageTabs` key:
+
+```js
+msg.payload = {
+    pageTabs: {
+        show: ['<Tab Name>',
+               '<Tab Id>',
+               '<Page Name>:<Tab Name>',
+               '<Page Id>:<Tab Name>',
+               {tab: '<Tab Name>'},
+               {page: '<Page Name>', tab: '<Tab Name>'}],
+        hide: ['<Page Name>:<Tab Name>']
+    }
+}
+```
+
+A tab name on its own matches the first tab with that name on any page, so add the page when more than one page has a tab with that name. Escape a colon in a page or tab name with a backslash, e.g. `'Layout\\: Tabs:Inbox'`.
+
+Hiding a tab hides the tab and all of its groups. If it was the selected tab, the first remaining tab is selected. Showing it again puts it back in its place in the page's tab list. Groups that aren't assigned to a tab are shown as their own tab, so show or hide them with `groups` instead.
+
 ### Enable/Disable
 
 You can programmatically disable/enable groups and pages with the following payload into `ui-control`:
@@ -229,9 +251,9 @@ msg = {
 }
 ```
 
-### Change Tab/Page
+### Page Change
 
-When a user changes the active tab or page, the `ui-control` node will emit:
+When a user changes the active page, the `ui-control` node will emit:
 
 ```js
 msg = {
@@ -242,6 +264,26 @@ msg = {
     name: '<Page Name>'
 }
 ```
+
+### Tab Change <AddedIn version="1.37.0" />
+
+When a user changes the active tab on a page using the [Tabs](../../layouts/types/tabs.md) layout, the `ui-control` node will emit:
+
+```js
+msg = {
+    payload: 'tab',
+    tab: '<Tab Index>',
+    id: '<Tab Id>',
+    name: '<Tab Name>',
+    page: '<Page Name>'
+}
+```
+
+`tab` is the position among the tabs currently shown, so it shifts when a tab is hidden. Use `id` to identify a tab. For a group that isn't assigned to a tab, `id` is the group's id.
+
+This is also sent for the first tab when the page opens.
+
+> **Note:** `tab` events fire under **Page/Tab Change Events Only** and **All Events**. Their payload is distinct from `change`, so existing flows switching on `msg.payload` are unaffected.
 
 ### Client Presence <AddedIn version="1.32.0" />
 
