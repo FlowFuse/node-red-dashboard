@@ -120,6 +120,18 @@ module.exports = function (RED) {
             config.stackSeries = false
         }
 
+        // a msg is data for the chart if it has a payload, or if y is configured as a msg property
+        // that is present on a msg that is not a ui_update
+        function isDataMsg (msg) {
+            if (typeof msg.payload !== 'undefined') {
+                return true
+            }
+            if (config.yAxisPropertyType !== 'msg' || msg.ui_update) {
+                return false
+            }
+            return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) !== undefined
+        }
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
@@ -188,7 +200,7 @@ module.exports = function (RED) {
                     // construct our datapoint
                     // when y is configured as a msg property, a single (non-array) value takes y from that property,
                     // regardless of what (or whether) msg.payload holds
-                    const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(msg.payload) && typeof payload !== 'object'
+                    const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(msg.payload) && typeof payload !== 'object' && isDataMsg(msg)
                     if (typeof payload === 'number' || typeof payload === 'string' || yFromMsg) {
                         // do we have an x-property defined - if not, we're assuming time series
                         // since key would attempt to evaluate a property on a number, we don't do evaluation when
@@ -238,8 +250,8 @@ module.exports = function (RED) {
                 if (!datastore.has(node.id)) {
                     datastore.save(base, node, [])
                 }
-                // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
-                if (typeof msg.payload !== 'undefined') {
+                // To prevent ui_update messages from deleting old data, skip this section if the msg carries no data
+                if (isDataMsg(msg)) {
                     if (Array.isArray(msg.payload) && !msg.payload.length) {
                         // clear history
                         datastore.save(base, node, [])

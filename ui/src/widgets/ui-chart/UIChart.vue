@@ -417,7 +417,8 @@ export default {
         onMsgInput (msg) {
             // ignore if payload is empty and msg is not an array (on loading it can be an array)
             // ui_update messages are handled by OnDynamicProperties
-            if (msg.payload !== undefined || Array.isArray(msg)) {
+            // a msg without payload is still data when the server computed a y value for it (y set to a msg property)
+            if (msg.payload !== undefined || Array.isArray(msg) || (msg._datapoint && msg._datapoint.y !== undefined)) {
                 if (Array.isArray(msg.payload) && !msg.payload.length) {
                     // clear the chart if msg.payload = [] is received
                     this.clearChart()
@@ -533,8 +534,8 @@ export default {
                         this.addPoints(p, d, label, options)
                     }
                 })
-            } else if (payload !== null && payload !== undefined) {
-                // we have a single payload value and should append it to the chart
+            } else if ((payload !== null && payload !== undefined) || (payload === undefined && msg._datapoint && !Array.isArray(msg._datapoint) && msg._datapoint.y !== undefined)) {
+                // we have a single payload value (or a y value taken from a msg property) and should append it to the chart
                 if (Array.isArray(msg._datapoint)) {
                     // single message has multiple datapoints to render (e.g. when Series is set to JSON)
                     msg._datapoint.forEach((d) => {

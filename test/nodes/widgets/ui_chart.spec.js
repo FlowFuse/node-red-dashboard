@@ -1,6 +1,7 @@
 const helper = require('node-red-node-test-helper')
 const should = require('should') // eslint-disable-line no-unused-vars
 
+const datastore = require('../../../nodes/store/data.js')
 const { testData1 } = require('../fixtures/index.js')
 const testFlow1 = testData1.flows
 const nodeImports = testData1.getImports(null, ['ui_chart'])
@@ -74,5 +75,29 @@ describe('ui-chart node', function () {
     it('uses the configured msg property for the y value when msg.payload is not set', async function () {
         const dp = await datapointFor({ yAxisProperty: 'value', yAxisPropertyType: 'msg' }, { topic: 'a', value: 3 })
         dp.y.should.equal(3)
+    })
+
+    it('stores a point in the datastore when y is a msg property and msg.payload is not set', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const base = helper.getNode('config-ui-base')
+        const widget = base.ui.widgets.get('node-ui-chart')
+        datastore.save(base, helper.getNode('node-ui-chart'), [])
+        const msg = widget.hooks.beforeSend({ topic: 'a', value: 3 })
+        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+        const stored = datastore.get('node-ui-chart')
+        stored.should.have.length(1)
+        stored[0]._datapoint.y.should.equal(3)
+    })
+
+    it('does not store a point for a ui_update msg without payload', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const base = helper.getNode('config-ui-base')
+        const widget = base.ui.widgets.get('node-ui-chart')
+        datastore.save(base, helper.getNode('node-ui-chart'), [])
+        const msg = widget.hooks.beforeSend({ topic: 'a', ui_update: { chartOptions: {} } })
+        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+        datastore.get('node-ui-chart').should.have.length(0)
     })
 })
