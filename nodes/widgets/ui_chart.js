@@ -121,7 +121,7 @@ module.exports = function (RED) {
         }
 
         // a msg is data for the chart if it has a payload. When y is configured as a msg property, what matters is
-        // that property: the msg is data if it is present (and the msg is not a ui_update), whatever msg.payload holds.
+        // that property: the msg is data if it is present, whatever msg.payload holds (it may also carry a ui_update).
         // An empty array payload is still a clear request.
         function isDataMsg (msg) {
             if (config.yAxisPropertyType !== 'msg') {
@@ -129,9 +129,6 @@ module.exports = function (RED) {
             }
             if (Array.isArray(msg.payload)) {
                 return true
-            }
-            if (msg.ui_update) {
-                return false
             }
             return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) !== undefined
         }

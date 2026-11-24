@@ -107,6 +107,19 @@ describe('ui-chart node', function () {
         datastore.get('node-ui-chart').should.have.length(0)
     })
 
+    it('stores a point for a msg carrying both a ui_update and a value in the y property', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const base = helper.getNode('config-ui-base')
+        const widget = base.ui.widgets.get('node-ui-chart')
+        datastore.save(base, helper.getNode('node-ui-chart'), [])
+        const msg = widget.hooks.beforeSend({ topic: 'a', value: 3, ui_update: { chartOptions: {} } })
+        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+        const stored = datastore.get('node-ui-chart')
+        stored.should.have.length(1)
+        stored[0]._datapoint.y.should.equal(3)
+    })
+
     it('does not store a point when y is a msg property that is missing, whatever msg.payload holds', async function () {
         const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
         await helper.load(nodeImports, flow)
