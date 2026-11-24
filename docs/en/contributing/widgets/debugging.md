@@ -8,6 +8,8 @@ FlowFuse Dashboard comes with a built-in debugging tool to understand the data b
 
 To navigate to the tooling, head to `<your-host>:<your-port>/dashboard/_debug`.
 
+The Debug View is only available when the ["Allow Debug View"](../../nodes/config/ui-base.md#allow-debug-view) option is enabled in your Dashboard's `ui-base` settings. It is disabled by default for new Dashboards.
+
 ![Debugging tool](/images/debug-example.png "Debugging tool"){data-zoomable}
 _Screenshot of the FlowFuse Dashboard Debugging Tool_
 
