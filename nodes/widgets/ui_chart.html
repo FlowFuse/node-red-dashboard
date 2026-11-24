@@ -207,8 +207,9 @@
                     } else {
                         $('#x-axis-format').hide()
                     }
-                    // default for most: hide the bins
+                    // default for most: hide the x-axis min/max & bins
                     $('#node-container-xAxisBins').hide()
+                    $('#node-container-bins').hide()
 
                     if (value === 'radial') {
                         // hide irrelevant fields
@@ -220,11 +221,16 @@
                         $('#node-container-yAxisLabel').show()
                         // show the options to configure the histogram bins
                         $('#node-container-xAxisBins').show()
+                        $('#node-container-bins').show()
                     } else {
                         // make sure they're shown
                         $('#node-container-xAxisLabel').show()
                         $('#node-container-yAxisLabel').show()
                         $('#y-axis-show').show()
+                        if (value === 'linear') {
+                            // allow optional fixed min/max limits for a linear x-axis
+                            $('#node-container-xAxisBins').show()
+                        }
                     }
 
                     // update the series types allowed
@@ -595,11 +601,13 @@
         <input type="text" id="node-input-xAxisLabel">
     </div>
     <div class="form-row" id="node-container-xAxisBins">
-        <label id="y-label-show" for="node-input-ymin" data-i18n="ui-chart.label.xAxis"></label>
+        <label for="node-input-xmin" data-i18n="ui-chart.label.xAxis"></label>
         <label for="node-input-xmin" style="width:auto" data-i18n="ui-chart.label.min"></label>
         <input type="text" id="node-input-xmin" style="width:92px">
-        <label for="node-input-bins" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.bins"></label>
-        <input type="text" id="node-input-bins" style="width:92px">
+        <span id="node-container-bins">
+            <label for="node-input-bins" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.bins"></label>
+            <input type="text" id="node-input-bins" style="width:92px">
+        </span>
         <label for="node-input-xmax" style="width:auto; margin-left:20px;" data-i18n="ui-chart.label.max"></label>
         <input type="text" id="node-input-xmax" style="width:92px">
     </div>

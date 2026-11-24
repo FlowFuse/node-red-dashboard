@@ -17,6 +17,7 @@ props:
         Defines how the values are displayed on the axis, when X-Axis type is <code>'timescale'</code>.
         See <a target="_blank" href="https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter">here</a> for an overview of the available format types.
     X-Axis Limit: Any data that is before the specific time limit (for time charts) or where there are more data points than the limit specified will be removed from the chart.  The time based limit may be disabled by setting the value to 0.
+    X-Axis Min/Max: Optional fixed lower and upper limits for the x-axis, available when X-Axis Type is <code>Linear</code>. Leave either value blank to scale that end of the axis to the data.
     Properties:
         <b>Series:</b> Controls how you want to set the Series of data stream into this widget. The default is <code>msg.topic</code>, where separate topics will render to a new line/bar in their respective plots.</br>
         <b>X:</b> Defines which data to use when rendering the x-value of any data point.</br>
@@ -247,6 +248,10 @@ Which results in:
 
 ![Example of a rendered Scatter Plot with a "Linear" x-axis, and data grouped into "Series"](/images/node-examples/ui-chart-scatter-series.png "Example of a rendered Scatter Plot with a 'Linear' x-axis, and data grouped into 'Series'"){data-zoomable}
 *Example of a rendered Scatter Plot with a "Linear" x-axis, and data grouped into "Series".*
+
+#### Fixing the X-Axis Range <AddedIn version="1.38.0" />
+
+By default, a "Linear" x-axis scales to fit the data that has been received. If you'd rather keep the x-axis at a fixed range (for example, when plotting measurements that always fall between known limits), set the "min." and/or "max." values in the "X-Axis" row of the chart's configuration. Any data points outside of the range are not drawn. Leaving a value blank scales that end of the axis to the data.
 
 
 ### Bar Charts

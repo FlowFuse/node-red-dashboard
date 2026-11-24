@@ -32,6 +32,12 @@
             See <a target="_blank" href="https://dashboard.flowfuse.com/nodes/widgets/ui-chart#formatting-timestamps">here</a> for an overview of the available format types.  
         </dd>
 
+        <dt>X-Axis Min/Max <span class="property-type">number</span></dt>
+        <dd>When the X-Axis Type is <code>Linear</code>, these optional values fix the lower and upper limits of the x-axis.
+            Leave either value blank to scale that end of the axis to the data.
+            When the X-Axis Type is <code>Bins</code>, they define the range of values that is split into bins.
+        </dd>
+
         <dt>X-Axis Limit</dt>
         <dd>When the X-Axis Type is <code>Timescale</code> these properties define under what circumstances to remove old data from the chart.
             For example setting this to last 5 minutes will cause data to be removed from the chart when it is greater than 5 minutes old.
