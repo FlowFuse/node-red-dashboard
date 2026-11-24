@@ -140,12 +140,13 @@ module.exports = function (RED) {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
             beforeSend: function (msg) {
-                // when y is configured as a msg property, a single (non-object) value takes y from that property,
-                // regardless of what (or whether) msg.payload holds. This is resolved here, before addToChart,
-                // which just adds the value it is given to the chart
+                // when y is configured as a msg property, a single value takes y from that property, regardless of
+                // what (or whether) msg.payload holds (an object payload still supplies x and the series). This is
+                // resolved here, before addToChart, which just adds the y it is given to the chart
                 const p = msg.payload
-                const yFromMsg = config.yAxisPropertyType === 'msg' && typeof p !== 'object' && isDataMsg(msg)
-                const single = yFromMsg ? RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) : p
+                const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(p) && isDataMsg(msg)
+                const msgY = yFromMsg ? RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) : undefined
+                const single = yFromMsg && typeof p !== 'object' ? msgY : p
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
@@ -170,13 +171,13 @@ module.exports = function (RED) {
                         const points = []
                         series.forEach((s) => {
                             if (hasProperty(p, s)) {
-                                const datapoint = addToChart(single, s)
+                                const datapoint = addToChart(single, s, msgY)
                                 points.push(datapoint)
                             }
                         })
                         msg._datapoint = points
                     } else {
-                        msg._datapoint = addToChart(single, series)
+                        msg._datapoint = addToChart(single, series, msgY)
                     }
                 }
 
@@ -201,7 +202,7 @@ module.exports = function (RED) {
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToChart (payload, series) {
+                function addToChart (payload, series, yOverride) {
                     const datapoint = {}
                     // we group/categorize data by "series"
                     datapoint.category = series
@@ -238,7 +239,9 @@ module.exports = function (RED) {
                                 // we are using the "series" as a key to get the y value from the payload
                                 y = getProperty(payload, series)
                             } else {
-                                y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                                y = typeof yOverride !== 'undefined'
+                                    ? yOverride
+                                    : evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
                             }
                         }
                         datapoint.x = x

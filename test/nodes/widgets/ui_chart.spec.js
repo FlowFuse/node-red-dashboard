@@ -77,6 +77,12 @@ describe('ui-chart node', function () {
         dp.y.should.equal(3)
     })
 
+    it('uses the configured msg property for the y value when payload is an object', async function () {
+        const dp = await datapointFor({ yAxisProperty: 'value', yAxisPropertyType: 'msg', xAxisProperty: 'ts', xAxisPropertyType: 'property' }, { topic: 'a', payload: { y: 7, ts: 123 }, value: 3 })
+        dp.y.should.equal(3)
+        dp.x.should.equal(123)
+    })
+
     it('stores a point in the datastore when y is a msg property and msg.payload is not set', async function () {
         const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
         await helper.load(nodeImports, flow)
