@@ -100,4 +100,15 @@ describe('ui-chart node', function () {
         await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
         datastore.get('node-ui-chart').should.have.length(0)
     })
+
+    it('does not store a point when y is a msg property that is missing, whatever msg.payload holds', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const base = helper.getNode('config-ui-base')
+        const widget = base.ui.widgets.get('node-ui-chart')
+        datastore.save(base, helper.getNode('node-ui-chart'), [])
+        const msg = widget.hooks.beforeSend({ topic: 'a', payload: 7 })
+        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+        datastore.get('node-ui-chart').should.have.length(0)
+    })
 })
