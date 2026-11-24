@@ -136,7 +136,12 @@ module.exports = function (RED) {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
             beforeSend: function (msg) {
+                // when y is configured as a msg property, a single (non-object) value takes y from that property,
+                // regardless of what (or whether) msg.payload holds. This is resolved here, before addToChart,
+                // which just adds the value it is given to the chart
                 const p = msg.payload
+                const yFromMsg = config.yAxisPropertyType === 'msg' && typeof p !== 'object' && isDataMsg(msg)
+                const single = yFromMsg ? RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) : p
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
@@ -161,13 +166,13 @@ module.exports = function (RED) {
                         const points = []
                         series.forEach((s) => {
                             if (hasProperty(p, s)) {
-                                const datapoint = addToChart(p, s)
+                                const datapoint = addToChart(single, s)
                                 points.push(datapoint)
                             }
                         })
                         msg._datapoint = points
                     } else {
-                        msg._datapoint = addToChart(p, series)
+                        msg._datapoint = addToChart(single, series)
                     }
                 }
 
@@ -198,19 +203,14 @@ module.exports = function (RED) {
                     datapoint.category = series
 
                     // construct our datapoint
-                    // when y is configured as a msg property, a single (non-array) value takes y from that property,
-                    // regardless of what (or whether) msg.payload holds
-                    const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(msg.payload) && typeof payload !== 'object' && isDataMsg(msg)
-                    if (typeof payload === 'number' || typeof payload === 'string' || yFromMsg) {
+                    if (typeof payload === 'number' || typeof payload === 'string') {
                         // do we have an x-property defined - if not, we're assuming time series
                         // since key would attempt to evaluate a property on a number, we don't do evaluation when
                         // x-axis is type is 'key' (only when it's 'msg' or 'str')
                         datapoint.x = config.xAxisPropertyType === 'msg' || config.xAxisPropertyType === 'str'
                             ? evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                             : (new Date()).getTime()
-                        datapoint.y = yFromMsg
-                            ? evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
-                            : payload
+                        datapoint.y = payload
                     } else if (typeof payload === 'object') {
                         // let x = evaluateNodePropertyWithKey(node, msg, payload, config.xAxisProperty, config.xAxisPropertyType)
                         let x = null
