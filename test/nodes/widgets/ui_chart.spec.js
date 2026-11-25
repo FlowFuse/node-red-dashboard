@@ -141,17 +141,34 @@ describe('ui-chart node', function () {
         datastore.get(chart.id).should.deepEqual(history)
     })
 
-    it('does not store a point when y is a msg property that is missing, whatever msg.payload holds', async function () {
+    it('does not store a point when y is a msg property that is missing and msg.payload is not a clear request', async function () {
         const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
         await helper.load(nodeImports, flow)
         const base = helper.getNode('config-ui-base')
         const widget = base.ui.widgets.get('node-ui-chart')
         datastore.save(base, helper.getNode('node-ui-chart'), [])
-        for (const payload of [[{ y: 7 }], [], 7]) {
+        for (const payload of [[{ y: 7 }], 7]) {
             const msg = widget.hooks.beforeSend({ topic: 'a', payload })
             await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
             datastore.get('node-ui-chart').should.have.length(0)
             should(msg._datapoint).equal(null)
         }
+    })
+
+    it('clears chart history with an empty payload array when y is a different msg property', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const chart = helper.getNode('node-ui-chart')
+        const base = helper.getNode('config-ui-base')
+        const emitter = new EventEmitter()
+        base.uiShared.connections['chart-test'] = { id: 'chart-test', emit: emitter.emit.bind(emitter) }
+        const history = [{ _datapoint: { x: 1, y: 3, category: 'a' } }]
+        datastore.save(base, chart, history)
+
+        const received = once(emitter, 'msg-input:' + chart.id)
+        chart.receive({ payload: [] })
+        const [msg] = await received
+        datastore.get(chart.id).should.have.length(0)
+        should(msg._datapoint).deepEqual([])
     })
 })

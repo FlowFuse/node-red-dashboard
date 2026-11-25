@@ -132,6 +132,11 @@ module.exports = function (RED) {
         }
 
         function isDataMsg (msg) {
+            // An empty payload array clears the chart regardless of the configured Y property.
+            if (Array.isArray(msg.payload) && !msg.payload.length) {
+                return true
+            }
+
             return config.yAxisPropertyType === 'msg'
                 ? getConfiguredY(msg) !== undefined
                 : msg.payload !== undefined
