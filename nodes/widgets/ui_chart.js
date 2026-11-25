@@ -120,6 +120,9 @@ module.exports = function (RED) {
             config.stackSeries = false
         }
 
+        // the editor hides the y property for JSON series and histograms, so any value left in it must be ignored
+        const yFromMsg = config.yAxisPropertyType === 'msg' && config.categoryType !== 'json' && config.chartType !== 'histogram'
+
         function getConfiguredY (msg) {
             try {
                 return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg)
@@ -137,7 +140,7 @@ module.exports = function (RED) {
                 return true
             }
 
-            return config.yAxisPropertyType === 'msg'
+            return yFromMsg
                 ? getConfiguredY(msg) !== undefined
                 : msg.payload !== undefined
         }
@@ -164,11 +167,10 @@ module.exports = function (RED) {
                     return msg
                 }
 
-                // when y is configured as a msg property, a single value takes y from that property, regardless of
+                // when y is taken from a msg property, a single value takes y from that property, regardless of
                 // what (or whether) msg.payload holds (an object payload still supplies x and the series). This is
                 // resolved here, before addToChart, which just adds the y it is given to the chart
                 const p = msg.payload
-                const yFromMsg = config.yAxisPropertyType === 'msg'
                 const msgY = yFromMsg ? getConfiguredY(msg) : undefined
                 const single = yFromMsg && typeof p !== 'object' ? msgY : p
 

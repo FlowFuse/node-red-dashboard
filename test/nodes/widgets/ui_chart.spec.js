@@ -155,6 +155,23 @@ describe('ui-chart node', function () {
         }
     })
 
+    it('plots one point per JSON series regardless of the configured y msg property', async function () {
+        const flow = chartFlow({ category: '["sin","cos"]', categoryType: 'json', yAxisProperty: 'payload.value', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const base = helper.getNode('config-ui-base')
+        const widget = base.ui.widgets.get('node-ui-chart')
+        datastore.save(base, helper.getNode('node-ui-chart'), [])
+        const msg = widget.hooks.beforeSend({ payload: { sin: 5, cos: 8 } })
+        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+        msg._datapoint.map((d) => [d.category, d.y]).should.deepEqual([['sin', 5], ['cos', 8]])
+        datastore.get('node-ui-chart').should.have.length(1)
+    })
+
+    it('plots a histogram value regardless of the configured y msg property', async function () {
+        const dp = await datapointFor({ chartType: 'histogram', xAxisType: 'bins', yAxisProperty: 'value', yAxisPropertyType: 'msg' }, { topic: 'a', payload: 7 })
+        dp.y.should.equal(7)
+    })
+
     it('clears chart history with an empty payload array when y is a different msg property', async function () {
         const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
         await helper.load(nodeImports, flow)
