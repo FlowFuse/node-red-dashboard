@@ -197,15 +197,15 @@ export default {
                     utterance.rate = clamp(rate, 0.1, 10)
                 }
                 if (typeof ttsOptions.pitch === 'number' || !isNaN(parseFloat(ttsOptions.pitch))) {
-                    const pitch = parseFloat(ttsOptions.pitch) || 1
-                    utterance.pitch = clamp(pitch, 0, 2)
+                    const pitch = parseFloat(ttsOptions.pitch)
+                    utterance.pitch = clamp(Number.isNaN(pitch) ? 1 : pitch, 0, 2)
                 }
                 if (ttsOptions.lang && typeof ttsOptions.lang === 'string') {
                     utterance.lang = ttsOptions.lang
                 }
                 if (typeof ttsOptions.volume === 'number' || !isNaN(parseInt(ttsOptions.volume))) {
-                    const vol = (+ttsOptions.volume / 100) || 1
-                    utterance.volume = clamp(vol, 0, 1)
+                    const volume = Number(ttsOptions.volume) / 100
+                    utterance.volume = clamp(Number.isNaN(volume) ? 1 : volume, 0, 1)
                 }
                 if (typeof ttsOptions.voice === 'number' || !isNaN(parseInt(ttsOptions.voice))) {
                     const v = +ttsOptions.voice
