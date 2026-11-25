@@ -16,7 +16,7 @@ module.exports = function (RED) {
         if (!('showTitle' in config)) {
             // migration backwards compatibility
             // we now use showTitle, not disp, but older flows still may have disp
-            config.showTitle = config.disp || true
+            config.showTitle = config.disp ?? true
         }
 
         // register self
