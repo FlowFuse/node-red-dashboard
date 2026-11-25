@@ -845,7 +845,7 @@ export default {
          */
         getBinIndex (bins, datapoint) {
             if (this.props.xAxisType === 'bins') {
-                const binSize = Math.floor((this.props.xmax - this.props.xmin) / this.props.bins)
+                const binSize = (this.props.xmax - this.props.xmin) / this.props.bins
                 return Math.min(Math.floor((datapoint.x - this.props.xmin) / binSize), bins.length - 1)
             } else {
                 const xIndex = this.histogram.labels.indexOf(datapoint.x)
