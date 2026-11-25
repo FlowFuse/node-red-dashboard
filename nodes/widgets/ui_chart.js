@@ -120,29 +120,51 @@ module.exports = function (RED) {
             config.stackSeries = false
         }
 
-        // a msg is data for the chart if it has a payload. When y is configured as a msg property, what matters is
-        // that property: the msg is data if it is present, whatever msg.payload holds (it may also carry a ui_update).
-        // An empty array payload is still a clear request.
+        function getConfiguredY (msg) {
+            try {
+                return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg)
+            } catch (err) {
+                // Node-RED throws when an intermediate property in the path is missing.
+                if (!(err instanceof TypeError)) {
+                    throw err
+                }
+            }
+        }
+
         function isDataMsg (msg) {
-            if (config.yAxisPropertyType !== 'msg') {
-                return typeof msg.payload !== 'undefined'
-            }
-            if (Array.isArray(msg.payload)) {
-                return true
-            }
-            return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) !== undefined
+            return config.yAxisPropertyType === 'msg'
+                ? getConfiguredY(msg) !== undefined
+                : msg.payload !== undefined
         }
 
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
             beforeSend: function (msg) {
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.chartOptions !== 'undefined') {
+                        // merge chart options specified here in with any others previously set
+                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
+                        // Deep merge new options in with old
+                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
+                        // pass the full set to the clients so they don't need to do the merge
+                        msg.ui_update.chartOptions = mergedOptions
+                    }
+                }
+
+                if (!isDataMsg(msg)) {
+                    msg._datapoint = null
+                    return msg
+                }
+
                 // when y is configured as a msg property, a single value takes y from that property, regardless of
                 // what (or whether) msg.payload holds (an object payload still supplies x and the series). This is
                 // resolved here, before addToChart, which just adds the y it is given to the chart
                 const p = msg.payload
-                const yFromMsg = config.yAxisPropertyType === 'msg' && !Array.isArray(p) && isDataMsg(msg)
-                const msgY = yFromMsg ? RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg) : undefined
+                const yFromMsg = config.yAxisPropertyType === 'msg'
+                const msgY = yFromMsg ? getConfiguredY(msg) : undefined
                 const single = yFromMsg && typeof p !== 'object' ? msgY : p
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
@@ -168,26 +190,13 @@ module.exports = function (RED) {
                         const points = []
                         series.forEach((s) => {
                             if (hasProperty(p, s)) {
-                                const datapoint = addToChart(single, s, msgY)
+                                const datapoint = addToChart(single, s)
                                 points.push(datapoint)
                             }
                         })
                         msg._datapoint = points
                     } else {
-                        msg._datapoint = addToChart(single, series, msgY)
-                    }
-                }
-
-                const updates = msg.ui_update
-                if (updates) {
-                    if (typeof updates.chartOptions !== 'undefined') {
-                        // merge chart options specified here in with any others previously set
-                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
-                        // Deep merge new options in with old
-                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
-                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
-                        // pass the full set to the clients so they don't need to do the merge
-                        msg.ui_update.chartOptions = mergedOptions
+                        msg._datapoint = addToChart(single, series)
                     }
                 }
 
@@ -199,7 +208,7 @@ module.exports = function (RED) {
                 }
 
                 // function to process a data point being appended to a line/scatter chart
-                function addToChart (payload, series, yOverride) {
+                function addToChart (payload, series) {
                     const datapoint = {}
                     // we group/categorize data by "series"
                     datapoint.category = series
@@ -236,9 +245,7 @@ module.exports = function (RED) {
                                 // we are using the "series" as a key to get the y value from the payload
                                 y = getProperty(payload, series)
                             } else {
-                                y = typeof yOverride !== 'undefined'
-                                    ? yOverride
-                                    : evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
+                                y = evaluateNodePropertyWithKey(node, msg, payload, config.yAxisProperty, config.yAxisPropertyType)
                             }
                         }
                         datapoint.x = x

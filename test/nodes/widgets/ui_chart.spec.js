@@ -1,3 +1,5 @@
+const { EventEmitter, once } = require('node:events')
+
 const helper = require('node-red-node-test-helper')
 const should = require('should') // eslint-disable-line no-unused-vars
 
@@ -120,14 +122,36 @@ describe('ui-chart node', function () {
         stored[0]._datapoint.y.should.equal(3)
     })
 
+    it('emits a chart options update when the parent of the configured y property is missing', async function () {
+        const flow = chartFlow({ yAxisProperty: 'value.y', yAxisPropertyType: 'msg' })
+        await helper.load(nodeImports, flow)
+        const chart = helper.getNode('node-ui-chart')
+        const base = helper.getNode('config-ui-base')
+        const emitter = new EventEmitter()
+        base.uiShared.connections['chart-test'] = { id: 'chart-test', emit: emitter.emit.bind(emitter) }
+        const history = [{ _datapoint: { x: 1, y: 3, category: 'a' } }]
+        datastore.save(base, chart, history)
+
+        const update = { chartOptions: { title: { text: 'Updated' } } }
+        const received = once(emitter, 'msg-input:' + chart.id)
+        chart.receive({ ui_update: update })
+        const [msg] = await received
+        msg.ui_update.should.deepEqual(update)
+        should(msg._datapoint).equal(null)
+        datastore.get(chart.id).should.deepEqual(history)
+    })
+
     it('does not store a point when y is a msg property that is missing, whatever msg.payload holds', async function () {
         const flow = chartFlow({ yAxisProperty: 'value', yAxisPropertyType: 'msg' })
         await helper.load(nodeImports, flow)
         const base = helper.getNode('config-ui-base')
         const widget = base.ui.widgets.get('node-ui-chart')
         datastore.save(base, helper.getNode('node-ui-chart'), [])
-        const msg = widget.hooks.beforeSend({ topic: 'a', payload: 7 })
-        await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
-        datastore.get('node-ui-chart').should.have.length(0)
+        for (const payload of [[{ y: 7 }], [], 7]) {
+            const msg = widget.hooks.beforeSend({ topic: 'a', payload })
+            await new Promise((resolve) => widget.hooks.onInput(msg, resolve, () => {}))
+            datastore.get('node-ui-chart').should.have.length(0)
+            should(msg._datapoint).equal(null)
+        }
     })
 })

@@ -415,6 +415,10 @@ export default {
             }
         },
         onMsgInput (msg) {
+            // The server marks messages that carry no chart data. Dynamic updates are handled separately.
+            if (msg._datapoint === null) {
+                return
+            }
             // ignore if payload is empty and msg is not an array (on loading it can be an array)
             // ui_update messages are handled by OnDynamicProperties
             // a msg without payload is still data when the server computed a y value for it (y set to a msg property)
