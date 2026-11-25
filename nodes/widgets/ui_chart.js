@@ -120,11 +120,59 @@ module.exports = function (RED) {
             config.stackSeries = false
         }
 
+        // the editor hides the y property for JSON series and histograms, so any value left in it must be ignored
+        const yFromMsg = config.yAxisPropertyType === 'msg' && config.categoryType !== 'json' && config.chartType !== 'histogram'
+
+        function getConfiguredY (msg) {
+            try {
+                return RED.util.evaluateNodeProperty(config.yAxisProperty, 'msg', node, msg)
+            } catch (err) {
+                // Node-RED throws when an intermediate property in the path is missing.
+                if (!(err instanceof TypeError)) {
+                    throw err
+                }
+            }
+        }
+
+        function isDataMsg (msg) {
+            // An empty payload array clears the chart regardless of the configured Y property.
+            if (Array.isArray(msg.payload) && !msg.payload.length) {
+                return true
+            }
+
+            return yFromMsg
+                ? getConfiguredY(msg) !== undefined
+                : msg.payload !== undefined
+        }
+
         const evts = {
             // beforeSend will run before messages are sent client-side, as well as before sending on within Node-RED
             // here, we use it to pre-process chart data to format it ready for plotting
             beforeSend: function (msg) {
+                const updates = msg.ui_update
+                if (updates) {
+                    if (typeof updates.chartOptions !== 'undefined') {
+                        // merge chart options specified here in with any others previously set
+                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
+                        // Deep merge new options in with old
+                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
+                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
+                        // pass the full set to the clients so they don't need to do the merge
+                        msg.ui_update.chartOptions = mergedOptions
+                    }
+                }
+
+                if (!isDataMsg(msg)) {
+                    msg._datapoint = null
+                    return msg
+                }
+
+                // when y is taken from a msg property, a single value takes y from that property, regardless of
+                // what (or whether) msg.payload holds (an object payload still supplies x and the series). This is
+                // resolved here, before addToChart, which just adds the y it is given to the chart
                 const p = msg.payload
+                const msgY = yFromMsg ? getConfiguredY(msg) : undefined
+                const single = yFromMsg && typeof p !== 'object' ? msgY : p
 
                 let series = RED.util.evaluateNodeProperty(config.category, config.categoryType, node, msg)
                 // if receiving a object payload, the series could be a within the payload
@@ -149,26 +197,13 @@ module.exports = function (RED) {
                         const points = []
                         series.forEach((s) => {
                             if (hasProperty(p, s)) {
-                                const datapoint = addToChart(p, s)
+                                const datapoint = addToChart(single, s)
                                 points.push(datapoint)
                             }
                         })
                         msg._datapoint = points
                     } else {
-                        msg._datapoint = addToChart(p, series)
-                    }
-                }
-
-                const updates = msg.ui_update
-                if (updates) {
-                    if (typeof updates.chartOptions !== 'undefined') {
-                        // merge chart options specified here in with any others previously set
-                        const currentOptions = statestore.getProperty(node.id, 'chartOptions') ?? {}
-                        // Deep merge new options in with old
-                        const mergedOptions = deepMerge(currentOptions, updates.chartOptions)
-                        statestore.set(group.getBase(), node, msg, 'chartOptions', mergedOptions)
-                        // pass the full set to the clients so they don't need to do the merge
-                        msg.ui_update.chartOptions = mergedOptions
+                        msg._datapoint = addToChart(single, series)
                     }
                 }
 
@@ -233,8 +268,8 @@ module.exports = function (RED) {
                 if (!datastore.has(node.id)) {
                     datastore.save(base, node, [])
                 }
-                // To prevent ui_update messages from deleting old data, skip this section if no msg.payload present
-                if (typeof msg.payload !== 'undefined') {
+                // To prevent ui_update messages from deleting old data, skip this section if the msg carries no data
+                if (isDataMsg(msg)) {
                     if (Array.isArray(msg.payload) && !msg.payload.length) {
                         // clear history
                         datastore.save(base, node, [])
