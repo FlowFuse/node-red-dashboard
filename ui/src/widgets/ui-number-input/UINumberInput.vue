@@ -26,6 +26,8 @@ import DOMPurify from 'dompurify'
 import { VNumberInput } from 'vuetify/lib/components/VNumberInput/VNumberInput'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+import { stepPrecision } from './precision.js'
+
 export default {
     name: 'DBUITextInput',
     components: {
@@ -103,8 +105,7 @@ export default {
             return Math.abs(this.getProperty('step')) || 1
         },
         precision () {
-            const s = Math.abs(this.getProperty('step')) || 1
-            return s.toString().split('.')[1]?.length || 0
+            return stepPrecision(this.step)
         },
         spinner () {
             return this.getProperty('spinner')
