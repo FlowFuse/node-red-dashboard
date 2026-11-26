@@ -139,7 +139,11 @@ export default {
             // update the UI with any changes
             if (typeof msg?.payload !== 'undefined') {
                 if (this.typeIsComboBox) {
-                    this.value = this.options.find((o) => o.value === msg.payload)
+                    if (this.multiple && Array.isArray(msg.payload)) {
+                        this.select(msg.payload, this.multiple)
+                    } else {
+                        this.value = this.options.find((o) => o.value === msg.payload)
+                    }
                 } else {
                     this.value = msg.payload
                 }
@@ -185,7 +189,7 @@ export default {
                 this.$socket.emit('widget-change', this.id, msg.payload)
             }
         },
-        select (value) {
+        select (value, multiple = this.props.multiple) {
             if (value !== undefined) {
                 // first, if we have a single value, we need to convert it to an array
                 if (!Array.isArray(value)) {
@@ -195,7 +199,7 @@ export default {
                 // value [] is used to clear the current selection
                 if (value.length > 0) {
                     // now if this is a single selection, we just need to find the option with the matching value
-                    if (!this.props.multiple) {
+                    if (!multiple) {
                         value = this.options.find((o) => {
                             return o.value === value[0]
                         })
