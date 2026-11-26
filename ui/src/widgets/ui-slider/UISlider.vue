@@ -205,7 +205,8 @@ export default {
         },
         roundToStep (value) {
             const step = this.step || 1
-            return Math.round(value / step) * step
+            const offset = this.min % step
+            return Math.round((value - offset) / step) * step + offset
         }
     }
 }
