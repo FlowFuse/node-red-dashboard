@@ -38,6 +38,8 @@
 import DOMPurify from 'dompurify'
 import { mapState } from 'vuex' // eslint-disable-line import/order
 
+import { roundToStep } from './round-to-step.js'
+
 export default {
     name: 'DBUISlider',
     inject: ['$socket', '$dataTracker'],
@@ -204,8 +206,7 @@ export default {
             } else if (this.textFieldValue > this.max) { this.textFieldValue = this.max }
         },
         roundToStep (value) {
-            const step = this.step || 1
-            return Math.round(value / step) * step
+            return roundToStep(value, this.min, this.step || 1)
         }
     }
 }
