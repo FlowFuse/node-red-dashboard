@@ -24,5 +24,6 @@ jobs:
     with:
       package_name: node-red-dashboard
       publish_package: true
+      build_package: true
     secrets:
       npm_registry_token: ${{ secrets.NPM_PUBLISH_TOKEN }}

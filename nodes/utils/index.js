@@ -61,6 +61,13 @@ function isClientScoped (msg) {
     return clientTargets(msg).length > 0
 }
 
+function hasExtraProps (message) {
+    const allowed = ['_msgid', 'ui_update', 'class', 'visible', 'enabled']
+    const keys = Object.keys(message).filter(key => message[key] !== undefined)
+
+    return keys.length > 0 && keys.some(key => !allowed.includes(key))
+}
+
 function matchesClient (conn, msg) {
     return clientTargets(msg).every((target) => target.value === target.connValue(conn))
 }
@@ -162,5 +169,6 @@ module.exports = {
     normalizeClientId,
     isClientScoped,
     matchesClient,
-    getThirdPartyWidgets
+    getThirdPartyWidgets,
+    hasExtraProps
 }
