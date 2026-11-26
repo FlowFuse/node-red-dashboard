@@ -73,14 +73,7 @@ export default {
             // no file selected yet
             if (!this.files || (Array.isArray(this.files) && !this.files.length)) return false
 
-            let tooLarge = false
-            if (Array.isArray(this.files)) {
-                tooLarge = this.files.some(file => file.size > this.props.maxFileSize)
-            } else {
-                tooLarge = this.files.size > this.props.maxFileSize
-            }
-
-            if (tooLarge) return false
+            if (this.hasOversizedFile(this.files)) return false
 
             return !this.uploading && !this.uploaded
         }
@@ -140,12 +133,15 @@ export default {
         send (msg) {
             this.$socket.emit('widget-action', this.id, msg)
         },
+        hasOversizedFile (files) {
+            const selection = Array.isArray(files) ? files : [files]
+            return selection.some(file => file && file.size > this.props.maxFileSize)
+        },
         maxFileSize (files) {
-            if (files) {
-                const size = files[0]?.size
-                const maxSize = this.props.maxFileSize
-                return !files || !files.length || size < maxSize || `File size should be less than ${this.formatFileSize(maxSize)}!`
+            if (this.hasOversizedFile(files)) {
+                return `File size should be at most ${this.formatFileSize(this.props.maxFileSize)}!`
             }
+            return true
         }
     }
 }
